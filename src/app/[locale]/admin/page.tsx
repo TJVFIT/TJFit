@@ -2,6 +2,7 @@ import { adminAdvancedStats, adminStats } from "@/lib/content";
 import { getDictionary, isLocale } from "@/lib/i18n";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { AdminCoachApplications } from "@/components/admin-coach-applications";
+import { AdminCoachAuthorization } from "@/components/admin-coach-authorization";
 import { AdminFeedbackList } from "@/components/admin-feedback-list";
 import { ProtectedRoute } from "@/components/protected-route";
 import { StatGrid } from "@/components/ui";
@@ -65,6 +66,8 @@ export default async function AdminPage({ params }: { params: { locale: string }
           </div>
         ))}
       </div>
+
+      <AdminCoachAuthorization />
 
       <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
         <aside className="glass-panel rounded-[32px] p-6">
