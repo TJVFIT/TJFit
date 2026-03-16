@@ -16,7 +16,8 @@ const routeMap = {
   membership: "/membership",
   becomeCoach: "/become-a-coach",
   dashboard: "/dashboard",
-  admin: "/admin"
+  admin: "/admin",
+  feedback: "/feedback"
 } as const;
 
 export function SiteShell({
@@ -49,6 +50,7 @@ export function SiteShell({
               <Link href={`/${locale}${routeMap.becomeCoach}`}>{dict.nav.becomeCoach}</Link>
               <Link href={`/${locale}${routeMap.dashboard}`}>{dict.nav.dashboard}</Link>
               <Link href={`/${locale}${routeMap.admin}`}>{dict.nav.admin}</Link>
+              <Link href={`/${locale}${routeMap.feedback}`}>{dict.nav.feedback}</Link>
             </nav>
           </div>
 
@@ -58,7 +60,7 @@ export function SiteShell({
               href={`/${locale}/login`}
               className="rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-200 transition hover:border-white/20 hover:bg-white/5"
             >
-              {dict.nav.login}
+              {dict.nav.loginAsCoach}
             </Link>
           </div>
         </div>
@@ -108,6 +110,7 @@ export function SiteShell({
               <Link href={`/${locale}/community`}>Community Feed</Link>
               <Link href={`/${locale}/challenges`}>Challenges</Link>
               <Link href={`/${locale}/live`}>Live Sessions</Link>
+              <Link href={`/${locale}/feedback`}>Feedback & Support</Link>
               <Link href={`/${locale}/coach-dashboard`}>Coach Dashboard</Link>
               <Link href={`/${locale}/admin`}>Admin Panel</Link>
               <Link href={`/${locale}/checkout`}>PayTR Checkout</Link>

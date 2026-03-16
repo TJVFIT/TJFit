@@ -8,7 +8,7 @@ import { Locale, isLocale } from "@/lib/i18n";
 const filterGroups = {
   goal: ["Fat loss", "Muscle", "Rehab", "Sports"],
   specialty: ["Fat loss", "Bodybuilding", "Performance", "Nutrition", "Rehab"],
-  price: ["0-800", "800-1200", "1200-1600", "1600+"],
+  price: ["Budget 1", "Budget 2", "Budget 3", "Budget 4"],
   language: ["English", "Turkish", "Arabic"],
   country: ["Turkey", "UAE", "Qatar", "Global"],
   rating: ["4.5+", "4.8+", "5.0"],

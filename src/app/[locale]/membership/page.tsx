@@ -1,6 +1,5 @@
 import { membershipPlans } from "@/lib/content";
 import { isLocale } from "@/lib/i18n";
-import { formatCurrency } from "@/lib/utils";
 
 export default function MembershipPage({ params }: { params: { locale: string } }) {
   if (!isLocale(params.locale)) {
@@ -21,8 +20,7 @@ export default function MembershipPage({ params }: { params: { locale: string } 
         {membershipPlans.map((plan) => (
           <div key={plan.name} className="glass-panel rounded-[36px] p-8 text-center">
             <p className="text-3xl font-semibold text-white">{plan.name}</p>
-            <p className="mt-4 text-5xl font-semibold text-white">{formatCurrency(plan.monthlyPrice)}</p>
-            <p className="mt-2 text-sm text-zinc-400">per month</p>
+            <p className="mt-4 text-sm text-zinc-400">Pricing hidden for now</p>
 
             <div className="mx-auto mt-8 grid max-w-3xl gap-4 md:grid-cols-2">
               {plan.benefits.map((benefit) => (

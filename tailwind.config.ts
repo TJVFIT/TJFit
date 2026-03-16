@@ -12,8 +12,8 @@ const config: Config = {
         text: "#F5F5F5"
       },
       fontFamily: {
-        sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
-        display: ["Satoshi", "Inter", "ui-sans-serif", "system-ui", "sans-serif"]
+        sans: ["var(--font-sans)", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "Outfit", "Inter", "ui-sans-serif", "system-ui", "sans-serif"]
       },
       boxShadow: {
         glass: "0 20px 80px rgba(0, 0, 0, 0.35)"

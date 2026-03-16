@@ -5,7 +5,6 @@ import { notFound } from "next/navigation";
 import { ProgramCard, SectionHeading } from "@/components/ui";
 import { coaches, programs } from "@/lib/content";
 import { isLocale } from "@/lib/i18n";
-import { formatCurrency } from "@/lib/utils";
 
 export default function CoachProfilePage({
   params
@@ -53,8 +52,7 @@ export default function CoachProfilePage({
             </div>
 
             <div className="rounded-[28px] border border-white/10 bg-black/20 p-5 text-right">
-              <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">Starting at</p>
-              <p className="mt-3 text-3xl font-semibold text-white">{formatCurrency(coach.price)}</p>
+              <p className="text-sm text-zinc-400">Pricing hidden for now</p>
               <p className="mt-2 text-sm text-zinc-400">Includes session booking and dashboard access</p>
             </div>
           </div>

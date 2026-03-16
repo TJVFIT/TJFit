@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 
 import { coaches, products, programs } from "@/lib/content";
 import { isLocale } from "@/lib/i18n";
-import { formatCurrency } from "@/lib/utils";
 
 export default function ProgramDetailPage({
   params
@@ -74,7 +73,7 @@ export default function ProgramDetailPage({
               </div>
               <div className="flex items-center justify-between">
                 <span>Price</span>
-                <span className="text-white">{formatCurrency(program.price)}</span>
+                <span className="text-white">Hidden</span>
               </div>
               <div className="flex items-center justify-between">
                 <span>Coach commission</span>
@@ -109,7 +108,7 @@ export default function ProgramDetailPage({
                       <p className="mt-1 text-sm text-zinc-400">{product.description}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-white">{formatCurrency(product.price)}</p>
+                      <p className="text-white">Hidden</p>
                       <p className="mt-1 text-xs text-zinc-500">
                         Coach earns {product.coachCommissionRate}% commission
                       </p>

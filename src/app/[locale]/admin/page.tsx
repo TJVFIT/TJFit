@@ -1,10 +1,46 @@
 import { adminAdvancedStats, adminStats } from "@/lib/content";
-import { isLocale } from "@/lib/i18n";
+import { getDictionary, isLocale } from "@/lib/i18n";
+import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { StatGrid } from "@/components/ui";
+import { AdminCoachApplications } from "@/components/admin-coach-applications";
+import { AdminFeedbackList } from "@/components/admin-feedback-list";
 
-export default function AdminPage({ params }: { params: { locale: string } }) {
+export default async function AdminPage({ params }: { params: { locale: string } }) {
   if (!isLocale(params.locale)) {
     return null;
+  }
+  const dict = getDictionary(params.locale);
+
+  const supabase = getSupabaseServerClient();
+  let applications: Array<{
+    id: string;
+    created_at: string;
+    age: number;
+    full_name: string;
+    specialty: string;
+    languages: string;
+    country: string;
+    certifications_and_style: string;
+    locale: string | null;
+  }> = [];
+  let submissions: Array<{
+    id: string;
+    created_at: string;
+    type: string;
+    subject: string | null;
+    message: string;
+    order_reference: string | null;
+    email: string | null;
+    locale: string | null;
+  }> = [];
+
+  if (supabase) {
+    const [appsRes, feedbackRes] = await Promise.all([
+      supabase.from("coach_applications").select("*").order("created_at", { ascending: false }),
+      supabase.from("feedback_submissions").select("*").order("created_at", { ascending: false })
+    ]);
+    if (appsRes.data) applications = appsRes.data;
+    if (feedbackRes.data) submissions = feedbackRes.data;
   }
 
   return (
@@ -52,7 +88,9 @@ export default function AdminPage({ params }: { params: { locale: string } }) {
           </div>
         </aside>
 
-        <section className="glass-panel rounded-[32px] p-6">
+        <section className="space-y-6">
+          <AdminCoachApplications dict={dict.admin} initialApplications={applications} />
+          <div className="glass-panel rounded-[32px] p-6">
           <p className="text-lg font-semibold text-white">Approval queue</p>
           <div className="mt-6 space-y-4">
             {[
@@ -72,10 +110,12 @@ export default function AdminPage({ params }: { params: { locale: string } }) {
               </div>
             ))}
           </div>
+          </div>
         </section>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-2">
+        <AdminFeedbackList initialSubmissions={submissions} />
         <div className="glass-panel rounded-[32px] p-6">
           <p className="text-lg font-semibold text-white">Advanced analytics</p>
           <div className="mt-6 grid gap-4 md:grid-cols-2">

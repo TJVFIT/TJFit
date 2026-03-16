@@ -6,7 +6,6 @@ import Link from "next/link";
 import { coaches, Goal } from "@/lib/content";
 import { Locale } from "@/lib/i18n";
 import { CoachMatchInput, rankCoaches } from "@/lib/recommendations";
-import { formatCurrency } from "@/lib/utils";
 
 const initialState: CoachMatchInput = {
   goal: "fat loss",
@@ -68,9 +67,9 @@ export function AiCoachMatcher({ locale }: { locale: Locale }) {
             value={String(form.budget)}
             onChange={(event) => setForm((current) => ({ ...current, budget: Number(event.target.value) }))}
           >
-            {[900, 1100, 1300, 1500].map((amount) => (
+            {[900, 1100, 1300, 1500].map((amount, index) => (
               <option key={amount} value={amount}>
-                Up to {formatCurrency(amount)}
+                {`Budget ${index + 1}`}
               </option>
             ))}
           </select>
@@ -113,9 +112,7 @@ export function AiCoachMatcher({ locale }: { locale: Locale }) {
               </div>
 
               <div className="text-left sm:text-right">
-                <p className="text-sm text-zinc-400">Starting price</p>
-                <p className="mt-1 text-xl font-semibold text-white">{formatCurrency(coach.price)}</p>
-                <p className="mt-2 text-sm text-zinc-400">
+                <p className="text-sm text-zinc-400">
                   {coach.rating} rating • {coach.successRate}% success
                 </p>
               </div>

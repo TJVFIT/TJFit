@@ -1,65 +1,61 @@
 import { rankingTiers } from "@/lib/content";
-import { isLocale } from "@/lib/i18n";
+import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
+import { CoachApplicationSlideshow } from "@/components/coach-application-slideshow";
+import { HoverLift } from "@/components/motion";
 
 export default function BecomeCoachPage({ params }: { params: { locale: string } }) {
   if (!isLocale(params.locale)) {
     return null;
   }
+  const dict = getDictionary(params.locale);
+
+  const bc = dict.becomeCoach;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
       <div className="grid gap-8 xl:grid-cols-[1fr_0.9fr]">
         <section className="glass-panel rounded-[36px] p-8">
-          <span className="badge">Become a Coach</span>
-          <h1 className="mt-6 max-w-3xl font-display text-4xl font-semibold tracking-tight text-white sm:text-5xl">
-            Join a premium coaching marketplace designed to grow coach earnings.
+          <span className="badge">{bc.badge}</span>
+          <h1 className="mt-6 max-w-3xl font-display text-3xl font-semibold leading-tight tracking-tight text-white text-balance sm:text-4xl lg:text-5xl">
+            {bc.title}
           </h1>
-          <p className="mt-6 max-w-2xl text-base leading-8 text-zinc-400">
-            TJFit attracts coaches with high-trust profiles, multilingual positioning, ranked visibility, referrals,
-            and a premium client experience.
+          <p className="mt-6 max-w-2xl text-base leading-relaxed text-zinc-400">
+            {bc.subtitle}
           </p>
 
           <div className="mt-10 grid gap-4 md:grid-cols-2">
-            {[
-              "Featured placement for high performers",
-              "Referral codes and repeat revenue",
-              "Coach dashboard with bookings and earnings",
-              "Global audience with English, Turkish, and Arabic support"
-            ].map((point) => (
-              <div key={point} className="rounded-[24px] border border-white/10 bg-white/5 p-5 text-sm text-zinc-200">
-                {point}
-              </div>
+            {[bc.feature1, bc.feature2, bc.feature3, bc.feature4].map((point) => (
+              <HoverLift key={point}>
+                <div className="rounded-[24px] border border-white/10 bg-white/5 p-5 text-sm text-zinc-200">
+                  {point}
+                </div>
+              </HoverLift>
             ))}
           </div>
         </section>
 
         <aside className="space-y-6">
           <div className="glass-panel rounded-[36px] p-6">
-            <p className="text-lg font-semibold text-white">Coach magnet system</p>
+            <p className="text-lg font-semibold text-white">{bc.magnetTitle}</p>
             <p className="mt-3 text-sm leading-7 text-zinc-400">
-              Higher rank means better visibility, more trust, more clients, and stronger marketplace momentum.
+              {bc.magnetSubtitle}
             </p>
             <div className="mt-6 space-y-3">
               {rankingTiers.map((tier) => (
-                <div key={tier.name} className="rounded-[24px] border border-white/10 bg-white/5 p-4">
-                  <p className="font-medium text-white">{tier.name}</p>
-                  <p className="mt-2 text-sm text-zinc-400">{tier.detail}</p>
-                </div>
+                <HoverLift key={tier.name}>
+                  <div className="rounded-[24px] border border-white/10 bg-white/5 p-4">
+                    <p className="font-medium text-white">{tier.name}</p>
+                    <p className="mt-2 text-sm text-zinc-400">{tier.detail}</p>
+                  </div>
+                </HoverLift>
               ))}
             </div>
           </div>
 
           <div className="glass-panel rounded-[36px] p-6">
-            <p className="text-lg font-semibold text-white">Coach application</p>
-            <div className="mt-5 space-y-4">
-              <input className="input" placeholder="Full name" />
-              <input className="input" placeholder="Specialty" />
-              <input className="input" placeholder="Languages" />
-              <input className="input" placeholder="Country" />
-              <textarea className="input min-h-32" placeholder="Tell us about your certifications and coaching style" />
-              <button className="gradient-button w-full rounded-full px-5 py-3 text-sm font-medium text-white">
-                Submit application
-              </button>
+            <p className="text-lg font-semibold text-white">{bc.applicationTitle}</p>
+            <div className="mt-5">
+              <CoachApplicationSlideshow dict={dict.becomeCoach} locale={params.locale as Locale} />
             </div>
           </div>
         </aside>

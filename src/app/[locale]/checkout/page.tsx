@@ -1,9 +1,4 @@
 import { isLocale } from "@/lib/i18n";
-import { formatCurrency } from "@/lib/utils";
-
-const totalPayment = 1000;
-const platformFee = 500;
-const coachEarnings = 500;
 
 export default function CheckoutPage({ params }: { params: { locale: string } }) {
   if (!isLocale(params.locale)) {
@@ -60,15 +55,15 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
             <div className="mt-6 space-y-4">
               <div className="flex items-center justify-between text-sm text-zinc-300">
                 <span>Total payment</span>
-                <span className="text-white">{formatCurrency(totalPayment)}</span>
+                <span className="text-white">Hidden</span>
               </div>
               <div className="flex items-center justify-between text-sm text-zinc-300">
                 <span>Platform fee</span>
-                <span className="text-white">{formatCurrency(platformFee)}</span>
+                <span className="text-white">Hidden</span>
               </div>
               <div className="flex items-center justify-between text-sm text-zinc-300">
                 <span>Coach earnings</span>
-                <span className="text-white">{formatCurrency(coachEarnings)}</span>
+                <span className="text-white">Hidden</span>
               </div>
             </div>
 

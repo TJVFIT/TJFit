@@ -3,7 +3,7 @@ import { ArrowRight, Star } from "lucide-react";
 
 import { HoverLift } from "@/components/motion";
 import { Challenge, Coach, CommunityPost, Product, Program, Transformation } from "@/lib/content";
-import { cn, formatCurrency } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 export function SectionHeading({
   eyebrow,
@@ -58,10 +58,7 @@ export function CoachCard({ coach, href }: { coach: Coach; href: string }) {
         </div>
 
         <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-5">
-          <div>
-            <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">Starting at</p>
-            <p className="mt-1 text-lg font-semibold text-white">{formatCurrency(coach.price)}</p>
-          </div>
+          <div />
           <span className="inline-flex items-center gap-2 text-sm text-zinc-200">
             View profile <ArrowRight className="h-4 w-4" />
           </span>
@@ -84,10 +81,7 @@ export function ProgramCard({ program, href }: { program: Program; href?: string
         <h3 className="mt-5 text-xl font-semibold text-white">{program.title}</h3>
         <p className="mt-3 text-sm leading-7 text-zinc-400">{program.description}</p>
         <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-5">
-          <div>
-            <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{program.difficulty}</p>
-            <p className="mt-1 text-lg font-semibold text-white">{formatCurrency(program.price)}</p>
-          </div>
+          <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{program.difficulty}</p>
           {href ? (
             <Link
               href={href}
@@ -123,7 +117,7 @@ export function ProductCard({ product }: { product: Product }) {
           </span>
         </div>
         <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-5">
-          <p className="text-lg font-semibold text-white">{formatCurrency(product.price)}</p>
+          <div />
           <button className="gradient-button rounded-full px-4 py-2 text-sm font-medium text-white">
             Add to cart
           </button>
