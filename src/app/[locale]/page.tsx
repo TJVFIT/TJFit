@@ -248,7 +248,7 @@ export default function HomePage({ params }: { params: { locale: string } }) {
             <FadeIn key={testimonial.name} delay={index * 0.08}>
               <div className="glass-panel rounded-[28px] p-6">
                 <p className="text-sm uppercase tracking-[0.24em] text-zinc-500">{testimonial.name}</p>
-                <p className="mt-6 text-lg leading-8 text-zinc-200">"{testimonial.quote}"</p>
+                <p className="mt-6 text-lg leading-8 text-zinc-200">&quot;{testimonial.quote}&quot;</p>
               </div>
             </FadeIn>
           ))}

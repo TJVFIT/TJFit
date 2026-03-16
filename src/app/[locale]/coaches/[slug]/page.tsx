@@ -147,7 +147,7 @@ export default function CoachProfilePage({
                 "Fast response time, great accountability, strong results."
               ].map((review) => (
                 <div key={review} className="rounded-[24px] border border-white/10 bg-white/5 p-4 text-sm leading-7 text-zinc-300">
-                  "{review}"
+                  &quot;{review}&quot;
                 </div>
               ))}
             </div>
