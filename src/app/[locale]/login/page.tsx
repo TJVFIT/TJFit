@@ -39,11 +39,20 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
       setLoading(false);
       return;
     }
-    const signInEmail = adminMode ? getAdminEmailForUsername(username) : email;
-    if (adminMode && !signInEmail) {
-      setError("Invalid admin username.");
-      setLoading(false);
-      return;
+    let signInEmail: string;
+    if (adminMode) {
+      const fromMapping = getAdminEmailForUsername(username);
+      if (fromMapping) {
+        signInEmail = fromMapping;
+      } else if (username.includes("@")) {
+        signInEmail = username.trim();
+      } else {
+        setError("Invalid admin username. Try your email instead.");
+        setLoading(false);
+        return;
+      }
+    } else {
+      signInEmail = email;
     }
     const { error: err } = await supabase.auth.signInWithPassword({
       email: signInEmail!,
@@ -76,7 +85,7 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
             <input
               className="input"
               type="text"
-              placeholder="Username"
+              placeholder="Username or email"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required

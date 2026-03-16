@@ -2,6 +2,7 @@
 node_modules
 .env
 .env.local
+vercel-env-paste.txt
 .vercel
 dist
 coverage
