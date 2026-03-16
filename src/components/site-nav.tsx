@@ -57,6 +57,7 @@ export function SiteNav({ locale }: { locale: Locale }) {
     { key: "challenges", href: routeMap.challenges, label: dict.nav.challenges },
     { key: "live", href: routeMap.live, label: dict.nav.live },
     { key: "membership", href: routeMap.membership, label: dict.nav.membership },
+    { key: "sep", href: "", label: "|", separator: true },
     { key: "becomeCoach", href: routeMap.becomeCoach, label: dict.nav.becomeCoach },
     { key: "dashboard", href: routeMap.dashboard, label: dict.nav.dashboard },
     { key: "admin", href: routeMap.admin, label: dict.nav.admin },
@@ -67,8 +68,8 @@ export function SiteNav({ locale }: { locale: Locale }) {
 
   return (
     <>
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-8">
-        <div className="flex min-w-0 flex-1 items-center gap-8">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
+        <div className="flex min-w-0 flex-1 items-center gap-6">
           <Link
             href={`/${locale}`}
             className="shrink-0 font-display text-xl font-semibold tracking-tight text-white transition hover:text-zinc-200"
@@ -76,16 +77,22 @@ export function SiteNav({ locale }: { locale: Locale }) {
             TJFit
           </Link>
           {!loading && (
-            <nav className="hidden items-center gap-5 text-sm text-zinc-300 lg:flex">
-              {links.map(({ key, href, label }) => (
-                <Link
-                  key={key}
-                  href={`/${locale}${href}`}
-                  className="whitespace-nowrap transition hover:text-white"
-                >
-                  {label}
-                </Link>
-              ))}
+            <nav className="hidden min-w-0 flex-1 items-center gap-6 overflow-x-auto text-sm text-zinc-300 lg:flex">
+              {links.map((item) =>
+                "separator" in item && item.separator ? (
+                  <span key={item.key} className="shrink-0 text-white/30" aria-hidden>
+                    {item.label}
+                  </span>
+                ) : (
+                  <Link
+                    key={item.key}
+                    href={`/${locale}${item.href}`}
+                    className="shrink-0 whitespace-nowrap transition hover:text-white"
+                  >
+                    {item.label}
+                  </Link>
+                )
+              )}
             </nav>
           )}
         </div>
@@ -121,15 +128,21 @@ export function SiteNav({ locale }: { locale: Locale }) {
       {!loading && links.length > 0 && (
         <div className="overflow-x-auto border-t border-white/5 lg:hidden">
           <div className="mx-auto flex max-w-7xl gap-3 px-4 py-3 text-sm text-zinc-300 sm:px-6">
-            {links.map(({ key, href, label }) => (
-              <Link
-                key={key}
-                href={`/${locale}${href}`}
-                className="shrink-0 rounded-full border border-white/10 px-3 py-1.5 transition hover:bg-white/5"
-              >
-                {label}
-              </Link>
-            ))}
+            {links.map((item) =>
+              "separator" in item && item.separator ? (
+                <span key={item.key} className="shrink-0 text-white/30" aria-hidden>
+                  {item.label}
+                </span>
+              ) : (
+                <Link
+                  key={item.key}
+                  href={`/${locale}${item.href}`}
+                  className="shrink-0 rounded-full border border-white/10 px-3 py-1.5 transition hover:bg-white/5"
+                >
+                  {item.label}
+                </Link>
+              )
+            )}
           </div>
         </div>
       )}
