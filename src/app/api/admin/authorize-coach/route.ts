@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { requireAdmin } from "@/lib/require-admin";
 
 export async function POST(request: NextRequest) {
+  const admin = await requireAdmin();
+  if (!admin.ok) return admin.response;
+
   try {
     const body = await request.json();
     const { email, password } = body;
@@ -16,7 +19,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = getSupabaseServerClient();
+    const supabase = admin.supabase;
     if (!supabase) {
       return NextResponse.json(
         { error: "Database not configured." },

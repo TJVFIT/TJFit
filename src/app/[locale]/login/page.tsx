@@ -1,20 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { isLocale } from "@/lib/i18n";
-
-function getAdminEmailForUsername(username: string): string | null {
-  const raw = process.env.NEXT_PUBLIC_ADMIN_CREDENTIALS ?? "";
-  const pairs = raw.split(",").map((p) => p.trim()).filter(Boolean);
-  for (const pair of pairs) {
-    const [u, e] = pair.split(":").map((s) => s.trim());
-    if (u && e && u.toLowerCase() === username.toLowerCase()) return e;
-  }
-  return null;
-}
 
 export default function LoginPage({ params }: { params: { locale: string } }) {
   const [email, setEmail] = useState("");
@@ -33,29 +22,32 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
     e.preventDefault();
     setError(null);
     setLoading(true);
+
+    if (adminMode) {
+      const res = await fetch("/api/auth/admin-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: username.trim(), password }),
+        credentials: "include"
+      });
+      const data = await res.json();
+      setLoading(false);
+      if (!res.ok) {
+        setError(data.error ?? "Login failed.");
+        return;
+      }
+      window.location.href = `/${params.locale}`;
+      return;
+    }
+
     const supabase = getSupabaseBrowserClient();
     if (!supabase) {
       setError("Auth not configured.");
       setLoading(false);
       return;
     }
-    let signInEmail: string;
-    if (adminMode) {
-      const fromMapping = getAdminEmailForUsername(username);
-      if (fromMapping) {
-        signInEmail = fromMapping;
-      } else if (username.includes("@")) {
-        signInEmail = username.trim();
-      } else {
-        setError("Invalid admin username. Try your email instead.");
-        setLoading(false);
-        return;
-      }
-    } else {
-      signInEmail = email;
-    }
     const { error: err } = await supabase.auth.signInWithPassword({
-      email: signInEmail!,
+      email: email.trim(),
       password
     });
     setLoading(false);

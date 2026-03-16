@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 
 import { AuthProvider } from "@/components/auth-provider";
+import "../../sentry.client.config";
 import "./globals.css";
 
 const inter = Inter({

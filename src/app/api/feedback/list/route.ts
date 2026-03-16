@@ -1,17 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/require-admin";
 
-export async function GET(request: NextRequest) {
-  const secret = process.env.ADMIN_API_SECRET;
-  if (secret) {
-    const provided = request.headers.get("x-admin-secret");
-    if (provided !== secret) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-  }
+export async function GET() {
+  const admin = await requireAdmin();
+  if (!admin.ok) return admin.response;
 
   try {
-    const supabase = getSupabaseServerClient();
+    const supabase = admin.supabase;
     if (!supabase) {
       return NextResponse.json(
         { error: "Database not configured." },
