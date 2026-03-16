@@ -140,16 +140,8 @@ export default function CoachProfilePage({
 
           <div className="glass-panel rounded-[36px] p-6">
             <p className="text-lg font-semibold text-white">Client reviews</p>
-            <div className="mt-6 space-y-4">
-              {[
-                "Very structured onboarding and clear progression each week.",
-                "The multilingual support made communication incredibly smooth.",
-                "Fast response time, great accountability, strong results."
-              ].map((review) => (
-                <div key={review} className="rounded-[24px] border border-white/10 bg-white/5 p-4 text-sm leading-7 text-zinc-300">
-                  &quot;{review}&quot;
-                </div>
-              ))}
+            <div className="mt-6">
+              <p className="text-sm text-zinc-500">No reviews yet.</p>
             </div>
           </div>
         </aside>

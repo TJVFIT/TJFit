@@ -112,23 +112,8 @@ export default async function AdminPage({ params }: { params: { locale: string }
           <AdminCoachApplications dict={dict.admin} initialApplications={applications} />
           <div className="glass-panel rounded-[32px] p-6">
           <p className="text-lg font-semibold text-white">Approval queue</p>
-          <div className="mt-6 space-y-4">
-            {[
-              "Hassan Ali - Nutrition - UAE",
-              "Zeynep Kaya - Pilates - Turkey",
-              "Rana Mahmoud - Rehab - Saudi Arabia"
-            ].map((entry) => (
-              <div
-                key={entry}
-                className="flex flex-col gap-4 rounded-[24px] border border-white/10 bg-white/5 p-5 sm:flex-row sm:items-center sm:justify-between"
-              >
-                <p className="text-sm text-zinc-200">{entry}</p>
-                <div className="flex gap-3">
-                  <button className="rounded-full border border-white/10 px-4 py-2 text-sm text-white">Review</button>
-                  <button className="gradient-button rounded-full px-4 py-2 text-sm font-medium text-white">Approve</button>
-                </div>
-              </div>
-            ))}
+          <div className="mt-6">
+            <p className="text-sm text-zinc-500">No pending approvals.</p>
           </div>
           </div>
         </section>
@@ -140,10 +125,10 @@ export default async function AdminPage({ params }: { params: { locale: string }
           <p className="text-lg font-semibold text-white">Advanced analytics</p>
           <div className="mt-6 grid gap-4 md:grid-cols-2">
             {[
-              ["Revenue", "184,000 TRY"],
-              ["Top programs", "Home Fat Loss, Vertical Jump Training"],
-              ["Coach conversion", "5.8%"],
-              ["Membership growth", "+11.4%"]
+              ["Revenue", "0 TRY"],
+              ["Top programs", "—"],
+              ["Coach conversion", "0%"],
+              ["Membership growth", "0%"]
             ].map(([label, value]) => (
               <div key={label} className="rounded-[24px] border border-white/10 bg-white/5 p-5">
                 <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{label}</p>

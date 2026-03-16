@@ -90,7 +90,12 @@ export function AiCoachMatcher({ locale }: { locale: Locale }) {
       </div>
 
       <div className="space-y-4">
-        {recommendations.map((coach, index) => (
+        {recommendations.length === 0 ? (
+          <div className="glass-panel rounded-[28px] p-6">
+            <p className="text-sm text-zinc-500">No coaches available yet.</p>
+          </div>
+        ) : (
+          recommendations.map((coach, index) => (
           <div key={coach.slug} className="glass-panel rounded-[28px] p-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
@@ -133,7 +138,8 @@ export function AiCoachMatcher({ locale }: { locale: Locale }) {
               </Link>
             </div>
           </div>
-        ))}
+        ))
+        )}
       </div>
     </div>
   );

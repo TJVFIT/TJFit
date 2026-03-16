@@ -56,15 +56,19 @@ export function AdminDashboardView({ locale }: { locale: Locale }) {
         <p className="text-lg font-semibold text-white">{dict.admin.coachList}</p>
         <p className="mt-2 text-sm text-zinc-400">{dict.admin.coachListSubtitle}</p>
         <div className="mt-6 max-h-48 space-y-2 overflow-y-auto">
-          {coaches.slice(0, 8).map((c) => (
-            <div
-              key={c.slug}
-              className="flex items-center justify-between rounded-[20px] border border-white/10 bg-white/5 px-4 py-3 text-sm"
-            >
-              <span className="font-medium text-white">{c.name}</span>
-              <span className="text-zinc-400">{c.specialty} · {c.country}</span>
-            </div>
-          ))}
+          {coaches.length === 0 ? (
+            <p className="text-sm text-zinc-500">No coaches yet.</p>
+          ) : (
+            coaches.slice(0, 8).map((c) => (
+              <div
+                key={c.slug}
+                className="flex items-center justify-between rounded-[20px] border border-white/10 bg-white/5 px-4 py-3 text-sm"
+              >
+                <span className="font-medium text-white">{c.name}</span>
+                <span className="text-zinc-400">{c.specialty} · {c.country}</span>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>
