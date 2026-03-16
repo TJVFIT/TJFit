@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { ProtectedRoute } from "@/components/protected-route";
 import { coaches, liveSessions } from "@/lib/content";
 import { isLocale } from "@/lib/i18n";
 
@@ -9,7 +10,8 @@ export default function LivePage({ params }: { params: { locale: string } }) {
   }
 
   return (
-    <div className="mx-auto max-w-7xl space-y-10 px-4 py-16 sm:px-6 lg:px-8">
+    <ProtectedRoute locale={params.locale} requireAdmin>
+      <div className="mx-auto max-w-7xl space-y-10 px-4 py-16 sm:px-6 lg:px-8">
       <div>
         <span className="badge">Live Training System</span>
         <h1 className="mt-4 text-4xl font-semibold text-white">Group live sessions with booking-ready rooms.</h1>
@@ -65,5 +67,6 @@ export default function LivePage({ params }: { params: { locale: string } }) {
         })}
       </div>
     </div>
+    </ProtectedRoute>
   );
 }

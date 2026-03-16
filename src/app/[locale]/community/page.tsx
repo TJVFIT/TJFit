@@ -1,4 +1,5 @@
 import { CommunityPostCard, SectionHeading } from "@/components/ui";
+import { ProtectedRoute } from "@/components/protected-route";
 import { communityPosts } from "@/lib/content";
 import { isLocale } from "@/lib/i18n";
 
@@ -8,7 +9,8 @@ export default function CommunityPage({ params }: { params: { locale: string } }
   }
 
   return (
-    <div className="mx-auto max-w-6xl space-y-10 px-4 py-16 sm:px-6 lg:px-8">
+    <ProtectedRoute locale={params.locale} requireAdmin>
+      <div className="mx-auto max-w-6xl space-y-10 px-4 py-16 sm:px-6 lg:px-8">
       <SectionHeading
         eyebrow="Fitness Social Network"
         title="A community feed for workouts, progress, questions, and coach replies."
@@ -30,5 +32,6 @@ export default function CommunityPage({ params }: { params: { locale: string } }
         ))}
       </div>
     </div>
+    </ProtectedRoute>
   );
 }

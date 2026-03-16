@@ -1,4 +1,5 @@
 import { ChallengeCard, SectionHeading, TransformationCard } from "@/components/ui";
+import { ProtectedRoute } from "@/components/protected-route";
 import {
   challenges,
   transformationLeaderboards,
@@ -12,7 +13,8 @@ export default function TransformationsPage({ params }: { params: { locale: stri
   }
 
   return (
-    <div className="mx-auto max-w-7xl space-y-14 px-4 py-16 sm:px-6 lg:px-8">
+    <ProtectedRoute locale={params.locale} requireAdmin>
+      <div className="mx-auto max-w-7xl space-y-14 px-4 py-16 sm:px-6 lg:px-8">
       <SectionHeading
         eyebrow="Transformation Engine"
         title="Public transformations that build trust and momentum."
@@ -59,5 +61,6 @@ export default function TransformationsPage({ params }: { params: { locale: stri
         </div>
       </section>
     </div>
+    </ProtectedRoute>
   );
 }

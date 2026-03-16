@@ -3,6 +3,7 @@ import { CalendarDays, MessageSquareText, Mic, Star, Video } from "lucide-react"
 import { notFound } from "next/navigation";
 
 import { ProgramCard, SectionHeading } from "@/components/ui";
+import { ProtectedRoute } from "@/components/protected-route";
 import { coaches, programs } from "@/lib/content";
 import { isLocale } from "@/lib/i18n";
 
@@ -24,7 +25,8 @@ export default function CoachProfilePage({
   const relatedPrograms = programs.filter((program) => coach.programs.includes(program.slug));
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <ProtectedRoute locale={params.locale} requireAdmin>
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
       <div className="grid gap-8 xl:grid-cols-[1.2fr_0.8fr]">
         <section className="glass-panel rounded-[36px] p-8">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
@@ -153,5 +155,6 @@ export default function CoachProfilePage({
         </aside>
       </div>
     </div>
+    </ProtectedRoute>
   );
 }

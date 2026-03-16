@@ -2,6 +2,7 @@ import { rankingTiers } from "@/lib/content";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
 import { CoachApplicationSlideshow } from "@/components/coach-application-slideshow";
 import { HoverLift } from "@/components/motion";
+import { ProtectedRoute } from "@/components/protected-route";
 
 export default function BecomeCoachPage({ params }: { params: { locale: string } }) {
   if (!isLocale(params.locale)) {
@@ -12,7 +13,8 @@ export default function BecomeCoachPage({ params }: { params: { locale: string }
   const bc = dict.becomeCoach;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <ProtectedRoute locale={params.locale} requireAdmin>
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
       <div className="grid gap-8 xl:grid-cols-[1fr_0.9fr]">
         <section className="glass-panel rounded-[36px] p-8">
           <span className="badge">{bc.badge}</span>
@@ -61,5 +63,6 @@ export default function BecomeCoachPage({ params }: { params: { locale: string }
         </aside>
       </div>
     </div>
+    </ProtectedRoute>
   );
 }

@@ -2,6 +2,7 @@ import { Search } from "lucide-react";
 
 import { AiCoachMatcher } from "@/components/ai-coach-matcher";
 import { CoachCard, SectionHeading } from "@/components/ui";
+import { ProtectedRoute } from "@/components/protected-route";
 import { coaches } from "@/lib/content";
 import { Locale, isLocale } from "@/lib/i18n";
 
@@ -23,7 +24,8 @@ export default function CoachesPage({ params }: { params: { locale: string } }) 
   const locale = params.locale as Locale;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <ProtectedRoute locale={params.locale} requireAdmin>
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
       <SectionHeading
         eyebrow="Find a Coach"
         title="Discover elite coaches with advanced filtering."
@@ -83,5 +85,6 @@ export default function CoachesPage({ params }: { params: { locale: string } }) 
         </div>
       </div>
     </div>
+    </ProtectedRoute>
   );
 }

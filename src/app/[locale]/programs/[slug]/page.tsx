@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ProtectedRoute } from "@/components/protected-route";
 import { coaches, products, programs } from "@/lib/content";
 import { isLocale } from "@/lib/i18n";
 
@@ -25,7 +26,8 @@ export default function ProgramDetailPage({
   );
 
   return (
-    <div className="mx-auto max-w-7xl space-y-10 px-4 py-16 sm:px-6 lg:px-8">
+    <ProtectedRoute locale={params.locale} requireAdmin>
+      <div className="mx-auto max-w-7xl space-y-10 px-4 py-16 sm:px-6 lg:px-8">
       <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr]">
         <section className="glass-panel rounded-[36px] p-8">
           <span className="badge">{program.category}</span>
@@ -121,5 +123,6 @@ export default function ProgramDetailPage({
         </aside>
       </div>
     </div>
+    </ProtectedRoute>
   );
 }

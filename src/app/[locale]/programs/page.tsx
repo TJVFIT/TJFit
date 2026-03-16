@@ -1,4 +1,5 @@
 import { ProgramCard, SectionHeading } from "@/components/ui";
+import { ProtectedRoute } from "@/components/protected-route";
 import { programs } from "@/lib/content";
 import { isLocale } from "@/lib/i18n";
 
@@ -8,7 +9,8 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <ProtectedRoute locale={params.locale} requireAdmin>
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
       <SectionHeading
         eyebrow="Programs Marketplace"
         title="Digital programs built for scalable coaching revenue."
@@ -21,5 +23,6 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
         ))}
       </div>
     </div>
+    </ProtectedRoute>
   );
 }

@@ -1,5 +1,6 @@
-import { getDictionary, isLocale } from "@/lib/i18n";
 import { FeedbackForm } from "@/components/feedback-form";
+import { ProtectedRoute } from "@/components/protected-route";
+import { getDictionary, isLocale } from "@/lib/i18n";
 
 export default function FeedbackPage({ params }: { params: { locale: string } }) {
   if (!isLocale(params.locale)) {
@@ -8,7 +9,8 @@ export default function FeedbackPage({ params }: { params: { locale: string } })
   const dict = getDictionary(params.locale);
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
+    <ProtectedRoute locale={params.locale} requireAdmin>
+      <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
       <div className="glass-panel rounded-[36px] p-8">
         <span className="badge">{dict.feedback.nav}</span>
         <h1 className="mt-6 font-display text-3xl font-semibold text-white sm:text-4xl">
@@ -22,5 +24,6 @@ export default function FeedbackPage({ params }: { params: { locale: string } })
         </div>
       </div>
     </div>
+    </ProtectedRoute>
   );
 }

@@ -1,9 +1,10 @@
 import { adminAdvancedStats, adminStats } from "@/lib/content";
 import { getDictionary, isLocale } from "@/lib/i18n";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
-import { StatGrid } from "@/components/ui";
 import { AdminCoachApplications } from "@/components/admin-coach-applications";
 import { AdminFeedbackList } from "@/components/admin-feedback-list";
+import { ProtectedRoute } from "@/components/protected-route";
+import { StatGrid } from "@/components/ui";
 
 export default async function AdminPage({ params }: { params: { locale: string } }) {
   if (!isLocale(params.locale)) {
@@ -44,7 +45,8 @@ export default async function AdminPage({ params }: { params: { locale: string }
   }
 
   return (
-    <div className="mx-auto max-w-7xl space-y-8 px-4 py-16 sm:px-6 lg:px-8">
+    <ProtectedRoute locale={params.locale} requireAdmin>
+      <div className="mx-auto max-w-7xl space-y-8 px-4 py-16 sm:px-6 lg:px-8">
       <div>
         <span className="badge">Admin Panel</span>
         <h1 className="mt-4 text-4xl font-semibold text-white">Marketplace operations command center.</h1>
@@ -151,5 +153,6 @@ export default async function AdminPage({ params }: { params: { locale: string }
         </div>
       </div>
     </div>
+    </ProtectedRoute>
   );
 }

@@ -1,3 +1,4 @@
+import { ProtectedRoute } from "@/components/protected-route";
 import { membershipPlans } from "@/lib/content";
 import { isLocale } from "@/lib/i18n";
 
@@ -7,7 +8,8 @@ export default function MembershipPage({ params }: { params: { locale: string } 
   }
 
   return (
-    <div className="mx-auto max-w-5xl space-y-10 px-4 py-16 sm:px-6 lg:px-8">
+    <ProtectedRoute locale={params.locale} requireAdmin>
+      <div className="mx-auto max-w-5xl space-y-10 px-4 py-16 sm:px-6 lg:px-8">
       <div className="text-center">
         <span className="badge">Premium Membership</span>
         <h1 className="mt-4 text-4xl font-semibold text-white">Subscription access for your best users.</h1>
@@ -37,5 +39,6 @@ export default function MembershipPage({ params }: { params: { locale: string } 
         ))}
       </div>
     </div>
+    </ProtectedRoute>
   );
 }

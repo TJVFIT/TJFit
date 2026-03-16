@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 
+import { AuthProvider } from "@/components/auth-provider";
 import "./globals.css";
 
 const inter = Inter({
@@ -18,13 +19,15 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: "TJFit | Premium Coaching Platform",
   description:
-    "A premium multilingual coaching platform for online fitness, performance, nutrition, and rehabilitation."
+    "A premium multilingual coaching platform for fitness, performance, nutrition, and rehabilitation."
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
-      <body className="font-sans antialiased">{children}</body>
+      <body className="font-sans antialiased">
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }

@@ -1,4 +1,5 @@
 import { ChallengeCard, SectionHeading } from "@/components/ui";
+import { ProtectedRoute } from "@/components/protected-route";
 import { challenges } from "@/lib/content";
 import { isLocale } from "@/lib/i18n";
 
@@ -8,7 +9,8 @@ export default function ChallengesPage({ params }: { params: { locale: string } 
   }
 
   return (
-    <div className="mx-auto max-w-7xl space-y-12 px-4 py-16 sm:px-6 lg:px-8">
+    <ProtectedRoute locale={params.locale} requireAdmin>
+      <div className="mx-auto max-w-7xl space-y-12 px-4 py-16 sm:px-6 lg:px-8">
       <SectionHeading
         eyebrow="Transformation Challenges"
         title="Platform-wide challenges designed for viral momentum."
@@ -36,5 +38,6 @@ export default function ChallengesPage({ params }: { params: { locale: string } 
         </div>
       </div>
     </div>
+    </ProtectedRoute>
   );
 }
