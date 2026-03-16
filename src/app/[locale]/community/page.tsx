@@ -27,9 +27,15 @@ export default function CommunityPage({ params }: { params: { locale: string } }
       </div>
 
       <div className="space-y-5">
-        {communityPosts.map((post) => (
-          <CommunityPostCard key={post.id} post={post} />
-        ))}
+        {communityPosts.length === 0 ? (
+          <div className="glass-panel rounded-[32px] p-8 text-center">
+            <p className="text-sm text-zinc-500">No posts yet.</p>
+          </div>
+        ) : (
+          communityPosts.map((post) => (
+            <CommunityPostCard key={post.id} post={post} />
+          ))
+        )}
       </div>
     </div>
     </ProtectedRoute>

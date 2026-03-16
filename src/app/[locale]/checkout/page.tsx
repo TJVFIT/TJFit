@@ -37,9 +37,9 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
             <p className="text-lg font-semibold text-white">Booking summary</p>
             <div className="mt-6 space-y-4">
               {[
-                ["Coach", "Layla Haddad"],
-                ["Session", "Video Session"],
-                ["Time slot", "Tuesday 18:30"],
+                ["Coach", "—"],
+                ["Session", "—"],
+                ["Time slot", "—"],
                 ["Currency", "TRY"]
               ].map(([label, value]) => (
                 <div key={label} className="flex items-center justify-between text-sm text-zinc-300">
