@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "i18n:check": "tsx scripts/i18n/check-locale-parity.ts",
+    "i18n:scan": "tsx scripts/i18n/check-hardcoded-ui.ts",
+    "i18n:verify": "npm run i18n:check && npm run i18n:scan"
   },
   "dependencies": {
     "@sentry/nextjs": "^10.43.0",
@@ -29,6 +32,7 @@
     "eslint-config-next": "14.2.30",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
+    "tsx": "^4.21.0",
     "typescript": "^5.7.2"
   }
 }

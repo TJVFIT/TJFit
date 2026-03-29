@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 
-export type Role = "admin" | "coach" | null;
+export type Role = "admin" | "coach" | "user" | null;
 
 type AuthState = {
   user: User | null;

@@ -19,6 +19,9 @@ export type Dictionary = {
     feedback: string;
     login: string;
     loginAsCoach: string;
+    progress: string;
+    messages: string;
+    logout: string;
   };
   hero: {
     badge: string;
@@ -159,7 +162,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
       admin: "Admin",
       feedback: "Feedback",
       login: "Login",
-      loginAsCoach: "Log in as a coach"
+      loginAsCoach: "Log in as a coach",
+      progress: "Progress",
+      messages: "Messages",
+      logout: "Log out"
     },
     hero: {
       badge: "Global Online Coaching Platform",
@@ -300,7 +306,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
       admin: "Yonetim",
       feedback: "Geri Bildirim",
       login: "Giris",
-      loginAsCoach: "Koç olarak giris yap"
+      loginAsCoach: "Koç olarak giris yap",
+      progress: "Ilerleme",
+      messages: "Mesajlar",
+      logout: "Cikis yap"
     },
     hero: {
       badge: "Global Online Kocluk Platformu",
@@ -441,7 +450,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
       admin: "الادارة",
       feedback: "الملاحظات",
       login: "تسجيل الدخول",
-      loginAsCoach: "تسجيل الدخول كمدرب"
+      loginAsCoach: "تسجيل الدخول كمدرب",
+      progress: "التقدم",
+      messages: "الرسائل",
+      logout: "تسجيل الخروج"
     },
     hero: {
       badge: "منصة تدريب عالمية عبر الانترنت",
@@ -582,7 +594,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
       admin: "Admin",
       feedback: "Comentarios",
       login: "Iniciar sesion",
-      loginAsCoach: "Iniciar sesion como coach"
+      loginAsCoach: "Iniciar sesion como coach",
+      progress: "Progreso",
+      messages: "Mensajes",
+      logout: "Cerrar sesion"
     },
     hero: {
       badge: "Plataforma global de coaching online",
@@ -723,7 +738,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
       admin: "Admin",
       feedback: "Commentaires",
       login: "Connexion",
-      loginAsCoach: "Se connecter en tant que coach"
+      loginAsCoach: "Se connecter en tant que coach",
+      progress: "Progression",
+      messages: "Messages",
+      logout: "Se deconnecter"
     },
     hero: {
       badge: "Plateforme mondiale de coaching en ligne",

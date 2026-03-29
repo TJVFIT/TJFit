@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isAdminEmail } from "@/lib/auth-utils";
 
-export type Role = "admin" | "coach" | null;
+export type Role = "admin" | "coach" | "user" | null;
 
 export async function GET() {
   try {
@@ -16,7 +16,7 @@ export async function GET() {
       return NextResponse.json({ user: null, role: null });
     }
 
-    let role: Role = null;
+    let role: Role = "user";
 
     if (user.email && isAdminEmail(user.email)) {
       role = "admin";

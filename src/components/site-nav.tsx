@@ -45,7 +45,13 @@ export function SiteNav({ locale }: { locale: Locale }) {
     { key: "store", href: routeMap.store, label: dict.nav.store }
   ];
 
-  const coachLinks = [...publicLinks, { key: "dashboard", href: routeMap.dashboard, label: dict.nav.dashboard }];
+  const loggedInSharedLinks = [
+    ...publicLinks,
+    { key: "progress", href: "/progress", label: dict.nav.progress },
+    { key: "messages", href: "/messages", label: dict.nav.messages }
+  ];
+
+  const coachLinks = [...loggedInSharedLinks, { key: "dashboard", href: routeMap.dashboard, label: dict.nav.dashboard }];
 
   const adminLinks = [
     { key: "home", href: routeMap.home, label: dict.nav.home },
@@ -59,12 +65,14 @@ export function SiteNav({ locale }: { locale: Locale }) {
     { key: "membership", href: routeMap.membership, label: dict.nav.membership },
     { key: "sep", href: "", label: "|", separator: true },
     { key: "becomeCoach", href: routeMap.becomeCoach, label: dict.nav.becomeCoach },
+    { key: "progress", href: "/progress", label: dict.nav.progress },
+    { key: "messages", href: "/messages", label: dict.nav.messages },
     { key: "dashboard", href: routeMap.dashboard, label: dict.nav.dashboard },
     { key: "admin", href: routeMap.admin, label: dict.nav.admin },
     { key: "feedback", href: routeMap.feedback, label: dict.nav.feedback }
   ];
 
-  const links = isAdmin ? adminLinks : isCoach ? coachLinks : publicLinks;
+  const links = isAdmin ? adminLinks : isCoach ? coachLinks : user ? loggedInSharedLinks : publicLinks;
 
   return (
     <>
@@ -105,14 +113,14 @@ export function SiteNav({ locale }: { locale: Locale }) {
                 href={`/${locale}/dashboard`}
                 className="rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-200 transition hover:border-white/20 hover:bg-white/5"
               >
-                {isAdmin ? dict.nav.admin : dict.nav.dashboard}
+                {isAdmin ? dict.nav.admin : isCoach ? dict.nav.dashboard : dict.nav.progress}
               </Link>
               <button
                 type="button"
                 onClick={handleLogout}
                 className="rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-400 transition hover:border-white/20 hover:bg-white/5 hover:text-zinc-200"
               >
-                Log out
+                {dict.nav.logout}
               </button>
             </>
           ) : (

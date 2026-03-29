@@ -7,11 +7,18 @@ export default function DashboardPage({ params }: { params: { locale: string } }
   if (!isLocale(params.locale)) {
     return null;
   }
+  const loadingByLocale: Record<Locale, string> = {
+    en: "Loading dashboard...",
+    tr: "Panel yukleniyor...",
+    ar: "جار تحميل لوحة التحكم...",
+    es: "Cargando panel...",
+    fr: "Chargement du tableau de bord..."
+  };
 
   return (
     <ProtectedRoute locale={params.locale}>
       <div className="mx-auto max-w-7xl space-y-8 px-4 py-16 sm:px-6 lg:px-8">
-        <Suspense fallback={<div className="text-zinc-400">Loading dashboard...</div>}>
+        <Suspense fallback={<div className="text-zinc-400">{loadingByLocale[params.locale as Locale]}</div>}>
           <DashboardRoleRouter locale={params.locale as Locale} />
         </Suspense>
       </div>

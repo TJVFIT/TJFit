@@ -13,6 +13,13 @@ type Props = {
 export function ProtectedRoute({ children, locale, requireAdmin }: Props) {
   const { user, role, loading } = useAuth();
   const router = useRouter();
+  const loadingText: Record<string, string> = {
+    en: "Loading...",
+    tr: "Yukleniyor...",
+    ar: "جار التحميل...",
+    es: "Cargando...",
+    fr: "Chargement..."
+  };
 
   useEffect(() => {
     if (loading) return;
@@ -29,7 +36,7 @@ export function ProtectedRoute({ children, locale, requireAdmin }: Props) {
   if (loading) {
     return (
       <div className="flex min-h-[40vh] items-center justify-center">
-        <p className="text-sm text-zinc-400">Loading...</p>
+        <p className="text-sm text-zinc-400">{loadingText[locale] ?? loadingText.en}</p>
       </div>
     );
   }

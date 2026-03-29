@@ -1,0 +1,64 @@
+import { NextRequest, NextResponse } from "next/server";
+import { requireAuth } from "@/lib/require-auth";
+import { rateLimit } from "@/lib/rate-limit";
+
+export async function GET() {
+  const auth = await requireAuth();
+  if (!auth.ok) return auth.response;
+
+  const { data, error } = await auth.supabase
+    .from("workout_logs")
+    .select("*")
+    .eq("user_id", auth.user.id)
+    .order("workout_date", { ascending: false })
+    .limit(300);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ workouts: data ?? [] });
+}
+
+export async function POST(request: NextRequest) {
+  const auth = await requireAuth();
+  if (!auth.ok) return auth.response;
+
+  const limiter = rateLimit({
+    key: request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? request.ip ?? auth.user.id,
+    limit: 40,
+    windowMs: 60_000
+  });
+  if (!limiter.success) {
+    return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+  }
+
+  const body = await request.json();
+  if (typeof body.exercise !== "string" || !body.exercise.trim()) {
+    return NextResponse.json({ error: "Exercise is required." }, { status: 400 });
+  }
+
+  const payload = {
+    user_id: auth.user.id,
+    workout_date: body.workout_date ?? new Date().toISOString().slice(0, 10),
+    exercise: body.exercise.trim(),
+    sets: body.sets ?? null,
+    reps: body.reps ?? null,
+    weight_kg: body.weight_kg ?? null,
+    duration_minutes: body.duration_minutes ?? null,
+    notes: typeof body.notes === "string" ? body.notes.trim() : null
+  };
+
+  const { data, error } = await auth.supabase
+    .from("workout_logs")
+    .insert(payload)
+    .select("*")
+    .single();
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 400 });
+  }
+
+  return NextResponse.json({ workout: data }, { status: 201 });
+}
+
