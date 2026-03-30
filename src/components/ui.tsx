@@ -5,6 +5,44 @@ import { HoverLift } from "@/components/motion";
 import { Challenge, Coach, CommunityPost, Product, Program, Transformation } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
+function getProgramVisual(program: Program) {
+  const category = program.category.toLowerCase();
+  if (category.includes("nutrition")) {
+    return {
+      gradient: "from-emerald-400/25 via-teal-400/15 to-cyan-400/25",
+      ring: "border-emerald-300/20",
+      tag: "NUTRITION"
+    };
+  }
+  if (category.includes("fat")) {
+    return {
+      gradient: "from-orange-400/25 via-rose-400/15 to-red-400/25",
+      ring: "border-orange-300/20",
+      tag: "FAT LOSS"
+    };
+  }
+  if (category.includes("muscle") || category.includes("mass")) {
+    return {
+      gradient: "from-violet-400/25 via-fuchsia-400/15 to-indigo-400/25",
+      ring: "border-violet-300/20",
+      tag: "MUSCLE"
+    };
+  }
+  return {
+    gradient: "from-cyan-400/25 via-blue-400/15 to-indigo-400/25",
+    ring: "border-cyan-300/20",
+    tag: "PERFORMANCE"
+  };
+}
+
+function getProgramTier(program: Program) {
+  const slug = program.slug.toLowerCase();
+  if (slug.includes("advanced") || slug.includes("hardcore")) return "Elite";
+  if (slug.includes("pro") || slug.includes("shred")) return "Popular";
+  if (slug.includes("starter") || slug.includes("beginner")) return "New";
+  return "Signature";
+}
+
 export function SectionHeading({
   eyebrow,
   title,
@@ -68,11 +106,38 @@ export function CoachCard({ coach, href }: { coach: Coach; href: string }) {
   );
 }
 
-export function ProgramCard({ program, href }: { program: Program; href?: string }) {
+export function ProgramCard({
+  program,
+  href,
+  viewLabel = "View Program",
+  priceLabel,
+  tierLabel
+}: {
+  program: Program;
+  href?: string;
+  viewLabel?: string;
+  priceLabel?: string;
+  tierLabel?: string;
+}) {
+  const visual = getProgramVisual(program);
+  const tier = tierLabel ?? getProgramTier(program);
   return (
     <HoverLift>
-      <div className="glass-panel rounded-[28px] p-6">
-        <div className="flex items-center justify-between gap-3">
+      <div className={cn("glass-panel rounded-[28px] border p-6", visual.ring)}>
+        <div className={cn("rounded-[22px] border border-white/10 bg-gradient-to-br p-5", visual.gradient)}>
+          <div className="flex items-center justify-between text-xs uppercase tracking-[0.22em] text-zinc-200/90">
+            <span>{visual.tag}</span>
+            <span className="rounded-full border border-white/20 px-2.5 py-1 font-semibold text-white">{tier}</span>
+          </div>
+          <p className="mt-8 text-2xl font-semibold text-white">{program.title}</p>
+          <p className="mt-2 text-xs uppercase tracking-[0.22em] text-zinc-200/80">{program.duration}</p>
+          <div className="mt-6 flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-zinc-200/90">
+            <span>TJFit Program</span>
+            <span>{priceLabel ?? program.price}</span>
+          </div>
+        </div>
+
+        <div className="mt-4 flex items-center justify-between gap-3">
           <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-300">
             {program.category}
           </span>
@@ -81,17 +146,20 @@ export function ProgramCard({ program, href }: { program: Program; href?: string
         <h3 className="mt-5 text-xl font-semibold text-white">{program.title}</h3>
         <p className="mt-3 text-sm leading-7 text-zinc-400">{program.description}</p>
         <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-5">
-          <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{program.difficulty}</p>
+          <div>
+            <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{program.difficulty}</p>
+            <p className="mt-1 text-sm text-zinc-300">{priceLabel ?? program.price}</p>
+          </div>
           {href ? (
             <Link
               href={href}
               className="rounded-full border border-white/10 px-4 py-2 text-sm text-white transition hover:bg-white/5"
             >
-              View Program
+              {viewLabel}
             </Link>
           ) : (
             <button className="rounded-full border border-white/10 px-4 py-2 text-sm text-white transition hover:bg-white/5">
-              View Program
+              {viewLabel}
             </button>
           )}
         </div>

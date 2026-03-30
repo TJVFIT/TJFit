@@ -16,7 +16,7 @@ type Conversation = {
 
 export function MessagesView({ locale }: { locale: Locale }) {
   const t = getMessagesCopy(locale);
-  const { user } = useAuth();
+  const { user, role, hasActiveCoachChat, activeCoachId } = useAuth();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [participantId, setParticipantId] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -30,6 +30,14 @@ export function MessagesView({ locale }: { locale: Locale }) {
   useEffect(() => {
     load();
   }, []);
+
+  useEffect(() => {
+    if (role === "user" && activeCoachId) {
+      setParticipantId(activeCoachId);
+    }
+  }, [role, activeCoachId]);
+
+  const canAccessChat = role === "coach" || role === "admin" || hasActiveCoachChat;
 
   const createConversation = async () => {
     try {
@@ -99,24 +107,37 @@ export function MessagesView({ locale }: { locale: Locale }) {
         <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-400">{t.subtitle}</p>
       </div>
 
-      <div className="glass-panel rounded-[28px] p-6">
-        <p className="text-sm text-zinc-400">Create private thread by participant user ID</p>
-        <div className="mt-3 flex gap-3">
-          <input
-            className="input"
-            placeholder="participant user id"
-            value={participantId}
-            onChange={(e) => setParticipantId(e.target.value)}
-          />
-          <button className="gradient-button rounded-full px-5 py-2 text-sm font-medium text-white" onClick={createConversation}>
-            Create
-          </button>
+      {!canAccessChat ? (
+        <div className="glass-panel rounded-[28px] p-6">
+          <p className="text-sm text-zinc-300">
+            Chat unlocks after you are assigned to a coach and the coach service is paid.
+          </p>
         </div>
-        {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
-      </div>
+      ) : (
+        <div className="glass-panel rounded-[28px] p-6">
+          <p className="text-sm text-zinc-400">
+            {role === "user" ? "Start secure chat with your coach" : "Create private thread by participant user ID"}
+          </p>
+          <div className="mt-3 flex gap-3">
+            <input
+              className="input"
+              placeholder="participant user id"
+              value={participantId}
+              onChange={(e) => setParticipantId(e.target.value)}
+              disabled={role === "user" && Boolean(activeCoachId)}
+            />
+            <button className="gradient-button rounded-full px-5 py-2 text-sm font-medium text-white" onClick={createConversation}>
+              {role === "user" ? "Open Chat" : "Create"}
+            </button>
+          </div>
+          {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
+        </div>
+      )}
 
       <div className="space-y-3">
-        {conversations.length === 0 ? (
+        {!canAccessChat ? (
+          <div className="glass-panel rounded-[24px] p-5 text-sm text-zinc-500">Chat is not available on this account yet.</div>
+        ) : conversations.length === 0 ? (
           <div className="glass-panel rounded-[24px] p-5 text-sm text-zinc-500">{t.noConversations}</div>
         ) : (
           conversations.map((conversation) => (

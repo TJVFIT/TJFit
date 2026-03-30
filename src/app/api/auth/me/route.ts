@@ -30,12 +30,26 @@ export async function GET() {
       if (data?.role === "admin") role = "admin";
     }
 
+    const { data: activeCoachLink } = await supabase
+      .from("coach_student_links")
+      .select("id,coach_id,student_id")
+      .or(`student_id.eq.${user.id},coach_id.eq.${user.id}`)
+      .eq("status", "active")
+      .limit(1)
+      .maybeSingle();
+
+    const hasActiveCoachChat =
+      role === "coach" || role === "admin" || Boolean(activeCoachLink && activeCoachLink.student_id === user.id);
+
     return NextResponse.json({
       user: {
         id: user.id,
         email: user.email ?? undefined
       },
-      role
+      role,
+      hasActiveCoachChat,
+      activeCoachId:
+        activeCoachLink && activeCoachLink.student_id === user.id ? activeCoachLink.coach_id : undefined
     });
   } catch {
     return NextResponse.json({ user: null, role: null });

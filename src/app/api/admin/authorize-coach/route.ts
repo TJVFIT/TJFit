@@ -8,15 +8,10 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { email, password } = body;
+    const normalizedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
 
-    if (typeof email !== "string" || !email.trim()) {
+    if (!normalizedEmail) {
       return NextResponse.json({ error: "Email is required." }, { status: 400 });
-    }
-    if (typeof password !== "string" || !password.trim() || password.length < 6) {
-      return NextResponse.json(
-        { error: "Password is required and must be at least 6 characters." },
-        { status: 400 }
-      );
     }
 
     const supabase = admin.supabase;
@@ -27,10 +22,47 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // If the user already exists as a normal customer, promote to coach.
+    const { data: existingProfile } = await supabase
+      .from("profiles")
+      .select("id, email, role")
+      .eq("email", normalizedEmail)
+      .maybeSingle();
+
+    if (existingProfile?.id) {
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ role: "coach", email: normalizedEmail })
+        .eq("id", existingProfile.id);
+
+      if (updateError) {
+        return NextResponse.json(
+          { error: updateError.message ?? "Failed to promote existing user to coach." },
+          { status: 500 }
+        );
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: "Existing account promoted to coach."
+      });
+    }
+
+    if (typeof password !== "string" || !password.trim() || password.length < 8) {
+      return NextResponse.json(
+        { error: "Password is required (min 8) when creating a new coach account." },
+        { status: 400 }
+      );
+    }
+
     const { data: userData, error: createError } = await supabase.auth.admin.createUser({
-      email: email.trim().toLowerCase(),
+      email: normalizedEmail,
       password: password.trim(),
-      email_confirm: true
+      email_confirm: true,
+      user_metadata: {
+        requested_role: "coach",
+        created_by_admin: true
+      }
     });
 
     if (createError) {
@@ -49,7 +81,7 @@ export async function POST(request: NextRequest) {
 
     const { error: profileError } = await supabase.from("profiles").insert({
       id: userData.user.id,
-      email: email.trim().toLowerCase(),
+      email: normalizedEmail,
       role: "coach"
     });
 

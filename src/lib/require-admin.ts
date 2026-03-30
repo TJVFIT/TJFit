@@ -45,9 +45,17 @@ export async function requireAdmin(): Promise<RequireAdminResult> {
     };
   }
 
+  const serviceClient = getSupabaseServerClient();
+  if (!serviceClient) {
+    return {
+      ok: false,
+      response: NextResponse.json({ error: "Admin backend not configured." }, { status: 503 })
+    };
+  }
+
   return {
     ok: true,
-    supabase: getSupabaseServerClient()!,
+    supabase: serviceClient,
     userId: user.id
   };
 }

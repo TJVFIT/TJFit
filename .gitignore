@@ -6,3 +6,5 @@ vercel-env-paste.txt
 .vercel
 dist
 coverage
+
+.vercel

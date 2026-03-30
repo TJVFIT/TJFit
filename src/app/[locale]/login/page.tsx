@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { isLocale } from "@/lib/i18n";
@@ -24,6 +25,11 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
     setLoading(true);
 
     if (adminMode) {
+      if (!username.trim()) {
+        setError("Please enter admin username.");
+        setLoading(false);
+        return;
+      }
       const res = await fetch("/api/auth/admin-login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -43,6 +49,16 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
     const supabase = getSupabaseBrowserClient();
     if (!supabase) {
       setError("Auth not configured.");
+      setLoading(false);
+      return;
+    }
+    if (!email.trim()) {
+      setError("Please enter email.");
+      setLoading(false);
+      return;
+    }
+    if (!password) {
+      setError("Please enter password.");
       setLoading(false);
       return;
     }
@@ -136,6 +152,14 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
             </button>
           )}
         </p>
+        {!adminMode && (
+          <p className="mt-3 text-center text-sm text-zinc-400">
+            New here?{" "}
+            <Link href={`/${params.locale}/signup`} className="text-white underline underline-offset-4 hover:text-zinc-200">
+              Create account
+            </Link>
+          </p>
+        )}
       </div>
     </div>
   );

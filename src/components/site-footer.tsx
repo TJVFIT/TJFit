@@ -11,26 +11,40 @@ export function SiteFooter({ locale }: { locale: Locale }) {
 
   const platformLinks = isAdmin
     ? [
-        { href: "/coaches", label: "Find a Coach" },
+        { href: "/coaches", label: "Coaches (Coming Soon)" },
         { href: "/programs", label: "Programs Marketplace" },
-        { href: "/store", label: "Equipment Store" },
-        { href: "/transformations", label: "Transformations" }
+        { href: "/ai", label: "TJFIT AI (Coming Soon)" },
+        { href: "/membership", label: "Subscription (Coming Soon)" }
       ]
-    : [{ href: "/store", label: "Equipment Store" }];
+    : [
+        { href: "/coaches", label: "Coaches (Coming Soon)" },
+        { href: "/programs", label: "Programs Marketplace" },
+        { href: "/ai", label: "TJFIT AI (Coming Soon)" },
+        { href: "/membership", label: "Subscription (Coming Soon)" }
+      ];
 
   const operationsLinks = isAdmin
     ? [
-        { href: "/community", label: "Community Feed" },
-        { href: "/challenges", label: "Challenges" },
-        { href: "/live", label: "Live Sessions" },
-        { href: "/feedback", label: "Feedback & Support" },
+        { href: "/terms-and-conditions", label: "Terms of Service" },
+        { href: "/privacy-policy", label: "Privacy Policy" },
+        { href: "/refund-policy", label: "Refund Policy" },
+        { href: "/support", label: "Support" },
         { href: "/coach-dashboard", label: "Coach Dashboard" },
         { href: "/admin", label: "Admin Panel" },
-        { href: "/checkout", label: "PayTR Checkout" }
+        { href: "/checkout", label: "Checkout" }
       ]
     : isCoach
-      ? [{ href: "/feedback", label: "Feedback & Support" }]
-      : [];
+      ? [
+          { href: "/terms-and-conditions", label: "Terms of Service" },
+          { href: "/privacy-policy", label: "Privacy Policy" },
+          { href: "/refund-policy", label: "Refund Policy" },
+          { href: "/support", label: "Support" }
+        ]
+      : [
+          { href: "/terms-and-conditions", label: "Terms of Service" },
+          { href: "/privacy-policy", label: "Privacy Policy" },
+          { href: "/refund-policy", label: "Refund Policy" }
+        ];
 
   return (
     <footer className="border-t border-white/10 bg-black/40">
@@ -38,7 +52,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
         <div>
           <p className="font-display text-lg font-semibold text-white">TJFit</p>
           <p className="mt-3 max-w-sm">
-            Premium online coaching platform for fitness, performance, recovery, and multilingual support.
+            Premium online coaching and digital programs platform for fitness, performance, and recovery.
           </p>
         </div>
         <div>
