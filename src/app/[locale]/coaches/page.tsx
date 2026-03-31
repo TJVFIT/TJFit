@@ -1,19 +1,39 @@
-import { isLocale } from "@/lib/i18n";
+import Link from "next/link";
+import { PremiumPageShell, PremiumPanel, PremiumSectionTitle } from "@/components/premium";
+import { getCoachesListingCopy } from "@/lib/premium-public-copy";
+import { isLocale, type Locale } from "@/lib/i18n";
 
 export default function CoachesPage({ params }: { params: { locale: string } }) {
   if (!isLocale(params.locale)) {
     return null;
   }
 
+  const locale = params.locale as Locale;
+  const copy = getCoachesListingCopy(locale);
+
   return (
-    <div className="mx-auto flex min-h-[60vh] max-w-3xl items-center px-4 py-16 sm:px-6 lg:px-8">
-      <div className="glass-panel w-full rounded-[36px] p-8 text-center">
-        <span className="badge">Coming Soon</span>
-        <h1 className="mt-6 text-4xl font-semibold text-white">Coach Marketplace Coming Soon</h1>
-        <p className="mt-4 text-sm leading-7 text-zinc-400">
-          We are onboarding verified coaches this week. Coach profiles and bookings will be available soon.
-        </p>
-      </div>
-    </div>
+    <PremiumPageShell>
+      <PremiumSectionTitle eyebrow={copy.badge} title={copy.title} subtitle={copy.body} />
+      <PremiumPanel className="flex flex-col gap-4 sm:flex-row sm:flex-wrap">
+        <Link
+          href={`/${locale}/programs`}
+          className="lux-btn-primary inline-flex flex-1 items-center justify-center rounded-full px-6 py-3 text-center text-sm font-semibold text-[#05080a] sm:min-w-[200px]"
+        >
+          {copy.ctaPrograms}
+        </Link>
+        <Link
+          href={`/${locale}/signup`}
+          className="lux-btn-secondary inline-flex flex-1 items-center justify-center rounded-full px-6 py-3 text-center text-sm font-medium sm:min-w-[200px]"
+        >
+          {copy.ctaSignup}
+        </Link>
+        <Link
+          href={`/${locale}/become-a-coach`}
+          className="inline-flex flex-1 items-center justify-center rounded-full border border-violet-400/25 bg-violet-500/10 px-6 py-3 text-center text-sm font-medium text-violet-200/95 transition hover:border-violet-400/40 sm:min-w-[200px]"
+        >
+          {copy.ctaBecomeCoach}
+        </Link>
+      </PremiumPanel>
+    </PremiumPageShell>
   );
 }

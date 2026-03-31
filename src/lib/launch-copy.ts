@@ -138,6 +138,7 @@ type NavChromeCopy = {
   threads: string;
   blogs: string;
   loginLabel: string;
+  joinLabel: string;
   aiLabel: string;
 };
 
@@ -916,6 +917,7 @@ const navChromeCopy: Record<Locale, NavChromeCopy> = {
     threads: "Threads",
     blogs: "Blogs",
     loginLabel: "Log in",
+    joinLabel: "Join",
     aiLabel: "TJFIT AI"
   },
   tr: {
@@ -930,6 +932,7 @@ const navChromeCopy: Record<Locale, NavChromeCopy> = {
     threads: "Threadler",
     blogs: "Bloglar",
     loginLabel: "Giris yap",
+    joinLabel: "Katil",
     aiLabel: "TJFIT AI"
   },
   ar: {
@@ -944,6 +947,7 @@ const navChromeCopy: Record<Locale, NavChromeCopy> = {
     threads: "المناقشات",
     blogs: "المدونات",
     loginLabel: "تسجيل الدخول",
+    joinLabel: "انضم",
     aiLabel: "TJFIT AI"
   },
   es: {
@@ -958,6 +962,7 @@ const navChromeCopy: Record<Locale, NavChromeCopy> = {
     threads: "Hilos",
     blogs: "Blogs",
     loginLabel: "Iniciar sesion",
+    joinLabel: "Unirse",
     aiLabel: "TJFIT AI"
   },
   fr: {
@@ -972,6 +977,7 @@ const navChromeCopy: Record<Locale, NavChromeCopy> = {
     threads: "Discussions",
     blogs: "Blogs",
     loginLabel: "Connexion",
+    joinLabel: "Rejoindre",
     aiLabel: "TJFIT AI"
   }
 };

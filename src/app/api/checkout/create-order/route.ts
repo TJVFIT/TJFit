@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { programs } from "@/lib/content";
 import { getProgramBasePriceTry } from "@/lib/program-localization";
+import {
+  getCheckoutPaymentAdapter,
+  providerIdForStorage,
+  resolvePaymentBackend
+} from "@/lib/payments";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { TJFIT_COINS_PER_PROGRAM_PURCHASE } from "@/lib/tjfit-coin";
@@ -19,15 +24,14 @@ export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => null);
   const programSlug = String(body?.programSlug ?? "").trim();
   const discountCode = String(body?.discountCode ?? "").trim().toUpperCase();
-  const allowTestCheckout = process.env.ALLOW_TEST_CHECKOUT === "true";
-  const paytrConfigured = Boolean(
-    process.env.PAYTR_MERCHANT_ID && process.env.PAYTR_MERCHANT_KEY && process.env.PAYTR_MERCHANT_SALT
-  );
-
-  const provider = paytrConfigured ? "paytr" : allowTestCheckout ? "test" : "";
-  if (!provider) {
+  const { providerId } = resolvePaymentBackend();
+  const provider = providerIdForStorage(providerId);
+  if (!providerId) {
     return NextResponse.json(
-      { error: "Payments are not configured yet. Please finish provider setup before accepting purchases." },
+      {
+        error:
+          "Checkout is not available until a payment provider is configured. Enable test mode for development or connect a provider on the server."
+      },
       { status: 503 }
     );
   }
@@ -88,20 +92,25 @@ export async function POST(request: NextRequest) {
       discount_percent: discountPercent,
       tjfit_coins_earned: TJFIT_COINS_PER_PROGRAM_PURCHASE
     })
-    .select("id,program_slug,amount_try,final_amount_try,discount_code,discount_percent,provider,status")
+    .select(
+      "id,program_slug,amount_try,final_amount_try,currency,discount_code,discount_percent,provider,status"
+    )
     .single();
 
   if (orderError || !order) {
     return NextResponse.json({ error: "Could not create order." }, { status: 500 });
   }
 
+  const adapter = getCheckoutPaymentAdapter(providerId);
+  const clientFlow = adapter.clientFlowAfterOrderCreated({
+    id: order.id,
+    finalAmountTry: order.final_amount_try,
+    currency: order.currency ?? "TRY"
+  });
+
   return NextResponse.json({
     order,
     coinsToEarn: TJFIT_COINS_PER_PROGRAM_PURCHASE,
-    provider,
-    message:
-      provider === "paytr"
-        ? "PAYTR order prepared. Complete the provider handoff to finish payment."
-        : "Test order prepared."
+    clientFlow
   });
 }

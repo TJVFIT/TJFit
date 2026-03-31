@@ -144,7 +144,7 @@ export default async function AdminPage({ params }: { params: { locale: string }
             {[
               "Secure authentication with role-ready access control",
               "Anti-spam systems for community and signup flows",
-              "PayTR callback verification for payment integrity",
+              "Payment webhooks and checkout completion verified server-side",
               "Rate limiting for public endpoints",
               "Architecture ready for AI workout, nutrition, and injury prevention"
             ].map((item) => (

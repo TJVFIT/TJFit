@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
+import { PremiumPageShell } from "@/components/premium";
 import { ProgramCard, SectionHeading } from "@/components/ui";
 import { programs, Program } from "@/lib/content";
 import { Locale, isLocale } from "@/lib/i18n";
@@ -97,7 +98,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
               };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <PremiumPageShell className="max-w-7xl">
       <div className="flex items-start justify-between gap-4">
         <SectionHeading eyebrow={heading.eyebrow} title={heading.title} copy={heading.body} />
         {canUpload && (
@@ -136,10 +137,10 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
         ))}
       </div>
       {allPrograms.length === 0 && (
-        <div className="glass-panel mt-6 rounded-[24px] p-6 text-sm text-zinc-500">
+        <div className="mt-6 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 text-sm text-zinc-500">
           {programManagementCopy.noProgramsPublished}
         </div>
       )}
-    </div>
+    </PremiumPageShell>
   );
 }

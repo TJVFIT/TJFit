@@ -318,12 +318,12 @@ export function CommunityHub({
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <div className="glass-panel rounded-[32px] p-6 sm:p-8">
+    <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+      <div className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.045] to-white/[0.015] p-6 shadow-[0_24px_64px_-32px_rgba(0,0,0,0.75)] sm:p-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <span className="badge">{copy.badge}</span>
-            <h1 className="mt-4 text-3xl font-semibold text-white sm:text-4xl">{copy.title}</h1>
+            <span className="lux-badge inline-flex">{copy.badge}</span>
+            <h1 className="mt-4 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">{copy.title}</h1>
             <p className="mt-3 max-w-2xl text-sm text-zinc-400">
               {copy.subtitle}
             </p>
@@ -340,10 +340,10 @@ export function CommunityHub({
                   setActiveTab(tab.key);
                   router.replace(`/${locale}/community?tab=${tab.key}`, { scroll: false });
                 }}
-                className={`rounded-full border px-4 py-2 text-sm transition ${
+                className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
                   activeTab === tab.key
-                    ? "border-accent/60 bg-accent/15 text-white"
-                    : "border-white/15 bg-white/5 text-zinc-300 hover:border-white/25"
+                    ? "border-cyan-400/35 bg-cyan-500/10 text-white shadow-[0_0_24px_-10px_rgba(34,211,238,0.2)]"
+                    : "border-white/10 bg-white/[0.04] text-zinc-400 hover:border-white/15 hover:text-zinc-200"
                 }`}
               >
                 {tab.label}

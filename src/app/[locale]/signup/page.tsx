@@ -91,10 +91,10 @@ export default function SignupPage({ params }: { params: { locale: string } }) {
   };
 
   return (
-    <div className="mx-auto flex min-h-[80vh] max-w-xl items-center px-4 py-16 sm:px-6 lg:px-8">
-      <div className="glass-panel w-full rounded-[36px] p-8">
-        <span className="badge">{copy.signupBadge}</span>
-        <h1 className="mt-6 text-4xl font-semibold text-white">{copy.signupTitle}</h1>
+    <div className="mx-auto flex min-h-[80vh] max-w-md items-center px-4 py-16 sm:px-6 lg:px-8">
+      <div className="w-full rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.05] to-white/[0.015] p-8 shadow-[0_24px_64px_-32px_rgba(0,0,0,0.75)]">
+        <span className="lux-badge inline-flex">{copy.signupBadge}</span>
+        <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">{copy.signupTitle}</h1>
         <p className="mt-3 text-sm leading-7 text-zinc-400">
           {copy.signupSubtitle}
         </p>
@@ -151,7 +151,7 @@ export default function SignupPage({ params }: { params: { locale: string } }) {
           <button
             type="submit"
             disabled={loading}
-            className="gradient-button w-full rounded-full px-5 py-3 text-sm font-medium text-white disabled:opacity-60"
+            className="gradient-button w-full rounded-full px-5 py-3 text-sm font-semibold text-[#05080a] disabled:opacity-60"
           >
             {loading ? copy.creatingAccount : copy.createAccountButton}
           </button>

@@ -56,8 +56,8 @@ export function SectionHeading({
 }) {
   return (
     <div className={cn("space-y-4", align === "center" && "mx-auto max-w-3xl text-center")}>
-      <span className="badge">{eyebrow}</span>
-      <h2 className="section-title">{title}</h2>
+      <span className="lux-badge inline-flex">{eyebrow}</span>
+      <h2 className="font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">{title}</h2>
       <p className="section-copy">{copy}</p>
     </div>
   );
@@ -123,8 +123,13 @@ export function ProgramCard({
   const tier = tierLabel ?? getProgramTier(program);
   return (
     <HoverLift>
-      <div className={cn("glass-panel rounded-[28px] border p-6", visual.ring)}>
-        <div className={cn("rounded-[22px] border border-white/10 bg-gradient-to-br p-5", visual.gradient)}>
+      <div
+        className={cn(
+          "rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-white/[0.015] p-6 shadow-[0_24px_56px_-32px_rgba(0,0,0,0.7)]",
+          visual.ring
+        )}
+      >
+        <div className={cn("rounded-xl border border-white/[0.08] bg-gradient-to-br p-5", visual.gradient)}>
           <div className="flex items-center justify-between text-xs uppercase tracking-[0.22em] text-zinc-200/90">
             <span>{visual.tag}</span>
             <span className="rounded-full border border-white/20 px-2.5 py-1 font-semibold text-white">{tier}</span>
@@ -153,12 +158,15 @@ export function ProgramCard({
           {href ? (
             <Link
               href={href}
-              className="rounded-full border border-white/10 px-4 py-2 text-sm text-white transition hover:bg-white/5"
+              className="lux-btn-secondary rounded-full px-4 py-2 text-sm font-medium text-zinc-100"
             >
               {viewLabel}
             </Link>
           ) : (
-            <button className="rounded-full border border-white/10 px-4 py-2 text-sm text-white transition hover:bg-white/5">
+            <button
+              type="button"
+              className="lux-btn-secondary rounded-full px-4 py-2 text-sm font-medium text-zinc-100"
+            >
               {viewLabel}
             </button>
           )}

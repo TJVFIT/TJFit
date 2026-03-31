@@ -104,9 +104,9 @@ export default async function ProgramDetailPage({
     ];
 
   return (
-    <div className="mx-auto max-w-7xl space-y-10 px-4 py-16 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-6xl space-y-10 px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
       <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr]">
-        <section className="glass-panel rounded-[36px] p-8">
+        <section className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.045] to-white/[0.015] p-8 shadow-[0_24px_64px_-32px_rgba(0,0,0,0.75)]">
           <span className="badge">{programCategory}</span>
           <h1 className="mt-6 text-4xl font-semibold text-white">{programTitle}</h1>
           <p className="mt-4 max-w-3xl text-sm leading-7 text-zinc-400">{programDescription}</p>
@@ -255,7 +255,7 @@ export default async function ProgramDetailPage({
         </section>
 
         <aside className="space-y-6">
-          <div className="glass-panel rounded-[32px] p-6">
+          <div className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-white/[0.015] p-6">
             <p className="text-sm text-zinc-400">{copy.coachLabel}</p>
             <p className="mt-2 text-2xl font-semibold text-white">{coach?.name ?? copy.teamFallback}</p>
             <p className="mt-2 text-sm text-zinc-400">{coach?.specialty ?? copy.teamFallback}</p>
@@ -285,7 +285,7 @@ export default async function ProgramDetailPage({
             </div>
           </div>
 
-          <div className="glass-panel rounded-[32px] p-6">
+          <div className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-white/[0.015] p-6">
             <p className="text-lg font-semibold text-white">{copy.recommendedEquipment}</p>
             <div className="mt-6 space-y-4">
               {recommendedProducts.length === 0 && (

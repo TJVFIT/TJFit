@@ -59,7 +59,7 @@ src/
 │   │   ├── admin/
 │   │   │   ├── authorize-coach/  # POST – create coach
 │   │   │   └── coaches/          # GET – list coaches
-│   │   └── paytr/                # Payment (create, callback)
+│   │   └── checkout/             # create-order, complete-order, prepare-session
 │   └── layout.tsx
 ├── components/
 │   ├── auth-provider.tsx
@@ -80,7 +80,7 @@ src/
     ├── i18n.ts             # Inline dictionaries (EN, TR, AR, ES, FR)
     ├── content.ts          # Static content
     ├── rate-limit.ts       # In-memory rate limiting
-    ├── paytr.ts            # PayTR payment integration
+    ├── payments/           # Checkout adapters + resolve-provider
     └── utils.ts
 ```
 
@@ -115,7 +115,7 @@ src/
 | Admin APIs unprotected | **Critical** | `/api/admin/authorize-coach` and `/api/admin/coaches` have no auth. Anyone can create coach accounts or list coaches. |
 | Rate limiting in-memory | Medium | `rate-limit.ts` uses `Map` – resets on serverless cold starts, not shared across instances. |
 | Admin credentials in client | Medium | `NEXT_PUBLIC_ADMIN_CREDENTIALS` and `NEXT_PUBLIC_ADMIN_EMAILS` are exposed to the browser. |
-| PayTR callback | Unknown | Callback route should verify hash; implementation exists in `paytr.ts`. |
+| Payment webhooks | TBD | Wire your PSP; verify signatures server-side on dedicated webhook routes. |
 | List APIs | Low | `coach-applications/list` and `feedback/list` use optional `x-admin-secret` header when `ADMIN_API_SECRET` is set. |
 
 ---
@@ -164,7 +164,7 @@ src/
 ## 11. Deployment
 
 - **Platform:** Vercel
-- **Env vars:** Supabase URL/keys, admin emails/credentials, PayTR keys
+- **Env vars:** Supabase URL/keys, admin emails/credentials, payment provider flags (`PAYMENT_PROVIDER`, `ALLOW_TEST_CHECKOUT`)
 - **Build:** `next build` – no custom optimizations
 
 ---
@@ -182,7 +182,7 @@ src/
 | Feedback list (admin) | ✅ |
 | Coach authorization (admin) | ✅ |
 | Login (email + admin username) | ✅ |
-| PayTR integration | Partial (create token, callback) |
+| Checkout / PSP | Adapter UI ready; live gateway + webhooks TBD |
 | Store, Programs, Coaches pages | Coming soon / placeholder |
 | Tests | ❌ None |
 

@@ -22,7 +22,7 @@ Premium multilingual online coaching platform built with `Next.js 14`, `Tailwind
 - Coach dashboard
 - Admin panel
 - Login and signup pages
-- PayTR API scaffolding
+- Checkout API with pluggable payment gateway (`PAYMENT_PROVIDER=live|test`)
 - English, Turkish, Arabic, Spanish, and French route support
 
 ## Routes
@@ -59,7 +59,7 @@ npm install
 ```
 
 3. Copy `.env.example` to `.env.local`
-4. Add your Supabase and PayTR credentials
+4. Add your Supabase credentials (and payment env vars from `.env.example` when wiring a PSP)
 5. Start development:
 
 ```bash
@@ -71,15 +71,15 @@ npm run dev
 - Current data is mocked in `src/lib/content.ts`
 - AI matching logic is in `src/lib/recommendations.ts`
 - Supabase client bootstrap is in `src/lib/supabase.ts`
-- PayTR token and callback helpers are in `src/lib/paytr.ts`
+- Payment resolution and checkout adapters are in `src/lib/payments/`
 - Simple rate limiting helper is in `src/lib/rate-limit.ts`
-- API endpoints are under `src/app/api/paytr`
+- Checkout APIs are under `src/app/api/checkout/`
 
 ## Recommended Next Steps
 
 - Connect auth, bookings, and dashboards to Supabase
 - Replace mock data with PostgreSQL tables
-- Wire real PayTR iframe flow
+- Wire your payment provider (prepare-session + webhooks)
 - Add daily or WebRTC session room creation
 - Add role-based route protection
 - Persist transformations, wallet, challenges, and community to PostgreSQL

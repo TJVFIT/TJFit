@@ -48,30 +48,33 @@ export function SiteFooter({ locale }: { locale: Locale }) {
           { href: "/refund-policy", label: copy.refund }
         ];
 
+  const linkClass =
+    "text-zinc-500 transition hover:text-cyan-200/90 hover:translate-x-0.5 inline-block";
+
   return (
-    <footer className="border-t border-white/[0.06] bg-surface/80 backdrop-blur-sm">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 text-sm text-zinc-400 sm:px-6 lg:grid-cols-3 lg:px-8">
+    <footer className="border-t border-white/[0.06] bg-surface/90 backdrop-blur-md">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 text-sm sm:px-6 lg:grid-cols-3 lg:gap-12 lg:px-8">
         <div>
-          <p className="font-display text-lg font-semibold text-white">TJFit</p>
-          <p className="mt-3 max-w-sm">
-            {copy.description}
+          <p className="bg-gradient-to-r from-white to-zinc-400 bg-clip-text font-display text-xl font-semibold tracking-tight text-transparent">
+            TJFit
           </p>
+          <p className="mt-4 max-w-sm leading-relaxed text-zinc-500">{copy.description}</p>
         </div>
         <div>
-          <p className="font-medium text-white">{copy.platformTitle}</p>
-          <div className="mt-3 flex flex-col gap-2">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-600">{copy.platformTitle}</p>
+          <div className="mt-4 flex flex-col gap-2.5">
             {platformLinks.map(({ href, label }) => (
-              <Link key={href} href={`/${locale}${href}`} className="hover:text-white">
+              <Link key={href} href={`/${locale}${href}`} className={linkClass}>
                 {label}
               </Link>
             ))}
           </div>
         </div>
         <div>
-          <p className="font-medium text-white">{copy.operationsTitle}</p>
-          <div className="mt-3 flex flex-col gap-2">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-600">{copy.operationsTitle}</p>
+          <div className="mt-4 flex flex-col gap-2.5">
             {operationsLinks.map(({ href, label }) => (
-              <Link key={href} href={`/${locale}${href}`} className="hover:text-white">
+              <Link key={href} href={`/${locale}${href}`} className={linkClass}>
                 {label}
               </Link>
             ))}

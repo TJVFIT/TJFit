@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { allowsSimulatedPaidCompletionForStoredProvider } from "@/lib/payments";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { TJFIT_COINS_PER_PROGRAM_PURCHASE } from "@/lib/tjfit-coin";
@@ -43,9 +44,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Order not found" }, { status: 404 });
   }
 
-  if (existingOrder.provider !== "test") {
+  if (!allowsSimulatedPaidCompletionForStoredProvider(existingOrder.provider)) {
     return NextResponse.json(
-      { error: "Only test-mode orders can be completed directly." },
+      { error: "This order cannot be completed from the browser. Use the configured payment gateway." },
       { status: 403 }
     );
   }

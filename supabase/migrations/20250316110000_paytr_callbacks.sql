@@ -1,4 +1,4 @@
--- Idempotency table for PayTR payment callbacks
+-- Legacy payment callback idempotency (dropped in 20260331120000_drop_legacy_payment_callbacks.sql)
 create table if not exists paytr_callbacks (
   merchant_oid text primary key,
   status text not null,

@@ -5,10 +5,19 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Bot, Dumbbell, Sparkles, Users } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { CursorGlow } from "@/components/luxury/cursor-glow";
+import { GlowButton } from "@/components/luxury/glow-button";
+import { InteractiveCard } from "@/components/luxury/interactive-card";
+import { useHero3DEnabled } from "@/components/luxury/use-hero-3d-enabled";
 import type { HomeLuxuryCopy } from "@/lib/home-luxury-copy";
 import type { Locale } from "@/lib/i18n";
 
 const LUX_EASE = [0.16, 1, 0.3, 1] as const;
+
+const HeroScene3D = dynamic(
+  () => import("@/components/luxury/hero-scene-3d").then((m) => m.HeroScene3D),
+  { ssr: false, loading: () => null }
+);
 
 const HomeBlogsPreview = dynamic(
   () => import("@/components/home-blogs-preview").then((m) => m.HomeBlogsPreview),
@@ -20,8 +29,6 @@ const HomeBlogsPreview = dynamic(
     )
   }
 );
-
-const MotionLink = motion(Link);
 
 export type HomeProgramPreview = {
   slug: string;
@@ -74,7 +81,7 @@ function Reveal({
       initial={reduce ? false : { opacity: 0, y: 16 }}
       whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-64px", amount: 0.2 }}
-      transition={{ duration: 0.68, delay, ease: LUX_EASE }}
+      transition={{ duration: 0.74, delay, ease: LUX_EASE }}
     >
       {children}
     </motion.div>
@@ -95,6 +102,8 @@ export function LuxuryHome({
   const reduce = useReducedMotion();
   const heroRef = useRef<HTMLElement>(null);
   const [stickyCta, setStickyCta] = useState(false);
+  const [sceneReady, setSceneReady] = useState(false);
+  const showHero3d = useHero3DEnabled(reduce === true);
 
   useEffect(() => {
     const el = heroRef.current;
@@ -104,42 +113,61 @@ export function LuxuryHome({
         if (!e) return;
         setStickyCta(!e.isIntersecting);
       },
-      { threshold: 0, rootMargin: "-10% 0px 0px 0px" }
+      { threshold: 0, rootMargin: "-10% 0px 0px 0px 0px" }
     );
     io.observe(el);
     return () => io.disconnect();
   }, []);
 
+  useEffect(() => {
+    if (!showHero3d) setSceneReady(false);
+  }, [showHero3d]);
+
   const trustLine = copy.hero.trust.join(" · ");
 
   return (
     <div className={`overflow-x-hidden ${stickyCta ? "pb-24 lg:pb-0" : ""}`}>
-      {/* Hero */}
+      {/* Hero — 3D canvas (desktop only) + readable overlay */}
       <section
         ref={heroRef}
-        className="relative flex min-h-[100dvh] flex-col justify-center px-4 pb-24 pt-24 sm:px-6 lg:px-8 lg:pt-28"
+        className="relative flex min-h-[100dvh] flex-col justify-center overflow-hidden px-4 pb-24 pt-24 sm:px-6 lg:px-8 lg:pt-28"
       >
-        <div className="pointer-events-none absolute inset-0 mesh-grid opacity-[0.14]" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 z-0 mesh-grid opacity-[0.12]" aria-hidden />
         <div
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_45%_at_50%_-10%,rgba(34,211,238,0.07),transparent),radial-gradient(ellipse_50%_35%_at_100%_40%,rgba(139,92,246,0.06),transparent)]"
+          className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_70%_45%_at_50%_-10%,rgba(34,211,238,0.06),transparent),radial-gradient(ellipse_50%_35%_at_100%_40%,rgba(139,92,246,0.05),transparent)]"
           aria-hidden
         />
-        {!reduce ? (
+        {showHero3d ? (
+          <div
+            className={`pointer-events-none absolute inset-0 z-0 touch-none transition-opacity duration-1000 ease-out ${
+              sceneReady ? "opacity-100" : "opacity-0"
+            }`}
+            aria-hidden
+          >
+            <HeroScene3D className="h-full w-full" onReady={() => setSceneReady(true)} />
+          </div>
+        ) : null}
+        {!showHero3d && !reduce ? (
           <>
             <motion.div
-              className="hero-orb pointer-events-none absolute -left-40 top-1/3 h-80 w-80 bg-cyan-400/12"
+              className="hero-orb pointer-events-none absolute -left-40 top-1/3 z-0 h-80 w-80 bg-cyan-400/12"
               aria-hidden
               animate={{ y: [0, -12, 0] }}
               transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
             />
             <motion.div
-              className="hero-orb pointer-events-none absolute -right-32 bottom-1/3 h-96 w-96 bg-violet-500/10"
+              className="hero-orb pointer-events-none absolute -right-32 bottom-1/3 z-0 h-96 w-96 bg-violet-500/10"
               aria-hidden
               animate={{ y: [0, 14, 0] }}
               transition={{ duration: 28, repeat: Infinity, ease: "easeInOut" }}
             />
           </>
         ) : null}
+        {showHero3d && reduce !== true ? <CursorGlow /> : null}
+        <div
+          className="pointer-events-none absolute inset-0 z-[4] bg-gradient-to-b from-[#0A0A0B]/65 via-[#0A0A0B]/25 to-[#0A0A0B]/93"
+          aria-hidden
+        />
 
         <div className="relative z-10 mx-auto w-full max-w-6xl">
           <motion.span
@@ -176,24 +204,12 @@ export function LuxuryHome({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.14, ease: LUX_EASE }}
           >
-            <MotionLink
-              href={`/${locale}/signup`}
-              className="lux-btn-primary inline-flex min-h-[48px] items-center justify-center rounded-full px-8 py-3 text-sm font-semibold text-[#05080a] sm:text-[15px]"
-              whileHover={reduce ? undefined : { scale: 1.02 }}
-              whileTap={reduce ? undefined : { scale: 0.98 }}
-              transition={{ duration: 0.35, ease: LUX_EASE }}
-            >
+            <GlowButton href={`/${locale}/signup`} variant="primary" reducedMotion={reduce}>
               {copy.hero.ctaPrimary}
-            </MotionLink>
-            <MotionLink
-              href={`/${locale}/programs`}
-              className="lux-btn-secondary inline-flex min-h-[48px] items-center justify-center rounded-full px-8 py-3 text-sm font-medium text-zinc-200 sm:text-[15px]"
-              whileHover={reduce ? undefined : { scale: 1.01 }}
-              whileTap={reduce ? undefined : { scale: 0.99 }}
-              transition={{ duration: 0.35, ease: LUX_EASE }}
-            >
+            </GlowButton>
+            <GlowButton href={`/${locale}/programs`} variant="secondary" reducedMotion={reduce}>
               {copy.hero.ctaSecondary}
-            </MotionLink>
+            </GlowButton>
           </motion.div>
 
           <motion.p
@@ -306,21 +322,21 @@ export function LuxuryHome({
           <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {programs.map((p, i) => (
               <Reveal key={p.slug} delay={i * 0.04}>
-                <MotionLink
-                  href={`/${locale}/programs/${p.slug}`}
-                  className="group flex h-full flex-col rounded-xl border border-white/[0.06] bg-surface-elevated/60 p-6 transition-colors hover:border-white/[0.1]"
-                  whileHover={reduce ? undefined : { y: -3 }}
-                  transition={{ duration: 0.4, ease: LUX_EASE }}
-                >
-                  <div className="h-px w-10 rounded-full bg-cyan-400/50 transition group-hover:bg-cyan-400/70" />
-                  <p className="mt-5 text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-500">{p.category}</p>
-                  <h3 className="mt-2 line-clamp-2 text-base font-medium leading-snug text-white">{p.title}</h3>
-                  <p className="mt-2 text-xs text-zinc-600">{p.duration}</p>
-                  <p className="mt-auto pt-8 text-sm text-zinc-500">
-                    {copy.programs.from}{" "}
-                    <span className="font-medium text-zinc-200">{formatMoney(locale, p.price)}</span>
-                  </p>
-                </MotionLink>
+                <Link href={`/${locale}/programs/${p.slug}`} className="block h-full">
+                  <InteractiveCard
+                    reducedMotion={reduce}
+                    className="group flex h-full flex-col rounded-xl border border-white/[0.06] bg-surface-elevated/60 p-6 transition-colors hover:border-white/[0.12]"
+                  >
+                    <div className="h-px w-10 rounded-full bg-cyan-400/50 transition group-hover:bg-cyan-400/70" />
+                    <p className="mt-5 text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-500">{p.category}</p>
+                    <h3 className="mt-2 line-clamp-2 text-base font-medium leading-snug text-white">{p.title}</h3>
+                    <p className="mt-2 text-xs text-zinc-600">{p.duration}</p>
+                    <p className="mt-auto pt-8 text-sm text-zinc-500">
+                      {copy.programs.from}{" "}
+                      <span className="font-medium text-zinc-200">{formatMoney(locale, p.price)}</span>
+                    </p>
+                  </InteractiveCard>
+                </Link>
               </Reveal>
             ))}
           </div>
@@ -343,15 +359,14 @@ export function LuxuryHome({
                 <h3 className="text-xl font-medium text-white">{copy.coaches.emptyTitle}</h3>
                 <p className="mt-4 max-w-xl text-sm leading-relaxed text-zinc-500">{copy.coaches.emptyDesc}</p>
                 <div className="mt-8 flex flex-wrap gap-3">
-                  <MotionLink
+                  <GlowButton
                     href={`/${locale}/become-a-coach`}
-                    className="lux-btn-primary inline-flex rounded-full px-6 py-2.5 text-sm font-semibold text-[#05080a]"
-                    whileHover={reduce ? undefined : { scale: 1.02 }}
-                    whileTap={reduce ? undefined : { scale: 0.98 }}
-                    transition={{ duration: 0.35, ease: LUX_EASE }}
+                    variant="primary"
+                    reducedMotion={reduce}
+                    className="min-h-0 px-6 py-2.5 text-sm"
                   >
                     {copy.coaches.cta}
-                  </MotionLink>
+                  </GlowButton>
                   <Link
                     href={`/${locale}/coaches`}
                     className="lux-btn-secondary inline-flex rounded-full px-6 py-2.5 text-sm font-medium text-zinc-200"
@@ -394,15 +409,9 @@ export function LuxuryHome({
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-zinc-500 sm:text-[15px]">{copy.finalCta.sub}</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-              <MotionLink
-                href={`/${locale}/signup`}
-                className="lux-btn-primary inline-flex min-h-[48px] items-center justify-center rounded-full px-8 py-3 text-sm font-semibold text-[#05080a] sm:text-[15px]"
-                whileHover={reduce ? undefined : { scale: 1.02 }}
-                whileTap={reduce ? undefined : { scale: 0.98 }}
-                transition={{ duration: 0.35, ease: LUX_EASE }}
-              >
+              <GlowButton href={`/${locale}/signup`} variant="primary" reducedMotion={reduce}>
                 {copy.finalCta.primary}
-              </MotionLink>
+              </GlowButton>
               <Link
                 href={`/${locale}/membership`}
                 className="lux-btn-secondary inline-flex min-h-[48px] items-center justify-center rounded-full px-8 py-3 text-sm font-medium text-zinc-200 sm:text-[15px]"
@@ -428,14 +437,14 @@ export function LuxuryHome({
             style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
           >
             <div className="mx-auto flex max-w-lg items-center gap-3">
-              <MotionLink
+              <GlowButton
                 href={`/${locale}/signup`}
-                className="lux-btn-primary flex min-h-[44px] flex-1 items-center justify-center rounded-full text-sm font-semibold text-[#05080a]"
-                whileTap={reduce ? undefined : { scale: 0.98 }}
-                transition={{ duration: 0.25, ease: LUX_EASE }}
+                variant="primary"
+                reducedMotion={reduce}
+                className="flex min-h-[44px] flex-1 justify-center text-sm"
               >
                 {copy.hero.ctaPrimary}
-              </MotionLink>
+              </GlowButton>
               <Link
                 href={`/${locale}/programs`}
                 className="shrink-0 py-2 text-xs font-medium text-zinc-500 underline-offset-4 hover:text-zinc-300"

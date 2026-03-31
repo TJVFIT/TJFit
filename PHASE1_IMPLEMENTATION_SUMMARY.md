@@ -70,11 +70,11 @@ All admin routes now require a valid Supabase session and admin role:
 
 ---
 
-## 7. PayTR Callback
+## 7. Payments (current)
 
-- **Idempotency:** `paytr_callbacks` table stores processed `merchant_oid`
-- **Logging:** JSON logs for received, duplicate, invalid, processed, error
-- Run migration: `supabase db push` or apply `supabase/migrations/20250316110000_paytr_callbacks.sql`
+- Checkout uses `src/lib/payments/` adapters and `/api/checkout/*`.
+- Legacy vendor-specific callback storage was removed; apply migration `20260331120000_drop_legacy_payment_callbacks.sql` when updating Supabase.
+- Implement your PSP via `prepare-session` + webhook routes as needed.
 
 ---
 
@@ -85,7 +85,6 @@ Already applied to:
 - Coach applications POST
 - Feedback POST
 - Admin login POST
-- PayTR create-payment POST
 
 ---
 
@@ -105,7 +104,7 @@ Already applied to:
    - Remove `NEXT_PUBLIC_ADMIN_EMAILS` and `NEXT_PUBLIC_ADMIN_CREDENTIALS` from Vercel
 
 2. **Supabase**
-   - Run migration: `paytr_callbacks` table
+   - Run migrations including checkout-related schema; drop legacy callback table via `20260331120000_drop_legacy_payment_callbacks.sql` if upgrading an old project
 
 3. **Vercel**
    - Redeploy after env changes

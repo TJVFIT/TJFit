@@ -27,7 +27,14 @@ const routeMap = {
 
 type MenuRow = { key: string; href: string; label: string; summary: string };
 
-export function SiteNav({ locale }: { locale: Locale }) {
+const desktopNavItems = (dict: ReturnType<typeof getDictionary>) => [
+  { key: "programs", href: routeMap.programs, label: dict.nav.programs },
+  { key: "coaches", href: routeMap.coaches, label: dict.nav.coaches },
+  { key: "community", href: routeMap.community, label: dict.nav.community },
+  { key: "membership", href: routeMap.membership, label: dict.nav.membership }
+];
+
+export function SiteNav({ locale, elevated = false }: { locale: Locale; elevated?: boolean }) {
   const { user, role, hasActiveCoachChat, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -198,7 +205,7 @@ export function SiteNav({ locale }: { locale: Locale }) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
             onClick={() => setSidebarOpen(false)}
-            className="absolute inset-0 bg-slate-950/50 backdrop-blur-md"
+            className="absolute inset-0 bg-[#0A0A0B]/55 backdrop-blur-md"
           />
           <motion.aside
             role="dialog"
@@ -265,29 +272,62 @@ export function SiteNav({ locale }: { locale: Locale }) {
     </AnimatePresence>
   ) : null;
 
+  const desktopNav = desktopNavItems(dict);
+
   return (
     <>
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-        <div className="flex min-w-0 flex-1 items-center gap-3">
+      <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3.5 sm:px-6 lg:gap-4 lg:px-8">
+        <div className="flex min-w-0 items-center gap-3">
           <button
             type="button"
             onClick={() => setSidebarOpen((prev) => !prev)}
-            className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/[0.06] px-3 py-2 text-sm text-zinc-200 shadow-sm transition hover:border-cyan-400/30 hover:bg-white/10 hover:text-white hover:shadow-[0_0_24px_-10px_rgba(34,211,238,0.25)]"
+            className={`flex items-center gap-2 rounded-xl border bg-white/[0.06] px-3 py-2 text-sm text-zinc-200 shadow-sm transition hover:bg-white/10 hover:text-white ${
+              elevated
+                ? "border-white/[0.12] hover:border-cyan-400/35 hover:shadow-[0_0_24px_-10px_rgba(34,211,238,0.22)]"
+                : "border-white/15 hover:border-cyan-400/30 hover:shadow-[0_0_24px_-10px_rgba(34,211,238,0.25)]"
+            }`}
             aria-label={navCopy.menu}
             aria-expanded={sidebarOpen}
           >
             <Menu className="h-4 w-4 text-cyan-300/90" strokeWidth={2} />
-            {navCopy.menu}
+            <span className="hidden sm:inline">{navCopy.menu}</span>
           </button>
           <Link
             href={`/${locale}`}
-            className="shrink-0 bg-gradient-to-r from-white to-zinc-300 bg-clip-text font-display text-xl font-semibold tracking-tight text-transparent transition hover:from-cyan-100 hover:to-zinc-200"
+            className={`shrink-0 bg-gradient-to-r from-white to-zinc-300 bg-clip-text font-display text-xl font-semibold tracking-tight text-transparent transition hover:from-cyan-100 hover:to-zinc-200 ${
+              elevated ? "drop-shadow-[0_0_20px_rgba(34,211,238,0.12)]" : ""
+            }`}
           >
             TJFit
           </Link>
         </div>
 
-        <div className="flex shrink-0 items-center gap-3">
+        <nav
+          className="hidden min-w-0 flex-1 justify-center lg:flex"
+          aria-label={navCopy.navigation}
+        >
+          <ul className="flex flex-wrap items-center justify-center gap-0.5">
+            {desktopNav.map((item) => {
+              const active = isActive(item.href);
+              return (
+                <li key={item.key}>
+                  <Link
+                    href={`/${locale}${item.href}`}
+                    className={`rounded-full px-3.5 py-2 text-sm font-medium transition ${
+                      active
+                        ? "text-white shadow-[inset_0_0_0_1px_rgba(34,211,238,0.25)]"
+                        : "text-zinc-500 hover:text-zinc-200"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+
+        <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
           <LanguageSwitcher locale={locale} />
           {user ? (
             <>
@@ -306,12 +346,20 @@ export function SiteNav({ locale }: { locale: Locale }) {
               </button>
             </>
           ) : (
-            <Link
-              href={`/${locale}/login`}
-              className="rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-200 transition hover:border-white/20 hover:bg-white/5"
-            >
-              {navCopy.loginLabel}
-            </Link>
+            <>
+              <Link
+                href={`/${locale}/signup`}
+                className="hidden rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 px-4 py-2 text-sm font-semibold text-[#05080a] shadow-[0_0_24px_-8px_rgba(34,211,238,0.35)] transition hover:opacity-95 sm:inline-flex"
+              >
+                {navCopy.joinLabel}
+              </Link>
+              <Link
+                href={`/${locale}/login`}
+                className="rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-200 transition hover:border-white/20 hover:bg-white/5"
+              >
+                {navCopy.loginLabel}
+              </Link>
+            </>
           )}
         </div>
       </div>
