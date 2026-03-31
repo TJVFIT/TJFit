@@ -8,5 +8,9 @@ export function getSupabaseBrowserClient() {
     return null;
   }
 
-  return createBrowserClient(supabaseUrl, supabaseAnonKey);
+  try {
+    return createBrowserClient(supabaseUrl, supabaseAnonKey);
+  } catch {
+    return null;
+  }
 }
