@@ -8,7 +8,7 @@ import { Locale, locales } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export function LanguageSwitcher({ locale }: { locale: Locale }) {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "";
   const normalizedPath = pathname.replace(/^\/(en|tr|ar|es|fr)/, "") || "";
   const [search, setSearch] = useState("");
 

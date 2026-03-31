@@ -18,7 +18,13 @@ const outfit = Outfit({
   variable: "--font-display"
 });
 
-const siteUrl = getSiteUrl();
+let siteUrl: string;
+try {
+  siteUrl = getSiteUrl();
+  new URL(siteUrl);
+} catch {
+  siteUrl = "https://tjfit.org";
+}
 
 function googleVerificationToken(): string | undefined {
   const raw = process.env.GOOGLE_SITE_VERIFICATION?.trim();

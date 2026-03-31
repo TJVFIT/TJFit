@@ -46,7 +46,10 @@ function normalizeBlogPosts(raw: unknown): BlogPost[] {
         title: String(p.title ?? ""),
         content: String(p.content ?? ""),
         author_name: String(p.author_name ?? ""),
-        image_url: typeof p.image_url === "string" && p.image_url.length > 0 ? p.image_url : null,
+        image_url:
+          typeof p.image_url === "string" && p.image_url.length > 0 && isSafeImageSrc(p.image_url)
+            ? p.image_url
+            : null,
         is_pinned: Boolean(p.is_pinned),
         created_at: String(p.created_at ?? "")
       };
@@ -73,8 +76,7 @@ export function HomeBlogsPreview({
         const res = await fetch("/api/community/blogs", { credentials: "include" });
         const data = await res.json().catch(() => ({}));
         if (!ok) return;
-        const list = Array.isArray(data.posts) ? data.posts : [];
-        setPosts(list.slice(0, 4));
+        setPosts(normalizeBlogPosts(data.posts).slice(0, 4));
       } catch {
         if (ok) setPosts([]);
       } finally {

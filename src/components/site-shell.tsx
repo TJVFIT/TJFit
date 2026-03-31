@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 
 import { GuestOnboardingPopup } from "@/components/guest-onboarding-popup";
+import { MainErrorBoundary } from "@/components/main-error-boundary";
 import { SiteFooter } from "@/components/site-footer";
 import { ShellHeader } from "@/components/shell-header";
 import { Locale } from "@/lib/i18n";
@@ -17,7 +18,9 @@ export function SiteShell({
       <ShellHeader locale={locale} />
       <GuestOnboardingPopup locale={locale} />
 
-      <main>{children}</main>
+      <MainErrorBoundary>
+        <main>{children}</main>
+      </MainErrorBoundary>
 
       <SiteFooter locale={locale} />
     </div>

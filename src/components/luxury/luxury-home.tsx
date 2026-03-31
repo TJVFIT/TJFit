@@ -4,7 +4,8 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Bot, Dumbbell, Sparkles, Users } from "lucide-react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+import { ClientErrorBoundary } from "@/components/client-error-boundary";
 import { CursorGlow } from "@/components/luxury/cursor-glow";
 import { GlowButton } from "@/components/luxury/glow-button";
 import { InteractiveCard } from "@/components/luxury/interactive-card";
@@ -49,6 +50,7 @@ export type HomeCoachPreview = {
 const featureIcons = [Sparkles, Dumbbell, Users, Bot] as const;
 
 function formatMoney(locale: Locale, value: number) {
+  const n = Number.isFinite(value) ? value : 0;
   const loc =
     locale === "tr"
       ? "tr-TR"
@@ -59,11 +61,15 @@ function formatMoney(locale: Locale, value: number) {
           : locale === "fr"
             ? "fr-FR"
             : "en-US";
-  return new Intl.NumberFormat(loc, {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0
-  }).format(value);
+  try {
+    return new Intl.NumberFormat(loc, {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0
+    }).format(n);
+  } catch {
+    return `$${Math.round(n)}`;
+  }
 }
 
 function Reveal({
@@ -124,7 +130,7 @@ export function LuxuryHome({
     if (!showHero3d) setSceneReady(false);
   }, [showHero3d]);
 
-  const trustLine = copy.hero.trust.join(" · ");
+  const trustLine = Array.isArray(copy?.hero?.trust) ? copy.hero.trust.join(" · ") : "";
 
   return (
     <div className={`overflow-x-hidden ${stickyCta ? "pb-24 lg:pb-0" : ""}`}>
@@ -152,17 +158,13 @@ export function LuxuryHome({
         ) : null}
         {!showHero3d && !reduce ? (
           <>
-            <motion.div
-              className="hero-orb pointer-events-none absolute -left-40 top-1/3 z-0 h-80 w-80 bg-cyan-400/12"
+            <div
+              className="hero-orb hero-orb--drift-a pointer-events-none absolute -left-40 top-1/3 z-0 h-80 w-80 bg-cyan-400/12"
               aria-hidden
-              animate={{ y: [0, -12, 0] }}
-              transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
             />
-            <motion.div
-              className="hero-orb pointer-events-none absolute -right-32 bottom-1/3 z-0 h-96 w-96 bg-violet-500/10"
+            <div
+              className="hero-orb hero-orb--drift-b pointer-events-none absolute -right-32 bottom-1/3 z-0 h-96 w-96 bg-violet-500/10"
               aria-hidden
-              animate={{ y: [0, 14, 0] }}
-              transition={{ duration: 28, repeat: Infinity, ease: "easeInOut" }}
             />
           </>
         ) : null}
@@ -173,65 +175,27 @@ export function LuxuryHome({
         />
 
         <div className="relative z-10 mx-auto w-full max-w-6xl">
-          <motion.span
-            className="lux-badge inline-flex"
-            initial={reduce ? false : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, ease: LUX_EASE }}
-          >
-            {copy.hero.badge}
-          </motion.span>
+          <span className="lux-badge inline-flex">{copy.hero.badge}</span>
 
-          <motion.h1
-            className="mt-10 font-display text-[clamp(2.25rem,5.5vw,3.75rem)] font-semibold leading-[1.08] tracking-tight"
-            initial={reduce ? false : { opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.62, delay: 0.05, ease: LUX_EASE }}
-          >
+          <h1 className="mt-10 font-display text-[clamp(2.25rem,5.5vw,3.75rem)] font-semibold leading-[1.08] tracking-tight">
             <span className="block text-white">{copy.hero.headline}</span>
             <span className="mt-1 block font-normal text-zinc-400">{copy.hero.headlineLine2}</span>
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            className="mt-8 max-w-lg text-[15px] leading-relaxed text-zinc-500 sm:text-base"
-            initial={reduce ? false : { opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.58, delay: 0.1, ease: LUX_EASE }}
-          >
-            {copy.hero.sub}
-          </motion.p>
+          <p className="mt-8 max-w-lg text-[15px] leading-relaxed text-zinc-500 sm:text-base">{copy.hero.sub}</p>
 
-          <motion.div
-            className="mt-10 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center"
-            initial={reduce ? false : { opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.14, ease: LUX_EASE }}
-          >
+          <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
             <GlowButton href={`/${locale}/signup`} variant="primary" reducedMotion={reduce}>
               {copy.hero.ctaPrimary}
             </GlowButton>
             <GlowButton href={`/${locale}/programs`} variant="secondary" reducedMotion={reduce}>
               {copy.hero.ctaSecondary}
             </GlowButton>
-          </motion.div>
+          </div>
 
-          <motion.p
-            className="mt-6 max-w-md text-xs leading-relaxed text-zinc-600 sm:text-[13px]"
-            initial={reduce ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.22, duration: 0.5, ease: LUX_EASE }}
-          >
-            {copy.hero.ctaNote}
-          </motion.p>
+          <p className="mt-6 max-w-md text-xs leading-relaxed text-zinc-600 sm:text-[13px]">{copy.hero.ctaNote}</p>
 
-          <motion.p
-            className="mt-12 text-sm text-zinc-600"
-            initial={reduce ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.28, duration: 0.5, ease: LUX_EASE }}
-          >
-            {trustLine}
-          </motion.p>
+          {trustLine ? <p className="mt-12 text-sm text-zinc-600">{trustLine}</p> : null}
         </div>
       </section>
 
@@ -398,9 +362,17 @@ export function LuxuryHome({
         </div>
       </section>
 
-      {/* Community / blog */}
+      {/* Community / blog — isolated: bad API payloads or Image errors cannot take down the whole home */}
       <div className="border-t border-white/[0.05] bg-surface/[0.2]">
-        <HomeBlogsPreview locale={locale} sectionClassName="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8" />
+        <ClientErrorBoundary
+          fallback={
+            <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
+              <p className="text-sm text-zinc-500">Community highlights are temporarily unavailable.</p>
+            </div>
+          }
+        >
+          <HomeBlogsPreview locale={locale} sectionClassName="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8" />
+        </ClientErrorBoundary>
       </div>
 
       {/* Final CTA */}
@@ -427,37 +399,30 @@ export function LuxuryHome({
         </Reveal>
       </section>
 
-      {/* Mobile sticky CTA — appears after hero scroll */}
-      <AnimatePresence>
-        {stickyCta ? (
-          <motion.div
-            key="lux-sticky-cta"
-            initial={{ y: 88, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 88, opacity: 0 }}
-            transition={{ duration: 0.42, ease: LUX_EASE }}
-            className="fixed inset-x-0 bottom-0 z-40 border-t border-white/[0.08] bg-[#0A0A0B]/88 px-4 py-3 backdrop-blur-xl backdrop-saturate-150 lg:hidden"
-            style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
-          >
-            <div className="mx-auto flex max-w-lg items-center gap-3">
-              <GlowButton
-                href={`/${locale}/signup`}
-                variant="primary"
-                reducedMotion={reduce}
-                className="flex min-h-[44px] flex-1 justify-center text-sm"
-              >
-                {copy.hero.ctaPrimary}
-              </GlowButton>
-              <Link
-                href={`/${locale}/programs`}
-                className="shrink-0 py-2 text-xs font-medium text-zinc-500 underline-offset-4 hover:text-zinc-300"
-              >
-                {copy.hero.ctaSecondary}
-              </Link>
-            </div>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+      {/* Mobile sticky CTA — appears after hero scroll (no exit animation — avoids Framer AnimatePresence edge cases) */}
+      {stickyCta ? (
+        <div
+          className="fixed inset-x-0 bottom-0 z-40 border-t border-white/[0.08] bg-[#0A0A0B]/88 px-4 py-3 backdrop-blur-xl backdrop-saturate-150 lg:hidden"
+          style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+        >
+          <div className="mx-auto flex max-w-lg items-center gap-3">
+            <GlowButton
+              href={`/${locale}/signup`}
+              variant="primary"
+              reducedMotion={reduce}
+              className="flex min-h-[44px] flex-1 justify-center text-sm"
+            >
+              {copy.hero.ctaPrimary}
+            </GlowButton>
+            <Link
+              href={`/${locale}/programs`}
+              className="shrink-0 py-2 text-xs font-medium text-zinc-500 underline-offset-4 hover:text-zinc-300"
+            >
+              {copy.hero.ctaSecondary}
+            </Link>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

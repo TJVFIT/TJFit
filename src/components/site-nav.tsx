@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePathname, useRouter } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
@@ -193,86 +192,66 @@ export function SiteNav({ locale, elevated = false }: { locale: Locale; elevated
     return pathname === fullPath || pathname.startsWith(`${fullPath}/`);
   };
 
-  const drawer = mounted ? (
-    <AnimatePresence>
-      {sidebarOpen ? (
-        <div key="nav-drawer-root" className="fixed inset-0 z-[200]" style={{ isolation: "isolate" }}>
-          <motion.button
-            type="button"
-            aria-label={navCopy.closeSidebarOverlay}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            onClick={() => setSidebarOpen(false)}
-            className="absolute inset-0 bg-[#0A0A0B]/55 backdrop-blur-md"
-          />
-          <motion.aside
-            role="dialog"
-            aria-modal="true"
-            aria-label={navCopy.navigation}
-            initial={{ x: "-105%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "-105%" }}
-            transition={{ type: "spring", damping: 30, stiffness: 320, mass: 0.85 }}
-            className="absolute inset-y-0 left-0 flex h-[100dvh] w-[min(100vw,max(50vw,18rem))] max-w-[720px] flex-col border-r border-white/[0.08] bg-gradient-to-b from-[#111215] via-[#0A0A0B] to-[#050506] shadow-[0_0_80px_-20px_rgba(34,211,238,0.28),inset_-1px_0_0_rgba(255,255,255,0.04)] sm:w-1/2"
-          >
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/45 to-transparent" />
-            <div className="relative flex items-center justify-between gap-4 px-5 py-5 sm:px-8 sm:py-7">
-              <div>
-                <p className="font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-                  {navCopy.navigation}
-                </p>
-                <p className="mt-1 text-[11px] uppercase tracking-[0.25em] text-zinc-500">TJFit</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSidebarOpen(false)}
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/15 bg-white/5 text-zinc-200 transition hover:border-cyan-400/35 hover:bg-white/10 hover:text-white"
-                aria-label={navCopy.close}
-              >
-                <X className="h-5 w-5" strokeWidth={1.75} />
-              </button>
-            </div>
-
-            <nav className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-4 pb-10 pt-2 sm:px-8" aria-label={navCopy.navigation}>
-              <div className="space-y-1.5">
-                {menuRows.map((item, i) => (
-                  <motion.div
-                    key={`${item.key}-${item.href}`}
-                    initial={{ opacity: 0, x: -16 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{
-                      delay: 0.06 + i * 0.035,
-                      duration: 0.32,
-                      ease: [0.22, 1, 0.36, 1]
-                    }}
-                  >
-                    <Link
-                      href={`/${locale}${item.href}`}
-                      onClick={() => setSidebarOpen(false)}
-                      className={`group flex w-full items-start justify-between gap-5 rounded-2xl border px-4 py-4 text-start transition sm:rounded-3xl sm:px-5 sm:py-5 ${
-                        isActive(item.href)
-                          ? "border-cyan-400/35 bg-gradient-to-r from-cyan-500/12 to-transparent text-white shadow-[0_0_28px_-8px_rgba(34,211,238,0.35)]"
-                          : "border-transparent text-zinc-100 hover:border-white/10 hover:bg-white/[0.05]"
-                      }`}
-                    >
-                      <span className="text-base font-semibold leading-snug sm:text-lg">{item.label}</span>
-                      <span className="max-w-[46%] shrink-0 text-end text-[11px] leading-snug text-zinc-500 transition group-hover:text-zinc-400 sm:text-xs">
-                        {item.summary}
-                      </span>
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
-            </nav>
-          </motion.aside>
-        </div>
-      ) : null}
-    </AnimatePresence>
-  ) : null;
-
   const desktopNav = desktopNavItems(dict);
+
+  const drawer =
+    mounted && sidebarOpen ? (
+      <div className="fixed inset-0 z-[200]" style={{ isolation: "isolate" }}>
+        <button
+          type="button"
+          aria-label={navCopy.closeSidebarOverlay}
+          onClick={() => setSidebarOpen(false)}
+          className="absolute inset-0 bg-[#0A0A0B]/55 backdrop-blur-md"
+        />
+        <aside
+          role="dialog"
+          aria-modal="true"
+          aria-label={navCopy.navigation}
+          className="nav-drawer-panel absolute inset-y-0 left-0 flex h-[100dvh] w-[min(100vw,max(50vw,18rem))] max-w-[720px] flex-col border-r border-white/[0.08] bg-gradient-to-b from-[#111215] via-[#0A0A0B] to-[#050506] shadow-[0_0_80px_-20px_rgba(34,211,238,0.28),inset_-1px_0_0_rgba(255,255,255,0.04)] sm:w-1/2"
+        >
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/45 to-transparent" />
+          <div className="relative flex items-center justify-between gap-4 px-5 py-5 sm:px-8 sm:py-7">
+            <div>
+              <p className="font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+                {navCopy.navigation}
+              </p>
+              <p className="mt-1 text-[11px] uppercase tracking-[0.25em] text-zinc-500">TJFit</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSidebarOpen(false)}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/15 bg-white/5 text-zinc-200 transition hover:border-cyan-400/35 hover:bg-white/10 hover:text-white"
+              aria-label={navCopy.close}
+            >
+              <X className="h-5 w-5" strokeWidth={1.75} />
+            </button>
+          </div>
+
+          <nav className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-4 pb-10 pt-2 sm:px-8" aria-label={navCopy.navigation}>
+            <div className="space-y-1.5">
+              {menuRows.map((item) => (
+                <div key={`${item.key}-${item.href}`}>
+                  <Link
+                    href={`/${locale}${item.href}`}
+                    onClick={() => setSidebarOpen(false)}
+                    className={`group flex w-full items-start justify-between gap-5 rounded-2xl border px-4 py-4 text-start transition sm:rounded-3xl sm:px-5 sm:py-5 ${
+                      isActive(item.href)
+                        ? "border-cyan-400/35 bg-gradient-to-r from-cyan-500/12 to-transparent text-white shadow-[0_0_28px_-8px_rgba(34,211,238,0.35)]"
+                        : "border-transparent text-zinc-100 hover:border-white/10 hover:bg-white/[0.05]"
+                    }`}
+                  >
+                    <span className="text-base font-semibold leading-snug sm:text-lg">{item.label}</span>
+                    <span className="max-w-[46%] shrink-0 text-end text-[11px] leading-snug text-zinc-500 transition group-hover:text-zinc-400 sm:text-xs">
+                      {item.summary}
+                    </span>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </nav>
+        </aside>
+      </div>
+    ) : null;
 
   return (
     <>
@@ -364,7 +343,7 @@ export function SiteNav({ locale, elevated = false }: { locale: Locale; elevated
         </div>
       </div>
 
-      {mounted && drawer ? createPortal(drawer, document.body) : null}
+      {drawer ? createPortal(drawer, document.body) : null}
     </>
   );
 }

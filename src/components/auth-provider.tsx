@@ -75,11 +75,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     syncFromServer();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      () => syncFromServer()
-    );
+    let subscription: { unsubscribe: () => void } | null = null;
+    try {
+      const { data } = supabase.auth.onAuthStateChange(() => syncFromServer());
+      subscription = data.subscription;
+    } catch {
+      subscription = null;
+    }
 
-    return () => subscription.unsubscribe();
+    return () => subscription?.unsubscribe();
   }, []);
 
   return (

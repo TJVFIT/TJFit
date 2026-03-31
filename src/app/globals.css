@@ -103,6 +103,61 @@ body {
   opacity: 0.5;
 }
 
+@keyframes lux-orb-drift-a {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes lux-orb-drift-b {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(14px);
+  }
+}
+
+.hero-orb--drift-a {
+  animation: lux-orb-drift-a 22s ease-in-out infinite;
+}
+
+.hero-orb--drift-b {
+  animation: lux-orb-drift-b 28s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-orb--drift-a,
+  .hero-orb--drift-b {
+    animation: none;
+  }
+}
+
+@keyframes nav-drawer-slide-in {
+  from {
+    transform: translateX(-105%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.nav-drawer-panel {
+  animation: nav-drawer-slide-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-drawer-panel {
+    animation: none;
+    transform: translateX(0);
+  }
+}
+
 .mesh-grid {
   background-image:
     linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
