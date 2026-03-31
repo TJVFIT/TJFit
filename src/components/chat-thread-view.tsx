@@ -49,7 +49,7 @@ export function ChatThreadView({
     const res = await fetch(`/api/chat/messages/${conversationId}`, { credentials: "include" });
     const data = await res.json();
     if (!res.ok) {
-      setError(data.error ?? "Unable to load messages.");
+      setError(data.error ?? t.loadError);
       return;
     }
     setWrappedKey(data.encrypted_conversation_key ?? null);
@@ -78,7 +78,7 @@ export function ChatThreadView({
             try {
               plaintext = await decryptText(row.ciphertext, row.nonce, key);
             } catch {
-              plaintext = "[Unable to decrypt]";
+              plaintext = `[${t.decryptError}]`;
             }
           }
           setMessages((prev) => [...prev, { ...row, plaintext }]);
@@ -104,13 +104,13 @@ export function ChatThreadView({
               const plaintext = await decryptText(msg.ciphertext, msg.nonce, conversationKey);
               return { ...msg, plaintext };
             } catch {
-              return { ...msg, plaintext: "[Unable to decrypt]" };
+              return { ...msg, plaintext: `[${t.decryptError}]` };
             }
           })
         );
         setMessages(decrypted);
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Unable to decrypt conversation.");
+        setError(e instanceof Error ? e.message : t.decryptError);
       }
     };
     boot();
@@ -129,7 +129,7 @@ export function ChatThreadView({
             const plaintext = await decryptText(msg.ciphertext, msg.nonce, key);
             return { ...msg, plaintext };
           } catch {
-            return { ...msg, plaintext: "[Unable to decrypt]" };
+            return { ...msg, plaintext: `[${t.decryptError}]` };
           }
         })
       );
@@ -154,7 +154,7 @@ export function ChatThreadView({
     });
     if (!res.ok) {
       const data = await res.json();
-      setError(data.error ?? "Unable to send message.");
+      setError(data.error ?? t.sendError);
       return;
     }
     setMessageText("");
@@ -176,7 +176,7 @@ export function ChatThreadView({
     });
     if (!res.ok) {
       const data = await res.json();
-      setError(data.error ?? "Unable to send message.");
+      setError(data.error ?? t.sendError);
       return;
     }
     setLinkText("");
@@ -200,7 +200,7 @@ export function ChatThreadView({
       });
       const signData = await signRes.json();
       if (!signRes.ok) {
-        setError(signData.error ?? "Unable to sign attachment upload.");
+        setError(signData.error ?? t.signAttachmentError);
         return;
       }
 
@@ -212,7 +212,7 @@ export function ChatThreadView({
         body: encryptedFile.ciphertext
       });
       if (!uploadRes.ok) {
-        setError("Attachment upload failed.");
+        setError(t.uploadAttachmentError);
         return;
       }
 
@@ -235,7 +235,7 @@ export function ChatThreadView({
       });
       const messageData = await messageRes.json();
       if (!messageRes.ok) {
-        setError(messageData.error ?? "Unable to post attachment message.");
+        setError(messageData.error ?? t.postAttachmentError);
         return;
       }
 
@@ -252,7 +252,7 @@ export function ChatThreadView({
         })
       });
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Unable to send file.");
+      setError(e instanceof Error ? e.message : t.sendFileError);
     }
   };
 
@@ -267,7 +267,7 @@ export function ChatThreadView({
       });
       const callData = await callRes.json();
       if (!callRes.ok) {
-        setError(callData.error ?? "Unable to start call.");
+        setError(callData.error ?? t.startCallError);
         return;
       }
 
@@ -292,7 +292,7 @@ export function ChatThreadView({
         })
       });
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Unable to start call.");
+      setError(e instanceof Error ? e.message : t.startCallError);
     }
   };
 
@@ -324,7 +324,7 @@ export function ChatThreadView({
           </button>
           {activeCallMode && (
             <button onClick={endLocalCall} className="rounded-full border border-red-400/40 px-4 py-2 text-sm text-red-300">
-              End
+              {t.endCall}
             </button>
           )}
         </div>
@@ -344,7 +344,7 @@ export function ChatThreadView({
                   msg.sender_id === myId ? "ml-auto bg-accent/20 text-white" : "bg-white/5 text-zinc-200"
                 }`}
               >
-                {msg.plaintext || "Encrypted message"}
+                {msg.plaintext || t.encryptedMessage}
               </div>
             ))
           )}
@@ -353,7 +353,7 @@ export function ChatThreadView({
         <div className="mt-4 flex gap-3">
           <input
             className="input"
-            placeholder="Encrypted message"
+            placeholder={t.encryptedMessage}
             value={messageText}
             onChange={(e) => setMessageText(e.target.value)}
           />
@@ -364,15 +364,15 @@ export function ChatThreadView({
         <div className="mt-3 grid gap-3 md:grid-cols-[1fr_auto_auto]">
           <input
             className="input"
-            placeholder="https://..."
+            placeholder={t.linkPlaceholder}
             value={linkText}
             onChange={(e) => setLinkText(e.target.value)}
           />
           <button onClick={sendLink} className="rounded-full border border-white/10 px-4 py-2 text-sm text-white">
-            Link
+            {t.linkButton}
           </button>
           <label className="cursor-pointer rounded-full border border-white/10 px-4 py-2 text-sm text-white">
-            File
+            {t.fileButton}
             <input
               type="file"
               className="hidden"

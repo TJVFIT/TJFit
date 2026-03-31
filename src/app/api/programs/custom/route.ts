@@ -6,8 +6,8 @@ import {
   buildProgramTranslations,
   extractPdfText,
   getPriceForKind,
-  localizeCustomProgramRow,
   slugifyProgramTitle,
+  toPublicCustomProgramRow,
   type CustomProgramRow
 } from "@/lib/custom-programs";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
 
     const rows = (data ?? []) as CustomProgramRow[];
     return NextResponse.json({
-      programs: rows.map((row) => localizeCustomProgramRow(row, locale))
+      programs: rows.map((row) => toPublicCustomProgramRow(row, locale))
     });
   }
 
@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
 
   const rows = (data ?? []) as CustomProgramRow[];
   return NextResponse.json({
-    programs: rows.map((row) => localizeCustomProgramRow(row, locale))
+    programs: rows.map((row) => toPublicCustomProgramRow(row, locale))
   });
 }
 
@@ -167,7 +167,7 @@ export async function POST(request: NextRequest) {
   }
 
   return NextResponse.json({
-    program: localizeCustomProgramRow(data as CustomProgramRow, "en")
+    program: toPublicCustomProgramRow(data as CustomProgramRow, "en")
   });
 }
 

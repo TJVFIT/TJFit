@@ -121,8 +121,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
       credentials: "include",
       body: JSON.stringify({
         programSlug: selectedProgram.slug,
-        discountCode: selectedCode || undefined,
-        provider: "paddle"
+        discountCode: selectedCode || undefined
       })
     });
     const createData = await createRes.json();
@@ -132,8 +131,15 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
       return;
     }
 
-    // Paddle-ready logic:
-    // order is created with provider "paddle", then this endpoint simulates paid callback completion.
+    if (createData.provider !== "test") {
+      setWorking(false);
+      setStatus(
+        createData.message ??
+          "Payment provider setup is in progress. Real payment handoff must be completed before purchases can go live."
+      );
+      return;
+    }
+
     const completeRes = await fetch("/api/checkout/complete-order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -212,7 +218,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
               {working ? "Processing..." : "Complete Program Purchase"}
             </button>
             <p className="mt-3 text-xs text-zinc-500">
-              Paddle-ready order flow is enabled; this action currently completes in test mode for launch prep.
+              Real payment only becomes available when a provider is configured. Direct completion is restricted to explicit test mode.
             </p>
             {status && <p className="mt-3 text-sm text-emerald-300">{status}</p>}
           </div>

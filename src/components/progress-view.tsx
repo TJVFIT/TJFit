@@ -117,8 +117,8 @@ export function ProgressView({ locale }: { locale: Locale }) {
         <section className="glass-panel rounded-[28px] p-6">
           <p className="text-lg font-semibold text-white">{t.metrics}</p>
           <div className="mt-4 grid gap-3">
-            <input className="input" placeholder="Weight (kg)" value={weight} onChange={(e) => setWeight(e.target.value)} />
-            <input className="input" placeholder="Body fat (%)" value={bodyFat} onChange={(e) => setBodyFat(e.target.value)} />
+            <input className="input" placeholder={t.weightPlaceholder} value={weight} onChange={(e) => setWeight(e.target.value)} />
+            <input className="input" placeholder={t.bodyFatPlaceholder} value={bodyFat} onChange={(e) => setBodyFat(e.target.value)} />
             <button onClick={addMetrics} className="gradient-button rounded-full px-5 py-2 text-sm font-medium text-white">
               {t.save}
             </button>
@@ -139,7 +139,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
         <section className="glass-panel rounded-[28px] p-6">
           <p className="text-lg font-semibold text-white">{t.workouts}</p>
           <div className="mt-4 grid gap-3">
-            <input className="input" placeholder="Exercise" value={exercise} onChange={(e) => setExercise(e.target.value)} />
+            <input className="input" placeholder={t.exercisePlaceholder} value={exercise} onChange={(e) => setExercise(e.target.value)} />
             <button onClick={addWorkout} className="gradient-button rounded-full px-5 py-2 text-sm font-medium text-white">
               {t.add}
             </button>
@@ -160,7 +160,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
         <section className="glass-panel rounded-[28px] p-6">
           <p className="text-lg font-semibold text-white">{t.milestones}</p>
           <div className="mt-4 grid gap-3">
-            <input className="input" placeholder="Milestone" value={milestoneTitle} onChange={(e) => setMilestoneTitle(e.target.value)} />
+            <input className="input" placeholder={t.milestonePlaceholder} value={milestoneTitle} onChange={(e) => setMilestoneTitle(e.target.value)} />
             <button onClick={addMilestone} className="gradient-button rounded-full px-5 py-2 text-sm font-medium text-white">
               {t.add}
             </button>
@@ -177,7 +177,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
                       {t.complete}
                     </button>
                   ) : (
-                    <span className="text-green-400">Done</span>
+                    <span className="text-green-400">{t.done}</span>
                   )}
                 </div>
               ))

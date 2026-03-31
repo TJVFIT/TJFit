@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
-import { isLocale } from "@/lib/i18n";
+import { isLocale, type Locale } from "@/lib/i18n";
+import { getAuthCopy } from "@/lib/launch-copy";
 
 export default function LoginPage({ params }: { params: { locale: string } }) {
   const [email, setEmail] = useState("");
@@ -19,6 +20,9 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
     return null;
   }
 
+  const locale = params.locale as Locale;
+  const copy = getAuthCopy(locale);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -26,7 +30,7 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
 
     if (adminMode) {
       if (!username.trim()) {
-        setError("Please enter admin username.");
+        setError(copy.adminUsernameRequired);
         setLoading(false);
         return;
       }
@@ -36,10 +40,10 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
         body: JSON.stringify({ username: username.trim(), password }),
         credentials: "include"
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       setLoading(false);
       if (!res.ok) {
-        setError(data.error ?? "Login failed.");
+        setError(data.error ?? copy.loginFailed);
         return;
       }
       window.location.href = `/${params.locale}`;
@@ -48,17 +52,17 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
 
     const supabase = getSupabaseBrowserClient();
     if (!supabase) {
-      setError("Auth not configured.");
+      setError(copy.authNotConfigured);
       setLoading(false);
       return;
     }
     if (!email.trim()) {
-      setError("Please enter email.");
+      setError(copy.emailRequired);
       setLoading(false);
       return;
     }
     if (!password) {
-      setError("Please enter password.");
+      setError(copy.passwordRequired);
       setLoading(false);
       return;
     }
@@ -68,7 +72,7 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
     });
     setLoading(false);
     if (err) {
-      setError(err.message ?? "Login failed.");
+      setError(err.message ?? copy.loginFailed);
       return;
     }
     router.push(`/${params.locale}`);
@@ -78,14 +82,14 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
   return (
     <div className="mx-auto flex min-h-[80vh] max-w-xl items-center px-4 py-16 sm:px-6 lg:px-8">
       <div className="glass-panel w-full rounded-[36px] p-8">
-        <span className="badge">{adminMode ? "Admin Login" : "Login"}</span>
+        <span className="badge">{adminMode ? copy.adminLoginBadge : copy.loginBadge}</span>
         <h1 className="mt-6 text-4xl font-semibold text-white">
-          {adminMode ? "Log in as admin" : "Welcome back."}
+          {adminMode ? copy.adminLoginTitle : copy.loginTitle}
         </h1>
         <p className="mt-3 text-sm leading-7 text-zinc-400">
           {adminMode
-            ? "Sign in with your admin username and password."
-            : "Sign in to access your dashboard."}
+            ? copy.adminLoginSubtitle
+            : copy.loginSubtitle}
         </p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
@@ -93,7 +97,7 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
             <input
               className="input"
               type="text"
-              placeholder="Username or email"
+              placeholder={copy.usernamePlaceholder}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
@@ -103,7 +107,7 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
             <input
               className="input"
               type="email"
-              placeholder="Email"
+              placeholder={copy.emailPlaceholder}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -112,7 +116,7 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
           <input
             className="input"
             type="password"
-            placeholder="Password"
+            placeholder={copy.passwordPlaceholder}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -123,7 +127,7 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
             disabled={loading}
             className="gradient-button w-full rounded-full px-5 py-3 text-sm font-medium text-white disabled:opacity-60"
           >
-            {loading ? "Signing in..." : adminMode ? "Log in as admin" : "Login"}
+            {loading ? copy.signingIn : adminMode ? copy.loginAsAdminButton : copy.loginButton}
           </button>
         </form>
 
@@ -137,7 +141,7 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
               }}
               className="text-white underline underline-offset-4 hover:text-zinc-200"
             >
-              Use email login instead
+              {copy.useEmailLogin}
             </button>
           ) : (
             <button
@@ -148,15 +152,15 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
               }}
               className="text-white underline underline-offset-4 hover:text-zinc-200"
             >
-              Log in as admin
+              {copy.switchToAdminLogin}
             </button>
           )}
         </p>
         {!adminMode && (
           <p className="mt-3 text-center text-sm text-zinc-400">
-            New here?{" "}
+            {copy.newHere}{" "}
             <Link href={`/${params.locale}/signup`} className="text-white underline underline-offset-4 hover:text-zinc-200">
-              Create account
+              {copy.createAccount}
             </Link>
           </p>
         )}

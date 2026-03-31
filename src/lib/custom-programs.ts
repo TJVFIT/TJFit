@@ -182,3 +182,21 @@ export function localizeCustomProgramRow(row: CustomProgramRow, locale: Locale) 
     category
   };
 }
+
+export function toPublicCustomProgramRow(row: CustomProgramRow, locale: Locale) {
+  const localized = localizeCustomProgramRow(row, locale);
+  return {
+    id: localized.id,
+    slug: localized.slug,
+    title: localized.title,
+    description: localized.description,
+    kind: localized.kind,
+    category: localized.category,
+    price_try: localized.price_try,
+    difficulty: localized.difficulty,
+    duration: localized.duration,
+    uploader_role: localized.uploader_role,
+    translation_status: localized.translation_status,
+    created_at: localized.created_at
+  };
+}

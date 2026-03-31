@@ -1,10 +1,30 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { LocaleDocument } from "@/components/locale-document";
 import { SiteShell } from "@/components/site-shell";
-import { Locale, getDirection, isLocale, locales } from "@/lib/i18n";
+import { Locale, getDictionary, getDirection, isLocale, locales } from "@/lib/i18n";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
+}
+
+export function generateMetadata({
+  params
+}: {
+  params: { locale: string };
+}): Metadata {
+  if (!isLocale(params.locale)) {
+    return {};
+  }
+
+  const locale = params.locale as Locale;
+  const dict = getDictionary(locale);
+
+  return {
+    title: `TJFit | ${dict.hero.title}`,
+    description: dict.hero.subtitle
+  };
 }
 
 export default function LocaleLayout({
@@ -22,6 +42,7 @@ export default function LocaleLayout({
 
   return (
     <div dir={getDirection(locale)}>
+      <LocaleDocument locale={locale} direction={getDirection(locale)} />
       <SiteShell locale={locale}>{children}</SiteShell>
     </div>
   );

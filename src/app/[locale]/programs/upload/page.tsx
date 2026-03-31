@@ -4,6 +4,7 @@ import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { ProtectedRoute } from "@/components/protected-route";
 import { useAuth } from "@/components/auth-provider";
 import { isLocale, type Locale } from "@/lib/i18n";
+import { getProgramManagementCopy } from "@/lib/program-management-copy";
 
 type MyProgram = {
   id: string;
@@ -28,6 +29,7 @@ export default function ProgramUploadPage({ params }: { params: { locale: string
 
 function ProgramUploadClient({ locale }: { locale: Locale }) {
   const { role } = useAuth();
+  const copy = getProgramManagementCopy(locale);
   const [title, setTitle] = useState("");
   const [kind, setKind] = useState<"diet" | "program">("program");
   const [file, setFile] = useState<File | null>(null);
@@ -65,15 +67,15 @@ function ProgramUploadClient({ locale }: { locale: Locale }) {
     setError(null);
     setSuccess(null);
     if (!canUpload) {
-      setError("Only admin and coach accounts can upload programs.");
+      setError(copy.onlyAdminsAndCoaches);
       return;
     }
     if (!title.trim() || !file) {
-      setError("Title and PDF are required.");
+      setError(copy.titleAndPdfRequired);
       return;
     }
     if (role === "coach" && coachRemaining <= 0) {
-      setError("Coach upload limit reached (max 3 active programs). Delete one first.");
+      setError(copy.coachLimitReached);
       return;
     }
 
@@ -91,11 +93,11 @@ function ProgramUploadClient({ locale }: { locale: Locale }) {
     const data = await res.json();
     setWorking(false);
     if (!res.ok) {
-      setError(data.error ?? "Upload failed.");
+      setError(data.error ?? copy.uploadFailed);
       return;
     }
 
-    setSuccess("Program uploaded, translated, and published.");
+    setSuccess(copy.uploadSuccess);
     setTitle("");
     setKind("program");
     setFile(null);
@@ -113,10 +115,10 @@ function ProgramUploadClient({ locale }: { locale: Locale }) {
     });
     const data = await res.json();
     if (!res.ok) {
-      setError(data.error ?? "Unable to delete program.");
+      setError(data.error ?? copy.deleteFailed);
       return;
     }
-    setSuccess("Program deleted.");
+    setSuccess(copy.deleteSuccess);
     await loadMine();
   };
 
@@ -124,7 +126,7 @@ function ProgramUploadClient({ locale }: { locale: Locale }) {
     return (
       <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="glass-panel rounded-[32px] p-6">
-          <p className="text-sm text-zinc-300">Only admin and coach accounts can upload custom programs.</p>
+          <p className="text-sm text-zinc-300">{copy.onlyAdminsAndCoaches}</p>
         </div>
       </div>
     );
@@ -133,23 +135,23 @@ function ProgramUploadClient({ locale }: { locale: Locale }) {
   return (
     <div className="mx-auto max-w-5xl space-y-8 px-4 py-16 sm:px-6 lg:px-8">
       <div className="glass-panel rounded-[32px] p-6">
-        <span className="badge">Program Upload</span>
-        <h1 className="mt-4 text-3xl font-semibold text-white">Upload PDF Program</h1>
+        <span className="badge">{copy.badge}</span>
+        <h1 className="mt-4 text-3xl font-semibold text-white">{copy.title}</h1>
         <p className="mt-3 text-sm text-zinc-400">
-          Price is set automatically: Diet = 350 TRY, Program = 400 TRY. Upload triggers translation into EN/TR/AR/ES/FR.
+          {copy.subtitle}
         </p>
         {role === "coach" && (
           <p className="mt-2 text-sm text-zinc-300">
-            Coach limit: {myPrograms.length}/{maxCoachPrograms} active uploads.
+            {copy.coachLimitLabel}: {myPrograms.length}/{maxCoachPrograms} active uploads.
           </p>
         )}
       </div>
 
       <form onSubmit={onSubmit} className="glass-panel rounded-[32px] p-6 space-y-4">
-        <input className="input" placeholder="Program title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+        <input className="input" placeholder={copy.titlePlaceholder} value={title} onChange={(e) => setTitle(e.target.value)} required />
         <select className="input" value={kind} onChange={(e) => setKind(e.target.value as "diet" | "program")}>
-          <option value="program">Program (400 TRY)</option>
-          <option value="diet">Diet (350 TRY)</option>
+          <option value="program">{copy.programOption}</option>
+          <option value="diet">{copy.dietOption}</option>
         </select>
         <input
           className="input"
@@ -161,29 +163,29 @@ function ProgramUploadClient({ locale }: { locale: Locale }) {
         {error && <p className="text-sm text-red-400">{error}</p>}
         {success && <p className="text-sm text-emerald-400">{success}</p>}
         <button type="submit" disabled={working} className="gradient-button rounded-full px-5 py-3 text-sm font-medium text-white disabled:opacity-60">
-          {working ? "Uploading and translating..." : "Upload program"}
+          {working ? copy.uploading : copy.upload}
         </button>
       </form>
 
       <div className="glass-panel rounded-[32px] p-6">
-        <p className="text-lg font-semibold text-white">Your active uploads</p>
+        <p className="text-lg font-semibold text-white">{copy.activeUploads}</p>
         <div className="mt-4 space-y-3">
           {myPrograms.length === 0 ? (
-            <p className="text-sm text-zinc-500">No uploaded programs yet.</p>
+            <p className="text-sm text-zinc-500">{copy.noUploads}</p>
           ) : (
             myPrograms.map((program) => (
               <div key={program.id} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-4">
                 <div>
                   <p className="text-white">{program.title}</p>
                   <p className="text-xs text-zinc-500">
-                    {program.kind === "diet" ? "Diet" : "Program"} - {program.price_try} TRY
+                    {program.kind === "diet" ? copy.dietLabel : copy.programLabel} - {program.price_try} TRY
                   </p>
                 </div>
                 <button
                   onClick={() => deleteProgram(program.id)}
                   className="rounded-full border border-red-300/30 px-4 py-2 text-xs text-red-200 hover:bg-red-400/10"
                 >
-                  Delete
+                  {copy.delete}
                 </button>
               </div>
             ))

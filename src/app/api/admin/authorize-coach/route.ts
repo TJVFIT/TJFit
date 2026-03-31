@@ -30,6 +30,20 @@ export async function POST(request: NextRequest) {
       .maybeSingle();
 
     if (existingProfile?.id) {
+      if (existingProfile.role === "admin") {
+        return NextResponse.json(
+          { error: "Admin accounts cannot be converted into coach accounts." },
+          { status: 400 }
+        );
+      }
+
+      if (existingProfile.role === "coach") {
+        return NextResponse.json({
+          success: true,
+          message: "This account is already a coach."
+        });
+      }
+
       const { error: updateError } = await supabase
         .from("profiles")
         .update({ role: "coach", email: normalizedEmail })

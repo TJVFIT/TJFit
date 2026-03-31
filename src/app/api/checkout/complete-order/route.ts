@@ -4,6 +4,13 @@ import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { TJFIT_COINS_PER_PROGRAM_PURCHASE } from "@/lib/tjfit-coin";
 
 export async function POST(request: NextRequest) {
+  if (process.env.ALLOW_TEST_CHECKOUT !== "true") {
+    return NextResponse.json(
+      { error: "Test order completion is disabled in this environment." },
+      { status: 403 }
+    );
+  }
+
   const supabase = createServerSupabaseClient();
   const {
     data: { user },
@@ -27,13 +34,20 @@ export async function POST(request: NextRequest) {
 
   const { data: existingOrder } = await adminClient
     .from("program_orders")
-    .select("id,user_id,status,discount_code")
+    .select("id,user_id,status,discount_code,provider")
     .eq("id", orderId)
     .eq("user_id", user.id)
     .maybeSingle();
 
   if (!existingOrder) {
     return NextResponse.json({ error: "Order not found" }, { status: 404 });
+  }
+
+  if (existingOrder.provider !== "test") {
+    return NextResponse.json(
+      { error: "Only test-mode orders can be completed directly." },
+      { status: 403 }
+    );
   }
 
   if (existingOrder.status === "paid") {

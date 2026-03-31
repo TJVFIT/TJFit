@@ -27,18 +27,24 @@ async function fetchAuthState(): Promise<{
   hasActiveCoachChat: boolean;
   activeCoachId?: string;
 }> {
-  const res = await fetch("/api/auth/me", { credentials: "include" });
-  const data = await res.json();
-  if (!data.user) return { user: null, role: null, hasActiveCoachChat: false };
-  return {
-    user: {
-      id: data.user.id,
-      email: data.user.email
-    } as User,
-    role: data.role ?? null,
-    hasActiveCoachChat: Boolean(data.hasActiveCoachChat),
-    activeCoachId: typeof data.activeCoachId === "string" ? data.activeCoachId : undefined
-  };
+  try {
+    const res = await fetch("/api/auth/me", { credentials: "include" });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.user) {
+      return { user: null, role: null, hasActiveCoachChat: false };
+    }
+    return {
+      user: {
+        id: data.user.id,
+        email: data.user.email
+      } as User,
+      role: data.role ?? null,
+      hasActiveCoachChat: Boolean(data.hasActiveCoachChat),
+      activeCoachId: typeof data.activeCoachId === "string" ? data.activeCoachId : undefined
+    };
+  } catch {
+    return { user: null, role: null, hasActiveCoachChat: false };
+  }
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -56,12 +62,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     const syncFromServer = async () => {
-      const { user: u, role: r, hasActiveCoachChat: hasChat, activeCoachId: coachId } = await fetchAuthState();
-      setUser(u);
-      setRole(r);
-      setHasActiveCoachChat(hasChat);
-      setActiveCoachId(coachId);
-      setLoading(false);
+      try {
+        const { user: u, role: r, hasActiveCoachChat: hasChat, activeCoachId: coachId } = await fetchAuthState();
+        setUser(u);
+        setRole(r);
+        setHasActiveCoachChat(hasChat);
+        setActiveCoachId(coachId);
+      } finally {
+        setLoading(false);
+      }
     };
 
     syncFromServer();

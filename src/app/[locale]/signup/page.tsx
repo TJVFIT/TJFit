@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
-import { isLocale } from "@/lib/i18n";
+import { isLocale, type Locale } from "@/lib/i18n";
 import { BILLING_PROVIDER, PRIVACY_VERSION, TERMS_VERSION } from "@/lib/legal";
+import { getAuthCopy } from "@/lib/launch-copy";
 
 export default function SignupPage({ params }: { params: { locale: string } }) {
   const [email, setEmail] = useState("");
@@ -19,6 +20,9 @@ export default function SignupPage({ params }: { params: { locale: string } }) {
     return null;
   }
 
+  const locale = params.locale as Locale;
+  const copy = getAuthCopy(locale);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -27,25 +31,25 @@ export default function SignupPage({ params }: { params: { locale: string } }) {
 
     const supabase = getSupabaseBrowserClient();
     if (!supabase) {
-      setError("Auth not configured.");
+      setError(copy.authNotConfigured);
       setLoading(false);
       return;
     }
 
     if (password.length < 8) {
-      setError("Password must be at least 8 characters.");
+      setError(copy.passwordTooShort);
       setLoading(false);
       return;
     }
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError(copy.passwordsDoNotMatch);
       setLoading(false);
       return;
     }
 
     if (!acceptedTerms) {
-      setError("You must accept Terms, Privacy, and Billing Terms to create an account.");
+      setError(copy.acceptTermsRequired);
       setLoading(false);
       return;
     }
@@ -75,11 +79,11 @@ export default function SignupPage({ params }: { params: { locale: string } }) {
     setLoading(false);
 
     if (signUpError) {
-      setError(signUpError.message ?? "Unable to create account.");
+      setError(signUpError.message ?? copy.signupFailed);
       return;
     }
 
-    setSuccess("Account created. Check your email for verification, then sign in.");
+    setSuccess(copy.signupSuccess);
     setEmail("");
     setPassword("");
     setConfirmPassword("");
@@ -89,17 +93,17 @@ export default function SignupPage({ params }: { params: { locale: string } }) {
   return (
     <div className="mx-auto flex min-h-[80vh] max-w-xl items-center px-4 py-16 sm:px-6 lg:px-8">
       <div className="glass-panel w-full rounded-[36px] p-8">
-        <span className="badge">Create account</span>
-        <h1 className="mt-6 text-4xl font-semibold text-white">Join TJFit.</h1>
+        <span className="badge">{copy.signupBadge}</span>
+        <h1 className="mt-6 text-4xl font-semibold text-white">{copy.signupTitle}</h1>
         <p className="mt-3 text-sm leading-7 text-zinc-400">
-          Sign up to book coaching sessions, buy programs, track progress, and message your coach.
+          {copy.signupSubtitle}
         </p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
           <input
             className="input"
             type="email"
-            placeholder="Email"
+            placeholder={copy.emailPlaceholder}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -107,7 +111,7 @@ export default function SignupPage({ params }: { params: { locale: string } }) {
           <input
             className="input"
             type="password"
-            placeholder="Password (min 8 characters)"
+            placeholder={copy.passwordMinPlaceholder}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -116,7 +120,7 @@ export default function SignupPage({ params }: { params: { locale: string } }) {
           <input
             className="input"
             type="password"
-            placeholder="Confirm password"
+            placeholder={copy.confirmPasswordPlaceholder}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
@@ -131,15 +135,15 @@ export default function SignupPage({ params }: { params: { locale: string } }) {
               required
             />
             <span>
-              I agree to the{" "}
+              {copy.agreePrefix}{" "}
               <Link href={`/${params.locale}/terms-and-conditions`} className="text-white underline underline-offset-4 hover:text-zinc-200">
-                Terms of Service
+                {copy.termsLink}
               </Link>
               ,{" "}
               <Link href={`/${params.locale}/privacy-policy`} className="text-white underline underline-offset-4 hover:text-zinc-200">
-                Privacy Policy
+                {copy.privacyLink}
               </Link>
-              , and {BILLING_PROVIDER} billing terms.
+              , {BILLING_PROVIDER} {copy.billingSuffix}
             </span>
           </label>
           {error && <p className="text-sm text-red-400">{error}</p>}
@@ -149,14 +153,14 @@ export default function SignupPage({ params }: { params: { locale: string } }) {
             disabled={loading}
             className="gradient-button w-full rounded-full px-5 py-3 text-sm font-medium text-white disabled:opacity-60"
           >
-            {loading ? "Creating account..." : "Create account"}
+            {loading ? copy.creatingAccount : copy.createAccountButton}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-zinc-400">
-          Already have an account?{" "}
+          {copy.alreadyHaveAccount}{" "}
           <Link href={`/${params.locale}/login`} className="text-white underline underline-offset-4 hover:text-zinc-200">
-            Log in
+            {copy.logIn}
           </Link>
         </p>
       </div>

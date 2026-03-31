@@ -8,7 +8,7 @@ const BLOG_BUCKET = "community-blog-images";
 export async function GET() {
   const supabase = getSupabaseServerClient();
   if (!supabase) {
-    return NextResponse.json({ posts: [] });
+    return NextResponse.json({ error: "Community blog service is not configured." }, { status: 503 });
   }
 
   const { data, error } = await supabase

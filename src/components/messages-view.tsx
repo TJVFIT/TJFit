@@ -59,7 +59,7 @@ export function MessagesView({ locale }: { locale: Locale }) {
         .single();
 
       if (!myPublicKeyRow?.public_key_jwk || !participantPublicKeyRow?.public_key_jwk) {
-        setError("Public keys are missing for one of the users.");
+        setError(t.missingPublicKeys);
         return;
       }
 
@@ -89,13 +89,13 @@ export function MessagesView({ locale }: { locale: Locale }) {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error ?? "Unable to create conversation.");
+        setError(data.error ?? t.sendError);
         return;
       }
       setParticipantId("");
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Unable to create conversation.");
+      setError(e instanceof Error ? e.message : t.sendError);
     }
   };
 
@@ -110,24 +110,24 @@ export function MessagesView({ locale }: { locale: Locale }) {
       {!canAccessChat ? (
         <div className="glass-panel rounded-[28px] p-6">
           <p className="text-sm text-zinc-300">
-            Chat unlocks after you are assigned to a coach and the coach service is paid.
+            {t.chatLocked}
           </p>
         </div>
       ) : (
         <div className="glass-panel rounded-[28px] p-6">
           <p className="text-sm text-zinc-400">
-            {role === "user" ? "Start secure chat with your coach" : "Create private thread by participant user ID"}
+            {role === "user" ? t.startSecureChat : t.createPrivateThread}
           </p>
           <div className="mt-3 flex gap-3">
             <input
               className="input"
-              placeholder="participant user id"
+              placeholder={t.participantPlaceholder}
               value={participantId}
               onChange={(e) => setParticipantId(e.target.value)}
               disabled={role === "user" && Boolean(activeCoachId)}
             />
             <button className="gradient-button rounded-full px-5 py-2 text-sm font-medium text-white" onClick={createConversation}>
-              {role === "user" ? "Open Chat" : "Create"}
+              {role === "user" ? t.openChat : t.create}
             </button>
           </div>
           {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
@@ -136,7 +136,7 @@ export function MessagesView({ locale }: { locale: Locale }) {
 
       <div className="space-y-3">
         {!canAccessChat ? (
-          <div className="glass-panel rounded-[24px] p-5 text-sm text-zinc-500">Chat is not available on this account yet.</div>
+          <div className="glass-panel rounded-[24px] p-5 text-sm text-zinc-500">{t.chatUnavailable}</div>
         ) : conversations.length === 0 ? (
           <div className="glass-panel rounded-[24px] p-5 text-sm text-zinc-500">{t.noConversations}</div>
         ) : (

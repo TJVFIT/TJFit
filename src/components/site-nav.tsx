@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/components/auth-provider";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { Locale, getDictionary } from "@/lib/i18n";
+import { getNavChromeCopy } from "@/lib/launch-copy";
 
 const routeMap = {
   home: "",
@@ -26,6 +27,7 @@ export function SiteNav({ locale }: { locale: Locale }) {
   const router = useRouter();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [search, setSearch] = useState("");
 
   const handleLogout = async () => {
     const supabase = getSupabaseBrowserClient();
@@ -36,6 +38,11 @@ export function SiteNav({ locale }: { locale: Locale }) {
     }
   };
   const dict = getDictionary(locale);
+  const navCopy = getNavChromeCopy(locale);
+
+  useEffect(() => {
+    setSearch(window.location.search);
+  }, [pathname]);
 
   const isAdmin = role === "admin";
   const isCoach = role === "coach";
@@ -45,7 +52,7 @@ export function SiteNav({ locale }: { locale: Locale }) {
     { key: "coaches", href: routeMap.coaches, label: dict.nav.coaches },
     { key: "programs", href: routeMap.programs, label: dict.nav.programs },
     { key: "community", href: routeMap.community, label: dict.nav.community },
-    { key: "ai", href: routeMap.ai, label: "TJFIT AI" },
+    { key: "ai", href: routeMap.ai, label: navCopy.aiLabel },
     { key: "membership", href: routeMap.membership, label: dict.nav.membership },
     { key: "support", href: routeMap.support, label: dict.nav.feedback }
   ];
@@ -89,10 +96,10 @@ export function SiteNav({ locale }: { locale: Locale }) {
     [links]
   );
   const communityLinks = [
-    { key: "community-threads", href: "/community?tab=threads", label: "Threads" },
-    { key: "community-challenges", href: "/community?tab=challenges", label: "Challenges" },
-    { key: "community-transformations", href: "/community?tab=transformations", label: "Transformations" },
-    { key: "community-blogs", href: "/community?tab=blogs", label: "Blogs" }
+    { key: "community-threads", href: "/community?tab=threads", label: navCopy.threads },
+    { key: "community-challenges", href: "/community?tab=challenges", label: dict.nav.challenges },
+    { key: "community-transformations", href: "/community?tab=transformations", label: dict.nav.transformations },
+    { key: "community-blogs", href: "/community?tab=blogs", label: navCopy.blogs }
   ];
   const accountLinks = links.filter(
     (item) =>
@@ -108,7 +115,9 @@ export function SiteNav({ locale }: { locale: Locale }) {
   const isActive = (href: string) => {
     const fullPath = `/${locale}${href}`;
     if (href.includes("?")) {
-      return pathname === `/${locale}/community`;
+      const currentTab = new URLSearchParams(search).get("tab") ?? "threads";
+      const hrefTab = new URLSearchParams(href.split("?")[1] ?? "").get("tab") ?? "threads";
+      return pathname === `/${locale}/community` && currentTab === hrefTab;
     }
     if (href === "") return pathname === `/${locale}`;
     return pathname === fullPath || pathname.startsWith(`${fullPath}/`);
@@ -150,9 +159,9 @@ export function SiteNav({ locale }: { locale: Locale }) {
             type="button"
             onClick={() => setSidebarOpen((prev) => !prev)}
             className="rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm text-zinc-200 transition hover:bg-white/10"
-            aria-label="Toggle sidebar"
+            aria-label={navCopy.menu}
           >
-            Menu
+            {navCopy.menu}
           </button>
           <Link
             href={`/${locale}`}
@@ -185,7 +194,7 @@ export function SiteNav({ locale }: { locale: Locale }) {
               href={`/${locale}/login`}
               className="rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-200 transition hover:border-white/20 hover:bg-white/5"
             >
-              {dict.nav.loginAsCoach}
+              {navCopy.loginLabel}
             </Link>
           )}
         </div>
@@ -195,27 +204,27 @@ export function SiteNav({ locale }: { locale: Locale }) {
         <div className="fixed inset-0 z-[60]">
           <button
             type="button"
-            aria-label="Close sidebar overlay"
+            aria-label={navCopy.closeSidebarOverlay}
             onClick={() => setSidebarOpen(false)}
             className="absolute inset-0 bg-black/60"
           />
-          <aside className="absolute inset-y-0 left-0 w-[86vw] max-w-sm border-r border-white/10 bg-[#0B0B0F] p-5 shadow-2xl">
+          <aside className="absolute inset-y-0 left-0 flex w-[86vw] max-w-sm flex-col border-r border-white/10 bg-[#0B0B0F] p-5 shadow-2xl">
             <div className="mb-4 flex items-center justify-between">
-              <p className="font-display text-lg text-white">Navigation</p>
+              <p className="font-display text-lg text-white">{navCopy.navigation}</p>
               <button
                 type="button"
                 onClick={() => setSidebarOpen(false)}
                 className="rounded-lg border border-white/15 px-2 py-1 text-xs text-zinc-300 hover:bg-white/5"
               >
-                Close
+                {navCopy.close}
               </button>
             </div>
 
-            <div className="space-y-6 overflow-y-auto pb-10">
-              <SidebarLinks title="Explore" items={exploreLinks} />
-              <SidebarLinks title="Community" items={communityLinks} />
-              {featureLinks.length > 0 ? <SidebarLinks title="Features" items={featureLinks} /> : null}
-              {accountLinks.length > 0 ? <SidebarLinks title="Account" items={accountLinks} /> : null}
+            <div className="min-h-0 flex-1 space-y-6 overflow-y-auto pb-10 pr-1">
+              <SidebarLinks title={navCopy.explore} items={exploreLinks} />
+              <SidebarLinks title={navCopy.community} items={communityLinks} />
+              {featureLinks.length > 0 ? <SidebarLinks title={navCopy.features} items={featureLinks} /> : null}
+              {accountLinks.length > 0 ? <SidebarLinks title={navCopy.account} items={accountLinks} /> : null}
             </div>
           </aside>
         </div>

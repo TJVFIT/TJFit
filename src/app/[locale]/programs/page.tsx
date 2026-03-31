@@ -8,12 +8,14 @@ import { programs, Program } from "@/lib/content";
 import { Locale, isLocale } from "@/lib/i18n";
 import { formatProgramPrice, getProgramBasePriceTry, getProgramUiCopy, localizeProgram } from "@/lib/program-localization";
 import { useAuth } from "@/components/auth-provider";
+import { getProgramManagementCopy } from "@/lib/program-management-copy";
 
 type CustomProgramCard = Program & { isCustomUpload?: boolean };
 
 export default function ProgramsPage({ params }: { params: { locale: string } }) {
   const locale = isLocale(params.locale) ? (params.locale as Locale) : ("en" as Locale);
   const copy = getProgramUiCopy(locale);
+  const programManagementCopy = getProgramManagementCopy(locale);
   const { role } = useAuth();
   const [uploadedPrograms, setUploadedPrograms] = useState<CustomProgramCard[]>([]);
 
@@ -34,15 +36,15 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
         description: item.description,
         coachSlug: "tjfit-team",
         requiredEquipment: [],
-        previewImages: ["Uploaded Program"],
-        assets: [{ type: "pdf-guide" as const, label: "Uploaded PDF" }],
+        previewImages: [programManagementCopy.uploadedProgramPreview],
+        assets: [{ type: "pdf-guide" as const, label: programManagementCopy.uploadedPdfAsset }],
         coachCommissionRate: 0,
         isCustomUpload: true
       })) as CustomProgramCard[];
       setUploadedPrograms(mapped);
     };
     loadCustomPrograms();
-  }, [locale]);
+  }, [locale, programManagementCopy.uploadedPdfAsset, programManagementCopy.uploadedProgramPreview]);
 
   const allPrograms = useMemo(
     () => [...uploadedPrograms, ...programs.map((item) => localizeProgram(item, locale))],
@@ -102,10 +104,10 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
           <Link
             href={`/${params.locale}/programs/upload`}
             className="mt-2 inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm text-white hover:bg-white/5"
-            title="Upload Program"
+            title={programManagementCopy.uploadCtaTitle}
           >
             <Plus className="h-4 w-4" />
-            Upload
+            {programManagementCopy.upload}
           </Link>
         )}
       </div>
@@ -135,7 +137,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
       </div>
       {allPrograms.length === 0 && (
         <div className="glass-panel mt-6 rounded-[24px] p-6 text-sm text-zinc-500">
-          No programs are published yet. Check back soon.
+          {programManagementCopy.noProgramsPublished}
         </div>
       )}
     </div>

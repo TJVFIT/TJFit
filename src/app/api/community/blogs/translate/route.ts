@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { locales, type Locale } from "@/lib/i18n";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { rateLimit } from "@/lib/rate-limit";
 
 function chunkText(input: string, chunkSize = 2500) {
   if (input.length <= chunkSize) return [input];
@@ -74,6 +75,18 @@ async function translateTextRobust(text: string, target: Locale) {
 }
 
 export async function POST(request: NextRequest) {
+  const limiter = rateLimit({
+    key:
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      request.ip ??
+      "unknown",
+    limit: 20,
+    windowMs: 60_000
+  });
+  if (!limiter.success) {
+    return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+  }
+
   const body = await request.json().catch(() => null);
   const blogId = String(body?.blogId ?? "").trim();
   const target = String(body?.targetLocale ?? "en").trim() as Locale;

@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Locale } from "@/lib/i18n";
 import { useAuth } from "@/components/auth-provider";
+import { getGuestPopupCopy } from "@/lib/launch-copy";
 
 type Stage = "hidden" | "entry" | "marketing" | "email";
 
@@ -14,13 +15,25 @@ const MARKETING_DONE_KEY = "tjfit_marketing_prompt_done";
 export function GuestOnboardingPopup({ locale }: { locale: Locale }) {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const [stage, setStage] = useState<Stage>("hidden");
   const [email, setEmail] = useState("");
   const [working, setWorking] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const copy = getGuestPopupCopy(locale);
 
   useEffect(() => {
     if (loading) return;
+    const isAuthRoute =
+      pathname === `/${locale}/login` ||
+      pathname === `/${locale}/signup` ||
+      pathname === `/${locale}/admin`;
+
+    if (isAuthRoute) {
+      setStage("hidden");
+      return;
+    }
+
     if (user) {
       setStage("hidden");
       return;
@@ -41,7 +54,7 @@ export function GuestOnboardingPopup({ locale }: { locale: Locale }) {
     }
 
     setStage("hidden");
-  }, [user, loading]);
+  }, [user, loading, locale, pathname]);
 
   const markMarketingDone = () => {
     localStorage.setItem(MARKETING_DONE_KEY, "1");
@@ -53,6 +66,7 @@ export function GuestOnboardingPopup({ locale }: { locale: Locale }) {
   const chooseCreateAccount = () => {
     localStorage.setItem(ENTRY_DONE_KEY, "1");
     localStorage.setItem(MARKETING_FLAG_KEY, "1");
+    setStage("hidden");
     router.push(`/${locale}/signup?from=welcome`);
   };
 
@@ -65,7 +79,7 @@ export function GuestOnboardingPopup({ locale }: { locale: Locale }) {
   const subscribeNewsletter = async () => {
     const cleanEmail = email.trim().toLowerCase();
     if (!cleanEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
-      setMessage("Please enter a valid email.");
+      setMessage(copy.invalidEmail);
       return;
     }
 
@@ -83,7 +97,7 @@ export function GuestOnboardingPopup({ locale }: { locale: Locale }) {
     const data = await res.json().catch(() => ({}));
     setWorking(false);
     if (!res.ok) {
-      setMessage(data.error ?? "Could not subscribe.");
+      setMessage(data.error ?? copy.subscribeFailed);
       return;
     }
     markMarketingDone();
@@ -98,23 +112,23 @@ export function GuestOnboardingPopup({ locale }: { locale: Locale }) {
       <div className="glass-panel w-full max-w-lg rounded-[28px] p-6">
         {stage === "entry" && (
           <>
-            <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">Welcome</p>
-            <h2 className="mt-3 text-2xl font-semibold text-white">Create account or view website?</h2>
+            <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{copy.welcome}</p>
+            <h2 className="mt-3 text-2xl font-semibold text-white">{copy.entryTitle}</h2>
             <p className="mt-3 text-sm text-zinc-400">
-              Create an account for programs, progress tracking, and secure coach chat. You can also browse first.
+              {copy.entrySubtitle}
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <button
                 onClick={chooseCreateAccount}
                 className="gradient-button rounded-full px-5 py-2.5 text-sm font-medium text-white"
               >
-                Create account
+                {copy.createAccount}
               </button>
               <button
                 onClick={chooseViewWebsite}
                 className="rounded-full border border-white/15 px-5 py-2.5 text-sm text-white hover:bg-white/5"
               >
-                View website
+                {copy.viewWebsite}
               </button>
             </div>
           </>
@@ -122,23 +136,23 @@ export function GuestOnboardingPopup({ locale }: { locale: Locale }) {
 
         {stage === "marketing" && (
           <>
-            <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">Stay Updated</p>
-            <h2 className="mt-3 text-2xl font-semibold text-white">Want discount and feature emails?</h2>
+            <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{copy.stayUpdated}</p>
+            <h2 className="mt-3 text-2xl font-semibold text-white">{copy.marketingTitle}</h2>
             <p className="mt-3 text-sm text-zinc-400">
-              Get discount alerts and announcements when new TJFit features and programs are released.
+              {copy.marketingSubtitle}
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <button
                 onClick={() => setStage("email")}
                 className="gradient-button rounded-full px-5 py-2.5 text-sm font-medium text-white"
               >
-                Yes, sign me up
+                {copy.yesSignMeUp}
               </button>
               <button
                 onClick={markMarketingDone}
                 className="rounded-full border border-white/15 px-5 py-2.5 text-sm text-white hover:bg-white/5"
               >
-                No thanks
+                {copy.noThanks}
               </button>
             </div>
           </>
@@ -146,13 +160,13 @@ export function GuestOnboardingPopup({ locale }: { locale: Locale }) {
 
         {stage === "email" && (
           <>
-            <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">Email Signup</p>
-            <h2 className="mt-3 text-2xl font-semibold text-white">Enter your email</h2>
-            <p className="mt-3 text-sm text-zinc-400">We will send discounts and updates for new TJFit features.</p>
+            <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{copy.emailSignup}</p>
+            <h2 className="mt-3 text-2xl font-semibold text-white">{copy.enterEmail}</h2>
+            <p className="mt-3 text-sm text-zinc-400">{copy.emailSubtitle}</p>
             <input
               className="input mt-4"
               type="email"
-              placeholder="you@example.com"
+              placeholder={copy.emailPlaceholder}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -163,13 +177,13 @@ export function GuestOnboardingPopup({ locale }: { locale: Locale }) {
                 disabled={working}
                 className="gradient-button rounded-full px-5 py-2.5 text-sm font-medium text-white disabled:opacity-60"
               >
-                {working ? "Submitting..." : "Subscribe"}
+                {working ? copy.submitting : copy.subscribe}
               </button>
               <button
                 onClick={markMarketingDone}
                 className="rounded-full border border-white/15 px-5 py-2.5 text-sm text-white hover:bg-white/5"
               >
-                Skip
+                {copy.skip}
               </button>
             </div>
           </>

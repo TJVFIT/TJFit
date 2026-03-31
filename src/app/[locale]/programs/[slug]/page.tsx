@@ -13,6 +13,7 @@ import {
   localizeProgram
 } from "@/lib/program-localization";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { getProgramManagementCopy } from "@/lib/program-management-copy";
 
 function getProgramTheme(category: string) {
   const base = category.toLowerCase();
@@ -70,6 +71,7 @@ export default async function ProgramDetailPage({
   };
   const localizedProgram = program ? localizeProgram(program, locale) : null;
   const copy = getProgramUiCopy(locale);
+  const programManagementCopy = getProgramManagementCopy(locale);
   const localizedPrice = formatProgramPrice(
     program ? getProgramBasePriceTry(program) : customProgram?.price_try ?? 400,
     locale
@@ -93,10 +95,13 @@ export default async function ProgramDetailPage({
   const programDescription = localizedProgram?.description ?? customProgram?.description ?? "";
   const programDuration = localizedProgram?.duration ?? customProgram?.duration ?? "";
   const programDifficulty = localizedProgram?.difficulty ?? customProgram?.difficulty ?? "Beginner to Advanced";
-  const previewItems = program?.previewImages ?? ["Uploaded PDF Program"];
+  const previewItems = program?.previewImages ?? [programManagementCopy.uploadedProgramPreview];
   const programAssets =
     program?.assets ??
-    [{ type: "pdf-guide" as const, label: "Uploaded PDF" }, { type: "pdf-guide" as const, label: "Translated Pack" }];
+    [
+      { type: "pdf-guide" as const, label: programManagementCopy.uploadedPdfAsset },
+      { type: "pdf-guide" as const, label: programManagementCopy.translatedPackAsset }
+    ];
 
   return (
     <div className="mx-auto max-w-7xl space-y-10 px-4 py-16 sm:px-6 lg:px-8">
@@ -252,7 +257,7 @@ export default async function ProgramDetailPage({
         <aside className="space-y-6">
           <div className="glass-panel rounded-[32px] p-6">
             <p className="text-sm text-zinc-400">{copy.coachLabel}</p>
-            <p className="mt-2 text-2xl font-semibold text-white">{coach?.name ?? "TJFit Team"}</p>
+            <p className="mt-2 text-2xl font-semibold text-white">{coach?.name ?? copy.teamFallback}</p>
             <p className="mt-2 text-sm text-zinc-400">{coach?.specialty ?? copy.teamFallback}</p>
 
             <div className="mt-6 space-y-3 text-sm text-zinc-300">

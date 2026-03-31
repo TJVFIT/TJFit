@@ -1,6 +1,13 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+function applyHtmlCacheHeaders(request: NextRequest, response: NextResponse) {
+  const accept = request.headers.get("accept") ?? "";
+  if (accept.includes("text/html")) {
+    response.headers.set("Cache-Control", "public, max-age=0, must-revalidate");
+  }
+}
+
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
     request: { headers: request.headers }
@@ -10,6 +17,7 @@ export async function middleware(request: NextRequest) {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
+    applyHtmlCacheHeaders(request, response);
     return response;
   }
 
@@ -27,6 +35,8 @@ export async function middleware(request: NextRequest) {
   });
 
   await supabase.auth.getUser();
+
+  applyHtmlCacheHeaders(request, response);
 
   return response;
 }

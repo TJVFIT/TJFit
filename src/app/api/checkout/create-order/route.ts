@@ -19,7 +19,18 @@ export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => null);
   const programSlug = String(body?.programSlug ?? "").trim();
   const discountCode = String(body?.discountCode ?? "").trim().toUpperCase();
-  const provider = String(body?.provider ?? "paddle").trim().toLowerCase();
+  const allowTestCheckout = process.env.ALLOW_TEST_CHECKOUT === "true";
+  const paytrConfigured = Boolean(
+    process.env.PAYTR_MERCHANT_ID && process.env.PAYTR_MERCHANT_KEY && process.env.PAYTR_MERCHANT_SALT
+  );
+
+  const provider = paytrConfigured ? "paytr" : allowTestCheckout ? "test" : "";
+  if (!provider) {
+    return NextResponse.json(
+      { error: "Payments are not configured yet. Please finish provider setup before accepting purchases." },
+      { status: 503 }
+    );
+  }
 
   const staticProgram = programs.find((item) => item.slug === programSlug);
   let discountPercent = 0;
@@ -87,10 +98,10 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({
     order,
     coinsToEarn: TJFIT_COINS_PER_PROGRAM_PURCHASE,
-    provider: provider === "paddle" ? "paddle" : "test",
+    provider,
     message:
-      provider === "paddle"
-        ? "Paddle order prepared. Connect Paddle checkout + webhook to auto-complete."
+      provider === "paytr"
+        ? "PAYTR order prepared. Complete the provider handoff to finish payment."
         : "Test order prepared."
   });
 }

@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Locale, locales } from "@/lib/i18n";
-import { localizeCustomProgramRow, type CustomProgramRow } from "@/lib/custom-programs";
+import { toPublicCustomProgramRow, type CustomProgramRow } from "@/lib/custom-programs";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
-
-const BUCKET_NAME = "program-assets";
 
 function getRequestedLocale(request: NextRequest): Locale {
   const value = request.nextUrl.searchParams.get("locale") ?? "en";
@@ -32,15 +30,7 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
   }
 
   const row = data as CustomProgramRow;
-  const localized = localizeCustomProgramRow(row, locale);
-
-  const { data: signed } = await supabase.storage
-    .from(BUCKET_NAME)
-    .createSignedUrl(row.pdf_path, 60 * 20);
-
   return NextResponse.json({
-    program: localized,
-    translatedPdfText: row.localized_pdf_text?.[locale] ?? row.source_pdf_text ?? "",
-    pdfUrl: signed?.signedUrl ?? null
+    program: toPublicCustomProgramRow(row, locale)
   });
 }
