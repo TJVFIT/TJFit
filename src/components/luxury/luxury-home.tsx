@@ -6,11 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import { Bot, Dumbbell, Sparkles, Users } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { ClientErrorBoundary } from "@/components/client-error-boundary";
-import { CursorGlow } from "@/components/luxury/cursor-glow";
 import { GlowButton } from "@/components/luxury/glow-button";
 import { InteractiveCard } from "@/components/luxury/interactive-card";
-import { useHero3DEnabled } from "@/components/luxury/use-hero-3d-enabled";
-import { WebGLErrorBoundary } from "@/components/luxury/webgl-error-boundary";
 import { HomeLeadNudge } from "@/components/marketing/home-lead-nudge";
 import { LeadCaptureForm } from "@/components/marketing/lead-capture-form";
 import { PricingPreviewHome } from "@/components/marketing/pricing-preview-home";
@@ -19,11 +16,6 @@ import type { HomeLuxuryCopy } from "@/lib/home-luxury-copy";
 import type { Locale } from "@/lib/i18n";
 
 const LUX_EASE = [0.16, 1, 0.3, 1] as const;
-
-const HeroScene3D = dynamic(
-  () => import("@/components/luxury/hero-scene-3d").then((m) => m.HeroScene3D),
-  { ssr: false, loading: () => null }
-);
 
 const HomeBlogsPreview = dynamic(
   () => import("@/components/home-blogs-preview").then((m) => m.HomeBlogsPreview),
@@ -113,8 +105,6 @@ export function LuxuryHome({
   const reduce = useReducedMotion();
   const heroRef = useRef<HTMLElement>(null);
   const [stickyCta, setStickyCta] = useState(false);
-  const [sceneReady, setSceneReady] = useState(false);
-  const showHero3d = useHero3DEnabled(reduce === true);
 
   useEffect(() => {
     const el = heroRef.current;
@@ -130,52 +120,35 @@ export function LuxuryHome({
     return () => io.disconnect();
   }, []);
 
-  useEffect(() => {
-    if (!showHero3d) setSceneReady(false);
-  }, [showHero3d]);
-
   const trustItems = Array.isArray(copy?.hero?.trust) ? copy.hero.trust : [];
   const headlineAccent = copy.hero.headlineLine2?.trim();
 
   return (
     <div className={`overflow-x-hidden ${stickyCta ? "pb-24 lg:pb-0" : ""}`}>
-      {/* Hero — 3D canvas (desktop only) + readable overlay */}
+      {/* Hero — CSS gradients + soft orbs (no WebGL / Three.js) */}
       <section
         ref={heroRef}
         className="relative flex min-h-[100dvh] flex-col justify-center overflow-hidden px-4 pb-24 pt-24 sm:px-6 lg:px-8 lg:pt-28"
       >
         <div className="pointer-events-none absolute inset-0 z-0 mesh-grid opacity-[0.12]" aria-hidden />
         <div
-          className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_70%_45%_at_50%_-10%,rgba(34,211,238,0.06),transparent),radial-gradient(ellipse_50%_35%_at_100%_40%,rgba(139,92,246,0.05),transparent)]"
+          className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_70%_45%_at_50%_-10%,rgba(34,211,238,0.08),transparent),radial-gradient(ellipse_50%_35%_at_100%_40%,rgba(139,92,246,0.07),transparent),radial-gradient(ellipse_40%_30%_at_0%_60%,rgba(34,211,238,0.04),transparent)]"
           aria-hidden
         />
-        {showHero3d ? (
-          <div
-            className={`pointer-events-none absolute inset-0 z-0 touch-none transition-opacity duration-1000 ease-out ${
-              sceneReady ? "opacity-100" : "opacity-0"
-            }`}
-            aria-hidden
-          >
-            <WebGLErrorBoundary>
-              <HeroScene3D className="h-full w-full" onReady={() => setSceneReady(true)} />
-            </WebGLErrorBoundary>
-          </div>
-        ) : null}
-        {!showHero3d && !reduce ? (
-          <>
-            <div
-              className="hero-orb hero-orb--drift-a pointer-events-none absolute -left-40 top-1/3 z-0 h-80 w-80 bg-cyan-400/12"
-              aria-hidden
-            />
-            <div
-              className="hero-orb hero-orb--drift-b pointer-events-none absolute -right-32 bottom-1/3 z-0 h-96 w-96 bg-violet-500/10"
-              aria-hidden
-            />
-          </>
-        ) : null}
-        {showHero3d && reduce !== true ? <CursorGlow /> : null}
         <div
-          className="pointer-events-none absolute inset-0 z-[4] bg-gradient-to-b from-[#0A0A0B]/65 via-[#0A0A0B]/25 to-[#0A0A0B]/93"
+          className={`hero-orb pointer-events-none absolute -left-40 top-1/3 z-0 h-80 w-80 bg-cyan-400/14 ${
+            reduce ? "" : "hero-orb--drift-a"
+          }`}
+          aria-hidden
+        />
+        <div
+          className={`hero-orb pointer-events-none absolute -right-32 bottom-1/3 z-0 h-96 w-96 bg-violet-500/12 ${
+            reduce ? "" : "hero-orb--drift-b"
+          }`}
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute inset-0 z-[4] bg-gradient-to-b from-[#0A0A0B]/70 via-[#0A0A0B]/30 to-[#0A0A0B]/94"
           aria-hidden
         />
 
@@ -410,7 +383,17 @@ export function LuxuryHome({
         </div>
       </section>
 
-      <PricingPreviewHome locale={locale} copy={copy.pricingPreview} />
+      <ClientErrorBoundary
+        fallback={
+          <section className="border-t border-white/[0.05] py-20">
+            <div className="mx-auto max-w-6xl px-4 text-sm text-zinc-500 sm:px-6 lg:px-8">
+              Membership preview is temporarily unavailable.
+            </div>
+          </section>
+        }
+      >
+        <PricingPreviewHome locale={locale} copy={copy.pricingPreview} />
+      </ClientErrorBoundary>
 
       {/* Coaches */}
       <section className="border-t border-white/[0.05] py-24 lg:py-32">
@@ -463,7 +446,8 @@ export function LuxuryHome({
                       </span>
                       <p className="mt-4 font-display text-lg font-semibold text-white">{c.name}</p>
                       <p className="mt-3 text-xs text-zinc-500">
-                        ★ {c.rating.toFixed(1)}
+                        ★{" "}
+                        {typeof c.rating === "number" && Number.isFinite(c.rating) ? c.rating.toFixed(1) : "—"}
                         <span className="text-zinc-700"> · </span>
                         <span className="text-zinc-600 transition group-hover:text-zinc-400">
                           {copy.coaches.viewProfile}
@@ -532,16 +516,18 @@ export function LuxuryHome({
         >
           <div className="mx-auto flex max-w-lg items-center gap-3">
             <GlowButton
-              href={`/${locale}/signup`}
+              href={`/${locale}#tjfit-lead`}
               variant="primary"
               reducedMotion={reduce}
               className="flex min-h-[44px] flex-1 justify-center text-sm"
+              onPress={() => trackMarketingEvent("hero_cta_click", { cta: "roadmap", surface: "sticky" })}
             >
               {copy.hero.ctaPrimary}
             </GlowButton>
             <Link
-              href={`/${locale}/programs`}
+              href={`/${locale}/signup`}
               className="shrink-0 py-2 text-xs font-medium text-zinc-500 underline-offset-4 hover:text-zinc-300"
+              onClick={() => trackMarketingEvent("hero_cta_click", { cta: "signup", surface: "sticky" })}
             >
               {copy.hero.ctaSecondary}
             </Link>
@@ -549,7 +535,9 @@ export function LuxuryHome({
         </div>
       ) : null}
 
-      <HomeLeadNudge locale={locale} title={copy.leadNudge.title} sub={copy.leadNudge.sub} />
+      <ClientErrorBoundary fallback={null}>
+        <HomeLeadNudge locale={locale} title={copy.leadNudge?.title ?? ""} sub={copy.leadNudge?.sub ?? ""} />
+      </ClientErrorBoundary>
     </div>
   );
 }

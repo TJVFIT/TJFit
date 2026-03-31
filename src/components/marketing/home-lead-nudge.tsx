@@ -78,6 +78,7 @@ export function HomeLeadNudge({
     };
   }, [tryOpen]);
 
+  if (!title?.trim()) return null;
   if (!open) return null;
 
   return (
