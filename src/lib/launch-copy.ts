@@ -141,6 +141,33 @@ type NavChromeCopy = {
   aiLabel: string;
 };
 
+/** Short blurbs (2–3 words) for sidebar rows; must stay tiny for layout. */
+export type NavMenuSummaries = {
+  blogs: string;
+  home: string;
+  coaches: string;
+  programs: string;
+  community: string;
+  threads: string;
+  challenges: string;
+  transformations: string;
+  ai: string;
+  membership: string;
+  support: string;
+  live: string;
+  progress: string;
+  messages: string;
+  dashboard: string;
+  admin: string;
+  chat: string;
+};
+
+type HomePageSectionCopy = {
+  blogsTitle: string;
+  blogsSubtitle: string;
+  blogsViewAll: string;
+};
+
 type AdminCoachCopy = {
   title: string;
   subtitle: string;
@@ -750,6 +777,132 @@ const footerCopy: Record<Locale, FooterCopy> = {
   }
 };
 
+const navMenuSummaries: Record<Locale, NavMenuSummaries> = {
+  en: {
+    blogs: "Coach articles",
+    home: "Start here",
+    coaches: "Find coaches",
+    programs: "Plans & training",
+    community: "Community hub",
+    threads: "Open discussions",
+    challenges: "Group challenges",
+    transformations: "Success stories",
+    ai: "Smart guidance",
+    membership: "Subscriptions",
+    support: "Help & answers",
+    live: "Live sessions",
+    progress: "Track progress",
+    messages: "Inbox",
+    dashboard: "Coach workspace",
+    admin: "Admin tools",
+    chat: "Coach chat"
+  },
+  tr: {
+    blogs: "Koç yazıları",
+    home: "Başlangıç",
+    coaches: "Koç bul",
+    programs: "Plan ve antrenman",
+    community: "Topluluk merkezi",
+    threads: "Tartışmalar",
+    challenges: "Grup meydan okuma",
+    transformations: "Başarı hikayeleri",
+    ai: "Akıllı rehber",
+    membership: "Abonelik",
+    support: "Yardım",
+    live: "Canlı yayın",
+    progress: "İlerleme takibi",
+    messages: "Gelen kutusu",
+    dashboard: "Koç paneli",
+    admin: "Yönetim",
+    chat: "Koç sohbeti"
+  },
+  ar: {
+    blogs: "مقالات المدرب",
+    home: "ابدأ هنا",
+    coaches: "ابحث عن مدرب",
+    programs: "خطط وتدريب",
+    community: "مركز المجتمع",
+    threads: "نقاشات",
+    challenges: "تحديات جماعية",
+    transformations: "قصص نجاح",
+    ai: "دليل ذكي",
+    membership: "اشتراك",
+    support: "مساعدة",
+    live: "جلسات مباشرة",
+    progress: "تتبع التقدم",
+    messages: "صندوق الوارد",
+    dashboard: "لوحة المدرب",
+    admin: "إدارة",
+    chat: "محادثة المدرب"
+  },
+  es: {
+    blogs: "Artículos coach",
+    home: "Empieza aquí",
+    coaches: "Encuentra coach",
+    programs: "Planes y training",
+    community: "Hub comunidad",
+    threads: "Debates abiertos",
+    challenges: "Retos grupales",
+    transformations: "Historias éxito",
+    ai: "Guía inteligente",
+    membership: "Suscripción",
+    support: "Ayuda",
+    live: "Sesiones en vivo",
+    progress: "Tu progreso",
+    messages: "Bandeja",
+    dashboard: "Panel coach",
+    admin: "Administración",
+    chat: "Chat coach"
+  },
+  fr: {
+    blogs: "Articles coach",
+    home: "Par ici",
+    coaches: "Trouver coach",
+    programs: "Plans training",
+    community: "Hub communauté",
+    threads: "Discussions",
+    challenges: "Défis groupe",
+    transformations: "Réussites",
+    ai: "Guide futé",
+    membership: "Abonnement",
+    support: "Aide",
+    live: "Sessions live",
+    progress: "Ta progression",
+    messages: "Boîte réception",
+    dashboard: "Espace coach",
+    admin: "Administration",
+    chat: "Chat coach"
+  }
+};
+
+const homePageSectionCopy: Record<Locale, HomePageSectionCopy> = {
+  en: {
+    blogsTitle: "Latest from the blog",
+    blogsSubtitle: "Coach-written posts—read more in Community.",
+    blogsViewAll: "View all blogs"
+  },
+  tr: {
+    blogsTitle: "Blogdan son yazılar",
+    blogsSubtitle: "Koç yazıları—devamı Toplulukta.",
+    blogsViewAll: "Tüm bloglar"
+  },
+  ar: {
+    blogsTitle: "أحدث التدوينات",
+    blogsSubtitle: "منشورات المدرب—المزيد في المجتمع.",
+    blogsViewAll: "كل المدونات"
+  },
+  es: {
+    blogsTitle: "Últimas entradas",
+    blogsSubtitle: "Posts del coach—más en Comunidad.",
+    blogsViewAll: "Ver todos los blogs"
+  },
+  fr: {
+    blogsTitle: "Derniers articles",
+    blogsSubtitle: "Posts coach—suite dans Communauté.",
+    blogsViewAll: "Tous les blogs"
+  }
+};
+
 const navChromeCopy: Record<Locale, NavChromeCopy> = {
   en: {
     menu: "Menu",
@@ -899,6 +1052,14 @@ export function getFooterCopy(locale: Locale) {
 
 export function getNavChromeCopy(locale: Locale) {
   return navChromeCopy[locale];
+}
+
+export function getNavMenuSummaries(locale: Locale) {
+  return navMenuSummaries[locale];
+}
+
+export function getHomePageSectionCopy(locale: Locale) {
+  return homePageSectionCopy[locale];
 }
 
 export function getAdminCoachCopy(locale: Locale) {

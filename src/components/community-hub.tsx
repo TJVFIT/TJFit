@@ -24,8 +24,10 @@ type BlogPost = {
 };
 
 function safeTab(value: string | null): TabKey {
-  if (value === "challenges" || value === "transformations" || value === "blogs") return value;
-  return "threads";
+  if (value === "threads" || value === "challenges" || value === "transformations" || value === "blogs") {
+    return value;
+  }
+  return "blogs";
 }
 
 function formatDate(value: string, locale: Locale) {
@@ -132,10 +134,10 @@ export function CommunityHub({
   const isAdmin = role === "admin";
   const copy = getCommunityCopy(locale);
   const tabs: { key: TabKey; label: string }[] = [
+    { key: "blogs", label: copy.tabs.blogs },
     { key: "threads", label: copy.tabs.threads },
     { key: "challenges", label: copy.tabs.challenges },
-    { key: "transformations", label: copy.tabs.transformations },
-    { key: "blogs", label: copy.tabs.blogs }
+    { key: "transformations", label: copy.tabs.transformations }
   ];
 
   const [activeTab, setActiveTab] = useState<TabKey>(safeTab(initialTab ?? null));

@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { HomeBlogsPreview } from "@/components/home-blogs-preview";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
+import { getCommunityCopy } from "@/lib/launch-copy";
 
 export default function HomePage({ params }: { params: { locale: string } }) {
   if (!isLocale(params.locale)) {
@@ -8,6 +10,7 @@ export default function HomePage({ params }: { params: { locale: string } }) {
 
   const locale = params.locale as Locale;
   const dict = getDictionary(locale);
+  const communityTabs = getCommunityCopy(locale);
 
   const copy = {
     en: {
@@ -68,6 +71,20 @@ export default function HomePage({ params }: { params: { locale: string } }) {
   }[locale];
 
   const categories = [
+    {
+      title: communityTabs.tabs.blogs,
+      description:
+        locale === "tr"
+          ? "Koçlardan güncel yazılar ve ipuçları."
+          : locale === "ar"
+            ? "منشورات ونصائح من المدربين."
+            : locale === "es"
+              ? "Publicaciones y consejos de coaches."
+              : locale === "fr"
+                ? "Articles et conseils des coachs."
+                : "Fresh posts and tips from coaches.",
+      href: `/${locale}/community?tab=blogs`
+    },
     {
       title:
         locale === "tr"
@@ -178,6 +195,8 @@ export default function HomePage({ params }: { params: { locale: string } }) {
           </Link>
         </div>
       </section>
+
+      <HomeBlogsPreview locale={locale} />
 
       <section className="mt-10">
         <div className="mb-6">

@@ -7,7 +7,7 @@ import { useAuth } from "@/components/auth-provider";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { Locale, getDictionary } from "@/lib/i18n";
-import { getNavChromeCopy } from "@/lib/launch-copy";
+import { getNavChromeCopy, getNavMenuSummaries } from "@/lib/launch-copy";
 
 const routeMap = {
   home: "",
@@ -21,6 +21,8 @@ const routeMap = {
   admin: "/admin",
   support: "/support"
 } as const;
+
+type MenuRow = { key: string; href: string; label: string; summary: string };
 
 export function SiteNav({ locale }: { locale: Locale }) {
   const { user, role, hasActiveCoachChat, loading } = useAuth();
@@ -39,6 +41,7 @@ export function SiteNav({ locale }: { locale: Locale }) {
   };
   const dict = getDictionary(locale);
   const navCopy = getNavChromeCopy(locale);
+  const summaries = getNavMenuSummaries(locale);
 
   useEffect(() => {
     setSearch(window.location.search);
@@ -84,72 +87,73 @@ export function SiteNav({ locale }: { locale: Locale }) {
   ];
 
   const links = isAdmin ? adminLinks : isCoach ? coachLinks : user ? userLinks : publicLinks;
-  const exploreLinks = useMemo(
-    () =>
-      links.filter(
-        (item) =>
-          item.key === "home" ||
-          item.key === "programs" ||
-          item.key === "community" ||
-          item.key === "coaches"
-      ),
-    [links]
-  );
-  const communityLinks = [
-    { key: "community-threads", href: "/community?tab=threads", label: navCopy.threads },
-    { key: "community-challenges", href: "/community?tab=challenges", label: dict.nav.challenges },
-    { key: "community-transformations", href: "/community?tab=transformations", label: dict.nav.transformations },
-    { key: "community-blogs", href: "/community?tab=blogs", label: navCopy.blogs }
-  ];
-  const accountLinks = links.filter(
-    (item) =>
-      !exploreLinks.some((entry) => entry.key === item.key) &&
-      item.key !== "ai" &&
-      item.key !== "membership" &&
-      item.key !== "support"
-  );
-  const featureLinks = links.filter(
-    (item) => item.key === "ai" || item.key === "membership" || item.key === "support" || item.key === "live"
-  );
+  const linkKeys = useMemo(() => new Set(links.map((l) => l.key)), [links]);
+
+  const menuRows: MenuRow[] = useMemo(() => {
+    const row = (key: keyof typeof summaries, href: string, label: string): MenuRow => ({
+      key,
+      href,
+      label,
+      summary: summaries[key]
+    });
+
+    const core: MenuRow[] = [
+      row("blogs", "/community?tab=blogs", navCopy.blogs),
+      row("home", routeMap.home, dict.nav.home),
+      row("programs", routeMap.programs, dict.nav.programs),
+      row("community", routeMap.community, dict.nav.community),
+      row("coaches", routeMap.coaches, dict.nav.coaches),
+      row("threads", "/community?tab=threads", navCopy.threads),
+      row("challenges", "/community?tab=challenges", dict.nav.challenges),
+      row("transformations", "/community?tab=transformations", dict.nav.transformations)
+    ];
+
+    const featureOrder: { key: keyof typeof summaries; href: string; label: string }[] = [
+      { key: "ai", href: routeMap.ai, label: navCopy.aiLabel },
+      { key: "membership", href: routeMap.membership, label: dict.nav.membership },
+      { key: "live", href: routeMap.live, label: dict.nav.live },
+      { key: "support", href: routeMap.support, label: dict.nav.feedback }
+    ];
+
+    const features: MenuRow[] = featureOrder
+      .filter((f) => linkKeys.has(f.key))
+      .map((f) => row(f.key, f.href, f.label));
+
+    const accountOrder: { key: string; href: string; label: string; summaryKey: keyof typeof summaries }[] = [
+      { key: "progress", href: "/progress", label: dict.nav.progress, summaryKey: "progress" },
+      { key: "chat", href: "/messages", label: chatLabel, summaryKey: "chat" },
+      { key: "messages", href: "/messages", label: dict.nav.messages, summaryKey: "messages" },
+      { key: "dashboard", href: routeMap.dashboard, label: dict.nav.dashboard, summaryKey: "dashboard" },
+      { key: "admin", href: routeMap.admin, label: dict.nav.admin, summaryKey: "admin" }
+    ];
+
+    const accounts: MenuRow[] = [];
+    const seen = new Set<string>();
+    for (const a of accountOrder) {
+      if (!linkKeys.has(a.key) || seen.has(a.href)) continue;
+      seen.add(a.href);
+      accounts.push({
+        key: a.key,
+        href: a.href,
+        label: a.label,
+        summary: summaries[a.summaryKey]
+      });
+    }
+
+    return [...core, ...features, ...accounts];
+  }, [summaries, dict, navCopy, linkKeys, chatLabel]);
 
   const isActive = (href: string) => {
     const fullPath = `/${locale}${href}`;
     if (href.includes("?")) {
-      const currentTab = new URLSearchParams(search).get("tab") ?? "threads";
-      const hrefTab = new URLSearchParams(href.split("?")[1] ?? "").get("tab") ?? "threads";
+      const currentTab = new URLSearchParams(search).get("tab") ?? "blogs";
+      const hrefTab = new URLSearchParams(href.split("?")[1] ?? "").get("tab") ?? "";
+      if (!hrefTab) return false;
       return pathname === `/${locale}/community` && currentTab === hrefTab;
     }
     if (href === "") return pathname === `/${locale}`;
     return pathname === fullPath || pathname.startsWith(`${fullPath}/`);
   };
-
-  const SidebarLinks = ({
-    title,
-    items
-  }: {
-    title: string;
-    items: { key: string; href: string; label: string }[];
-  }) => (
-    <section>
-      <p className="px-2 text-[11px] uppercase tracking-[0.22em] text-zinc-500">{title}</p>
-      <div className="mt-2 space-y-1">
-        {items.map((item) => (
-          <Link
-            key={item.key}
-            href={`/${locale}${item.href}`}
-            onClick={() => setSidebarOpen(false)}
-            className={`block rounded-xl px-3 py-2 text-sm transition ${
-              isActive(item.href)
-                ? "bg-white/12 text-white"
-                : "text-zinc-300 hover:bg-white/8 hover:text-white"
-            }`}
-          >
-            {item.label}
-          </Link>
-        ))}
-      </div>
-    </section>
-  );
 
   return (
     <>
@@ -206,26 +210,41 @@ export function SiteNav({ locale }: { locale: Locale }) {
             type="button"
             aria-label={navCopy.closeSidebarOverlay}
             onClick={() => setSidebarOpen(false)}
-            className="absolute inset-0 bg-black/60"
+            className="absolute inset-0 bg-black/55 backdrop-blur-[2px]"
           />
-          <aside className="absolute inset-y-0 left-0 flex w-[86vw] max-w-sm flex-col border-r border-white/10 bg-[#0B0B0F] p-5 shadow-2xl">
-            <div className="mb-4 flex items-center justify-between">
-              <p className="font-display text-lg text-white">{navCopy.navigation}</p>
+          <aside className="absolute inset-y-0 left-0 flex h-full w-[min(100vw,max(50vw,17.5rem))] flex-col border-r border-white/10 bg-[#07070c] shadow-2xl sm:w-1/2 sm:max-w-[50vw]">
+            <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 sm:px-8">
+              <p className="font-display text-xl text-white sm:text-2xl">{navCopy.navigation}</p>
               <button
                 type="button"
                 onClick={() => setSidebarOpen(false)}
-                className="rounded-lg border border-white/15 px-2 py-1 text-xs text-zinc-300 hover:bg-white/5"
+                className="rounded-xl border border-white/15 px-3 py-2 text-sm text-zinc-300 transition hover:bg-white/5"
               >
                 {navCopy.close}
               </button>
             </div>
 
-            <div className="min-h-0 flex-1 space-y-6 overflow-y-auto pb-10 pr-1">
-              <SidebarLinks title={navCopy.explore} items={exploreLinks} />
-              <SidebarLinks title={navCopy.community} items={communityLinks} />
-              {featureLinks.length > 0 ? <SidebarLinks title={navCopy.features} items={featureLinks} /> : null}
-              {accountLinks.length > 0 ? <SidebarLinks title={navCopy.account} items={accountLinks} /> : null}
-            </div>
+            <nav className="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-8 sm:py-8" aria-label={navCopy.navigation}>
+              <div className="space-y-1">
+                {menuRows.map((item) => (
+                  <Link
+                    key={`${item.key}-${item.href}`}
+                    href={`/${locale}${item.href}`}
+                    onClick={() => setSidebarOpen(false)}
+                    className={`flex w-full items-start justify-between gap-6 rounded-2xl border border-transparent px-4 py-4 text-start transition sm:px-5 sm:py-5 ${
+                      isActive(item.href)
+                        ? "border-white/15 bg-white/10 text-white"
+                        : "text-zinc-100 hover:border-white/10 hover:bg-white/[0.06]"
+                    }`}
+                  >
+                    <span className="text-base font-semibold leading-snug sm:text-lg">{item.label}</span>
+                    <span className="max-w-[45%] shrink-0 text-end text-[11px] leading-snug text-zinc-500 sm:text-xs">
+                      {item.summary}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </nav>
           </aside>
         </div>
       )}
