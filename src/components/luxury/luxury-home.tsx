@@ -9,6 +9,7 @@ import { CursorGlow } from "@/components/luxury/cursor-glow";
 import { GlowButton } from "@/components/luxury/glow-button";
 import { InteractiveCard } from "@/components/luxury/interactive-card";
 import { useHero3DEnabled } from "@/components/luxury/use-hero-3d-enabled";
+import { WebGLErrorBoundary } from "@/components/luxury/webgl-error-boundary";
 import type { HomeLuxuryCopy } from "@/lib/home-luxury-copy";
 import type { Locale } from "@/lib/i18n";
 
@@ -144,7 +145,9 @@ export function LuxuryHome({
             }`}
             aria-hidden
           >
-            <HeroScene3D className="h-full w-full" onReady={() => setSceneReady(true)} />
+            <WebGLErrorBoundary>
+              <HeroScene3D className="h-full w-full" onReady={() => setSceneReady(true)} />
+            </WebGLErrorBoundary>
           </div>
         ) : null}
         {!showHero3d && !reduce ? (
