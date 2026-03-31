@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useAuth } from "@/components/auth-provider";
+import { LeadCaptureForm } from "@/components/marketing/lead-capture-form";
 import { Locale } from "@/lib/i18n";
 import { getFooterCopy } from "@/lib/launch-copy";
 
@@ -53,7 +54,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
 
   return (
     <footer className="border-t border-white/[0.06] bg-surface/90 backdrop-blur-md">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 text-sm sm:px-6 lg:grid-cols-3 lg:gap-12 lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 text-sm sm:px-6 lg:grid-cols-4 lg:gap-12 lg:px-8">
         <div>
           <p className="bg-gradient-to-r from-white to-zinc-400 bg-clip-text font-display text-xl font-semibold tracking-tight text-transparent">
             TJFit
@@ -78,6 +79,13 @@ export function SiteFooter({ locale }: { locale: Locale }) {
                 {label}
               </Link>
             ))}
+          </div>
+        </div>
+        <div className="lg:max-w-xs">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-600">{copy.leadColumnTitle}</p>
+          <p className="mt-3 text-xs leading-relaxed text-zinc-500">{copy.leadColumnSub}</p>
+          <div className="mt-5">
+            <LeadCaptureForm locale={locale} source="footer" variant="footer" />
           </div>
         </div>
       </div>

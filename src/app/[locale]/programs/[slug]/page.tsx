@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ProgramViewTracker } from "@/components/marketing/program-view-tracker";
 import { coaches, products, programs } from "@/lib/content";
 import { localizeCustomProgramRow, type CustomProgramRow } from "@/lib/custom-programs";
 import { programBlueprints } from "@/lib/program-blueprints";
@@ -105,6 +106,7 @@ export default async function ProgramDetailPage({
 
   return (
     <div className="mx-auto max-w-6xl space-y-10 px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+      <ProgramViewTracker slug={params.slug} />
       <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr]">
         <section className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.045] to-white/[0.015] p-8 shadow-[0_24px_64px_-32px_rgba(0,0,0,0.75)]">
           <span className="badge">{programCategory}</span>

@@ -14,7 +14,21 @@ export default function CoachesPage({ params }: { params: { locale: string } }) 
   return (
     <PremiumPageShell>
       <PremiumSectionTitle eyebrow={copy.badge} title={copy.title} subtitle={copy.body} />
-      <PremiumPanel className="flex flex-col gap-4 sm:flex-row sm:flex-wrap">
+
+      <h2 className="mt-12 text-center font-display text-lg font-semibold text-white sm:text-xl">{copy.standardsTitle}</h2>
+      <div className="mt-8 grid gap-4 md:grid-cols-3">
+        {copy.standards.map((line) => (
+          <div
+            key={line}
+            className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.05] to-transparent px-6 py-8"
+          >
+            <div className="h-px w-12 rounded-full bg-cyan-400/40" aria-hidden />
+            <p className="mt-6 text-sm leading-relaxed text-zinc-400">{line}</p>
+          </div>
+        ))}
+      </div>
+
+      <PremiumPanel className="mt-14 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
         <Link
           href={`/${locale}/programs`}
           className="lux-btn-primary inline-flex flex-1 items-center justify-center rounded-full px-6 py-3 text-center text-sm font-semibold text-[#05080a] sm:min-w-[200px]"

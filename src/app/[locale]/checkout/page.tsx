@@ -7,6 +7,7 @@ import { Locale, isLocale } from "@/lib/i18n";
 import { formatProgramPrice, getProgramBasePriceTry, localizeProgram } from "@/lib/program-localization";
 import { ProtectedRoute } from "@/components/protected-route";
 import { PremiumPageShell, PremiumPanel } from "@/components/premium";
+import { trackMarketingEvent } from "@/lib/analytics-events";
 import { TJFIT_COINS_PER_PROGRAM_PURCHASE, TJFIT_COINS_PER_USD } from "@/lib/tjfit-coin";
 import type { CheckoutClientFlow } from "@/lib/payments/types";
 
@@ -111,6 +112,10 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
   useEffect(() => {
     refreshWallet();
   }, []);
+
+  useEffect(() => {
+    trackMarketingEvent("checkout_start", { locale });
+  }, [locale]);
 
   if (!isLocale(params.locale)) {
     return null;

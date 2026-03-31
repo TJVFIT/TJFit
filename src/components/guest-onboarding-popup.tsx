@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Locale } from "@/lib/i18n";
 import { useAuth } from "@/components/auth-provider";
+import { trackMarketingEvent } from "@/lib/analytics-events";
 import { getGuestPopupCopy } from "@/lib/launch-copy";
 
 type Stage = "hidden" | "entry" | "marketing" | "email";
@@ -100,6 +101,7 @@ export function GuestOnboardingPopup({ locale }: { locale: Locale }) {
       setMessage(data.error ?? copy.subscribeFailed);
       return;
     }
+    trackMarketingEvent("lead_submit", { source: "guest-onboarding" });
     markMarketingDone();
   };
 

@@ -124,6 +124,8 @@ type FooterCopy = {
   coachDashboard: string;
   adminPanel: string;
   checkout: string;
+  leadColumnTitle: string;
+  leadColumnSub: string;
 };
 
 type NavChromeCopy = {
@@ -710,7 +712,9 @@ const footerCopy: Record<Locale, FooterCopy> = {
     support: "Support",
     coachDashboard: "Coach Dashboard",
     adminPanel: "Admin Panel",
-    checkout: "Checkout"
+    checkout: "Checkout",
+    leadColumnTitle: "Product updates",
+    leadColumnSub: "Roadmap and launch notes — no noise."
   },
   tr: {
     description: "Fitness, performans ve toparlanma icin premium online koçluk ve dijital program platformu.",
@@ -726,7 +730,9 @@ const footerCopy: Record<Locale, FooterCopy> = {
     support: "Destek",
     coachDashboard: "Koç Paneli",
     adminPanel: "Yonetim Paneli",
-    checkout: "Odeme"
+    checkout: "Odeme",
+    leadColumnTitle: "Urun guncellemeleri",
+    leadColumnSub: "Yol haritasi ve lansman — gereksiz e-posta yok."
   },
   ar: {
     description: "منصة تدريب اونلاين وبرامج رقمية مميزة للياقة والاداء والتعافي.",
@@ -742,7 +748,9 @@ const footerCopy: Record<Locale, FooterCopy> = {
     support: "الدعم",
     coachDashboard: "لوحة المدرب",
     adminPanel: "لوحة الادارة",
-    checkout: "الدفع"
+    checkout: "الدفع",
+    leadColumnTitle: "تحديثات المنتج",
+    leadColumnSub: "خارطة الطريق والإطلاق — بلا إزعاج."
   },
   es: {
     description: "Plataforma premium de coaching online y programas digitales para fitness, rendimiento y recuperacion.",
@@ -758,7 +766,9 @@ const footerCopy: Record<Locale, FooterCopy> = {
     support: "Soporte",
     coachDashboard: "Panel del Coach",
     adminPanel: "Panel Admin",
-    checkout: "Checkout"
+    checkout: "Checkout",
+    leadColumnTitle: "Novedades del producto",
+    leadColumnSub: "Hoja de ruta y lanzamientos — sin ruido."
   },
   fr: {
     description: "Plateforme premium de coaching en ligne et de programmes digitaux pour fitness, performance et recuperation.",
@@ -774,7 +784,9 @@ const footerCopy: Record<Locale, FooterCopy> = {
     support: "Support",
     coachDashboard: "Tableau Coach",
     adminPanel: "Panneau Admin",
-    checkout: "Paiement"
+    checkout: "Paiement",
+    leadColumnTitle: "Mises a jour produit",
+    leadColumnSub: "Feuille de route et lancements — sans bruit."
   }
 };
 

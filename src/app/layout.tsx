@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 
 import { AuthProvider } from "@/components/auth-provider";
+import { TrackingScripts } from "@/components/marketing/tracking-scripts";
 import { getSiteUrl } from "@/lib/site-url";
 import "../../sentry.client.config";
 import "./globals.css";
@@ -68,6 +69,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
       <body className="font-sans antialiased">
+        <TrackingScripts />
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

@@ -8,12 +8,14 @@ type GlowButtonProps = {
   className?: string;
   children: React.ReactNode;
   reducedMotion?: boolean | null;
+  /** Fires on click (e.g. analytics) before navigation */
+  onPress?: () => void;
 };
 
 /**
  * CTA with CSS hover/tap scale (no Framer Motion — avoids hydration/runtime issues in production).
  */
-export function GlowButton({ href, variant, className = "", children, reducedMotion }: GlowButtonProps) {
+export function GlowButton({ href, variant, className = "", children, reducedMotion, onPress }: GlowButtonProps) {
   const base =
     variant === "primary"
       ? "lux-btn-primary group relative inline-flex min-h-[48px] items-center justify-center overflow-hidden rounded-full px-8 py-3 text-sm font-semibold text-[#05080a] sm:text-[15px]"
@@ -26,7 +28,7 @@ export function GlowButton({ href, variant, className = "", children, reducedMot
 
   return (
     <div className={`inline-flex ${className}`.trim()}>
-      <Link href={href} className={`${base} ${motionCls}`}>
+      <Link href={href} className={`${base} ${motionCls}`} onClick={() => onPress?.()}>
         {variant === "primary" ? (
           <span
             className="pointer-events-none absolute inset-0 -translate-x-full skew-x-12 bg-gradient-to-r from-transparent via-white/35 to-transparent opacity-0 transition duration-700 ease-out group-hover:translate-x-full group-hover:opacity-100"
