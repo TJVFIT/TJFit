@@ -16,10 +16,42 @@ type BlogPost = {
   created_at: string;
 };
 
-function excerpt(text: string, max = 140) {
-  const t = text.replace(/\s+/g, " ").trim();
+function excerpt(text: string | null | undefined, max = 140) {
+  const t = String(text ?? "")
+    .replace(/\s+/g, " ")
+    .trim();
   if (t.length <= max) return t;
   return `${t.slice(0, max).trim()}…`;
+}
+
+function isSafeImageSrc(src: string) {
+  try {
+    const u = new URL(src);
+    return u.protocol === "https:" || u.protocol === "http:";
+  } catch {
+    return false;
+  }
+}
+
+function normalizeBlogPosts(raw: unknown): BlogPost[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((row): BlogPost | null => {
+      if (!row || typeof row !== "object") return null;
+      const p = row as Record<string, unknown>;
+      const id = String(p.id ?? "").trim();
+      if (!id) return null;
+      return {
+        id,
+        title: String(p.title ?? ""),
+        content: String(p.content ?? ""),
+        author_name: String(p.author_name ?? ""),
+        image_url: typeof p.image_url === "string" && p.image_url.length > 0 ? p.image_url : null,
+        is_pinned: Boolean(p.is_pinned),
+        created_at: String(p.created_at ?? "")
+      };
+    })
+    .filter((p): p is BlogPost => p !== null);
 }
 
 export function HomeBlogsPreview({
@@ -91,7 +123,7 @@ export function HomeBlogsPreview({
                 <div className="relative aspect-[16/9] w-full overflow-hidden bg-black/40">
                   <Image
                     src={post.image_url}
-                    alt={post.title}
+                    alt={post.title || "Blog"}
                     fill
                     className="object-cover transition group-hover:scale-[1.02]"
                     sizes="(max-width: 640px) 100vw, 50vw"
