@@ -1,0 +1,38 @@
+{
+  "name": "TJFit",
+  "short_name": "TJFit",
+  "description": "Premium multilingual coaching platform for fitness, performance, nutrition, and rehabilitation.",
+  "id": "/",
+  "scope": "/",
+  "start_url": "/en",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0a0a0b",
+  "theme_color": "#0a0a0b",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

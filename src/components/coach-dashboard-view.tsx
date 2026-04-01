@@ -1,4 +1,5 @@
 import { coachDashboardStats, walletTransactions } from "@/lib/content";
+import { BrandLogo } from "@/components/brand-logo";
 import { StatGrid } from "@/components/ui";
 import { getDictionary } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
@@ -9,7 +10,10 @@ export function CoachDashboardView({ locale }: { locale: Locale }) {
   return (
     <div className="space-y-8">
       <div>
-        <span className="badge">{d.badge}</span>
+        <div className="flex items-center gap-3">
+          <BrandLogo variant="mark" align="center" className="h-10 w-10 shrink-0" />
+          <span className="badge">{d.badge}</span>
+        </div>
         <h1 className="mt-4 font-display text-3xl font-semibold text-white sm:text-4xl">
           {d.title}
         </h1>

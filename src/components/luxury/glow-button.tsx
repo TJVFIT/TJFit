@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 type GlowButtonProps = {
   href: string;
@@ -24,11 +25,11 @@ export function GlowButton({ href, variant, className = "", children, reducedMot
   const motionCls =
     reducedMotion === true
       ? ""
-      : "motion-safe:transition-transform motion-safe:duration-200 motion-safe:hover:scale-[1.03] motion-safe:active:scale-[0.98]";
+      : "max-lg:motion-safe:transition-transform max-lg:motion-safe:duration-150 lg:motion-safe:duration-200 motion-safe:hover:scale-[1.02] motion-safe:active:scale-[0.99] lg:motion-safe:hover:scale-[1.03] lg:motion-safe:active:scale-[0.98]";
 
   return (
-    <div className={`inline-flex ${className}`.trim()}>
-      <Link href={href} className={`${base} ${motionCls}`} onClick={() => onPress?.()}>
+    <div className={cn("flex w-full justify-center sm:inline-flex sm:w-auto sm:justify-start", className)}>
+      <Link href={href} className={cn(base, motionCls, "w-full max-w-md sm:max-w-none sm:w-auto")} onClick={() => onPress?.()}>
         {variant === "secondary" ? (
           <span
             className="pointer-events-none absolute inset-0 rounded-full bg-white/[0.03] opacity-0 transition-opacity duration-300 group-hover:opacity-100"

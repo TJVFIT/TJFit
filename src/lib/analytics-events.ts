@@ -11,7 +11,9 @@ export type MarketingEventName =
   | "coach_profile_view"
   | "pricing_section_view"
   | "checkout_start"
-  | "program_view";
+  | "program_view"
+  | "early_access_popup_cta"
+  | "early_access_popup_dismiss";
 
 export type MarketingEventParams = Record<string, string | number | boolean | undefined>;
 

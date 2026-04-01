@@ -173,6 +173,12 @@ body {
   animation: nav-drawer-slide-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
+@media (max-width: 1023px) {
+  .nav-drawer-panel {
+    animation-duration: 0.22s;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .nav-drawer-panel {
     animation: none;
@@ -188,7 +194,7 @@ body {
 }
 
 .input {
-  @apply w-full rounded-2xl border border-white/[0.1] bg-white/[0.04] px-4 py-3 text-sm text-white outline-none transition duration-200 placeholder:text-zinc-500;
+  @apply min-h-[48px] w-full rounded-2xl border border-white/[0.1] bg-white/[0.04] px-4 py-3 text-base text-white outline-none transition duration-200 placeholder:text-zinc-500 sm:min-h-0 sm:text-sm;
 }
 
 .input:focus-visible {

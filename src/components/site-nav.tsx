@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
+import { BrandLogo } from "@/components/brand-logo";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { Locale, getDictionary } from "@/lib/i18n";
 import { getNavChromeCopy, getNavMenuSummaries } from "@/lib/launch-copy";
@@ -206,37 +207,38 @@ export function SiteNav({ locale }: { locale: Locale }) {
           role="dialog"
           aria-modal="true"
           aria-label={navCopy.navigation}
-          className="nav-drawer-panel absolute inset-y-0 left-0 flex h-[100dvh] w-[min(100vw,max(50vw,18rem))] max-w-[720px] flex-col border-r border-white/[0.06] bg-[#0A0A0B] sm:w-1/2"
+          className="nav-drawer-panel absolute inset-y-0 left-0 flex h-[100dvh] w-[min(100%,20rem)] max-w-[min(100vw,22rem)] flex-col border-r border-white/[0.06] bg-[#0A0A0B] sm:w-[min(100%,24rem)] lg:max-w-[720px] lg:w-1/2"
         >
-          <div className="relative flex items-center justify-between gap-4 border-b border-white/[0.06] px-5 py-4 sm:px-6">
-            <div>
+          <div className="relative flex items-center justify-between gap-3 border-b border-white/[0.06] px-4 py-3.5 sm:px-6 sm:py-4">
+            <div className="flex min-w-0 items-center gap-3">
+              <BrandLogo variant="mark" align="center" className="h-8 w-8 shrink-0" alt="" />
               <p className="font-display text-lg font-medium tracking-tight text-white">{navCopy.navigation}</p>
             </div>
             <button
               type="button"
               onClick={() => setSidebarOpen(false)}
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/[0.1] text-zinc-400 transition hover:bg-white/[0.05] hover:text-white"
+              className="flex h-11 w-11 shrink-0 touch-manipulation items-center justify-center rounded-lg border border-white/[0.1] text-zinc-400 transition hover:bg-white/[0.05] hover:text-white"
               aria-label={navCopy.close}
             >
               <X className="h-5 w-5" strokeWidth={1.5} />
             </button>
           </div>
 
-          <nav className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-3 pb-8 pt-3 sm:px-5" aria-label={navCopy.navigation}>
+          <nav className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-2 pb-4 pt-2 sm:px-5 sm:pb-8 sm:pt-3" aria-label={navCopy.navigation}>
             <div className="space-y-0.5">
               {menuRows.map((item) => (
                 <div key={`${item.key}-${item.href}`}>
                   <Link
                     href={`/${locale}${item.href}`}
                     onClick={() => setSidebarOpen(false)}
-                    className={`group flex w-full items-start justify-between gap-4 rounded-lg px-3 py-3.5 text-start transition ${
+                    className={`group flex w-full min-w-0 flex-col gap-1 rounded-xl px-3 py-3.5 text-start transition sm:flex-row sm:items-start sm:justify-between sm:gap-4 ${
                       isActive(item.href)
                         ? "bg-white/[0.06] text-white"
                         : "text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-200"
                     }`}
                   >
                     <span className="text-[15px] font-medium leading-snug">{item.label}</span>
-                    <span className="max-w-[42%] shrink-0 text-end text-[10px] leading-snug text-zinc-600 sm:text-[11px]">
+                    <span className="text-[11px] leading-snug text-zinc-600 sm:max-w-[42%] sm:shrink-0 sm:text-end sm:text-[11px]">
                       {item.summary}
                     </span>
                   </Link>
@@ -244,29 +246,58 @@ export function SiteNav({ locale }: { locale: Locale }) {
               ))}
             </div>
           </nav>
+
+          <div className="shrink-0 border-t border-white/[0.06] px-4 py-4 lg:hidden">
+            <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-zinc-600">{navCopy.language}</p>
+            <LanguageSwitcher locale={locale} />
+          </div>
+
+          {!loading && user ? (
+            <div className="shrink-0 border-t border-white/[0.06] px-4 py-3 lg:hidden">
+              <button
+                type="button"
+                onClick={() => {
+                  setSidebarOpen(false);
+                  void handleLogout();
+                }}
+                className="touch-manipulation w-full rounded-xl border border-white/[0.08] py-3 text-sm text-zinc-400 transition hover:bg-white/[0.04] hover:text-zinc-200"
+              >
+                {dict.nav.logout}
+              </button>
+            </div>
+          ) : null}
         </aside>
       </div>
     ) : null;
 
   return (
     <>
-      <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-4 sm:px-6 lg:gap-5 lg:px-8">
-        <div className="flex min-w-0 items-center gap-3">
+      <div className="mx-auto flex max-w-7xl min-w-0 items-center gap-2 px-3 py-3 sm:gap-3 sm:px-6 sm:py-4 lg:gap-5 lg:px-8">
+        <div className="flex min-w-0 shrink-0 items-center gap-2 sm:gap-3">
           <button
             type="button"
             onClick={() => setSidebarOpen((prev) => !prev)}
-            className="flex items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-2 text-sm text-zinc-300 transition hover:border-white/[0.12] hover:bg-white/[0.06] hover:text-white"
+            className="flex h-11 w-11 touch-manipulation items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.04] text-zinc-300 transition hover:border-white/[0.12] hover:bg-white/[0.06] hover:text-white lg:h-10 lg:w-auto lg:gap-2 lg:rounded-lg lg:px-3 lg:py-2"
             aria-label={navCopy.menu}
             aria-expanded={sidebarOpen}
           >
-            <Menu className="h-4 w-4 text-cyan-300/90" strokeWidth={2} />
-            <span className="hidden sm:inline">{navCopy.menu}</span>
+            <Menu className="h-[22px] w-[22px] text-cyan-300/90" strokeWidth={2} />
+            <span className="hidden text-sm lg:inline">{navCopy.menu}</span>
           </button>
           <Link
             href={`/${locale}`}
-            className="shrink-0 font-display text-xl font-semibold tracking-tight text-white transition hover:text-zinc-200"
+            className="flex min-w-0 shrink-0 items-center gap-2.5 overflow-visible py-0.5 transition hover:opacity-95 lg:gap-0"
+            aria-label="TJFit"
           >
-            TJFit
+            <BrandLogo variant="mark" className="h-8 w-8 shrink-0 lg:hidden" priority alt="" />
+            <span className="font-display text-lg font-semibold tracking-tight text-white lg:hidden" aria-hidden>
+              TJFit
+            </span>
+            <BrandLogo
+              variant="full"
+              className="hidden h-10 w-auto max-h-11 lg:block"
+              priority
+            />
           </Link>
         </div>
 
@@ -293,8 +324,10 @@ export function SiteNav({ locale }: { locale: Locale }) {
           </ul>
         </nav>
 
-        <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
-          <LanguageSwitcher locale={locale} />
+        <div className="ml-auto flex min-w-0 shrink-0 items-center justify-end gap-1.5 sm:gap-2 lg:gap-3">
+          <div className="hidden min-w-0 lg:block">
+            <LanguageSwitcher locale={locale} />
+          </div>
           {loading ? (
             <div
               className="hidden h-9 min-w-[10rem] shrink-0 animate-pulse rounded-full bg-white/10 sm:block"
@@ -316,14 +349,14 @@ export function SiteNav({ locale }: { locale: Locale }) {
               </Link>
               <Link
                 href={`/${locale}/dashboard`}
-                className="rounded-lg border border-white/[0.1] px-4 py-2 text-sm text-zinc-300 transition hover:border-white/[0.14] hover:bg-white/[0.04]"
+                className="touch-manipulation rounded-lg border border-white/[0.1] px-3 py-2.5 text-sm text-zinc-300 transition hover:border-white/[0.14] hover:bg-white/[0.04] sm:px-4 sm:py-2"
               >
                 {isAdmin ? dict.nav.admin : isCoach ? dict.nav.dashboard : dict.nav.progress}
               </Link>
               <button
                 type="button"
                 onClick={handleLogout}
-                className="rounded-lg px-4 py-2 text-sm text-zinc-500 transition hover:text-zinc-300"
+                className="hidden touch-manipulation rounded-lg px-4 py-2 text-sm text-zinc-500 transition hover:text-zinc-300 lg:inline-flex"
               >
                 {dict.nav.logout}
               </button>
@@ -344,7 +377,7 @@ export function SiteNav({ locale }: { locale: Locale }) {
               </Link>
               <Link
                 href={`/${locale}/login`}
-                className="rounded-lg border border-white/[0.1] px-4 py-2.5 text-sm text-zinc-300 transition hover:border-white/[0.15] hover:bg-white/[0.04]"
+                className="touch-manipulation rounded-lg border border-white/[0.1] px-3 py-2.5 text-sm text-zinc-300 transition hover:border-white/[0.15] hover:bg-white/[0.04] sm:px-4"
               >
                 {navCopy.loginLabel}
               </Link>

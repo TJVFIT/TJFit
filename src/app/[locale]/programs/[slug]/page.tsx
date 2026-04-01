@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { BrandLogo } from "@/components/brand-logo";
 import { ProgramViewTracker } from "@/components/marketing/program-view-tracker";
 import { coaches, products, programs } from "@/lib/content";
 import { localizeCustomProgramRow, type CustomProgramRow } from "@/lib/custom-programs";
@@ -137,8 +138,9 @@ export default async function ProgramDetailPage({
                 <span className="rounded-full border border-white/25 bg-black/20 px-3 py-1 text-xs font-semibold text-white">
                   {tier}
                 </span>
-                <span className="rounded-full border border-white/25 bg-black/20 px-3 py-1 text-xs font-semibold text-white">
-                  TJFit
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-black/20 px-2.5 py-1 text-xs font-semibold text-white">
+                  <BrandLogo variant="mark" align="center" className="h-4 w-4 shrink-0" alt="" />
+                  <span>TJFit</span>
                 </span>
               </div>
             </div>

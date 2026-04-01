@@ -13,6 +13,6 @@ export function InteractiveCard({ children, className = "", reducedMotion }: Int
   const motionCls =
     reducedMotion === true
       ? ""
-      : "motion-safe:transition-[transform] motion-safe:duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-[0.998]";
+      : "motion-safe:transition-[transform] motion-safe:duration-200 lg:motion-safe:hover:-translate-y-0.5 lg:motion-safe:active:scale-[0.998]";
   return <div className={`${className} ${motionCls}`.trim()}>{children}</div>;
 }

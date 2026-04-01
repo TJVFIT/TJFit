@@ -133,6 +133,7 @@ type FooterCopy = {
 type NavChromeCopy = {
   menu: string;
   navigation: string;
+  language: string;
   close: string;
   closeSidebarOverlay: string;
   explore: string;
@@ -939,6 +940,7 @@ const navChromeCopy: Record<Locale, NavChromeCopy> = {
   en: {
     menu: "Menu",
     navigation: "Navigation",
+    language: "Language",
     close: "Close",
     closeSidebarOverlay: "Close sidebar overlay",
     explore: "Explore",
@@ -954,6 +956,7 @@ const navChromeCopy: Record<Locale, NavChromeCopy> = {
   tr: {
     menu: "Menu",
     navigation: "Gezinme",
+    language: "Dil",
     close: "Kapat",
     closeSidebarOverlay: "Yan menuyu kapat",
     explore: "Kesfet",
@@ -969,6 +972,7 @@ const navChromeCopy: Record<Locale, NavChromeCopy> = {
   ar: {
     menu: "القائمة",
     navigation: "التنقل",
+    language: "اللغة",
     close: "اغلاق",
     closeSidebarOverlay: "اغلاق الشريط الجانبي",
     explore: "استكشاف",
@@ -984,6 +988,7 @@ const navChromeCopy: Record<Locale, NavChromeCopy> = {
   es: {
     menu: "Menu",
     navigation: "Navegacion",
+    language: "Idioma",
     close: "Cerrar",
     closeSidebarOverlay: "Cerrar barra lateral",
     explore: "Explorar",
@@ -999,6 +1004,7 @@ const navChromeCopy: Record<Locale, NavChromeCopy> = {
   fr: {
     menu: "Menu",
     navigation: "Navigation",
+    language: "Langue",
     close: "Fermer",
     closeSidebarOverlay: "Fermer la barre laterale",
     explore: "Explorer",

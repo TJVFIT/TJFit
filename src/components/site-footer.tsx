@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { BrandLogo } from "@/components/brand-logo";
 import { useAuth } from "@/components/auth-provider";
 import { LeadCaptureForm } from "@/components/marketing/lead-capture-form";
 import { Locale } from "@/lib/i18n";
@@ -57,9 +58,9 @@ export function SiteFooter({ locale }: { locale: Locale }) {
     <footer className="border-t border-white/[0.06] bg-surface/90 backdrop-blur-md">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 text-sm sm:px-6 lg:grid-cols-4 lg:gap-12 lg:px-8">
         <div>
-          <p className="bg-gradient-to-r from-white to-zinc-400 bg-clip-text font-display text-xl font-semibold tracking-tight text-transparent">
-            TJFit
-          </p>
+          <Link href={`/${locale}`} className="inline-block" aria-label="TJFit">
+            <BrandLogo variant="full" align="left" className="h-14 w-auto max-w-[220px] sm:h-16" />
+          </Link>
           <p className="mt-4 max-w-sm leading-relaxed text-zinc-500">{copy.description}</p>
         </div>
         <div>

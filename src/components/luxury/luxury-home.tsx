@@ -32,6 +32,22 @@ function usePrefersReducedMotion() {
   return reduce;
 }
 
+function useNarrowViewport() {
+  const [narrow, setNarrow] = useState(false);
+  useLayoutEffect(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") return;
+    try {
+      const mq = window.matchMedia("(max-width: 1023px)");
+      const apply = () => setNarrow(mq.matches);
+      apply();
+      return subscribeToMediaQueryChange(mq, apply);
+    } catch {
+      return;
+    }
+  }, []);
+  return narrow;
+}
+
 const HomeBlogsPreview = dynamic(
   () => import("@/components/home-blogs-preview").then((m) => m.HomeBlogsPreview),
   {
@@ -93,6 +109,7 @@ function Reveal({
   delay?: number;
 }) {
   const reduce = usePrefersReducedMotion();
+  const narrow = useNarrowViewport();
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(reduce);
 
@@ -123,15 +140,16 @@ function Reveal({
     return <div className={className}>{children}</div>;
   }
 
+  const lightMotion = narrow;
   return (
     <div
       ref={ref}
       className={className}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(8px)",
-        transitionProperty: "opacity, transform",
-        transitionDuration: "0.4s",
+        transform: lightMotion ? "none" : visible ? "translateY(0)" : "translateY(8px)",
+        transitionProperty: lightMotion ? "opacity" : "opacity, transform",
+        transitionDuration: lightMotion ? "0.22s" : "0.4s",
         transitionDelay: `${delay}s`,
         transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)"
       }}
@@ -217,7 +235,7 @@ export function LuxuryHome({
       {/* Hero — base gradient + optional client-only 3D (lg+, motion OK); mobile uses CSS orb */}
       <section
         ref={heroRef}
-        className="relative flex min-h-[100dvh] flex-col justify-center overflow-hidden px-4 pb-24 pt-24 sm:px-6 lg:px-8 lg:pt-28"
+        className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-hidden overflow-y-visible px-4 pb-28 pt-20 sm:px-6 sm:pb-24 sm:pt-24 lg:px-8 lg:pt-28"
       >
         <div
           className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(34,211,238,0.07),transparent),radial-gradient(ellipse_50%_40%_at_100%_0%,rgba(167,139,250,0.04),transparent)]"
@@ -236,17 +254,17 @@ export function LuxuryHome({
           aria-hidden
         />
 
-        <div className="relative z-10 mx-auto w-full max-w-6xl">
+        <div className="relative z-10 mx-auto w-full max-w-6xl text-center sm:text-start">
           <span className="lux-badge inline-flex">{copy.hero.badge}</span>
 
-          <h1 className="mt-10 font-display text-[clamp(2.25rem,5.5vw,3.5rem)] font-semibold leading-[1.08] tracking-tight text-white">
-            <span className="block">{copy.hero.headline}</span>
-            {headlineAccent ? <span className="mt-1 block font-normal text-zinc-500">{headlineAccent}</span> : null}
+          <h1 className="mx-auto mt-8 max-w-[22rem] font-display text-[clamp(1.875rem,8.2vw,3.5rem)] font-semibold leading-[1.1] tracking-tight text-white sm:mx-0 sm:mt-10 sm:max-w-none sm:text-[clamp(2.25rem,5.5vw,3.5rem)] sm:leading-[1.08]">
+            <span className="block break-words">{copy.hero.headline}</span>
+            {headlineAccent ? <span className="mt-2 block break-words font-normal text-zinc-500 sm:mt-1">{headlineAccent}</span> : null}
           </h1>
 
-          <p className="mt-7 max-w-lg text-[15px] leading-relaxed text-zinc-500 sm:text-base">{copy.hero.sub}</p>
+          <p className="mx-auto mt-6 max-w-lg text-[15px] leading-relaxed text-zinc-500 sm:mx-0 sm:mt-7 sm:text-base">{copy.hero.sub}</p>
 
-          <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+          <div className="mx-auto mt-9 flex w-full max-w-md flex-col items-stretch gap-3 sm:mx-0 sm:mt-10 sm:max-w-none sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
             <GlowButton
               href={`/${locale}#tjfit-lead`}
               variant="primary"
@@ -265,25 +283,33 @@ export function LuxuryHome({
             </GlowButton>
           </div>
 
-          <div className="mt-5">
+          <div className="mt-6 flex justify-center sm:mt-5 sm:block">
             <Link
               href={`/${locale}/programs`}
-              className="text-sm font-medium text-zinc-500 underline-offset-4 transition hover:text-cyan-200/90 hover:underline"
+              className="inline-flex min-h-11 items-center text-sm font-medium text-zinc-500 underline-offset-4 transition hover:text-cyan-200/90 hover:underline"
               onClick={() => trackMarketingEvent("hero_cta_click", { cta: "programs", surface: "hero" })}
             >
               {copy.hero.ctaBrowsePrograms}
             </Link>
           </div>
 
-          <p className="mt-6 max-w-md text-xs leading-relaxed text-zinc-600 sm:text-[13px]">{copy.hero.ctaNote}</p>
+          <p className="mx-auto mt-6 max-w-md text-xs leading-relaxed text-zinc-600 sm:mx-0 sm:text-[13px]">{copy.hero.ctaNote}</p>
 
-          <LeadCaptureForm locale={locale} source="hero-inline" variant="minimal" className="mt-10 max-w-xl" />
+          <LeadCaptureForm
+            locale={locale}
+            source="hero-inline"
+            variant="minimal"
+            className="mx-auto mt-10 max-w-xl sm:mx-0"
+          />
 
           {trustItems.length > 0 ? (
-            <p className="mt-12 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-zinc-600" aria-label="Trust">
+            <p
+              className="mt-10 flex flex-col gap-2 text-sm leading-snug text-zinc-600 max-sm:mx-auto max-sm:max-w-xs sm:mt-12 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3 sm:gap-y-1 sm:text-start"
+              aria-label="Trust"
+            >
               {trustItems.map((t, i) => (
-                <span key={`trust-${i}-${t}`} className="inline-flex items-center gap-x-3">
-                  {i > 0 ? <span className="text-zinc-700" aria-hidden>·</span> : null}
+                <span key={`trust-${i}-${t}`} className="inline-flex items-center gap-x-3 max-sm:justify-center">
+                  {i > 0 ? <span className="hidden text-zinc-700 sm:inline" aria-hidden>·</span> : null}
                   <span>{t}</span>
                 </span>
               ))}
@@ -293,17 +319,17 @@ export function LuxuryHome({
       </section>
 
       {/* Social proof */}
-      <section className="border-t border-white/[0.05] py-24 lg:py-32">
+      <section className="border-t border-white/[0.05] py-28 lg:py-32">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <Reveal>
             <h2 className="font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
               {copy.social.title}
             </h2>
-            <p className="mt-3 max-w-md text-sm text-zinc-500 sm:text-[15px]">{copy.social.subtitle}</p>
+            <p className="mt-4 max-w-md text-sm leading-relaxed text-zinc-500 sm:mt-3 sm:text-[15px]">{copy.social.subtitle}</p>
           </Reveal>
 
-          <Reveal className="mt-16" delay={0.04}>
-            <div className="grid grid-cols-1 gap-10 border-t border-white/[0.05] pt-14 sm:grid-cols-3 sm:gap-6">
+          <Reveal className="mt-14 sm:mt-16" delay={0.04}>
+            <div className="grid grid-cols-1 gap-12 border-t border-white/[0.05] pt-12 sm:grid-cols-3 sm:gap-6 sm:pt-14">
               {socialStats.map((s, i) => (
                 <div key={`stat-${i}-${s.label}`}>
                   <p className="font-display text-3xl font-semibold tabular-nums text-white sm:text-4xl">{s.value}</p>
@@ -333,11 +359,11 @@ export function LuxuryHome({
       {/* Lead magnet — primary free value */}
       <section
         id="tjfit-lead"
-        className="scroll-mt-24 border-t border-white/[0.05] py-24 lg:py-32"
+        className="scroll-mt-24 border-t border-white/[0.05] py-28 lg:py-32"
       >
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <Reveal>
-            <div className="rounded-2xl border border-white/[0.07] bg-surface/40 p-8 sm:p-11 lg:p-12">
+            <div className="rounded-2xl border border-white/[0.07] bg-surface/40 p-6 sm:p-11 lg:p-12">
               <span className="lux-badge inline-flex">{copy.leadMagnet.badge}</span>
               <h2 className="mt-8 font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
                 {copy.leadMagnet.title}
@@ -366,24 +392,24 @@ export function LuxuryHome({
       </section>
 
       {/* Features */}
-      <section className="border-t border-white/[0.05] py-24 lg:py-32">
+      <section className="border-t border-white/[0.05] py-28 lg:py-32">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <Reveal>
             <h2 className="font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
               {copy.features.title}
             </h2>
-            <p className="mt-3 max-w-md text-sm text-zinc-500 sm:text-[15px]">{copy.features.subtitle}</p>
+            <p className="mt-4 max-w-md text-sm leading-relaxed text-zinc-500 sm:mt-3 sm:text-[15px]">{copy.features.subtitle}</p>
           </Reveal>
 
-          <div className="mt-10 grid gap-px overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.06] sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-12 grid grid-cols-1 gap-3 sm:mt-10 sm:gap-px sm:overflow-hidden sm:rounded-2xl sm:border sm:border-white/[0.06] sm:bg-white/[0.06] sm:grid-cols-2 lg:grid-cols-4">
             {featureItems.map((item, i) => {
               const Icon = featureIcons[i] ?? Sparkles;
               return (
                 <Reveal key={`feature-${i}-${item.title}`} delay={i * 0.04} className="h-full bg-[#0A0A0B]">
-                  <div className="group flex h-full flex-col p-6 transition-colors hover:bg-white/[0.02] sm:p-7">
+                  <div className="group flex h-full flex-col rounded-2xl border border-white/[0.06] p-6 transition-colors max-sm:min-h-0 sm:rounded-none sm:border-0 sm:p-7 sm:hover:bg-white/[0.02]">
                     <Icon className="h-5 w-5 text-zinc-500 transition group-hover:text-zinc-400" strokeWidth={1.25} aria-hidden />
-                    <h3 className="mt-4 font-display text-[15px] font-medium tracking-tight text-white">{item.title}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-zinc-500">{item.desc}</p>
+                    <h3 className="mt-4 font-display text-base font-medium tracking-tight text-white sm:text-[15px]">{item.title}</h3>
+                    <p className="mt-2 text-[15px] leading-relaxed text-zinc-500 sm:text-sm">{item.desc}</p>
                   </div>
                 </Reveal>
               );
@@ -393,7 +419,7 @@ export function LuxuryHome({
       </section>
 
       {/* Mid-page capture */}
-      <section className="border-t border-white/[0.06] py-24 lg:py-28">
+      <section className="border-t border-white/[0.06] py-28 lg:py-28">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <Reveal>
             <div className="mx-auto max-w-2xl text-center">
@@ -410,9 +436,9 @@ export function LuxuryHome({
       </section>
 
       {/* Programs */}
-      <section className="border-t border-white/[0.05] bg-surface/[0.25] py-24 lg:py-32">
+      <section className="border-t border-white/[0.05] bg-surface/[0.25] py-28 lg:py-32">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <div className="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
             <Reveal>
               <h2 className="font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
                 {copy.programs.title}
@@ -429,23 +455,23 @@ export function LuxuryHome({
             </Reveal>
           </div>
 
-          <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-12 grid w-full grid-cols-1 gap-5 sm:mt-14 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
             {programs.map((p, i) => (
               <Reveal key={p.slug} delay={i * 0.04}>
                 <Link
                   href={`/${locale}/programs/${p.slug}`}
-                  className="block h-full"
+                  className="block h-full w-full min-w-0"
                   onClick={() => trackMarketingEvent("program_view", { slug: p.slug, surface: "home" })}
                 >
                   <InteractiveCard
                     reducedMotion={reduce}
-                    className="group flex h-full flex-col rounded-xl border border-white/[0.06] bg-surface-elevated/50 p-6 transition-colors hover:border-white/[0.1]"
+                    className="group flex h-full w-full min-w-0 flex-col rounded-xl border border-white/[0.06] bg-surface-elevated/50 p-6 transition-colors hover:border-white/[0.1] sm:p-6"
                   >
                     <div className="h-px w-8 rounded-full bg-zinc-600 transition group-hover:bg-zinc-500" />
                     <p className="mt-5 text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-500">{p.category}</p>
-                    <h3 className="mt-2 line-clamp-2 text-base font-medium leading-snug text-white">{p.title}</h3>
-                    <p className="mt-2 text-xs text-zinc-600">{p.duration}</p>
-                    <p className="mt-auto pt-8 text-sm text-zinc-500">
+                    <h3 className="mt-2 line-clamp-2 text-[17px] font-medium leading-snug text-white sm:text-base">{p.title}</h3>
+                    <p className="mt-2 text-sm text-zinc-600 sm:text-xs">{p.duration}</p>
+                    <p className="mt-auto pt-8 text-[15px] text-zinc-500 sm:text-sm">
                       {copy.programs.from}{" "}
                       <span className="font-medium text-zinc-200">{formatMoney(locale, p.price)}</span>
                     </p>
@@ -470,13 +496,13 @@ export function LuxuryHome({
       </ClientErrorBoundary>
 
       {/* Coaches */}
-      <section className="border-t border-white/[0.05] py-24 lg:py-32">
+      <section className="border-t border-white/[0.05] py-28 lg:py-32">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <Reveal>
             <h2 className="font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
               {copy.coaches.title}
             </h2>
-            <p className="mt-3 max-w-md text-sm text-zinc-500 sm:text-[15px]">{copy.coaches.subtitle}</p>
+            <p className="mt-4 max-w-md text-sm leading-relaxed text-zinc-500 sm:mt-3 sm:text-[15px]">{copy.coaches.subtitle}</p>
           </Reveal>
 
           {coaches.length === 0 ? (
@@ -506,12 +532,12 @@ export function LuxuryHome({
               </div>
             </Reveal>
           ) : (
-            <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-12 grid w-full grid-cols-1 gap-5 sm:mt-14 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
               {coaches.map((c, i) => (
                 <Reveal key={c.slug} delay={i * 0.04}>
                   <Link
                     href={`/${locale}/coaches/${c.slug}`}
-                    className="group block h-full overflow-hidden rounded-xl border border-white/[0.07] bg-surface-elevated/40 transition hover:border-white/[0.11]"
+                    className="group block h-full w-full min-w-0 overflow-hidden rounded-xl border border-white/[0.07] bg-surface-elevated/40 transition hover:border-white/[0.11]"
                     onClick={() =>
                       trackMarketingEvent("coach_profile_view", { slug: c.slug, surface: "home" })
                     }
@@ -522,7 +548,7 @@ export function LuxuryHome({
                         {c.specialty}
                       </span>
                       <p className="mt-4 font-display text-lg font-semibold text-white">{c.name}</p>
-                      <p className="mt-3 text-xs text-zinc-500">
+                      <p className="mt-3 text-sm text-zinc-500 sm:text-xs">
                         ★{" "}
                         {typeof c.rating === "number" && Number.isFinite(c.rating) ? c.rating.toFixed(1) : "—"}
                         <span className="text-zinc-700"> · </span>
@@ -553,9 +579,9 @@ export function LuxuryHome({
       </div>
 
       {/* Final CTA */}
-      <section className="px-4 py-24 sm:px-6 lg:py-28 lg:px-8">
+      <section className="px-4 py-28 sm:px-6 lg:py-28 lg:px-8">
         <Reveal>
-          <div className="mx-auto max-w-2xl rounded-2xl border border-white/[0.07] bg-surface/35 px-8 py-12 text-center sm:px-10 sm:py-14">
+          <div className="mx-auto max-w-2xl rounded-2xl border border-white/[0.07] bg-surface/35 px-6 py-10 text-center sm:px-10 sm:py-14">
             <h2 className="font-display text-xl font-semibold tracking-tight text-white sm:text-2xl">
               {copy.finalCta.title}
             </h2>
@@ -603,7 +629,7 @@ export function LuxuryHome({
             </GlowButton>
             <Link
               href={`/${locale}/signup`}
-              className="shrink-0 py-2 text-xs font-medium text-zinc-500 underline-offset-4 hover:text-zinc-300"
+              className="inline-flex min-h-11 shrink-0 items-center px-2 py-2 text-xs font-medium text-zinc-500 underline-offset-4 hover:text-zinc-300"
               onClick={() => trackMarketingEvent("hero_cta_click", { cta: "signup", surface: "sticky" })}
             >
               {copy.hero.ctaSecondary}

@@ -375,7 +375,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
   const showComposer = !fetchError && !initializing && conversationKeyRef.current !== null;
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col bg-background">
+    <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-background">
       <header className="flex shrink-0 items-center gap-3 border-b border-white/[0.06] px-3 py-3 sm:px-4">
         <Link
           href={`/${locale}/messages`}
@@ -428,7 +428,11 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
         </div>
       ) : null}
 
-      <div ref={listRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 py-2 sm:px-4">
+      <div
+        ref={listRef}
+        className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-y-contain px-2 py-2 sm:px-4"
+        style={{ WebkitOverflowScrolling: "touch" }}
+      >
         {fetchError ? (
           <div className="flex flex-col items-center justify-center px-4 py-16 text-center">
             <p className="text-sm text-red-400">{fetchError}</p>
@@ -516,7 +520,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
           <button
             type="button"
             disabled={!showComposer || sending || !messageText.trim()}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cyan-500 text-[#05080a] transition hover:bg-cyan-400 disabled:opacity-35"
+            className="flex h-12 w-12 shrink-0 touch-manipulation items-center justify-center rounded-xl bg-cyan-500 text-[#05080a] transition hover:bg-cyan-400 disabled:opacity-35 sm:h-11 sm:w-11"
             aria-label={t.send}
             onClick={() => void sendText()}
           >

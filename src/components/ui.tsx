@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Star } from "lucide-react";
 
+import { BRAND } from "@/lib/brand-assets";
 import { HoverLift } from "@/components/motion";
 import { Challenge, Coach, CommunityPost, Product, Program, Transformation } from "@/lib/content";
 import { cn } from "@/lib/utils";
@@ -137,7 +138,11 @@ export function ProgramCard({
           <p className="mt-8 text-2xl font-semibold text-white">{program.title}</p>
           <p className="mt-2 text-xs uppercase tracking-[0.22em] text-zinc-200/80">{program.duration}</p>
           <div className="mt-6 flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-zinc-200/90">
-            <span>TJFit Program</span>
+            <span className="inline-flex items-center gap-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={BRAND.logoMark} alt="" width={16} height={16} className="h-4 w-4 shrink-0 object-contain" />
+              TJFit Program
+            </span>
             <span>{priceLabel ?? program.price}</span>
           </div>
         </div>

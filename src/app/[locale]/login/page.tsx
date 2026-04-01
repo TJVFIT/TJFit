@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { isLocale, type Locale } from "@/lib/i18n";
+import { BrandLogo } from "@/components/brand-logo";
 import { getAuthCopy } from "@/lib/launch-copy";
 
 export default function LoginPage({ params }: { params: { locale: string } }) {
@@ -86,7 +87,10 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
   return (
     <div className="mx-auto flex min-h-[80vh] max-w-md items-center px-4 py-16 sm:px-6 lg:px-8">
       <div className="w-full rounded-2xl border border-white/[0.07] bg-surface/25 p-8 sm:p-9">
-        <span className="lux-badge inline-flex">{adminMode ? copy.adminLoginBadge : copy.loginBadge}</span>
+        <div className="flex justify-center">
+          <BrandLogo variant="full" align="center" className="h-12 w-auto sm:h-14" priority />
+        </div>
+        <span className="lux-badge mt-6 inline-flex">{adminMode ? copy.adminLoginBadge : copy.loginBadge}</span>
         <h1 className="mt-6 font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
           {adminMode ? copy.adminLoginTitle : copy.loginTitle}
         </h1>
@@ -129,7 +133,7 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
           <button
             type="submit"
             disabled={loading}
-            className="gradient-button w-full rounded-xl px-5 py-3 text-sm font-medium text-[#05080a] transition hover:brightness-105 disabled:opacity-60"
+            className="gradient-button min-h-[52px] w-full touch-manipulation rounded-xl px-5 py-3 text-base font-medium text-[#05080a] transition hover:brightness-105 disabled:opacity-60 sm:min-h-0 sm:text-sm"
           >
             {loading ? copy.signingIn : adminMode ? copy.loginAsAdminButton : copy.loginButton}
           </button>

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { LocaleDocument } from "@/components/locale-document";
 import { SiteShell } from "@/components/site-shell";
+import { BRAND } from "@/lib/brand-assets";
 import { Locale, getDictionary, getDirection, isLocale, locales } from "@/lib/i18n";
 
 export function generateStaticParams() {
@@ -21,10 +22,26 @@ export function generateMetadata({
 
   const locale = raw as Locale;
   const dict = getDictionary(locale);
+  const ogLocale =
+    locale === "tr" ? "tr_TR" : locale === "ar" ? "ar_SA" : locale === "es" ? "es_ES" : locale === "fr" ? "fr_FR" : "en_US";
 
   return {
     title: `TJFit | ${dict.hero.title}`,
-    description: dict.hero.subtitle
+    description: dict.hero.subtitle,
+    openGraph: {
+      type: "website",
+      siteName: "TJFit",
+      title: `TJFit | ${dict.hero.title}`,
+      description: dict.hero.subtitle,
+      locale: ogLocale,
+      images: [{ url: BRAND.ogDefault, width: 1200, height: 630, alt: "TJFit" }]
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `TJFit | ${dict.hero.title}`,
+      description: dict.hero.subtitle,
+      images: [{ url: BRAND.ogDefault, width: 1200, height: 630, alt: "TJFit" }]
+    }
   };
 }
 

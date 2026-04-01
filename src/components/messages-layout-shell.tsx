@@ -267,7 +267,14 @@ export function MessagesLayoutShell({
   );
 
   return (
-    <div className="mx-auto flex min-h-[calc(100dvh-4.5rem)] max-w-5xl flex-1 flex-col lg:flex-row lg:gap-0">
+    <div
+      className={clsx(
+        "mx-auto flex w-full max-w-5xl flex-1 flex-col lg:flex-row lg:gap-0",
+        "min-h-[calc(100dvh-4.5rem)]",
+        activeId &&
+          "max-lg:fixed max-lg:inset-x-0 max-lg:bottom-0 max-lg:left-0 max-lg:right-0 max-lg:top-14 max-lg:z-[35] max-lg:m-0 max-lg:max-w-none max-lg:min-h-0"
+      )}
+    >
       {/* Inbox column: full width on mobile; sidebar on desktop */}
       <aside
         className={clsx(
@@ -305,7 +312,7 @@ export function MessagesLayoutShell({
       {/* Desktop: new chat or thread */}
       <main
         className={clsx(
-          "flex min-h-0 min-w-0 flex-1 flex-col bg-background lg:bg-transparent",
+          "flex h-full min-h-0 min-w-0 flex-1 flex-col bg-background lg:bg-transparent",
           activeId ? "flex" : "hidden lg:flex"
         )}
       >
