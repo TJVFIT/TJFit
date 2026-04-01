@@ -1,9 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
-
-const EASE = [0.16, 1, 0.3, 1] as const;
-
 type InteractiveCardProps = {
   children: React.ReactNode;
   className?: string;
@@ -11,24 +7,12 @@ type InteractiveCardProps = {
 };
 
 /**
- * Hover lift + cyan-tinted glow for linked card shells.
+ * Hover lift for linked card shells (CSS only — avoids Framer Motion production edge cases).
  */
 export function InteractiveCard({ children, className = "", reducedMotion }: InteractiveCardProps) {
-  return (
-    <motion.div
-      className={className}
-      whileHover={
-        reducedMotion
-          ? undefined
-          : {
-              y: -2,
-              transition: { duration: 0.28, ease: EASE }
-            }
-      }
-      whileTap={reducedMotion ? undefined : { scale: 0.998 }}
-      transition={{ duration: 0.28, ease: EASE }}
-    >
-      {children}
-    </motion.div>
-  );
+  const motionCls =
+    reducedMotion === true
+      ? ""
+      : "motion-safe:transition-[transform] motion-safe:duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-[0.998]";
+  return <div className={`${className} ${motionCls}`.trim()}>{children}</div>;
 }

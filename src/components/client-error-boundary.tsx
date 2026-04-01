@@ -24,10 +24,14 @@ export class ClientErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    Sentry.captureException(error, {
-      tags: this.props.sentryScope ? { area: this.props.sentryScope } : undefined,
-      extra: { componentStack: info.componentStack }
-    });
+    try {
+      Sentry.captureException(error, {
+        tags: this.props.sentryScope ? { area: this.props.sentryScope } : undefined,
+        extra: { componentStack: info.componentStack }
+      });
+    } catch {
+      /* never let telemetry break the fallback UI */
+    }
     if (process.env.NODE_ENV === "development") {
       console.error("[ClientErrorBoundary]", error, info.componentStack);
     }

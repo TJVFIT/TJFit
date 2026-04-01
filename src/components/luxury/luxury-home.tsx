@@ -2,9 +2,8 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Bot, Dumbbell, Sparkles, Users } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
 import { ClientErrorBoundary } from "@/components/client-error-boundary";
 import { GlowButton } from "@/components/luxury/glow-button";
 import { InteractiveCard } from "@/components/luxury/interactive-card";
@@ -15,7 +14,17 @@ import { trackMarketingEvent } from "@/lib/analytics-events";
 import type { HomeLuxuryCopy } from "@/lib/home-luxury-copy";
 import type { Locale } from "@/lib/i18n";
 
-const LUX_EASE = [0.16, 1, 0.3, 1] as const;
+function usePrefersReducedMotion() {
+  const [reduce, setReduce] = useState(false);
+  useLayoutEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const apply = () => setReduce(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+  return reduce;
+}
 
 const HomeBlogsPreview = dynamic(
   () => import("@/components/home-blogs-preview").then((m) => m.HomeBlogsPreview),
@@ -77,20 +86,44 @@ function Reveal({
   className?: string;
   delay?: number;
 }) {
-  const reduce = useReducedMotion();
+  const reduce = usePrefersReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(reduce);
+
+  useEffect(() => {
+    if (reduce) return;
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        const e = entries[0];
+        if (e?.isIntersecting) setVisible(true);
+      },
+      { root: null, rootMargin: "-32px 0px", threshold: 0.12 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [reduce]);
+
   if (reduce) {
     return <div className={className}>{children}</div>;
   }
+
   return (
-    <motion.div
+    <div
+      ref={ref}
       className={className}
-      initial={{ opacity: 0, y: 8 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-32px", amount: 0.12 }}
-      transition={{ duration: 0.4, delay, ease: LUX_EASE }}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(8px)",
+        transitionProperty: "opacity, transform",
+        transitionDuration: "0.4s",
+        transitionDelay: `${delay}s`,
+        transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)"
+      }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
 
@@ -105,7 +138,7 @@ export function LuxuryHome({
   programs: HomeProgramPreview[];
   coaches: HomeCoachPreview[];
 }) {
-  const reduce = useReducedMotion();
+  const reduce = usePrefersReducedMotion();
   const heroRef = useRef<HTMLElement>(null);
   const [stickyCta, setStickyCta] = useState(false);
 
@@ -125,6 +158,10 @@ export function LuxuryHome({
 
   const trustItems = Array.isArray(copy?.hero?.trust) ? copy.hero.trust : [];
   const headlineAccent = copy.hero.headlineLine2?.trim();
+  const socialStats = Array.isArray(copy.social?.stats) ? copy.social.stats : [];
+  const testimonials = Array.isArray(copy.social?.testimonials) ? copy.social.testimonials : [];
+  const leadBullets = Array.isArray(copy.leadMagnet?.bullets) ? copy.leadMagnet.bullets : [];
+  const featureItems = Array.isArray(copy.features?.items) ? copy.features.items : [];
 
   return (
     <div className={`overflow-x-hidden ${stickyCta ? "pb-24 lg:pb-0" : ""}`}>
@@ -214,7 +251,7 @@ export function LuxuryHome({
 
           <Reveal className="mt-16" delay={0.04}>
             <div className="grid grid-cols-1 gap-10 border-t border-white/[0.05] pt-14 sm:grid-cols-3 sm:gap-6">
-              {copy.social.stats.map((s, i) => (
+              {socialStats.map((s, i) => (
                 <div key={`stat-${i}-${s.label}`}>
                   <p className="font-display text-3xl font-semibold tabular-nums text-white sm:text-4xl">{s.value}</p>
                   <p className="mt-2 text-sm leading-snug text-zinc-500">{s.label}</p>
@@ -224,7 +261,7 @@ export function LuxuryHome({
           </Reveal>
 
           <div className="mt-20 max-w-3xl space-y-14">
-            {copy.social.testimonials.map((t, i) => (
+            {testimonials.map((t, i) => (
               <Reveal key={`testimonial-${i}-${t.author}`} delay={0.06 + i * 0.04}>
                 <blockquote>
                   <p className="text-lg font-light leading-relaxed text-zinc-300 sm:text-xl">&ldquo;{t.quote}&rdquo;</p>
@@ -256,7 +293,7 @@ export function LuxuryHome({
                 {copy.leadMagnet.sub}
               </p>
               <ul className="mt-8 max-w-xl space-y-3 text-sm text-zinc-400">
-                {copy.leadMagnet.bullets.map((b, i) => (
+                {leadBullets.map((b, i) => (
                   <li key={`bullet-${i}`} className="flex gap-3">
                     <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-cyan-400/70" aria-hidden />
                     <span>{b}</span>
@@ -286,7 +323,7 @@ export function LuxuryHome({
           </Reveal>
 
           <div className="mt-10 grid gap-px overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.06] sm:grid-cols-2 lg:grid-cols-4">
-            {copy.features.items.map((item, i) => {
+            {featureItems.map((item, i) => {
               const Icon = featureIcons[i] ?? Sparkles;
               return (
                 <Reveal key={`feature-${i}-${item.title}`} delay={i * 0.04} className="h-full bg-[#0A0A0B]">
