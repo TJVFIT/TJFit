@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { mapSupabaseMessagingError } from "@/lib/messaging-errors";
 import { readRequestJson } from "@/lib/read-request-json";
 import { requireAuth } from "@/lib/require-auth";
+import { isMissingSchemaMigrationError, jsonSchemaNotReady } from "@/lib/supabase-rpc-errors";
 
 export async function GET() {
   const auth = await requireAuth();
@@ -10,6 +11,9 @@ export async function GET() {
   const { data, error } = await auth.supabase.rpc("list_my_conversations_with_peers");
 
   if (error) {
+    if (isMissingSchemaMigrationError(error.message)) {
+      return jsonSchemaNotReady("api/chat/conversations:GET", error.message);
+    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 

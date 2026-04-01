@@ -13,7 +13,16 @@ type RequireAdminResult =
  * Returns supabase client (with user context) + userId if admin, else 401/403 response.
  */
 export async function requireAdmin(): Promise<RequireAdminResult> {
-  const supabase = createServerSupabaseClient();
+  let supabase: ReturnType<typeof createServerSupabaseClient>;
+  try {
+    supabase = createServerSupabaseClient();
+  } catch {
+    return {
+      ok: false,
+      response: NextResponse.json({ error: "Service temporarily unavailable." }, { status: 503 })
+    };
+  }
+
   const {
     data: { user },
     error

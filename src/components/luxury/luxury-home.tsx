@@ -78,11 +78,14 @@ function Reveal({
   delay?: number;
 }) {
   const reduce = useReducedMotion();
+  if (reduce) {
+    return <div className={className}>{children}</div>;
+  }
   return (
     <motion.div
       className={className}
-      initial={reduce ? false : { opacity: 0, y: 8 }}
-      whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 8 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-32px", amount: 0.12 }}
       transition={{ duration: 0.4, delay, ease: LUX_EASE }}
     >
@@ -189,7 +192,7 @@ export function LuxuryHome({
           {trustItems.length > 0 ? (
             <p className="mt-12 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-zinc-600" aria-label="Trust">
               {trustItems.map((t, i) => (
-                <span key={t} className="inline-flex items-center gap-x-3">
+                <span key={`trust-${i}-${t}`} className="inline-flex items-center gap-x-3">
                   {i > 0 ? <span className="text-zinc-700" aria-hidden>·</span> : null}
                   <span>{t}</span>
                 </span>
@@ -211,8 +214,8 @@ export function LuxuryHome({
 
           <Reveal className="mt-16" delay={0.04}>
             <div className="grid grid-cols-1 gap-10 border-t border-white/[0.05] pt-14 sm:grid-cols-3 sm:gap-6">
-              {copy.social.stats.map((s) => (
-                <div key={s.label}>
+              {copy.social.stats.map((s, i) => (
+                <div key={`stat-${i}-${s.label}`}>
                   <p className="font-display text-3xl font-semibold tabular-nums text-white sm:text-4xl">{s.value}</p>
                   <p className="mt-2 text-sm leading-snug text-zinc-500">{s.label}</p>
                 </div>
@@ -222,7 +225,7 @@ export function LuxuryHome({
 
           <div className="mt-20 max-w-3xl space-y-14">
             {copy.social.testimonials.map((t, i) => (
-              <Reveal key={t.author} delay={0.06 + i * 0.04}>
+              <Reveal key={`testimonial-${i}-${t.author}`} delay={0.06 + i * 0.04}>
                 <blockquote>
                   <p className="text-lg font-light leading-relaxed text-zinc-300 sm:text-xl">&ldquo;{t.quote}&rdquo;</p>
                   <footer className="mt-5 text-sm text-zinc-600">
@@ -253,8 +256,8 @@ export function LuxuryHome({
                 {copy.leadMagnet.sub}
               </p>
               <ul className="mt-8 max-w-xl space-y-3 text-sm text-zinc-400">
-                {copy.leadMagnet.bullets.map((b) => (
-                  <li key={b} className="flex gap-3">
+                {copy.leadMagnet.bullets.map((b, i) => (
+                  <li key={`bullet-${i}`} className="flex gap-3">
                     <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-cyan-400/70" aria-hidden />
                     <span>{b}</span>
                   </li>
@@ -286,7 +289,7 @@ export function LuxuryHome({
             {copy.features.items.map((item, i) => {
               const Icon = featureIcons[i] ?? Sparkles;
               return (
-                <Reveal key={item.title} delay={i * 0.04} className="h-full bg-[#0A0A0B]">
+                <Reveal key={`feature-${i}-${item.title}`} delay={i * 0.04} className="h-full bg-[#0A0A0B]">
                   <div className="group flex h-full flex-col p-6 transition-colors hover:bg-white/[0.02] sm:p-7">
                     <Icon className="h-5 w-5 text-zinc-500 transition group-hover:text-zinc-400" strokeWidth={1.25} aria-hidden />
                     <h3 className="mt-4 font-display text-[15px] font-medium tracking-tight text-white">{item.title}</h3>

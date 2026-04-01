@@ -11,7 +11,19 @@ type RequireAuthResult =
   | { ok: false; response: NextResponse };
 
 export async function requireAuth(): Promise<RequireAuthResult> {
-  const supabase = createServerSupabaseClient();
+  let supabase: ReturnType<typeof createServerSupabaseClient>;
+  try {
+    supabase = createServerSupabaseClient();
+  } catch {
+    return {
+      ok: false,
+      response: NextResponse.json(
+        { error: "Service temporarily unavailable.", code: "SUPABASE_MISCONFIGURED" },
+        { status: 503 }
+      )
+    };
+  }
+
   const {
     data: { user },
     error

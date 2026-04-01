@@ -11,7 +11,16 @@ type RequireCoachOrAdminResult =
   | { ok: false; response: NextResponse };
 
 export async function requireCoachOrAdmin(): Promise<RequireCoachOrAdminResult> {
-  const supabase = createServerSupabaseClient();
+  let supabase: ReturnType<typeof createServerSupabaseClient>;
+  try {
+    supabase = createServerSupabaseClient();
+  } catch {
+    return {
+      ok: false,
+      response: NextResponse.json({ error: "Service temporarily unavailable." }, { status: 503 })
+    };
+  }
+
   const {
     data: { user },
     error

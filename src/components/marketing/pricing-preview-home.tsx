@@ -14,7 +14,7 @@ export function PricingPreviewHome({
   copy: HomeLuxuryCopy["pricingPreview"];
 }) {
   const { tierStatus, ...rest } = copy;
-  const ref = useRef<HTMLElement | null>(null);
+  const ref = useRef<HTMLElement>(null);
   const fired = useRef(false);
 
   useEffect(() => {

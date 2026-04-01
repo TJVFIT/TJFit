@@ -8,8 +8,17 @@ export const dynamic = "force-dynamic";
 export type Role = "admin" | "coach" | "user" | null;
 
 export async function GET() {
+  let supabase: ReturnType<typeof createServerSupabaseClient>;
   try {
-    const supabase = createServerSupabaseClient();
+    supabase = createServerSupabaseClient();
+  } catch {
+    return NextResponse.json(
+      { user: null, role: null, error: "Service temporarily unavailable.", code: "SUPABASE_MISCONFIGURED" },
+      { status: 503 }
+    );
+  }
+
+  try {
     const {
       data: { user },
       error: authError
@@ -80,3 +89,4 @@ export async function GET() {
     return NextResponse.json({ user: null, role: null });
   }
 }
+

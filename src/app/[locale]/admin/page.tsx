@@ -15,7 +15,13 @@ export default async function AdminPage({ params }: { params: { locale: string }
   const locale = requireLocaleParam(params.locale);
   const dict = getDictionary(locale);
 
-  const authClient = createServerSupabaseClient();
+  let authClient: ReturnType<typeof createServerSupabaseClient>;
+  try {
+    authClient = createServerSupabaseClient();
+  } catch {
+    redirect(`/${locale}/login`);
+  }
+
   const { data: { user } } = await authClient.auth.getUser();
   if (!user?.email) {
     redirect(`/${locale}/login`);
