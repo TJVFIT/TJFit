@@ -6,6 +6,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Bot, Dumbbell, Sparkles, Users } from "lucide-react";
 import { ClientErrorBoundary } from "@/components/client-error-boundary";
 import { GlowButton } from "@/components/luxury/glow-button";
+import { LuxuryHero3DExperience } from "@/components/luxury/luxury-hero-3d";
 import { InteractiveCard } from "@/components/luxury/interactive-card";
 import { HomeLeadNudge } from "@/components/marketing/home-lead-nudge";
 import { LeadCaptureForm } from "@/components/marketing/lead-capture-form";
@@ -153,7 +154,37 @@ export function LuxuryHome({
 }) {
   const reduce = usePrefersReducedMotion();
   const heroRef = useRef<HTMLElement>(null);
+  const heroMouseRef = useRef({ x: 0, y: 0 });
+  const [allowHero3d, setAllowHero3d] = useState(false);
   const [stickyCta, setStickyCta] = useState(false);
+
+  useEffect(() => {
+    if (reduce) {
+      setAllowHero3d(false);
+      return;
+    }
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const apply = () => setAllowHero3d(mq.matches);
+    apply();
+    return subscribeToMediaQueryChange(mq, apply);
+  }, [reduce]);
+
+  useEffect(() => {
+    if (!allowHero3d) return;
+    const hero = heroRef.current;
+    if (!hero) return;
+    const onMove = (e: MouseEvent) => {
+      const r = hero.getBoundingClientRect();
+      if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) return;
+      heroMouseRef.current = {
+        x: ((e.clientX - r.left) / r.width) * 2 - 1,
+        y: ((e.clientY - r.top) / r.height) * 2 - 1
+      };
+    };
+    window.addEventListener("mousemove", onMove, { passive: true });
+    return () => window.removeEventListener("mousemove", onMove);
+  }, [allowHero3d]);
 
   useEffect(() => {
     if (typeof IntersectionObserver === "undefined") return;
@@ -183,7 +214,7 @@ export function LuxuryHome({
 
   return (
     <div className={`overflow-x-hidden ${stickyCta ? "pb-24 lg:pb-0" : ""}`}>
-      {/* Hero — CSS gradients + soft orbs (no WebGL / Three.js) */}
+      {/* Hero — base gradient + optional client-only 3D (lg+, motion OK); mobile uses CSS orb */}
       <section
         ref={heroRef}
         className="relative flex min-h-[100dvh] flex-col justify-center overflow-hidden px-4 pb-24 pt-24 sm:px-6 lg:px-8 lg:pt-28"
@@ -192,12 +223,16 @@ export function LuxuryHome({
           className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(34,211,238,0.07),transparent),radial-gradient(ellipse_50%_40%_at_100%_0%,rgba(167,139,250,0.04),transparent)]"
           aria-hidden
         />
+        {allowHero3d ? (
+          <LuxuryHero3DExperience mouseRef={heroMouseRef} />
+        ) : (
+          <div
+            className={`hero-orb pointer-events-none absolute -left-32 top-1/4 z-0 h-72 w-72 bg-cyan-500/10 ${reduce ? "" : "hero-orb--drift-a"}`}
+            aria-hidden
+          />
+        )}
         <div
-          className={`hero-orb pointer-events-none absolute -left-32 top-1/4 z-0 h-72 w-72 bg-cyan-500/10 ${reduce ? "" : "hero-orb--drift-a"}`}
-          aria-hidden
-        />
-        <div
-          className="pointer-events-none absolute inset-0 z-[4] bg-gradient-to-b from-[#0A0A0B]/55 via-transparent to-[#0A0A0B]"
+          className="pointer-events-none absolute inset-0 z-[4] bg-gradient-to-b from-[#0A0A0B]/55 via-[#0A0A0B]/25 to-[#0A0A0B]"
           aria-hidden
         />
 
