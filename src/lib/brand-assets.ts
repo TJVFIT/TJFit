@@ -1,11 +1,10 @@
 /**
  * Canonical public paths for TJFit brand imagery (see scripts/generate-brand-assets.mjs).
- * - Monogram: favicons, tabs, PWA icons, tight UI (nav below lg breakpoint, badges, cards).
- * - Full lockup (UI): composited on opaque dark — use for footer, login, nav lg+.
- * - Source master: tjfit-logo-main.png (regenerate only; `npm run brand:assets`).
+ * - Replace `public/brand/tjfit-logo-source.jpg` (or `.png`) and run `npm run brand:assets` to
+ *   regenerate `tjfit-logo-main.png` (flat backdrop stripped) plus icons and OG.
  */
 export const BRAND = {
-  logoFull: "/brand/tjfit-logo-ui.png",
+  logoFull: "/brand/tjfit-logo-main.png",
   logoMark: "/icons/tjfit-mark.png",
   /** Square monogram @192 — structured data / app shell */
   logoIcon192: "/icons/icon-192.png",
