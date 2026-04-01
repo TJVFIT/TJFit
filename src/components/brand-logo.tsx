@@ -38,7 +38,12 @@ export function BrandLogo({
       width={intrinsic.width}
       height={intrinsic.height}
       priority={priority}
-      className={cn("object-contain", align === "center" ? "object-center" : "object-left", className)}
+      unoptimized
+      className={cn(
+        "object-contain",
+        align === "center" ? "object-center" : "object-left",
+        className
+      )}
       sizes={
         variant === "mark"
           ? "(max-width: 1023px) 40px, 48px"
