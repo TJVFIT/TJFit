@@ -1,11 +1,11 @@
-import { isLocale } from "@/lib/i18n";
 import { BILLING_PROVIDER, TERMS_VERSION } from "@/lib/legal";
 import { getTermsCopy } from "@/lib/legal-copy";
+import { requireLocaleParam } from "@/lib/require-locale";
 
 export default function TermsPage({ params }: { params: { locale: string } }) {
-  if (!isLocale(params.locale)) return null;
+  const locale = requireLocaleParam(params.locale);
 
-  const copy = getTermsCopy(params.locale, BILLING_PROVIDER, TERMS_VERSION);
+  const copy = getTermsCopy(locale, BILLING_PROVIDER, TERMS_VERSION);
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 px-4 py-16 sm:px-6 lg:px-8">

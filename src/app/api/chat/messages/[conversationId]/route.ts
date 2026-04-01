@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { mapSupabaseMessagingError } from "@/lib/messaging-errors";
+import { readRequestJson } from "@/lib/read-request-json";
 import { requireAuth } from "@/lib/require-auth";
 import { rateLimit } from "@/lib/rate-limit";
 
@@ -58,7 +60,9 @@ export async function POST(request: NextRequest, { params }: { params: { convers
     return NextResponse.json({ error: "Too many requests." }, { status: 429 });
   }
 
-  const body = await request.json();
+  const parsed = await readRequestJson(request);
+  if (!parsed.ok) return parsed.response;
+  const body = parsed.value as Record<string, unknown>;
   if (typeof body.ciphertext !== "string" || typeof body.nonce !== "string") {
     return NextResponse.json({ error: "ciphertext and nonce are required." }, { status: 400 });
   }
@@ -91,6 +95,10 @@ export async function POST(request: NextRequest, { params }: { params: { convers
     .single();
 
   if (error) {
+    const mapped = mapSupabaseMessagingError(error.message);
+    if (mapped) {
+      return NextResponse.json({ error: mapped.error, code: mapped.code }, { status: mapped.status });
+    }
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 

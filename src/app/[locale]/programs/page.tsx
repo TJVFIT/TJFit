@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 import { PremiumPageShell } from "@/components/premium";
@@ -14,7 +15,9 @@ import { getProgramManagementCopy } from "@/lib/program-management-copy";
 type CustomProgramCard = Program & { isCustomUpload?: boolean };
 
 export default function ProgramsPage({ params }: { params: { locale: string } }) {
-  const locale = isLocale(params.locale) ? (params.locale as Locale) : ("en" as Locale);
+  const rawLocale = params?.locale ?? "";
+  const localeValid = isLocale(rawLocale);
+  const locale = (localeValid ? rawLocale : "en") as Locale;
   const copy = getProgramUiCopy(locale);
   const programManagementCopy = getProgramManagementCopy(locale);
   const { role } = useAuth();
@@ -52,8 +55,8 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
     [uploadedPrograms, locale]
   );
 
-  if (!isLocale(params.locale)) {
-    return null;
+  if (!localeValid) {
+    notFound();
   }
 
   const tierLabels =

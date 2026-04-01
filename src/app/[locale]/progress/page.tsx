@@ -1,15 +1,13 @@
 import { ProtectedRoute } from "@/components/protected-route";
 import { ProgressView } from "@/components/progress-view";
-import { isLocale, type Locale } from "@/lib/i18n";
+import { requireLocaleParam } from "@/lib/require-locale";
 
 export default function ProgressPage({ params }: { params: { locale: string } }) {
-  if (!isLocale(params.locale)) {
-    return null;
-  }
+  const locale = requireLocaleParam(params.locale);
 
   return (
-    <ProtectedRoute locale={params.locale}>
-      <ProgressView locale={params.locale as Locale} />
+    <ProtectedRoute locale={locale}>
+      <ProgressView locale={locale} />
     </ProtectedRoute>
   );
 }

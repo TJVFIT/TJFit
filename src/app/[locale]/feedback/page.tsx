@@ -1,9 +1,7 @@
 import { redirect } from "next/navigation";
-import { isLocale } from "@/lib/i18n";
+import { requireLocaleParam } from "@/lib/require-locale";
 
 export default function FeedbackPage({ params }: { params: { locale: string } }) {
-  if (!isLocale(params.locale)) {
-    return null;
-  }
-  redirect(`/${params.locale}/support`);
+  const locale = requireLocaleParam(params.locale);
+  redirect(`/${locale}/support`);
 }

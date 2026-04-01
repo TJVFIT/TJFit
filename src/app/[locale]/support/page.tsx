@@ -1,12 +1,10 @@
-import { isLocale } from "@/lib/i18n";
+import { requireLocaleParam } from "@/lib/require-locale";
 
 export default function SupportPage({ params }: { params: { locale: string } }) {
-  if (!isLocale(params.locale)) {
-    return null;
-  }
+  const locale = requireLocaleParam(params.locale);
 
   const copy =
-    params.locale === "tr"
+    locale === "tr"
       ? {
           badge: "Destek",
           title: "Destek Iletisimi",
@@ -18,13 +16,13 @@ export default function SupportPage({ params }: { params: { locale: string } }) 
             title: "التواصل مع الدعم",
             subtitle: "للدعم يمكنك التواصل معنا عبر البريد."
           }
-        : params.locale === "es"
+        : locale === "es"
           ? {
               badge: "Soporte",
               title: "Contacto de Soporte",
               subtitle: "Para soporte, puedes escribirnos por correo."
             }
-          : params.locale === "fr"
+          : locale === "fr"
             ? {
                 badge: "Support",
                 title: "Contact Support",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
@@ -16,8 +16,8 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
   const [adminMode, setAdminMode] = useState(false);
   const router = useRouter();
 
-  if (!isLocale(params.locale)) {
-    return null;
+  if (!isLocale(params?.locale ?? "")) {
+    notFound();
   }
 
   const locale = params.locale as Locale;
@@ -27,63 +27,67 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
     e.preventDefault();
     setError(null);
     setLoading(true);
-
-    if (adminMode) {
-      if (!username.trim()) {
-        setError(copy.adminUsernameRequired);
-        setLoading(false);
+    try {
+      if (adminMode) {
+        if (!username.trim()) {
+          setError(copy.adminUsernameRequired);
+          return;
+        }
+        const res = await fetch("/api/auth/admin-login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: username.trim(), password }),
+          credentials: "include"
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          setError(typeof data.error === "string" ? data.error : copy.loginFailed);
+          return;
+        }
+        window.location.href = `/${params.locale}`;
         return;
       }
-      const res = await fetch("/api/auth/admin-login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: username.trim(), password }),
-        credentials: "include"
+
+      const supabase = getSupabaseBrowserClient();
+      if (!supabase) {
+        setError(copy.authNotConfigured);
+        return;
+      }
+      if (!email.trim()) {
+        setError(copy.emailRequired);
+        return;
+      }
+      if (!password) {
+        setError(copy.passwordRequired);
+        return;
+      }
+      const { error: err } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password
       });
-      const data = await res.json().catch(() => ({}));
-      setLoading(false);
-      if (!res.ok) {
-        setError(data.error ?? copy.loginFailed);
+      if (err) {
+        setError(err.message ?? copy.loginFailed);
         return;
       }
-      window.location.href = `/${params.locale}`;
-      return;
-    }
-
-    const supabase = getSupabaseBrowserClient();
-    if (!supabase) {
-      setError(copy.authNotConfigured);
+      const nextRaw =
+        typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("next") : null;
+      const nextPath =
+        nextRaw && nextRaw.startsWith("/") && !nextRaw.startsWith("//") ? nextRaw : `/${params.locale}`;
+      router.push(nextPath);
+      router.refresh();
+    } catch (err) {
+      console.error("[login] submit failed", err);
+      setError(copy.loginFailed);
+    } finally {
       setLoading(false);
-      return;
     }
-    if (!email.trim()) {
-      setError(copy.emailRequired);
-      setLoading(false);
-      return;
-    }
-    if (!password) {
-      setError(copy.passwordRequired);
-      setLoading(false);
-      return;
-    }
-    const { error: err } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password
-    });
-    setLoading(false);
-    if (err) {
-      setError(err.message ?? copy.loginFailed);
-      return;
-    }
-    router.push(`/${params.locale}`);
-    router.refresh();
   };
 
   return (
     <div className="mx-auto flex min-h-[80vh] max-w-md items-center px-4 py-16 sm:px-6 lg:px-8">
-      <div className="w-full rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.05] to-white/[0.015] p-8 shadow-[0_24px_64px_-32px_rgba(0,0,0,0.75)]">
+      <div className="w-full rounded-2xl border border-white/[0.07] bg-surface/25 p-8 sm:p-9">
         <span className="lux-badge inline-flex">{adminMode ? copy.adminLoginBadge : copy.loginBadge}</span>
-        <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+        <h1 className="mt-6 font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
           {adminMode ? copy.adminLoginTitle : copy.loginTitle}
         </h1>
         <p className="mt-3 text-sm leading-7 text-zinc-400">
@@ -92,7 +96,7 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
             : copy.loginSubtitle}
         </p>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+        <form onSubmit={handleSubmit} className="mt-8 space-y-5">
           {adminMode ? (
             <input
               className="input"
@@ -121,11 +125,11 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          {error && <p className="text-sm text-red-400">{error}</p>}
+          {error ? <div className="form-error-banner">{error}</div> : null}
           <button
             type="submit"
             disabled={loading}
-            className="gradient-button w-full rounded-full px-5 py-3 text-sm font-semibold text-[#05080a] disabled:opacity-60"
+            className="gradient-button w-full rounded-xl px-5 py-3 text-sm font-medium text-[#05080a] transition hover:brightness-105 disabled:opacity-60"
           >
             {loading ? copy.signingIn : adminMode ? copy.loginAsAdminButton : copy.loginButton}
           </button>

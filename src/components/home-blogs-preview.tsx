@@ -57,6 +57,20 @@ function normalizeBlogPosts(raw: unknown): BlogPost[] {
     .filter((p): p is BlogPost => p !== null);
 }
 
+function BlogCardSkeleton() {
+  return (
+    <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-surface/30">
+      <div className="aspect-[16/9] animate-pulse bg-white/[0.06]" />
+      <div className="space-y-3 p-5">
+        <div className="h-3 w-24 animate-pulse rounded bg-white/[0.08]" />
+        <div className="h-5 w-full max-w-[280px] animate-pulse rounded bg-white/[0.1]" />
+        <div className="h-3 w-full animate-pulse rounded bg-white/[0.05]" />
+        <div className="h-3 w-4/5 animate-pulse rounded bg-white/[0.05]" />
+      </div>
+    </div>
+  );
+}
+
 export function HomeBlogsPreview({
   locale,
   sectionClassName = ""
@@ -94,32 +108,37 @@ export function HomeBlogsPreview({
     <section className={sectionClassName || "mt-10"}>
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h2 className="font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">{home.blogsTitle}</h2>
-          <p className="mt-3 max-w-2xl text-sm text-zinc-400 sm:text-base">{home.blogsSubtitle}</p>
+          <h2 className="font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">{home.blogsTitle}</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-500">{home.blogsSubtitle}</p>
         </div>
         <Link
           href={hrefAll}
-          className="lux-btn-secondary shrink-0 rounded-full px-5 py-2.5 text-sm font-semibold"
+          className="lux-btn-secondary shrink-0 rounded-lg px-5 py-2.5 text-sm font-medium"
         >
           {home.blogsViewAll}
         </Link>
       </div>
 
       {loading ? (
-        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] p-8 text-sm text-zinc-400 ring-1 ring-white/[0.04]">
-          {copy.loadingBlogs}
+        <div className="space-y-4">
+          <p className="text-center text-xs font-medium uppercase tracking-wider text-zinc-500">{copy.loadingBlogs}</p>
+          <div className="grid gap-5 sm:grid-cols-2">
+            {[0, 1, 2, 3].map((k) => (
+              <BlogCardSkeleton key={k} />
+            ))}
+          </div>
         </div>
       ) : posts.length === 0 ? (
-        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] p-8 text-sm text-zinc-400 ring-1 ring-white/[0.04]">
-          {copy.noBlogs}
+        <div className="rounded-xl border border-dashed border-white/[0.08] bg-surface/20 px-6 py-12 text-center">
+          <p className="text-sm text-zinc-500">{copy.noBlogs}</p>
         </div>
       ) : (
-        <div className="grid gap-5 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2 sm:gap-5">
           {posts.map((post) => (
             <Link
               key={post.id}
               href={hrefAll}
-              className="group flex flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-[#15171A] transition duration-300 hover:-translate-y-0.5 hover:border-cyan-400/25 hover:shadow-[0_20px_50px_-20px_rgba(34,211,238,0.15)]"
+              className="group flex h-full flex-col overflow-hidden rounded-xl border border-white/[0.07] bg-surface-elevated/40 transition hover:border-white/[0.11]"
             >
               {post.image_url ? (
                 <div className="relative aspect-[16/9] w-full overflow-hidden bg-black/40">
@@ -127,7 +146,7 @@ export function HomeBlogsPreview({
                     src={post.image_url}
                     alt={post.title || "Blog"}
                     fill
-                    className="object-cover transition group-hover:scale-[1.02]"
+                    className="object-cover transition duration-500 group-hover:opacity-95"
                     sizes="(max-width: 640px) 100vw, 50vw"
                     unoptimized
                   />

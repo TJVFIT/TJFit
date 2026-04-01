@@ -1,3 +1,4 @@
+-- Tighten coach_student_links insertion: only coaches/admins as coach_id (replaces legacy policy name).
 drop policy if exists "Admins and coach can insert links" on coach_student_links;
 
 create policy "Coaches and admins can insert links"

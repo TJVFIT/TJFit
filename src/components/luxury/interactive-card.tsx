@@ -21,13 +21,12 @@ export function InteractiveCard({ children, className = "", reducedMotion }: Int
         reducedMotion
           ? undefined
           : {
-              y: -5,
-              boxShadow: "0 28px 56px -20px rgba(34, 211, 238, 0.14)",
-              transition: { duration: 0.38, ease: EASE }
+              y: -2,
+              transition: { duration: 0.28, ease: EASE }
             }
       }
-      whileTap={reducedMotion ? undefined : { scale: 0.996 }}
-      transition={{ duration: 0.38, ease: EASE }}
+      whileTap={reducedMotion ? undefined : { scale: 0.998 }}
+      transition={{ duration: 0.28, ease: EASE }}
     >
       {children}
     </motion.div>

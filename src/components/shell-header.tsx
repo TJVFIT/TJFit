@@ -16,13 +16,13 @@ export function ShellHeader({ locale }: { locale: Locale }) {
 
   return (
     <header
-      className={`sticky top-0 z-50 border-b transition-[background-color,box-shadow] duration-300 ease-out ${
+      className={`sticky top-0 z-50 border-b transition-[background-color,box-shadow,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
         elevated
-          ? "border-white/[0.08] bg-[#0A0A0B]/94 shadow-[0_12px_48px_-20px_rgba(0,0,0,0.65)] backdrop-blur-xl backdrop-saturate-150"
-          : "border-white/[0.05] bg-[#0A0A0B]/65 backdrop-blur-lg backdrop-saturate-150"
+          ? "border-white/[0.06] bg-[#0A0A0B]/82 shadow-[0_1px_0_0_rgba(255,255,255,0.04)] backdrop-blur-xl"
+          : "border-transparent bg-[#0A0A0B]/60 backdrop-blur-lg"
       }`}
     >
-      <SiteNav locale={locale} elevated={elevated} />
+      <SiteNav locale={locale} />
     </header>
   );
 }

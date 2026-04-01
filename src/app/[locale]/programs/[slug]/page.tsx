@@ -5,7 +5,8 @@ import { ProgramViewTracker } from "@/components/marketing/program-view-tracker"
 import { coaches, products, programs } from "@/lib/content";
 import { localizeCustomProgramRow, type CustomProgramRow } from "@/lib/custom-programs";
 import { programBlueprints } from "@/lib/program-blueprints";
-import { Locale, isLocale, locales } from "@/lib/i18n";
+import { Locale, locales } from "@/lib/i18n";
+import { requireLocaleParam } from "@/lib/require-locale";
 import {
   formatProgramPrice,
   getProgramBasePriceTry,
@@ -29,12 +30,9 @@ export default async function ProgramDetailPage({
 }: {
   params: { locale: string; slug: string };
 }) {
-  if (!isLocale(params.locale)) {
-    return null;
-  }
-
-  const locale = params.locale as Locale;
-  const staticProgram = programs.find((item) => item.slug === params.slug);
+  const locale = requireLocaleParam(params.locale);
+  const slug = params.slug ?? "";
+  const staticProgram = programs.find((item) => item.slug === slug);
   let customProgram: ReturnType<typeof localizeCustomProgramRow> | null = null;
   let customProgramPdfUrl: string | null = null;
   let customProgramTranslatedText: string | null = null;
@@ -45,7 +43,7 @@ export default async function ProgramDetailPage({
       const { data } = await supabase
         .from("custom_programs")
         .select("*")
-        .eq("slug", params.slug)
+        .eq("slug", slug)
         .eq("active", true)
         .maybeSingle();
       if (data) {
@@ -79,11 +77,11 @@ export default async function ProgramDetailPage({
   );
   const programTheme = getProgramTheme((localizedProgram ?? customProgram!).category);
   const tier =
-    params.slug.includes("advanced") || params.slug.includes("hardcore")
+    slug.includes("advanced") || slug.includes("hardcore")
       ? "ELITE"
-      : params.slug.includes("pro") || params.slug.includes("shred")
+      : slug.includes("pro") || slug.includes("shred")
         ? "POPULAR"
-        : params.slug.includes("starter")
+        : slug.includes("starter")
           ? "NEW"
           : "SIGNATURE";
   const coach = program ? coaches.find((entry) => entry.slug === program.coachSlug) : null;
@@ -106,7 +104,7 @@ export default async function ProgramDetailPage({
 
   return (
     <div className="mx-auto max-w-6xl space-y-10 px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-      <ProgramViewTracker slug={params.slug} />
+      <ProgramViewTracker slug={slug} />
       <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr]">
         <section className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.045] to-white/[0.015] p-8 shadow-[0_24px_64px_-32px_rgba(0,0,0,0.75)]">
           <span className="badge">{programCategory}</span>
@@ -119,7 +117,7 @@ export default async function ProgramDetailPage({
               {locales.map((targetLocale) => (
                 <Link
                   key={targetLocale}
-                  href={`/${targetLocale}/programs/${params.slug}`}
+                  href={`/${targetLocale}/programs/${slug}`}
                   className={`rounded-full border px-3 py-1.5 text-xs transition ${
                     targetLocale === locale
                       ? "border-white/40 bg-white/10 text-white"
@@ -152,7 +150,7 @@ export default async function ProgramDetailPage({
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             {previewItems.map((_, index) => (
               <div
-                key={`${params.slug}-preview-${index}`}
+                key={`${slug}-preview-${index}`}
                 className={`rounded-[24px] border border-white/10 bg-gradient-to-br p-8 text-center text-xs uppercase tracking-[0.24em] text-zinc-100/85 ${programTheme}`}
               >
                 {copy.previewLabel} {index + 1}
@@ -279,7 +277,7 @@ export default async function ProgramDetailPage({
 
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
-                href={`/${params.locale}/checkout?program=${params.slug}`}
+                href={`/${locale}/checkout?program=${slug}`}
                 className="gradient-button rounded-full px-5 py-2.5 text-sm font-medium text-white"
               >
                 {copy.buyProgram}

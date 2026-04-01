@@ -1,10 +1,7 @@
-import { isLocale } from "@/lib/i18n";
 import { redirect } from "next/navigation";
+import { requireLocaleParam } from "@/lib/require-locale";
 
 export default function TransformationsPage({ params }: { params: { locale: string } }) {
-  if (!isLocale(params.locale)) {
-    return null;
-  }
-
-  redirect(`/${params.locale}/community?tab=transformations`);
+  const locale = requireLocaleParam(params.locale);
+  redirect(`/${locale}/community?tab=transformations`);
 }

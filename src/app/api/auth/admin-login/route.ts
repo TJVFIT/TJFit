@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getAdminEmailForUsername, isAdminEmail } from "@/lib/auth-utils";
+import { readRequestJson } from "@/lib/read-request-json";
 import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
@@ -18,7 +19,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Too many requests." }, { status: 429 });
     }
 
-    const body = await request.json();
+    const parsed = await readRequestJson(request);
+    if (!parsed.ok) return parsed.response;
+    const body = parsed.value as { username?: unknown; password?: unknown };
     const { username, password } = body;
 
     if (typeof username !== "string" || !username.trim()) {

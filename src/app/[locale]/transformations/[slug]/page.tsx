@@ -2,18 +2,17 @@ import { notFound } from "next/navigation";
 
 import { ProtectedRoute } from "@/components/protected-route";
 import { transformations, coaches } from "@/lib/content";
-import { isLocale } from "@/lib/i18n";
+import { requireLocaleParam } from "@/lib/require-locale";
 
 export default function TransformationDetailPage({
   params
 }: {
   params: { locale: string; slug: string };
 }) {
-  if (!isLocale(params.locale)) {
-    return null;
-  }
+  const locale = requireLocaleParam(params.locale);
+  const slug = params.slug ?? "";
 
-  const transformation = transformations.find((item) => item.slug === params.slug);
+  const transformation = transformations.find((item) => item.slug === slug);
 
   if (!transformation) {
     notFound();
@@ -22,7 +21,7 @@ export default function TransformationDetailPage({
   const coach = coaches.find((entry) => entry.slug === transformation.coachSlug);
 
   return (
-    <ProtectedRoute locale={params.locale} requireAdmin>
+    <ProtectedRoute locale={locale} requireAdmin>
       <div className="mx-auto max-w-6xl space-y-10 px-4 py-16 sm:px-6 lg:px-8">
       <div className="glass-panel rounded-[36px] p-8">
         <span className="badge">Transformation Story</span>

@@ -10,6 +10,8 @@ type AuthCopy = {
   adminUsernameRequired: string;
   loginFailed: string;
   authNotConfigured: string;
+  /** Shown when /api/auth/me cannot be reached (network / 5xx). */
+  sessionCheckFailed: string;
   emailRequired: string;
   passwordRequired: string;
   emailPlaceholder: string;
@@ -115,7 +117,7 @@ type FooterCopy = {
   operationsTitle: string;
   coaches: string;
   programs: string;
-  ai: string;
+  community: string;
   membership: string;
   terms: string;
   privacy: string;
@@ -160,9 +162,11 @@ export type NavMenuSummaries = {
   live: string;
   progress: string;
   messages: string;
+  profile: string;
   dashboard: string;
   admin: string;
   chat: string;
+  peopleSearch: string;
 };
 
 type HomePageSectionCopy = {
@@ -194,6 +198,7 @@ const authCopy: Record<Locale, AuthCopy> = {
     adminUsernameRequired: "Please enter admin username.",
     loginFailed: "Login failed.",
     authNotConfigured: "Auth not configured.",
+    sessionCheckFailed: "We could not verify your session. Check your connection and refresh the page.",
     emailRequired: "Please enter email.",
     passwordRequired: "Please enter password.",
     emailPlaceholder: "Email",
@@ -235,6 +240,7 @@ const authCopy: Record<Locale, AuthCopy> = {
     adminUsernameRequired: "Lutfen yonetici kullanici adini gir.",
     loginFailed: "Giris basarisiz.",
     authNotConfigured: "Kimlik dogrulama ayarli degil.",
+    sessionCheckFailed: "Oturum dogrulanamadi. Baglantini kontrol et ve sayfayi yenile.",
     emailRequired: "Lutfen e-posta gir.",
     passwordRequired: "Lutfen sifre gir.",
     emailPlaceholder: "E-posta",
@@ -276,6 +282,7 @@ const authCopy: Record<Locale, AuthCopy> = {
     adminUsernameRequired: "الرجاء ادخال اسم مستخدم الادارة.",
     loginFailed: "فشل تسجيل الدخول.",
     authNotConfigured: "المصادقة غير مهيأة.",
+    sessionCheckFailed: "تعذر التحقق من جلستك. تحقق من الاتصال وحدّث الصفحة.",
     emailRequired: "الرجاء ادخال البريد الالكتروني.",
     passwordRequired: "الرجاء ادخال كلمة المرور.",
     emailPlaceholder: "البريد الالكتروني",
@@ -317,6 +324,7 @@ const authCopy: Record<Locale, AuthCopy> = {
     adminUsernameRequired: "Introduce el usuario de administrador.",
     loginFailed: "Inicio de sesion fallido.",
     authNotConfigured: "Autenticacion no configurada.",
+    sessionCheckFailed: "No pudimos verificar tu sesion. Revisa la conexion y actualiza la pagina.",
     emailRequired: "Introduce tu correo.",
     passwordRequired: "Introduce tu contrasena.",
     emailPlaceholder: "Correo electronico",
@@ -358,6 +366,7 @@ const authCopy: Record<Locale, AuthCopy> = {
     adminUsernameRequired: "Veuillez entrer le nom d'utilisateur admin.",
     loginFailed: "Echec de connexion.",
     authNotConfigured: "Authentification non configuree.",
+    sessionCheckFailed: "Impossible de verifier ta session. Verifie ta connexion et actualise la page.",
     emailRequired: "Veuillez entrer votre email.",
     passwordRequired: "Veuillez entrer votre mot de passe.",
     emailPlaceholder: "Email",
@@ -704,7 +713,7 @@ const footerCopy: Record<Locale, FooterCopy> = {
     operationsTitle: "Operations",
     coaches: "Coaches (Coming Soon)",
     programs: "Programs Marketplace",
-    ai: "TJFIT AI (Coming Soon)",
+    community: "Community",
     membership: "Subscription (Coming Soon)",
     terms: "Terms of Service",
     privacy: "Privacy Policy",
@@ -722,7 +731,7 @@ const footerCopy: Record<Locale, FooterCopy> = {
     operationsTitle: "Islemler",
     coaches: "Koçlar (Yakinda)",
     programs: "Program Pazari",
-    ai: "TJFIT AI (Yakinda)",
+    community: "Topluluk",
     membership: "Abonelik (Yakinda)",
     terms: "Hizmet Sartlari",
     privacy: "Gizlilik Politikasi",
@@ -740,7 +749,7 @@ const footerCopy: Record<Locale, FooterCopy> = {
     operationsTitle: "العمليات",
     coaches: "المدربون (قريبا)",
     programs: "سوق البرامج",
-    ai: "TJFIT AI (قريبا)",
+    community: "المجتمع",
     membership: "الاشتراك (قريبا)",
     terms: "شروط الخدمة",
     privacy: "سياسة الخصوصية",
@@ -758,7 +767,7 @@ const footerCopy: Record<Locale, FooterCopy> = {
     operationsTitle: "Operaciones",
     coaches: "Coaches (Proximamente)",
     programs: "Marketplace de Programas",
-    ai: "TJFIT AI (Proximamente)",
+    community: "Comunidad",
     membership: "Suscripcion (Proximamente)",
     terms: "Terminos del Servicio",
     privacy: "Politica de Privacidad",
@@ -776,7 +785,7 @@ const footerCopy: Record<Locale, FooterCopy> = {
     operationsTitle: "Operations",
     coaches: "Coachs (Bientot)",
     programs: "Marketplace des Programmes",
-    ai: "TJFIT AI (Bientot)",
+    community: "Communaute",
     membership: "Abonnement (Bientot)",
     terms: "Conditions d'utilisation",
     privacy: "Politique de confidentialite",
@@ -806,9 +815,11 @@ const navMenuSummaries: Record<Locale, NavMenuSummaries> = {
     live: "Live sessions",
     progress: "Track progress",
     messages: "Inbox",
+    profile: "Your profile",
     dashboard: "Coach workspace",
     admin: "Admin tools",
-    chat: "Coach chat"
+    chat: "Coach chat",
+    peopleSearch: "Member search"
   },
   tr: {
     blogs: "Koç yazıları",
@@ -825,9 +836,11 @@ const navMenuSummaries: Record<Locale, NavMenuSummaries> = {
     live: "Canlı yayın",
     progress: "İlerleme takibi",
     messages: "Gelen kutusu",
+    profile: "Profilin",
     dashboard: "Koç paneli",
     admin: "Yönetim",
-    chat: "Koç sohbeti"
+    chat: "Koç sohbeti",
+    peopleSearch: "Üye arama"
   },
   ar: {
     blogs: "مقالات المدرب",
@@ -844,9 +857,11 @@ const navMenuSummaries: Record<Locale, NavMenuSummaries> = {
     live: "جلسات مباشرة",
     progress: "تتبع التقدم",
     messages: "صندوق الوارد",
+    profile: "ملفك",
     dashboard: "لوحة المدرب",
     admin: "إدارة",
-    chat: "محادثة المدرب"
+    chat: "محادثة المدرب",
+    peopleSearch: "بحث الأعضاء"
   },
   es: {
     blogs: "Artículos coach",
@@ -863,9 +878,11 @@ const navMenuSummaries: Record<Locale, NavMenuSummaries> = {
     live: "Sesiones en vivo",
     progress: "Tu progreso",
     messages: "Bandeja",
+    profile: "Tu perfil",
     dashboard: "Panel coach",
     admin: "Administración",
-    chat: "Chat coach"
+    chat: "Chat coach",
+    peopleSearch: "Buscar miembros"
   },
   fr: {
     blogs: "Articles coach",
@@ -882,9 +899,11 @@ const navMenuSummaries: Record<Locale, NavMenuSummaries> = {
     live: "Sessions live",
     progress: "Ta progression",
     messages: "Boîte réception",
+    profile: "Ton profil",
     dashboard: "Espace coach",
     admin: "Administration",
-    chat: "Chat coach"
+    chat: "Chat coach",
+    peopleSearch: "Chercher membres"
   }
 };
 

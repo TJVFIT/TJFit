@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireCoachOrAdmin } from "@/lib/require-coach-or-admin";
-import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { readRequestJson } from "@/lib/read-request-json";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 const BLOG_BUCKET = "community-blog-images";
 
@@ -112,8 +113,10 @@ export async function DELETE(request: NextRequest) {
   const auth = await requireCoachOrAdmin();
   if (!auth.ok) return auth.response;
 
-  const body = await request.json().catch(() => null);
-  const blogId = String(body?.blogId ?? "").trim();
+  const parsed = await readRequestJson(request);
+  if (!parsed.ok) return parsed.response;
+  const body = parsed.value as Record<string, unknown>;
+  const blogId = String(body.blogId ?? "").trim();
   if (!blogId) {
     return NextResponse.json({ error: "blogId is required." }, { status: 400 });
   }
@@ -159,9 +162,11 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: "Only admins can pin blogs." }, { status: 403 });
   }
 
-  const body = await request.json().catch(() => null);
-  const blogId = String(body?.blogId ?? "").trim();
-  const action = String(body?.action ?? "").trim().toLowerCase();
+  const parsed = await readRequestJson(request);
+  if (!parsed.ok) return parsed.response;
+  const body = parsed.value as Record<string, unknown>;
+  const blogId = String(body.blogId ?? "").trim();
+  const action = String(body.action ?? "").trim().toLowerCase();
   if (!blogId || (action !== "pin" && action !== "unpin")) {
     return NextResponse.json({ error: "blogId and valid action are required." }, { status: 400 });
   }

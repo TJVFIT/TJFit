@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { rateLimit } from "@/lib/rate-limit";
+import { readRequestJson } from "@/lib/read-request-json";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -15,10 +16,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Too many requests." }, { status: 429 });
   }
 
-  const body = await request.json().catch(() => null);
-  const email = String(body?.email ?? "").trim().toLowerCase();
-  const locale = String(body?.locale ?? "en").trim().toLowerCase();
-  const source = String(body?.source ?? "guest-onboarding").trim().toLowerCase();
+  const parsed = await readRequestJson(request);
+  if (!parsed.ok) return parsed.response;
+  const body = parsed.value as Record<string, unknown>;
+  const email = String(body.email ?? "").trim().toLowerCase();
+  const locale = String(body.locale ?? "en").trim().toLowerCase();
+  const source = String(body.source ?? "guest-onboarding").trim().toLowerCase();
 
   if (!emailRegex.test(email)) {
     return NextResponse.json({ error: "Valid email is required." }, { status: 400 });

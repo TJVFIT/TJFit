@@ -1,5 +1,6 @@
 "use client";
 
+import { notFound } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { programs } from "@/lib/content";
 import { getCheckoutCopy } from "@/lib/premium-public-copy";
@@ -43,7 +44,9 @@ type CheckoutProgramOption = {
 };
 
 export default function CheckoutPage({ params }: { params: { locale: string } }) {
-  const locale = isLocale(params.locale) ? (params.locale as Locale) : ("en" as Locale);
+  const rawLocale = params?.locale ?? "";
+  const localeValid = isLocale(rawLocale);
+  const locale = (localeValid ? rawLocale : "en") as Locale;
   const copy = getCheckoutCopy(locale);
   const [activeSlug, setActiveSlug] = useState(programs[0]?.slug ?? "");
   const [customPrograms, setCustomPrograms] = useState<CheckoutProgramOption[]>([]);
@@ -114,11 +117,12 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
   }, []);
 
   useEffect(() => {
+    if (!localeValid) return;
     trackMarketingEvent("checkout_start", { locale });
-  }, [locale]);
+  }, [locale, localeValid]);
 
-  if (!isLocale(params.locale)) {
-    return null;
+  if (!localeValid) {
+    notFound();
   }
 
   const redeemOffer = async (offerKey: string) => {
@@ -219,7 +223,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
           : "text-zinc-400";
 
   return (
-    <ProtectedRoute locale={params.locale}>
+    <ProtectedRoute locale={rawLocale as Locale}>
       <PremiumPageShell>
         <PremiumPanel padding="lg" className="mb-8">
           <span className="lux-badge inline-flex">{copy.badge}</span>

@@ -29,17 +29,12 @@ export function GlowButton({ href, variant, className = "", children, reducedMot
   return (
     <div className={`inline-flex ${className}`.trim()}>
       <Link href={href} className={`${base} ${motionCls}`} onClick={() => onPress?.()}>
-        {variant === "primary" ? (
+        {variant === "secondary" ? (
           <span
-            className="pointer-events-none absolute inset-0 -translate-x-full skew-x-12 bg-gradient-to-r from-transparent via-white/35 to-transparent opacity-0 transition duration-700 ease-out group-hover:translate-x-full group-hover:opacity-100"
+            className="pointer-events-none absolute inset-0 rounded-full bg-white/[0.03] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
             aria-hidden
           />
-        ) : (
-          <span
-            className="pointer-events-none absolute inset-0 rounded-full opacity-0 shadow-[0_0_36px_-8px_rgba(34,211,238,0.25)] transition-opacity duration-500 group-hover:opacity-100"
-            aria-hidden
-          />
-        )}
+        ) : null}
         <span className="relative z-10">{children}</span>
       </Link>
     </div>

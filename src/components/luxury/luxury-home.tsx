@@ -81,10 +81,10 @@ function Reveal({
   return (
     <motion.div
       className={className}
-      initial={reduce ? false : { opacity: 0, y: 16 }}
+      initial={reduce ? false : { opacity: 0, y: 8 }}
       whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-64px", amount: 0.2 }}
-      transition={{ duration: 0.74, delay, ease: LUX_EASE }}
+      viewport={{ once: true, margin: "-32px", amount: 0.12 }}
+      transition={{ duration: 0.4, delay, ease: LUX_EASE }}
     >
       {children}
     </motion.div>
@@ -130,37 +130,28 @@ export function LuxuryHome({
         ref={heroRef}
         className="relative flex min-h-[100dvh] flex-col justify-center overflow-hidden px-4 pb-24 pt-24 sm:px-6 lg:px-8 lg:pt-28"
       >
-        <div className="pointer-events-none absolute inset-0 z-0 mesh-grid opacity-[0.12]" aria-hidden />
         <div
-          className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_70%_45%_at_50%_-10%,rgba(34,211,238,0.08),transparent),radial-gradient(ellipse_50%_35%_at_100%_40%,rgba(139,92,246,0.07),transparent),radial-gradient(ellipse_40%_30%_at_0%_60%,rgba(34,211,238,0.04),transparent)]"
+          className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(34,211,238,0.07),transparent),radial-gradient(ellipse_50%_40%_at_100%_0%,rgba(167,139,250,0.04),transparent)]"
           aria-hidden
         />
         <div
-          className={`hero-orb pointer-events-none absolute -left-40 top-1/3 z-0 h-80 w-80 bg-cyan-400/14 ${
-            reduce ? "" : "hero-orb--drift-a"
-          }`}
+          className={`hero-orb pointer-events-none absolute -left-32 top-1/4 z-0 h-72 w-72 bg-cyan-500/10 ${reduce ? "" : "hero-orb--drift-a"}`}
           aria-hidden
         />
         <div
-          className={`hero-orb pointer-events-none absolute -right-32 bottom-1/3 z-0 h-96 w-96 bg-violet-500/12 ${
-            reduce ? "" : "hero-orb--drift-b"
-          }`}
-          aria-hidden
-        />
-        <div
-          className="pointer-events-none absolute inset-0 z-[4] bg-gradient-to-b from-[#0A0A0B]/70 via-[#0A0A0B]/30 to-[#0A0A0B]/94"
+          className="pointer-events-none absolute inset-0 z-[4] bg-gradient-to-b from-[#0A0A0B]/55 via-transparent to-[#0A0A0B]"
           aria-hidden
         />
 
         <div className="relative z-10 mx-auto w-full max-w-6xl">
           <span className="lux-badge inline-flex">{copy.hero.badge}</span>
 
-          <h1 className="mt-10 font-display text-[clamp(2.25rem,5.5vw,3.75rem)] font-semibold leading-[1.08] tracking-tight text-white">
+          <h1 className="mt-10 font-display text-[clamp(2.25rem,5.5vw,3.5rem)] font-semibold leading-[1.08] tracking-tight text-white">
             <span className="block">{copy.hero.headline}</span>
-            {headlineAccent ? <span className="mt-1 block font-normal text-zinc-400">{headlineAccent}</span> : null}
+            {headlineAccent ? <span className="mt-1 block font-normal text-zinc-500">{headlineAccent}</span> : null}
           </h1>
 
-          <p className="mt-8 max-w-xl text-[15px] leading-relaxed text-zinc-500 sm:text-base">{copy.hero.sub}</p>
+          <p className="mt-7 max-w-lg text-[15px] leading-relaxed text-zinc-500 sm:text-base">{copy.hero.sub}</p>
 
           <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
             <GlowButton
@@ -196,16 +187,14 @@ export function LuxuryHome({
           <LeadCaptureForm locale={locale} source="hero-inline" variant="minimal" className="mt-10 max-w-xl" />
 
           {trustItems.length > 0 ? (
-            <ul className="mt-12 flex flex-wrap gap-2" aria-label="Trust">
-              {trustItems.map((t) => (
-                <li
-                  key={t}
-                  className="rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-zinc-400"
-                >
-                  {t}
-                </li>
+            <p className="mt-12 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-zinc-600" aria-label="Trust">
+              {trustItems.map((t, i) => (
+                <span key={t} className="inline-flex items-center gap-x-3">
+                  {i > 0 ? <span className="text-zinc-700" aria-hidden>·</span> : null}
+                  <span>{t}</span>
+                </span>
               ))}
-            </ul>
+            </p>
           ) : null}
         </div>
       </section>
@@ -255,7 +244,7 @@ export function LuxuryHome({
       >
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <Reveal>
-            <div className="rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/[0.04] to-transparent p-8 sm:p-12 lg:p-14">
+            <div className="rounded-2xl border border-white/[0.07] bg-surface/40 p-8 sm:p-11 lg:p-12">
               <span className="lux-badge inline-flex">{copy.leadMagnet.badge}</span>
               <h2 className="mt-8 font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
                 {copy.leadMagnet.title}
@@ -275,14 +264,8 @@ export function LuxuryHome({
                 <LeadCaptureForm locale={locale} source="free-roadmap" variant="panel" />
               </div>
               <div className="mt-10 border-t border-white/[0.06] pt-10">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-600">{copy.leadMagnet.tjaiSub}</p>
-                <Link
-                  href={`/${locale}/ai`}
-                  className="mt-3 inline-flex text-sm font-medium text-cyan-200/90 underline-offset-4 hover:underline"
-                  onClick={() => trackMarketingEvent("tJAI_waitlist_click", { surface: "lead-magnet" })}
-                >
-                  {copy.leadMagnet.tjaiCta}
-                </Link>
+                <span className="lux-badge inline-flex">{copy.leadMagnet.tjaiBadge}</span>
+                <p className="mt-3 max-w-xl text-sm leading-relaxed text-zinc-500">{copy.leadMagnet.tjaiSub}</p>
               </div>
             </div>
           </Reveal>
@@ -299,17 +282,15 @@ export function LuxuryHome({
             <p className="mt-3 max-w-md text-sm text-zinc-500 sm:text-[15px]">{copy.features.subtitle}</p>
           </Reveal>
 
-          <div className="mt-4 divide-y divide-white/[0.06]">
+          <div className="mt-10 grid gap-px overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.06] sm:grid-cols-2 lg:grid-cols-4">
             {copy.features.items.map((item, i) => {
               const Icon = featureIcons[i] ?? Sparkles;
               return (
-                <Reveal key={item.title} delay={i * 0.05}>
-                  <div className="flex gap-5 py-12 sm:gap-8">
-                    <Icon className="mt-0.5 h-5 w-5 shrink-0 text-zinc-600" strokeWidth={1.25} aria-hidden />
-                    <div className="min-w-0">
-                      <h3 className="text-lg font-medium text-white">{item.title}</h3>
-                      <p className="mt-2 max-w-xl text-sm leading-relaxed text-zinc-500">{item.desc}</p>
-                    </div>
+                <Reveal key={item.title} delay={i * 0.04} className="h-full bg-[#0A0A0B]">
+                  <div className="group flex h-full flex-col p-6 transition-colors hover:bg-white/[0.02] sm:p-7">
+                    <Icon className="h-5 w-5 text-zinc-500 transition group-hover:text-zinc-400" strokeWidth={1.25} aria-hidden />
+                    <h3 className="mt-4 font-display text-[15px] font-medium tracking-tight text-white">{item.title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-zinc-500">{item.desc}</p>
                   </div>
                 </Reveal>
               );
@@ -319,7 +300,7 @@ export function LuxuryHome({
       </section>
 
       {/* Mid-page capture */}
-      <section className="border-t border-white/[0.05] py-20 lg:py-24">
+      <section className="border-t border-white/[0.06] py-24 lg:py-28">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <Reveal>
             <div className="mx-auto max-w-2xl text-center">
@@ -336,7 +317,7 @@ export function LuxuryHome({
       </section>
 
       {/* Programs */}
-      <section className="border-t border-white/[0.05] bg-surface/[0.35] py-24 lg:py-32">
+      <section className="border-t border-white/[0.05] bg-surface/[0.25] py-24 lg:py-32">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <Reveal>
@@ -365,9 +346,9 @@ export function LuxuryHome({
                 >
                   <InteractiveCard
                     reducedMotion={reduce}
-                    className="group flex h-full flex-col rounded-xl border border-white/[0.06] bg-surface-elevated/60 p-6 transition-colors hover:border-white/[0.12]"
+                    className="group flex h-full flex-col rounded-xl border border-white/[0.06] bg-surface-elevated/50 p-6 transition-colors hover:border-white/[0.1]"
                   >
-                    <div className="h-px w-10 rounded-full bg-cyan-400/50 transition group-hover:bg-cyan-400/70" />
+                    <div className="h-px w-8 rounded-full bg-zinc-600 transition group-hover:bg-zinc-500" />
                     <p className="mt-5 text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-500">{p.category}</p>
                     <h3 className="mt-2 line-clamp-2 text-base font-medium leading-snug text-white">{p.title}</h3>
                     <p className="mt-2 text-xs text-zinc-600">{p.duration}</p>
@@ -411,14 +392,17 @@ export function LuxuryHome({
                 <h3 className="text-xl font-medium text-white">{copy.coaches.emptyTitle}</h3>
                 <p className="mt-4 max-w-xl text-sm leading-relaxed text-zinc-500">{copy.coaches.emptyDesc}</p>
                 <div className="mt-8 flex flex-wrap gap-3">
-                  <GlowButton
-                    href={`/${locale}/become-a-coach`}
-                    variant="primary"
-                    reducedMotion={reduce}
-                    className="min-h-0 px-6 py-2.5 text-sm"
+                  <div
+                    className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.02] px-6 py-2.5 text-sm text-zinc-400"
+                    role="group"
+                    aria-disabled="true"
+                    aria-label={`${copy.coaches.applyComingSoonBadge}: ${copy.coaches.cta}`}
                   >
-                    {copy.coaches.cta}
-                  </GlowButton>
+                    <span className="rounded-full border border-amber-400/30 bg-amber-500/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-amber-200/90">
+                      {copy.coaches.applyComingSoonBadge}
+                    </span>
+                    <span>{copy.coaches.cta}</span>
+                  </div>
                   <Link
                     href={`/${locale}/coaches`}
                     className="lux-btn-secondary inline-flex rounded-full px-6 py-2.5 text-sm font-medium text-zinc-200"
@@ -434,7 +418,7 @@ export function LuxuryHome({
                 <Reveal key={c.slug} delay={i * 0.04}>
                   <Link
                     href={`/${locale}/coaches/${c.slug}`}
-                    className="group block h-full overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.05] to-white/[0.02] transition hover:border-cyan-400/25 hover:shadow-[0_0_40px_-12px_rgba(34,211,238,0.15)]"
+                    className="group block h-full overflow-hidden rounded-xl border border-white/[0.07] bg-surface-elevated/40 transition hover:border-white/[0.11]"
                     onClick={() =>
                       trackMarketingEvent("coach_profile_view", { slug: c.slug, surface: "home" })
                     }
@@ -463,7 +447,7 @@ export function LuxuryHome({
       </section>
 
       {/* Community / blog — isolated: bad API payloads or Image errors cannot take down the whole home */}
-      <div className="border-t border-white/[0.05] bg-surface/[0.2]">
+      <div className="border-t border-white/[0.05]">
         <ClientErrorBoundary
           fallback={
             <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
@@ -476,14 +460,14 @@ export function LuxuryHome({
       </div>
 
       {/* Final CTA */}
-      <section className="px-4 py-24 sm:px-6 lg:py-32 lg:px-8">
+      <section className="px-4 py-24 sm:px-6 lg:py-28 lg:px-8">
         <Reveal>
-          <div className="mx-auto max-w-3xl rounded-2xl border border-white/[0.08] bg-surface-elevated/40 px-8 py-12 sm:px-12 sm:py-14">
-            <h2 className="font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+          <div className="mx-auto max-w-2xl rounded-2xl border border-white/[0.07] bg-surface/35 px-8 py-12 text-center sm:px-10 sm:py-14">
+            <h2 className="font-display text-xl font-semibold tracking-tight text-white sm:text-2xl">
               {copy.finalCta.title}
             </h2>
-            <p className="mt-4 text-sm leading-relaxed text-zinc-500 sm:text-[15px]">{copy.finalCta.sub}</p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-zinc-500">{copy.finalCta.sub}</p>
+            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
               <GlowButton
                 href={`/${locale}/signup`}
                 variant="primary"
@@ -500,10 +484,10 @@ export function LuxuryHome({
                 {copy.finalCta.secondary}
               </Link>
             </div>
-            <div className="mt-10 max-w-xl border-t border-white/[0.06] pt-10">
+            <div className="mx-auto mt-10 max-w-md border-t border-white/[0.06] pt-8">
               <LeadCaptureForm locale={locale} source="final-cta" variant="minimal" />
             </div>
-            <p className="mt-8 text-xs leading-relaxed text-zinc-600 sm:text-sm">{copy.finalCta.nudge}</p>
+            <p className="mt-6 text-xs leading-relaxed text-zinc-600">{copy.finalCta.nudge}</p>
           </div>
         </Reveal>
       </section>
@@ -511,7 +495,7 @@ export function LuxuryHome({
       {/* Mobile sticky CTA — appears after hero scroll (no exit animation — avoids Framer AnimatePresence edge cases) */}
       {stickyCta ? (
         <div
-          className="fixed inset-x-0 bottom-0 z-40 border-t border-white/[0.08] bg-[#0A0A0B]/88 px-4 py-3 backdrop-blur-xl backdrop-saturate-150 lg:hidden"
+          className="fixed inset-x-0 bottom-0 z-40 border-t border-white/[0.06] bg-[#0A0A0B]/92 px-4 py-3 backdrop-blur-md lg:hidden"
           style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
         >
           <div className="mx-auto flex max-w-lg items-center gap-3">

@@ -1,14 +1,12 @@
 import { Suspense } from "react";
 import { DashboardRoleRouter } from "@/components/dashboard-role-router";
 import { ProtectedRoute } from "@/components/protected-route";
-import { isLocale, type Locale } from "@/lib/i18n";
+import { requireLocaleParam } from "@/lib/require-locale";
 
 export default function DashboardPage({ params }: { params: { locale: string } }) {
-  if (!isLocale(params.locale)) {
-    return null;
-  }
+  const locale = requireLocaleParam(params.locale);
   return (
-    <ProtectedRoute locale={params.locale}>
+    <ProtectedRoute locale={locale}>
       <div className="mx-auto max-w-6xl space-y-8 px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <Suspense
           fallback={
@@ -18,7 +16,7 @@ export default function DashboardPage({ params }: { params: { locale: string } }
             </div>
           }
         >
-          <DashboardRoleRouter locale={params.locale as Locale} />
+          <DashboardRoleRouter locale={locale} />
         </Suspense>
       </div>
     </ProtectedRoute>

@@ -1,7 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Locale, locales } from "@/lib/i18n";
-import { requireCoachOrAdmin } from "@/lib/require-coach-or-admin";
-import { requireAuth } from "@/lib/require-auth";
 import {
   buildProgramTranslations,
   extractPdfText,
@@ -10,6 +7,10 @@ import {
   toPublicCustomProgramRow,
   type CustomProgramRow
 } from "@/lib/custom-programs";
+import { Locale, locales } from "@/lib/i18n";
+import { readRequestJson } from "@/lib/read-request-json";
+import { requireCoachOrAdmin } from "@/lib/require-coach-or-admin";
+import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 const BUCKET_NAME = "program-assets";
@@ -175,8 +176,10 @@ export async function DELETE(request: NextRequest) {
   const auth = await requireCoachOrAdmin();
   if (!auth.ok) return auth.response;
 
-  const body = await request.json().catch(() => null);
-  const programId = String(body?.programId ?? "").trim();
+  const parsed = await readRequestJson(request);
+  if (!parsed.ok) return parsed.response;
+  const body = parsed.value as Record<string, unknown>;
+  const programId = String(body.programId ?? "").trim();
   if (!programId) {
     return NextResponse.json({ error: "programId is required." }, { status: 400 });
   }

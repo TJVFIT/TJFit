@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { readRequestJson } from "@/lib/read-request-json";
 import { rateLimit } from "@/lib/rate-limit";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
@@ -17,7 +18,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Too many requests." }, { status: 429 });
     }
 
-    const body = await request.json();
+    const parsed = await readRequestJson(request);
+    if (!parsed.ok) return parsed.response;
+    const body = parsed.value as Record<string, unknown>;
     const {
       age,
       full_name,

@@ -66,6 +66,10 @@ npm install
 npm run dev
 ```
 
+## Engineering
+
+- Large or risky refactors: follow [docs/engineering/major-changes-and-rollback.md](docs/engineering/major-changes-and-rollback.md) so rollback stays straightforward (branch, optional pre-change tag, PR change summary).
+
 ## Notes
 
 - Current data is mocked in `src/lib/content.ts`

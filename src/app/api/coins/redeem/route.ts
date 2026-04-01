@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
+import { generateDiscountCode } from "@/lib/tjfit-coin";
+import { readRequestJson } from "@/lib/read-request-json";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
-import { generateDiscountCode } from "@/lib/tjfit-coin";
 
 export async function POST(request: NextRequest) {
   const supabase = createServerSupabaseClient();
@@ -14,8 +15,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await request.json().catch(() => null);
-  const offerKey = String(body?.offerKey ?? "").trim();
+  const parsed = await readRequestJson(request);
+  if (!parsed.ok) return parsed.response;
+  const body = parsed.value as Record<string, unknown>;
+  const offerKey = String(body.offerKey ?? "").trim();
   if (!offerKey) {
     return NextResponse.json({ error: "offerKey is required" }, { status: 400 });
   }

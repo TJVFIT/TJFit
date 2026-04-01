@@ -4,6 +4,13 @@
 
 :root {
   color-scheme: dark;
+  --tj-bg: #0a0a0b;
+  --tj-surface: #111215;
+  --tj-surface-elevated: #15171a;
+  --tj-accent-cyan: #22d3ee;
+  --tj-accent-violet: #a78bfa;
+  --tj-border: rgba(255, 255, 255, 0.08);
+  --tj-text-secondary: #a1a1aa;
 }
 
 html {
@@ -12,10 +19,7 @@ html {
 
 body {
   background-color: #0a0a0b;
-  background-image:
-    radial-gradient(ellipse 120% 80% at 50% -30%, rgba(34, 211, 238, 0.12), transparent),
-    radial-gradient(ellipse 70% 50% at 100% 20%, rgba(167, 139, 250, 0.08), transparent),
-    linear-gradient(180deg, #0a0a0b 0%, #080809 100%);
+  background-image: radial-gradient(ellipse 100% 60% at 50% -20%, rgba(34, 211, 238, 0.06), transparent 55%);
   color: #f4f4f5;
   font-family: Inter, Arial, Helvetica, sans-serif;
 }
@@ -25,10 +29,10 @@ body {
 }
 
 .glass-panel {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02));
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  backdrop-filter: blur(20px);
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
 }
 
 .lux-glass {
@@ -41,26 +45,45 @@ body {
 
 .lux-badge {
   border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.03);
-  padding: 0.35rem 0.85rem;
-  font-size: 0.6875rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.35rem 0.8rem;
+  font-size: 0.625rem;
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: rgba(161, 161, 170, 0.95);
 }
 
+.premium-card-shell {
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(17, 18, 21, 0.65);
+  box-shadow: 0 12px 40px -20px rgba(0, 0, 0, 0.45);
+}
+
+.section-y {
+  padding-top: 5.5rem;
+  padding-bottom: 5.5rem;
+}
+
+@media (min-width: 1024px) {
+  .section-y {
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+  }
+}
+
 .lux-btn-primary {
-  background: linear-gradient(135deg, #22d3ee 0%, #06b6d4 48%, #8b5cf6 100%);
-  box-shadow: 0 0 32px -12px rgba(34, 211, 238, 0.4);
+  background: linear-gradient(180deg, #2dd4e8 0%, #22d3ee 48%, #06b6d4 100%);
+  box-shadow: none;
   transition:
-    box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    filter 0.25s ease,
+    transform 0.25s ease;
 }
 
 .lux-btn-primary:hover {
-  box-shadow: 0 0 44px -10px rgba(34, 211, 238, 0.48);
+  filter: brightness(1.06);
 }
 
 .lux-btn-secondary {
@@ -74,9 +97,8 @@ body {
 }
 
 .lux-btn-secondary:hover {
-  border-color: rgba(34, 211, 238, 0.22);
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: 0 0 24px -12px rgba(34, 211, 238, 0.18);
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .gradient-button {
@@ -99,8 +121,8 @@ body {
 .hero-orb {
   position: absolute;
   border-radius: 9999px;
-  filter: blur(72px);
-  opacity: 0.5;
+  filter: blur(80px);
+  opacity: 0.35;
 }
 
 @keyframes lux-orb-drift-a {
@@ -166,7 +188,16 @@ body {
 }
 
 .input {
-  @apply w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition placeholder:text-zinc-500 focus:border-accent;
+  @apply w-full rounded-2xl border border-white/[0.1] bg-white/[0.04] px-4 py-3 text-sm text-white outline-none transition duration-200 placeholder:text-zinc-500;
+}
+
+.input:focus-visible {
+  border-color: rgba(34, 211, 238, 0.4);
+  box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.12);
+}
+
+.form-error-banner {
+  @apply rounded-xl border border-red-500/25 bg-red-500/[0.07] px-4 py-3 text-sm text-red-200/95;
 }
 
 .badge {

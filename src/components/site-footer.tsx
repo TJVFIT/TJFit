@@ -16,13 +16,13 @@ export function SiteFooter({ locale }: { locale: Locale }) {
     ? [
         { href: "/coaches", label: copy.coaches },
         { href: "/programs", label: copy.programs },
-        { href: "/ai", label: copy.ai },
+        { href: "/community", label: copy.community },
         { href: "/membership", label: copy.membership }
       ]
     : [
         { href: "/coaches", label: copy.coaches },
         { href: "/programs", label: copy.programs },
-        { href: "/ai", label: copy.ai },
+        { href: "/community", label: copy.community },
         { href: "/membership", label: copy.membership }
       ];
 
@@ -46,7 +46,8 @@ export function SiteFooter({ locale }: { locale: Locale }) {
       : [
           { href: "/terms-and-conditions", label: copy.terms },
           { href: "/privacy-policy", label: copy.privacy },
-          { href: "/refund-policy", label: copy.refund }
+          { href: "/refund-policy", label: copy.refund },
+          { href: "/support", label: copy.support }
         ];
 
   const linkClass =

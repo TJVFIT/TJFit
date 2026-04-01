@@ -1,14 +1,10 @@
 import Link from "next/link";
 import { PremiumPageShell, PremiumPanel, PremiumSectionTitle } from "@/components/premium";
 import { getCoachesListingCopy } from "@/lib/premium-public-copy";
-import { isLocale, type Locale } from "@/lib/i18n";
+import { requireLocaleParam } from "@/lib/require-locale";
 
 export default function CoachesPage({ params }: { params: { locale: string } }) {
-  if (!isLocale(params.locale)) {
-    return null;
-  }
-
-  const locale = params.locale as Locale;
+  const locale = requireLocaleParam(params.locale);
   const copy = getCoachesListingCopy(locale);
 
   return (
@@ -41,12 +37,17 @@ export default function CoachesPage({ params }: { params: { locale: string } }) 
         >
           {copy.ctaSignup}
         </Link>
-        <Link
-          href={`/${locale}/become-a-coach`}
-          className="inline-flex flex-1 items-center justify-center rounded-full border border-violet-400/25 bg-violet-500/10 px-6 py-3 text-center text-sm font-medium text-violet-200/95 transition hover:border-violet-400/40 sm:min-w-[200px]"
+        <div
+          className="inline-flex flex-1 cursor-not-allowed flex-col items-center justify-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-6 py-3 text-center sm:min-w-[200px]"
+          role="group"
+          aria-disabled="true"
+          aria-label={`${copy.comingSoonLabel}: ${copy.ctaBecomeCoach}`}
         >
-          {copy.ctaBecomeCoach}
-        </Link>
+          <span className="rounded-full border border-amber-400/30 bg-amber-500/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-amber-200/90">
+            {copy.comingSoonLabel}
+          </span>
+          <span className="text-sm font-medium text-zinc-500">{copy.ctaBecomeCoach}</span>
+        </div>
       </PremiumPanel>
     </PremiumPageShell>
   );

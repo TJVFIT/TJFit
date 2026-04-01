@@ -21,6 +21,7 @@ export type Dictionary = {
     loginAsCoach: string;
     progress: string;
     messages: string;
+    profile: string;
     logout: string;
   };
   hero: {
@@ -126,6 +127,9 @@ export type Dictionary = {
     subtitle: string;
     storeDescription: string;
   };
+  becomeCoachPage: {
+    description: string;
+  };
   feedback: {
     title: string;
     subtitle: string;
@@ -165,6 +169,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       loginAsCoach: "Log in as a coach",
       progress: "Progress",
       messages: "Messages",
+      profile: "Profile",
       logout: "Log out"
     },
     hero: {
@@ -199,6 +204,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
       title: "Coming Soon",
       subtitle: "Our equipment store is on its way.",
       storeDescription: "Training and recovery tools, resistance bands, dumbbells, and more. Connect with our future dropshipping store."
+    },
+    becomeCoachPage: {
+      description:
+        "We are onboarding coaches privately. Public applications are not open yet. Browse programs or find a coach in the meantime."
     },
     becomeCoach: {
       badge: "Become a Coach",
@@ -309,6 +318,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       loginAsCoach: "Koç olarak giris yap",
       progress: "Ilerleme",
       messages: "Mesajlar",
+      profile: "Profil",
       logout: "Cikis yap"
     },
     hero: {
@@ -343,6 +353,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
       title: "Yakinda",
       subtitle: "Ekipman magazamiz yolda.",
       storeDescription: "Antrenman ve toparlanma araclari, direnc bantlari, dumbellar ve daha fazlasi. Gelecekteki dropshipping magazamizla baglanti."
+    },
+    becomeCoachPage: {
+      description:
+        "Koclari su an ozel olarak dahil ediyoruz. Herkese acik basvurular henuz acik degil. Bu arada programlara goz atabilir veya bir koç bulabilirsiniz."
     },
     becomeCoach: {
       badge: "Koç Ol",
@@ -453,6 +467,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       loginAsCoach: "تسجيل الدخول كمدرب",
       progress: "التقدم",
       messages: "الرسائل",
+      profile: "الملف الشخصي",
       logout: "تسجيل الخروج"
     },
     hero: {
@@ -487,6 +502,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
       title: "قريباً",
       subtitle: "متجر المعدات قادم.",
       storeDescription: "ادوات التدريب والتعافي، اشرطة المقاومة، الدمبلز والمزيد. متصل بمتجر dropshipping المستقبلي."
+    },
+    becomeCoachPage: {
+      description:
+        "نجري حالياً ضم المدربين بشكل خاص. طلبات الانضمام العامة غير متاحة بعد. يمكنك تصفح البرامج أو اختيار مدرب في هذه الأثناء."
     },
     becomeCoach: {
       badge: "انضم كمدرب",
@@ -597,6 +616,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       loginAsCoach: "Iniciar sesion como coach",
       progress: "Progreso",
       messages: "Mensajes",
+      profile: "Perfil",
       logout: "Cerrar sesion"
     },
     hero: {
@@ -631,6 +651,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
       title: "Proximamente",
       subtitle: "Nuestra tienda de equipamiento esta en camino.",
       storeDescription: "Herramientas de entrenamiento y recuperacion, bandas de resistencia, mancuernas y mas. Conectado con nuestra futura tienda dropshipping."
+    },
+    becomeCoachPage: {
+      description:
+        "Estamos incorporando coaches de forma privada. Las solicitudes publicas aun no estan abiertas. Mientras tanto, explora programas o elige un coach."
     },
     becomeCoach: {
       badge: "Ser coach",
@@ -741,6 +765,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       loginAsCoach: "Se connecter en tant que coach",
       progress: "Progression",
       messages: "Messages",
+      profile: "Profil",
       logout: "Se deconnecter"
     },
     hero: {
@@ -775,6 +800,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
       title: "Bientot",
       subtitle: "Notre boutique d'equipement arrive.",
       storeDescription: "Outils d'entrainement et de recuperation, bandes de resistance, haltères et plus. Connecte a notre future boutique dropshipping."
+    },
+    becomeCoachPage: {
+      description:
+        "Nous integrons les coaches en privé pour l'instant. Les candidatures publiques ne sont pas encore ouvertes. En attendant, parcours les programmes ou choisis un coach."
     },
     becomeCoach: {
       badge: "Devenir coach",

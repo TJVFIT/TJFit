@@ -3,8 +3,9 @@
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { ProtectedRoute } from "@/components/protected-route";
 import { useAuth } from "@/components/auth-provider";
-import { isLocale, type Locale } from "@/lib/i18n";
+import type { Locale } from "@/lib/i18n";
 import { getProgramManagementCopy } from "@/lib/program-management-copy";
+import { requireLocaleParam } from "@/lib/require-locale";
 
 type MyProgram = {
   id: string;
@@ -16,10 +17,7 @@ type MyProgram = {
 };
 
 export default function ProgramUploadPage({ params }: { params: { locale: string } }) {
-  if (!isLocale(params.locale)) {
-    return null;
-  }
-  const locale = params.locale as Locale;
+  const locale = requireLocaleParam(params.locale);
   return (
     <ProtectedRoute locale={locale}>
       <ProgramUploadClient locale={locale} />

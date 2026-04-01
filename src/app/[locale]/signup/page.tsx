@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { isLocale, type Locale } from "@/lib/i18n";
@@ -16,8 +17,8 @@ export default function SignupPage({ params }: { params: { locale: string } }) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
 
-  if (!isLocale(params.locale)) {
-    return null;
+  if (!isLocale(params?.locale ?? "")) {
+    notFound();
   }
 
   const locale = params.locale as Locale;
@@ -28,78 +29,78 @@ export default function SignupPage({ params }: { params: { locale: string } }) {
     setError(null);
     setSuccess(null);
     setLoading(true);
-
-    const supabase = getSupabaseBrowserClient();
-    if (!supabase) {
-      setError(copy.authNotConfigured);
-      setLoading(false);
-      return;
-    }
-
-    if (password.length < 8) {
-      setError(copy.passwordTooShort);
-      setLoading(false);
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError(copy.passwordsDoNotMatch);
-      setLoading(false);
-      return;
-    }
-
-    if (!acceptedTerms) {
-      setError(copy.acceptTermsRequired);
-      setLoading(false);
-      return;
-    }
-
-    const now = new Date().toISOString();
-    const { error: signUpError } = await supabase.auth.signUp({
-      email: email.trim(),
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/${params.locale}`,
-        data: {
-          requested_role: "user",
-          terms_accepted: true,
-          terms_version: TERMS_VERSION,
-          terms_accepted_at: now,
-          privacy_accepted: true,
-          privacy_version: PRIVACY_VERSION,
-          privacy_accepted_at: now,
-          billing_terms_accepted: true,
-          billing_provider: BILLING_PROVIDER,
-          billing_terms_version: TERMS_VERSION,
-          billing_terms_accepted_at: now
-        }
+    try {
+      const supabase = getSupabaseBrowserClient();
+      if (!supabase) {
+        setError(copy.authNotConfigured);
+        return;
       }
-    });
 
-    setLoading(false);
+      if (password.length < 8) {
+        setError(copy.passwordTooShort);
+        return;
+      }
 
-    if (signUpError) {
-      setError(signUpError.message ?? copy.signupFailed);
-      return;
+      if (password !== confirmPassword) {
+        setError(copy.passwordsDoNotMatch);
+        return;
+      }
+
+      if (!acceptedTerms) {
+        setError(copy.acceptTermsRequired);
+        return;
+      }
+
+      const now = new Date().toISOString();
+      const { error: signUpError } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/${params.locale}`,
+          data: {
+            requested_role: "user",
+            terms_accepted: true,
+            terms_version: TERMS_VERSION,
+            terms_accepted_at: now,
+            privacy_accepted: true,
+            privacy_version: PRIVACY_VERSION,
+            privacy_accepted_at: now,
+            billing_terms_accepted: true,
+            billing_provider: BILLING_PROVIDER,
+            billing_terms_version: TERMS_VERSION,
+            billing_terms_accepted_at: now
+          }
+        }
+      });
+
+      if (signUpError) {
+        setError(signUpError.message ?? copy.signupFailed);
+        return;
+      }
+
+      setSuccess(copy.signupSuccess);
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+      setAcceptedTerms(false);
+    } catch (err) {
+      console.error("[signup] submit failed", err);
+      setError(copy.signupFailed);
+    } finally {
+      setLoading(false);
     }
-
-    setSuccess(copy.signupSuccess);
-    setEmail("");
-    setPassword("");
-    setConfirmPassword("");
-    setAcceptedTerms(false);
   };
 
   return (
     <div className="mx-auto flex min-h-[80vh] max-w-md items-center px-4 py-16 sm:px-6 lg:px-8">
-      <div className="w-full rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.05] to-white/[0.015] p-8 shadow-[0_24px_64px_-32px_rgba(0,0,0,0.75)]">
+      <div className="w-full rounded-2xl border border-white/[0.07] bg-surface/25 p-8 sm:p-9">
         <span className="lux-badge inline-flex">{copy.signupBadge}</span>
-        <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">{copy.signupTitle}</h1>
+        <h1 className="mt-6 font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">{copy.signupTitle}</h1>
         <p className="mt-3 text-sm leading-7 text-zinc-400">
           {copy.signupSubtitle}
         </p>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+        <form onSubmit={handleSubmit} className="mt-8 space-y-5">
           <input
             className="input"
             type="email"
@@ -126,7 +127,7 @@ export default function SignupPage({ params }: { params: { locale: string } }) {
             required
             minLength={8}
           />
-          <label className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/5 p-3 text-sm text-zinc-300">
+          <label className="flex items-start gap-3 rounded-2xl border border-white/[0.1] bg-white/[0.04] p-4 text-sm leading-relaxed text-zinc-300 transition-colors hover:border-white/[0.14]">
             <input
               type="checkbox"
               checked={acceptedTerms}
@@ -146,12 +147,16 @@ export default function SignupPage({ params }: { params: { locale: string } }) {
               , {BILLING_PROVIDER} {copy.billingSuffix}
             </span>
           </label>
-          {error && <p className="text-sm text-red-400">{error}</p>}
-          {success && <p className="text-sm text-green-400">{success}</p>}
+          {error ? <div className="form-error-banner">{error}</div> : null}
+          {success ? (
+            <div className="rounded-xl border border-emerald-500/25 bg-emerald-500/[0.08] px-4 py-3 text-sm text-emerald-200/95">
+              {success}
+            </div>
+          ) : null}
           <button
             type="submit"
             disabled={loading}
-            className="gradient-button w-full rounded-full px-5 py-3 text-sm font-semibold text-[#05080a] disabled:opacity-60"
+            className="gradient-button w-full rounded-xl px-5 py-3 text-sm font-medium text-[#05080a] transition hover:brightness-105 disabled:opacity-60"
           >
             {loading ? copy.creatingAccount : copy.createAccountButton}
           </button>

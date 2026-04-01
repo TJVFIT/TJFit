@@ -46,6 +46,13 @@ type MessagesCopy = {
   fileButton: string;
   linkPlaceholder: string;
   missingPublicKeys: string;
+  inboxEncryptedPreview: string;
+  inboxNoMessagesYet: string;
+  threadLoading: string;
+  threadEmpty: string;
+  threadRetry: string;
+  messageInputPlaceholder: string;
+  newChatSectionTitle: string;
 };
 
 const progressCopy: Record<Locale, ProgressCopy> = {
@@ -134,7 +141,7 @@ const progressCopy: Record<Locale, ProgressCopy> = {
 const messagesCopy: Record<Locale, MessagesCopy> = {
   en: {
     title: "Messages",
-    subtitle: "Private encrypted coach-student chat.",
+    subtitle: "Encrypted direct messages and coach chat. Find people by username.",
     noConversations: "No conversations yet.",
     startCall: "Call",
     startVideoCall: "Video call",
@@ -160,11 +167,18 @@ const messagesCopy: Record<Locale, MessagesCopy> = {
     linkButton: "Link",
     fileButton: "File",
     linkPlaceholder: "https://...",
-    missingPublicKeys: "Public keys are missing for one of the users."
+    missingPublicKeys: "Public keys are missing for one of the users.",
+    inboxEncryptedPreview: "Encrypted message",
+    inboxNoMessagesYet: "No messages yet",
+    threadLoading: "Loading conversation…",
+    threadEmpty: "No messages yet. Say hello below.",
+    threadRetry: "Try again",
+    messageInputPlaceholder: "Message",
+    newChatSectionTitle: "New chat"
   },
   tr: {
     title: "Mesajlar",
-    subtitle: "Ozel sifreli koç-ogrenci sohbeti.",
+    subtitle: "Sifreli DM ve koç sohbeti. Kullanici adiyla kisi bulun.",
     noConversations: "Henuz sohbet yok.",
     startCall: "Ara",
     startVideoCall: "Goruntulu ara",
@@ -190,11 +204,18 @@ const messagesCopy: Record<Locale, MessagesCopy> = {
     linkButton: "Baglanti",
     fileButton: "Dosya",
     linkPlaceholder: "https://...",
-    missingPublicKeys: "Kullanicilardan biri icin ortak anahtar eksik."
+    missingPublicKeys: "Kullanicilardan biri icin ortak anahtar eksik.",
+    inboxEncryptedPreview: "Sifreli mesaj",
+    inboxNoMessagesYet: "Henuz mesaj yok",
+    threadLoading: "Sohbet yukleniyor…",
+    threadEmpty: "Henuz mesaj yok. Asagidan yazin.",
+    threadRetry: "Tekrar dene",
+    messageInputPlaceholder: "Mesaj",
+    newChatSectionTitle: "Yeni sohbet"
   },
   ar: {
     title: "الرسائل",
-    subtitle: "محادثة خاصة مشفرة بين المدرب والطالب.",
+    subtitle: "رسائل مباشرة مشفرة ومحادثة المدرب. ابحث بالاسم المستخدم.",
     noConversations: "لا توجد محادثات بعد.",
     startCall: "اتصال",
     startVideoCall: "مكالمة فيديو",
@@ -220,11 +241,18 @@ const messagesCopy: Record<Locale, MessagesCopy> = {
     linkButton: "رابط",
     fileButton: "ملف",
     linkPlaceholder: "https://...",
-    missingPublicKeys: "المفاتيح العامة مفقودة لاحد المستخدمين."
+    missingPublicKeys: "المفاتيح العامة مفقودة لاحد المستخدمين.",
+    inboxEncryptedPreview: "رسالة مشفرة",
+    inboxNoMessagesYet: "لا رسائل بعد",
+    threadLoading: "جار تحميل المحادثة…",
+    threadEmpty: "لا رسائل بعد. اكتب في الأسفل.",
+    threadRetry: "إعادة المحاولة",
+    messageInputPlaceholder: "رسالة",
+    newChatSectionTitle: "محادثة جديدة"
   },
   es: {
     title: "Mensajes",
-    subtitle: "Chat privado cifrado entre coach y estudiante.",
+    subtitle: "DM cifrados y chat con coach. Busca por usuario.",
     noConversations: "Aun no hay conversaciones.",
     startCall: "Llamar",
     startVideoCall: "Videollamada",
@@ -250,11 +278,18 @@ const messagesCopy: Record<Locale, MessagesCopy> = {
     linkButton: "Enlace",
     fileButton: "Archivo",
     linkPlaceholder: "https://...",
-    missingPublicKeys: "Faltan claves publicas para uno de los usuarios."
+    missingPublicKeys: "Faltan claves publicas para uno de los usuarios.",
+    inboxEncryptedPreview: "Mensaje cifrado",
+    inboxNoMessagesYet: "Sin mensajes aun",
+    threadLoading: "Cargando conversacion…",
+    threadEmpty: "Sin mensajes. Escribe abajo.",
+    threadRetry: "Reintentar",
+    messageInputPlaceholder: "Mensaje",
+    newChatSectionTitle: "Nuevo chat"
   },
   fr: {
     title: "Messages",
-    subtitle: "Chat prive chiffre entre coach et eleve.",
+    subtitle: "DM chiffres et chat coach. Trouvez des membres par pseudo.",
     noConversations: "Aucune conversation pour le moment.",
     startCall: "Appeler",
     startVideoCall: "Appel video",
@@ -280,7 +315,14 @@ const messagesCopy: Record<Locale, MessagesCopy> = {
     linkButton: "Lien",
     fileButton: "Fichier",
     linkPlaceholder: "https://...",
-    missingPublicKeys: "Les cles publiques manquent pour un des utilisateurs."
+    missingPublicKeys: "Les cles publiques manquent pour un des utilisateurs.",
+    inboxEncryptedPreview: "Message chiffre",
+    inboxNoMessagesYet: "Pas encore de messages",
+    threadLoading: "Chargement…",
+    threadEmpty: "Pas encore de messages. Ecrivez ci-dessous.",
+    threadRetry: "Reessayer",
+    messageInputPlaceholder: "Message",
+    newChatSectionTitle: "Nouvelle conversation"
   }
 };
 

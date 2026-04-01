@@ -2,7 +2,6 @@ import { withSentryConfig } from "@sentry/nextjs";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ["three"],
   images: {
     remotePatterns: [
       {
@@ -26,5 +25,9 @@ export default withSentryConfig(nextConfig, {
   silent: true,
   widenClientFileUpload: true,
   hideSourceMaps: true,
-  disableLogger: true
+  webpack: {
+    treeshake: {
+      removeDebugLogging: true
+    }
+  }
 });

@@ -1,5 +1,5 @@
-import { isLocale, type Locale } from "@/lib/i18n";
 import { CommunityHub } from "@/components/community-hub";
+import { requireLocaleParam } from "@/lib/require-locale";
 
 export default function CommunityPage({
   params,
@@ -8,9 +8,7 @@ export default function CommunityPage({
   params: { locale: string };
   searchParams?: { tab?: string };
 }) {
-  if (!isLocale(params.locale)) {
-    return null;
-  }
+  const locale = requireLocaleParam(params.locale);
 
-  return <CommunityHub locale={params.locale as Locale} initialTab={searchParams?.tab ?? null} />;
+  return <CommunityHub locale={locale} initialTab={searchParams?.tab ?? null} />;
 }

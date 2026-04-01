@@ -10,14 +10,13 @@ import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { Locale, getDictionary } from "@/lib/i18n";
 import { getNavChromeCopy, getNavMenuSummaries } from "@/lib/launch-copy";
+import { getSocialCopy } from "@/lib/social-copy";
 
 const routeMap = {
   home: "",
   coaches: "/coaches",
-  ai: "/ai",
   programs: "/programs",
   community: "/community",
-  live: "/live",
   membership: "/membership",
   dashboard: "/dashboard",
   admin: "/admin",
@@ -33,8 +32,8 @@ const desktopNavItems = (dict: ReturnType<typeof getDictionary>) => [
   { key: "membership", href: routeMap.membership, label: dict.nav.membership }
 ];
 
-export function SiteNav({ locale, elevated = false }: { locale: Locale; elevated?: boolean }) {
-  const { user, role, hasActiveCoachChat, loading } = useAuth();
+export function SiteNav({ locale }: { locale: Locale }) {
+  const { user, role, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -52,6 +51,7 @@ export function SiteNav({ locale, elevated = false }: { locale: Locale; elevated
   const dict = getDictionary(locale);
   const navCopy = getNavChromeCopy(locale);
   const summaries = getNavMenuSummaries(locale);
+  const social = getSocialCopy(locale);
 
   useEffect(() => {
     setMounted(true);
@@ -83,7 +83,6 @@ export function SiteNav({ locale, elevated = false }: { locale: Locale; elevated
     { key: "coaches", href: routeMap.coaches, label: dict.nav.coaches },
     { key: "programs", href: routeMap.programs, label: dict.nav.programs },
     { key: "community", href: routeMap.community, label: dict.nav.community },
-    { key: "ai", href: routeMap.ai, label: navCopy.aiLabel },
     { key: "membership", href: routeMap.membership, label: dict.nav.membership },
     { key: "support", href: routeMap.support, label: dict.nav.feedback }
   ];
@@ -93,16 +92,16 @@ export function SiteNav({ locale, elevated = false }: { locale: Locale; elevated
     { key: "progress", href: "/progress", label: dict.nav.progress }
   ];
 
-  const chatLabel =
-    locale === "tr" ? "Sohbet" : locale === "ar" ? "الدردشة" : locale === "es" ? "Chat" : locale === "fr" ? "Chat" : "Chat";
-
-  const userLinks = hasActiveCoachChat
-    ? [...loggedInSharedLinks, { key: "chat", href: "/messages", label: chatLabel }]
-    : loggedInSharedLinks;
+  const userLinks = [
+    ...loggedInSharedLinks,
+    { key: "messages", href: "/messages", label: dict.nav.messages },
+    { key: "profile", href: "/profile/edit", label: dict.nav.profile }
+  ];
 
   const coachLinks = [
     ...loggedInSharedLinks,
     { key: "messages", href: "/messages", label: dict.nav.messages },
+    { key: "profile", href: "/profile/edit", label: dict.nav.profile },
     { key: "dashboard", href: routeMap.dashboard, label: dict.nav.dashboard }
   ];
 
@@ -110,6 +109,7 @@ export function SiteNav({ locale, elevated = false }: { locale: Locale; elevated
     ...publicLinks,
     { key: "progress", href: "/progress", label: dict.nav.progress },
     { key: "messages", href: "/messages", label: dict.nav.messages },
+    { key: "profile", href: "/profile/edit", label: dict.nav.profile },
     { key: "dashboard", href: routeMap.dashboard, label: dict.nav.dashboard },
     { key: "admin", href: routeMap.admin, label: dict.nav.admin }
   ];
@@ -140,15 +140,14 @@ export function SiteNav({ locale, elevated = false }: { locale: Locale; elevated
       row("programs", routeMap.programs, dict.nav.programs),
       row("community", routeMap.community, dict.nav.community),
       row("coaches", routeMap.coaches, dict.nav.coaches),
+      row("peopleSearch", "/profile/search", social.peopleSearchTitle),
       row("threads", "/community?tab=threads", navCopy.threads),
       row("challenges", "/community?tab=challenges", dict.nav.challenges),
       row("transformations", "/community?tab=transformations", dict.nav.transformations)
     ];
 
     const featureOrder: { key: keyof typeof summaries; href: string; label: string }[] = [
-      { key: "ai", href: routeMap.ai, label: navCopy.aiLabel },
       { key: "membership", href: routeMap.membership, label: dict.nav.membership },
-      { key: "live", href: routeMap.live, label: dict.nav.live },
       { key: "support", href: routeMap.support, label: dict.nav.feedback }
     ];
 
@@ -158,8 +157,8 @@ export function SiteNav({ locale, elevated = false }: { locale: Locale; elevated
 
     const accountOrder: { key: string; href: string; label: string; summaryKey: keyof typeof summaries }[] = [
       { key: "progress", href: "/progress", label: dict.nav.progress, summaryKey: "progress" },
-      { key: "chat", href: "/messages", label: chatLabel, summaryKey: "chat" },
       { key: "messages", href: "/messages", label: dict.nav.messages, summaryKey: "messages" },
+      { key: "profile", href: "/profile/edit", label: dict.nav.profile, summaryKey: "profile" },
       { key: "dashboard", href: routeMap.dashboard, label: dict.nav.dashboard, summaryKey: "dashboard" },
       { key: "admin", href: routeMap.admin, label: dict.nav.admin, summaryKey: "admin" }
     ];
@@ -178,7 +177,7 @@ export function SiteNav({ locale, elevated = false }: { locale: Locale; elevated
     }
 
     return [...core, ...features, ...accounts];
-  }, [summaries, dict, navCopy, linkKeys, chatLabel]);
+  }, [summaries, dict, navCopy, linkKeys, social]);
 
   const isActive = (href: string) => {
     const fullPath = `/${locale}${href}`;
@@ -201,47 +200,43 @@ export function SiteNav({ locale, elevated = false }: { locale: Locale; elevated
           type="button"
           aria-label={navCopy.closeSidebarOverlay}
           onClick={() => setSidebarOpen(false)}
-          className="absolute inset-0 bg-[#0A0A0B]/55 backdrop-blur-md"
+          className="absolute inset-0 bg-black/40 backdrop-blur-sm"
         />
         <aside
           role="dialog"
           aria-modal="true"
           aria-label={navCopy.navigation}
-          className="nav-drawer-panel absolute inset-y-0 left-0 flex h-[100dvh] w-[min(100vw,max(50vw,18rem))] max-w-[720px] flex-col border-r border-white/[0.08] bg-gradient-to-b from-[#111215] via-[#0A0A0B] to-[#050506] shadow-[0_0_80px_-20px_rgba(34,211,238,0.28),inset_-1px_0_0_rgba(255,255,255,0.04)] sm:w-1/2"
+          className="nav-drawer-panel absolute inset-y-0 left-0 flex h-[100dvh] w-[min(100vw,max(50vw,18rem))] max-w-[720px] flex-col border-r border-white/[0.06] bg-[#0A0A0B] sm:w-1/2"
         >
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/45 to-transparent" />
-          <div className="relative flex items-center justify-between gap-4 px-5 py-5 sm:px-8 sm:py-7">
+          <div className="relative flex items-center justify-between gap-4 border-b border-white/[0.06] px-5 py-4 sm:px-6">
             <div>
-              <p className="font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-                {navCopy.navigation}
-              </p>
-              <p className="mt-1 text-[11px] uppercase tracking-[0.25em] text-zinc-500">TJFit</p>
+              <p className="font-display text-lg font-medium tracking-tight text-white">{navCopy.navigation}</p>
             </div>
             <button
               type="button"
               onClick={() => setSidebarOpen(false)}
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/15 bg-white/5 text-zinc-200 transition hover:border-cyan-400/35 hover:bg-white/10 hover:text-white"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/[0.1] text-zinc-400 transition hover:bg-white/[0.05] hover:text-white"
               aria-label={navCopy.close}
             >
-              <X className="h-5 w-5" strokeWidth={1.75} />
+              <X className="h-5 w-5" strokeWidth={1.5} />
             </button>
           </div>
 
-          <nav className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-4 pb-10 pt-2 sm:px-8" aria-label={navCopy.navigation}>
-            <div className="space-y-1.5">
+          <nav className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-3 pb-8 pt-3 sm:px-5" aria-label={navCopy.navigation}>
+            <div className="space-y-0.5">
               {menuRows.map((item) => (
                 <div key={`${item.key}-${item.href}`}>
                   <Link
                     href={`/${locale}${item.href}`}
                     onClick={() => setSidebarOpen(false)}
-                    className={`group flex w-full items-start justify-between gap-5 rounded-2xl border px-4 py-4 text-start transition sm:rounded-3xl sm:px-5 sm:py-5 ${
+                    className={`group flex w-full items-start justify-between gap-4 rounded-lg px-3 py-3.5 text-start transition ${
                       isActive(item.href)
-                        ? "border-cyan-400/35 bg-gradient-to-r from-cyan-500/12 to-transparent text-white shadow-[0_0_28px_-8px_rgba(34,211,238,0.35)]"
-                        : "border-transparent text-zinc-100 hover:border-white/10 hover:bg-white/[0.05]"
+                        ? "bg-white/[0.06] text-white"
+                        : "text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-200"
                     }`}
                   >
-                    <span className="text-base font-semibold leading-snug sm:text-lg">{item.label}</span>
-                    <span className="max-w-[46%] shrink-0 text-end text-[11px] leading-snug text-zinc-500 transition group-hover:text-zinc-400 sm:text-xs">
+                    <span className="text-[15px] font-medium leading-snug">{item.label}</span>
+                    <span className="max-w-[42%] shrink-0 text-end text-[10px] leading-snug text-zinc-600 sm:text-[11px]">
                       {item.summary}
                     </span>
                   </Link>
@@ -255,16 +250,12 @@ export function SiteNav({ locale, elevated = false }: { locale: Locale; elevated
 
   return (
     <>
-      <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3.5 sm:px-6 lg:gap-4 lg:px-8">
+      <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-4 sm:px-6 lg:gap-5 lg:px-8">
         <div className="flex min-w-0 items-center gap-3">
           <button
             type="button"
             onClick={() => setSidebarOpen((prev) => !prev)}
-            className={`flex items-center gap-2 rounded-xl border bg-white/[0.06] px-3 py-2 text-sm text-zinc-200 shadow-sm transition hover:bg-white/10 hover:text-white ${
-              elevated
-                ? "border-white/[0.12] hover:border-cyan-400/35 hover:shadow-[0_0_24px_-10px_rgba(34,211,238,0.22)]"
-                : "border-white/15 hover:border-cyan-400/30 hover:shadow-[0_0_24px_-10px_rgba(34,211,238,0.25)]"
-            }`}
+            className="flex items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-2 text-sm text-zinc-300 transition hover:border-white/[0.12] hover:bg-white/[0.06] hover:text-white"
             aria-label={navCopy.menu}
             aria-expanded={sidebarOpen}
           >
@@ -273,9 +264,7 @@ export function SiteNav({ locale, elevated = false }: { locale: Locale; elevated
           </button>
           <Link
             href={`/${locale}`}
-            className={`shrink-0 bg-gradient-to-r from-white to-zinc-300 bg-clip-text font-display text-xl font-semibold tracking-tight text-transparent transition hover:from-cyan-100 hover:to-zinc-200 ${
-              elevated ? "drop-shadow-[0_0_20px_rgba(34,211,238,0.12)]" : ""
-            }`}
+            className="shrink-0 font-display text-xl font-semibold tracking-tight text-white transition hover:text-zinc-200"
           >
             TJFit
           </Link>
@@ -285,17 +274,15 @@ export function SiteNav({ locale, elevated = false }: { locale: Locale; elevated
           className="hidden min-w-0 flex-1 justify-center lg:flex"
           aria-label={navCopy.navigation}
         >
-          <ul className="flex flex-wrap items-center justify-center gap-0.5">
+          <ul className="flex flex-wrap items-center justify-center gap-1 sm:gap-2">
             {desktopNav.map((item) => {
               const active = isActive(item.href);
               return (
                 <li key={item.key}>
                   <Link
                     href={`/${locale}${item.href}`}
-                    className={`rounded-full px-3.5 py-2 text-sm font-medium transition ${
-                      active
-                        ? "text-white shadow-[inset_0_0_0_1px_rgba(34,211,238,0.25)]"
-                        : "text-zinc-500 hover:text-zinc-200"
+                    className={`px-3 py-2 text-sm transition duration-200 ${
+                      active ? "font-medium text-white" : "text-zinc-500 hover:text-zinc-200"
                     }`}
                   >
                     {item.label}
@@ -308,18 +295,35 @@ export function SiteNav({ locale, elevated = false }: { locale: Locale; elevated
 
         <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
           <LanguageSwitcher locale={locale} />
-          {user ? (
+          {loading ? (
+            <div
+              className="hidden h-9 min-w-[10rem] shrink-0 animate-pulse rounded-full bg-white/10 sm:block"
+              aria-hidden
+            />
+          ) : user ? (
             <>
               <Link
+                href={`/${locale}/messages`}
+                className="hidden rounded-full border border-white/10 px-3 py-2 text-sm text-zinc-200 transition hover:border-cyan-400/25 hover:bg-white/[0.05] sm:inline-flex"
+              >
+                {dict.nav.messages}
+              </Link>
+              <Link
+                href={`/${locale}/profile/edit`}
+                className="hidden rounded-lg px-3 py-2 text-sm text-zinc-400 transition hover:text-white sm:inline-flex"
+              >
+                {dict.nav.profile}
+              </Link>
+              <Link
                 href={`/${locale}/dashboard`}
-                className="rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-200 transition hover:border-white/20 hover:bg-white/5"
+                className="rounded-lg border border-white/[0.1] px-4 py-2 text-sm text-zinc-300 transition hover:border-white/[0.14] hover:bg-white/[0.04]"
               >
                 {isAdmin ? dict.nav.admin : isCoach ? dict.nav.dashboard : dict.nav.progress}
               </Link>
               <button
                 type="button"
                 onClick={handleLogout}
-                className="rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-400 transition hover:border-white/20 hover:bg-white/5 hover:text-zinc-200"
+                className="rounded-lg px-4 py-2 text-sm text-zinc-500 transition hover:text-zinc-300"
               >
                 {dict.nav.logout}
               </button>
@@ -327,14 +331,20 @@ export function SiteNav({ locale, elevated = false }: { locale: Locale; elevated
           ) : (
             <>
               <Link
+                href={`/${locale}/profile/search`}
+                className="hidden rounded-lg px-3 py-2 text-sm text-zinc-400 transition hover:text-white sm:inline-flex"
+              >
+                {social.peopleSearchTitle}
+              </Link>
+              <Link
                 href={`/${locale}/signup`}
-                className="hidden rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 px-4 py-2 text-sm font-semibold text-[#05080a] shadow-[0_0_24px_-8px_rgba(34,211,238,0.35)] transition hover:opacity-95 sm:inline-flex"
+                className="hidden rounded-lg bg-cyan-400 px-4 py-2.5 text-sm font-medium text-[#05080a] transition hover:bg-cyan-300 sm:inline-flex"
               >
                 {navCopy.joinLabel}
               </Link>
               <Link
                 href={`/${locale}/login`}
-                className="rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-200 transition hover:border-white/20 hover:bg-white/5"
+                className="rounded-lg border border-white/[0.1] px-4 py-2.5 text-sm text-zinc-300 transition hover:border-white/[0.15] hover:bg-white/[0.04]"
               >
                 {navCopy.loginLabel}
               </Link>

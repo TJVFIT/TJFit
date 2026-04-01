@@ -1,329 +1,400 @@
-# TJFit — Full codebase audit (for ChatGPT / external review)
+# TJFit — Full technical audit (external review)
 
-**Generated:** 2026-03-31 (workspace: Next.js app `tjfit`, GitHub `TJVFIT/TJFit`, production domain `tjfit.org` on Vercel).
+**Generated:** 2026-04-01 — Next.js app in repo `TJFit`, intended production domain `tjfit.org` (Vercel).  
+**Method:** Static analysis of `src/`, `supabase/migrations/`, `package.json`, `next.config.mjs`. **Not** a live production penetration test or end-user QA session.
 
----
-
-## Important: this is not a literal dump of every character
-
-- **`src/` alone is ~14,600+ lines** of `.ts` / `.tsx` / `.css` (approximate count via PowerShell).
-- Pasting **100% of the source** would exceed ChatGPT context limits and is unnecessary for most reviews.
-- For a **line-by-line** review, zip the repo or use your IDE / `git archive`, then upload or reference specific files.
-
-This document gives a **complete inventory**, **architecture**, **API surface**, **data layer**, **env/config**, **known issues**, and **how pieces connect** so another model can reason about the whole system.
+**Honesty note:** Items marked “assumed working” means the code path exists, `next build` / `next lint` succeed, and behavior depends on correct **env vars** and **applied Supabase migrations** matching this repo.
 
 ---
 
-## 1. Stack & tooling
+## 1. PROJECT OVERVIEW
 
-| Layer | Choice |
-|--------|--------|
-| Framework | **Next.js 14.2** (App Router) |
-| UI | **React 18**, **Tailwind CSS 3.4** |
-| Motion | **Framer Motion 11** |
-| Icons | **lucide-react** |
-| Auth + DB | **Supabase** (`@supabase/ssr`, `@supabase/supabase-js`) |
-| Errors | **Sentry** (`@sentry/nextjs`, `withSentryConfig` in `next.config.mjs`) |
-| Payments | **Adapter-based checkout** (`src/lib/payments/`, `/api/checkout/*`, `PAYMENT_PROVIDER` = `live` or `test`) |
-| PDF | **pdf-parse** (program ingestion / uploads) |
-| Language | **TypeScript 5.7** |
-| Lint | **ESLint** + `eslint-config-next` |
+### What the app does
 
-**Scripts (`package.json`):** `dev`, `build`, `start`, `lint`, `i18n:check`, `i18n:scan`, `i18n:verify`.
+Premium multilingual fitness/coaching web app: marketing home, coach and program discovery, checkout/coins, community (blogs, challenges/transformations tabs), progress tracking, dashboards by role, admin tools, **encrypted direct + coach–student messaging**, **public profiles with usernames**, custom PDF program uploads for coaches/admins.
 
----
+### Main features (implemented in code)
 
-## 2. High-level architecture
+- **Locales:** `en`, `tr`, `ar`, `es`, `fr` under `src/app/[locale]/…`.
+- **Auth:** Supabase Auth; session via cookies; `/api/auth/me` drives client `AuthProvider`.
+- **Roles:** `user`, `coach`, `admin` (admin also via `NEXT_PUBLIC_ADMIN_EMAILS` / env parsing in `src/lib/auth-utils.ts`).
+- **Messaging:** E2E-style ciphertext in `messages`; Supabase Realtime on `messages`; RPCs for conversation list, peer, direct thread creation (`list_my_conversations_with_peers`, `create_direct_conversation`, `get_conversation_peer`, etc.).
+- **Profiles:** Usernames, display name, avatar, bio, `is_private`, `is_searchable`, `message_privacy`; search RPC; public profile pages.
+- **Progress:** `progress_entries`, `workout_logs`, `progress_milestones` with RLS.
+- **Programs:** Static/marketplace content + **custom coach/admin uploads** (`custom_programs`, PDF parse, translations API).
+- **Community:** `community_blog_posts` + API; pinning migration exists.
+- **Checkout / coins:** Adapter-based checkout APIs; `program_orders`, `tjfit_coin_*` tables.
+- **Marketing:** newsletter/subscribers, lead forms, Sentry.
 
-- **App Router** under `src/app/`.
-- **Locale-first URLs:** `src/app/[locale]/...` with `locales = ["en","tr","ar","es","fr"]` in `src/lib/i18n.ts`.
-- **Root** `src/app/page.tsx` uses `permanentRedirect("/en")` (backup); **`next.config.mjs`** also redirects `/` → `/en` with **308** (crawler-safe `Location` header).
-- **Shell:** `src/components/site-shell.tsx` — sticky header (`SiteNav`), `GuestOnboardingPopup`, `<main>`, `SiteFooter`.
-- **Middleware** `src/middleware.ts` — Supabase session refresh on cookies; **HTML** responses get `Cache-Control: public, max-age=0, must-revalidate`.
-- **SEO:** `src/app/sitemap.ts`, `src/app/robots.ts`, `src/lib/site-url.ts`, root `layout.tsx` metadata + optional `GOOGLE_SITE_VERIFICATION`.
+### Current state
 
----
+- **Build/lint:** Project is configured to compile; ESLint (Next core-web-vitals) reports clean when last run in development.
+- **Maturity:** **Partial.** Many routes are **“Coming soon”** placeholders (`/live`, `/ai`, `/store`, `/become-a-coach`, parts of membership/coaches). Core **auth, community hub, messages, profiles, progress, checkout APIs, custom programs** have substantial implementation.
+- **Data:** README still mentions mock content in places; **several domains are backed by Supabase** (profiles, chat, progress, blogs, orders). Do not assume everything is still mock—verify per route.
 
-## 3. Complete source file inventory (paths)
+### Important notes
 
-### 3.1 App — pages & layouts
-
-```
-src/app/layout.tsx
-src/app/page.tsx
-src/app/globals.css
-src/app/robots.ts
-src/app/sitemap.ts
-src/app/programs/page.tsx
-src/app/privacy-policy/page.tsx
-src/app/refund-policy/page.tsx
-src/app/terms-and-conditions/page.tsx
-src/app/[locale]/layout.tsx
-src/app/[locale]/page.tsx
-src/app/[locale]/admin/page.tsx
-src/app/[locale]/ai/page.tsx
-src/app/[locale]/become-a-coach/page.tsx
-src/app/[locale]/challenges/page.tsx
-src/app/[locale]/checkout/page.tsx
-src/app/[locale]/coach-dashboard/page.tsx
-src/app/[locale]/coaches/page.tsx
-src/app/[locale]/coaches/[slug]/page.tsx
-src/app/[locale]/community/page.tsx
-src/app/[locale]/dashboard/page.tsx
-src/app/[locale]/feedback/page.tsx
-src/app/[locale]/live/page.tsx
-src/app/[locale]/login/page.tsx
-src/app/[locale]/membership/page.tsx
-src/app/[locale]/messages/page.tsx
-src/app/[locale]/messages/[conversationId]/page.tsx
-src/app/[locale]/privacy-policy/page.tsx
-src/app/[locale]/programs/page.tsx
-src/app/[locale]/programs/[slug]/page.tsx
-src/app/[locale]/programs/upload/page.tsx
-src/app/[locale]/progress/page.tsx
-src/app/[locale]/refund-policy/page.tsx
-src/app/[locale]/signup/page.tsx
-src/app/[locale]/store/page.tsx
-src/app/[locale]/support/page.tsx
-src/app/[locale]/terms-and-conditions/page.tsx
-src/app/[locale]/transformations/page.tsx
-src/app/[locale]/transformations/[slug]/page.tsx
-```
-
-### 3.2 App — API routes (`route.ts`)
-
-```
-src/app/api/admin/authorize-coach/route.ts      POST
-src/app/api/admin/coaches/route.ts              GET
-src/app/api/auth/admin-login/route.ts           POST
-src/app/api/auth/me/route.ts                    GET
-src/app/api/chat/attachments/register/route.ts  POST
-src/app/api/chat/attachments/sign/route.ts      POST
-src/app/api/chat/calls/events/route.ts          POST
-src/app/api/chat/calls/start/route.ts          POST
-src/app/api/chat/conversations/route.ts         GET, POST
-src/app/api/chat/messages/[conversationId]/route.ts  GET, POST
-src/app/api/checkout/complete-order/route.ts    POST
-src/app/api/checkout/create-order/route.ts      POST
-src/app/api/coach-applications/route.ts         POST
-src/app/api/coach-applications/list/route.ts    GET
-src/app/api/coins/redeem/route.ts               POST
-src/app/api/coins/wallet/route.ts               GET
-src/app/api/community/blogs/route.ts            GET, POST, DELETE, PATCH
-src/app/api/community/blogs/translate/route.ts  POST
-src/app/api/feedback/route.ts                   POST
-src/app/api/feedback/list/route.ts              GET
-src/app/api/newsletter/subscribe/route.ts       POST
-src/app/api/checkout/prepare-session/route.ts   POST
-src/app/api/programs/custom/route.ts            GET, POST, DELETE
-src/app/api/programs/custom/[slug]/route.ts     GET
-src/app/api/progress/entries/route.ts           GET, POST
-src/app/api/progress/milestones/route.ts        GET, POST, PATCH
-src/app/api/progress/workouts/route.ts          GET, POST
-```
-
-### 3.3 Components (`src/components/`)
-
-```
-admin-coach-applications.tsx
-admin-coach-authorization.tsx
-admin-dashboard-view.tsx
-admin-feedback-list.tsx
-ai-coach-matcher.tsx
-auth-provider.tsx
-chat-thread-view.tsx
-coach-application-slideshow.tsx
-coach-dashboard-view.tsx
-community-hub.tsx
-dashboard-role-router.tsx
-feedback-form.tsx
-guest-onboarding-popup.tsx
-home-blogs-preview.tsx
-language-switcher.tsx
-live-proof.tsx
-locale-document.tsx
-locale-document-attrs.tsx
-messages-view.tsx
-motion.tsx
-progress-view.tsx
-protected-route.tsx
-site-footer.tsx
-site-nav.tsx          (portal + framer-motion drawer; half-width menu; summaries)
-site-shell.tsx
-ui.tsx
-```
-
-### 3.4 Library (`src/lib/`)
-
-```
-auth-utils.ts
-chat-crypto.ts
-chat-keyring.ts
-content.ts              — static marketing/program seed-like content, community mock data
-custom-programs.ts
-feature-copy.ts
-i18n.ts                 — locale types, `getDictionary`, large string tables
-launch-copy.ts          — auth, guest popup, community UI, footer, nav chrome, nav summaries, home sections, admin coach copy
-legal.ts
-legal-copy.ts
-payments/               — resolve-provider, checkout adapters, types
-program-blueprints.ts
-program-localization.ts
-program-management-copy.ts
-rate-limit.ts
-recommendations.ts
-require-admin.ts
-require-auth.ts
-require-coach-or-admin.ts
-site-url.ts             — canonical URL for SEO
-supabase.ts             — browser client
-supabase-server.ts      — server client (service role where used)
-supabase/server.ts      — server component client pattern
-tjfit-coin.ts
-utils.ts
-```
-
-### 3.5 Other root-level source
-
-```
-src/middleware.ts
-src/instrumentation.ts
-sentry.client.config.ts
-sentry.server.config.ts
-sentry.edge.config.ts
-```
-
-### 3.6 Scripts
-
-```
-scripts/i18n/check-locale-parity.ts
-scripts/i18n/check-hardcoded-ui.ts
-```
-
-### 3.7 Supabase migrations (`supabase/migrations/`)
-
-```
-20250316000000_coach_applications_and_feedback.sql
-20250316100000_profiles_and_auth.sql
-20250316110000_paytr_callbacks.sql
-20260331120000_drop_legacy_payment_callbacks.sql
-20260316000100_progress_and_secure_chat.sql
-20260330000100_tjfit_coin.sql
-20260330000200_one_active_coach_per_student.sql
-20260330000300_custom_program_uploads.sql
-20260330000400_marketing_subscribers.sql
-20260330000500_enforce_customer_signup_and_roles.sql
-20260330000600_community_blogs.sql
-20260330000700_community_blog_pinning.sql
-20260331000100_coach_student_links_insert_rls.sql
-20260331000100_harden_coach_student_link_insert.sql   ← duplicate timestamp prefix with previous row; verify ordering in Supabase
-```
-
-### 3.8 Docs (non-code product copy)
-
-- `docs/programs/*.md` — many markdown program descriptions (content source / references).
-
-### 3.9 Config / build
-
-```
-package.json
-package-lock.json
-next.config.mjs
-tailwind.config.ts (if present at root)
-postcss.config.js / mjs
-tsconfig.json
-.eslintrc.* (if present)
-.env.example          — env template (no secrets)
-.gitignore
-```
+- **Root layout** `src/app/layout.tsx` sets `<html lang="en">` fixed; **`LocaleDocument`** (client) updates `document.documentElement.lang` and `dir` per locale after hydration. Wrapper `div` in `[locale]/layout.tsx` sets `dir` for SSR subtree.
+- **Two legacy top-level policy pages** exist outside `[locale]` (`src/app/privacy-policy`, etc.) in addition to localized versions—possible duplicate SEO paths.
+- **Supabase:** `coach_student_links` insert RLS uses two sequential versions `20260331000100` then `20260331000101` (duplicate same-timestamp pair removed).
 
 ---
 
-## 4. Product surface (what the app does)
+## 2. TECH STACK
 
-- **Marketing / home:** localized hero, **blog preview** (`HomeBlogsPreview` → `/api/community/blogs`), category cards (blogs first in grid).
-- **Programs:** marketplace + detail pages; **custom coach uploads** via API + storage.
-- **Community hub:** tabs — **Blogs** (default when no `tab`), Threads (static content from `content.ts`), Challenges / Transformations (static + redirects from legacy routes).
-- **Blogs:** DB-backed `community_blog_posts`, image bucket, coach/admin publish, admin pin, **translate** API to target locale.
-- **Auth:** Supabase email/password; **admin** path via `admin-login` + `ADMIN_EMAILS` / `ADMIN_CREDENTIALS` patterns; roles: customer, coach, admin (see migrations).
-- **Coach dashboard / student progress / encrypted chat** — APIs under `/api/chat/*`, `/api/progress/*`, client crypto helpers in `chat-*.ts`.
-- **Checkout:** create order, `clientFlow` (simulated vs await gateway), complete-order (test only), prepare-session stub for future PSP.
-- **TJFit coin:** wallet + redeem APIs.
-- **Newsletter / marketing subscribers** table + subscribe API.
-- **Feedback** form + admin list.
+| Area | Choice | Versions (from `package.json`) |
+|------|--------|----------------------------------|
+| Framework | Next.js (App Router) | **14.2.30** |
+| UI | React | **18.3.1** |
+| Styling | Tailwind CSS | **3.4.x** (devDependency) |
+| Animation | Framer Motion | **11.11.x** |
+| Icons | lucide-react | **0.469.x** |
+| Class utils | clsx, tailwind-merge | **2.x** |
+| Auth + DB | Supabase (`@supabase/ssr`, `@supabase/supabase-js`) | **ssr 0.9.x**, **js 2.49.x** |
+| Errors / perf | Sentry Next.js | **10.43.x** (`withSentryConfig` in `next.config.mjs`; `webpack.treeshake.removeDebugLogging`) |
+| PDF | pdf-parse | **2.4.x** |
+| Language | TypeScript | **5.7.x** |
 
----
+**Database:** PostgreSQL (Supabase). Schema defined in `supabase/migrations/*.sql`.
 
-## 5. Internationalization (i18n)
-
-- **Locales:** `en`, `tr`, `ar`, `es`, `fr`.
-- **Dictionaries:** `src/lib/i18n.ts` (large).
-- **Feature-specific copy:** `launch-copy.ts`, `feature-copy.ts`, `legal-copy.ts`, `program-management-copy.ts`, per-page literals still exist in some routes (see `i18n:scan` script).
-- **RTL:** `dir` set per locale in `locale-document` / layout patterns.
-- **Verification:** `npm run i18n:verify` = parity check + hardcoded UI scan (scan may be noisy).
+**Hosting (intended):** Vercel + Supabase (not verified in this audit).
 
 ---
 
-## 6. Security & auth (patterns to review in depth)
+## 3. FOLDER STRUCTURE (high level)
 
-- **Server guards:** `require-admin.ts`, `require-coach-or-admin.ts`, `require-auth.ts` used in sensitive API routes.
-- **Service role:** `SUPABASE_SERVICE_ROLE_KEY` — must remain server-only; `getSupabaseServerClient` / admin operations.
-- **RLS:** enforced in Supabase; migrations include blog tables, roles, coach–student links, etc. **Two migrations share `20260331000100_` prefix** — confirm applied order.
-- **Chat:** E2E-style encryption helpers on client; review threat model separately.
-- **Rate limiting:** `rate-limit.ts` present — confirm usage on hot routes.
-- **Admin env:** `.env.example` shows **ADMIN_EMAILS** / **ADMIN_CREDENTIALS** — treat as sensitive in real deployments (rotate if exposed).
+### `src/app`
 
----
+- **`layout.tsx`**, **`page.tsx`** (redirect), **`globals.css`**, **`robots.ts`**, **`sitemap.ts`**
+- **Non-locale routes:** `programs/page.tsx`, `privacy-policy`, `refund-policy`, `terms-and-conditions` (legacy alongside `[locale]` equivalents)
+- **`[locale]/`** — all primary UX: home, login/signup, dashboard, admin, coach-dashboard, coaches, programs (+ `[slug]`, upload), community, messages (+ `[conversationId]`), profile (+ `[username]`, edit, search), people (+ search, `[username]` **redirects to profile**), progress, checkout, membership, support, settings/messaging, legal pages, feedback (redirects to support), challenges/transformations (redirects into community tabs), placeholders (live, store, ai, become-a-coach)
 
-## 7. Environment variables (from `.env.example`; names only)
+### `src/app/api` (32 `route.ts` files)
 
-- `NEXT_PUBLIC_SITE_URL` — canonical site URL for SEO.
-- `GOOGLE_SITE_VERIFICATION` — optional Search Console HTML tag content.
-- `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `ADMIN_EMAILS`, `ADMIN_CREDENTIALS` (server-side admin login mapping)
-- `PAYMENT_PROVIDER`, `ALLOW_TEST_CHECKOUT` (see `.env.example`)
-- `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_ORG`, `SENTRY_PROJECT`
+Grouped by domain: `auth/me`, `auth/admin-login`, `admin/*`, `checkout/*`, `coach-applications` (+ list), `feedback` (+ list), `newsletter/subscribe`, `profiles/me`, `profiles/search`, `profiles/by-username/[username]`, `programs/custom` (+ `[slug]`), `progress/*`, `coins/*`, `community/blogs` (+ `translate`), `chat/conversations`, `chat/messages/[conversationId]`, `chat/attachments/*`, `chat/calls/*`, `chat/conversations/[conversationId]/read`, `…/peer`.
 
-**Vercel:** also uses system vars like `VERCEL_URL`, `VERCEL_PROJECT_PRODUCTION_URL`, `VERCEL_ENV` (read in `site-url.ts`).
+### `src/components` (~41 files)
 
----
+Shell: `site-shell`, `shell-header`, `site-nav`, `site-footer`, `guest-onboarding-popup`, `language-switcher`, `main-error-boundary`, `client-error-boundary`, `locale-document`.  
+Auth: `auth-provider`, `protected-route`, `auth-required-panel`.  
+Social/messaging: `messages-inbox-home`, `messages-layout-shell`, `chat-thread-view`, `direct-message-launch-button`, `people-search-view`, `public-profile-view`, `profile-edit-form`.  
+Dashboards: `dashboard-role-router`, `admin-dashboard-view`, `coach-dashboard-view`.  
+Marketing/luxury: `luxury/luxury-home`, `home-blogs-preview` (dynamic import), `marketing/*`, `premium/*`, `ui`, `motion`.
 
-## 8. Known technical notes / debt
+### `src/lib` (representative)
 
-- **ESLint:** `chat-thread-view.tsx` has `react-hooks/exhaustive-deps` warnings (non-blocking build).
-- **Sentry:** suggests `global-error.js` for React render errors (optional).
-- **No `error.tsx` / `loading.tsx`** in `src/app` at time of audit — consider adding for UX.
-- **Guest onboarding popup** — marketing email capture; flows should be tested per locale.
-- **Checkout / PSP** — validate in production with real webhooks and legal terms when `PAYMENT_PROVIDER=live`.
+`i18n.ts`, `supabase.ts`, `supabase/server.ts`, `supabase-server.ts`, `require-auth.ts`, `require-admin.ts`, `require-coach-or-admin.ts`, `auth-utils.ts`, `read-request-json.ts`, `rate-limit.ts`, `chat-crypto.ts`, `chat-keyring.ts`, `messaging-errors.ts`, `profile-validation.ts`, `payments/*`, `custom-programs.ts`, `tjfit-coin.ts`, copy modules (`launch-copy`, `legal-copy`, `feature-copy`, `social-copy`, …), `content.ts`, `recommendations.ts`, etc.
+
+### Other important files
+
+- **`src/middleware.ts`** — Supabase session refresh; `Cache-Control` on HTML responses.
+- **`docs/engineering/major-changes-and-rollback.md`** — team protocol for large changes.
+- **`sentry.client.config.ts`** — Sentry deprecation: consider `instrumentation-client.ts` for future Turbopack.
 
 ---
 
-## 9. Deployment
+## 4. ROUTES
 
-- **Vercel** project `tjfitmain`, domain `tjfit.org` (DNS often Namecheap; TXT for Google verification).
-- **Git:** `main` branch pushed to `https://github.com/TJVFIT/TJFit.git`.
-- **Build:** `npm run build` (Next production build).
+**Locale pattern:** `/[locale]/…` with `locale ∈ {en,tr,ar,es,fr}`.
+
+### Main / marketing
+
+| Route | Role | Notes |
+|-------|------|--------|
+| `/` | redirect | To `/en` (also `next.config.mjs` redirect) |
+| `/[locale]` | public | Luxury home + dynamic blog preview |
+| `/[locale]/membership` | public | Lead / membership content |
+| `/[locale]/coaches`, `/[locale]/coaches/[slug]` | public | Coach listing + gated profile |
+| `/[locale]/programs`, `/[locale]/programs/[slug]`, `/[locale]/programs/upload` | mixed | Marketplace + custom programs; upload needs coach/admin |
+| `/[locale]/community` | public/mixed | Hub: blogs, challenges, transformations tabs |
+| `/[locale]/challenges` | redirect | → `community?tab=challenges` |
+| `/[locale]/transformations`, `/[locale]/transformations/[slug]` | mixed | List redirects to community; slug page may need auth (check component) |
+| `/[locale]/checkout` | protected | Checkout UI |
+| `/[locale]/login`, `/[locale]/signup` | public | Auth |
+| `/[locale]/support` | public | Support / feedback entry |
+| `/[locale]/feedback` | redirect | → `support` |
+| `/[locale]/privacy-policy`, `refund-policy`, `terms-and-conditions` | public | Legal (localized copy modules) |
+
+### Placeholders (“Coming soon” or minimal)
+
+| Route | Notes |
+|-------|--------|
+| `/[locale]/live` | Static placeholder |
+| `/[locale]/store` | Localized “coming soon” |
+| `/[locale]/ai` | Static placeholder |
+| `/[locale]/become-a-coach` | Placeholder (applications table/API exist but page not full flow) |
+
+### Authenticated / role-sensitive
+
+| Route | Protection | Notes |
+|-------|------------|--------|
+| `/[locale]/dashboard` | `ProtectedRoute` | `DashboardRoleRouter`: coach vs admin vs user |
+| `/[locale]/coach-dashboard` | `ProtectedRoute` | Coach dashboard |
+| `/[locale]/admin` | `ProtectedRoute` + `requireAdmin` | Admin panel |
+| `/[locale]/progress` | `ProtectedRoute` | Progress UI |
+| `/[locale]/messages` | layout shell + `ProtectedRoute` | Inbox |
+| `/[locale]/messages/[conversationId]` | protected | Thread + crypto |
+| `/[locale]/profile/edit` | `ProtectedRoute` | Edit profile |
+| `/[locale]/profile/search` | public | People search |
+| `/[locale]/profile/[username]` | public | Public profile card via API/RPC |
+| `/[locale]/people/search` | public | Alias UX |
+| `/[locale]/people/[username]` | redirect | → `/profile/[username]` |
+| `/[locale]/settings/messaging` | check page | Messaging-related settings (verify completeness) |
+
+### API routes (summary)
+
+All under `/api/…`. Most sensitive routes use **`requireAuth`**, **`requireAdmin`**, or **`requireCoachOrAdmin`** as appropriate. JSON bodies increasingly use **`readRequestJson`** (single `text()` + `JSON.parse`, 400 on invalid JSON).
+
+**Cannot honestly label each as “works/broken” in production** without live env. Failure modes include: missing `SUPABASE_SERVICE_ROLE_KEY` on admin routes, RLS mismatches, wrong migration order, missing Realtime publication.
 
 ---
 
-## 10. How to give ChatGPT “everything” anyway
+## 5. AUTH SYSTEM
 
-1. **Zip the repo** (exclude `node_modules`, `.next`):  
-   `git archive -o tjfit-src.zip HEAD`
-2. **Upload** the zip to ChatGPT if your plan supports it, **or**
-3. **Paste this file** + **ask targeted questions** (“audit `src/app/api/checkout` for idempotency”).
-4. For **one file at a time**, paste file contents with path as header.
+### How auth works
+
+1. **Middleware** (`src/middleware.ts`): creates Supabase server client from cookies, calls `getUser()` to refresh session.
+2. **Browser:** `AuthProvider` subscribes to `onAuthStateChange` and calls **`GET /api/auth/me`** to load `user`, `role`, coach link flags, profile snippet.
+3. **API routes:** `createServerSupabaseClient()` + `getUser()` (or `requireAuth` / `requireAdmin`).
+
+### Login / signup
+
+- Pages under `[locale]/login` and `[locale]/signup` use Supabase client auth (see page implementations).
+- **Profile row:** trigger `handle_new_auth_user_profile` (in migrations) inserts `profiles` with default username (`tjfit_` + hash), role `user`.
+
+### Roles
+
+- **`profiles.role`:** `user` | `coach` | `admin`.
+- **Admin override:** if `user.email` is in configured admin allowlist, `/api/auth/me` sets `role` to `admin` even if profile row differs (intended for ops).
+- **Coach:** promoted via admin flows / `profiles` update + `coach_student_links`.
+
+### Protection
+
+- **Client:** `ProtectedRoute` gates children; optional `requireAdmin` redirects non-admins home. **Not a substitute for server enforcement**—API routes must remain authoritative.
+- **Server:** `requireAuth`, `requireAdmin`, `requireCoachOrAdmin` on APIs; Supabase **RLS** on tables.
+
+### Gaps / risks
+
+- **UI flash:** Client-only gate → brief unauthenticated UI possible before `loading` resolves.
+- **Admin login:** Separate `api/auth/admin-login` path—ensure it is rate-limited and secret-safe (review if used).
 
 ---
 
-## 11. Changelog highlights (recent product-facing work)
+## 6. DATABASE STRUCTURE (from migrations — consolidated)
 
-- SEO: sitemap, robots, metadataBase, root redirect 308 `/` → `/en`.
-- Nav: wide menu, translated short summaries, **portal to `document.body`** (fixes drawer clipped by header `backdrop-blur`).
-- Home: blogs preview section + blogs first in community hub default tab.
-- Community blogs: CRUD, pin, translate API, image uploads to storage.
+Relationships are PostgreSQL FKs to `auth.users` where noted.
+
+### Core identity
+
+**`profiles`**
+
+- `id` (PK, FK → `auth.users`)
+- `email`
+- `role` — `admin` | `coach` | `user`
+- `username`, `username_normalized` (unique, normalized)
+- `display_name`, `avatar_url`, `bio`
+- `is_private`, `is_searchable` (evolved from older `account_visibility` / `searchable`)
+- `message_privacy` — `everyone` | `nobody` | `coaches_only` | `connections_only` | `approved_only`
+- `created_at` / `updated_at` (as added in migrations)
+- Triggers: username normalize, `updated_at`, new-user insert
+
+**`coach_student_links`**
+
+- `id`, `coach_id`, `student_id`, `status` (`active`/`paused`/`ended`), `created_at`, unique `(coach_id, student_id)`
+- RLS: participants read; insert restricted to coach role matching `auth.uid()` = `coach_id` (see latest migration policy name)
+
+**`message_allowances`**
+
+- For `approved_only` messaging: `granter_id`, `grantee_id`
+
+### Messaging / calls
+
+**`user_public_keys`** — JWK per user for crypto handshake.
+
+**`conversations`**
+
+- `id`, `conversation_type` (`coach_student` | `direct`), `coach_student_link_id` (nullable for direct), `created_by`, `created_at`
+
+**`conversation_participants`**
+
+- `(conversation_id, user_id)` PK, `encrypted_conversation_key`, `last_read_at`
+
+**`messages`**
+
+- `id`, `conversation_id`, `sender_id`, `message_type`, `ciphertext`, `nonce`, `metadata`, `created_at`
+- **Before-insert trigger** enforces 2-participant threads and `message_privacy` via `raise_if_messaging_blocked`
+
+**`message_attachments`**, **`call_sessions`**, **`call_events`** — call/signaling and attachments
+
+### Progress
+
+**`progress_entries`**, **`workout_logs`**, **`progress_milestones`** — per-user RLS
+
+### Programs / commerce
+
+**`custom_programs`**, **`program_orders`**, **`tjfit_coin_wallets`**, **`tjfit_coin_ledger`**, **`tjfit_discount_offers`**, **`tjfit_discount_codes`**
+
+### Community / marketing
+
+**`community_blog_posts`** (+ pinning columns in later migration)  
+**`marketing_subscribers`**  
+**`coach_applications`**, **`feedback_submissions`** — anon insert policies for forms
+
+### Payment callbacks
+
+**PayTR-related** tables in older migrations; some dropped/replaced in later migrations—**confirm actual prod schema** matches latest files.
+
+### RPCs / functions (important)
+
+- `messaging_allowed`, `raise_if_messaging_blocked`, `create_direct_conversation`, `assert_can_message_peer`
+- `search_profiles`, `get_profile_card`
+- `list_my_conversations_with_peers`, `get_conversation_peer`
+- (Plus variants updated across migrations—**deployed DB must match latest function bodies**)
+
+### Missing / problems
+
+- **No single schema snapshot** in repo besides migrations; drift between environments is a risk.
+- **Migrations:** `20260331230100_ensure_messaging_and_profile_rpc_grants.sql` re-affirms RPC `GRANT EXECUTE` for API-used functions.
+- **Historical renames:** `staff_only` → `coaches_only` handled in migration; app code still normalizes legacy strings in places (`profile-validation.ts`, `profile-edit-form.tsx`).
 
 ---
 
-*End of audit index. For behavioral questions, name files from section 3.*
+## 7. MESSAGING SYSTEM
+
+### Does messaging exist?
+
+**Yes.** Full stack: DB tables, RLS, triggers, Realtime publication on `messages`, Next API routes under `/api/chat/*`, client crypto helpers (`chat-crypto`, `chat-keyring`), UI: inbox, thread, layout shell, DM launch button.
+
+### How it works (simplified)
+
+1. User holds wrapped conversation keys in `conversation_participants`.
+2. Message bodies stored as **ciphertext** + nonce; client encrypts/decrypts.
+3. **Direct threads:** RPC `create_direct_conversation` after privacy checks.
+4. **Coach–student:** `coach_student_links` + `conversation_type = 'coach_student'`.
+5. **List:** RPC `list_my_conversations_with_peers` (with last message / unread fields added in later migrations—confirm column list matches API expectations).
+6. **Realtime:** postgres changes on `messages` (RLS applies per subscriber).
+
+### What can be broken / fragile
+
+- **Crypto + key setup:** High complexity; easy to have subtle client bugs (wrong key, race on new conversation).
+- **RPC vs API mismatch** if migrations not applied in order.
+- **Group chat:** explicitly rejected by trigger (`MESSAGING_UNSUPPORTED_GROUP`).
+- **Privacy errors:** mapped in `messaging-errors.ts` from Postgres exception text.
+
+### What’s missing
+
+- **Product polish:** read receipts, typing, attachment UX, call UX depend on implementation depth (not fully audited line-by-line).
+- **Moderation / reporting** — not described in schema overview.
+
+---
+
+## 8. PROFILE SYSTEM
+
+### How profiles work
+
+- **Row per user** in `profiles`; default username assigned at signup.
+- **Public view:** `PublicProfileView` + `/api/profiles/by-username/[username]` / RPC `get_profile_card` (viewer-aware fields, `can_message`, limited bio when private).
+- **Edit:** `profile-edit-form` + `PATCH /api/profiles/me` with `profile-validation.ts`.
+
+### Username system
+
+- Required, unique (normalized). Validation helpers in `src/lib/username.ts` / `profile-validation.ts`.
+- **Search:** `search_profiles` RPC + `/api/profiles/search`.
+
+### What’s missing / risks
+
+- **SEO / caching** of public profiles not analyzed.
+- **Legacy fields** in older docs (`account_visibility`) removed in DB—ensure no stale API consumers.
+
+---
+
+## 9. KNOWN ISSUES (codebase-level)
+
+**Not an exhaustive runtime bug list.**
+
+1. **Client-only route protection** — `ProtectedRoute` hides content but does not replace server layout auth; APIs must enforce (they largely do).
+2. **Fixed `lang="en"` on `<html>`** until client `LocaleDocument` runs — acceptable for many browsers but not ideal for SEO/a11y purists.
+3. **Placeholder routes** — `/live`, `/ai`, `/become-a-coach` etc. look “live” in nav but are not full products.
+4. **Duplicate legal/program routes** at root vs `[locale]` — possible duplicate URLs.
+5. **README vs code** — README still claims broad mock data; many features are Supabase-backed—onboarding new devs can be misleading.
+6. **Sentry** — client config filename deprecation warning (Turbopack future).
+7. **Supabase migrations** — duplicate timestamp pair; ordering must stay correct; no automated migration test in CI described.
+8. **`/api/auth/me` catch** — returns null user on throw; can mask server misconfig during debugging.
+9. **Heavy client bundles** — luxury home uses Framer Motion + dynamic imports; still non-trivial JS.
+
+*Hydration / specific console errors:* not measured in this audit—run browser QA.
+
+---
+
+## 10. PERFORMANCE
+
+- **Luxury home (`luxury-home.tsx`):** Framer Motion, large sections, dynamic import for `HomeBlogsPreview` (good); still a **large client component**.
+- **Community / messages:** Realtime subscriptions and message lists—watch re-renders and channel cleanup (verify in code review).
+- **Middleware** runs Supabase on many requests—necessary for session refresh; monitor latency.
+- **PDF / translation** workloads on upload/translate routes—CPU/timeouts depend on Vercel limits.
+
+---
+
+## 11. SECURITY
+
+### Strengths
+
+- **RLS** enabled on sensitive tables; messaging enforced with triggers + policies.
+- **Service role** used in admin/server paths where appropriate (`requireAdmin` returns service client for admin work).
+- **Rate limiting** helper exists (`rate-limit.ts`)—confirm it wraps public POST endpoints that need it.
+- **Structured JSON parsing** on APIs reduces some malformed-body ambiguity (`read-request-json.ts`).
+
+### Weak points / review targets
+
+- **Admin/coach promotion flows** — any endpoint that mutates `profiles.role` must stay strictly guarded.
+- **Anon insert** on `coach_applications` / `feedback_submissions` — spam risk; rate limit + validation required.
+- **E2E messaging** — server sees ciphertext but metadata/attachments paths must not leak storage keys.
+- **Env secrets:** `SUPABASE_SERVICE_ROLE_KEY`, payment keys, translation API keys—never client-exposed (verify `NEXT_PUBLIC_*` usage).
+
+---
+
+## 12. DEPENDENCIES (major)
+
+| Package | Purpose |
+|---------|---------|
+| `next` | Framework, SSR, routing, API routes |
+| `react`, `react-dom` | UI |
+| `tailwindcss` | Styling pipeline |
+| `framer-motion` | Animations |
+| `lucide-react` | Icons |
+| `@supabase/ssr`, `@supabase/supabase-js` | Auth, DB, Realtime |
+| `@sentry/nextjs` | Error reporting |
+| `pdf-parse` | PDF text extraction for programs |
+| `clsx`, `tailwind-merge` | Class names |
+
+---
+
+## 13. WHAT WAS RECENTLY CHANGED (from engineering history in repo / conversation context)
+
+Recent work (approximate themes—verify with `git log`):
+
+- **API request bodies:** Centralized **`readRequestJson`**; removed older `parse-request-json` helper; invalid JSON → 400.
+- **Programs / blogs API:** Migrated JSON parsing on `custom` and `blogs/translate` routes.
+- **Sentry Next config:** `disableLogger` replaced with **`webpack.treeshake.removeDebugLogging`**.
+- **Dead UI removed:** e.g. unused `locale-document-attrs`, orphan components (`live-proof`, `ai-coach-matcher`, `coach-application-slideshow`, `feedback-form`).
+- **Error UI:** `[locale]/error.tsx` simplified; `global-error.tsx` present.
+- **Docs:** `docs/engineering/major-changes-and-rollback.md`, README engineering pointer.
+- **Supabase:** Messaging enforcement, realtime, profile/username/coaches_only evolution (multiple March 2026 migrations).
+
+*If something regressed,* compare deploy commit to migrations applied on the Supabase project and env vars on Vercel.
+
+---
+
+## 14. CURRENT PRIORITY PROBLEMS (TOP 5)
+
+1. **Environment / migration parity** — Production Supabase must match latest migrations and RPC signatures; drift causes 500s on chat/profile features.
+2. **Operational clarity on migrations** — Keep `supabase db push` / reset in CI; avoid reintroducing duplicate migration timestamps.
+3. **AuthZ UX vs security audit** — Document and test all admin/coach APIs with automated tests; client `ProtectedRoute` is not enough for compliance stories.
+4. **Product truth vs placeholders** — Nav still surfaces Coming Soon routes; either hide links or set expectations to reduce “broken product” perception.
+5. **README / audit docs accuracy** — Align README feature list and mock-data notes with Supabase-backed reality so external reviewers optimize the right architecture.
+
+---
+
+## Appendix: strict output checklist (for the receiving system)
+
+This file intentionally mirrors the requested sections **1–14** so it can be ingested by another model for optimization planning. Update the **Generated** date when refreshing.

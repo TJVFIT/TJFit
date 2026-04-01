@@ -12,13 +12,14 @@ export function generateStaticParams() {
 export function generateMetadata({
   params
 }: {
-  params: { locale: string };
+  params: { locale?: string };
 }): Metadata {
-  if (!isLocale(params.locale)) {
-    return {};
+  const raw = params?.locale;
+  if (typeof raw !== "string" || !isLocale(raw)) {
+    return { title: "TJFit" };
   }
 
-  const locale = params.locale as Locale;
+  const locale = raw as Locale;
   const dict = getDictionary(locale);
 
   return {
@@ -32,13 +33,14 @@ export default function LocaleLayout({
   params
 }: {
   children: React.ReactNode;
-  params: { locale: string };
+  params: { locale?: string };
 }) {
-  if (!isLocale(params.locale)) {
+  const raw = params?.locale;
+  if (typeof raw !== "string" || !isLocale(raw)) {
     notFound();
   }
 
-  const locale = params.locale as Locale;
+  const locale = raw as Locale;
 
   return (
     <div dir={getDirection(locale)}>

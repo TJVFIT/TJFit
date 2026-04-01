@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
+
+import { isLocale } from "@/lib/i18n";
 
 /**
  * Locale segment error UI — keeps shell chrome from parent layout; recover without full reload when possible.
@@ -12,6 +15,11 @@ export default function LocaleError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const pathname = usePathname();
+  const firstSegment = pathname?.split("/").filter(Boolean)[0];
+  const homeHref =
+    firstSegment && isLocale(firstSegment) ? `/${firstSegment}` : "/en";
+
   useEffect(() => {
     if (process.env.NODE_ENV === "development") {
       console.error("[locale error]", error);
@@ -32,10 +40,10 @@ export default function LocaleError({
           Try again
         </button>
         <a
-          href="/en"
+          href={homeHref}
           className="rounded-full border border-transparent px-6 py-2.5 text-sm font-medium text-zinc-500 transition hover:text-zinc-300"
         >
-          Home (EN)
+          Home
         </a>
       </div>
     </div>

@@ -40,7 +40,7 @@ export function DashboardRoleRouter({ locale }: { locale: Locale }) {
       userHint: "Utilise la page progression pour suivre ton parcours."
     }
   };
-  const t = labels[locale];
+  const t = labels[locale] ?? labels.en;
 
   if (view === "admin" && canViewAdmin) {
     return (

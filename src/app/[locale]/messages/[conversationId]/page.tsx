@@ -1,18 +1,17 @@
+import { notFound } from "next/navigation";
 import { ChatThreadView } from "@/components/chat-thread-view";
-import { ProtectedRoute } from "@/components/protected-route";
-import { isLocale, type Locale } from "@/lib/i18n";
+import { requireLocaleParam } from "@/lib/require-locale";
 
 export default function ConversationPage({
   params
 }: {
   params: { locale: string; conversationId: string };
 }) {
-  if (!isLocale(params.locale)) return null;
+  const locale = requireLocaleParam(params.locale);
+  const conversationId = typeof params.conversationId === "string" ? params.conversationId.trim() : "";
+  if (!conversationId) {
+    notFound();
+  }
 
-  return (
-    <ProtectedRoute locale={params.locale}>
-      <ChatThreadView locale={params.locale as Locale} conversationId={params.conversationId} />
-    </ProtectedRoute>
-  );
+  return <ChatThreadView locale={locale} conversationId={conversationId} />;
 }
-

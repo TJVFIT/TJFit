@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { adminAdvancedStats, adminStats } from "@/lib/content";
-import { getDictionary, isLocale } from "@/lib/i18n";
+import { getDictionary } from "@/lib/i18n";
+import { requireLocaleParam } from "@/lib/require-locale";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { isAdminEmail } from "@/lib/auth-utils";
@@ -11,21 +12,19 @@ import { ProtectedRoute } from "@/components/protected-route";
 import { StatGrid } from "@/components/ui";
 
 export default async function AdminPage({ params }: { params: { locale: string } }) {
-  if (!isLocale(params.locale)) {
-    return null;
-  }
-  const dict = getDictionary(params.locale);
+  const locale = requireLocaleParam(params.locale);
+  const dict = getDictionary(locale);
 
   const authClient = createServerSupabaseClient();
   const { data: { user } } = await authClient.auth.getUser();
   if (!user?.email) {
-    redirect(`/${params.locale}/login`);
+    redirect(`/${locale}/login`);
   }
   const isAdmin =
     isAdminEmail(user.email) ||
     (await authClient.from("profiles").select("role").eq("id", user.id).single()).data?.role === "admin";
   if (!isAdmin) {
-    redirect(`/${params.locale}`);
+    redirect(`/${locale}`);
   }
 
   const supabase = getSupabaseServerClient();
@@ -61,7 +60,7 @@ export default async function AdminPage({ params }: { params: { locale: string }
   }
 
   return (
-    <ProtectedRoute locale={params.locale} requireAdmin>
+    <ProtectedRoute locale={locale} requireAdmin>
       <div className="mx-auto max-w-7xl space-y-8 px-4 py-16 sm:px-6 lg:px-8">
       <div>
         <span className="badge">Admin Panel</span>

@@ -2,7 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { AuthRequiredPanel } from "@/components/auth-required-panel";
 import { useAuth } from "@/components/auth-provider";
+import { getAuthCopy } from "@/lib/launch-copy";
+import { isLocale, type Locale } from "@/lib/i18n";
 
 type Props = {
   children: React.ReactNode;
@@ -11,8 +14,11 @@ type Props = {
 };
 
 export function ProtectedRoute({ children, locale, requireAdmin }: Props) {
-  const { user, role, loading } = useAuth();
+  const { user, role, loading, sessionCheckFailed } = useAuth();
   const router = useRouter();
+  const loc = isLocale(locale) ? (locale as Locale) : "en";
+  const authCopy = getAuthCopy(loc);
+
   const loadingText: Record<string, string> = {
     en: "Loading...",
     tr: "Yukleniyor...",
@@ -22,14 +28,9 @@ export function ProtectedRoute({ children, locale, requireAdmin }: Props) {
   };
 
   useEffect(() => {
-    if (loading) return;
-    if (!user) {
-      router.replace(`/${locale}/login`);
-      return;
-    }
+    if (loading || !user) return;
     if (requireAdmin && role !== "admin") {
       router.replace(`/${locale}`);
-      return;
     }
   }, [user, role, loading, locale, requireAdmin, router]);
 
@@ -40,8 +41,36 @@ export function ProtectedRoute({ children, locale, requireAdmin }: Props) {
       </div>
     );
   }
-  if (!user || (requireAdmin && role !== "admin")) {
-    return null;
+
+  if (!user && sessionCheckFailed) {
+    return (
+      <div className="flex min-h-[50vh] flex-col items-center justify-center px-4 py-12 text-center">
+        <p className="max-w-md text-sm text-amber-200/90">{authCopy.sessionCheckFailed}</p>
+        <button
+          type="button"
+          className="mt-6 rounded-full border border-white/15 bg-white/[0.06] px-6 py-2.5 text-sm font-medium text-zinc-100 transition hover:border-cyan-400/35"
+          onClick={() => window.location.reload()}
+        >
+          {locale === "tr" ? "Yenile" : locale === "ar" ? "تحديث" : locale === "es" ? "Actualizar" : locale === "fr" ? "Actualiser" : "Refresh"}
+        </button>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center px-4 py-12">
+        <AuthRequiredPanel locale={locale} className="w-full" />
+      </div>
+    );
+  }
+
+  if (requireAdmin && role !== "admin") {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center px-4">
+        <p className="text-sm text-zinc-400">{loadingText[locale] ?? loadingText.en}</p>
+      </div>
+    );
   }
 
   return <>{children}</>;

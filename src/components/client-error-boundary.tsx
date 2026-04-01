@@ -1,12 +1,14 @@
 "use client";
 
 import { Component, type ErrorInfo, type ReactNode } from "react";
+import * as Sentry from "@sentry/nextjs";
 
 type Props = {
   children: ReactNode;
   /** Shown when a child throws during render (production-safe fallback). */
   fallback: ReactNode;
-  onError?: (error: Error, info: ErrorInfo) => void;
+  /** Optional Sentry tag to group errors (e.g. "messages", "profile-search"). */
+  sentryScope?: string;
 };
 
 type State = { error: Error | null };
@@ -22,7 +24,10 @@ export class ClientErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    this.props.onError?.(error, info);
+    Sentry.captureException(error, {
+      tags: this.props.sentryScope ? { area: this.props.sentryScope } : undefined,
+      extra: { componentStack: info.componentStack }
+    });
     if (process.env.NODE_ENV === "development") {
       console.error("[ClientErrorBoundary]", error, info.componentStack);
     }

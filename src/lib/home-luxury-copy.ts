@@ -24,7 +24,7 @@ export type HomeLuxuryCopy = {
     title: string;
     sub: string;
     bullets: string[];
-    tjaiCta: string;
+    tjaiBadge: string;
     tjaiSub: string;
   };
   /** Future-ready membership teaser (no finalized prices) */
@@ -69,6 +69,7 @@ export type HomeLuxuryCopy = {
     emptyTitle: string;
     emptyDesc: string;
     cta: string;
+    applyComingSoonBadge: string;
     browse: string;
     viewProfile: string;
   };
@@ -96,14 +97,14 @@ const en: HomeLuxuryCopy = {
   leadMagnet: {
     badge: "Free guide",
     title: "The TJFit starter roadmap",
-    sub: "A short, practical outline: how to use programs, when a coach helps, and how TJAI fits your week — sent once by email.",
+    sub: "A short, practical outline: how to use programs, when a coach helps, and what's planned for deeper personalization — sent once by email.",
     bullets: [
       "Week-one structure you can follow immediately",
       "When to add coaching — and what to expect",
-      "How TJAI slots in without overwhelming you"
+      "How TJAI will fit when it launches — without overwhelming your week"
     ],
-    tjaiCta: "TJAI early access",
-    tjaiSub: "Personalized planning is rolling out — join the list from the AI page."
+    tjaiBadge: "Coming soon",
+    tjaiSub: "TJAI personalized planning is not live yet. Use the roadmap above to stay in the loop — no separate AI page to visit."
   },
   pricingPreview: {
     badge: "Membership",
@@ -179,8 +180,9 @@ const en: HomeLuxuryCopy = {
     subtitle: "Quality-first roster — apply if you lead with craft.",
     emptyTitle: "Coach roster opening",
     emptyDesc:
-      "We are curating verified coaches. Apply to join a platform where your expertise is framed like a luxury product.",
+      "We are curating verified coaches. Public coach applications are not open yet — browse the directory or explore programs.",
     cta: "Apply as a coach",
+    applyComingSoonBadge: "Coming soon",
     browse: "Browse coaches",
     viewProfile: "View profile"
   },
@@ -207,14 +209,14 @@ const tr: HomeLuxuryCopy = {
   leadMagnet: {
     badge: "Ucretsiz rehber",
     title: "TJFit baslangic yol haritasi",
-    sub: "Programlari nasil kullanacaginiz, koç ne zaman ise yarar ve TJAI haftaniza nasil oturur — tek e-postada ozet.",
+    sub: "Programlari nasil kullanacaginiz, koç ne zaman ise yarar ve kisisel planlama icin neyin hazirlandigi — tek e-postada ozet.",
     bullets: [
       "Ilk hafta icin net bir yapi",
       "Koçluk ne zaman mantikli — ne beklenir",
-      "TJAI'yi sizi bogmadan nasil kullanirsiniz"
+      "TJAI yayina ciktiginda haftaniza nasil oturacagi — sizi bogmadan"
     ],
-    tjaiCta: "TJAI erken erisim",
-    tjaiSub: "Kisisel planlama aciliyor — AI sayfasindan listeye katilin."
+    tjaiBadge: "Yakinda",
+    tjaiSub: "TJAI kisisel planlama henuz canli degil. Ustteki yol haritasiyla haberdar olun — ayri bir AI sayfasi yok."
   },
   pricingPreview: {
     badge: "Uyelik",
@@ -290,8 +292,9 @@ const tr: HomeLuxuryCopy = {
     subtitle: "Once kalite — zanaatle liderlik ediyorsaniz basvurun.",
     emptyTitle: "Koç kadrosu aciliyor",
     emptyDesc:
-      "Dogrulanmis koçlari seciyoruz. Uzmanliginizin luks bir urun gibi cercevelendigi bir platforma katilin.",
+      "Dogrulanmis koçlari seciyoruz. Herkese acik koç basvurusu henuz yok — rehberi gezin veya programlara bakin.",
     cta: "Koç olarak basvur",
+    applyComingSoonBadge: "Yakinda",
     browse: "Koçlari gor",
     viewProfile: "Profili gor"
   },
@@ -318,14 +321,14 @@ const ar: HomeLuxuryCopy = {
   leadMagnet: {
     badge: "دليل مجاني",
     title: "خارطة بداية TJFit",
-    sub: "ملخص عملي: كيف تستخدم البرامج، متى يساعد المدرب، وأين يدخل TJAI في أسبوعك — برسالة واحدة.",
+    sub: "ملخص عملي: البرامج، متى يساعد المدرب، وما المخطط للتخصيص الأعمق — برسالة واحدة.",
     bullets: [
       "هيكل الأسبوع الأول جاهز للتطبيق",
       "متى تضيف التدريب — وماذا تتوقع",
-      "استخدام TJAI دون إرهاق"
+      "كيف سيتكامل TJAI عند الإطلاق — دون إرهاق"
     ],
-    tjaiCta: "الوصول المبكر لـ TJAI",
-    tjaiSub: "التخطيط الشخصي قادم — انضم من صفحة الذكاء الاصطناعي."
+    tjaiBadge: "قريباً",
+    tjaiSub: "تخطيط TJAI الشخصي غير متاح بعد. استخدم الخارطة أعلاه للبقاء على اطلاع — لا صفحة ذكاء اصطناعي منفصلة."
   },
   pricingPreview: {
     badge: "العضوية",
@@ -401,8 +404,9 @@ const ar: HomeLuxuryCopy = {
     subtitle: "الجودة أولاً — تقدم إذا قادتك الحرفية.",
     emptyTitle: "فتح قائمة المدربين",
     emptyDesc:
-      "نختار مدربين موثوقين. انضم لمنصة تُقدّم خبرتك كمنتج راقٍ.",
+      "نختار مدربين موثوقين. طلبات الانضمام العامة غير مفتوحة بعد — تصفح الدليل أو البرامج.",
     cta: "تقديم كمدرب",
+    applyComingSoonBadge: "قريباً",
     browse: "تصفح المدربين",
     viewProfile: "عرض الملف"
   },
@@ -429,14 +433,14 @@ const es: HomeLuxuryCopy = {
   leadMagnet: {
     badge: "Guia gratis",
     title: "Hoja de ruta inicial TJFit",
-    sub: "Resumen practico: como usar programas, cuando sumar coach y como encaja TJAI en tu semana — un solo email.",
+    sub: "Resumen practico: programas, cuando sumar coach y que viene en personalizacion — un solo email.",
     bullets: [
       "Estructura de la primera semana lista para aplicar",
       "Cuando tiene sentido el coaching y que esperar",
-      "TJAI sin saturarte"
+      "Como encajara TJAI al lanzarse — sin saturarte"
     ],
-    tjaiCta: "Acceso anticipado TJAI",
-    tjaiSub: "El planning personalizado llega — apuntate desde la pagina de IA."
+    tjaiBadge: "Proximamente",
+    tjaiSub: "El planning personalizado con TJAI aun no esta activo. Deja el email arriba para enterarte — no hay pagina de IA aparte."
   },
   pricingPreview: {
     badge: "Membresia",
@@ -512,8 +516,9 @@ const es: HomeLuxuryCopy = {
     subtitle: "Calidad primero — aplica si lideras con oficio.",
     emptyTitle: "Apertura del roster",
     emptyDesc:
-      "Estamos curando coaches verificados. Unete a una plataforma que enmarca tu expertise como producto de lujo.",
+      "Estamos curando coaches verificados. Las solicitudes publicas aun no estan abiertas — mira el directorio o los programas.",
     cta: "Solicitar ser coach",
+    applyComingSoonBadge: "Proximamente",
     browse: "Ver coaches",
     viewProfile: "Ver perfil"
   },
@@ -540,14 +545,14 @@ const fr: HomeLuxuryCopy = {
   leadMagnet: {
     badge: "Guide gratuit",
     title: "Feuille de route TJFit",
-    sub: "Resume pratique: utiliser les programmes, quand ajouter un coach, ou TJAI s'inscrit dans votre semaine — un email.",
+    sub: "Resume pratique: programmes, quand ajouter un coach, et la personnalisation prevue — un email.",
     bullets: [
       "Structure de semaine 1 prete a appliquer",
       "Quand le coaching aide — et le cadre attendu",
-      "TJAI sans vous submerger"
+      "Comment TJAI s'integre au lancement — sans surcharge"
     ],
-    tjaiCta: "Acces anticipe TJAI",
-    tjaiSub: "La planification personnalisee arrive — inscrivez-vous depuis la page IA."
+    tjaiBadge: "Bientot",
+    tjaiSub: "La planification TJAI personnalisee n'est pas encore en ligne. Utilisez la feuille de route ci-dessus — pas de page IA separee."
   },
   pricingPreview: {
     badge: "Abonnement",
@@ -623,8 +628,9 @@ const fr: HomeLuxuryCopy = {
     subtitle: "La qualite d'abord — postulez si vous menez par le metier.",
     emptyTitle: "Ouverture du roster coachs",
     emptyDesc:
-      "Nous selectionnons des coachs verifies. Rejoignez une plateforme qui met votre expertise en valeur comme un produit de luxe.",
+      "Nous selectionnons des coachs verifies. Les candidatures publiques ne sont pas encore ouvertes — parcourez l'annuaire ou les programmes.",
     cta: "Postuler comme coach",
+    applyComingSoonBadge: "Bientot",
     browse: "Voir les coachs",
     viewProfile: "Voir le profil"
   },

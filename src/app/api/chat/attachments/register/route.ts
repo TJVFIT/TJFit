@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { readRequestJson } from "@/lib/read-request-json";
 import { requireAuth } from "@/lib/require-auth";
 
 export async function POST(request: NextRequest) {
   const auth = await requireAuth();
   if (!auth.ok) return auth.response;
 
-  const body = await request.json();
+  const parsed = await readRequestJson(request);
+  if (!parsed.ok) return parsed.response;
+  const body = parsed.value as Record<string, unknown>;
   if (typeof body.message_id !== "string" || typeof body.storage_path !== "string" || typeof body.mime_type !== "string") {
     return NextResponse.json({ error: "message_id, storage_path and mime_type are required." }, { status: 400 });
   }

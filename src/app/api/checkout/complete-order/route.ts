@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { allowsSimulatedPaidCompletionForStoredProvider } from "@/lib/payments";
+import { readRequestJson } from "@/lib/read-request-json";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { TJFIT_COINS_PER_PROGRAM_PURCHASE } from "@/lib/tjfit-coin";
@@ -22,8 +23,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await request.json().catch(() => null);
-  const orderId = String(body?.orderId ?? "").trim();
+  const parsed = await readRequestJson(request);
+  if (!parsed.ok) return parsed.response;
+  const body = parsed.value as Record<string, unknown>;
+  const orderId = String(body.orderId ?? "").trim();
   if (!orderId) {
     return NextResponse.json({ error: "orderId is required" }, { status: 400 });
   }

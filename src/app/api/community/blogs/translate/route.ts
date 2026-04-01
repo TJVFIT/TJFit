@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { locales, type Locale } from "@/lib/i18n";
-import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { rateLimit } from "@/lib/rate-limit";
+import { readRequestJson } from "@/lib/read-request-json";
+import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 function chunkText(input: string, chunkSize = 2500) {
   if (input.length <= chunkSize) return [input];
@@ -87,9 +88,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Too many requests." }, { status: 429 });
   }
 
-  const body = await request.json().catch(() => null);
-  const blogId = String(body?.blogId ?? "").trim();
-  const target = String(body?.targetLocale ?? "en").trim() as Locale;
+  const parsed = await readRequestJson(request);
+  if (!parsed.ok) return parsed.response;
+  const body = parsed.value as Record<string, unknown>;
+  const blogId = String(body.blogId ?? "").trim();
+  const target = String(body.targetLocale ?? "en").trim() as Locale;
 
   if (!blogId || !locales.includes(target)) {
     return NextResponse.json({ error: "blogId and valid targetLocale are required." }, { status: 400 });

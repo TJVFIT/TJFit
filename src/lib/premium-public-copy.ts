@@ -7,6 +7,7 @@ export type CoachesListingCopy = {
   ctaPrograms: string;
   ctaSignup: string;
   ctaBecomeCoach: string;
+  comingSoonLabel: string;
   standardsTitle: string;
   standards: string[];
 };
@@ -70,6 +71,7 @@ const coaches: Record<Locale, CoachesListingCopy> = {
     ctaPrograms: "Browse programs",
     ctaSignup: "Create account",
     ctaBecomeCoach: "Apply as a coach",
+    comingSoonLabel: "Coming soon",
     standardsTitle: "What “verified” means here",
     standards: [
       "Credential and experience review before a public profile",
@@ -84,6 +86,7 @@ const coaches: Record<Locale, CoachesListingCopy> = {
     ctaPrograms: "Programlari incele",
     ctaSignup: "Hesap olustur",
     ctaBecomeCoach: "Koç basvurusu",
+    comingSoonLabel: "Yakinda",
     standardsTitle: "Dogrulanmis ne demek",
     standards: [
       "Herkese acik profil oncesi yetkinlik ve deneyim kontrolu",
@@ -98,6 +101,7 @@ const coaches: Record<Locale, CoachesListingCopy> = {
     ctaPrograms: "تصفح البرامج",
     ctaSignup: "إنشاء حساب",
     ctaBecomeCoach: "التقديم كمدرب",
+    comingSoonLabel: "قريباً",
     standardsTitle: "ماذا تعني “الموثوقية” هنا",
     standards: [
       "مراجعة المؤهلات والخبرة قبل أي ملف عام",
@@ -112,6 +116,7 @@ const coaches: Record<Locale, CoachesListingCopy> = {
     ctaPrograms: "Ver programas",
     ctaSignup: "Crear cuenta",
     ctaBecomeCoach: "Solicitar ser coach",
+    comingSoonLabel: "Proximamente",
     standardsTitle: "Que significa verificado aqui",
     standards: [
       "Revision de credenciales y experiencia antes del perfil publico",
@@ -126,6 +131,7 @@ const coaches: Record<Locale, CoachesListingCopy> = {
     ctaPrograms: "Voir les programmes",
     ctaSignup: "Creer un compte",
     ctaBecomeCoach: "Postuler comme coach",
+    comingSoonLabel: "Bientot",
     standardsTitle: "Ce que verifie signifie ici",
     standards: [
       "Revue des competences et de l'experience avant profil public",

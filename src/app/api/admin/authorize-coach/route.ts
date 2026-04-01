@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { readRequestJson } from "@/lib/read-request-json";
 import { requireAdmin } from "@/lib/require-admin";
 
 export async function POST(request: NextRequest) {
@@ -6,7 +7,9 @@ export async function POST(request: NextRequest) {
   if (!admin.ok) return admin.response;
 
   try {
-    const body = await request.json();
+    const parsed = await readRequestJson(request);
+    if (!parsed.ok) return parsed.response;
+    const body = parsed.value as { email?: unknown; password?: unknown };
     const { email, password } = body;
     const normalizedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
 

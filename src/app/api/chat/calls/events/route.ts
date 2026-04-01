@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { readRequestJson } from "@/lib/read-request-json";
 import { requireAuth } from "@/lib/require-auth";
 
 function isValidCallEvent(type: unknown) {
@@ -9,7 +10,9 @@ export async function POST(request: NextRequest) {
   const auth = await requireAuth();
   if (!auth.ok) return auth.response;
 
-  const body = await request.json();
+  const parsed = await readRequestJson(request);
+  if (!parsed.ok) return parsed.response;
+  const body = parsed.value as Record<string, unknown>;
   const callSessionId = typeof body.call_session_id === "string" ? body.call_session_id : "";
   const eventType = body.event_type;
   const payload = body.payload;

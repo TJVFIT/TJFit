@@ -1,11 +1,14 @@
 "use client";
 
+import Link from "next/link";
+import clsx from "clsx";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { useAuth } from "@/components/auth-provider";
 import type { Locale } from "@/lib/i18n";
 import { getMessagesCopy } from "@/lib/feature-copy";
-import { decryptText, encryptBinary, encryptText, unwrapConversationKeyForSelf } from "@/lib/chat-crypto";
+import { getSocialCopy } from "@/lib/social-copy";
+import { decryptText, encryptText, unwrapConversationKeyForSelf } from "@/lib/chat-crypto";
 import { ensureUserKeyPair } from "@/lib/chat-keyring";
 
 type MessageRow = {
@@ -18,88 +21,278 @@ type MessageRow = {
   created_at: string;
 };
 
-type DecryptedMessage = MessageRow & { plaintext: string };
+type DecryptedMessage = MessageRow & { plaintext: string | null };
 
-export function ChatThreadView({
-  locale,
-  conversationId
-}: {
-  locale: Locale;
-  conversationId: string;
-}) {
+type PeerInfo = {
+  id: string;
+  username: string;
+  display_name: string;
+  avatar_url: string | null;
+  conversation_type: string;
+};
+
+function mergeFetchedMessages(
+  prev: DecryptedMessage[],
+  fetched: MessageRow[]
+): DecryptedMessage[] {
+  const next: DecryptedMessage[] = fetched.map((m) => ({ ...m, plaintext: null }));
+  const byId = new Map<string, DecryptedMessage>();
+  for (const m of next) {
+    byId.set(m.id, m);
+  }
+  for (const m of prev) {
+    const existing = byId.get(m.id);
+    if (existing) {
+      if (m.plaintext !== null) {
+        byId.set(m.id, { ...existing, plaintext: m.plaintext });
+      }
+    } else {
+      byId.set(m.id, m);
+    }
+  }
+  return Array.from(byId.values());
+}
+
+function bubbleTime(iso: string, locale: Locale) {
+  try {
+    const d = new Date(iso);
+    const loc =
+      locale === "tr" ? "tr-TR" : locale === "ar" ? "ar" : locale === "es" ? "es" : locale === "fr" ? "fr-FR" : "en-US";
+    return d.toLocaleTimeString(loc, { hour: "2-digit", minute: "2-digit" });
+  } catch {
+    return "";
+  }
+}
+
+function MessageSkeleton() {
+  return (
+    <div className="space-y-4 px-2 py-4" aria-busy="true">
+      <div className="flex justify-start">
+        <div className="h-10 w-[72%] animate-pulse rounded-2xl rounded-bl-md bg-white/[0.06]" />
+      </div>
+      <div className="flex justify-end">
+        <div className="h-10 w-[64%] animate-pulse rounded-2xl rounded-br-md bg-cyan-500/20" />
+      </div>
+      <div className="flex justify-start">
+        <div className="h-12 w-[55%] animate-pulse rounded-2xl rounded-bl-md bg-white/[0.05]" />
+      </div>
+    </div>
+  );
+}
+
+export function ChatThreadView({ locale, conversationId }: { locale: Locale; conversationId: string }) {
   const t = getMessagesCopy(locale);
+  const s = getSocialCopy(locale);
   const { user } = useAuth();
   const [messages, setMessages] = useState<DecryptedMessage[]>([]);
   const [messageText, setMessageText] = useState("");
-  const [linkText, setLinkText] = useState("");
   const [wrappedKey, setWrappedKey] = useState<string | null>(null);
   const conversationKeyRef = useRef<CryptoKey | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [activeCallMode, setActiveCallMode] = useState<"voice" | "video" | null>(null);
-  const localVideoRef = useRef<HTMLVideoElement>(null);
-  const localStreamRef = useRef<MediaStream | null>(null);
+  const [peer, setPeer] = useState<PeerInfo | null>(null);
+  const [peerLoadFailed, setPeerLoadFailed] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [initializing, setInitializing] = useState(true);
+  const [sending, setSending] = useState(false);
+  const listRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const conversationIdRef = useRef(conversationId);
+  conversationIdRef.current = conversationId;
+  const messagesRef = useRef(messages);
+  messagesRef.current = messages;
 
   const myId = user?.id ?? "";
   const sorted = useMemo(
-    () => messages.slice().sort((a, b) => a.created_at.localeCompare(b.created_at)),
+    () =>
+      messages.slice().sort((a, b) => String(a.created_at ?? "").localeCompare(String(b.created_at ?? ""))),
     [messages]
   );
 
-  const loadMessages = useCallback(async () => {
-    const res = await fetch(`/api/chat/messages/${conversationId}`, { credentials: "include" });
-    const data = await res.json();
+  const loadPeer = useCallback(async () => {
+    const res = await fetch(`/api/chat/conversations/${conversationId}/peer`, { credentials: "include" });
+    const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      setError(data.error ?? t.loadError);
+      setPeer(null);
+      setPeerLoadFailed(true);
       return;
     }
-    setWrappedKey(data.encrypted_conversation_key ?? null);
-    setMessages((data.messages ?? []).map((m: MessageRow) => ({ ...m, plaintext: "" })));
+    const p = data.peer as Record<string, unknown> | null;
+    if (p && typeof p.id === "string") {
+      setPeer({
+        id: p.id,
+        username: String(p.username ?? "").trim() || "—",
+        display_name: String(p.display_name ?? "").trim() || String(p.username ?? "").trim() || "—",
+        avatar_url: typeof p.avatar_url === "string" ? p.avatar_url : null,
+        conversation_type: String(p.conversation_type ?? "")
+      });
+      setPeerLoadFailed(false);
+    } else {
+      setPeer(null);
+      setPeerLoadFailed(true);
+    }
   }, [conversationId]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    loadMessages();
+    void loadPeer();
+  }, [loadPeer]);
+
+  useEffect(() => {
+    setMessages([]);
+    setWrappedKey(null);
+    setFetchError(null);
+    setError(null);
+    conversationKeyRef.current = null;
+  }, [conversationId]);
+
+  useEffect(() => {
+    if (!conversationId || !user?.id) return;
+    void fetch(`/api/chat/conversations/${conversationId}/read`, {
+      method: "POST",
+      credentials: "include"
+    });
+  }, [conversationId, user?.id]);
+
+  const loadMessages = useCallback(
+    async (opts?: { silent?: boolean }) => {
+      const silent = Boolean(opts?.silent);
+      const cid = conversationId;
+      if (!silent) {
+        setInitializing(true);
+        setFetchError(null);
+      }
+      const res = await fetch(`/api/chat/messages/${cid}`, { credentials: "include" });
+      const data = await res.json().catch(() => ({}));
+      if (conversationIdRef.current !== cid) return;
+
+      if (!res.ok) {
+        if (!silent) {
+          setFetchError(typeof data.error === "string" ? data.error : t.loadError);
+          setWrappedKey(null);
+          setMessages([]);
+          setInitializing(false);
+        }
+        return;
+      }
+      const wk = (data.encrypted_conversation_key ?? null) as string | null;
+      if (!silent) {
+        setWrappedKey(wk);
+      } else if (wk) {
+        setWrappedKey((prev) => prev ?? wk);
+      }
+      const rawRows = data.messages;
+      const rows = (Array.isArray(rawRows) ? rawRows : []) as MessageRow[];
+      const safeRows = rows.filter(
+        (m) =>
+          m &&
+          typeof m.id === "string" &&
+          typeof m.sender_id === "string" &&
+          typeof m.ciphertext === "string" &&
+          typeof m.nonce === "string" &&
+          typeof m.created_at === "string"
+      );
+      setMessages((prev) => mergeFetchedMessages(prev, safeRows));
+      if (!wk && !silent) {
+        setInitializing(false);
+      }
+    },
+    [conversationId, t.loadError]
+  );
+
+  useEffect(() => {
+    void loadMessages();
   }, [loadMessages]);
 
   useEffect(() => {
     const supabase = getSupabaseBrowserClient();
-    if (!supabase) return;
+    if (!supabase || !conversationId) return;
+
+    const cid = conversationId;
+    let cancelled = false;
 
     const channel = supabase
-      .channel(`messages-${conversationId}`)
+      .channel(`thread-messages:${cid}`)
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "messages", filter: `conversation_id=eq.${conversationId}` },
+        { event: "INSERT", schema: "public", table: "messages", filter: `conversation_id=eq.${cid}` },
         async (payload) => {
-          const row = payload.new as MessageRow;
+          const row = payload.new as Record<string, unknown> | null;
+          if (!row || typeof row.id !== "string") return;
+          const convId = row.conversation_id;
+          if (typeof convId === "string" && convId !== cid) return;
+
+          const ciphertext = typeof row.ciphertext === "string" ? row.ciphertext : "";
+          const nonce = typeof row.nonce === "string" ? row.nonce : "";
+          const senderId = typeof row.sender_id === "string" ? row.sender_id : "";
+          const mt = row.message_type;
+          const messageType: MessageRow["message_type"] =
+            mt === "image" || mt === "file" || mt === "link" || mt === "call_event" ? mt : "text";
+          const createdAt = typeof row.created_at === "string" ? row.created_at : new Date().toISOString();
+          if (!ciphertext || !nonce || !senderId) return;
+
+          const safeRow: MessageRow = {
+            id: row.id,
+            sender_id: senderId,
+            message_type: messageType,
+            ciphertext,
+            nonce,
+            metadata: row.metadata && typeof row.metadata === "object" ? (row.metadata as Record<string, unknown>) : null,
+            created_at: createdAt
+          };
+
           const key = conversationKeyRef.current;
-          let plaintext = "";
+          let plaintext: string | null = null;
           if (key) {
             try {
-              plaintext = await decryptText(row.ciphertext, row.nonce, key);
+              plaintext = await decryptText(safeRow.ciphertext, safeRow.nonce, key);
             } catch {
               plaintext = `[${t.decryptError}]`;
             }
           }
-          setMessages((prev) => [...prev, { ...row, plaintext }]);
+
+          if (cancelled) return;
+
+          setMessages((prev) => {
+            if (prev.some((m) => m.id === safeRow.id)) return prev;
+            return [...prev, { ...safeRow, plaintext }];
+          });
         }
       )
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      cancelled = true;
+      void supabase.removeChannel(channel);
     };
-  }, [conversationId]);
+  }, [conversationId, t.decryptError]);
+
+  useEffect(() => {
+    let wasHidden = false;
+    const onVis = () => {
+      if (document.visibilityState === "hidden") {
+        wasHidden = true;
+        return;
+      }
+      if (document.visibilityState === "visible" && wasHidden) {
+        wasHidden = false;
+        void loadMessages({ silent: true });
+      }
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => document.removeEventListener("visibilitychange", onVis);
+  }, [loadMessages]);
 
   useEffect(() => {
     const boot = async () => {
-      if (!user?.id || !wrappedKey) return;
+      if (!user?.id || !wrappedKey) {
+        return;
+      }
       try {
         const { privateKey } = await ensureUserKeyPair(user.id);
         const conversationKey = await unwrapConversationKeyForSelf(wrappedKey, privateKey);
         conversationKeyRef.current = conversationKey;
+        const rows = messagesRef.current;
         const decrypted = await Promise.all(
-          messages.map(async (msg) => {
+          rows.map(async (msg) => {
             try {
               const plaintext = await decryptText(msg.ciphertext, msg.nonce, conversationKey);
               return { ...msg, plaintext };
@@ -109,22 +302,25 @@ export function ChatThreadView({
           })
         );
         setMessages(decrypted);
+        setError(null);
       } catch (e) {
         setError(e instanceof Error ? e.message : t.decryptError);
+      } finally {
+        setInitializing(false);
       }
     };
-    boot();
-  }, [user?.id, wrappedKey]);
+    void boot();
+  }, [user?.id, wrappedKey, t.decryptError]);
 
   useEffect(() => {
-    const hydratePlaintext = async () => {
+    const hydrate = async () => {
       const key = conversationKeyRef.current;
-      if (!key || messages.length === 0) return;
-      if (messages.every((m) => m.plaintext)) return;
+      if (!key) return;
+      if (messagesRef.current.every((m) => m.plaintext !== null)) return;
 
       const decrypted = await Promise.all(
-        messages.map(async (msg) => {
-          if (msg.plaintext) return msg;
+        messagesRef.current.map(async (msg) => {
+          if (msg.plaintext !== null) return msg;
           try {
             const plaintext = await decryptText(msg.ciphertext, msg.nonce, key);
             return { ...msg, plaintext };
@@ -135,260 +331,203 @@ export function ChatThreadView({
       );
       setMessages(decrypted);
     };
-    hydratePlaintext();
-  }, [messages]);
+    void hydrate();
+  }, [messages, t.decryptError]);
+
+  useEffect(() => {
+    const el = listRef.current;
+    if (!el) return;
+    el.scrollTop = el.scrollHeight;
+  }, [sorted.length, initializing]);
 
   const sendText = async () => {
     const key = conversationKeyRef.current;
-    if (!key || !messageText.trim()) return;
-    const encrypted = await encryptText(messageText.trim(), key);
-    const res = await fetch(`/api/chat/messages/${conversationId}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({
-        message_type: "text",
-        ciphertext: encrypted.ciphertext,
-        nonce: encrypted.nonce
-      })
-    });
-    if (!res.ok) {
-      const data = await res.json();
-      setError(data.error ?? t.sendError);
-      return;
-    }
-    setMessageText("");
-  };
-
-  const sendLink = async () => {
-    const key = conversationKeyRef.current;
-    if (!key || !linkText.trim()) return;
-    const encrypted = await encryptText(linkText.trim(), key);
-    const res = await fetch(`/api/chat/messages/${conversationId}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({
-        message_type: "link",
-        ciphertext: encrypted.ciphertext,
-        nonce: encrypted.nonce
-      })
-    });
-    if (!res.ok) {
-      const data = await res.json();
-      setError(data.error ?? t.sendError);
-      return;
-    }
-    setLinkText("");
-  };
-
-  const sendAttachment = async (file: File) => {
-    const key = conversationKeyRef.current;
-    if (!key) return;
+    const trimmed = messageText.trim();
+    if (!key || !trimmed || sending) return;
+    setSending(true);
+    setError(null);
     try {
-      const bytes = await file.arrayBuffer();
-      const encryptedFile = await encryptBinary(bytes, key);
-
-      const signRes = await fetch("/api/chat/attachments/sign", {
+      const encrypted = await encryptText(trimmed, key);
+      const res = await fetch(`/api/chat/messages/${conversationId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          conversation_id: conversationId,
-          filename: file.name
+          message_type: "text",
+          ciphertext: encrypted.ciphertext,
+          nonce: encrypted.nonce
         })
       });
-      const signData = await signRes.json();
-      if (!signRes.ok) {
-        setError(signData.error ?? t.signAttachmentError);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(typeof data.error === "string" ? data.error : t.sendError);
         return;
       }
-
-      const uploadRes = await fetch(signData.signedUrl, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/octet-stream"
-        },
-        body: encryptedFile.ciphertext
-      });
-      if (!uploadRes.ok) {
-        setError(t.uploadAttachmentError);
-        return;
-      }
-
-      const encryptedCaption = await encryptText(`[file] ${file.name}`, key);
-      const messageRes = await fetch(`/api/chat/messages/${conversationId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          message_type: "file",
-          ciphertext: encryptedCaption.ciphertext,
-          nonce: encryptedCaption.nonce,
-          metadata: {
-            attachment_nonce: encryptedFile.nonce,
-            storage_path: signData.path,
-            mime_type: file.type,
-            size_bytes: file.size
-          }
-        })
-      });
-      const messageData = await messageRes.json();
-      if (!messageRes.ok) {
-        setError(messageData.error ?? t.postAttachmentError);
-        return;
-      }
-
-      await fetch("/api/chat/attachments/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          message_id: messageData.message.id,
-          storage_path: signData.path,
-          mime_type: file.type || "application/octet-stream",
-          size_bytes: file.size,
-          encrypted_name: encryptedCaption.ciphertext
-        })
-      });
+      setMessageText("");
+      inputRef.current?.focus();
     } catch (e) {
-      setError(e instanceof Error ? e.message : t.sendFileError);
+      setError(e instanceof Error ? e.message : t.sendError);
+    } finally {
+      setSending(false);
     }
   };
 
-  const startCall = async (mode: "voice" | "video") => {
-    try {
-      setError(null);
-      const callRes = await fetch("/api/chat/calls/start", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ conversation_id: conversationId, mode })
-      });
-      const callData = await callRes.json();
-      if (!callRes.ok) {
-        setError(callData.error ?? t.startCallError);
-        return;
-      }
-
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: mode === "video"
-      });
-      localStreamRef.current = stream;
-      if (mode === "video" && localVideoRef.current) {
-        localVideoRef.current.srcObject = stream;
-      }
-      setActiveCallMode(mode);
-
-      await fetch("/api/chat/calls/events", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          call_session_id: callData.call_session.id,
-          event_type: "ring",
-          payload: { mode }
-        })
-      });
-    } catch (e) {
-      setError(e instanceof Error ? e.message : t.startCallError);
-    }
-  };
-
-  const endLocalCall = async () => {
-    localStreamRef.current?.getTracks().forEach((t) => t.stop());
-    localStreamRef.current = null;
-    if (localVideoRef.current) {
-      localVideoRef.current.srcObject = null;
-    }
-    setActiveCallMode(null);
-  };
+  const showComposer = !fetchError && !initializing && conversationKeyRef.current !== null;
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 px-4 py-16 sm:px-6 lg:px-8">
-      <div>
-        <span className="badge">{t.encrypted}</span>
-        <h1 className="mt-4 font-display text-3xl font-semibold text-white sm:text-4xl">{t.title}</h1>
+    <div className="flex min-h-0 flex-1 flex-col bg-background">
+      <header className="flex shrink-0 items-center gap-3 border-b border-white/[0.06] px-3 py-3 sm:px-4">
+        <Link
+          href={`/${locale}/messages`}
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 text-zinc-300 transition hover:border-white/20 hover:text-white lg:hidden"
+          aria-label={s.threadBack}
+        >
+          <span className="text-lg leading-none">‹</span>
+        </Link>
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full border border-white/[0.08] bg-surface-elevated">
+            {peer?.avatar_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={peer.avatar_url} alt="" className="h-full w-full object-cover" />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-xs font-semibold text-zinc-400">
+                {(peer?.display_name || peer?.username || "?").slice(0, 2).toUpperCase()}
+              </div>
+            )}
+          </div>
+          <div className="min-w-0">
+            <p className="truncate font-medium text-white">{peer?.display_name || "…"}</p>
+            <p className="truncate text-xs text-zinc-500">
+              @{peer?.username || "…"}
+              {peer?.conversation_type === "coach_student" ? (
+                <span className="ml-1.5 text-[10px] uppercase tracking-wider text-zinc-600">· {s.conversationCoach}</span>
+              ) : null}
+            </p>
+          </div>
+        </div>
+        {peer?.username ? (
+          <Link
+            href={`/${locale}/profile/${encodeURIComponent(peer.username)}`}
+            className="shrink-0 rounded-full border border-white/10 px-3 py-1.5 text-xs text-zinc-300 transition hover:border-cyan-400/30 hover:text-white"
+          >
+            {s.openProfile}
+          </Link>
+        ) : null}
+      </header>
+
+      {peerLoadFailed && !fetchError ? (
+        <div className="shrink-0 border-b border-amber-500/20 bg-amber-500/5 px-3 py-2 text-center text-[11px] text-amber-100/90 sm:px-4">
+          {s.threadParticipantUnknown}
+          <button
+            type="button"
+            className="ml-2 underline underline-offset-2 hover:text-white"
+            onClick={() => void loadPeer()}
+          >
+            {s.retryLabel}
+          </button>
+        </div>
+      ) : null}
+
+      <div ref={listRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 py-2 sm:px-4">
+        {fetchError ? (
+          <div className="flex flex-col items-center justify-center px-4 py-16 text-center">
+            <p className="text-sm text-red-400">{fetchError}</p>
+            <button
+              type="button"
+              className="mt-4 rounded-full border border-white/15 px-4 py-2 text-sm text-zinc-200 hover:border-white/25"
+              onClick={() => void loadMessages()}
+            >
+              {t.threadRetry}
+            </button>
+          </div>
+        ) : initializing ? (
+          <MessageSkeleton />
+        ) : sorted.length === 0 ? (
+          <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
+            <p className="max-w-xs text-sm text-zinc-500">{t.threadEmpty}</p>
+            <p className="mt-2 text-[11px] text-zinc-600">{t.encrypted}</p>
+          </div>
+        ) : (
+          <div className="mx-auto max-w-3xl space-y-1 pb-2">
+            {sorted.map((msg, idx) => {
+              const mine = Boolean(myId) && msg.sender_id === myId;
+              return (
+                <div
+                  key={msg.id ?? `msg-${idx}-${msg.created_at ?? ""}`}
+                  className={clsx("flex w-full", mine ? "justify-end" : "justify-start")}
+                >
+                  <div
+                    className={clsx(
+                      "flex max-w-[min(85%,28rem)] flex-col gap-0.5",
+                      mine ? "items-end" : "items-start"
+                    )}
+                  >
+                    <div
+                      className={clsx(
+                        "px-3.5 py-2 text-[15px] leading-snug",
+                        mine
+                          ? "rounded-2xl rounded-br-md bg-cyan-500/90 text-[#05080a]"
+                          : "rounded-2xl rounded-bl-md bg-white/[0.06] text-zinc-100"
+                      )}
+                    >
+                      {msg.plaintext === null
+                        ? "…"
+                        : msg.plaintext || (msg.message_type === "text" ? "" : `[${msg.message_type}]`)}
+                    </div>
+                    <time
+                      className="px-1 text-[10px] tabular-nums text-zinc-600"
+                      dateTime={msg.created_at}
+                      suppressHydrationWarning
+                    >
+                      {bubbleTime(msg.created_at, locale)}
+                    </time>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {error && !fetchError ? (
+        <div className="shrink-0 border-t border-red-500/15 bg-red-500/5 px-4 py-2 text-center text-xs text-red-300">{error}</div>
+      ) : null}
 
-      <div className="glass-panel rounded-[28px] p-6">
-        <div className="mb-4 flex gap-3">
-          <button onClick={() => startCall("voice")} className="rounded-full border border-white/10 px-4 py-2 text-sm text-white">
-            {t.startCall}
-          </button>
-          <button onClick={() => startCall("video")} className="rounded-full border border-white/10 px-4 py-2 text-sm text-white">
-            {t.startVideoCall}
-          </button>
-          {activeCallMode && (
-            <button onClick={endLocalCall} className="rounded-full border border-red-400/40 px-4 py-2 text-sm text-red-300">
-              {t.endCall}
-            </button>
-          )}
-        </div>
-
-        {activeCallMode === "video" && (
-          <video ref={localVideoRef} autoPlay muted playsInline className="mb-4 w-full rounded-xl border border-white/10 bg-black/30" />
-        )}
-
-        <div className="max-h-[420px] space-y-2 overflow-y-auto rounded-xl border border-white/10 bg-black/20 p-4">
-          {sorted.length === 0 ? (
-            <p className="text-sm text-zinc-500">{t.noConversations}</p>
-          ) : (
-            sorted.map((msg) => (
-              <div
-                key={msg.id}
-                className={`max-w-[80%] rounded-xl px-3 py-2 text-sm ${
-                  msg.sender_id === myId ? "ml-auto bg-accent/20 text-white" : "bg-white/5 text-zinc-200"
-                }`}
-              >
-                {msg.plaintext || t.encryptedMessage}
-              </div>
-            ))
-          )}
-        </div>
-
-        <div className="mt-4 flex gap-3">
+      <div
+        className="shrink-0 border-t border-white/[0.06] px-3 pt-2"
+        style={{ paddingBottom: "max(0.65rem, env(safe-area-inset-bottom, 0px))" }}
+      >
+        <div className="mx-auto flex max-w-3xl items-center gap-2 pb-2">
           <input
-            className="input"
-            placeholder={t.encryptedMessage}
+            ref={inputRef}
+            className="input min-h-[46px] min-w-0 flex-1 rounded-xl border-white/[0.08] bg-surface-elevated/80 py-2.5 pl-4 pr-3 text-[15px] text-white placeholder:text-zinc-500"
+            placeholder={t.messageInputPlaceholder}
             value={messageText}
+            disabled={!showComposer || sending}
             onChange={(e) => setMessageText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                void sendText();
+              }
+            }}
+            aria-label={t.messageInputPlaceholder}
           />
-          <button onClick={sendText} className="gradient-button rounded-full px-5 py-2 text-sm font-medium text-white">
-            {t.send}
+          <button
+            type="button"
+            disabled={!showComposer || sending || !messageText.trim()}
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cyan-500 text-[#05080a] transition hover:bg-cyan-400 disabled:opacity-35"
+            aria-label={t.send}
+            onClick={() => void sendText()}
+          >
+            {sending ? (
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+            ) : (
+              <span className="text-lg leading-none">➤</span>
+            )}
           </button>
-        </div>
-        <div className="mt-3 grid gap-3 md:grid-cols-[1fr_auto_auto]">
-          <input
-            className="input"
-            placeholder={t.linkPlaceholder}
-            value={linkText}
-            onChange={(e) => setLinkText(e.target.value)}
-          />
-          <button onClick={sendLink} className="rounded-full border border-white/10 px-4 py-2 text-sm text-white">
-            {t.linkButton}
-          </button>
-          <label className="cursor-pointer rounded-full border border-white/10 px-4 py-2 text-sm text-white">
-            {t.fileButton}
-            <input
-              type="file"
-              className="hidden"
-              accept="image/*,.doc,.docx,.pdf,.txt"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  void sendAttachment(file);
-                }
-                e.currentTarget.value = "";
-              }}
-            />
-          </label>
         </div>
       </div>
     </div>
   );
 }
-

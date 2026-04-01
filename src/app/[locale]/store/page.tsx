@@ -1,11 +1,10 @@
-import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
+import { getDictionary } from "@/lib/i18n";
+import { requireLocaleParam } from "@/lib/require-locale";
 
 export default function StorePage({ params }: { params: { locale: string } }) {
-  if (!isLocale(params.locale)) {
-    return null;
-  }
+  const locale = requireLocaleParam(params.locale);
 
-  const dict = getDictionary(params.locale as Locale);
+  const dict = getDictionary(locale);
   const cs = dict.comingSoon;
 
   return (

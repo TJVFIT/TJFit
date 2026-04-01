@@ -12,6 +12,7 @@ const config: Config = {
         },
         accent: "#22D3EE",
         "accent-muted": "#67E8F9",
+        "accent-violet": "#A78BFA",
         success: "#22C55E",
         text: "#F4F4F5"
       },
@@ -22,7 +23,8 @@ const config: Config = {
       boxShadow: {
         glass: "0 20px 80px rgba(0, 0, 0, 0.45)",
         "lux-glow": "0 0 60px -12px rgba(34, 211, 238, 0.35)",
-        "lux-violet": "0 0 50px -14px rgba(167, 139, 250, 0.3)"
+        "lux-violet": "0 0 50px -14px rgba(167, 139, 250, 0.3)",
+        "premium-card": "0 12px 40px -16px rgba(0,0,0,0.5)"
       },
       backgroundImage: {
         "hero-gradient":
