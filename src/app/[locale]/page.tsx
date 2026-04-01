@@ -56,6 +56,7 @@ export default function HomePage({ params }: { params: { locale: string } }) {
 
   return (
     <ClientErrorBoundary
+      sentryScope="home-luxury"
       fallback={
         <div className="min-h-[100dvh] bg-[#0A0A0B] px-4 py-24 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-lg text-center">
