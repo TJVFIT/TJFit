@@ -16,6 +16,7 @@ const src = path.join(root, "public/brand/tjfit-logo-main.png");
 const brandDir = path.join(root, "public/brand");
 const iconsDir = path.join(root, "public/icons");
 const ogDir = path.join(root, "public/og");
+const appDir = path.join(root, "src/app");
 /** UI / site background match — opaque plate so transparent PNG regions and glow stay visible */
 const uiPng = path.join(brandDir, "tjfit-logo-ui.png");
 
@@ -58,12 +59,21 @@ async function main() {
 
   const fav16 = await sharp(mark128).resize(16, 16, { fit: "contain", background: BG }).png().toBuffer();
   const fav32 = await sharp(mark128).resize(32, 32, { fit: "contain", background: BG }).png().toBuffer();
+  const fav48 = await sharp(mark128).resize(48, 48, { fit: "contain", background: BG }).png().toBuffer();
+  const fav96 = await sharp(mark128).resize(96, 96, { fit: "contain", background: BG }).png().toBuffer();
 
   fs.writeFileSync(path.join(iconsDir, "favicon-16.png"), fav16);
   fs.writeFileSync(path.join(iconsDir, "favicon-32.png"), fav32);
+  fs.writeFileSync(path.join(iconsDir, "favicon-48.png"), fav48);
+  fs.writeFileSync(path.join(iconsDir, "favicon-96.png"), fav96);
 
-  const ico = await toIco([fav16, fav32]);
+  /* Google Search requires a square icon ≥48px; .ico should include that size. */
+  const ico = await toIco([fav16, fav32, fav48]);
   fs.writeFileSync(path.join(root, "public/favicon.ico"), ico);
+
+  /* Next.js file convention — strong signal for crawlers + browser tab */
+  fs.mkdirSync(appDir, { recursive: true });
+  fs.writeFileSync(path.join(appDir, "icon.png"), fav48);
 
   await sharp(mark128)
     .resize(180, 180, { fit: "contain", background: BG })

@@ -46,11 +46,13 @@ export const metadata: Metadata = {
   applicationName: "TJFit",
   themeColor: "#0a0a0b",
   manifest: "/site.webmanifest",
-  /* Tab + bookmark icons: monogram only (same source as tjfit-mark / PWA icons). */
+  /* Monogram. Google Search favicons: list 48×48+ first (minimum per Google favicon guidelines). */
   icons: {
     icon: [
-      { url: "/icons/favicon-16.png", sizes: "16x16", type: "image/png" },
-      { url: "/icons/favicon-32.png", sizes: "32x32", type: "image/png" }
+      { url: "/icons/favicon-48.png", sizes: "48x48", type: "image/png" },
+      { url: "/icons/favicon-96.png", sizes: "96x96", type: "image/png" },
+      { url: "/icons/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/favicon-16.png", sizes: "16x16", type: "image/png" }
     ],
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
     shortcut: "/favicon.ico"
