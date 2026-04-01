@@ -13,15 +13,20 @@ import { PricingPreviewHome } from "@/components/marketing/pricing-preview-home"
 import { trackMarketingEvent } from "@/lib/analytics-events";
 import type { HomeLuxuryCopy } from "@/lib/home-luxury-copy";
 import type { Locale } from "@/lib/i18n";
+import { subscribeToMediaQueryChange } from "@/lib/media-query-list";
 
 function usePrefersReducedMotion() {
   const [reduce, setReduce] = useState(false);
   useLayoutEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const apply = () => setReduce(mq.matches);
-    apply();
-    mq.addEventListener("change", apply);
-    return () => mq.removeEventListener("change", apply);
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") return;
+    try {
+      const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const apply = () => setReduce(mq.matches);
+      apply();
+      return subscribeToMediaQueryChange(mq, apply);
+    } catch {
+      return;
+    }
   }, []);
   return reduce;
 }
@@ -92,17 +97,25 @@ function Reveal({
 
   useEffect(() => {
     if (reduce) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setVisible(true);
+      return;
+    }
     const el = ref.current;
     if (!el) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        const e = entries[0];
-        if (e?.isIntersecting) setVisible(true);
-      },
-      { root: null, rootMargin: "-32px 0px", threshold: 0.12 }
-    );
-    io.observe(el);
-    return () => io.disconnect();
+    try {
+      const io = new IntersectionObserver(
+        (entries) => {
+          const e = entries[0];
+          if (e?.isIntersecting) setVisible(true);
+        },
+        { root: null, rootMargin: "-32px 0px", threshold: 0.12 }
+      );
+      io.observe(el);
+      return () => io.disconnect();
+    } catch {
+      setVisible(true);
+    }
   }, [reduce]);
 
   if (reduce) {
@@ -143,21 +156,26 @@ export function LuxuryHome({
   const [stickyCta, setStickyCta] = useState(false);
 
   useEffect(() => {
+    if (typeof IntersectionObserver === "undefined") return;
     const el = heroRef.current;
     if (!el) return;
-    const io = new IntersectionObserver(
-      ([e]) => {
-        if (!e) return;
-        setStickyCta(!e.isIntersecting);
-      },
-      { threshold: 0, rootMargin: "-10% 0px 0px 0px 0px" }
-    );
-    io.observe(el);
-    return () => io.disconnect();
+    try {
+      const io = new IntersectionObserver(
+        ([e]) => {
+          if (!e) return;
+          setStickyCta(!e.isIntersecting);
+        },
+        { threshold: 0, rootMargin: "-10% 0px 0px 0px 0px" }
+      );
+      io.observe(el);
+      return () => io.disconnect();
+    } catch {
+      /* sticky CTA optional */
+    }
   }, []);
 
   const trustItems = Array.isArray(copy?.hero?.trust) ? copy.hero.trust : [];
-  const headlineAccent = copy.hero.headlineLine2?.trim();
+  const headlineAccent = copy?.hero?.headlineLine2?.trim();
   const socialStats = Array.isArray(copy.social?.stats) ? copy.social.stats : [];
   const testimonials = Array.isArray(copy.social?.testimonials) ? copy.social.testimonials : [];
   const leadBullets = Array.isArray(copy.leadMagnet?.bullets) ? copy.leadMagnet.bullets : [];

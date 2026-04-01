@@ -14,6 +14,7 @@ export function PricingPreviewHome({
   copy: HomeLuxuryCopy["pricingPreview"];
 }) {
   const { tierStatus, ...rest } = copy;
+  const tiers = Array.isArray(rest.tiers) ? rest.tiers : [];
   const ref = useRef<HTMLElement>(null);
   const fired = useRef(false);
 
@@ -40,7 +41,7 @@ export function PricingPreviewHome({
         <p className="mt-4 max-w-2xl text-sm leading-relaxed text-zinc-500 sm:text-[15px]">{rest.sub}</p>
 
         <div className="mt-14 grid gap-4 md:grid-cols-3">
-          {rest.tiers.map((t) => (
+          {tiers.map((t) => (
             <div
               key={t.name}
               className="rounded-2xl border border-white/[0.08] bg-white/[0.02] px-6 py-8 ring-1 ring-white/[0.04]"

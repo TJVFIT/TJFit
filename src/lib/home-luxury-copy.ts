@@ -652,5 +652,5 @@ const copies: Record<Locale, HomeLuxuryCopy> = {
 };
 
 export function getHomeLuxuryCopy(locale: Locale): HomeLuxuryCopy {
-  return copies[locale];
+  return copies[locale] ?? copies.en;
 }

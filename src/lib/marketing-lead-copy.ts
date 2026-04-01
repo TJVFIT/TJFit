@@ -71,5 +71,5 @@ const copies: Record<Locale, LeadCaptureCopy> = {
 };
 
 export function getLeadCaptureCopy(locale: Locale): LeadCaptureCopy {
-  return copies[locale];
+  return copies[locale] ?? copies.en;
 }

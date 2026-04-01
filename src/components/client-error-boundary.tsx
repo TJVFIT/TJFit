@@ -33,7 +33,13 @@ export class ClientErrorBoundary extends Component<Props, State> {
       /* never let telemetry break the fallback UI */
     }
     if (process.env.NODE_ENV === "development") {
-      console.error("[ClientErrorBoundary]", error, info.componentStack);
+      console.error(
+        "[ClientErrorBoundary]",
+        this.props.sentryScope ?? "(no scope)",
+        error?.message ?? error,
+        error?.stack,
+        info.componentStack
+      );
     }
   }
 
