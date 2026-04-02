@@ -1,10 +1,7 @@
-import { redirect } from "next/navigation";
 import { adminAdvancedStats, adminStats } from "@/lib/content";
 import { getDictionary } from "@/lib/i18n";
 import { requireLocaleParam } from "@/lib/require-locale";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
-import { isAdminEmail } from "@/lib/auth-utils";
 import { AdminCoachApplications } from "@/components/admin-coach-applications";
 import { AdminCoachAuthorization } from "@/components/admin-coach-authorization";
 import { AdminFeedbackList } from "@/components/admin-feedback-list";
@@ -14,24 +11,6 @@ import { StatGrid } from "@/components/ui";
 export default async function AdminPage({ params }: { params: { locale: string } }) {
   const locale = requireLocaleParam(params.locale);
   const dict = getDictionary(locale);
-
-  let authClient: ReturnType<typeof createServerSupabaseClient>;
-  try {
-    authClient = createServerSupabaseClient();
-  } catch {
-    redirect(`/${locale}/login`);
-  }
-
-  const { data: { user } } = await authClient.auth.getUser();
-  if (!user?.email) {
-    redirect(`/${locale}/login`);
-  }
-  const isAdmin =
-    isAdminEmail(user.email) ||
-    (await authClient.from("profiles").select("role").eq("id", user.id).single()).data?.role === "admin";
-  if (!isAdmin) {
-    redirect(`/${locale}`);
-  }
 
   const supabase = getSupabaseServerClient();
   let applications: Array<{

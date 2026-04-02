@@ -40,6 +40,9 @@ export async function POST(request: NextRequest) {
   }
 
   const staticProgram = programs.find((item) => item.slug === programSlug);
+  if (staticProgram?.is_free) {
+    return NextResponse.json({ error: "This program is free. Sign in and open it from the library instead." }, { status: 400 });
+  }
   let discountPercent = 0;
   const adminClient = getSupabaseServerClient();
   if (!adminClient) {

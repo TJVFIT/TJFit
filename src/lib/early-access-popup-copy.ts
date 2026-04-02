@@ -10,37 +10,37 @@ export type EarlyAccessPopupCopy = {
 
 const copy: Record<Locale, EarlyAccessPopupCopy> = {
   en: {
-    headline: "Start your fitness journey",
-    body: "Join early access for member-only perks, free program drops, and first access when TJAI coaching goes live.",
-    cta: "Join early access",
+    headline: "Be first when we unlock the next layer",
+    body: "Early list: member perks, program drops, and first access when TJAI coaching ships — one step ahead of the feed.",
+    cta: "Join the early list",
     secondaryCta: "Browse programs",
     closeLabel: "Close"
   },
   tr: {
-    headline: "Fitness yolculuğuna başla",
-    body: "Üyelere özel ayrıcalıklar, ücretsiz program duyuruları ve TJAI koçluğu yayına çıktığında ilk sıraya geçmek için erken erişime katıl.",
-    cta: "Erken erişime katıl",
+    headline: "Yeni katman açıldığında ilk sıradasın",
+    body: "Erken liste: üyelere özel avantajlar, program sürprizleri ve TJAI koçluk yayına girdiğinde öncelik — gürültünün önünde.",
+    cta: "Erken listeye yazıl",
     secondaryCta: "Programlara göz at",
     closeLabel: "Kapat"
   },
   ar: {
-    headline: "ابدأ رحلتك الرياضية",
-    body: "انضم للوصول المبكر لمزايا حصرية للأعضاء، وبرامج مجانية قادمة، وكن أول من يستفيد عند إطلاق TJAI.",
-    cta: "انضم للوصول المبكر",
+    headline: "كن أوّل من يستفيد عند الإطلاق التالي",
+    body: "قائمة مبكرة: مزايا للأعضاء، برامج جديدة، وأولوية عند إطلاق TJAI — أمام الضجيج.",
+    cta: "انضم للقائمة المبكرة",
     secondaryCta: "تصفح البرامج",
     closeLabel: "إغلاق"
   },
   es: {
-    headline: "Comienza tu viaje fitness",
-    body: "Únete al acceso anticipado: ventajas para miembros, programas gratuitos y prioridad cuando lancemos TJAI.",
-    cta: "Unirme al acceso anticipado",
+    headline: "Adelántate al siguiente gran paso",
+    body: "Lista early: perks de miembro, programas nuevos y prioridad cuando salga el coaching TJAI — antes que el ruido.",
+    cta: "Entrar en la lista early",
     secondaryCta: "Ver programas",
     closeLabel: "Cerrar"
   },
   fr: {
-    headline: "Commencez votre parcours fitness",
-    body: "Rejoignez l’accès anticipé : avantages membres, programmes gratuits à venir, et priorité au lancement de TJAI.",
-    cta: "Rejoindre l’accès anticipé",
+    headline: "Soyez les premiers au prochain palier",
+    body: "Liste early : avantages membres, nouveaux programmes et priorité au lancement du coaching TJAI — avant le bruit.",
+    cta: "Rejoindre la liste early",
     secondaryCta: "Voir les programmes",
     closeLabel: "Fermer"
   }

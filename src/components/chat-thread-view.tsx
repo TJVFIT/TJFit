@@ -376,7 +376,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
 
   return (
     <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-background">
-      <header className="flex shrink-0 items-center gap-3 border-b border-white/[0.06] px-3 py-3 sm:px-4">
+      <header className="flex shrink-0 items-center gap-2 border-b border-white/[0.06] px-3 py-3 sm:gap-3 sm:px-4">
         <Link
           href={`/${locale}/messages`}
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 text-zinc-300 transition hover:border-white/20 hover:text-white lg:hidden"
@@ -408,7 +408,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
         {peer?.username ? (
           <Link
             href={`/${locale}/profile/${encodeURIComponent(peer.username)}`}
-            className="shrink-0 rounded-full border border-white/10 px-3 py-1.5 text-xs text-zinc-300 transition hover:border-cyan-400/30 hover:text-white"
+            className="inline-flex min-h-10 shrink-0 items-center justify-center rounded-full border border-white/10 px-3 py-2 text-xs text-zinc-300 transition hover:border-cyan-400/30 hover:text-white"
           >
             {s.openProfile}
           </Link>
@@ -430,7 +430,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
 
       <div
         ref={listRef}
-        className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-y-contain px-2 py-2 sm:px-4"
+        className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-y-contain px-3 py-3 sm:px-4"
         style={{ WebkitOverflowScrolling: "touch" }}
       >
         {fetchError ? (
@@ -462,7 +462,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
                 >
                   <div
                     className={clsx(
-                      "flex max-w-[min(85%,28rem)] flex-col gap-0.5",
+                      "flex max-w-[min(92%,28rem)] flex-col gap-0.5",
                       mine ? "items-end" : "items-start"
                     )}
                   >
@@ -498,10 +498,10 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
       ) : null}
 
       <div
-        className="shrink-0 border-t border-white/[0.06] px-3 pt-2"
+        className="sticky bottom-0 z-10 shrink-0 border-t border-white/[0.06] bg-background/92 px-3 pt-2 backdrop-blur-md supports-[backdrop-filter]:bg-background/80"
         style={{ paddingBottom: "max(0.65rem, env(safe-area-inset-bottom, 0px))" }}
       >
-        <div className="mx-auto flex max-w-3xl items-center gap-2 pb-2">
+        <div className="mx-auto flex max-w-3xl items-stretch gap-2 pb-2 sm:items-center">
           <input
             ref={inputRef}
             className="input min-h-[46px] min-w-0 flex-1 rounded-xl border-white/[0.08] bg-surface-elevated/80 py-2.5 pl-4 pr-3 text-[15px] text-white placeholder:text-zinc-500"

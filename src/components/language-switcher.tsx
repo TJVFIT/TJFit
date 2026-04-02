@@ -19,7 +19,7 @@ export function LanguageSwitcher({ locale, className }: { locale: Locale; classN
   return (
     <div
       className={cn(
-        "flex max-w-full flex-wrap items-center gap-1 rounded-full border border-white/10 bg-white/5 p-1 text-[11px] text-zinc-300 sm:gap-2 sm:text-xs",
+        "flex max-w-full flex-nowrap items-center gap-1 overflow-x-auto overflow-y-hidden rounded-full border border-white/10 bg-white/5 p-1 text-[11px] text-zinc-300 [-ms-overflow-style:none] [scrollbar-width:none] sm:flex-wrap sm:overflow-x-visible sm:gap-2 sm:text-xs [&::-webkit-scrollbar]:hidden",
         className
       )}
     >
@@ -28,7 +28,7 @@ export function LanguageSwitcher({ locale, className }: { locale: Locale; classN
           key={code}
           href={`/${code}${normalizedPath}${search}`}
           className={cn(
-            "touch-manipulation rounded-full px-2.5 py-2 leading-none transition sm:px-3 sm:py-1.5",
+            "touch-manipulation shrink-0 rounded-full px-3 py-2.5 leading-none transition sm:px-3 sm:py-1.5",
             code === locale ? "bg-white text-black" : "hover:bg-white/10"
           )}
         >

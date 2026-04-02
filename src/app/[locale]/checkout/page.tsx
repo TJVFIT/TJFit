@@ -60,15 +60,17 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
 
   const staticProgramOptions = useMemo<CheckoutProgramOption[]>(
     () =>
-      programs.map((program) => {
-        const localized = localizeProgram(program, locale);
-        return {
-          slug: program.slug,
-          title: localized.title,
-          description: localized.description,
-          baseTry: getProgramBasePriceTry(program)
-        };
-      }),
+      programs
+        .filter((program) => !program.is_free)
+        .map((program) => {
+          const localized = localizeProgram(program, locale);
+          return {
+            slug: program.slug,
+            title: localized.title,
+            description: localized.description,
+            baseTry: getProgramBasePriceTry(program)
+          };
+        }),
     [locale]
   );
   const allProgramOptions = useMemo(
@@ -107,10 +109,15 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
 
   useEffect(() => {
     const querySlug = new URLSearchParams(window.location.search).get("program");
-    if (querySlug) {
-      setActiveSlug(querySlug);
+    if (!querySlug) return;
+    const match = programs.find((p) => p.slug === querySlug);
+    if (match?.is_free) {
+      const fallback = programs.find((p) => !p.is_free)?.slug;
+      if (fallback) setActiveSlug(fallback);
+      return;
     }
-  }, [customPrograms.length]);
+    setActiveSlug(querySlug);
+  }, [locale]);
 
   useEffect(() => {
     refreshWallet();

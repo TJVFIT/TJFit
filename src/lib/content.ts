@@ -43,6 +43,8 @@ export type Program = {
   difficulty: string;
   duration: string;
   price: number;
+  /** When true, catalog item is free after sign-in; stored in DB via program_catalog_flags. */
+  is_free?: boolean;
   description: string;
   coachSlug: string;
   requiredEquipment: string[];
@@ -710,6 +712,90 @@ export const programs: Program[] = [
       { type: "pdf-guide", label: "Clean bulk prep and execution handbook" },
       { type: "workout-schedule", label: "Performance fuel timing and lean-gain notes" },
       { type: "exercise-video", label: "Optional recovery and conditioning support guidance" }
+    ],
+    coachCommissionRate: 0
+  },
+  {
+    slug: "home-fat-loss-starter",
+    title: "Home Fat Loss Starter",
+    category: "Fat Loss",
+    difficulty: "Beginner",
+    duration: "4 weeks",
+    price: 0,
+    is_free: true,
+    description:
+      "A free 4-week home fat-loss starter: 3 sessions per week (Mon / Wed / Fri) with warm-ups, structured circuits, and clear progression. Sign in to unlock the full plan.",
+    coachSlug: "tjfit-team",
+    requiredEquipment: [],
+    previewImages: ["Weeks 1-2 Foundation", "Weeks 3-4 Progression", "Upgrade to 12-Week System"],
+    assets: [
+      { type: "workout-schedule", label: "4-week starter schedule" },
+      { type: "pdf-guide", label: "Movement and recovery notes" },
+      { type: "exercise-video", label: "Form cues for key exercises" },
+      { type: "nutrition-plan", label: "Fat-loss nutrition primer" }
+    ],
+    coachCommissionRate: 0
+  },
+  {
+    slug: "gym-muscle-starter",
+    title: "Gym Muscle Starter",
+    category: "Muscle Gain",
+    difficulty: "Beginner",
+    duration: "4 weeks",
+    price: 0,
+    is_free: true,
+    description:
+      "A free 4-week gym starter for muscle gain: 3 full-body style splits per week with machine and free-weight staples. Sign in to unlock the full plan.",
+    coachSlug: "tjfit-team",
+    requiredEquipment: [],
+    previewImages: ["Chest + Triceps", "Back + Biceps", "Legs + Shoulders"],
+    assets: [
+      { type: "workout-schedule", label: "4-week gym starter split" },
+      { type: "exercise-video", label: "Compound lift execution cues" },
+      { type: "pdf-guide", label: "Progression basics" },
+      { type: "nutrition-plan", label: "Muscle-gain eating overview" }
+    ],
+    coachCommissionRate: 0
+  },
+  {
+    slug: "clean-cut-starter",
+    title: "Clean Cut Starter",
+    category: "Nutrition",
+    difficulty: "Beginner",
+    duration: "2 weeks",
+    price: 0,
+    is_free: true,
+    description:
+      "A free 2-week cutting starter near 1800 kcal with simple whole-food meals, then a week-2 adjustment. Sign in to unlock full meal details and macros.",
+    coachSlug: "tjfit-team",
+    requiredEquipment: [],
+    previewImages: ["Week 1 Base Phase", "Week 2 Adjustment", "Upgrade to 12-Week Plan"],
+    assets: [
+      { type: "nutrition-plan", label: "2-week starter meals and macros" },
+      { type: "pdf-guide", label: "Prep and consistency checklist" },
+      { type: "workout-schedule", label: "Training fueling notes" },
+      { type: "exercise-video", label: "Optional activity guidance" }
+    ],
+    coachCommissionRate: 0
+  },
+  {
+    slug: "lean-bulk-starter",
+    title: "Lean Bulk Starter",
+    category: "Nutrition",
+    difficulty: "Beginner",
+    duration: "2 weeks",
+    price: 0,
+    is_free: true,
+    description:
+      "A free 2-week lean-bulk starter near 2800 kcal with high-protein meals and a simple week-2 bump. Sign in to unlock full meal breakdowns.",
+    coachSlug: "tjfit-team",
+    requiredEquipment: [],
+    previewImages: ["Week 1 Base Intake", "Week 2 Calorie Bump", "Upgrade to 12-Week Plan"],
+    assets: [
+      { type: "nutrition-plan", label: "2-week lean bulk meals" },
+      { type: "pdf-guide", label: "Shopping and prep outline" },
+      { type: "workout-schedule", label: "Gym fueling alignment" },
+      { type: "exercise-video", label: "Optional training support" }
     ],
     coachCommissionRate: 0
   }

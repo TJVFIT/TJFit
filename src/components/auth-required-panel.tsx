@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { BrandLogo } from "@/components/brand-logo";
+import { Logo } from "@/components/ui/Logo";
 import { getNavChromeCopy } from "@/lib/launch-copy";
 import { getSocialCopy } from "@/lib/social-copy";
 import type { Locale } from "@/lib/i18n";
@@ -19,25 +19,17 @@ export function AuthRequiredPanel({
   const nav = getNavChromeCopy(loc);
 
   return (
-    <div
-      className={`mx-auto max-w-md rounded-[28px] border border-white/[0.1] bg-gradient-to-b from-white/[0.06] to-white/[0.02] px-6 py-10 text-center shadow-[0_0_60px_-28px_rgba(34,211,238,0.35)] ${className}`}
-    >
-      <div className="flex justify-center">
-        <BrandLogo variant="mark" align="center" className="h-16 w-16 sm:h-[4.5rem] sm:w-[4.5rem]" priority />
+    <div className={`tj-surface-shell mx-auto max-w-md px-6 py-10 text-center ${className}`}>
+      <div className="mb-6 flex justify-center">
+        <Logo variant="icon" size="auth" href={`/${loc}`} priority />
       </div>
-      <p className="mt-6 font-display text-xl font-semibold tracking-tight text-white">{s.loginRequiredTitle}</p>
-      <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-zinc-400">{s.loginRequiredBody}</p>
+      <p className="tj-section-title mt-6 text-xl sm:text-2xl">{s.loginRequiredTitle}</p>
+      <p className="tj-prose-muted mx-auto mt-3 max-w-sm">{s.loginRequiredBody}</p>
       <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-        <Link
-          href={`/${loc}/login`}
-          className="gradient-button inline-flex justify-center rounded-full px-8 py-3 text-sm font-semibold text-white"
-        >
+        <Link href={`/${loc}/login`} className="lux-btn-primary inline-flex min-h-[48px] justify-center rounded-full px-8 py-3 text-sm font-semibold text-[#05080a]">
           {nav.loginLabel}
         </Link>
-        <Link
-          href={`/${loc}/signup`}
-          className="inline-flex justify-center rounded-full border border-white/15 px-8 py-3 text-sm font-medium text-zinc-200 transition hover:border-cyan-400/35 hover:bg-white/[0.05]"
-        >
+        <Link href={`/${loc}/signup`} className="lux-btn-secondary inline-flex min-h-[48px] justify-center rounded-full px-8 py-3 text-sm font-medium text-zinc-100">
           {nav.joinLabel}
         </Link>
       </div>

@@ -1,5 +1,5 @@
 import { adminStats, adminAdvancedStats, coaches } from "@/lib/content";
-import { BrandLogo } from "@/components/brand-logo";
+import { Logo } from "@/components/ui/Logo";
 import { StatGrid } from "@/components/ui";
 import { AdminCoachApplications } from "@/components/admin-coach-applications";
 import Link from "next/link";
@@ -12,8 +12,8 @@ export function AdminDashboardView({ locale }: { locale: Locale }) {
   return (
     <div className="space-y-8">
       <div>
-        <div className="flex items-center gap-3">
-          <BrandLogo variant="mark" align="center" className="h-10 w-10 shrink-0" />
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+          <Logo variant="icon" size="navbar" href={`/${locale}`} className="shrink-0" />
           <span className="badge">{dict.dashboard.admin.badge}</span>
         </div>
         <h1 className="mt-4 font-display text-3xl font-semibold text-white sm:text-4xl">

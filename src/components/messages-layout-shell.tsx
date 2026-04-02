@@ -213,7 +213,7 @@ export function MessagesLayoutShell({
                   <Link
                     href={`/${locale}/messages/${c.id}`}
                     className={clsx(
-                      "mx-1 flex items-stretch gap-3 rounded-lg px-2.5 py-2 transition",
+                      "mx-1 flex min-h-[4.25rem] items-stretch gap-3 rounded-lg px-2.5 py-2.5 transition sm:min-h-0 sm:py-2",
                       activeId === c.id ? "bg-white/[0.06]" : "hover:bg-white/[0.03]",
                       unread && activeId !== c.id && "bg-cyan-500/[0.04]"
                     )}
@@ -272,7 +272,7 @@ export function MessagesLayoutShell({
         "mx-auto flex w-full max-w-5xl flex-1 flex-col lg:flex-row lg:gap-0",
         "min-h-[calc(100dvh-4.5rem)]",
         activeId &&
-          "max-lg:fixed max-lg:inset-x-0 max-lg:bottom-0 max-lg:left-0 max-lg:right-0 max-lg:top-14 max-lg:z-[35] max-lg:m-0 max-lg:max-w-none max-lg:min-h-0"
+          "max-lg:fixed max-lg:inset-x-0 max-lg:bottom-0 max-lg:left-0 max-lg:right-0 max-lg:top-[calc(env(safe-area-inset-top,0px)+3.75rem)] max-lg:z-[35] max-lg:m-0 max-lg:max-w-none max-lg:min-h-0 max-lg:pb-[env(safe-area-inset-bottom,0px)]"
       )}
     >
       {/* Inbox column: full width on mobile; sidebar on desktop */}

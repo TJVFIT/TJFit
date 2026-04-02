@@ -21,7 +21,9 @@ const nutritionSlugs = new Set([
   "high-calorie-mass-diet-12w",
   "muscle-gain-athlete-diet-12w",
   "student-bulk-diet-12w",
-  "clean-weight-gain-diet-12w"
+  "clean-weight-gain-diet-12w",
+  "clean-cut-starter",
+  "lean-bulk-starter"
 ]);
 
 const categoryTranslations: Record<Locale, Record<string, string>> = {
@@ -145,7 +147,11 @@ const titleTranslations: Record<Exclude<Locale, "en">, Record<string, string>> =
     "gym-mass-builder-12w": "Salonda Kutle Artisi (12 Hafta)",
     "hypertrophy-system-12w": "Hipertrofi Sistemi (12 Hafta)",
     "strength-and-size-blueprint-12w": "Guc ve Hacim Plani (12 Hafta)",
-    "aesthetic-muscle-plan-12w": "Estetik Kas Plani (12 Hafta)"
+    "aesthetic-muscle-plan-12w": "Estetik Kas Plani (12 Hafta)",
+    "home-fat-loss-starter": "Evde Yag Yakim Baslangic",
+    "gym-muscle-starter": "Salon Kas Gelisimi Baslangic",
+    "clean-cut-starter": "Temiz Definisyon Baslangic",
+    "lean-bulk-starter": "Lean Bulk Baslangic"
   },
   ar: {
     "home-fat-burn-starter": "خطة بداية حرق الدهون في المنزل",
@@ -206,7 +212,11 @@ const titleTranslations: Record<Exclude<Locale, "en">, Record<string, string>> =
     "gym-mass-builder-12w": "بناء الكتلة في الجيم (12 اسبوع)",
     "hypertrophy-system-12w": "نظام التضخم العضلي (12 اسبوع)",
     "strength-and-size-blueprint-12w": "خطة القوة والحجم (12 اسبوع)",
-    "aesthetic-muscle-plan-12w": "خطة العضلات الجمالية (12 اسبوع)"
+    "aesthetic-muscle-plan-12w": "خطة العضلات الجمالية (12 اسبوع)",
+    "home-fat-loss-starter": "بداية حرق الدهون في المنزل",
+    "gym-muscle-starter": "بداية بناء العضلات في الجيم",
+    "clean-cut-starter": "بداية التنشيف النظيف",
+    "lean-bulk-starter": "بداية الزيادة النظيفة"
   },
   es: {
     "home-fat-burn-starter": "Inicio Quema Grasa en Casa",
@@ -267,7 +277,11 @@ const titleTranslations: Record<Exclude<Locale, "en">, Record<string, string>> =
     "gym-mass-builder-12w": "Constructor de Masa en Gimnasio (12 Semanas)",
     "hypertrophy-system-12w": "Sistema de Hipertrofia (12 Semanas)",
     "strength-and-size-blueprint-12w": "Plan de Fuerza y Tamano (12 Semanas)",
-    "aesthetic-muscle-plan-12w": "Plan de Musculo Estetico (12 Semanas)"
+    "aesthetic-muscle-plan-12w": "Plan de Musculo Estetico (12 Semanas)",
+    "home-fat-loss-starter": "Inicio Perdida de Grasa en Casa",
+    "gym-muscle-starter": "Inicio Musculo en Gimnasio",
+    "clean-cut-starter": "Inicio Definicion Limpia",
+    "lean-bulk-starter": "Inicio Volumen Magro"
   },
   fr: {
     "home-fat-burn-starter": "Demarrage Brule-Graisse a Domicile",
@@ -328,7 +342,43 @@ const titleTranslations: Record<Exclude<Locale, "en">, Record<string, string>> =
     "gym-mass-builder-12w": "Constructeur de Masse en Salle (12 Semaines)",
     "hypertrophy-system-12w": "Systeme Hypertrophie (12 Semaines)",
     "strength-and-size-blueprint-12w": "Plan Force et Volume (12 Semaines)",
-    "aesthetic-muscle-plan-12w": "Plan Muscle Esthetique (12 Semaines)"
+    "aesthetic-muscle-plan-12w": "Plan Muscle Esthetique (12 Semaines)",
+    "home-fat-loss-starter": "Demarrage Perte de Graisse a Domicile",
+    "gym-muscle-starter": "Demarrage Muscle en Salle",
+    "clean-cut-starter": "Demarrage Seche Propre",
+    "lean-bulk-starter": "Demarrage Prise de Masse Seche"
+  }
+};
+
+/** Short catalog descriptions for free starters (all locales). */
+const freeStarterDescriptions: Record<string, Record<Locale, string>> = {
+  "home-fat-loss-starter": {
+    en: "A free 4-week home fat-loss starter: 3 sessions per week (Mon / Wed / Fri) with warm-ups, structured circuits, and clear progression. Sign in to unlock the full plan.",
+    tr: "Ucretsiz 4 haftalik evde yag yakim baslangici: haftada 3 gun (Pzt / Car / Cum), isinma, yapilandirilmis devreler ve net ilerleme. Tam plan icin giris yapin.",
+    ar: "بداية مجانية لمدة 4 أسابيع لحرق الدهون في المنزل: 3 جلسات أسبوعياً مع إحماء ودوائر منظمة وتقدم واضح. سجّل الدخول لفتح الخطة كاملة.",
+    es: "Inicio gratuito de 4 semanas para perder grasa en casa: 3 sesiones por semana con calentamiento, circuitos estructurados y progresion clara. Inicia sesion para ver el plan completo.",
+    fr: "Demarrage gratuit de 4 semaines pour la perte de graisse a domicile : 3 seances par semaine avec echauffement, circuits structures et progression claire. Connectez-vous pour debloquer le plan complet."
+  },
+  "gym-muscle-starter": {
+    en: "A free 4-week gym starter for muscle gain: 3 full-body style splits per week with machine and free-weight staples. Sign in to unlock the full plan.",
+    tr: "Kas gelisimi icin ucretsiz 4 haftalik salon baslangici: haftada 3 gun, makine ve serbest agirlik temelleri. Tam plan icin giris yapin.",
+    ar: "بداية مجانية لمدة 4 أسابيع في الجيم لبناء العضلات: 3 انقسامات أسبوعياً مع الأجهزة والأوزان الحرة. سجّل الدخول لفتح الخطة كاملة.",
+    es: "Inicio gratuito de 4 semanas en gimnasio para ganar musculo: 3 divisiones semanales con maquinas y pesas libres. Inicia sesion para ver el plan completo.",
+    fr: "Demarrage gratuit de 4 semaines en salle pour la prise de muscle : 3 seances hebdomadaires avec machines et poids libres. Connectez-vous pour debloquer le plan complet."
+  },
+  "clean-cut-starter": {
+    en: "A free 2-week cutting starter near 1800 kcal with simple whole-food meals, then a week-2 adjustment. Sign in to unlock full meal details and macros.",
+    tr: "Yaklasik 1800 kcal ile 2 haftalik ucretsiz definisyon baslangici; 2. haftada ayarlama. Ogun detaylari ve makrolar icin giris yapin.",
+    ar: "بداية مجانية لمدة أسبوعين للتنشيف حوالي 1800 سعرة مع وجبات بسيطة، ثم تعديل في الأسبوع الثاني. سجّل الدخول لعرض الوجبات والماكروس كاملة.",
+    es: "Inicio gratuito de definicion de 2 semanas cerca de 1800 kcal con comidas simples y ajuste en la semana 2. Inicia sesion para ver comidas y macros completas.",
+    fr: "Demarrage gratuit de 2 semaines vers 1800 kcal avec repas simples puis ajustement en semaine 2. Connectez-vous pour les details et macros complets."
+  },
+  "lean-bulk-starter": {
+    en: "A free 2-week lean-bulk starter near 2800 kcal with high-protein meals and a simple week-2 bump. Sign in to unlock full meal breakdowns.",
+    tr: "Yaklasik 2800 kcal ile 2 haftalik ucretsiz lean bulk baslangici; yuksek protein ve 2. haftada hafif artis. Tam ogun detayi icin giris yapin.",
+    ar: "بداية مجانية لمدة أسبوعين للزيادة النظيفة حوالي 2800 سعرة مع بروتين عالي وزيادة بسيطة في الأسبوع الثاني. سجّل الدخول لعرض الوجبات كاملة.",
+    es: "Inicio gratuito de volumen magro de 2 semanas cerca de 2800 kcal con alto en proteina y subida en la semana 2. Inicia sesion para ver comidas completas.",
+    fr: "Demarrage gratuit de 2 semaines de prise de masche seche vers 2800 kcal, proteines elevees et leger surplus en semaine 2. Connectez-vous pour le detail des repas."
   }
 };
 
@@ -431,6 +481,7 @@ function getGoalLabel(program: Program, locale: Locale) {
 }
 
 export function getProgramBasePriceTry(program: Program) {
+  if (program.is_free) return 0;
   return nutritionSlugs.has(program.slug) ? 350 : 400;
 }
 
@@ -449,8 +500,10 @@ export function localizeProgram(program: Program, locale: Locale): Program {
   const translatedCategory = categoryTranslations[locale][program.category] ?? program.category;
   const translatedDifficulty = difficultyTranslations[locale][program.difficulty] ?? program.difficulty;
   const translatedDuration = normalizeDuration(program.duration, locale);
-  const translatedDescription =
-    locale === "en"
+  const starter = freeStarterDescriptions[program.slug];
+  const translatedDescription = starter
+    ? starter[locale]
+    : locale === "en"
       ? program.description
       : program.category === "Nutrition"
         ? descriptionTemplates[locale].nutrition(getGoalLabel(program, locale))
@@ -478,6 +531,16 @@ export function getProgramUiCopy(locale: Locale) {
             : locale === "fr"
               ? "Voir le Programme"
               : "View Program",
+    viewDiet:
+      locale === "tr"
+        ? "Plani Gor"
+        : locale === "ar"
+          ? "عرض الخطة"
+          : locale === "es"
+            ? "Ver plan"
+            : locale === "fr"
+              ? "Voir le plan"
+              : "View plan",
     buyProgram:
       locale === "tr"
         ? "Programi Satin Al"
@@ -488,6 +551,66 @@ export function getProgramUiCopy(locale: Locale) {
             : locale === "fr"
               ? "Acheter le Programme"
               : "Buy program",
+    getFullAccess:
+      locale === "tr"
+        ? "Tam erisim"
+        : locale === "ar"
+          ? "وصول كامل"
+          : locale === "es"
+            ? "Acceso completo"
+            : locale === "fr"
+              ? "Acces complet"
+              : "Get Full Access",
+    trainingLocationHome:
+      locale === "tr"
+        ? "Ev"
+        : locale === "ar"
+          ? "منزل"
+          : locale === "es"
+            ? "Casa"
+            : locale === "fr"
+              ? "Maison"
+              : "Home",
+    trainingLocationGym:
+      locale === "tr"
+        ? "Salon"
+        : locale === "ar"
+          ? "جيم"
+          : locale === "es"
+            ? "Gimnasio"
+            : locale === "fr"
+              ? "Salle"
+              : "Gym",
+    trainingLocationAny:
+      locale === "tr"
+        ? "Ev / salon"
+        : locale === "ar"
+          ? "مرن"
+          : locale === "es"
+            ? "Flexible"
+            : locale === "fr"
+              ? "Flexible"
+              : "Home or gym",
+    whatYouGetTitle:
+      locale === "tr"
+        ? "Neler var"
+        : locale === "ar"
+          ? "ماذا تحصل"
+          : locale === "es"
+            ? "Que incluye"
+            : locale === "fr"
+              ? "Contenu"
+              : "What you get",
+    dietPlanBadge:
+      locale === "tr"
+        ? "Beslenme plani"
+        : locale === "ar"
+          ? "خطة وجبات"
+          : locale === "es"
+            ? "Plan de comidas"
+            : locale === "fr"
+              ? "Plan repas"
+              : "Meal plan",
     coachLabel:
       locale === "tr"
         ? "Koç"
@@ -577,8 +700,306 @@ export function getProgramUiCopy(locale: Locale) {
             ? "No se requiere equipo para este programa."
             : locale === "fr"
               ? "Aucun equipement requis pour ce programme."
-              : "No equipment required for this program."
+              : "No equipment required for this program.",
+    freePriceLabel:
+      locale === "tr"
+        ? "Ucretsiz"
+        : locale === "ar"
+          ? "مجاني"
+          : locale === "es"
+            ? "Gratis"
+            : locale === "fr"
+              ? "Gratuit"
+              : "Free",
+    freeBadge:
+      locale === "tr"
+        ? "UCRETSIZ"
+        : locale === "ar"
+          ? "مجاني"
+          : locale === "es"
+            ? "GRATIS"
+            : locale === "fr"
+              ? "GRATUIT"
+              : "FREE",
+    premiumLockedHint:
+      locale === "tr"
+        ? "Premium"
+        : locale === "ar"
+          ? "بريميوم"
+          : locale === "es"
+            ? "Premium"
+            : locale === "fr"
+              ? "Premium"
+              : "Premium",
+    signUpToUnlockFree:
+      locale === "tr"
+        ? "Ucretsiz hesap olustur"
+        : locale === "ar"
+          ? "انشئ حساباً مجانياً"
+          : locale === "es"
+            ? "Crear cuenta gratis"
+            : locale === "fr"
+              ? "Creer un compte gratuit"
+              : "Create free account",
+    logInToUnlockFree:
+      locale === "tr"
+        ? "Giris yap ve ac"
+        : locale === "ar"
+          ? "سجّل الدخول لفتح المحتوى"
+          : locale === "es"
+            ? "Inicia sesion para desbloquear"
+            : locale === "fr"
+              ? "Connectez-vous pour debloquer"
+              : "Sign in to unlock",
+    freeContentTeaserTitle:
+      locale === "tr"
+        ? "Tam plan hesabinizla acilir"
+        : locale === "ar"
+          ? "الخطة الكاملة متاحة بعد تسجيل الدخول"
+          : locale === "es"
+            ? "El plan completo se desbloquea con tu cuenta"
+            : locale === "fr"
+              ? "Le plan complet est debloque avec votre compte"
+              : "Full plan unlocks with your free account",
+    freeContentTeaserBody:
+      locale === "tr"
+        ? "Asagidaki tam antrenman ve diyet detaylarini gormek icin ucretsiz kayit olun."
+        : locale === "ar"
+          ? "سجّل مجاناً لعرض تفاصيل التمارين والوجبات الكاملة أدناه."
+          : locale === "es"
+            ? "Registrate gratis para ver los detalles completos de entrenamiento y comidas."
+            : locale === "fr"
+              ? "Inscrivez-vous gratuitement pour voir le detail complet des entrainements et repas."
+              : "Create a free TJFit account to view the full workouts and meal plans below.",
+    paidPreviewTitle:
+      locale === "tr"
+        ? "Tam icerik satin alindiginda acilir"
+        : locale === "ar"
+          ? "المحتوى الكامل بعد الشراء"
+          : locale === "es"
+            ? "Contenido completo al comprar"
+            : locale === "fr"
+              ? "Contenu complet apres achat"
+              : "Unlock the full program",
+    paidPreviewSubtitle:
+      locale === "tr"
+        ? "Odemeyi tamamlayarak tum haftalari, ilerlemeyi ve varliklari acin."
+        : locale === "ar"
+          ? "أكمل الدفع لفتح كل الأسابيع والتقدم والمواد."
+          : locale === "es"
+            ? "Completa el pago para desbloquear todas las semanas y materiales."
+            : locale === "fr"
+              ? "Finalisez le paiement pour debloquer toutes les semaines et ressources."
+              : "Complete checkout to unlock every week, progression block, and asset.",
+    goToCheckout:
+      locale === "tr"
+        ? "Odemeye git"
+        : locale === "ar"
+          ? "الانتقال للدفع"
+          : locale === "es"
+            ? "Ir al pago"
+            : locale === "fr"
+              ? "Aller au paiement"
+              : "Go to checkout",
+    youHaveFullAccess:
+      locale === "tr"
+        ? "Tam erisim aktif"
+        : locale === "ar"
+          ? "وصول كامل مفعّل"
+          : locale === "es"
+            ? "Acceso completo activo"
+            : locale === "fr"
+              ? "Acces complet actif"
+              : "You have full access",
+    languageOptionsLabel:
+      locale === "tr"
+        ? "Dil secenekleri"
+        : locale === "ar"
+          ? "خيارات اللغة"
+          : locale === "es"
+            ? "Opciones de idioma"
+            : locale === "fr"
+              ? "Options de langue"
+              : "Language options",
+    programKindPremium:
+      locale === "tr"
+        ? "TJFit Premium Program"
+        : locale === "ar"
+          ? "برنامج تي جي فيت بريميوم"
+          : locale === "es"
+            ? "Programa Premium TJFit"
+            : locale === "fr"
+              ? "Programme Premium TJFit"
+              : "TJFit Premium Program",
+    programKindFree:
+      locale === "tr"
+        ? "TJFit Ucretsiz Baslangic"
+        : locale === "ar"
+          ? "بداية مجانية من تي جي فيت"
+          : locale === "es"
+            ? "Inicio gratuito TJFit"
+            : locale === "fr"
+              ? "Demarrage gratuit TJFit"
+              : "TJFit Free Starter",
+    brandedModule:
+      locale === "tr"
+        ? "TJFit modulu"
+        : locale === "ar"
+          ? "وحدة تي جي فيت"
+          : locale === "es"
+            ? "Modulo TJFit"
+            : locale === "fr"
+              ? "Module TJFit"
+              : "TJFit branded module",
+    upgradeSectionTitle:
+      locale === "tr"
+        ? "Tam surume yukselt"
+        : locale === "ar"
+          ? "ترقية إلى النسخة الكاملة"
+          : locale === "es"
+            ? "Pasar al plan completo"
+            : locale === "fr"
+              ? "Passer au programme complet"
+              : "Upgrade to the full experience",
+    previewSectionNotice:
+      locale === "tr"
+        ? "Onizleme — tam icerik asagida"
+        : locale === "ar"
+          ? "معاينة — المحتوى الكامل أدناه"
+          : locale === "es"
+            ? "Vista previa — el contenido completo esta abajo"
+            : locale === "fr"
+              ? "Apercu — contenu complet ci-dessous"
+              : "Preview — full content below",
+    blueprintTitle:
+      locale === "tr"
+        ? "Program plani"
+        : locale === "ar"
+          ? "مخطط البرنامج"
+          : locale === "es"
+            ? "Plan del programa"
+            : locale === "fr"
+              ? "Plan du programme"
+              : "Program Blueprint",
+    blueprintGoal:
+      locale === "tr"
+        ? "Hedef"
+        : locale === "ar"
+          ? "الهدف"
+          : locale === "es"
+            ? "Objetivo"
+            : locale === "fr"
+              ? "Objectif"
+              : "Goal",
+    blueprintLevel:
+      locale === "tr"
+        ? "Seviye"
+        : locale === "ar"
+          ? "المستوى"
+          : locale === "es"
+            ? "Nivel"
+            : locale === "fr"
+              ? "Niveau"
+              : "Level",
+    blueprintEquipment:
+      locale === "tr"
+        ? "Ekipman"
+        : locale === "ar"
+          ? "المعدات"
+          : locale === "es"
+            ? "Equipo"
+            : locale === "fr"
+              ? "Equipement"
+              : "Equipment",
+    blueprintTrainingDays:
+      locale === "tr"
+        ? "Antrenman gunleri"
+        : locale === "ar"
+          ? "ايام التدريب"
+          : locale === "es"
+            ? "Dias de entrenamiento"
+            : locale === "fr"
+              ? "Jours d'entrainement"
+              : "Training Days",
+    blueprintConditioning:
+      locale === "tr"
+        ? "Kondisyon ve toparlanma"
+        : locale === "ar"
+          ? "اللياقة والتعافي"
+          : locale === "es"
+            ? "Condicion y recuperacion"
+            : locale === "fr"
+              ? "Conditionnement et recuperation"
+              : "Conditioning and Recovery",
+    blueprintSafety:
+      locale === "tr"
+        ? "Guvenlik"
+        : locale === "ar"
+          ? "السلامة"
+          : locale === "es"
+            ? "Seguridad"
+            : locale === "fr"
+              ? "Securite"
+              : "Safety",
+    autoTranslatedPdf:
+      locale === "tr"
+        ? "Otomatik cevrilmis PDF icerigi"
+        : locale === "ar"
+          ? "محتوى PDF مترجم تلقائياً"
+          : locale === "es"
+            ? "Contenido PDF traducido automaticamente"
+            : locale === "fr"
+              ? "Contenu PDF traduit automatiquement"
+              : "Auto-Translated PDF Content",
+    downloadUploadedPdf:
+      locale === "tr"
+        ? "Yuklenen PDF'i indir"
+        : locale === "ar"
+          ? "تنزيل PDF المرفوع"
+          : locale === "es"
+            ? "Descargar PDF subido"
+            : locale === "fr"
+              ? "Telecharger le PDF televerse"
+              : "Download Uploaded PDF",
+    workoutWarmupLabel:
+      locale === "tr"
+        ? "Isinma"
+        : locale === "ar"
+          ? "احماء"
+          : locale === "es"
+            ? "Calentamiento"
+            : locale === "fr"
+              ? "Echauffement"
+              : "Warm-up",
+    workoutMainLabel:
+      locale === "tr"
+        ? "Ana bolum"
+        : locale === "ar"
+          ? "الجزء الرئيسي"
+          : locale === "es"
+            ? "Bloque principal"
+            : locale === "fr"
+              ? "Bloc principal"
+              : "Main",
+    workoutCooldownLabel:
+      locale === "tr"
+        ? "Soguma"
+        : locale === "ar"
+          ? "تبريد"
+          : locale === "es"
+            ? "Enfriamiento"
+            : locale === "fr"
+              ? "Retour au calme"
+              : "Cool-down"
   };
+}
+
+export function formatCoachCommissionLine(locale: Locale, percent: number) {
+  if (locale === "tr") return `Koç %${percent} komisyon kazanir`;
+  if (locale === "ar") return `المدرب يكسب ${percent}% عمولة`;
+  if (locale === "es") return `El coach gana ${percent}% de comision`;
+  if (locale === "fr") return `Le coach gagne ${percent}% de commission`;
+  return `Coach earns ${percent}% commission`;
 }
 
 export function localizeAssetType(assetType: Program["assets"][number]["type"], locale: Locale) {

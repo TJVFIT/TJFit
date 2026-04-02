@@ -1,13 +1,14 @@
 /**
- * Canonical public paths for TJFit brand imagery (see scripts/generate-brand-assets.mjs).
- * - Replace `public/brand/tjfit-logo-source.jpg` (or `.png`) and run `npm run brand:assets` to
- *   regenerate `tjfit-logo-main.png` (flat backdrop stripped) plus icons and OG.
+ * Canonical public paths for TJFit brand imagery.
+ * - Vector marks: `public/logo/tj-icon.svg`, `public/logo/tj-full.svg` (see `components/ui/Logo.tsx`).
+ * - Rasters (favicon, PWA, OG): run `npm run logo:rasters` after editing SVGs.
+ * - Legacy PNG pipeline: `npm run brand:assets` (optional; `generate-brand-assets.mjs`).
  */
 export const BRAND = {
-  logoFull: "/brand/tjfit-logo-main.png",
-  logoMark: "/icons/tjfit-mark.png",
-  /** Square monogram @192 — structured data / app shell */
+  logoIcon: "/logo/tj-icon.svg",
+  logoFull: "/logo/tj-full.svg",
+  /** Square monogram @192 — structured data / PWA */
   logoIcon192: "/icons/icon-192.png",
-  ogDefault: "/og/og-default.png",
+  ogDefault: "/og-image.png",
   faviconIco: "/favicon.ico"
 } as const;

@@ -1,9 +1,11 @@
 import { CoachDashboardView } from "@/components/coach-dashboard-view";
 import { ProtectedRoute } from "@/components/protected-route";
+import { gateCoachDashboardRoute } from "@/lib/coach-area-server";
 import { requireLocaleParam } from "@/lib/require-locale";
 
-export default function CoachDashboardPage({ params }: { params: { locale: string } }) {
+export default async function CoachDashboardPage({ params }: { params: { locale: string } }) {
   const locale = requireLocaleParam(params.locale);
+  await gateCoachDashboardRoute(locale);
 
   return (
     <ProtectedRoute locale={locale}>

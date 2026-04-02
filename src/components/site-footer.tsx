@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { BrandLogo } from "@/components/brand-logo";
+import { Logo } from "@/components/ui/Logo";
 import { useAuth } from "@/components/auth-provider";
 import { LeadCaptureForm } from "@/components/marketing/lead-capture-form";
 import { Locale } from "@/lib/i18n";
@@ -17,18 +17,21 @@ export function SiteFooter({ locale }: { locale: Locale }) {
     ? [
         { href: "/coaches", label: copy.coaches },
         { href: "/programs", label: copy.programs },
+        { href: "/diets", label: copy.diets },
         { href: "/community", label: copy.community },
         { href: "/membership", label: copy.membership }
       ]
     : [
         { href: "/coaches", label: copy.coaches },
         { href: "/programs", label: copy.programs },
+        { href: "/diets", label: copy.diets },
         { href: "/community", label: copy.community },
         { href: "/membership", label: copy.membership }
       ];
 
   const operationsLinks = isAdmin
     ? [
+        { href: "/legal", label: copy.legalHub },
         { href: "/terms-and-conditions", label: copy.terms },
         { href: "/privacy-policy", label: copy.privacy },
         { href: "/refund-policy", label: copy.refund },
@@ -39,12 +42,14 @@ export function SiteFooter({ locale }: { locale: Locale }) {
       ]
     : isCoach
       ? [
+          { href: "/legal", label: copy.legalHub },
           { href: "/terms-and-conditions", label: copy.terms },
           { href: "/privacy-policy", label: copy.privacy },
           { href: "/refund-policy", label: copy.refund },
           { href: "/support", label: copy.support }
         ]
       : [
+          { href: "/legal", label: copy.legalHub },
           { href: "/terms-and-conditions", label: copy.terms },
           { href: "/privacy-policy", label: copy.privacy },
           { href: "/refund-policy", label: copy.refund },
@@ -58,9 +63,12 @@ export function SiteFooter({ locale }: { locale: Locale }) {
     <footer className="border-t border-white/[0.06] bg-surface/90 backdrop-blur-md">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 text-sm sm:px-6 lg:grid-cols-4 lg:gap-12 lg:px-8">
         <div>
-          <Link href={`/${locale}`} className="inline-block" aria-label="TJFit">
-            <BrandLogo variant="full" align="left" className="h-14 w-auto max-w-[220px] sm:h-16" />
-          </Link>
+          <div className="inline-flex py-1">
+            <Logo variant="full" size="footer" href={`/${locale}`} />
+          </div>
+          <p className="mt-3 text-sm font-medium tracking-wide text-[var(--tj-text-secondary)]">
+            Transform. Perform. Dominate.
+          </p>
           <p className="mt-4 max-w-sm leading-relaxed text-zinc-500">{copy.description}</p>
         </div>
         <div>
@@ -74,7 +82,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
           </div>
         </div>
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-600">{copy.operationsTitle}</p>
+          <p className="tj-eyebrow">{copy.operationsTitle}</p>
           <div className="mt-4 flex flex-col gap-2.5">
             {operationsLinks.map(({ href, label }) => (
               <Link key={href} href={`/${locale}${href}`} className={linkClass}>
@@ -84,7 +92,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
           </div>
         </div>
         <div className="lg:max-w-xs">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-600">{copy.leadColumnTitle}</p>
+          <p className="tj-eyebrow">{copy.leadColumnTitle}</p>
           <p className="mt-3 text-xs leading-relaxed text-zinc-500">{copy.leadColumnSub}</p>
           <div className="mt-5">
             <LeadCaptureForm locale={locale} source="footer" variant="footer" />

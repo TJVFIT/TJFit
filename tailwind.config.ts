@@ -4,6 +4,10 @@ const config: Config = {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     extend: {
+      borderRadius: {
+        /** ~28px — large shells (auth panels, modals, legacy “28px” cards) */
+        shell: "1.75rem"
+      },
       colors: {
         background: "#0A0A0B",
         surface: {

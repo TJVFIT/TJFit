@@ -6,6 +6,7 @@ import { AuthRequiredPanel } from "@/components/auth-required-panel";
 import { useAuth } from "@/components/auth-provider";
 import { getAuthCopy } from "@/lib/launch-copy";
 import { isLocale, type Locale } from "@/lib/i18n";
+import { URL_NOTICE } from "@/lib/url-notice";
 
 type Props = {
   children: React.ReactNode;
@@ -30,7 +31,7 @@ export function ProtectedRoute({ children, locale, requireAdmin }: Props) {
   useEffect(() => {
     if (loading || !user) return;
     if (requireAdmin && role !== "admin") {
-      router.replace(`/${locale}`);
+      router.replace(`/${locale}/dashboard?notice=${URL_NOTICE.FORBIDDEN_ADMIN}`);
     }
   }, [user, role, loading, locale, requireAdmin, router]);
 

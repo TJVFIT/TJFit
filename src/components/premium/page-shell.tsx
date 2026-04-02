@@ -11,7 +11,7 @@ export function PremiumPageShell({
 }) {
   const Tag = as;
   return (
-    <Tag className={cn("mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20", className)}>{children}</Tag>
+    <Tag className={cn("mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24", className)}>{children}</Tag>
   );
 }
 
@@ -27,13 +27,7 @@ export function PremiumPanel({
   const pad =
     padding === "sm" ? "p-5 sm:p-6" : padding === "lg" ? "p-8 sm:p-10 lg:p-12" : "p-6 sm:p-8";
   return (
-    <div
-      className={cn(
-        "rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.045] to-white/[0.015] shadow-[0_24px_64px_-32px_rgba(0,0,0,0.75)]",
-        pad,
-        className
-      )}
-    >
+    <div className={cn("tj-surface-panel", pad, className)}>
       {children}
     </div>
   );
@@ -53,11 +47,9 @@ export function PremiumSectionTitle({
   return (
     <div className={cn("mb-10 max-w-2xl sm:mb-12", align === "center" && "mx-auto text-center")}>
       {eyebrow ? <span className="lux-badge mb-4 inline-flex">{eyebrow}</span> : null}
-      <h1 className="font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-[2.5rem] lg:leading-tight">
-        {title}
-      </h1>
+      <h1 className="tj-page-title sm:text-[2.25rem] lg:text-[2.5rem] lg:leading-tight">{title}</h1>
       {subtitle ? (
-        <p className="mt-4 text-sm leading-relaxed text-zinc-500 sm:text-base">{subtitle}</p>
+        <p className={cn("tj-prose-muted mt-4 max-w-xl", align === "center" && "mx-auto")}>{subtitle}</p>
       ) : null}
     </div>
   );

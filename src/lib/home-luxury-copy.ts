@@ -87,12 +87,12 @@ const en: HomeLuxuryCopy = {
   hero: {
     badge: "TJFit",
     headline: "A calm system for serious training.",
-    sub: "Structured programs, verified coaches, and TJAI when you want depth — for people who train with intention, not noise.",
-    ctaPrimary: "Get the free roadmap",
+    sub: "Structured programs, vetted coaches, and TJAI when you want to go deeper — built for people who train on purpose, not for the feed.",
+    ctaPrimary: "Get your free roadmap",
     ctaSecondary: "Create free account",
     ctaBrowsePrograms: "Browse programs",
-    trust: ["Structured plans", "Vetted coaches", "5 languages"],
-    ctaNote: "Free roadmap by email · Free account anytime · No clutter"
+    trust: ["Clear plans", "Vetted coaches", "5 languages"],
+    ctaNote: "Roadmap by email · Optional account · No clutter"
   },
   leadMagnet: {
     badge: "Free guide",
@@ -171,164 +171,164 @@ const en: HomeLuxuryCopy = {
   },
   programs: {
     title: "Programs",
-    subtitle: "Flagship plans with clear weekly structure.",
-    viewAll: "View all programs",
+    subtitle: "Flagship plans with a clear week-by-week path.",
+    viewAll: "See all programs",
     from: "From"
   },
   coaches: {
     title: "Coaches",
-    subtitle: "Quality-first roster — apply if you lead with craft.",
-    emptyTitle: "Coach roster opening",
+    subtitle: "Quality over quantity — apply if you lead with craft.",
+    emptyTitle: "Coach roster is opening soon",
     emptyDesc:
-      "We are curating verified coaches. Public coach applications are not open yet — browse the directory or explore programs.",
-    cta: "Apply as a coach",
+      "We’re hand-picking verified coaches. Public applications aren’t open yet — browse the directory or dive into programs.",
+    cta: "Apply to coach",
     applyComingSoonBadge: "Coming soon",
     browse: "Browse coaches",
     viewProfile: "View profile"
   },
   finalCta: {
-    title: "Create your account when you are ready",
-    sub: "Explore programs, save progress, and unlock coaching workflows as they go live.",
+    title: "Open an account when it feels right",
+    sub: "Explore programs, save progress, and unlock coach tools as we roll them out.",
     primary: "Create free account",
-    secondary: "Membership updates",
-    nudge: "We never sell your email. Unsubscribe in one click."
+    secondary: "Membership news",
+    nudge: "We don’t sell your email. Unsubscribe anytime."
   }
 };
 
 const tr: HomeLuxuryCopy = {
   hero: {
     badge: "TJFit",
-    headline: "Ciddi antrenman icin sakin bir sistem.",
-    sub: "Yapilandirilmis programlar, dogrulanmis koçlar ve derinlik icin TJAI — gurultu degil, niyetle calisanlar icin.",
-    ctaPrimary: "Ucretsiz yol haritasi",
-    ctaSecondary: "Ucretsiz hesap olustur",
-    ctaBrowsePrograms: "Programlari incele",
-    trust: ["Yapilandirilmis planlar", "Secilmis koçlar", "5 dil"],
-    ctaNote: "E-posta ile ucretsiz harita · Hesap istege bagli · Sade arayuz"
+    headline: "Ciddi antrenman için sakin, net bir sistem.",
+    sub: "Yapılandırılmış programlar, doğrulanmış koçlar ve derinleşmek istediğinde TJAI — gürültü için değil, bilinçle çalışanlar için.",
+    ctaPrimary: "Ücretsiz yol haritanı al",
+    ctaSecondary: "Hesap oluştur",
+    ctaBrowsePrograms: "Programları keşfet",
+    trust: ["Net planlar", "Seçilmiş koçlar", "5 dil"],
+    ctaNote: "Yol haritası e-postada · Hesap isteğe bağlı · Karmaşa yok"
   },
   leadMagnet: {
-    badge: "Ucretsiz rehber",
-    title: "TJFit baslangic yol haritasi",
-    sub: "Programlari nasil kullanacaginiz, koç ne zaman ise yarar ve kisisel planlama icin neyin hazirlandigi — tek e-postada ozet.",
+    badge: "Ücretsiz rehber",
+    title: "TJFit başlangıç yol haritası",
+    sub: "Kısa ve uygulanabilir: programları nasıl kullanırsın, koç ne zaman işe yarar, kişiselleştirme tarafında neler hazırlanıyor — tek e-posta.",
     bullets: [
-      "Ilk hafta icin net bir yapi",
-      "Koçluk ne zaman mantikli — ne beklenir",
-      "TJAI yayina ciktiginda haftaniza nasil oturacagi — sizi bogmadan"
+      "İlk haftanı netleştiren basit çerçeve",
+      "Koçluk ne zaman mantıklı — beklenti nedir",
+      "TJAI yayına girince haftana nasıl oturur — seni boğmadan"
     ],
-    tjaiBadge: "Yakinda",
-    tjaiSub: "TJAI kisisel planlama henuz canli degil. Ustteki yol haritasiyla haberdar olun — ayri bir AI sayfasi yok."
+    tjaiBadge: "Çok yakında",
+    tjaiSub: "TJAI kişisel planlama henüz yayında değil. Üstteki yol haritasıyla haberdar ol — ayrı bir yapay zekâ sayfası yok."
   },
   pricingPreview: {
-    badge: "Uyelik",
-    title: "Tam erisim son rutuşta",
-    sub: "Seviyeler ve avantajlar netlesiyor. Erken uyeler ilk haberdar olacak — sahte fiyat yok.",
+    badge: "Üyelik",
+    title: "Tam erişim son dokunuşta",
+    sub: "Seviyeleri ve avantajları netleştiriyoruz. Erken üyeler ilk duyan olacak — bugün sahte fiyat yok.",
     tiers: [
-      { name: "Train", teaser: "Programlar + topluluk temeli" },
-      { name: "Coach+", teaser: "Daha yakin koç temasi" },
-      { name: "Elite", teaser: "Oncelikli erisim ve ozel icerik" }
+      { name: "Train", teaser: "Programlar + topluluk çekirdeği" },
+      { name: "Coach+", teaser: "Koçla daha yakın temas" },
+      { name: "Elite", teaser: "Öncelik ve premium içerik" }
     ],
-    footnote: "Planlar hazir oldugunda duyurulacak. Asagidaki liste ile haber alin.",
-    tierStatus: "Cok yakinda"
+    footnote: "Planlar hazır olunca duyururuz. Aşağıdan haber listesine yazıl.",
+    tierStatus: "Çok yakında"
   },
   midCta: {
-    title: "Once e-posta mi?",
-    sub: "Yol haritasini alin, programlari sonra inceleyin."
+    title: "Önce e-posta mı istersin?",
+    sub: "Yol haritasını gönderelim; programlara sonra göz at."
   },
   leadNudge: {
-    title: "Gitmeden — ucretsiz harita",
-    sub: "Tek e-posta, baski yok — TJFit'i kendi temponuzda kesfedin."
+    title: "Gitmeden — ücretsiz yol haritası",
+    sub: "Tek e-posta, baskı yok. TJFit’e kendi temponla dön."
   },
   social: {
-    title: "Momentum, gurultusuz",
-    subtitle: "Daha az karar. Daha cok devamlilik.",
+    title: "Gürültüsüz ivme",
+    subtitle: "Daha az karar. Daha çok süreklilik.",
     stats: [
-      { value: "12+", label: "Haftalik amiral programlar" },
-      { value: "5", label: "Canli dil" },
-      { value: "7/24", label: "Senin saatine gore" }
+      { value: "12+", label: "Amiral program haftaları" },
+      { value: "5", label: "Canlı dil" },
+      { value: "7/24", label: "Senin saatine göre" }
     ],
     testimonials: [
       {
-        quote: "Takip ettigim en net antrenman sistemi. Gurultu yok — sadece uygulama.",
+        quote: "Takip ettiğim en net sistem. Gürültü yok — sadece iş.",
         author: "Maya R.",
-        role: "Uye"
+        role: "Üye"
       },
       {
-        quote: "Sonunda zamanimi ve zekami saygi duyan bir fitness urunu.",
+        quote: "Sonunda zamanıma ve zekâma saygı duyan bir fitness deneyimi.",
         author: "James L.",
-        role: "Uye"
+        role: "Üye"
       }
     ]
   },
   features: {
     title: "Ne sunuyoruz",
-    subtitle: "Dort odakli katman — fazlalik yok.",
+    subtitle: "Dört odaklı katman — fazlalık yok.",
     items: [
       {
         title: "Koçluk",
-        desc: "Ihtiyac duydugunda insan rehberligi — gercek hesap verebilirlikle mesajlasma."
+        desc: "İhtiyaç duyduğunda insan desteği — gerçek hesap verebilirlikle mesajlaşma."
       },
       {
         title: "Programlar",
-        desc: "Her zaman bir sonraki adimi bildigin acik yapida ilerleyen planlar."
+        desc: "Her zaman bir sonraki adımı bildiğin, ilerlemesi okunaklı planlar."
       },
       {
         title: "Topluluk",
-        desc: "Threadler, meydan okumalar ve hikayeler — kaos olmadan ilham."
+        desc: "Konular, meydan okumalar ve hikâyeler — ilham var, kaos yok."
       },
       {
-        title: "AI ve kisisellestirme",
-        desc: "Hedeflere daha hizli uyum ve akilli, pratik onerilerle yolu netlestirme."
+        title: "Yapay zekâ ve kişiselleştirme",
+        desc: "Hedefe daha hızlı otur, yolunu akıllı ve uygulanabilir önerilerle netleştir."
       }
     ]
   },
   programs: {
     title: "Programlar",
-    subtitle: "Net haftalik yapiya sahip amiral planlar.",
-    viewAll: "Tum programlar",
-    from: "Baslangic"
+    subtitle: "Hafta hafta net yapılı amiral planlar.",
+    viewAll: "Tüm programlar",
+    from: "Başlangıç"
   },
   coaches: {
     title: "Koçlar",
-    subtitle: "Once kalite — zanaatle liderlik ediyorsaniz basvurun.",
-    emptyTitle: "Koç kadrosu aciliyor",
+    subtitle: "Önce kalite — işini ustalıkla yürütüyorsan başvur.",
+    emptyTitle: "Koç kadrosu açılıyor",
     emptyDesc:
-      "Dogrulanmis koçlari seciyoruz. Herkese acik koç basvurusu henuz yok — rehberi gezin veya programlara bakin.",
-    cta: "Koç olarak basvur",
-    applyComingSoonBadge: "Yakinda",
-    browse: "Koçlari gor",
-    viewProfile: "Profili gor"
+      "Doğrulanmış koçları tek tek seçiyoruz. Herkese açık başvuru henüz yok — rehbere göz at veya programlara dal.",
+    cta: "Koç olarak başvur",
+    applyComingSoonBadge: "Çok yakında",
+    browse: "Koçları gör",
+    viewProfile: "Profili gör"
   },
   finalCta: {
-    title: "Hazir oldugunuzda hesap acin",
-    sub: "Programlari kesfedin, ilerlemeyi kaydedin, canli koçluk akislari acildikca kullanin.",
-    primary: "Ucretsiz hesap olustur",
-    secondary: "Uyelik guncellemeleri",
-    nudge: "E-postanizi satmiyoruz. Tek tikla cikis."
+    title: "Hazır olduğunda hesabını aç",
+    sub: "Programları keşfet, ilerlemeni kaydet, koç akışları açıldıkça kullan.",
+    primary: "Ücretsiz hesap oluştur",
+    secondary: "Üyelik haberleri",
+    nudge: "E-postanı satmıyoruz. Tek tıkla ayrıl."
   }
 };
 
 const ar: HomeLuxuryCopy = {
   hero: {
     badge: "TJFit",
-    headline: "نظام هادئ لتدريب جاد.",
-    sub: "برامج منظمة ومدربون موثوقون وTJAI عندما تريد العمق — لمن يتدرب بوعي لا بفوضى.",
-    ctaPrimary: "خارطة الطريق المجانية",
-    ctaSecondary: "إنشاء حساب مجاني",
-    ctaBrowsePrograms: "تصفح البرامج",
+    headline: "نظام هادئ وواضح لتدريب جاد.",
+    sub: "برامج مُنظَّمة، مدربون موثوقون، وTJAI عندما تريد أن تتعمق — لمن يتدرب بوعي، لا لمن يبحث عن الضجيج.",
+    ctaPrimary: "خارطتك المجانية",
+    ctaSecondary: "ابدأ مجاناً",
+    ctaBrowsePrograms: "البرامج",
     trust: ["خطط واضحة", "مدربون مختارون", "٥ لغات"],
-    ctaNote: "خارطة بالبريد · حساب اختياري · بلا ازدحام"
+    ctaNote: "خارطة بالبريد · الحساب اختياري · بلا فوضى"
   },
   leadMagnet: {
     badge: "دليل مجاني",
-    title: "خارطة بداية TJFit",
-    sub: "ملخص عملي: البرامج، متى يساعد المدرب، وما المخطط للتخصيص الأعمق — برسالة واحدة.",
+    title: "خارطة انطلاق TJFit",
+    sub: "ملخص قصير وعملي: كيف تستخدم البرامج، متى يضيف المدرب قيمة، وماذا نُجهّز للتخصيص — في رسالة واحدة فقط.",
     bullets: [
-      "هيكل الأسبوع الأول جاهز للتطبيق",
-      "متى تضيف التدريب — وماذا تتوقع",
-      "كيف سيتكامل TJAI عند الإطلاق — دون إرهاق"
+      "إطار أسبوعك الأول جاهز للتنفيذ",
+      "متى يصبح التدريب مع مدرب منطقياً — وماذا تتوقع",
+      "كيف يندمج TJAI بعد الإطلاق — دون أن يثقل أسبوعك"
     ],
     tjaiBadge: "قريباً",
-    tjaiSub: "تخطيط TJAI الشخصي غير متاح بعد. استخدم الخارطة أعلاه للبقاء على اطلاع — لا صفحة ذكاء اصطناعي منفصلة."
+    tjaiSub: "التخطيط الشخصي بـTJAI ليس متاحاً بعد. الخارطة أعلاه تكفي لتبقى على اطلاع — بلا صفحة ذكاء اصطناعي منفصلة."
   },
   pricingPreview: {
     badge: "العضوية",
@@ -343,16 +343,16 @@ const ar: HomeLuxuryCopy = {
     tierStatus: "قريباً"
   },
   midCta: {
-    title: "تفضّل البريد أولاً؟",
-    sub: "احصل على الخارطة، ثم استكشف البرامج براحة."
+    title: "تفضّل أن نرسل الخارطة بالبريد؟",
+    sub: "نرسلها مرة واحدة. زر البرامج عندما يناسبك."
   },
   leadNudge: {
-    title: "قبل المغادرة — الخارطة المجانية",
-    sub: "رسالة واحدة بلا ضغط — استكشف TJFit في وقتك."
+    title: "قبل أن تغادر — خارطتك المجانية",
+    sub: "رسالة واحدة، بلا ضغط. ارجع إلى TJFit عندما يناسب جدولك."
   },
   social: {
     title: "زخم بلا ضجيج",
-    subtitle: "قرارات أقل. استمرارية أكثر.",
+    subtitle: "أقل تردداً. أكثر استمراراً.",
     stats: [
       { value: "+12", label: "أسابيع برامج رئيسية" },
       { value: "5", label: "لغات مفعّلة" },
@@ -360,7 +360,7 @@ const ar: HomeLuxuryCopy = {
     ],
     testimonials: [
       {
-        quote: "أوضح نظام تدريب تبعته. بلا ضجيج — فقط تنفيذ.",
+        quote: "أوضح نظام تدريب جرّبته. بلا ضجيج — تنفيذ فقط.",
         author: "مايا ر.",
         role: "عضوة"
       },
@@ -394,77 +394,77 @@ const ar: HomeLuxuryCopy = {
     ]
   },
   programs: {
-    title: "برامج بإحساس فاخر",
-    subtitle: "ابدأ بخطط رئيسية مصممة للاستمرار وأسابيع قابلة للقياس.",
-    viewAll: "كل البرامج",
+    title: "البرامج",
+    subtitle: "خطط رئيسية بأسابيع واضحة وقابلة للقياس.",
+    viewAll: "عرض كل البرامج",
     from: "من"
   },
   coaches: {
     title: "المدربون",
-    subtitle: "الجودة أولاً — تقدم إذا قادتك الحرفية.",
-    emptyTitle: "فتح قائمة المدربين",
+    subtitle: "الجودة قبل العدد — قدّم إذا كانت خبرتك هي رصيدك.",
+    emptyTitle: "قائمة المدربين تفتح قريباً",
     emptyDesc:
-      "نختار مدربين موثوقين. طلبات الانضمام العامة غير مفتوحة بعد — تصفح الدليل أو البرامج.",
-    cta: "تقديم كمدرب",
+      "نختار المدربين بعناية. التقديم العام غير مفتوح بعد — تصفّح الدليل أو ابدأ من البرامج.",
+    cta: "قدّم طلباً كمدرب",
     applyComingSoonBadge: "قريباً",
     browse: "تصفح المدربين",
     viewProfile: "عرض الملف"
   },
   finalCta: {
-    title: "أنشئ حسابك عندما تكون جاهزاً",
-    sub: "استكشف البرامج واحفظ التقدم وفعّل مسارات التدريب مع الإطلاق.",
-    primary: "إنشاء حساب مجاني",
-    secondary: "تحديثات العضوية",
-    nudge: "لا نبيع بريدك. إلغاء الاشتراك بنقرة."
+    title: "حسابك حين تشعر أن الوقت مناسب",
+    sub: "برامج، تقدّم محفوظ، وأدوات للمدربين مع كل تحديث.",
+    primary: "سجّل مجاناً",
+    secondary: "العضوية",
+    nudge: "بريدك ليس للبيع. إلغاء في أي وقت."
   }
 };
 
 const es: HomeLuxuryCopy = {
   hero: {
     badge: "TJFit",
-    headline: "Un sistema sobrio para entrenar en serio.",
-    sub: "Programas estructurados, coaches verificados y TJAI cuando quieres profundidad — para quien entrena con intención.",
-    ctaPrimary: "Guia inicial gratis",
+    headline: "Un sistema calmado para entrenar en serio.",
+    sub: "Programas claros, coaches verificados y TJAI cuando quieras ir más allá — para quien entrena con intención, no por moda.",
+    ctaPrimary: "Consigue tu guía gratis",
     ctaSecondary: "Crear cuenta gratis",
-    ctaBrowsePrograms: "Ver programas",
+    ctaBrowsePrograms: "Explorar programas",
     trust: ["Planes claros", "Coaches seleccionados", "5 idiomas"],
-    ctaNote: "Guia por email · Cuenta opcional · Sin ruido"
+    ctaNote: "Guía por email · Cuenta opcional · Sin ruido"
   },
   leadMagnet: {
-    badge: "Guia gratis",
-    title: "Hoja de ruta inicial TJFit",
-    sub: "Resumen practico: programas, cuando sumar coach y que viene en personalizacion — un solo email.",
+    badge: "Guía gratis",
+    title: "Tu hoja de ruta inicial en TJFit",
+    sub: "Breve y accionable: cómo usar los programas, cuándo sumar a un coach y qué viene en personalización — un solo correo.",
     bullets: [
-      "Estructura de la primera semana lista para aplicar",
-      "Cuando tiene sentido el coaching y que esperar",
-      "Como encajara TJAI al lanzarse — sin saturarte"
+      "Tu primera semana, ya enmarcada",
+      "Cuándo tiene sentido el coaching — y qué esperar",
+      "Cómo encajará TJAI al salir — sin saturarte"
     ],
-    tjaiBadge: "Proximamente",
-    tjaiSub: "El planning personalizado con TJAI aun no esta activo. Deja el email arriba para enterarte — no hay pagina de IA aparte."
+    tjaiBadge: "Muy pronto",
+    tjaiSub: "El planning con TJAI aún no está activo. La guía de arriba basta para enterarte — sin página de IA aparte."
   },
   pricingPreview: {
-    badge: "Membresia",
-    title: "El acceso total en refinamiento final",
-    sub: "Estamos cerrando niveles y beneficios. Los primeros miembros sabran antes — sin precios falsos hoy.",
+    badge: "Membresía",
+    title: "Acceso total, últimos retoques",
+    sub: "Estamos cerrando niveles y beneficios. Los primeros en enterarse — sin precios de adorno hoy.",
     tiers: [
-      { name: "Train", teaser: "Programas y nucleo de comunidad" },
-      { name: "Coach+", teaser: "Mas contacto con coach" },
+      { name: "Train", teaser: "Programas y núcleo de comunidad" },
+      { name: "Coach+", teaser: "Más contacto con tu coach" },
       { name: "Elite", teaser: "Prioridad y contenido premium" }
     ],
-    footnote: "Anunciaremos cuando este listo. Deja tu email abajo.",
+    footnote: "Lo anunciaremos cuando esté listo. Deja tu correo abajo.",
     tierStatus: "Muy pronto"
   },
   midCta: {
-    title: "¿Prefieres email primero?",
-    sub: "Recibe la guia y explora programas despues."
+    title: "¿Primero por correo?",
+    sub: "Te enviamos la guía una vez. Los programas, cuando quieras."
   },
   leadNudge: {
-    title: "Antes de irte — la guia gratis",
-    sub: "Un email, sin presion — explora TJFit a tu ritmo."
+    title: "Antes de irte — tu guía gratis",
+    sub: "Un correo, cero presión. Vuelve a TJFit cuando te encaje."
   },
   social: {
-    title: "Momentum, sin ruido",
-    subtitle: "Menos decisiones. Más constancia.",
+    title: "Impulso, sin ruido",
+    subtitle: "Menos dudas. Más constancia.",
     stats: [
       { value: "12+", label: "Semanas en programas flagship" },
       { value: "5", label: "Idiomas activos" },
@@ -472,7 +472,7 @@ const es: HomeLuxuryCopy = {
     ],
     testimonials: [
       {
-        quote: "El sistema de entrenamiento mas claro que he seguido. Sin ruido — solo ejecucion.",
+        quote: "El sistema de entrenamiento más claro que he seguido. Sin ruido — solo ejecución.",
         author: "Maya R.",
         role: "Miembro"
       },
@@ -484,8 +484,8 @@ const es: HomeLuxuryCopy = {
     ]
   },
   features: {
-    title: "Que incluye",
-    subtitle: "Cuatro capas enfocadas — sin relleno.",
+    title: "Qué incluye",
+    subtitle: "Cuatro capas claras — sin relleno.",
     items: [
       {
         title: "Coaching",
@@ -507,52 +507,52 @@ const es: HomeLuxuryCopy = {
   },
   programs: {
     title: "Programas",
-    subtitle: "Planes flagship con estructura semanal clara.",
+    subtitle: "Planes insignia con semanas claras y medibles.",
     viewAll: "Ver todos los programas",
     from: "Desde"
   },
   coaches: {
     title: "Coaches",
-    subtitle: "Calidad primero — aplica si lideras con oficio.",
-    emptyTitle: "Apertura del roster",
+    subtitle: "Calidad antes que cantidad — postula si tu oficio te define.",
+    emptyTitle: "El roster abre pronto",
     emptyDesc:
-      "Estamos curando coaches verificados. Las solicitudes publicas aun no estan abiertas — mira el directorio o los programas.",
-    cta: "Solicitar ser coach",
-    applyComingSoonBadge: "Proximamente",
+      "Elegimos coaches uno a uno. Las postulaciones públicas aún no están — mira el directorio o entra por programas.",
+    cta: "Postular como coach",
+    applyComingSoonBadge: "Muy pronto",
     browse: "Ver coaches",
     viewProfile: "Ver perfil"
   },
   finalCta: {
-    title: "Crea tu cuenta cuando quieras",
-    sub: "Explora programas, guarda progreso y activa flujos de coaching al salir.",
+    title: "Abre tu cuenta cuando te encaje",
+    sub: "Explora programas, guarda avances y activa herramientas de coaching con cada lanzamiento.",
     primary: "Crear cuenta gratis",
-    secondary: "Novedades de membresia",
-    nudge: "No vendemos tu email. Baja en un clic."
+    secondary: "Novedades de membresía",
+    nudge: "No vendemos tu correo. Te das de baja cuando quieras."
   }
 };
 
 const fr: HomeLuxuryCopy = {
   hero: {
     badge: "TJFit",
-    headline: "Un systeme sobre pour s'entrainer serieusement.",
-    sub: "Programmes structures, coachs verifies et TJAI quand vous voulez aller plus loin — pour ceux qui s'entrainent avec intention.",
-    ctaPrimary: "Feuille de route gratuite",
-    ctaSecondary: "Creer un compte gratuit",
-    ctaBrowsePrograms: "Voir les programmes",
-    trust: ["Plans clairs", "Coachs selectionnes", "5 langues"],
-    ctaNote: "Roadmap par email · Compte optionnel · Sans surcharge"
+    headline: "Un cadre posé pour s’entraîner sérieusement.",
+    sub: "Programmes structurés, coachs vérifiés, et TJAI quand vous voulez aller plus loin — pour celles et ceux qui s’entraînent avec intention, pas pour le bruit.",
+    ctaPrimary: "Recevoir la feuille de route",
+    ctaSecondary: "Créer un compte gratuit",
+    ctaBrowsePrograms: "Parcourir les programmes",
+    trust: ["Plans clairs", "Coachs sélectionnés", "5 langues"],
+    ctaNote: "Feuille de route par e-mail · Compte optionnel · Sans surcharge"
   },
   leadMagnet: {
     badge: "Guide gratuit",
-    title: "Feuille de route TJFit",
-    sub: "Resume pratique: programmes, quand ajouter un coach, et la personnalisation prevue — un email.",
+    title: "Votre feuille de route TJFit",
+    sub: "Court et concret : programmes, quand un coach apporte vraiment plus, et ce qui arrive côté personnalisation — un seul e-mail.",
     bullets: [
-      "Structure de semaine 1 prete a appliquer",
-      "Quand le coaching aide — et le cadre attendu",
-      "Comment TJAI s'integre au lancement — sans surcharge"
+      "Votre première semaine, déjà cadrée",
+      "Quand le coaching a du sens — et à quoi vous attendre",
+      "Comment TJAI s’intègre au lancement — sans vous saturer"
     ],
-    tjaiBadge: "Bientot",
-    tjaiSub: "La planification TJAI personnalisee n'est pas encore en ligne. Utilisez la feuille de route ci-dessus — pas de page IA separee."
+    tjaiBadge: "Bientôt",
+    tjaiSub: "Le planning personnalisé TJAI n’est pas encore en ligne. La feuille de route ci-dessus suffit pour suivre l’actu — pas de page « IA » à part."
   },
   pricingPreview: {
     badge: "Abonnement",
@@ -563,20 +563,20 @@ const fr: HomeLuxuryCopy = {
       { name: "Coach+", teaser: "Plus de lien avec le coach" },
       { name: "Elite", teaser: "Priorite et contenu premium" }
     ],
-    footnote: "Annonce des que c'est pret. Laissez votre email ci-dessous.",
-    tierStatus: "Bientot"
+    footnote: "On annonce quand c’est prêt. Laissez votre e-mail ci-dessous.",
+    tierStatus: "Bientôt"
   },
   midCta: {
-    title: "Preferez l'email d'abord ?",
-    sub: "Recevez la feuille de route, explorez les programmes ensuite."
+    title: "Plutôt un e-mail pour commencer ?",
+    sub: "On vous envoie la feuille de route une fois. Les programmes, quand vous voulez."
   },
   leadNudge: {
-    title: "Avant de partir — la feuille de route",
-    sub: "Un email, sans pression — explorez TJFit a votre rythme."
+    title: "Avant de partir — la feuille de route offerte",
+    sub: "Un e-mail, zéro pression. Revenez sur TJFit quand ça vous arrange."
   },
   social: {
-    title: "Du momentum, sans le bruit",
-    subtitle: "Moins de decisions. Plus de regularite.",
+    title: "De l’élan, sans le bruit",
+    subtitle: "Moins d’hésitation. Plus de régularité.",
     stats: [
       { value: "12+", label: "Semaines de programmes phares" },
       { value: "5", label: "Langues actives" },
@@ -596,8 +596,8 @@ const fr: HomeLuxuryCopy = {
     ]
   },
   features: {
-    title: "Ce que vous obtenez",
-    subtitle: "Quatre couches ciblees — zero superflu.",
+    title: "Ce que vous avez",
+    subtitle: "Quatre couches nettes — zéro superflu.",
     items: [
       {
         title: "Coaching",
@@ -612,34 +612,34 @@ const fr: HomeLuxuryCopy = {
         desc: "Fils, defis et recits dans un hub calme — inspiration sans chaos."
       },
       {
-        title: "IA et personnalisation",
-        desc: "Alignez vos objectifs plus vite et affinez votre parcours avec des suggestions intelligentes."
+        title: "IA & personnalisation",
+        desc: "Alignez vos objectifs plus vite, affinez votre parcours avec des suggestions simples et utiles."
       }
     ]
   },
   programs: {
     title: "Programmes",
-    subtitle: "Plans phares avec structure hebdomadaire claire.",
+    subtitle: "Plans phares, semaine après semaine, lisibles d’un coup d’œil.",
     viewAll: "Tous les programmes",
-    from: "A partir de"
+    from: "À partir de"
   },
   coaches: {
     title: "Coachs",
-    subtitle: "La qualite d'abord — postulez si vous menez par le metier.",
-    emptyTitle: "Ouverture du roster coachs",
+    subtitle: "La qualité avant le volume — postulez si votre métier parle pour vous.",
+    emptyTitle: "Le roster s’ouvre bientôt",
     emptyDesc:
-      "Nous selectionnons des coachs verifies. Les candidatures publiques ne sont pas encore ouvertes — parcourez l'annuaire ou les programmes.",
+      "On choisit les coachs avec exigence. Candidatures publiques pas encore ouvertes — parcourez l’annuaire ou commencez par les programmes.",
     cta: "Postuler comme coach",
-    applyComingSoonBadge: "Bientot",
+    applyComingSoonBadge: "Bientôt",
     browse: "Voir les coachs",
     viewProfile: "Voir le profil"
   },
   finalCta: {
-    title: "Creez votre compte quand vous etes pret",
-    sub: "Explorez les programmes, enregistrez la progression et activez le coaching au fil des lancements.",
-    primary: "Creer un compte gratuit",
-    secondary: "Infos abonnement",
-    nudge: "Nous ne revendons pas vos emails. Desinscription en un clic."
+    title: "Créez votre compte quand vous le sentez",
+    sub: "Parcourez les programmes, enregistrez vos progrès, débloquez le coaching au fil des mises en ligne.",
+    primary: "Compte gratuit",
+    secondary: "Actu abonnement",
+    nudge: "On ne revend pas vos e-mails. Désinscription en un clic."
   }
 };
 

@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 
 import { ClientErrorBoundary } from "@/components/client-error-boundary";
+import { FreeOfferSection } from "@/components/free-offer-section";
 import { coaches, programs } from "@/lib/content";
 import { getHomeLuxuryCopy } from "@/lib/home-luxury-copy";
 import { isLocale, type Locale } from "@/lib/i18n";
@@ -40,7 +41,8 @@ export default function HomePage({ params }: { params: { locale: string } }) {
 
   const locale = raw as Locale;
   const copy = getHomeLuxuryCopy(locale);
-  const programPreviews = programs.slice(0, 4).map((p) => ({
+  const freePrograms = programs.filter((p) => p.is_free);
+  const programPreviews = programs.filter((p) => !p.is_free).slice(0, 4).map((p) => ({
     slug: p.slug,
     title: p.title,
     category: p.category,
@@ -55,6 +57,8 @@ export default function HomePage({ params }: { params: { locale: string } }) {
   }));
 
   return (
+    <>
+      {freePrograms.length > 0 ? <FreeOfferSection locale={locale} freePrograms={freePrograms} /> : null}
     <ClientErrorBoundary
       sentryScope="home-luxury"
       fallback={
@@ -75,5 +79,6 @@ export default function HomePage({ params }: { params: { locale: string } }) {
     >
       <LuxuryHome locale={locale} copy={copy} programs={programPreviews} coaches={coachPreviews} />
     </ClientErrorBoundary>
+    </>
   );
 }

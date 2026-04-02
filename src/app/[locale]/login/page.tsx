@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { isLocale, type Locale } from "@/lib/i18n";
-import { BrandLogo } from "@/components/brand-logo";
+import { Logo } from "@/components/ui/Logo";
 import { getAuthCopy } from "@/lib/launch-copy";
 
 export default function LoginPage({ params }: { params: { locale: string } }) {
@@ -86,15 +86,15 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
 
   return (
     <div className="mx-auto flex min-h-[80vh] max-w-md items-center px-4 py-16 sm:px-6 lg:px-8">
-      <div className="w-full rounded-2xl border border-white/[0.07] bg-surface/25 p-8 sm:p-9">
-        <div className="flex justify-center">
-          <BrandLogo variant="full" align="center" className="h-12 w-auto sm:h-14" priority />
+      <div className="tj-surface-panel w-full p-8 sm:p-9">
+        <div className="mb-6 flex justify-center">
+          <Logo variant="icon" size="auth" href={`/${params.locale}`} priority />
         </div>
-        <span className="lux-badge mt-6 inline-flex">{adminMode ? copy.adminLoginBadge : copy.loginBadge}</span>
-        <h1 className="mt-6 font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+        <span className="lux-badge inline-flex">{adminMode ? copy.adminLoginBadge : copy.loginBadge}</span>
+        <h1 className="tj-page-title mt-6">
           {adminMode ? copy.adminLoginTitle : copy.loginTitle}
         </h1>
-        <p className="mt-3 text-sm leading-7 text-zinc-400">
+        <p className="tj-prose-muted mt-3">
           {adminMode
             ? copy.adminLoginSubtitle
             : copy.loginSubtitle}

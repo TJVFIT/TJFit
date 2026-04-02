@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { BrandLogo } from "@/components/brand-logo";
+import { Logo } from "@/components/ui/Logo";
 import { PremiumPopup } from "@/components/premium-popup";
 import { trackMarketingEvent } from "@/lib/analytics-events";
 import { getEarlyAccessPopupCopy } from "@/lib/early-access-popup-copy";
@@ -77,11 +77,14 @@ export function DelayedEarlyAccessPopup({ locale }: Props) {
 
   return (
     <PremiumPopup open={open} onClose={dismiss} titleId={titleId} closeLabel={copy.closeLabel} zIndexClass="z-[100]">
-      <div className="flex items-center gap-2.5">
-        <BrandLogo variant="mark" className="h-10 w-10 shrink-0" alt="" />
-        <span className="font-display text-[10px] font-medium uppercase tracking-[0.2em] text-zinc-500" aria-hidden>
-          TJFit
-        </span>
+      <div className="flex items-center">
+        <Logo
+          variant="full"
+          size="footer"
+          href={`/${activeLocale}`}
+          suppressMinTouchTarget
+          className="max-w-[200px] sm:max-w-[220px]"
+        />
       </div>
       <h2 id={titleId} className="mt-3 pe-12 font-display text-xl font-semibold leading-snug tracking-tight text-white sm:text-2xl">
         {copy.headline}

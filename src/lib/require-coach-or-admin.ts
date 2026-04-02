@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { isAdminEmail } from "@/lib/auth-utils";
+import { getCoachTermsVersion } from "@/lib/coach-terms-version";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 type Role = "admin" | "coach";
@@ -72,6 +73,23 @@ export async function requireCoachOrAdmin(): Promise<RequireCoachOrAdminResult> 
   }
 
   if (profile?.role === "coach") {
+    const expected = getCoachTermsVersion();
+    const { data: acceptRow } = await supabase
+      .from("coach_terms_acceptance")
+      .select("terms_version")
+      .eq("coach_id", user.id)
+      .order("accepted_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (acceptRow?.terms_version !== expected) {
+      return {
+        ok: false,
+        response: NextResponse.json(
+          { error: "Accept the coach terms to use this feature.", code: "coach_terms_required" },
+          { status: 403 }
+        )
+      };
+    }
     const serviceClient = getSupabaseServerClient();
     if (!serviceClient) {
       return {

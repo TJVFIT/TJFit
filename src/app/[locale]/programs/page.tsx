@@ -11,17 +11,58 @@ import { Locale, isLocale } from "@/lib/i18n";
 import { formatProgramPrice, getProgramBasePriceTry, getProgramUiCopy, localizeProgram } from "@/lib/program-localization";
 import { useAuth } from "@/components/auth-provider";
 import { getProgramManagementCopy } from "@/lib/program-management-copy";
+import { getProgramsMarketplaceCopy } from "@/lib/programs-marketplace-copy";
+import { cn } from "@/lib/utils";
 
 type CustomProgramCard = Program & { isCustomUpload?: boolean };
+
+type GoalFilter = "all" | "fat" | "muscle";
+type LocFilter = "all" | "home" | "gym";
+
+function programMeta(p: Program | CustomProgramCard) {
+  const slug = p.slug.toLowerCase();
+  const cat = p.category.toLowerCase();
+  const goal: "fat" | "muscle" | "other" = cat.includes("fat")
+    ? "fat"
+    : cat.includes("muscle") || cat.includes("strength")
+      ? "muscle"
+      : "other";
+  const location: "home" | "gym" | "any" = slug.startsWith("home") ? "home" : slug.startsWith("gym") ? "gym" : "any";
+  return { goal, location };
+}
+
+function programMatchesFilters(p: Program | CustomProgramCard, goal: GoalFilter, loc: LocFilter) {
+  const m = programMeta(p);
+  if (goal === "fat") {
+    if (m.goal !== "fat") return false;
+    if (loc === "home") return m.location === "home" || m.location === "any";
+    if (loc === "gym") return m.location === "gym" || m.location === "any";
+    return true;
+  }
+  if (goal === "muscle") {
+    if (m.goal !== "muscle") return false;
+    if (loc === "home") return m.location === "home" || m.location === "any";
+    if (loc === "gym") return m.location === "gym" || m.location === "any";
+    return true;
+  }
+
+  if (loc === "all") return true;
+  if (loc === "home") return m.location === "home" || m.location === "any";
+  if (loc === "gym") return m.location === "gym" || m.location === "any";
+  return true;
+}
 
 export default function ProgramsPage({ params }: { params: { locale: string } }) {
   const rawLocale = params?.locale ?? "";
   const localeValid = isLocale(rawLocale);
   const locale = (localeValid ? rawLocale : "en") as Locale;
   const copy = getProgramUiCopy(locale);
+  const filterCopy = getProgramsMarketplaceCopy(locale);
   const programManagementCopy = getProgramManagementCopy(locale);
   const { role } = useAuth();
   const [uploadedPrograms, setUploadedPrograms] = useState<CustomProgramCard[]>([]);
+  const [goalFilter, setGoalFilter] = useState<GoalFilter>("all");
+  const [locFilter, setLocFilter] = useState<LocFilter>("all");
 
   const canUpload = role === "admin" || role === "coach";
 
@@ -50,10 +91,19 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
     loadCustomPrograms();
   }, [locale, programManagementCopy.uploadedPdfAsset, programManagementCopy.uploadedProgramPreview]);
 
-  const allPrograms = useMemo(
-    () => [...uploadedPrograms, ...programs.map((item) => localizeProgram(item, locale))],
-    [uploadedPrograms, locale]
+  const allPrograms = useMemo(() => {
+    const training = programs
+      .filter((item) => item.category.toLowerCase() !== "nutrition")
+      .map((item) => localizeProgram(item, locale));
+    return [...uploadedPrograms, ...training];
+  }, [uploadedPrograms, locale]);
+
+  const filteredPrograms = useMemo(
+    () => allPrograms.filter((p) => programMatchesFilters(p, goalFilter, locFilter)),
+    [allPrograms, goalFilter, locFilter]
   );
+
+  const filterActive = goalFilter !== "all" || locFilter !== "all";
 
   if (!localeValid) {
     notFound();
@@ -102,43 +152,135 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
 
   return (
     <PremiumPageShell className="max-w-7xl">
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <SectionHeading eyebrow={heading.eyebrow} title={heading.title} copy={heading.body} />
-        {canUpload && (
+        <div className="flex shrink-0 flex-col gap-2 sm:items-end">
           <Link
-            href={`/${params.locale}/programs/upload`}
-            className="mt-2 inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm text-white hover:bg-white/5"
-            title={programManagementCopy.uploadCtaTitle}
+            href={`/${params.locale}/diets`}
+            className="text-sm font-medium text-cyan-300/90 transition hover:text-cyan-200"
           >
-            <Plus className="h-4 w-4" />
-            {programManagementCopy.upload}
+            {filterCopy.browseDietsLink}
           </Link>
-        )}
+          {canUpload ? (
+            <Link
+              href={`/${params.locale}/programs/upload`}
+              className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm text-white hover:bg-white/5"
+              title={programManagementCopy.uploadCtaTitle}
+            >
+              <Plus className="h-4 w-4" />
+              {programManagementCopy.upload}
+            </Link>
+          ) : null}
+        </div>
       </div>
 
-      <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-        {allPrograms.map((program) => (
-          <ProgramCard
-            key={program.slug}
-            program={program}
-            href={`/${params.locale}/programs/${program.slug}`}
-            viewLabel={copy.viewProgram}
-            priceLabel={formatProgramPrice(
-              "isCustomUpload" in program && program.isCustomUpload ? program.price : getProgramBasePriceTry(program),
-              locale
-            )}
-            tierLabel={
-              program.slug.includes("advanced") || program.slug.includes("hardcore")
-                ? tierLabels.elite
-                : program.slug.includes("pro") || program.slug.includes("shred")
-                  ? tierLabels.popular
-                  : program.slug.includes("starter") || program.slug.includes("beginner")
-                    ? tierLabels.fresh
-                    : tierLabels.signature
-            }
-          />
-        ))}
+      <div className="mt-8 flex flex-col gap-4 rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4 sm:flex-row sm:flex-wrap sm:items-center">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">{filterCopy.filterLabel}</p>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs text-zinc-500">{filterCopy.filterGoal}:</span>
+          {(
+            [
+              ["all", filterCopy.all],
+              ["fat", filterCopy.goalFat],
+              ["muscle", filterCopy.goalMuscle]
+            ] as const
+          ).map(([k, label]) => (
+            <button
+              key={k}
+              type="button"
+              onClick={() => setGoalFilter(k)}
+              className={cn(
+                "min-h-[40px] rounded-full border px-3 py-2 text-xs font-medium transition",
+                goalFilter === k ? "border-cyan-400/40 bg-cyan-500/10 text-white" : "border-white/10 text-zinc-400 hover:border-white/20"
+              )}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs text-zinc-500">{filterCopy.filterLocation}:</span>
+          {(
+            [
+              ["all", filterCopy.all],
+              ["home", filterCopy.locHome],
+              ["gym", filterCopy.locGym]
+            ] as const
+          ).map(([k, label]) => (
+            <button
+              key={k}
+              type="button"
+              onClick={() => setLocFilter(k)}
+              className={cn(
+                "min-h-[40px] rounded-full border px-3 py-2 text-xs font-medium transition",
+                locFilter === k ? "border-cyan-400/40 bg-cyan-500/10 text-white" : "border-white/10 text-zinc-400 hover:border-white/20"
+              )}
+            >
+              {label}
+            </button>
+          ))}
+          {filterActive ? (
+            <button
+              type="button"
+              onClick={() => {
+                setGoalFilter("all");
+                setLocFilter("all");
+              }}
+              className="text-xs font-medium text-cyan-300 hover:text-cyan-200"
+            >
+              {filterCopy.clearFilters}
+            </button>
+          ) : null}
+        </div>
       </div>
+
+      <div className="mt-10 grid items-stretch gap-6 md:grid-cols-2 xl:grid-cols-4">
+        {filteredPrograms.map((program) => {
+          const m = programMeta(program);
+          const goalBadge = m.goal === "fat" ? filterCopy.goalFat : m.goal === "muscle" ? filterCopy.goalMuscle : undefined;
+          const locationBadge =
+            m.location === "home" ? filterCopy.locHome : m.location === "gym" ? filterCopy.locGym : undefined;
+          const isFree = !("isCustomUpload" in program && program.isCustomUpload) && Boolean(program.is_free);
+          const isPaidLocked = "isCustomUpload" in program && program.isCustomUpload ? true : !program.is_free;
+
+          return (
+            <ProgramCard
+              key={program.slug}
+              program={program}
+              href={`/${params.locale}/programs/${program.slug}`}
+              viewLabel={isFree ? copy.viewProgram : copy.getFullAccess}
+              trainingGoalBadge={goalBadge}
+              trainingLocationBadge={locationBadge}
+              freeBadgeLabel={
+                "isCustomUpload" in program && program.isCustomUpload ? undefined : program.is_free ? copy.freeBadge : undefined
+              }
+              showPaidLock={isPaidLocked}
+              premiumLockedHint={copy.premiumLockedHint}
+              priceLabel={
+                "isCustomUpload" in program && program.isCustomUpload
+                  ? formatProgramPrice(program.price, locale)
+                  : program.is_free
+                    ? copy.freePriceLabel
+                    : formatProgramPrice(getProgramBasePriceTry(program), locale)
+              }
+              tierLabel={
+                program.slug.includes("advanced") || program.slug.includes("hardcore")
+                  ? tierLabels.elite
+                  : program.slug.includes("pro") || program.slug.includes("shred")
+                    ? tierLabels.popular
+                    : program.slug.includes("starter") || program.slug.includes("beginner")
+                      ? tierLabels.fresh
+                      : tierLabels.signature
+              }
+            />
+          );
+        })}
+      </div>
+      {filterActive && filteredPrograms.length === 0 && allPrograms.length > 0 ? (
+        <div className="mt-6 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 text-sm text-zinc-500">
+          {filterCopy.noMatches}
+        </div>
+      ) : null}
       {allPrograms.length === 0 && (
         <div className="mt-6 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 text-sm text-zinc-500">
           {programManagementCopy.noProgramsPublished}
