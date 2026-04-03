@@ -4,7 +4,7 @@
 
 :root {
   color-scheme: dark;
-  --font-display: var(--font-sans);
+  /* --font-sans / --font-display set by next/font on <html> */
 
   /* Design system — source of truth */
   --color-bg: #09090b;
@@ -115,6 +115,17 @@ body {
 
 * {
   border-color: var(--tj-border);
+}
+
+/* Site header: keep primary nav on one row; scroll if needed (no visible scrollbar) */
+.tj-nav-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.tj-nav-scroll::-webkit-scrollbar {
+  display: none;
+  height: 0;
+  width: 0;
 }
 
 .glass-panel {

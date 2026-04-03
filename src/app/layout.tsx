@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 
 import { AuthProvider } from "@/components/auth-provider";
 import { TrackingScripts } from "@/components/marketing/tracking-scripts";
@@ -9,10 +9,16 @@ import { getSiteUrl } from "@/lib/site-url";
 import "../../sentry.client.config";
 import "./globals.css";
 
-const inter = Inter({
-  subsets: ["latin"],
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ["latin", "latin-ext"],
   display: "swap",
   variable: "--font-sans"
+});
+
+const outfit = Outfit({
+  subsets: ["latin", "latin-ext"],
+  display: "swap",
+  variable: "--font-display"
 });
 
 let siteUrl: string;
@@ -95,7 +101,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={`${plusJakarta.variable} ${outfit.variable}`}>
       <body className="font-sans antialiased">
         <BrandOrganizationJsonLd />
         <TrackingScripts />

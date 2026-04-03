@@ -454,101 +454,92 @@ export function SiteNav({ locale }: { locale: Locale }) {
       </>
     ) : null;
 
+  const navChromeBtn =
+    "inline-flex touch-manipulation items-center justify-center gap-2 rounded-full border border-white/[0.12] bg-white/[0.04] px-3.5 py-2 text-[13px] font-medium text-zinc-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition duration-200 hover:border-cyan-400/30 hover:bg-white/[0.08] hover:text-white";
+  const navGhostLink =
+    "hidden touch-manipulation items-center whitespace-nowrap rounded-lg px-2.5 py-2 text-[13px] font-medium text-zinc-500 transition hover:text-zinc-200 sm:inline-flex";
+
   return (
     <>
-      <div className="mx-auto flex h-14 max-w-[1200px] min-w-0 items-center px-6 sm:h-16 lg:px-8">
-        <Logo variant="icon" size="navbar" href={`/${locale}`} priority />
+      <div className="mx-auto flex min-h-[3.75rem] max-w-[1280px] min-w-0 items-center gap-2 px-4 py-2 sm:min-h-16 sm:gap-3 sm:px-6 lg:gap-4 lg:px-8">
+        <div className="flex shrink-0 items-center">
+          <Logo variant="icon" size="navbar" href={`/${locale}`} priority />
+        </div>
+
         <nav
-          className="ml-8 hidden min-w-0 flex-1 justify-center lg:flex"
+          className="ml-2 hidden min-w-0 flex-1 lg:ml-4 lg:block"
           aria-label={navCopy.navigation}
         >
-          <ul className="flex flex-wrap items-center justify-center gap-8">
-            {desktopNav.map((item) => {
-              const active = isActive(item.href);
-              return (
-                <li key={item.key}>
-                  <Link
-                    href={`/${locale}${item.href}`}
-                    className={cn(
-                      "relative py-2 text-sm font-medium text-[#A1A1AA] transition-colors duration-150 hover:text-white",
-                      active &&
-                        "text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:rounded-full after:bg-[#22D3EE]"
-                    )}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+          <div className="flex min-w-0 justify-center">
+            <ul className="tj-nav-scroll flex max-w-full flex-nowrap items-center justify-center gap-x-3 overflow-x-auto overflow-y-hidden py-1 sm:gap-x-4 xl:gap-x-6">
+              {desktopNav.map((item) => {
+                const active = isActive(item.href);
+                return (
+                  <li key={item.key} className="shrink-0">
+                    <Link
+                      href={`/${locale}${item.href}`}
+                      className={cn(
+                        "relative whitespace-nowrap py-2 font-display text-[13px] font-semibold tracking-[-0.02em] text-zinc-400 transition-colors duration-200 hover:text-white",
+                        active &&
+                          "text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:rounded-full after:bg-[#22D3EE] after:shadow-[0_0_12px_rgba(34,211,238,0.45)]"
+                      )}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </nav>
 
-        <button
-          type="button"
-          onClick={() => setSidebarOpen((prev) => !prev)}
-          className="ml-3 flex h-11 w-11 shrink-0 touch-manipulation items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.04] text-zinc-300 transition hover:border-white/[0.12] hover:bg-white/[0.06] hover:text-white lg:ml-4 lg:h-10 lg:w-auto lg:gap-2 lg:rounded-lg lg:px-3 lg:py-2"
-          aria-label={navCopy.menu}
-          aria-expanded={sidebarOpen}
-        >
-          <Menu className="h-[22px] w-[22px] text-cyan-300/90" strokeWidth={2} />
-          <span className="hidden text-sm lg:inline">{navCopy.menu}</span>
-        </button>
+        <div className="ms-auto flex min-w-0 shrink-0 flex-nowrap items-center gap-2 lg:gap-2.5">
+          <button
+            type="button"
+            onClick={() => setSidebarOpen((prev) => !prev)}
+            className={cn(navChromeBtn, "h-10 w-10 shrink-0 p-0 lg:h-10 lg:w-auto lg:px-3.5")}
+            aria-label={navCopy.menu}
+            aria-expanded={sidebarOpen}
+          >
+            <Menu className="h-[20px] w-[20px] text-cyan-300/90" strokeWidth={2} aria-hidden />
+            <span className="hidden lg:inline">{navCopy.menu}</span>
+          </button>
 
-        <div className="ml-auto flex min-w-0 flex-wrap items-center justify-end gap-x-1.5 gap-y-2 sm:flex-nowrap sm:gap-2 lg:gap-3">
-          <div className="hidden min-w-0 lg:block">
+          <div className="hidden lg:block">
             <LanguageSwitcher locale={locale} />
           </div>
           {loading ? (
             <div
-              className="hidden h-9 min-w-[10rem] shrink-0 animate-pulse rounded-full bg-white/10 sm:block"
+              className="hidden h-9 min-w-[9rem] shrink-0 animate-pulse rounded-full bg-white/10 sm:block"
               aria-hidden
             />
           ) : user ? (
             <>
-              <Link
-                href={`/${locale}/messages`}
-                className="hidden rounded-full border border-white/10 px-3 py-2 text-sm text-zinc-200 transition hover:border-cyan-400/25 hover:bg-white/[0.05] sm:inline-flex"
-              >
+              <Link href={`/${locale}/messages`} className={cn(navChromeBtn, "hidden sm:inline-flex")}>
                 {dict.nav.messages}
               </Link>
-              <Link
-                href={`/${locale}/profile/edit`}
-                className="hidden rounded-lg px-3 py-2 text-sm text-zinc-400 transition hover:text-white sm:inline-flex"
-              >
+              <Link href={`/${locale}/profile/edit`} className={navGhostLink}>
                 {dict.nav.profile}
               </Link>
-              <Link
-                href={`/${locale}/dashboard`}
-                className="touch-manipulation rounded-lg border border-white/[0.1] px-3 py-2.5 text-sm text-zinc-300 transition hover:border-white/[0.14] hover:bg-white/[0.04] sm:px-4 sm:py-2"
-              >
+              <Link href={`/${locale}/dashboard`} className={cn(navChromeBtn, "inline-flex max-w-[9rem] truncate sm:max-w-none")}>
                 {isAdmin ? dict.nav.admin : isCoach ? dict.nav.dashboard : dict.nav.progress}
               </Link>
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="hidden touch-manipulation rounded-lg px-4 py-2 text-sm text-zinc-500 transition hover:text-zinc-300 lg:inline-flex"
-              >
+              <button type="button" onClick={handleLogout} className={cn(navGhostLink, "hidden lg:inline-flex")}>
                 {dict.nav.logout}
               </button>
             </>
           ) : (
             <>
-              <Link
-                href={`/${locale}/profile/search`}
-                className="hidden rounded-lg px-3 py-2 text-sm text-zinc-400 transition hover:text-white sm:inline-flex"
-              >
+              <Link href={`/${locale}/profile/search`} className={navGhostLink}>
                 {social.peopleSearchTitle}
               </Link>
               <Link
                 href={`/${locale}/signup`}
-                className="lux-btn-primary hidden items-center rounded-full px-5 py-2.5 text-sm font-bold text-[#09090B] sm:inline-flex"
+                className="lux-btn-primary hidden items-center rounded-full px-5 py-2.5 text-[13px] font-bold text-[#09090B] sm:inline-flex"
               >
                 {navCopy.joinLabel}
               </Link>
-              <Link
-                href={`/${locale}/login`}
-                className="touch-manipulation max-w-full min-w-0 rounded-lg border border-white/[0.1] px-2.5 py-2.5 text-center text-xs leading-tight text-zinc-300 transition hover:border-white/[0.15] hover:bg-white/[0.04] sm:px-4 sm:text-sm sm:leading-normal"
-              >
+              <Link href={`/${locale}/login`} className={cn(navChromeBtn, "px-3 sm:px-3.5")}>
                 {navCopy.loginLabel}
               </Link>
             </>
