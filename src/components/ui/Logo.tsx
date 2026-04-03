@@ -5,14 +5,16 @@ import Link from "next/link";
 
 import { cn } from "@/lib/utils";
 
-const SRC = {
-  icon: "/logo/tj-icon.svg",
-  full: "/logo/tj-full.svg"
+/** Official lockup raster (transparent PNG) — source artwork, unchanged. */
+const LOCKUP = {
+  src: "/logo/tjfit-brand.png",
+  width: 348,
+  height: 506
 } as const;
 
-const WIDTH_HINT = {
-  icon: 100,
-  full: 144
+const SRC = {
+  icon: LOCKUP.src,
+  full: LOCKUP.src
 } as const;
 
 export type LogoVariant = "icon" | "full";
@@ -20,9 +22,7 @@ export type LogoSize = "navbar" | "navFull" | "mobile" | "hero" | "footer" | "au
 
 /** Pixel heights — width always auto, aspect preserved */
 const HEIGHT_PX: Record<LogoSize, number> = {
-  /** Icon-only mark (favicons, tight UI) */
   navbar: 32,
-  /** Header lockup: TJ monogram + FIT — readable on desktop */
   navFull: 46,
   mobile: 28,
   hero: 60,
@@ -46,7 +46,7 @@ export type LogoProps = {
 };
 
 /**
- * Single source of truth for TJFit SVG marks (`/public/logo/*`).
+ * Site logo: official TJ FIT lockup PNG (`/public/logo/tjfit-brand.png`).
  */
 export function Logo({
   variant = "icon",
@@ -62,14 +62,14 @@ export function Logo({
 }: LogoProps) {
   const src = SRC[variant];
   const h = HEIGHT_PX[size];
-  const wHint = WIDTH_HINT[variant];
+  const builtInGlow = src === LOCKUP.src;
 
   const img = (
     <Image
       src={src}
       alt={linked ? alt : ""}
-      width={wHint}
-      height={h}
+      width={LOCKUP.width}
+      height={LOCKUP.height}
       priority={priority}
       unoptimized
       draggable={false}
@@ -77,8 +77,8 @@ export function Logo({
       style={{
         height: h,
         width: "auto",
-        maxWidth: "none",
-        ...(glow ? { filter: "drop-shadow(0 0 14px rgba(34, 211, 238, 0.35))" } : {})
+        // Lockup already includes cyan glow in the artwork
+        ...(glow && !builtInGlow ? { filter: "drop-shadow(0 0 14px rgba(34, 211, 238, 0.35))" } : {})
       }}
       className={cn(
         "bg-transparent object-contain object-left [image-rendering:auto]",
