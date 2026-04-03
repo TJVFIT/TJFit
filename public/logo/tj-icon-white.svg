@@ -1,1 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none"><path fill="#fff" d="M2 5h11v2.5H8.5v17H7V7.5H2V5zm13 0h11v2.5h-4.5v10.5c0 3.8 2.2 6 5.8 6H28v2.5h-1.2c-5.2 0-8.3-3.2-8.3-9V8h-2.5V5z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 92" fill="none" aria-hidden="true">
+  <defs>
+    <filter id="tj-cyan-glow-w" x="-45%" y="-45%" width="190%" height="190%" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2.2" result="b"/>
+      <feFlood flood-color="#22d3ee" flood-opacity="0.95" result="f"/>
+      <feComposite in="f" in2="b" operator="in" result="g"/>
+      <feGaussianBlur in="g" stdDeviation="1.2" result="g2"/>
+      <feMerge>
+        <feMergeNode in="g2"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <path
+    filter="url(#tj-cyan-glow-w)"
+    fill="#ffffff"
+    d="M18 8h64v7H56v27h22L50 90 22 42h22V15H18V8z"
+  />
+</svg>

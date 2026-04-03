@@ -1,1 +1,27 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 118 32" fill="none"><path fill="#fff" d="M1 5h11v2.5H7.5v17H6V7.5H1V5zm13 0h11v2.5h-4.5v10.5c0 3.8 2.2 6 5.8 6H27v2.5h-1.2c-5.2 0-8.3-3.2-8.3-9V8h-2.5V5z"/><text x="30" y="21" fill="#fff" font-family="Outfit,Inter,system-ui,sans-serif" font-size="15" font-weight="700" letter-spacing=".14em">FIT</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 118" fill="none" aria-hidden="true">
+  <defs>
+    <filter id="tj-cyan-glow-full" x="-40%" y="-35%" width="180%" height="180%" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2.2" result="b"/>
+      <feFlood flood-color="#22d3ee" flood-opacity="0.95" result="f"/>
+      <feComposite in="f" in2="b" operator="in" result="g"/>
+      <feGaussianBlur in="g" stdDeviation="1.2" result="g2"/>
+      <feMerge>
+        <feMergeNode in="g2"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <g filter="url(#tj-cyan-glow-full)">
+    <path fill="#ffffff" d="M24 10h72v8H62v29h25L60 96 33 49h25V18H24v-8z"/>
+    <text
+      x="60"
+      y="112"
+      text-anchor="middle"
+      fill="#ffffff"
+      font-family="system-ui, -apple-system, 'Segoe UI', sans-serif"
+      font-size="15"
+      font-weight="800"
+      letter-spacing="0.38em"
+    >FIT</text>
+  </g>
+</svg>

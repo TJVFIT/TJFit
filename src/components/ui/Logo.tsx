@@ -11,8 +11,8 @@ const SRC = {
 } as const;
 
 const WIDTH_HINT = {
-  icon: 64,
-  full: 320
+  icon: 100,
+  full: 120
 } as const;
 
 export type LogoVariant = "icon" | "full";
