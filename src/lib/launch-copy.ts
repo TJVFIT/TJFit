@@ -149,6 +149,8 @@ type NavChromeCopy = {
   aiLabel: string;
   startFreeLabel: string;
   legalCenterLabel: string;
+  /** Primary nav overflow: Community, Subscription, Legal */
+  moreLabel: string;
 };
 
 /** Short blurbs (2–3 words) for sidebar rows; must stay tiny for layout. */
@@ -985,7 +987,8 @@ const navChromeCopy: Record<Locale, NavChromeCopy> = {
     joinLabel: "Join",
     aiLabel: "TJFIT AI",
     startFreeLabel: "Start free",
-    legalCenterLabel: "Legal & FAQ"
+    legalCenterLabel: "Legal & FAQ",
+    moreLabel: "More"
   },
   tr: {
     menu: "Menü",
@@ -1003,7 +1006,8 @@ const navChromeCopy: Record<Locale, NavChromeCopy> = {
     joinLabel: "Katıl",
     aiLabel: "TJFIT AI",
     startFreeLabel: "Ucretsiz basla",
-    legalCenterLabel: "Yasal ve SSS"
+    legalCenterLabel: "Yasal ve SSS",
+    moreLabel: "Daha fazla"
   },
   ar: {
     menu: "القائمة",
@@ -1021,7 +1025,8 @@ const navChromeCopy: Record<Locale, NavChromeCopy> = {
     joinLabel: "انضم",
     aiLabel: "TJFIT AI",
     startFreeLabel: "ابدأ مجاناً",
-    legalCenterLabel: "قانوني وأسئلة"
+    legalCenterLabel: "قانوني وأسئلة",
+    moreLabel: "المزيد"
   },
   es: {
     menu: "Menu",
@@ -1039,7 +1044,8 @@ const navChromeCopy: Record<Locale, NavChromeCopy> = {
     joinLabel: "Unirse",
     aiLabel: "TJFIT AI",
     startFreeLabel: "Empezar gratis",
-    legalCenterLabel: "Legal y FAQ"
+    legalCenterLabel: "Legal y FAQ",
+    moreLabel: "Mas"
   },
   fr: {
     menu: "Menu",
@@ -1057,7 +1063,8 @@ const navChromeCopy: Record<Locale, NavChromeCopy> = {
     joinLabel: "Rejoindre",
     aiLabel: "TJFIT AI",
     startFreeLabel: "Commencer gratuit",
-    legalCenterLabel: "Infos legales"
+    legalCenterLabel: "Infos legales",
+    moreLabel: "Plus"
   }
 };
 

@@ -8,7 +8,7 @@ export function ShellHeader({ locale }: { locale: Locale }) {
   const [elevated, setElevated] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setElevated(window.scrollY > 20);
+    const onScroll = () => setElevated(window.scrollY > 40);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -16,10 +16,10 @@ export function ShellHeader({ locale }: { locale: Locale }) {
 
   return (
     <header
-      className={`sticky top-0 z-50 border-b border-[var(--color-border-2)] pt-[env(safe-area-inset-top,0px)] backdrop-blur-[20px] backdrop-saturate-[180%] transition-[background-color,box-shadow,border-color] duration-300 ease-out ${
+      className={`sticky top-0 z-50 pt-[env(safe-area-inset-top,0px)] transition-[background-color,backdrop-filter,border-color] duration-300 ease-out ${
         elevated
-          ? "border-[rgba(255,255,255,0.08)] bg-[rgba(9,9,11,0.95)] shadow-[0_1px_0_0_rgba(255,255,255,0.06)]"
-          : "border-transparent bg-[rgba(9,9,11,0.85)]"
+          ? "border-b border-[rgba(255,255,255,0.06)] bg-[rgba(9,9,11,0.92)] backdrop-blur-[20px] backdrop-saturate-[180%]"
+          : "border-b border-transparent bg-[rgba(9,9,11,0)] backdrop-blur-none"
       }`}
     >
       <SiteNav locale={locale} />

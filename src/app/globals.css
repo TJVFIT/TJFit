@@ -694,3 +694,38 @@ body {
   @apply inline-flex items-center rounded-full border border-white/[0.1] bg-white/[0.05] px-3 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-zinc-400;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2) inset;
 }
+
+/* Free starters: no hover lift on touch; keep border/shadow calm */
+@media (hover: none) {
+  .free-starter-card:hover {
+    transform: none !important;
+    border-color: #1e2028 !important;
+    box-shadow: none !important;
+  }
+
+  .free-starter-card:hover::before {
+    opacity: 0 !important;
+  }
+
+  .fo-cta:hover {
+    transform: none !important;
+  }
+
+  .fo-cta:hover .fo-cta-arrow {
+    transform: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .free-starter-card,
+  .free-starter-card:hover,
+  .fo-cta,
+  .fo-cta:hover {
+    transform: none !important;
+  }
+
+  .free-starter-card::before,
+  .free-starter-card:hover::before {
+    transition: none !important;
+  }
+}

@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePathname, useRouter } from "next/navigation";
 import {
   BookOpen,
+  ChevronDown,
   ChevronRight,
   Crown,
   Dumbbell,
@@ -103,15 +104,95 @@ function usePrefersReducedMotionNav() {
   return reduce;
 }
 
-const desktopNavItems = (dict: ReturnType<typeof getDictionary>, nav: ReturnType<typeof getNavChromeCopy>) => [
-  { key: "start", href: "/start", label: nav.startFreeLabel },
-  { key: "programs", href: routeMap.programs, label: dict.nav.programs },
-  { key: "diets", href: routeMap.diets, label: dict.nav.diets },
-  { key: "coaches", href: routeMap.coaches, label: dict.nav.coaches },
-  { key: "community", href: routeMap.community, label: dict.nav.community },
-  { key: "membership", href: routeMap.membership, label: dict.nav.membership },
-  { key: "legal", href: "/legal", label: nav.legalCenterLabel }
-];
+type NavMoreItem = { key: string; href: string; label: string };
+
+function MoreNavDropdown({
+  locale,
+  items,
+  isActive,
+  moreLabel
+}: {
+  locale: Locale;
+  items: NavMoreItem[];
+  isActive: (href: string) => boolean;
+  moreLabel: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const anyActive = items.some((i) => isActive(i.href));
+
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e: MouseEvent) => {
+      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDoc);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  return (
+    <div ref={rootRef} className="relative shrink-0">
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-haspopup="menu"
+        onClick={() => setOpen((v) => !v)}
+        className={cn(
+          "relative inline-flex items-center gap-1 whitespace-nowrap py-2 text-[14px] font-medium transition-colors duration-150 ease-out",
+          anyActive ? "text-white" : "text-[#A1A1AA] hover:text-white",
+          anyActive &&
+            "after:absolute after:-bottom-[2px] after:left-0 after:right-0 after:h-0.5 after:rounded-sm after:bg-[#22D3EE]"
+        )}
+      >
+        {moreLabel}
+        <ChevronDown
+          className={cn("h-3.5 w-3.5 shrink-0 opacity-60 transition-transform duration-150", open && "rotate-180")}
+          aria-hidden
+        />
+      </button>
+      <div
+        className={cn(
+          "absolute end-0 top-[calc(100%+6px)] z-[120] min-w-[200px] rounded-[10px] border border-[#1E2028] bg-[#111215] p-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-[opacity,transform] duration-150 ease-out",
+          open
+            ? "pointer-events-auto translate-y-0 opacity-100"
+            : "pointer-events-none -translate-y-1 opacity-0"
+        )}
+      >
+        {items.map((item) => {
+          const active = isActive(item.href);
+          return (
+            <Link
+              key={item.key}
+              href={`/${locale}${item.href}`}
+              onClick={() => setOpen(false)}
+              className={cn(
+                "block rounded-md px-3 py-2 text-[13px] text-[#A1A1AA] transition-[background-color,color] duration-150",
+                "hover:bg-[rgba(255,255,255,0.05)] hover:text-white",
+                active && "font-semibold text-white"
+              )}
+            >
+              {item.label}
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+const navLinkClass = (active: boolean) =>
+  cn(
+    "relative whitespace-nowrap py-2 text-[14px] font-medium text-[#A1A1AA] transition-colors duration-150 ease-out hover:text-white",
+    active &&
+      "text-white after:absolute after:-bottom-[2px] after:left-0 after:right-0 after:h-0.5 after:rounded-sm after:bg-[#22D3EE]"
+  );
 
 export function SiteNav({ locale }: { locale: Locale }) {
   const { user, role, loading } = useAuth();
@@ -299,7 +380,18 @@ export function SiteNav({ locale }: { locale: Locale }) {
     return pathname === fullPath || pathname.startsWith(`${fullPath}/`);
   };
 
-  const desktopNav = desktopNavItems(dict, navCopy);
+  const primaryNavLinks: NavMoreItem[] = [
+    { key: "programs", href: routeMap.programs, label: dict.nav.programs },
+    { key: "diets", href: routeMap.diets, label: dict.nav.diets },
+    { key: "start", href: "/start", label: navCopy.startFreeLabel },
+    { key: "coaches", href: routeMap.coaches, label: dict.nav.coaches }
+  ];
+
+  const moreNavLinks: NavMoreItem[] = [
+    { key: "community", href: routeMap.community, label: dict.nav.community },
+    { key: "membership", href: routeMap.membership, label: dict.nav.membership },
+    { key: "legal", href: "/legal", label: navCopy.legalCenterLabel }
+  ];
 
   const drawerOpen = drawerEntered || reduceDrawerMotion;
   const panelOff =
@@ -434,7 +526,7 @@ export function SiteNav({ locale }: { locale: Locale }) {
                 <p className="mb-3 font-display text-[10px] font-semibold uppercase tracking-[0.22em] text-zinc-600">
                   {navCopy.language}
                 </p>
-                <LanguageSwitcher locale={locale} className="max-w-full" />
+                <LanguageSwitcher locale={locale} variant="drawer" className="max-w-full" />
               </div>
 
               {!loading && user ? (
@@ -457,94 +549,104 @@ export function SiteNav({ locale }: { locale: Locale }) {
 
   const navChromeBtn =
     "inline-flex touch-manipulation items-center justify-center gap-2 rounded-full border border-white/[0.12] bg-white/[0.04] px-3.5 py-2 text-[13px] font-medium text-zinc-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition duration-200 hover:border-cyan-400/30 hover:bg-white/[0.08] hover:text-white";
-  const navGhostLink =
-    "hidden touch-manipulation items-center whitespace-nowrap rounded-lg px-2.5 py-2 text-[13px] font-medium text-zinc-500 transition hover:text-zinc-200 sm:inline-flex";
+  const navAccountLink =
+    "hidden touch-manipulation items-center whitespace-nowrap rounded-lg px-2.5 py-2 text-[14px] font-medium text-[#A1A1AA] transition-colors duration-150 hover:text-white lg:inline-flex";
 
   return (
     <>
-      <div className="mx-auto flex min-h-[3.75rem] max-w-[1280px] min-w-0 items-center gap-2 px-4 py-2 sm:min-h-16 sm:gap-3 sm:px-6 lg:gap-4 lg:px-8">
+      <div className="mx-auto flex min-h-[3.75rem] max-w-[1280px] min-w-0 flex-nowrap items-center gap-2 px-4 py-2 sm:min-h-16 sm:gap-3 sm:px-6 lg:gap-4 lg:px-8">
         <div className="flex shrink-0 items-center">
           <Logo variant="full" size="navFull" href={`/${locale}`} priority glow />
         </div>
 
         <nav
-          className="ml-2 hidden min-w-0 flex-1 lg:ml-4 lg:block"
+          className="ml-2 hidden min-w-0 flex-1 lg:ml-4 lg:flex lg:justify-center"
           aria-label={navCopy.navigation}
         >
-          <div className="flex min-w-0 justify-center">
-            <ul className="tj-nav-scroll flex max-w-full flex-nowrap items-center justify-center gap-x-3 overflow-x-auto overflow-y-hidden py-1 sm:gap-x-4 xl:gap-x-6">
-              {desktopNav.map((item) => {
-                const active = isActive(item.href);
-                return (
-                  <li key={item.key} className="shrink-0">
-                    <Link
-                      href={`/${locale}${item.href}`}
-                      className={cn(
-                        "relative whitespace-nowrap py-2 font-display text-[13px] font-semibold tracking-[-0.02em] text-zinc-400 transition-colors duration-200 hover:text-white",
-                        active &&
-                          "text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:rounded-full after:bg-[#22D3EE] after:shadow-[0_0_12px_rgba(34,211,238,0.45)]"
-                      )}
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+          <ul className="flex max-w-full flex-none flex-nowrap items-center justify-center gap-6">
+            {primaryNavLinks.map((item) => {
+              const active = isActive(item.href);
+              return (
+                <li key={item.key} className="shrink-0">
+                  <Link href={`/${locale}${item.href}`} className={navLinkClass(active)}>
+                    {item.label}
+                  </Link>
+                </li>
+              );
+            })}
+            <li className="shrink-0">
+              <MoreNavDropdown
+                locale={locale}
+                items={moreNavLinks}
+                isActive={isActive}
+                moreLabel={navCopy.moreLabel}
+              />
+            </li>
+          </ul>
         </nav>
 
-        <div className="ms-auto flex min-w-0 shrink-0 flex-nowrap items-center gap-2 lg:gap-2.5">
+        <div className="ms-auto flex min-w-0 shrink-0 flex-nowrap items-center gap-2 lg:gap-3">
           <button
             type="button"
             onClick={() => setSidebarOpen((prev) => !prev)}
-            className={cn(navChromeBtn, "h-10 w-10 shrink-0 p-0 lg:h-10 lg:w-auto lg:px-3.5")}
+            className={cn(navChromeBtn, "h-10 w-10 shrink-0 p-0 lg:hidden")}
             aria-label={navCopy.menu}
             aria-expanded={sidebarOpen}
           >
             <Menu className="h-[20px] w-[20px] text-cyan-300/90" strokeWidth={2} aria-hidden />
-            <span className="hidden lg:inline">{navCopy.menu}</span>
           </button>
 
-          <div className="hidden lg:block">
-            <LanguageSwitcher locale={locale} />
-          </div>
           {loading ? (
-            <div
-              className="hidden h-9 min-w-[9rem] shrink-0 animate-pulse rounded-full bg-white/10 sm:block"
-              aria-hidden
-            />
+            <div className="hidden h-9 w-16 shrink-0 animate-pulse rounded-lg bg-white/10 lg:block" aria-hidden />
           ) : user ? (
             <>
-              <Link href={`/${locale}/messages`} className={cn(navChromeBtn, "hidden sm:inline-flex")}>
+              <Link href={`/${locale}/messages`} className={navAccountLink}>
                 {dict.nav.messages}
               </Link>
-              <Link href={`/${locale}/profile/edit`} className={navGhostLink}>
+              <Link href={`/${locale}/profile/edit`} className={navAccountLink}>
                 {dict.nav.profile}
               </Link>
-              <Link href={`/${locale}/dashboard`} className={cn(navChromeBtn, "inline-flex max-w-[9rem] truncate sm:max-w-none")}>
+              <Link href={`/${locale}/dashboard`} className={cn(navAccountLink, "max-w-[10rem] truncate")}>
                 {isAdmin ? dict.nav.admin : isCoach ? dict.nav.dashboard : dict.nav.progress}
               </Link>
-              <button type="button" onClick={handleLogout} className={cn(navGhostLink, "hidden lg:inline-flex")}>
-                {dict.nav.logout}
-              </button>
             </>
           ) : (
             <>
-              <Link href={`/${locale}/profile/search`} className={navGhostLink}>
-                {social.peopleSearchTitle}
-              </Link>
               <Link
                 href={`/${locale}/signup`}
-                className="lux-btn-primary hidden items-center rounded-full px-5 py-2.5 text-[13px] font-bold text-[#09090B] sm:inline-flex"
+                className="lux-btn-primary hidden items-center rounded-full px-5 py-2.5 text-[13px] font-bold text-[#09090B] lg:inline-flex"
               >
                 {navCopy.joinLabel}
               </Link>
-              <Link href={`/${locale}/login`} className={cn(navChromeBtn, "px-3 sm:px-3.5")}>
+              <Link href={`/${locale}/login`} className={cn(navChromeBtn, "hidden px-3 sm:px-3.5 lg:inline-flex")}>
                 {navCopy.loginLabel}
               </Link>
             </>
           )}
+
+          <div className="hidden lg:block">
+            <LanguageSwitcher locale={locale} />
+          </div>
+
+          {!loading && user ? (
+            <button type="button" onClick={handleLogout} className={navAccountLink}>
+              {dict.nav.logout}
+            </button>
+          ) : null}
+
+          {!loading && !user ? (
+            <>
+              <Link
+                href={`/${locale}/signup`}
+                className="lux-btn-primary inline-flex items-center rounded-full px-4 py-2 text-[13px] font-bold text-[#09090B] lg:hidden"
+              >
+                {navCopy.joinLabel}
+              </Link>
+              <Link href={`/${locale}/login`} className={cn(navChromeBtn, "inline-flex px-3 lg:hidden")}>
+                {navCopy.loginLabel}
+              </Link>
+            </>
+          ) : null}
         </div>
       </div>
 

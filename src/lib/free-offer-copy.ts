@@ -13,6 +13,9 @@ export type FreeOfferCopy = {
   signIn: string;
   programKind: string;
   dietKind: string;
+  trustLine1: string;
+  trustLine2: string;
+  trustLine3: string;
 };
 
 const c: Record<Locale, FreeOfferCopy> = {
@@ -26,7 +29,10 @@ const c: Record<Locale, FreeOfferCopy> = {
     signInHint: "Already have an account?",
     signIn: "Sign in →",
     programKind: "Training program",
-    dietKind: "Diet system"
+    dietKind: "Diet system",
+    trustLine1: "Structured 12-week system",
+    trustLine2: "Daily meals, macros, and recipes",
+    trustLine3: "Free to join. No credit card."
   },
   tr: {
     badge: "Ucretsiz baslangic",
@@ -38,7 +44,10 @@ const c: Record<Locale, FreeOfferCopy> = {
     signInHint: "Zaten hesabin var mi?",
     signIn: "Giris yap →",
     programKind: "Antrenman programi",
-    dietKind: "Diyet sistemi"
+    dietKind: "Diyet sistemi",
+    trustLine1: "Yapilandirilmis 12 haftalik sistem",
+    trustLine2: "Gunluk ogunler, makrolar ve tarifler",
+    trustLine3: "Katilim ucretsiz. Kredi karti yok."
   },
   ar: {
     badge: "بداية مجانية",
@@ -50,7 +59,10 @@ const c: Record<Locale, FreeOfferCopy> = {
     signInHint: "لديك حساب؟",
     signIn: "تسجيل الدخول ←",
     programKind: "برنامج تدريب",
-    dietKind: "نظام غذائي"
+    dietKind: "نظام غذائي",
+    trustLine1: "نظام منظم لمدة 12 أسبوعًا",
+    trustLine2: "وجبات يومية وماكروس ووصفات",
+    trustLine3: "مجاني. دون بطاقة ائتمان."
   },
   es: {
     badge: "Gratis",
@@ -62,7 +74,10 @@ const c: Record<Locale, FreeOfferCopy> = {
     signInHint: "¿Ya tienes cuenta?",
     signIn: "Iniciar sesión →",
     programKind: "Programa de entreno",
-    dietKind: "Plan de comidas"
+    dietKind: "Plan de comidas",
+    trustLine1: "Sistema estructurado de 12 semanas",
+    trustLine2: "Comidas diarias, macros y recetas",
+    trustLine3: "Gratis. Sin tarjeta."
   },
   fr: {
     badge: "Gratuit",
@@ -74,7 +89,10 @@ const c: Record<Locale, FreeOfferCopy> = {
     signInHint: "Déjà un compte ?",
     signIn: "Connexion →",
     programKind: "Programme training",
-    dietKind: "Système repas"
+    dietKind: "Système repas",
+    trustLine1: "Systeme structure sur 12 semaines",
+    trustLine2: "Repas quotidiens, macros et recettes",
+    trustLine3: "Gratuit. Sans carte bancaire."
   }
 };
 
