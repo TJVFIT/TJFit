@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 92" fill="none" aria-hidden="true">
   <defs>
-    <filter id="tj-cyan-glow-w" x="-45%" y="-45%" width="190%" height="190%" color-interpolation-filters="sRGB">
+    <filter id="tj-cyan-glow-w" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
       <feGaussianBlur in="SourceAlpha" stdDeviation="2.2" result="b"/>
       <feFlood flood-color="#22d3ee" flood-opacity="0.95" result="f"/>
       <feComposite in="f" in2="b" operator="in" result="g"/>
@@ -11,9 +11,8 @@
       </feMerge>
     </filter>
   </defs>
-  <path
-    filter="url(#tj-cyan-glow-w)"
-    fill="#ffffff"
-    d="M18 8h64v7H56v27h22L50 90 22 42h22V15H18V8z"
-  />
+  <g transform="translate(24,12)" filter="url(#tj-cyan-glow-w)" fill="#ffffff">
+    <path d="M0 0h26v8H17.75V68H8.25V8H0V0z"/>
+    <path d="M30 0H52V8H43V58H28V68H52v-60H30V0z"/>
+  </g>
 </svg>
