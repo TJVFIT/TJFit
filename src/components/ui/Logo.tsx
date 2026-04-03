@@ -12,15 +12,18 @@ const SRC = {
 
 const WIDTH_HINT = {
   icon: 100,
-  full: 120
+  full: 128
 } as const;
 
 export type LogoVariant = "icon" | "full";
-export type LogoSize = "navbar" | "mobile" | "hero" | "footer" | "auth" | "card" | "mini";
+export type LogoSize = "navbar" | "navFull" | "mobile" | "hero" | "footer" | "auth" | "card" | "mini";
 
 /** Pixel heights — width always auto, aspect preserved */
 const HEIGHT_PX: Record<LogoSize, number> = {
+  /** Icon-only mark (favicons, tight UI) */
   navbar: 32,
+  /** Header lockup: TJ monogram + FIT — readable on desktop */
+  navFull: 46,
   mobile: 28,
   hero: 60,
   footer: 40,
@@ -101,7 +104,7 @@ export function Logo({
         "inline-flex cursor-pointer items-center justify-center",
         "transition-opacity duration-150 ease-out hover:opacity-80",
         !suppressMinTouchTarget && "min-h-[44px] min-w-[44px]",
-        variant === "full" && !suppressMinTouchTarget && "min-w-[min(100%,12rem)]"
+        variant === "full" && !suppressMinTouchTarget && "px-0.5"
       )}
     >
       {img}

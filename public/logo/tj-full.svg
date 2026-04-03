@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 118" fill="none" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 118" fill="none" aria-hidden="true">
   <defs>
-    <filter id="tj-cyan-glow-full" x="-40%" y="-35%" width="180%" height="180%" color-interpolation-filters="sRGB">
+    <filter id="tj-cyan-glow-full" x="-45%" y="-45%" width="190%" height="190%" color-interpolation-filters="sRGB">
       <feGaussianBlur in="SourceAlpha" stdDeviation="2.2" result="b"/>
       <feFlood flood-color="#22d3ee" flood-opacity="0.95" result="f"/>
       <feComposite in="f" in2="b" operator="in" result="g"/>
@@ -11,17 +11,22 @@
       </feMerge>
     </filter>
   </defs>
-  <g filter="url(#tj-cyan-glow-full)">
-    <path fill="#ffffff" d="M24 10h72v8H62v29h25L60 96 33 49h25V18H24v-8z"/>
-    <text
-      x="60"
-      y="112"
-      text-anchor="middle"
+  <!-- Same geometry as tj-icon.svg; centered in wider canvas. Glow on path only — “FIT” stays sharp. -->
+  <g transform="translate(14, 0)">
+    <path
+      filter="url(#tj-cyan-glow-full)"
       fill="#ffffff"
-      font-family="system-ui, -apple-system, 'Segoe UI', sans-serif"
-      font-size="15"
-      font-weight="800"
-      letter-spacing="0.38em"
-    >FIT</text>
+      d="M18 8h64v7H56v27h22L50 90 22 42h22V15H18V8z"
+    />
   </g>
+  <text
+    x="64"
+    y="112"
+    text-anchor="middle"
+    fill="#ffffff"
+    font-family="system-ui, -apple-system, 'Segoe UI', sans-serif"
+    font-size="16"
+    font-weight="800"
+    letter-spacing="0.28em"
+  >FIT</text>
 </svg>
