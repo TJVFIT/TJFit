@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>OG export template — TJFit</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #111;
+        font-family: Inter, "Segoe UI", system-ui, sans-serif;
+      }
+      .note {
+        max-width: 1200px;
+        margin: 1rem auto;
+        padding: 0 1rem;
+        color: #a1a1aa;
+        font-size: 13px;
+      }
+      /* Exact 1200×630 composition — export via browser or design tool */
+      .og {
+        width: 1200px;
+        height: 630px;
+        margin: 1rem auto;
+        position: relative;
+        background: #0a0a0b;
+        overflow: hidden;
+      }
+      .og::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse 70% 55% at 50% 36%, rgba(34, 211, 238, 0.12), transparent 55%);
+        pointer-events: none;
+      }
+      .og img {
+        position: absolute;
+        left: 50%;
+        top: 42%;
+        transform: translate(-50%, -50%);
+        height: 200px;
+        width: auto;
+      }
+      .og .tagline {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 56px;
+        text-align: center;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <p class="note">
+      Open this file locally, ensure <code>logo/tj-full.svg</code> loads, then capture at 1200×630px or run
+      <code>npm run logo:rasters</code> to regenerate <code>og-image.png</code>.
+    </p>
+    <div class="og" role="img" aria-label="TJFit Open Graph preview">
+      <img src="/logo/tj-full.svg" alt="" width="400" height="120" />
+      <p class="tagline">Transform · Perform · Dominate</p>
+    </div>
+  </body>
+</html>

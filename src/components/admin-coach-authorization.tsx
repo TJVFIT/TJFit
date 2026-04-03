@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { AsyncButton } from "@/components/ui/AsyncButton";
 
 type Coach = {
   id: string;
@@ -29,8 +30,7 @@ export function AdminCoachAuthorization() {
     fetchCoaches();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const authorizeCoach = async () => {
     setError(null);
     setSuccess(null);
     setLoading(true);
@@ -60,7 +60,13 @@ export function AdminCoachAuthorization() {
         Enter email and password to create a coach account. They can log in and access the coach dashboard.
       </p>
 
-      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          void authorizeCoach();
+        }}
+        className="mt-6 space-y-4"
+      >
         <input
           className="input"
           type="email"
@@ -80,13 +86,17 @@ export function AdminCoachAuthorization() {
         />
         {error && <p className="text-sm text-red-400">{error}</p>}
         {success && <p className="text-sm text-green-400">{success}</p>}
-        <button
-          type="submit"
-          disabled={loading}
-          className="gradient-button w-full rounded-full px-5 py-3 text-sm font-medium text-white disabled:opacity-60"
+        <AsyncButton
+          type="button"
+          variant="primary"
+          fullWidth
+          loading={loading}
+          loadingText="Authorizing..."
+          className="gradient-button rounded-full px-5 py-3 text-sm font-medium text-white"
+          onClick={() => authorizeCoach()}
         >
-          {loading ? "Authorizing..." : "Authorize as coach"}
-        </button>
+          Authorize as coach
+        </AsyncButton>
       </form>
 
       <div className="mt-6">

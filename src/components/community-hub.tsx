@@ -421,7 +421,7 @@ export function CommunityHub({
                         </span>
                         <span className="flex items-center gap-2">
                           {post.is_pinned ? (
-                            <span className="rounded-full border border-amber-300/50 bg-amber-400/15 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-amber-200">
+                            <span className="rounded border border-violet-400/25 bg-violet-400/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-violet-200">
                               {copy.pinned}
                             </span>
                           ) : null}
@@ -488,7 +488,7 @@ export function CommunityHub({
                             type="button"
                             onClick={() => togglePin(post.id, !post.is_pinned)}
                             disabled={actionLoadingId === post.id}
-                            className="rounded-full border border-amber-300/35 px-3 py-1.5 text-xs text-amber-200 transition hover:bg-amber-400/10 disabled:opacity-60"
+                            className="rounded-full border border-cyan-400/30 px-3 py-1.5 text-xs text-cyan-200 transition hover:bg-cyan-400/10 disabled:opacity-60"
                           >
                             {actionLoadingId === post.id
                               ? copy.working

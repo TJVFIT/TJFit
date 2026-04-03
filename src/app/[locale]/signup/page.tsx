@@ -1,15 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { useState } from "react";
-import { getSupabaseBrowserClient } from "@/lib/supabase";
-import { isLocale, type Locale } from "@/lib/i18n";
-import { BILLING_PROVIDER, PRIVACY_VERSION, TERMS_VERSION } from "@/lib/legal";
+import { notFound, useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
+import { AsyncButton } from "@/components/ui/AsyncButton";
 import { Logo } from "@/components/ui/Logo";
 import { getAuthCopy } from "@/lib/launch-copy";
+import { isLocale, type Locale } from "@/lib/i18n";
+import { BILLING_PROVIDER, PRIVACY_VERSION, TERMS_VERSION } from "@/lib/legal";
+import { sanitizeRedirectParam } from "@/lib/safe-redirect";
+import { getSupabaseBrowserClient } from "@/lib/supabase";
 
-export default function SignupPage({ params }: { params: { locale: string } }) {
+function SignupForm({ params }: { params: { locale: string } }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,9 +28,16 @@ export default function SignupPage({ params }: { params: { locale: string } }) {
 
   const locale = params.locale as Locale;
   const copy = getAuthCopy(locale);
+  const redirectTarget =
+    sanitizeRedirectParam(searchParams.get("redirect"), locale) ??
+    sanitizeRedirectParam(searchParams.get("next"), locale);
+  const loginHref =
+    redirectTarget !== null
+      ? `/${locale}/login?redirect=${encodeURIComponent(redirectTarget)}`
+      : `/${locale}/login`;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const submitSignup = async () => {
+    if (loading) return;
     setError(null);
     setSuccess(null);
     setLoading(true);
@@ -53,7 +64,7 @@ export default function SignupPage({ params }: { params: { locale: string } }) {
       }
 
       const now = new Date().toISOString();
-      const { error: signUpError } = await supabase.auth.signUp({
+      const { data, error: signUpError } = await supabase.auth.signUp({
         email: email.trim(),
         password,
         options: {
@@ -79,6 +90,12 @@ export default function SignupPage({ params }: { params: { locale: string } }) {
         return;
       }
 
+      if (data.session && redirectTarget) {
+        router.push(redirectTarget);
+        router.refresh();
+        return;
+      }
+
       setSuccess(copy.signupSuccess);
       setEmail("");
       setPassword("");
@@ -100,11 +117,15 @@ export default function SignupPage({ params }: { params: { locale: string } }) {
         </div>
         <span className="lux-badge inline-flex">{copy.signupBadge}</span>
         <h1 className="tj-page-title mt-6">{copy.signupTitle}</h1>
-        <p className="tj-prose-muted mt-3">
-          {copy.signupSubtitle}
-        </p>
+        <p className="tj-prose-muted mt-3">{copy.signupSubtitle}</p>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            void submitSignup();
+          }}
+          className="mt-8 space-y-5"
+        >
           <input
             className="input"
             type="email"
@@ -131,7 +152,7 @@ export default function SignupPage({ params }: { params: { locale: string } }) {
             required
             minLength={8}
           />
-          <label className="flex items-start gap-3 rounded-2xl border border-white/[0.1] bg-white/[0.04] p-4 text-sm leading-relaxed text-zinc-300 transition-colors hover:border-white/[0.14]">
+          <label className="flex items-start gap-3 rounded-[10px] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 text-sm leading-relaxed text-[var(--color-text-secondary)] transition-colors hover:border-[rgba(255,255,255,0.12)]">
             <input
               type="checkbox"
               checked={acceptedTerms}
@@ -141,7 +162,10 @@ export default function SignupPage({ params }: { params: { locale: string } }) {
             />
             <span>
               {copy.agreePrefix}{" "}
-              <Link href={`/${params.locale}/terms-and-conditions`} className="text-white underline underline-offset-4 hover:text-zinc-200">
+              <Link
+                href={`/${params.locale}/terms-and-conditions`}
+                className="text-white underline underline-offset-4 hover:text-zinc-200"
+              >
                 {copy.termsLink}
               </Link>
               ,{" "}
@@ -151,28 +175,56 @@ export default function SignupPage({ params }: { params: { locale: string } }) {
               , {BILLING_PROVIDER} {copy.billingSuffix}
             </span>
           </label>
-          {error ? <div className="form-error-banner">{error}</div> : null}
+          {error ? <div className="tj-api-error-block">{error}</div> : null}
           {success ? (
-            <div className="rounded-xl border border-emerald-500/25 bg-emerald-500/[0.08] px-4 py-3 text-sm text-emerald-200/95">
+            <div className="rounded-[10px] border border-emerald-500/25 bg-emerald-500/[0.08] px-4 py-3 text-sm text-emerald-200/95">
               {success}
+              {redirectTarget ? (
+                <p className="mt-3 text-xs text-emerald-200/80">
+                  <Link href={redirectTarget} className="underline underline-offset-4">
+                    Continue to your program →
+                  </Link>
+                </p>
+              ) : null}
             </div>
           ) : null}
-          <button
-            type="submit"
-            disabled={loading}
-            className="gradient-button min-h-[52px] w-full touch-manipulation rounded-xl px-5 py-3 text-base font-medium text-[#05080a] transition hover:brightness-105 disabled:opacity-60 sm:min-h-0 sm:text-sm"
+          <AsyncButton
+            type="button"
+            fullWidth
+            loading={loading}
+            loadingText={copy.creatingAccount}
+            className="gradient-button flex min-h-[48px] w-full touch-manipulation items-center justify-center gap-2 rounded-full px-5 py-3 text-base font-semibold text-[#09090B] transition hover:brightness-105"
+            onClick={() => submitSignup()}
           >
-            {loading ? copy.creatingAccount : copy.createAccountButton}
-          </button>
+            {copy.createAccountButton}
+          </AsyncButton>
         </form>
 
-        <p className="mt-6 text-center text-sm text-zinc-400">
+        <p className="mt-4 text-center text-xs text-[var(--color-text-muted)]">Free to join. No credit card required.</p>
+
+        <p className="mt-6 text-center text-sm text-[var(--color-text-secondary)]">
           {copy.alreadyHaveAccount}{" "}
-          <Link href={`/${params.locale}/login`} className="text-white underline underline-offset-4 hover:text-zinc-200">
+          <Link href={loginHref} className="text-white underline underline-offset-4 transition-colors duration-150 hover:text-white">
             {copy.logIn}
           </Link>
         </p>
       </div>
     </div>
+  );
+}
+
+function SignupFallback() {
+  return (
+    <div className="mx-auto flex min-h-[80vh] max-w-md items-center px-4 py-16">
+      <div className="tj-skeleton tj-shimmer h-[480px] w-full rounded-[14px]" />
+    </div>
+  );
+}
+
+export default function SignupPage({ params }: { params: { locale: string } }) {
+  return (
+    <Suspense fallback={<SignupFallback />}>
+      <SignupForm params={params} />
+    </Suspense>
   );
 }

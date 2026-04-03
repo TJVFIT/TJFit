@@ -46,7 +46,7 @@ export function ProtectedRoute({ children, locale, requireAdmin }: Props) {
   if (!user && sessionCheckFailed) {
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center px-4 py-12 text-center">
-        <p className="max-w-md text-sm text-amber-200/90">{authCopy.sessionCheckFailed}</p>
+        <p className="max-w-md text-sm text-[#A1A1AA]">{authCopy.sessionCheckFailed}</p>
         <button
           type="button"
           className="mt-6 rounded-full border border-white/15 bg-white/[0.06] px-6 py-2.5 text-sm font-medium text-zinc-100 transition hover:border-cyan-400/35"

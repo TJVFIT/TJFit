@@ -43,7 +43,7 @@ export default function CoachesPage({ params }: { params: { locale: string } }) 
           aria-disabled="true"
           aria-label={`${copy.comingSoonLabel}: ${copy.ctaBecomeCoach}`}
         >
-          <span className="rounded-full border border-amber-400/30 bg-amber-500/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-amber-200/90">
+          <span className="rounded border border-cyan-400/25 bg-cyan-400/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-cyan-200/90">
             {copy.comingSoonLabel}
           </span>
           <span className="text-sm font-medium text-zinc-500">{copy.ctaBecomeCoach}</span>

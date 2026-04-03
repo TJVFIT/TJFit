@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { useAuth } from "@/components/auth-provider";
 import type { Locale } from "@/lib/i18n";
+import { AsyncButton } from "@/components/ui/AsyncButton";
 import { getMessagesCopy } from "@/lib/feature-copy";
 import { getSocialCopy } from "@/lib/social-copy";
 import { decryptText, encryptText, unwrapConversationKeyForSelf } from "@/lib/chat-crypto";
@@ -67,14 +68,14 @@ function bubbleTime(iso: string, locale: Locale) {
 function MessageSkeleton() {
   return (
     <div className="space-y-4 px-2 py-4" aria-busy="true">
-      <div className="flex justify-start">
-        <div className="h-10 w-[72%] animate-pulse rounded-2xl rounded-bl-md bg-white/[0.06]" />
+      <div className="flex justify-end">
+        <div className="tj-skeleton tj-shimmer h-11 w-[52%] max-w-[min(60%,18rem)] rounded-2xl rounded-br-md" />
       </div>
       <div className="flex justify-end">
-        <div className="h-10 w-[64%] animate-pulse rounded-2xl rounded-br-md bg-cyan-500/20" />
+        <div className="tj-skeleton tj-shimmer h-14 w-[44%] max-w-[min(60%,18rem)] rounded-2xl rounded-br-md" />
       </div>
       <div className="flex justify-start">
-        <div className="h-12 w-[55%] animate-pulse rounded-2xl rounded-bl-md bg-white/[0.05]" />
+        <div className="tj-skeleton tj-shimmer h-12 w-[48%] max-w-[min(60%,18rem)] rounded-2xl rounded-bl-md" />
       </div>
     </div>
   );
@@ -416,7 +417,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
       </header>
 
       {peerLoadFailed && !fetchError ? (
-        <div className="shrink-0 border-b border-amber-500/20 bg-amber-500/5 px-3 py-2 text-center text-[11px] text-amber-100/90 sm:px-4">
+        <div className="shrink-0 border-b border-cyan-500/20 bg-cyan-500/5 px-3 py-2 text-center text-[11px] text-cyan-100/90 sm:px-4">
           {s.threadParticipantUnknown}
           <button
             type="button"
@@ -448,7 +449,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
           <MessageSkeleton />
         ) : sorted.length === 0 ? (
           <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
-            <p className="max-w-xs text-sm text-zinc-500">{t.threadEmpty}</p>
+            <p className="max-w-xs text-sm italic text-[var(--color-text-muted)]">{t.threadEmpty}</p>
             <p className="mt-2 text-[11px] text-zinc-600">{t.encrypted}</p>
           </div>
         ) : (
@@ -517,19 +518,18 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
             }}
             aria-label={t.messageInputPlaceholder}
           />
-          <button
+          <AsyncButton
             type="button"
-            disabled={!showComposer || sending || !messageText.trim()}
-            className="flex h-12 w-12 shrink-0 touch-manipulation items-center justify-center rounded-xl bg-cyan-500 text-[#05080a] transition hover:bg-cyan-400 disabled:opacity-35 sm:h-11 sm:w-11"
+            variant="primary"
+            size="sm"
+            loading={sending}
+            disabled={!showComposer || !messageText.trim()}
+            className="flex h-12 w-12 shrink-0 touch-manipulation !min-h-[48px] !min-w-[48px] !rounded-xl !bg-cyan-500 !px-0 !text-[#05080a] !shadow-none hover:!scale-100 hover:!bg-cyan-400 hover:!opacity-100 sm:h-11 sm:w-11 sm:!min-h-[44px] sm:!min-w-[44px]"
             aria-label={t.send}
             onClick={() => void sendText()}
           >
-            {sending ? (
-              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-            ) : (
-              <span className="text-lg leading-none">➤</span>
-            )}
-          </button>
+            <span className="text-lg leading-none">➤</span>
+          </AsyncButton>
         </div>
       </div>
     </div>

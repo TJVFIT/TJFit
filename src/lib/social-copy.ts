@@ -9,6 +9,7 @@ export type SocialCopy = {
   searchStartPrompt: string;
   searchStartDetail: string;
   noResults: string;
+  noResultsSub: string;
   loading: string;
   errorGeneric: string;
   openProfile: string;
@@ -66,6 +67,11 @@ export type SocialCopy = {
   chatSessionUnavailable: string;
   threadParticipantUnknown: string;
   profileReloadHint: string;
+  profileActivityTitle: string;
+  profileActivityEmptyHeading: string;
+  profileActivityEmptySub: string;
+  profileActivityBrowse: string;
+  profileGuestNothingPublic: string;
 };
 
 const socialCopy: Record<Locale, SocialCopy> = {
@@ -78,7 +84,8 @@ const socialCopy: Record<Locale, SocialCopy> = {
       "Only members who turned on search can appear. Private accounts never show bios in this list — messaging follows their message settings.",
     searchStartPrompt: "Search the community",
     searchStartDetail: "Enter part of a username or display name. Results update as you type.",
-    noResults: "No one matches that search.",
+    noResults: "No results",
+    noResultsSub: "Try a different name or username.",
     loading: "Loading…",
     errorGeneric: "Something went wrong. Try again.",
     openProfile: "Profile",
@@ -135,7 +142,12 @@ const socialCopy: Record<Locale, SocialCopy> = {
     profileChooseUsernameHint: "Choose a username so your public profile link works and others can find you.",
     chatSessionUnavailable: "Messaging could not start in this session. Refresh the page or check your connection.",
     threadParticipantUnknown: "Could not load this chat participant.",
-    profileReloadHint: "We could not load your profile. Check your connection and try again."
+    profileReloadHint: "We could not load your profile. Check your connection and try again.",
+    profileActivityTitle: "Activity",
+    profileActivityEmptyHeading: "Nothing here yet",
+    profileActivityEmptySub: "Start a program to begin tracking your journey.",
+    profileActivityBrowse: "Browse Programs →",
+    profileGuestNothingPublic: "This user hasn't shared anything publicly yet."
   },
   tr: {
     peopleSearchTitle: "Kişileri bul",
@@ -148,7 +160,8 @@ const socialCopy: Record<Locale, SocialCopy> = {
     searchStartPrompt: "Toplulukta ara",
     searchStartDetail:
       "Kullanıcı adı veya görünen adın bir kısmını yazın; sonuçlar yazdıkça güncellenir.",
-    noResults: "Eşleşen kişi yok.",
+    noResults: "Sonuç yok",
+    noResultsSub: "Farklı bir ad veya kullanıcı adı deneyin.",
     loading: "Yükleniyor…",
     errorGeneric: "Bir sorun oldu. Tekrar deneyin.",
     openProfile: "Profil",
@@ -207,7 +220,12 @@ const socialCopy: Record<Locale, SocialCopy> = {
     chatSessionUnavailable:
       "Mesajlaşma bu oturumda başlamadı. Sayfayı yenileyin veya bağlantıyı kontrol edin.",
     threadParticipantUnknown: "Sohbet kişisi yüklenemedi.",
-    profileReloadHint: "Profilin yüklenemedi. Bağlantıyı kontrol edip tekrar deneyin."
+    profileReloadHint: "Profilin yüklenemedi. Bağlantıyı kontrol edip tekrar deneyin.",
+    profileActivityTitle: "Aktivite",
+    profileActivityEmptyHeading: "Henüz bir şey yok",
+    profileActivityEmptySub: "Yolculuğunu takip etmek için bir programa başla.",
+    profileActivityBrowse: "Programlara göz at →",
+    profileGuestNothingPublic: "Bu kullanıcı henüz herkese açık bir şey paylaşmadı."
   },
   ar: {
     peopleSearchTitle: "الأعضاء",
@@ -218,7 +236,8 @@ const socialCopy: Record<Locale, SocialCopy> = {
       "يظهر من فعّل الظهور في البحث فقط. لا نعرض نبذة الحسابات الخاصة هنا؛ المراسلة وفق إعدادات الطرف الآخر.",
     searchStartPrompt: "ابحث في المجتمع",
     searchStartDetail: "اكتب جزءاً من اسم المستخدم أو الاسم الظاهر. تتحدث النتائج أثناء الكتابة.",
-    noResults: "لا توجد نتائج.",
+    noResults: "لا توجد نتائج",
+    noResultsSub: "جرّب اسماً أو اسم مستخدم مختلفاً.",
     loading: "جار التحميل…",
     errorGeneric: "حدث خطأ. حاول مرة أخرى.",
     openProfile: "الملف",
@@ -275,7 +294,12 @@ const socialCopy: Record<Locale, SocialCopy> = {
     profileChooseUsernameHint: "اختر اسماً مستخدماً ليعمل رابط ملفك العلني.",
     chatSessionUnavailable: "تعذر بدء المراسلة في هذه الجلسة. حدّث الصفحة أو تحقق من الاتصال.",
     threadParticipantUnknown: "تعذر تحميل بيانات المشارك.",
-    profileReloadHint: "تعذر تحميل ملفك. تحقق من الاتصال وحاول مرة أخرى."
+    profileReloadHint: "تعذر تحميل ملفك. تحقق من الاتصال وحاول مرة أخرى.",
+    profileActivityTitle: "النشاط",
+    profileActivityEmptyHeading: "لا شيء هنا بعد",
+    profileActivityEmptySub: "ابدأ برنامجاً لتتبع رحلتك.",
+    profileActivityBrowse: "تصفح البرامج ←",
+    profileGuestNothingPublic: "لم يشارك هذا المستخدم أي شيء علناً بعد."
   },
   es: {
     peopleSearchTitle: "Buscar personas",
@@ -286,7 +310,8 @@ const socialCopy: Record<Locale, SocialCopy> = {
       "Solo aparecen quienes activaron la busqueda. Las cuentas privadas no muestran bio aqui; los mensajes respetan sus ajustes.",
     searchStartPrompt: "Busca en la comunidad",
     searchStartDetail: "Escribe parte del usuario o nombre visible. Los resultados se actualizan al escribir.",
-    noResults: "Sin resultados.",
+    noResults: "Sin resultados",
+    noResultsSub: "Prueba otro nombre o usuario.",
     loading: "Cargando…",
     errorGeneric: "Algo fallo. Reintenta.",
     openProfile: "Perfil",
@@ -343,7 +368,12 @@ const socialCopy: Record<Locale, SocialCopy> = {
     profileChooseUsernameHint: "Elige un usuario para que tu enlace publico funcione.",
     chatSessionUnavailable: "No se pudo iniciar el chat en esta sesion. Recarga o revisa la conexion.",
     threadParticipantUnknown: "No se pudo cargar el participante del chat.",
-    profileReloadHint: "No se pudo cargar tu perfil. Revisa la conexion e intentalo de nuevo."
+    profileReloadHint: "No se pudo cargar tu perfil. Revisa la conexion e intentalo de nuevo.",
+    profileActivityTitle: "Actividad",
+    profileActivityEmptyHeading: "Nada por aqui aun",
+    profileActivityEmptySub: "Empieza un programa para seguir tu avance.",
+    profileActivityBrowse: "Ver programas →",
+    profileGuestNothingPublic: "Este usuario aun no ha compartido nada en publico."
   },
   fr: {
     peopleSearchTitle: "Trouver des personnes",
@@ -354,7 +384,8 @@ const socialCopy: Record<Locale, SocialCopy> = {
       "Seuls les membres ayant active la recherche apparaissent. Pas de bio pour les comptes prives ici; la messagerie suit leurs reglages.",
     searchStartPrompt: "Parcourir la communaute",
     searchStartDetail: "Saisissez une partie du pseudo ou du nom affiche. Les resultats se mettent a jour en direct.",
-    noResults: "Aucun resultat.",
+    noResults: "Aucun resultat",
+    noResultsSub: "Essayez un autre nom ou pseudo.",
     loading: "Chargement…",
     errorGeneric: "Une erreur est survenue.",
     openProfile: "Profil",
@@ -411,7 +442,12 @@ const socialCopy: Record<Locale, SocialCopy> = {
     profileChooseUsernameHint: "Choisissez un pseudo pour activer votre lien de profil public.",
     chatSessionUnavailable: "Impossible de demarrer la messagerie sur cette session. Actualisez ou verifiez la connexion.",
     threadParticipantUnknown: "Impossible de charger ce participant.",
-    profileReloadHint: "Profil introuvable. Verifiez la connexion et reessayez."
+    profileReloadHint: "Profil introuvable. Verifiez la connexion et reessayez.",
+    profileActivityTitle: "Activite",
+    profileActivityEmptyHeading: "Rien pour le moment",
+    profileActivityEmptySub: "Demarrez un programme pour suivre votre parcours.",
+    profileActivityBrowse: "Voir les programmes →",
+    profileGuestNothingPublic: "Cet utilisateur n'a encore rien partage publiquement."
   }
 };
 

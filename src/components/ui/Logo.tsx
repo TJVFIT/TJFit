@@ -10,46 +10,47 @@ const SRC = {
   full: "/logo/tj-full.svg"
 } as const;
 
-const INTRINSIC = {
-  icon: { width: 64, height: 64 },
-  full: { width: 236, height: 64 }
+const WIDTH_HINT = {
+  icon: 64,
+  full: 320
 } as const;
 
-const SIZE_CLASS = {
-  navbar: "h-8 w-auto max-w-none",
-  mobile: "h-7 w-auto max-w-none",
-  hero: "h-14 w-auto max-w-none",
-  footer: "h-10 w-auto max-w-none",
-  auth: "h-11 w-auto max-w-none",
-  card: "h-5 w-auto max-w-none"
-} as const;
+export type LogoVariant = "icon" | "full";
+export type LogoSize = "navbar" | "mobile" | "hero" | "footer" | "auth" | "card" | "mini";
+
+/** Pixel heights — width always auto, aspect preserved */
+const HEIGHT_PX: Record<LogoSize, number> = {
+  navbar: 32,
+  mobile: 28,
+  hero: 60,
+  footer: 40,
+  auth: 44,
+  card: 20,
+  mini: 16
+};
 
 export type LogoProps = {
-  variant?: "icon" | "full";
-  size?: keyof typeof SIZE_CLASS;
+  variant?: LogoVariant;
+  size?: LogoSize;
   href?: string;
-  className?: string;
   glow?: boolean;
-  /** Navbar only — eager load */
+  className?: string;
   priority?: boolean;
   alt?: string;
-  /** Fires after the home link is activated (e.g. close mobile drawer). */
   onNavigate?: () => void;
-  /** Inline chips / pills where 44px target would break layout; keep default in nav, auth, footer. */
   suppressMinTouchTarget?: boolean;
-  /** When false, render the mark only (e.g. inside another `Link`). */
   linked?: boolean;
 };
 
 /**
- * Canonical TJFit logo entry points. Uses SVG marks under /public/logo; height-only sizing (width auto).
+ * Single source of truth for TJFit SVG marks (`/public/logo/*`).
  */
 export function Logo({
   variant = "icon",
   size = "navbar",
   href = "/",
-  className,
   glow = false,
+  className,
   priority = false,
   alt = "TJFit",
   onNavigate,
@@ -57,20 +58,27 @@ export function Logo({
   linked = true
 }: LogoProps) {
   const src = SRC[variant];
-  const dim = INTRINSIC[variant];
+  const h = HEIGHT_PX[size];
+  const wHint = WIDTH_HINT[variant];
 
   const img = (
     <Image
       src={src}
       alt={linked ? alt : ""}
-      width={dim.width}
-      height={dim.height}
+      width={wHint}
+      height={h}
       priority={priority}
+      unoptimized
       draggable={false}
+      role="img"
+      style={{
+        height: h,
+        width: "auto",
+        maxWidth: "none",
+        ...(glow ? { filter: "drop-shadow(0 0 14px rgba(34, 211, 238, 0.35))" } : {})
+      }}
       className={cn(
         "bg-transparent object-contain object-left [image-rendering:auto]",
-        SIZE_CLASS[size],
-        glow && "logo-glow",
         className
       )}
     />
@@ -88,13 +96,13 @@ export function Logo({
     <Link
       href={href}
       onClick={onNavigate}
+      aria-label="TJFit — Go to homepage"
       className={cn(
         "inline-flex cursor-pointer items-center justify-center",
-        !suppressMinTouchTarget && "min-h-11 min-w-11",
         "transition-opacity duration-150 ease-out hover:opacity-80",
+        !suppressMinTouchTarget && "min-h-[44px] min-w-[44px]",
         variant === "full" && !suppressMinTouchTarget && "min-w-[min(100%,12rem)]"
       )}
-      aria-label={alt === "TJFit" ? "TJFit home" : alt}
     >
       {img}
     </Link>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { AsyncButton } from "@/components/ui/AsyncButton";
 import { useAuth } from "@/components/auth-provider";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { ensureUserKeyPair } from "@/lib/chat-keyring";
@@ -140,14 +141,17 @@ export function MessagesInboxHome({ locale }: { locale: Locale }) {
             spellCheck={false}
             aria-label={s.newChatPlaceholder}
           />
-          <button
+          <AsyncButton
             type="button"
-            disabled={busy || !usernameInput.trim()}
-            className="min-h-[48px] shrink-0 rounded-lg bg-cyan-500 px-5 text-sm font-medium text-[#05080a] transition hover:bg-cyan-400 disabled:opacity-40"
-            onClick={() => void resolveUsernameAndStart()}
+            variant="primary"
+            loading={busy}
+            loadingText={s.saving}
+            disabled={!usernameInput.trim()}
+            className="min-h-[48px] shrink-0 !rounded-lg !bg-cyan-500 !px-5 !text-sm !font-medium !text-[#05080a] hover:!bg-cyan-400"
+            onClick={() => resolveUsernameAndStart()}
           >
-            {busy ? s.saving : s.newChatButton}
-          </button>
+            {s.newChatButton}
+          </AsyncButton>
         </div>
         {error ? <p className="mt-3 text-sm text-red-400">{error}</p> : null}
       </div>

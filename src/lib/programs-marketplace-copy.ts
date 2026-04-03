@@ -12,6 +12,9 @@ export type ProgramsMarketplaceCopy = {
   clearFilters: string;
   noMatches: string;
   browseDietsLink: string;
+  emptyFilterTitle: string;
+  emptyFilterSub: string;
+  footerCta: string;
 };
 
 const c: Record<Locale, ProgramsMarketplaceCopy> = {
@@ -26,7 +29,10 @@ const c: Record<Locale, ProgramsMarketplaceCopy> = {
     locGym: "Gym",
     clearFilters: "Clear",
     noMatches: "No programs match these filters.",
-    browseDietsLink: "Browse diets"
+    browseDietsLink: "Browse diets",
+    emptyFilterTitle: "No programs match your filter",
+    emptyFilterSub: "Try adjusting your filters or browse all programs.",
+    footerCta: "Not sure which program? Start with our free one →"
   },
   tr: {
     filterLabel: "Filtreler",
@@ -39,7 +45,10 @@ const c: Record<Locale, ProgramsMarketplaceCopy> = {
     locGym: "Salon",
     clearFilters: "Temizle",
     noMatches: "Bu filtrelere uyan program yok.",
-    browseDietsLink: "Diyetlere git"
+    browseDietsLink: "Diyetlere git",
+    emptyFilterTitle: "Filtreye uyan program yok",
+    emptyFilterSub: "Filtreleri degistirin veya tum programlara goz atin.",
+    footerCta: "Emin degil misiniz? Ucretsiz programla baslayin →"
   },
   ar: {
     filterLabel: "عوامل التصفية",
@@ -52,7 +61,10 @@ const c: Record<Locale, ProgramsMarketplaceCopy> = {
     locGym: "جيم",
     clearFilters: "مسح",
     noMatches: "لا توجد نتائج.",
-    browseDietsLink: "الأنظمة الغذائية"
+    browseDietsLink: "الأنظمة الغذائية",
+    emptyFilterTitle: "لا توجد برامج مطابقة",
+    emptyFilterSub: "جرّب تغيير الفلاتر أو تصفح كل البرامج.",
+    footerCta: "لست متأكداً؟ ابدأ بالمجاني ←"
   },
   es: {
     filterLabel: "Filtros",
@@ -65,7 +77,10 @@ const c: Record<Locale, ProgramsMarketplaceCopy> = {
     locGym: "Gimnasio",
     clearFilters: "Limpiar",
     noMatches: "Sin resultados.",
-    browseDietsLink: "Ver dietas"
+    browseDietsLink: "Ver dietas",
+    emptyFilterTitle: "Ningún programa coincide",
+    emptyFilterSub: "Ajusta los filtros o mira todos los programas.",
+    footerCta: "¿No sabes cuál? Empieza con el gratuito →"
   },
   fr: {
     filterLabel: "Filtres",
@@ -78,7 +93,10 @@ const c: Record<Locale, ProgramsMarketplaceCopy> = {
     locGym: "Salle",
     clearFilters: "Reinitialiser",
     noMatches: "Aucun resultat.",
-    browseDietsLink: "Voir les regimes"
+    browseDietsLink: "Voir les regimes",
+    emptyFilterTitle: "Aucun programme ne correspond",
+    emptyFilterSub: "Modifiez les filtres ou parcourez tous les programmes.",
+    footerCta: "Pas sûr ? Commencez par le programme gratuit →"
   }
 };
 

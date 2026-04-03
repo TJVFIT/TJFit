@@ -6,6 +6,8 @@
  */
 export const BRAND = {
   logoIcon: "/logo/tj-icon.svg",
+  /** Same mark as icon; optional alias for tooling */
+  logoIconWhite: "/logo/tj-icon-white.svg",
   logoFull: "/logo/tj-full.svg",
   /** Square monogram @192 — structured data / PWA */
   logoIcon192: "/icons/icon-192.png",

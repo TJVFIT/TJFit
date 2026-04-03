@@ -61,34 +61,43 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
   const programManagementCopy = getProgramManagementCopy(locale);
   const { role } = useAuth();
   const [uploadedPrograms, setUploadedPrograms] = useState<CustomProgramCard[]>([]);
+  const [customCatalogReady, setCustomCatalogReady] = useState(false);
   const [goalFilter, setGoalFilter] = useState<GoalFilter>("all");
   const [locFilter, setLocFilter] = useState<LocFilter>("all");
 
   const canUpload = role === "admin" || role === "coach";
 
   useEffect(() => {
+    let cancelled = false;
     const loadCustomPrograms = async () => {
-      const res = await fetch(`/api/programs/custom?locale=${locale}`, { credentials: "include" });
-      if (!res.ok) return;
-      const data = await res.json();
-      const mapped = (data.programs ?? []).map((item: any) => ({
-        slug: item.slug,
-        title: item.title,
-        category: item.category,
-        difficulty: item.difficulty ?? "Beginner to Advanced",
-        duration: item.duration ?? "12 weeks",
-        price: item.price_try ?? 400,
-        description: item.description,
-        coachSlug: "tjfit-team",
-        requiredEquipment: [],
-        previewImages: [programManagementCopy.uploadedProgramPreview],
-        assets: [{ type: "pdf-guide" as const, label: programManagementCopy.uploadedPdfAsset }],
-        coachCommissionRate: 0,
-        isCustomUpload: true
-      })) as CustomProgramCard[];
-      setUploadedPrograms(mapped);
+      try {
+        const res = await fetch(`/api/programs/custom?locale=${locale}`, { credentials: "include" });
+        if (!res.ok) return;
+        const data = await res.json();
+        const mapped = (data.programs ?? []).map((item: any) => ({
+          slug: item.slug,
+          title: item.title,
+          category: item.category,
+          difficulty: item.difficulty ?? "Beginner to Advanced",
+          duration: item.duration ?? "12 weeks",
+          price: item.price_try ?? 400,
+          description: item.description,
+          coachSlug: "tjfit-team",
+          requiredEquipment: [],
+          previewImages: [programManagementCopy.uploadedProgramPreview],
+          assets: [{ type: "pdf-guide" as const, label: programManagementCopy.uploadedPdfAsset }],
+          coachCommissionRate: 0,
+          isCustomUpload: true
+        })) as CustomProgramCard[];
+        if (!cancelled) setUploadedPrograms(mapped);
+      } finally {
+        if (!cancelled) setCustomCatalogReady(true);
+      }
     };
     loadCustomPrograms();
+    return () => {
+      cancelled = true;
+    };
   }, [locale, programManagementCopy.uploadedPdfAsset, programManagementCopy.uploadedProgramPreview]);
 
   const allPrograms = useMemo(() => {
@@ -190,7 +199,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
               type="button"
               onClick={() => setGoalFilter(k)}
               className={cn(
-                "min-h-[40px] rounded-full border px-3 py-2 text-xs font-medium transition",
+                "min-h-[44px] rounded-full border px-3 py-2 text-xs font-medium transition duration-200",
                 goalFilter === k ? "border-cyan-400/40 bg-cyan-500/10 text-white" : "border-white/10 text-zinc-400 hover:border-white/20"
               )}
             >
@@ -212,7 +221,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
               type="button"
               onClick={() => setLocFilter(k)}
               className={cn(
-                "min-h-[40px] rounded-full border px-3 py-2 text-xs font-medium transition",
+                "min-h-[44px] rounded-full border px-3 py-2 text-xs font-medium transition duration-200",
                 locFilter === k ? "border-cyan-400/40 bg-cyan-500/10 text-white" : "border-white/10 text-zinc-400 hover:border-white/20"
               )}
             >
@@ -234,6 +243,22 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
         </div>
       </div>
 
+      {!customCatalogReady ? (
+        <div className="mt-10 grid items-stretch gap-6 md:grid-cols-2 xl:grid-cols-4" aria-busy="true" aria-label="Loading programs">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div
+              key={`sk-${i}`}
+              className="flex min-h-[320px] flex-col rounded-[14px] border border-[var(--color-border)] bg-[var(--color-surface)] p-6"
+            >
+              <div className="tj-skeleton aspect-video w-full rounded-[10px]" />
+              <div className="tj-skeleton mt-4 h-4 w-2/3" />
+              <div className="tj-skeleton mt-3 h-3 w-full" />
+              <div className="tj-skeleton mt-2 h-3 w-5/6" />
+              <div className="tj-skeleton mt-auto h-11 w-full rounded-full" />
+            </div>
+          ))}
+        </div>
+      ) : (
       <div className="mt-10 grid items-stretch gap-6 md:grid-cols-2 xl:grid-cols-4">
         {filteredPrograms.map((program) => {
           const m = programMeta(program);
@@ -276,16 +301,47 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
           );
         })}
       </div>
-      {filterActive && filteredPrograms.length === 0 && allPrograms.length > 0 ? (
-        <div className="mt-6 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 text-sm text-zinc-500">
-          {filterCopy.noMatches}
+      )}
+      {customCatalogReady && filterActive && filteredPrograms.length === 0 && allPrograms.length > 0 ? (
+        <div className="tj-empty-state mt-10">
+          <div className="mx-auto max-w-[300px]">
+            <p className="text-[32px] text-[var(--color-text-muted)]" aria-hidden>
+              ⌕
+            </p>
+            <h3 className="mt-4 text-lg font-semibold text-[var(--color-text-secondary)]">{filterCopy.emptyFilterTitle}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-muted)]">{filterCopy.emptyFilterSub}</p>
+            <button
+              type="button"
+              onClick={() => {
+                setGoalFilter("all");
+                setLocFilter("all");
+              }}
+              className="mt-6 inline-flex min-h-[44px] items-center justify-center rounded-[10px] border border-[var(--color-border)] px-5 py-2 text-sm font-medium text-white transition-colors duration-150 hover:border-[rgba(255,255,255,0.12)] hover:bg-[rgba(255,255,255,0.04)]"
+            >
+              {filterCopy.clearFilters}
+            </button>
+          </div>
         </div>
       ) : null}
-      {allPrograms.length === 0 && (
-        <div className="mt-6 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 text-sm text-zinc-500">
-          {programManagementCopy.noProgramsPublished}
+      {customCatalogReady && allPrograms.length === 0 ? (
+        <div className="tj-empty-state mt-10">
+          <p className="text-sm text-[var(--color-text-muted)]">{programManagementCopy.noProgramsPublished}</p>
         </div>
-      )}
+      ) : null}
+
+      {customCatalogReady ? (
+        <>
+          <p className="mt-10 text-center text-xs text-[var(--color-text-muted)]">{copy.trustProgramsGrid}</p>
+          <div className="mt-12 border-t border-[var(--color-border)] pt-12 text-center">
+            <Link
+              href={`/${params.locale}/programs/${programs.find((p) => p.is_free && p.category.toLowerCase() !== "nutrition")?.slug ?? "home-fat-loss-starter"}`}
+              className="inline-flex min-h-[48px] items-center justify-center text-sm font-semibold text-[#22D3EE] transition-colors duration-150 hover:text-white"
+            >
+              {filterCopy.footerCta}
+            </Link>
+          </div>
+        </>
+      ) : null}
     </PremiumPageShell>
   );
 }

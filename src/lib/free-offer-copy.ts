@@ -4,45 +4,77 @@ export type FreeOfferCopy = {
   badge: string;
   title: string;
   subtitle: string;
+  /** @deprecated kept for older layouts */
   ctaStart: string;
+  /** @deprecated kept for older layouts */
   ctaPrograms: string;
+  getFreeAccess: string;
+  signInHint: string;
+  signIn: string;
+  programKind: string;
+  dietKind: string;
 };
 
 const c: Record<Locale, FreeOfferCopy> = {
   en: {
     badge: "Free starters",
-    title: "2 free programs + 2 free diets",
-    subtitle: "Professional starter plans. Sign in to unlock full workouts and meals—upgrade when you are ready for the 12-week system.",
-    ctaStart: "Start free quiz",
-    ctaPrograms: "Browse library"
+    title: "Start Free. Upgrade When Ready.",
+    subtitle: "Two full programs and two diet plans — yours at no cost.",
+    ctaStart: "Start free",
+    ctaPrograms: "Browse programs",
+    getFreeAccess: "Get Free Access →",
+    signInHint: "Already have an account?",
+    signIn: "Sign in →",
+    programKind: "Training program",
+    dietKind: "Diet system"
   },
   tr: {
     badge: "Ucretsiz baslangic",
-    title: "2 ucretsiz program + 2 diyet",
-    subtitle: "Profesyonel baslangic planlari. Tam icerik icin giris yapin — 12 haftalik sistem icin yukseltin.",
+    title: "Ucretsiz basla. Hazir olunca yukselt.",
+    subtitle: "Iki tam program ve iki diyet plani — ucretsiz.",
     ctaStart: "Ucretsiz basla",
-    ctaPrograms: "Kutuphane"
+    ctaPrograms: "Programlara git",
+    getFreeAccess: "Ucretsiz erisim →",
+    signInHint: "Zaten hesabin var mi?",
+    signIn: "Giris yap →",
+    programKind: "Antrenman programi",
+    dietKind: "Diyet sistemi"
   },
   ar: {
     badge: "بداية مجانية",
-    title: "برنامجان + نظاما غذاء مجاناً",
-    subtitle: "خطط احترافية للبداية. سجّل الدخول للمحتوى الكامل.",
+    title: "ابدأ مجاناً. ترقّ عند الجاهزية.",
+    subtitle: "برنامجان تدريبيان كاملان ونظاما غذاء — دون تكلفة.",
     ctaStart: "ابدأ مجاناً",
-    ctaPrograms: "المكتبة"
+    ctaPrograms: "تصفح البرامج",
+    getFreeAccess: "احصل على وصول مجاني ←",
+    signInHint: "لديك حساب؟",
+    signIn: "تسجيل الدخول ←",
+    programKind: "برنامج تدريب",
+    dietKind: "نظام غذائي"
   },
   es: {
     badge: "Gratis",
-    title: "2 programas + 2 dietas gratis",
-    subtitle: "Planes profesionales de inicio. Crea cuenta para desbloquear.",
+    title: "Empieza gratis. Mejora cuando quieras.",
+    subtitle: "Dos programas completos y dos dietas — sin coste.",
     ctaStart: "Empezar gratis",
-    ctaPrograms: "Biblioteca"
+    ctaPrograms: "Ver programas",
+    getFreeAccess: "Acceso gratis →",
+    signInHint: "¿Ya tienes cuenta?",
+    signIn: "Iniciar sesión →",
+    programKind: "Programa de entreno",
+    dietKind: "Plan de comidas"
   },
   fr: {
     badge: "Gratuit",
-    title: "2 programmes + 2 regimes gratuits",
-    subtitle: "Plans pro pour demarrer. Connectez-vous pour le detail.",
+    title: "Commencez gratuitement. Passez au complet quand vous voulez.",
+    subtitle: "Deux programmes complets et deux plans repas — sans frais.",
     ctaStart: "Commencer",
-    ctaPrograms: "Bibliotheque"
+    ctaPrograms: "Voir les programmes",
+    getFreeAccess: "Accès gratuit →",
+    signInHint: "Déjà un compte ?",
+    signIn: "Connexion →",
+    programKind: "Programme training",
+    dietKind: "Système repas"
   }
 };
 

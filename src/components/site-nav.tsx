@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePathname, useRouter } from "next/navigation";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   BookOpen,
   ChevronRight,
@@ -87,6 +86,23 @@ function drawerIcon(mapKey: string): LucideIcon {
   return DRAWER_ICONS[mapKey] ?? Globe2;
 }
 
+function usePrefersReducedMotionNav() {
+  const [reduce, setReduce] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") return;
+    try {
+      const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const apply = () => setReduce(mq.matches);
+      apply();
+      mq.addEventListener("change", apply);
+      return () => mq.removeEventListener("change", apply);
+    } catch {
+      return;
+    }
+  }, []);
+  return reduce;
+}
+
 const desktopNavItems = (dict: ReturnType<typeof getDictionary>, nav: ReturnType<typeof getNavChromeCopy>) => [
   { key: "start", href: "/start", label: nav.startFreeLabel },
   { key: "programs", href: routeMap.programs, label: dict.nav.programs },
@@ -104,7 +120,9 @@ export function SiteNav({ locale }: { locale: Locale }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [mounted, setMounted] = useState(false);
-  const reduceDrawerMotion = useReducedMotion();
+  const [drawerMounted, setDrawerMounted] = useState(false);
+  const [drawerEntered, setDrawerEntered] = useState(false);
+  const reduceDrawerMotion = usePrefersReducedMotionNav();
   const direction = getDirection(locale);
   const isRtl = direction === "rtl";
 
@@ -142,6 +160,25 @@ export function SiteNav({ locale }: { locale: Locale }) {
       window.removeEventListener("keydown", onKey);
     };
   }, [sidebarOpen]);
+
+  useEffect(() => {
+    if (sidebarOpen) {
+      setDrawerMounted(true);
+      if (reduceDrawerMotion) {
+        setDrawerEntered(true);
+        return;
+      }
+      setDrawerEntered(false);
+      const id = requestAnimationFrame(() => {
+        requestAnimationFrame(() => setDrawerEntered(true));
+      });
+      return () => cancelAnimationFrame(id);
+    }
+    setDrawerEntered(false);
+    const ms = reduceDrawerMotion ? 0 : 300;
+    const t = window.setTimeout(() => setDrawerMounted(false), ms);
+    return () => clearTimeout(t);
+  }, [sidebarOpen, reduceDrawerMotion]);
 
   const isAdmin = role === "admin";
   const isCoach = role === "coach";
@@ -264,59 +301,54 @@ export function SiteNav({ locale }: { locale: Locale }) {
 
   const desktopNav = desktopNavItems(dict, navCopy);
 
-  const drawerTransition = reduceDrawerMotion
-    ? { duration: 0 }
-    : { duration: 0.34, ease: [0.32, 0.72, 0, 1] as const };
+  const drawerOpen = drawerEntered || reduceDrawerMotion;
+  const panelOff =
+    isRtl === true
+      ? drawerOpen
+        ? "translate-x-0"
+        : "-translate-x-full"
+      : drawerOpen
+        ? "translate-x-0"
+        : "translate-x-full";
 
   const drawer =
-    mounted ? (
-      <AnimatePresence>
-        {sidebarOpen ? (
-          <motion.button
-            type="button"
-            key="site-nav-drawer-overlay"
-            aria-label={navCopy.closeSidebarOverlay}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={reduceDrawerMotion ? { duration: 0 } : { duration: 0.22, ease: [0.32, 0.72, 0, 1] }}
-            className="fixed inset-0 z-[200] bg-[#030304]/72 backdrop-blur-md backdrop-saturate-150"
-            style={{ isolation: "isolate" }}
-            onClick={() => setSidebarOpen(false)}
-          />
-        ) : null}
-        {sidebarOpen ? (
-            <motion.aside
-              key="site-nav-drawer-panel"
-              role="dialog"
-              aria-modal="true"
-              aria-label={navCopy.navigation}
-              dir={direction}
-              initial={{ x: isRtl ? "100%" : "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: isRtl ? "100%" : "-100%" }}
-              transition={drawerTransition}
-              className={cn(
-                "nav-drawer-panel fixed inset-y-0 z-[201] flex h-[100dvh] w-[min(100%,23.5rem)] max-w-[min(100vw,26rem)] flex-col overflow-hidden shadow-[16px_0_64px_-20px_rgba(0,0,0,0.85),inset_0_1px_0_0_rgba(255,255,255,0.06)] sm:w-[min(100%,27rem)] lg:max-w-[min(100vw,28rem)]",
-                "bg-gradient-to-b from-[#141518] via-[#0c0c0e] to-[#080809] backdrop-blur-2xl backdrop-saturate-150",
-                isRtl
-                  ? "end-0 border-s border-white/[0.09] ps-[max(0.75rem,env(safe-area-inset-left,0px))] pe-[env(safe-area-inset-right,0px)]"
-                  : "start-0 border-e border-white/[0.09] ps-[env(safe-area-inset-left,0px)] pe-[max(0.75rem,env(safe-area-inset-right,0px))]"
-              )}
-            >
-              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_90%_50%_at_0%_-10%,rgba(34,211,238,0.09),transparent_55%)] opacity-90" aria-hidden />
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/25 to-transparent" aria-hidden />
+    mounted && drawerMounted ? (
+      <>
+        <button
+          type="button"
+          aria-label={navCopy.closeSidebarOverlay}
+          className={cn(
+            "fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm transition-opacity duration-300",
+            drawerEntered ? "opacity-100" : "opacity-0"
+          )}
+          style={{ isolation: "isolate" }}
+          onClick={() => setSidebarOpen(false)}
+        />
+        <aside
+          role="dialog"
+          aria-modal="true"
+          aria-label={navCopy.navigation}
+          dir={direction}
+          className={cn(
+            "nav-drawer-panel fixed inset-y-0 z-[201] flex h-[100dvh] w-full max-w-md flex-col overflow-hidden border-[var(--color-border)] bg-[var(--color-surface)] shadow-[16px_0_64px_-20px_rgba(0,0,0,0.85)] backdrop-blur-xl backdrop-saturate-150",
+            isRtl
+              ? "start-0 border-e ps-[max(0.75rem,env(safe-area-inset-left,0px))] pe-[env(safe-area-inset-right,0px)]"
+              : "end-0 border-s ps-[env(safe-area-inset-left,0px)] pe-[max(0.75rem,env(safe-area-inset-right,0px))]",
+            panelOff
+          )}
+        >
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_90%_50%_at_50%_-10%,rgba(34,211,238,0.08),transparent_55%)] opacity-90" aria-hidden />
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[var(--gradient-divider)] opacity-80" aria-hidden />
 
-              <div className="relative border-b border-white/[0.07] px-5 pb-6 pt-6 sm:px-6 sm:pb-7">
-                <motion.button
+              <div className="relative border-b border-[var(--color-border-2)] px-5 pb-6 pt-6 sm:px-6 sm:pb-7">
+                <button
                   type="button"
                   onClick={() => setSidebarOpen(false)}
-                  whileTap={reduceDrawerMotion ? undefined : { scale: 0.94 }}
                   className="absolute end-4 top-6 z-10 flex h-12 w-12 touch-manipulation items-center justify-center rounded-full border border-white/[0.12] bg-white/[0.06] text-zinc-300 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_10px_36px_-14px_rgba(0,0,0,0.65)] transition-colors hover:border-cyan-400/30 hover:bg-white/[0.1] hover:text-white sm:end-5 sm:top-6"
                   aria-label={navCopy.close}
                 >
                   <X className="h-[22px] w-[22px]" strokeWidth={1.75} />
-                </motion.button>
+                </button>
                 <div className="flex justify-center pe-14">
                   <Logo
                     variant="icon"
@@ -332,7 +364,7 @@ export function SiteNav({ locale }: { locale: Locale }) {
               </div>
 
               <nav
-                className="relative min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-4 pb-4 pt-2 sm:px-5"
+                className="relative min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-4 pb-4 pt-6 sm:px-5"
                 aria-label={navCopy.navigation}
               >
                 {navSections.map((section, sIdx) => (
@@ -341,26 +373,16 @@ export function SiteNav({ locale }: { locale: Locale }) {
                       {section.title}
                     </h2>
                     <ul className="space-y-1.5" role="list">
-                      {section.items.map((item, iIdx) => {
-                        const globalIdx =
-                          navSections.slice(0, sIdx).reduce((acc, s) => acc + s.items.length, 0) + iIdx;
+                      {section.items.map((item) => {
                         const active = isActive(item.href);
                         const Icon = item.Icon;
                         return (
-                          <motion.li
-                            key={`${item.key}-${item.href}`}
-                            initial={reduceDrawerMotion ? false : { opacity: 0, x: isRtl ? 14 : -14 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{
-                              ...drawerTransition,
-                              delay: reduceDrawerMotion ? 0 : Math.min(globalIdx * 0.028, 0.32)
-                            }}
-                          >
+                          <li key={`${item.key}-${item.href}`}>
                             <Link
                               href={`/${locale}${item.href}`}
                               onClick={() => setSidebarOpen(false)}
                               className={cn(
-                                "group relative flex min-h-[3.75rem] w-full items-center gap-3.5 rounded-2xl px-3 py-3 text-start transition duration-200",
+                                "group relative flex min-h-[52px] w-full items-center gap-3.5 rounded-[14px] px-3 py-3 text-start transition duration-200",
                                 "hover:bg-white/[0.05]",
                                 active &&
                                   "bg-gradient-to-r from-cyan-500/[0.14] via-cyan-500/[0.06] to-transparent shadow-[inset_0_0_0_1px_rgba(34,211,238,0.18)]"
@@ -399,7 +421,7 @@ export function SiteNav({ locale }: { locale: Locale }) {
                                 </span>
                               </span>
                             </Link>
-                          </motion.li>
+                          </li>
                         );
                       })}
                     </ul>
@@ -428,29 +450,30 @@ export function SiteNav({ locale }: { locale: Locale }) {
                   </button>
                 </div>
               ) : null}
-            </motion.aside>
-        ) : null}
-      </AnimatePresence>
+        </aside>
+      </>
     ) : null;
 
   return (
     <>
-      <div className="mx-auto flex h-14 max-w-7xl min-w-0 items-center px-4 sm:h-16 sm:px-6">
+      <div className="mx-auto flex h-14 max-w-[1200px] min-w-0 items-center px-6 sm:h-16 lg:px-8">
         <Logo variant="icon" size="navbar" href={`/${locale}`} priority />
         <nav
           className="ml-8 hidden min-w-0 flex-1 justify-center lg:flex"
           aria-label={navCopy.navigation}
         >
-          <ul className="flex flex-wrap items-center justify-center gap-1 sm:gap-2">
+          <ul className="flex flex-wrap items-center justify-center gap-8">
             {desktopNav.map((item) => {
               const active = isActive(item.href);
               return (
                 <li key={item.key}>
                   <Link
                     href={`/${locale}${item.href}`}
-                    className={`px-3 py-2 text-sm transition duration-200 ${
-                      active ? "font-medium text-white" : "text-zinc-500 hover:text-zinc-200"
-                    }`}
+                    className={cn(
+                      "relative py-2 text-sm font-medium text-[#A1A1AA] transition-colors duration-150 hover:text-white",
+                      active &&
+                        "text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:rounded-full after:bg-[#22D3EE]"
+                    )}
                   >
                     {item.label}
                   </Link>
@@ -518,7 +541,7 @@ export function SiteNav({ locale }: { locale: Locale }) {
               </Link>
               <Link
                 href={`/${locale}/signup`}
-                className="hidden rounded-lg bg-cyan-400 px-4 py-2.5 text-sm font-medium text-[#05080a] transition hover:bg-cyan-300 sm:inline-flex"
+                className="lux-btn-primary hidden items-center rounded-full px-5 py-2.5 text-sm font-bold text-[#09090B] sm:inline-flex"
               >
                 {navCopy.joinLabel}
               </Link>

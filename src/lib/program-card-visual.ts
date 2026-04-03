@@ -7,28 +7,28 @@ export type ProgramVisual = {
   tag: string;
 };
 
-/** Category-driven hero gradient + accent for premium program cards */
+/** Category-driven hero gradient — cool palette only (cyan / violet / teal), no warm tones */
 export function getProgramVisual(program: Pick<Program, "category">): ProgramVisual {
   const category = program.category.toLowerCase();
   if (category.includes("nutrition")) {
     return {
-      gradient: "from-emerald-500/35 via-teal-500/20 to-cyan-500/25",
-      glow: "shadow-[0_0_40px_-12px_rgba(52,211,153,0.35)]",
-      ring: "border-emerald-400/15",
+      gradient: "from-cyan-500/30 via-teal-500/20 to-sky-500/25",
+      glow: "shadow-[0_0_40px_-12px_rgba(34,211,238,0.32)]",
+      ring: "border-cyan-400/15",
       tag: "NUTRITION"
     };
   }
   if (category.includes("fat")) {
     return {
-      gradient: "from-orange-500/35 via-rose-500/22 to-red-500/20",
-      glow: "shadow-[0_0_40px_-12px_rgba(251,146,60,0.3)]",
-      ring: "border-orange-400/15",
+      gradient: "from-cyan-500/28 via-sky-500/18 to-violet-500/26",
+      glow: "shadow-[0_0_40px_-12px_rgba(34,211,238,0.28)]",
+      ring: "border-cyan-400/15",
       tag: "FAT LOSS"
     };
   }
   if (category.includes("muscle") || category.includes("mass")) {
     return {
-      gradient: "from-violet-500/35 via-fuchsia-500/22 to-indigo-500/28",
+      gradient: "from-violet-500/32 via-indigo-500/22 to-cyan-500/24",
       glow: "shadow-[0_0_44px_-12px_rgba(167,139,250,0.35)]",
       ring: "border-violet-400/15",
       tag: "MUSCLE"

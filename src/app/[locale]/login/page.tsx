@@ -1,14 +1,16 @@
 "use client";
 
-import { notFound, useRouter } from "next/navigation";
 import Link from "next/link";
-import { useState } from "react";
-import { getSupabaseBrowserClient } from "@/lib/supabase";
-import { isLocale, type Locale } from "@/lib/i18n";
+import { notFound, useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
+import { AsyncButton } from "@/components/ui/AsyncButton";
 import { Logo } from "@/components/ui/Logo";
 import { getAuthCopy } from "@/lib/launch-copy";
+import { isLocale, type Locale } from "@/lib/i18n";
+import { sanitizeRedirectParam } from "@/lib/safe-redirect";
+import { getSupabaseBrowserClient } from "@/lib/supabase";
 
-export default function LoginPage({ params }: { params: { locale: string } }) {
+function LoginForm({ params }: { params: { locale: string } }) {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -16,6 +18,7 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
   const [loading, setLoading] = useState(false);
   const [adminMode, setAdminMode] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   if (!isLocale(params?.locale ?? "")) {
     notFound();
@@ -23,9 +26,16 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
 
   const locale = params.locale as Locale;
   const copy = getAuthCopy(locale);
+  const redirectSafe =
+    sanitizeRedirectParam(searchParams.get("redirect"), locale) ??
+    sanitizeRedirectParam(searchParams.get("next"), locale);
+  const signupHref =
+    redirectSafe !== null
+      ? `/${locale}/signup?redirect=${encodeURIComponent(redirectSafe)}`
+      : `/${locale}/signup`;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const submitLogin = async () => {
+    if (loading) return;
     setError(null);
     setLoading(true);
     try {
@@ -70,11 +80,7 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
         setError(err.message ?? copy.loginFailed);
         return;
       }
-      const nextRaw =
-        typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("next") : null;
-      const nextPath =
-        nextRaw && nextRaw.startsWith("/") && !nextRaw.startsWith("//") ? nextRaw : `/${params.locale}`;
-      router.push(nextPath);
+      router.push(redirectSafe ?? `/${locale}/dashboard`);
       router.refresh();
     } catch (err) {
       console.error("[login] submit failed", err);
@@ -95,12 +101,16 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
           {adminMode ? copy.adminLoginTitle : copy.loginTitle}
         </h1>
         <p className="tj-prose-muted mt-3">
-          {adminMode
-            ? copy.adminLoginSubtitle
-            : copy.loginSubtitle}
+          {adminMode ? copy.adminLoginSubtitle : copy.loginSubtitle}
         </p>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            void submitLogin();
+          }}
+          className="mt-8 space-y-5"
+        >
           {adminMode ? (
             <input
               className="input"
@@ -129,14 +139,17 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          {error ? <div className="form-error-banner">{error}</div> : null}
-          <button
-            type="submit"
-            disabled={loading}
-            className="gradient-button min-h-[52px] w-full touch-manipulation rounded-xl px-5 py-3 text-base font-medium text-[#05080a] transition hover:brightness-105 disabled:opacity-60 sm:min-h-0 sm:text-sm"
+          {error ? <div className="tj-api-error-block">{error}</div> : null}
+          <AsyncButton
+            type="button"
+            fullWidth
+            loading={loading}
+            loadingText={copy.signingIn}
+            className="gradient-button flex min-h-[48px] w-full touch-manipulation items-center justify-center gap-2 rounded-full px-5 py-3 text-base font-semibold text-[#09090B] transition hover:brightness-105"
+            onClick={() => submitLogin()}
           >
-            {loading ? copy.signingIn : adminMode ? copy.loginAsAdminButton : copy.loginButton}
-          </button>
+            {adminMode ? copy.loginAsAdminButton : copy.loginButton}
+          </AsyncButton>
         </form>
 
         <p className="mt-6 text-center text-sm text-zinc-400">
@@ -167,12 +180,28 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
         {!adminMode && (
           <p className="mt-3 text-center text-sm text-zinc-400">
             {copy.newHere}{" "}
-            <Link href={`/${params.locale}/signup`} className="text-white underline underline-offset-4 hover:text-zinc-200">
+            <Link href={signupHref} className="text-white underline underline-offset-4 hover:text-zinc-200">
               {copy.createAccount}
             </Link>
           </p>
         )}
       </div>
     </div>
+  );
+}
+
+function LoginFallback() {
+  return (
+    <div className="mx-auto flex min-h-[80vh] max-w-md items-center px-4 py-16">
+      <div className="tj-skeleton tj-shimmer h-[420px] w-full rounded-[14px]" />
+    </div>
+  );
+}
+
+export default function LoginPage({ params }: { params: { locale: string } }) {
+  return (
+    <Suspense fallback={<LoginFallback />}>
+      <LoginForm params={params} />
+    </Suspense>
   );
 }

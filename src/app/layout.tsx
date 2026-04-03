@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Outfit } from "next/font/google";
+import { Inter } from "next/font/google";
 
 import { AuthProvider } from "@/components/auth-provider";
 import { TrackingScripts } from "@/components/marketing/tracking-scripts";
@@ -13,12 +13,6 @@ const inter = Inter({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-sans"
-});
-
-const outfit = Outfit({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-display"
 });
 
 let siteUrl: string;
@@ -42,20 +36,26 @@ export const viewport: Viewport = {
   viewportFit: "cover"
 };
 
+const defaultTitle = "TJFit — Premium Fitness Transformation Platform";
+const defaultDescription =
+  "Complete 12-week transformation programs and diet systems designed to transform your body. Premium fitness at your level.";
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "TJFit | Premium Coaching Platform",
-  description:
-    "A premium multilingual coaching platform for fitness, performance, nutrition, and rehabilitation.",
+  title: {
+    default: defaultTitle,
+    template: "%s | TJFit"
+  },
+  description: defaultDescription,
   applicationName: "TJFit",
-  themeColor: "#0a0a0b",
+  themeColor: "#0A0A0B",
   manifest: "/site.webmanifest",
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },
-      { url: "/favicon.ico" }
+      { url: "/favicon.ico", sizes: "any" }
     ],
-    apple: "/apple-touch-icon.png"
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }]
   },
   appleWebApp: {
     capable: true,
@@ -66,28 +66,26 @@ export const metadata: Metadata = {
     ? { verification: { google: googleVerification } }
     : {}),
   openGraph: {
-    title: "TJFit | Premium Coaching Platform",
-    description:
-      "A premium multilingual coaching platform for fitness, performance, nutrition, and rehabilitation.",
+    type: "website",
+    locale: "en_US",
     url: siteUrl,
     siteName: "TJFit",
-    locale: "en_US",
-    type: "website",
+    title: defaultTitle,
+    description: defaultDescription,
     images: [
       {
         url: BRAND.ogDefault,
         width: 1200,
         height: 630,
-        alt: "TJFit"
+        alt: defaultTitle
       }
     ]
   },
   twitter: {
     card: "summary_large_image",
-    title: "TJFit | Premium Coaching Platform",
-    description:
-      "A premium multilingual coaching platform for fitness, performance, nutrition, and rehabilitation.",
-    images: [{ url: BRAND.ogDefault, width: 1200, height: 630, alt: "TJFit" }]
+    title: defaultTitle,
+    description: defaultDescription,
+    images: [BRAND.ogDefault]
   },
   robots: {
     index: true,
@@ -97,7 +95,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
+    <html lang="en" className={inter.variable}>
       <body className="font-sans antialiased">
         <BrandOrganizationJsonLd />
         <TrackingScripts />

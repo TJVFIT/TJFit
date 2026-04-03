@@ -110,7 +110,7 @@ export function LeadCaptureForm({
           disabled={working}
           className={inputCls}
         />
-        {err ? <p className="mt-2 text-xs text-rose-300/90">{err}</p> : null}
+        {err ? <p className="mt-2 text-xs text-[#EF4444]">{err}</p> : null}
         <p className="mt-2 text-[11px] text-zinc-600 sm:text-xs">{copy.privacyNote}</p>
       </div>
       <button type="submit" disabled={working} className={btnCls}>

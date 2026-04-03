@@ -1,4 +1,5 @@
 import { coachDashboardStats, walletTransactions } from "@/lib/content";
+import { CoachMyStudentsPanel } from "@/components/coach-my-students-panel";
 import { Logo } from "@/components/ui/Logo";
 import { StatGrid } from "@/components/ui";
 import { getDictionary } from "@/lib/i18n";
@@ -53,20 +54,7 @@ export function CoachDashboardView({ locale }: { locale: Locale }) {
 
           <div className="glass-panel rounded-[32px] p-6">
             <p className="text-lg font-semibold text-white">{d.myStudents}</p>
-            <div className="mt-6 rounded-[24px] border border-white/10 bg-white/5 p-5">
-              <p className="font-medium text-white">{d.myStudentsSubtitle}</p>
-              <p className="mt-2 text-sm text-zinc-400">No sessions yet</p>
-              <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                {[d.chat, d.reschedule, d.viewPlan].map((action) => (
-                  <button
-                    key={action}
-                    className="rounded-full border border-white/10 px-4 py-2 text-sm text-white hover:bg-white/5"
-                  >
-                    {action}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <CoachMyStudentsPanel locale={locale} />
           </div>
 
           <div className="grid gap-4 lg:grid-cols-2">

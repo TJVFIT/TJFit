@@ -57,16 +57,16 @@ export function SiteFooter({ locale }: { locale: Locale }) {
         ];
 
   const linkClass =
-    "text-zinc-500 transition hover:text-cyan-200/90 hover:translate-x-0.5 inline-block";
+    "text-[#A1A1AA] transition-colors duration-150 hover:text-white inline-block";
 
   return (
-    <footer className="border-t border-white/[0.06] bg-surface/90 backdrop-blur-md">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 text-sm sm:px-6 lg:grid-cols-4 lg:gap-12 lg:px-8">
+    <footer className="border-t border-[#1E2028] bg-[#09090B]">
+      <div className="mx-auto grid max-w-[1200px] gap-10 px-6 py-16 text-sm lg:grid-cols-4 lg:gap-12 lg:px-8">
         <div>
           <div className="inline-flex py-1">
             <Logo variant="full" size="footer" href={`/${locale}`} />
           </div>
-          <p className="mt-3 text-sm font-medium tracking-wide text-[var(--tj-text-secondary)]">
+          <p className="mt-3 text-sm font-medium uppercase tracking-widest text-[#A1A1AA]">
             Transform. Perform. Dominate.
           </p>
           <p className="mt-4 max-w-sm leading-relaxed text-zinc-500">{copy.description}</p>

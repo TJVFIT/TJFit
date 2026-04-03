@@ -3,10 +3,15 @@ import type { Locale } from "@/lib/i18n";
 export type HomeLuxuryCopy = {
   hero: {
     badge: string;
+    /** Premium eyebrow above headline */
+    eyebrow?: string;
     /** Primary headline — one clear statement */
     headline: string;
     /** Optional second line for rhythm; omit or empty for a single-line title */
     headlineLine2?: string;
+    /** Gradient accent word(s) inside line 2 (optional) */
+    headlineLine2Accent?: string;
+    headlineLine2Rest?: string;
     sub: string;
     /** Main CTA — typically low-friction (e.g. free roadmap) */
     ctaPrimary: string;
@@ -17,6 +22,8 @@ export type HomeLuxuryCopy = {
     trust: string[];
     /** Short friction-reducer under primary CTAs */
     ctaNote: string;
+    /** Single trust line (replaces chip row when set) */
+    trustLine?: string;
   };
   /** Free value / lead magnet section */
   leadMagnet: {
@@ -62,6 +69,26 @@ export type HomeLuxuryCopy = {
     subtitle: string;
     viewAll: string;
     from: string;
+    /** Home teaser filter labels */
+    filterAll?: string;
+    filterFat?: string;
+    filterMuscle?: string;
+    filterHome?: string;
+    filterGym?: string;
+  };
+  /** Optional diets grid teaser on home */
+  dietsTeaser?: {
+    title: string;
+    subtitle: string;
+    cta: string;
+    filterAll?: string;
+    filterCut?: string;
+    filterBulk?: string;
+  };
+  /** Large stat band (e.g. “The System Works.”) */
+  systemProof?: {
+    title: string;
+    stats: { value: string; label: string }[];
   };
   coaches: {
     title: string;
@@ -86,13 +113,18 @@ export type HomeLuxuryCopy = {
 const en: HomeLuxuryCopy = {
   hero: {
     badge: "TJFit",
-    headline: "A calm system for serious training.",
-    sub: "Structured programs, vetted coaches, and TJAI when you want to go deeper — built for people who train on purpose, not for the feed.",
-    ctaPrimary: "Get your free roadmap",
-    ctaSecondary: "Create free account",
+    eyebrow: "PREMIUM FITNESS TRANSFORMATION",
+    headline: "Train Smarter.",
+    headlineLine2: "Transform Completely.",
+    headlineLine2Accent: "Transform",
+    headlineLine2Rest: " Completely.",
+    sub: "Complete 12-week programs and diet systems — structured like a real coach plan.",
+    ctaPrimary: "Start Free Today",
+    ctaSecondary: "View Programs",
     ctaBrowsePrograms: "Browse programs",
     trust: ["Clear plans", "Vetted coaches", "5 languages"],
-    ctaNote: "Roadmap by email · Optional account · No clutter"
+    trustLine: "Free to start · No credit card · 20+ programs",
+    ctaNote: ""
   },
   leadMagnet: {
     badge: "Free guide",
@@ -148,32 +180,50 @@ const en: HomeLuxuryCopy = {
     ]
   },
   features: {
-    title: "What you get",
-    subtitle: "Four focused layers — no clutter.",
+    title: "Everything You Need. Nothing You Don't.",
+    subtitle: "Three pillars — zero clutter.",
     items: [
       {
-        title: "Coaching",
-        desc: "Human guidance when you need it — messaging and workflows built around real accountability."
+        title: "Structured Programs",
+        desc: "Day-by-day workouts with exact sets, reps, rest, and weekly progression."
       },
       {
-        title: "Programs",
-        desc: "Progressive plans with explicit structure so you always know the next right step."
+        title: "Complete Diet Systems",
+        desc: "Full meal plans with calories, macros, recipes, and alternatives."
       },
       {
-        title: "Community",
-        desc: "Threads, challenges, and stories in one calm hub — inspiration without the chaos."
-      },
-      {
-        title: "AI & personalization",
-        desc: "Match to goals faster and refine your path with intelligent, practical suggestions."
+        title: "Real Transformation",
+        desc: "A system built like a real coach plan — home or gym, fat loss or muscle gain."
       }
     ]
   },
   programs: {
-    title: "Programs",
-    subtitle: "Flagship plans with a clear week-by-week path.",
-    viewAll: "See all programs",
-    from: "From"
+    title: "20 Complete Programs",
+    subtitle: "Home or gym. Fat loss or muscle. Every goal, fully structured.",
+    viewAll: "View All Programs →",
+    from: "From",
+    filterAll: "All",
+    filterFat: "Fat Loss",
+    filterMuscle: "Muscle Gain",
+    filterHome: "Home",
+    filterGym: "Gym"
+  },
+  dietsTeaser: {
+    title: "10 Full Diet Systems",
+    subtitle: "Cutting or bulking. Daily meals, macros, recipes, and progression.",
+    cta: "View All Diets →",
+    filterAll: "All",
+    filterCut: "Cutting",
+    filterBulk: "Bulking"
+  },
+  systemProof: {
+    title: "The System Works.",
+    stats: [
+      { value: "20+", label: "Programs" },
+      { value: "10+", label: "Diet Systems" },
+      { value: "12 Weeks", label: "Per Program" },
+      { value: "100%", label: "Structured" }
+    ]
   },
   coaches: {
     title: "Coaches",
@@ -187,9 +237,9 @@ const en: HomeLuxuryCopy = {
     viewProfile: "View profile"
   },
   finalCta: {
-    title: "Open an account when it feels right",
-    sub: "Explore programs, save progress, and unlock coach tools as we roll them out.",
-    primary: "Create free account",
+    title: "Ready to Transform?",
+    sub: "Get your first program free. No credit card needed.",
+    primary: "Start Free Today",
     secondary: "Membership news",
     nudge: "We don’t sell your email. Unsubscribe anytime."
   }

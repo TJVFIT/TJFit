@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import type { Locale } from "@/lib/i18n";
 import type { FreeProductBlock, FreeProductPageModel } from "@/lib/free-product-pages";
+import { getProgramUiCopy } from "@/lib/program-localization";
 
 function renderBlocks(blocks: FreeProductBlock[], dayLabels: { warmup: string; main: string; cooldown: string }) {
   return blocks.map((block, i) => {
@@ -88,17 +89,26 @@ export function FreeProductUpgradeFooter({
   upgradeProgramTitle: string;
 }) {
   const href = `/${locale}/checkout?program=${model.upgrade.checkoutSlug}`;
+  const ui = getProgramUiCopy(locale);
 
   return (
-    <div className="rounded-[24px] border border-cyan-400/20 bg-gradient-to-br from-cyan-500/10 via-transparent to-sky-500/5 p-6 sm:p-8">
-      <p className="text-xs uppercase tracking-[0.22em] text-cyan-200/80">{upgradeProgramTitle}</p>
-      <p className="mt-3 text-sm leading-7 text-zinc-300">{model.upgrade.body}</p>
+    <div className="mx-auto max-w-[540px] border-t border-[#1E2028] bg-[#111215] px-8 py-12 text-center">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">{upgradeProgramTitle}</p>
+      <h2 className="mt-3 text-xl font-semibold text-white">{ui.upgradeFullSystemTitle}</h2>
+      <p className="mt-3 text-sm leading-[1.7] text-[var(--color-text-secondary)]">{model.upgrade.body}</p>
       <Link
         href={href}
-        className="mt-5 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-sky-500 px-5 py-2.5 text-sm font-semibold text-[#05080a]"
+        className="lux-btn-primary mt-6 inline-flex min-h-[48px] w-full max-w-sm items-center justify-center rounded-full px-6 py-3 text-sm font-bold text-[#09090B] sm:w-auto"
       >
-        {model.upgrade.cta} →
+        {ui.getFullAccess} →
       </Link>
+      <Link
+        href={`/${locale}/programs`}
+        className="mt-4 block text-sm text-[var(--color-text-muted)] transition-colors duration-150 hover:text-white"
+      >
+        {ui.upgradeViewAllPrograms}
+      </Link>
+      <p className="mt-3 text-xs text-[var(--color-text-muted)]">{ui.upgradeNoFluff}</p>
     </div>
   );
 }

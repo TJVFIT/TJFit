@@ -143,7 +143,7 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
         </div>
 
         {debounced.length > 0 && debounced.length < 2 ? (
-          <p className="mt-3 text-xs text-amber-200/70">{s.searchHint}</p>
+          <p className="mt-3 text-xs text-[#A1A1AA]">{s.searchHint}</p>
         ) : null}
       </div>
 
@@ -200,9 +200,10 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
       ) : null}
 
       {showEmpty ? (
-        <div className="relative mt-10 rounded-[28px] border border-dashed border-white/15 bg-white/[0.02] px-6 py-14 text-center">
-          <p className="text-sm text-zinc-500">{s.noResults}</p>
-          <p className="mx-auto mt-2 max-w-xs text-xs text-zinc-600">{s.searchHint}</p>
+        <div className="tj-empty-state relative mt-10">
+          <Search className="mx-auto h-7 w-7 text-[var(--color-text-muted)]" strokeWidth={1.75} aria-hidden />
+          <h2 className="mt-4 text-lg font-semibold text-[var(--color-text-secondary)]">{s.noResults}</h2>
+          <p className="tj-empty-state__text mt-2 text-sm text-[var(--color-text-muted)]">{s.noResultsSub}</p>
         </div>
       ) : null}
 
@@ -235,7 +236,7 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
                         <div className="flex flex-wrap items-center gap-2">
                           <h2 className="truncate font-display text-lg font-semibold text-white">{displayName}</h2>
                           {r.is_private ? (
-                            <span className="shrink-0 rounded-full border border-amber-500/25 bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-200/85">
+                            <span className="shrink-0 rounded border border-violet-400/25 bg-violet-400/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-violet-200/85">
                               {s.privateProfile}
                             </span>
                           ) : null}

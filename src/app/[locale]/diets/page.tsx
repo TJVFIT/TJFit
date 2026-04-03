@@ -82,7 +82,7 @@ export default function DietsPage({ params }: { params: { locale: string } }) {
               type="button"
               onClick={() => setPhaseFilter(k)}
               className={cn(
-                "min-h-[40px] rounded-full border px-3 py-2 text-xs font-medium transition",
+                "min-h-[44px] rounded-full border px-3 py-2 text-xs font-medium transition duration-200",
                 phaseFilter === k ? "border-cyan-400/40 bg-cyan-500/10 text-white" : "border-white/10 text-zinc-400 hover:border-white/20"
               )}
             >
@@ -139,10 +139,33 @@ export default function DietsPage({ params }: { params: { locale: string } }) {
       </div>
 
       {filterActive && filtered.length === 0 && allDiets.length > 0 ? (
-        <div className="mt-6 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 text-sm text-zinc-500">
-          {pageCopy.noMatches}
+        <div className="tj-empty-state mt-10">
+          <div className="mx-auto max-w-[300px]">
+            <p className="text-[32px] text-[var(--color-text-muted)]" aria-hidden>
+              ⌕
+            </p>
+            <h3 className="mt-4 text-lg font-semibold text-[var(--color-text-secondary)]">{pageCopy.emptyFilterTitle}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-muted)]">{pageCopy.emptyFilterSub}</p>
+            <button
+              type="button"
+              onClick={() => setPhaseFilter("all")}
+              className="mt-6 inline-flex min-h-[44px] items-center justify-center rounded-[10px] border border-[var(--color-border)] px-5 py-2 text-sm font-medium text-white transition-colors duration-150 hover:border-[rgba(255,255,255,0.12)] hover:bg-[rgba(255,255,255,0.04)]"
+            >
+              {pageCopy.clearFilters}
+            </button>
+          </div>
         </div>
       ) : null}
+
+      <p className="mt-10 text-center text-xs text-[var(--color-text-muted)]">{copy.trustDietsGrid}</p>
+      <div className="mt-12 border-t border-[var(--color-border)] pt-12 text-center">
+        <Link
+          href={`/${params.locale}/programs/${programs.find((p) => p.is_free && p.category.toLowerCase() === "nutrition")?.slug ?? "clean-cut-starter"}`}
+          className="inline-flex min-h-[48px] items-center justify-center text-sm font-semibold text-[#22D3EE] transition-colors duration-150 hover:text-white"
+        >
+          {pageCopy.footerCta}
+        </Link>
+      </div>
     </PremiumPageShell>
   );
 }

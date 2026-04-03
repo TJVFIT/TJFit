@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
+import { MessageCircle } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
 import { getMessagesCopy } from "@/lib/feature-copy";
 import { getSocialCopy } from "@/lib/social-copy";
@@ -43,16 +44,13 @@ function formatInboxTime(iso: string | null, locale: Locale) {
 
 function InboxSkeleton() {
   return (
-    <div className="space-y-1 px-3 py-2" aria-busy="true">
-      {[1, 2, 3, 4, 5, 6].map((i) => (
-        <div key={i} className="flex gap-3 rounded-xl px-2 py-3">
-          <div className="h-14 w-14 shrink-0 animate-pulse rounded-full bg-white/[0.08]" />
+    <div className="space-y-3 px-3 py-2" aria-busy="true">
+      {[1, 2, 3, 4].map((i) => (
+        <div key={i} className="flex gap-3 rounded-xl px-2 py-1">
+          <div className="tj-skeleton tj-shimmer h-10 w-10 shrink-0 rounded-full" />
           <div className="min-w-0 flex-1 space-y-2 border-b border-white/[0.04] py-1">
-            <div className="flex justify-between gap-2">
-              <div className="h-4 w-32 animate-pulse rounded bg-white/[0.08]" />
-              <div className="h-3 w-10 animate-pulse rounded bg-white/[0.05]" />
-            </div>
-            <div className="h-3 w-full max-w-[220px] animate-pulse rounded bg-white/[0.05]" />
+            <div className="tj-skeleton tj-shimmer h-3.5 w-32 rounded" />
+            <div className="tj-skeleton tj-shimmer h-3 w-full max-w-[200px] rounded" />
           </div>
         </div>
       ))}
@@ -194,15 +192,10 @@ export function MessagesLayoutShell({
         {listLoading ? (
           <InboxSkeleton />
         ) : conversations.length === 0 ? (
-          <div className="mx-3 mt-4 rounded-xl border border-dashed border-white/[0.08] px-5 py-10 text-center">
-            <p className="text-sm text-zinc-400">{t.noConversations}</p>
-            <p className="mx-auto mt-2 max-w-[240px] text-xs leading-relaxed text-zinc-600">{t.subtitle}</p>
-            <Link
-              href={`/${locale}/profile/search`}
-              className="mt-5 inline-flex rounded-lg border border-white/[0.1] px-4 py-2 text-sm text-zinc-300 transition hover:bg-white/[0.04]"
-            >
-              {s.peopleSearchTitle}
-            </Link>
+          <div className="tj-empty-state mx-3 mt-4">
+            <MessageCircle className="mx-auto h-8 w-8 text-[var(--color-text-muted)]" strokeWidth={1.5} aria-hidden />
+            <h2 className="mt-4 text-lg font-semibold text-[var(--color-text-secondary)]">{t.noConversations}</h2>
+            <p className="tj-empty-state__text mt-2 text-sm text-[var(--color-text-muted)]">{t.noConversationsSub}</p>
           </div>
         ) : (
           <ul className="pb-2 pt-1" role="list">

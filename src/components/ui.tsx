@@ -46,7 +46,7 @@ export function CoachCard({ coach, href }: { coach: Coach; href: string }) {
             </div>
           </div>
           <div className="flex items-center gap-1 rounded-full bg-white/5 px-3 py-1 text-sm text-zinc-200">
-            <Star className="h-4 w-4 fill-current text-yellow-400" />
+            <Star className="h-4 w-4 fill-current text-cyan-300" />
             {coach.rating}
           </div>
         </div>

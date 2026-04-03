@@ -34,13 +34,27 @@ export function generateMetadata({
       title: `TJFit | ${dict.hero.title}`,
       description: dict.hero.subtitle,
       locale: ogLocale,
-      images: [{ url: BRAND.ogDefault, width: 1200, height: 630, alt: "TJFit" }]
+      images: [
+        {
+          url: BRAND.ogDefault,
+          width: 1200,
+          height: 630,
+          alt: "TJFit — Premium Fitness Transformation Platform"
+        }
+      ]
     },
     twitter: {
       card: "summary_large_image",
       title: `TJFit | ${dict.hero.title}`,
       description: dict.hero.subtitle,
-      images: [{ url: BRAND.ogDefault, width: 1200, height: 630, alt: "TJFit" }]
+      images: [
+        {
+          url: BRAND.ogDefault,
+          width: 1200,
+          height: 630,
+          alt: "TJFit — Premium Fitness Transformation Platform"
+        }
+      ]
     }
   };
 }

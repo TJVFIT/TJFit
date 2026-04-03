@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import { AsyncButton } from "@/components/ui/AsyncButton";
 import { getSocialCopy } from "@/lib/social-copy";
 import type { Locale } from "@/lib/i18n";
 import { isValidUsername } from "@/lib/username";
@@ -213,7 +214,7 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
             {s.viewProfileButton} (@{form.username.trim()})
           </Link>
         ) : (
-          <p className="mt-3 rounded-xl border border-amber-500/20 bg-amber-500/5 px-3 py-2 text-xs text-amber-100/85">
+          <p className="mt-3 rounded-xl border border-cyan-500/20 bg-cyan-500/5 px-3 py-2 text-xs text-cyan-100/85">
             {s.profileChooseUsernameHint}
           </p>
         )}
@@ -322,14 +323,16 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
         {error ? <p className="text-sm text-red-400">{error}</p> : null}
         {savedFlash ? <p className="text-sm text-cyan-300/90">{s.saved}</p> : null}
 
-        <button
+        <AsyncButton
           type="button"
-          disabled={saving}
-          className="gradient-button w-full rounded-full py-2.5 text-sm font-medium text-white disabled:opacity-40 sm:w-auto sm:px-10"
-          onClick={() => void save()}
+          variant="primary"
+          loading={saving}
+          loadingText={s.saving}
+          className="gradient-button w-full rounded-full py-2.5 text-sm font-medium text-white sm:w-auto sm:px-10"
+          onClick={() => save()}
         >
-          {saving ? s.saving : s.saveProfile}
-        </button>
+          {s.saveProfile}
+        </AsyncButton>
       </div>
     </div>
   );

@@ -4,13 +4,11 @@ import { notFound } from "next/navigation";
 import { ClientErrorBoundary } from "@/components/client-error-boundary";
 import { FreeOfferSection } from "@/components/free-offer-section";
 import { coaches, programs } from "@/lib/content";
+import { getDietPhase, isCatalogDiet } from "@/lib/diet-catalog";
 import { getHomeLuxuryCopy } from "@/lib/home-luxury-copy";
 import { isLocale, type Locale } from "@/lib/i18n";
 
-/**
- * Luxury home is client-only (ssr: false) so Framer Motion + useReducedMotion never run during SSR.
- * That avoids hydration mismatches that surface as "Application error: a client-side exception has occurred".
- */
+/** Client-only home shell avoids hydration issues with viewport hooks and scroll observers. */
 const LuxuryHome = dynamic(() => import("@/components/luxury/luxury-home").then((m) => m.LuxuryHome), {
   ssr: false,
   loading: () => <HomeLuxurySkeleton />
@@ -18,7 +16,7 @@ const LuxuryHome = dynamic(() => import("@/components/luxury/luxury-home").then(
 
 function HomeLuxurySkeleton() {
   return (
-    <div className="min-h-[100dvh] bg-[#0A0A0B] px-4 pb-24 pt-24 sm:px-6 lg:px-8 lg:pt-28">
+    <div className="min-h-[100dvh] bg-[#09090B] px-4 pb-24 pt-24 sm:px-6 lg:px-8 lg:pt-28">
       <div className="mx-auto max-w-6xl animate-pulse">
         <div className="h-7 w-20 rounded-full bg-white/[0.08]" />
         <div className="mt-10 h-10 max-w-md rounded-lg bg-white/[0.07]" />
@@ -42,12 +40,24 @@ export default function HomePage({ params }: { params: { locale: string } }) {
   const locale = raw as Locale;
   const copy = getHomeLuxuryCopy(locale);
   const freePrograms = programs.filter((p) => p.is_free);
-  const programPreviews = programs.filter((p) => !p.is_free).slice(0, 4).map((p) => ({
+  const programPreviews = programs
+    .filter((p) => !p.is_free)
+    .map((p) => ({
+      slug: p.slug,
+      title: p.title,
+      category: p.category,
+      duration: p.duration,
+      price: p.price,
+      is_free: Boolean(p.is_free)
+    }));
+  const dietPreviews = programs.filter(isCatalogDiet).map((p) => ({
     slug: p.slug,
     title: p.title,
     category: p.category,
     duration: p.duration,
-    price: p.price
+    price: p.price,
+    phase: getDietPhase(p),
+    is_free: Boolean(p.is_free)
   }));
   const coachPreviews = coaches.slice(0, 4).map((c) => ({
     slug: c.slug,
@@ -62,7 +72,7 @@ export default function HomePage({ params }: { params: { locale: string } }) {
     <ClientErrorBoundary
       sentryScope="home-luxury"
       fallback={
-        <div className="min-h-[100dvh] bg-[#0A0A0B] px-4 py-24 sm:px-6 lg:px-8">
+        <div className="min-h-[100dvh] bg-[#09090B] px-4 py-24 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-lg text-center">
             <p className="text-sm text-zinc-400">
               The homepage could not be displayed. Please reload or try again later.
@@ -77,7 +87,13 @@ export default function HomePage({ params }: { params: { locale: string } }) {
         </div>
       }
     >
-      <LuxuryHome locale={locale} copy={copy} programs={programPreviews} coaches={coachPreviews} />
+      <LuxuryHome
+        locale={locale}
+        copy={copy}
+        programs={programPreviews}
+        diets={dietPreviews}
+        coaches={coachPreviews}
+      />
     </ClientErrorBoundary>
     </>
   );

@@ -24,10 +24,10 @@ import { getProgramManagementCopy } from "@/lib/program-management-copy";
 
 function getProgramTheme(category: string) {
   const base = category.toLowerCase();
-  if (base.includes("nutrition")) return "from-emerald-400/30 via-teal-400/20 to-cyan-400/30";
-  if (base.includes("fat")) return "from-orange-400/30 via-rose-400/20 to-red-400/30";
-  if (base.includes("muscle")) return "from-violet-400/30 via-fuchsia-400/20 to-indigo-400/30";
-  return "from-cyan-400/30 via-blue-400/20 to-indigo-400/30";
+  if (base.includes("nutrition")) return "from-cyan-400/30 via-teal-400/20 to-sky-400/30";
+  if (base.includes("fat")) return "from-cyan-400/30 via-sky-400/20 to-violet-400/30";
+  if (base.includes("muscle")) return "from-violet-400/30 via-indigo-400/20 to-cyan-400/30";
+  return "from-cyan-400/30 via-sky-400/20 to-indigo-400/30";
 }
 
 function trainingLocationLabel(slug: string, copy: ReturnType<typeof getProgramUiCopy>): string {
@@ -170,12 +170,35 @@ export default async function ProgramDetailPage({
 
   const checkoutHref = `/${locale}/checkout?program=${slug}`;
   const premiumBannerLabel = program?.is_free ? copy.programKindFree : copy.programKindPremium;
+  const signupUnlockHref = `/${locale}/signup?redirect=${encodeURIComponent(`/${locale}/programs/${slug}`)}`;
+  const loginUnlockHref = `/${locale}/login?redirect=${encodeURIComponent(`/${locale}/programs/${slug}`)}`;
+  const isDiet = programCategory.toLowerCase().includes("nutrition");
 
   return (
-    <div className="mx-auto max-w-6xl space-y-10 px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+    <div className="mx-auto max-w-6xl space-y-10 px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
       <ProgramViewTracker slug={slug} />
+      <nav className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-[var(--color-text-muted)]">
+        <Link href={`/${locale}`} className="transition-colors duration-150 hover:text-white">
+          {copy.breadcrumbHome}
+        </Link>
+        <span aria-hidden>/</span>
+        <Link
+          href={isDiet ? `/${locale}/diets` : `/${locale}/programs`}
+          className="transition-colors duration-150 hover:text-white"
+        >
+          {isDiet ? copy.breadcrumbDiets : copy.breadcrumbPrograms}
+        </Link>
+        <span aria-hidden>/</span>
+        <span className="text-[var(--color-text-secondary)]">{programTitle}</span>
+      </nav>
+      <Link
+        href={isDiet ? `/${locale}/diets` : `/${locale}/programs`}
+        className="inline-flex text-[13px] text-[var(--color-text-muted)] transition-colors duration-150 hover:text-white"
+      >
+        {isDiet ? copy.backToDiets : copy.backToPrograms}
+      </Link>
       <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr]">
-        <section className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.045] to-white/[0.015] p-8 shadow-[0_24px_64px_-32px_rgba(0,0,0,0.75)]">
+        <section className="max-w-[800px] w-full rounded-[14px] border border-[var(--color-border)] bg-gradient-to-b from-white/[0.045] to-white/[0.015] p-6 shadow-[0_24px_64px_-32px_rgba(0,0,0,0.75)] sm:p-8 xl:mx-0">
           <div className="flex flex-wrap items-center gap-2">
             <span className="badge">{programCategory}</span>
             {program?.is_free ? (
@@ -184,8 +207,11 @@ export default async function ProgramDetailPage({
               </span>
             ) : null}
           </div>
-          <h1 className="mt-6 text-4xl font-semibold text-white">{programTitle}</h1>
-          <p className="mt-4 max-w-3xl text-sm leading-7 text-zinc-400">{programDescription}</p>
+          <h1 className="mt-6 text-3xl font-semibold tracking-tight text-white sm:text-4xl">{programTitle}</h1>
+          <p className="mt-4 max-w-[680px] text-base leading-[1.7] text-[var(--color-text-secondary)]">{programDescription}</p>
+          <p className="mt-3 text-sm italic text-[var(--color-text-muted)]">
+            {isDiet ? copy.dietPageTrust : copy.programPageTrust}
+          </p>
 
           <div className="mt-6 flex flex-wrap gap-2">
             <span className="rounded-full border border-white/12 bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-zinc-200">
@@ -424,9 +450,9 @@ export default async function ProgramDetailPage({
                   locked
                   title={copy.freeContentTeaserTitle}
                   subtitle={copy.freeContentTeaserBody}
-                  ctaHref={`/${locale}/signup`}
+                  ctaHref={signupUnlockHref}
                   ctaLabel={copy.signUpToUnlockFree}
-                  secondaryHref={`/${locale}/login`}
+                  secondaryHref={loginUnlockHref}
                   secondaryLabel={copy.logInToUnlockFree}
                 >
                   <div className="p-4 sm:p-5">
@@ -469,14 +495,14 @@ export default async function ProgramDetailPage({
                 ) : (
                   <>
                     <Link
-                      href={`/${locale}/signup`}
-                      className="gradient-button inline-flex justify-center rounded-full px-5 py-2.5 text-center text-sm font-medium text-white"
+                      href={signupUnlockHref}
+                      className="lux-btn-primary inline-flex min-h-[44px] justify-center rounded-full px-5 py-2.5 text-center text-sm font-bold text-[#09090B]"
                     >
                       {copy.signUpToUnlockFree}
                     </Link>
                     <Link
-                      href={`/${locale}/login`}
-                      className="inline-flex justify-center rounded-full border border-white/20 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-white/5"
+                      href={loginUnlockHref}
+                      className="inline-flex min-h-[44px] justify-center rounded-[10px] border border-[var(--color-border)] px-5 py-2.5 text-center text-sm font-medium text-white transition-colors duration-150 hover:border-[rgba(255,255,255,0.12)] hover:bg-[rgba(255,255,255,0.04)]"
                     >
                       {copy.logInToUnlockFree}
                     </Link>

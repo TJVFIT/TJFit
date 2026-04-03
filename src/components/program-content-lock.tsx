@@ -39,20 +39,20 @@ export function ProgramContentLock({
         {children}
       </div>
       <div
-        className="absolute inset-0 flex items-center justify-center bg-[#0a0a0b]/75 px-4 py-10 backdrop-blur-[2px]"
+        className="absolute inset-0 flex items-center justify-center bg-[rgba(9,9,11,0.75)] px-4 py-10 backdrop-blur-[2px]"
         role="region"
         aria-label={title}
       >
         <div className="max-w-md text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl border border-white/15 bg-white/5">
-            <Lock className="h-5 w-5 text-cyan-300/90" aria-hidden />
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]">
+            <Lock className="h-5 w-5 text-[var(--color-text-muted)]" aria-hidden />
           </div>
           <p className="mt-4 text-base font-semibold text-white">{title}</p>
           {subtitle ? <p className="mt-2 text-sm leading-relaxed text-zinc-400">{subtitle}</p> : null}
           <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Link
               href={ctaHref}
-              className="inline-flex w-full min-w-[10rem] items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-sky-500 px-5 py-2.5 text-sm font-semibold text-[#05080a] shadow-[0_0_24px_-8px_rgba(34,211,238,0.45)] sm:w-auto"
+              className="lux-btn-primary inline-flex w-full min-w-[10rem] min-h-[44px] items-center justify-center rounded-full px-5 py-2.5 text-sm font-bold text-[#09090B] sm:w-auto"
             >
               {ctaLabel}
             </Link>

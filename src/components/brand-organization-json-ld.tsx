@@ -14,7 +14,8 @@ function safeOrigin(): string {
 /** Organization + logo for Google rich results (best-effort; requires indexing). */
 export function BrandOrganizationJsonLd() {
   const origin = safeOrigin();
-  const logoUrl = `${origin}${BRAND.logoIcon192}`;
+  const logoSvg = `${origin}${BRAND.logoFull}`;
+  const ogImage = `${origin}${BRAND.ogDefault}`;
   const payload = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -22,14 +23,13 @@ export function BrandOrganizationJsonLd() {
     url: origin,
     logo: {
       "@type": "ImageObject",
-      url: logoUrl,
-      contentUrl: logoUrl,
-      width: 192,
-      height: 192
+      url: logoSvg,
+      contentUrl: logoSvg
     },
-    image: `${origin}${BRAND.ogDefault}`,
+    image: ogImage,
+    sameAs: [] as string[],
     description:
-      "Premium multilingual coaching platform for fitness, performance, nutrition, and rehabilitation."
+      "Premium fitness transformation platform offering complete 12-week workout programs and diet systems."
   };
 
   return (

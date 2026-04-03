@@ -353,28 +353,28 @@ const titleTranslations: Record<Exclude<Locale, "en">, Record<string, string>> =
 /** Short catalog descriptions for free starters (all locales). */
 const freeStarterDescriptions: Record<string, Record<Locale, string>> = {
   "home-fat-loss-starter": {
-    en: "A free 4-week home fat-loss starter: 3 sessions per week (Mon / Wed / Fri) with warm-ups, structured circuits, and clear progression. Sign in to unlock the full plan.",
+    en: "Three workouts per week. No equipment. Full progression from week 1 to 4.",
     tr: "Ucretsiz 4 haftalik evde yag yakim baslangici: haftada 3 gun (Pzt / Car / Cum), isinma, yapilandirilmis devreler ve net ilerleme. Tam plan icin giris yapin.",
     ar: "بداية مجانية لمدة 4 أسابيع لحرق الدهون في المنزل: 3 جلسات أسبوعياً مع إحماء ودوائر منظمة وتقدم واضح. سجّل الدخول لفتح الخطة كاملة.",
     es: "Inicio gratuito de 4 semanas para perder grasa en casa: 3 sesiones por semana con calentamiento, circuitos estructurados y progresion clara. Inicia sesion para ver el plan completo.",
     fr: "Demarrage gratuit de 4 semaines pour la perte de graisse a domicile : 3 seances par semaine avec echauffement, circuits structures et progression claire. Connectez-vous pour debloquer le plan complet."
   },
   "gym-muscle-starter": {
-    en: "A free 4-week gym starter for muscle gain: 3 full-body style splits per week with machine and free-weight staples. Sign in to unlock the full plan.",
+    en: "Three full-body days per week. Machines and free weights. Built to add size every week.",
     tr: "Kas gelisimi icin ucretsiz 4 haftalik salon baslangici: haftada 3 gun, makine ve serbest agirlik temelleri. Tam plan icin giris yapin.",
     ar: "بداية مجانية لمدة 4 أسابيع في الجيم لبناء العضلات: 3 انقسامات أسبوعياً مع الأجهزة والأوزان الحرة. سجّل الدخول لفتح الخطة كاملة.",
     es: "Inicio gratuito de 4 semanas en gimnasio para ganar musculo: 3 divisiones semanales con maquinas y pesas libres. Inicia sesion para ver el plan completo.",
     fr: "Demarrage gratuit de 4 semaines en salle pour la prise de muscle : 3 seances hebdomadaires avec machines et poids libres. Connectez-vous pour debloquer le plan complet."
   },
   "clean-cut-starter": {
-    en: "A free 2-week cutting starter near 1800 kcal with simple whole-food meals, then a week-2 adjustment. Sign in to unlock full meal details and macros.",
+    en: "Two weeks near 1800 kcal. Whole-food meals, clear macros, and a week-2 adjustment.",
     tr: "Yaklasik 1800 kcal ile 2 haftalik ucretsiz definisyon baslangici; 2. haftada ayarlama. Ogun detaylari ve makrolar icin giris yapin.",
     ar: "بداية مجانية لمدة أسبوعين للتنشيف حوالي 1800 سعرة مع وجبات بسيطة، ثم تعديل في الأسبوع الثاني. سجّل الدخول لعرض الوجبات والماكروس كاملة.",
     es: "Inicio gratuito de definicion de 2 semanas cerca de 1800 kcal con comidas simples y ajuste en la semana 2. Inicia sesion para ver comidas y macros completas.",
     fr: "Demarrage gratuit de 2 semaines vers 1800 kcal avec repas simples puis ajustement en semaine 2. Connectez-vous pour les details et macros complets."
   },
   "lean-bulk-starter": {
-    en: "A free 2-week lean-bulk starter near 2800 kcal with high-protein meals and a simple week-2 bump. Sign in to unlock full meal breakdowns.",
+    en: "Two weeks near 2800 kcal. High protein, structured meals, and a simple week-2 bump.",
     tr: "Yaklasik 2800 kcal ile 2 haftalik ucretsiz lean bulk baslangici; yuksek protein ve 2. haftada hafif artis. Tam ogun detayi icin giris yapin.",
     ar: "بداية مجانية لمدة أسبوعين للزيادة النظيفة حوالي 2800 سعرة مع بروتين عالي وزيادة بسيطة في الأسبوع الثاني. سجّل الدخول لعرض الوجبات كاملة.",
     es: "Inicio gratuito de volumen magro de 2 semanas cerca de 2800 kcal con alto en proteina y subida en la semana 2. Inicia sesion para ver comidas completas.",
@@ -523,24 +523,24 @@ export function getProgramUiCopy(locale: Locale) {
   return {
     viewProgram:
       locale === "tr"
-        ? "Programi Gor"
+        ? "Ucretsiz erisim"
         : locale === "ar"
-          ? "عرض البرنامج"
+          ? "وصول مجاني"
           : locale === "es"
-            ? "Ver Programa"
+            ? "Acceso gratis"
             : locale === "fr"
-              ? "Voir le Programme"
-              : "View Program",
+              ? "Accès gratuit"
+              : "Get Free Access",
     viewDiet:
       locale === "tr"
-        ? "Plani Gor"
+        ? "Ucretsiz erisim"
         : locale === "ar"
-          ? "عرض الخطة"
+          ? "وصول مجاني"
           : locale === "es"
-            ? "Ver plan"
+            ? "Acceso gratis"
             : locale === "fr"
-              ? "Voir le plan"
-              : "View plan",
+              ? "Accès gratuit"
+              : "Get Free Access",
     buyProgram:
       locale === "tr"
         ? "Programi Satin Al"
@@ -739,8 +739,8 @@ export function getProgramUiCopy(locale: Locale) {
           : locale === "es"
             ? "Crear cuenta gratis"
             : locale === "fr"
-              ? "Creer un compte gratuit"
-              : "Create free account",
+              ? "Créer un compte gratuit"
+              : "Create Free Account",
     logInToUnlockFree:
       locale === "tr"
         ? "Giris yap ve ac"
@@ -990,7 +990,127 @@ export function getProgramUiCopy(locale: Locale) {
             ? "Enfriamiento"
             : locale === "fr"
               ? "Retour au calme"
-              : "Cool-down"
+              : "Cool-down",
+    upgradeFullSystemTitle:
+      locale === "tr"
+        ? "Tam sisteme hazir misin?"
+        : locale === "ar"
+          ? "جاهز للنظام الكامل؟"
+          : locale === "es"
+            ? "¿Listo para el sistema completo?"
+            : locale === "fr"
+              ? "Prêt pour le système complet ?"
+              : "Ready for the Full System?",
+    upgradeViewAllPrograms:
+      locale === "tr"
+        ? "Tum programlari gor →"
+        : locale === "ar"
+          ? "عرض كل البرامج ←"
+          : locale === "es"
+            ? "Ver todos los programas →"
+            : locale === "fr"
+              ? "Voir tous les programmes →"
+              : "View All Programs →",
+    breadcrumbHome:
+      locale === "tr"
+        ? "Ana sayfa"
+        : locale === "ar"
+          ? "الرئيسية"
+          : locale === "es"
+            ? "Inicio"
+            : locale === "fr"
+              ? "Accueil"
+              : "Home",
+    breadcrumbPrograms:
+      locale === "tr"
+        ? "Programlar"
+        : locale === "ar"
+          ? "البرامج"
+          : locale === "es"
+            ? "Programas"
+            : locale === "fr"
+              ? "Programmes"
+              : "Programs",
+    breadcrumbDiets:
+      locale === "tr"
+        ? "Diyetler"
+        : locale === "ar"
+          ? "الأنظمة الغذائية"
+          : locale === "es"
+            ? "Dietas"
+            : locale === "fr"
+              ? "Régimes"
+              : "Diets",
+    backToPrograms:
+      locale === "tr"
+        ? "← Programlara don"
+        : locale === "ar"
+          ? "← العودة إلى البرامج"
+          : locale === "es"
+            ? "← Volver a programas"
+            : locale === "fr"
+              ? "← Retour aux programmes"
+              : "← Back to Programs",
+    backToDiets:
+      locale === "tr"
+        ? "← Diyetlere don"
+        : locale === "ar"
+          ? "← العودة إلى الأنظمة الغذائية"
+          : locale === "es"
+            ? "← Volver a dietas"
+            : locale === "fr"
+              ? "← Retour aux régimes"
+              : "← Back to Diets",
+    trustProgramsGrid:
+      locale === "tr"
+        ? "12 haftalik yapili sistem. Tahmin yok."
+        : locale === "ar"
+          ? "نظام 12 أسبوعاً منظم. بلا تخمين."
+          : locale === "es"
+            ? "Sistema estructurado de 12 semanas. Sin adivinar."
+            : locale === "fr"
+              ? "Système structuré sur 12 semaines. Sans improvisation."
+              : "Structured 12-week system. No guesswork.",
+    trustDietsGrid:
+      locale === "tr"
+        ? "Gunluk ogunler, makrolar ve tarifler dahil."
+        : locale === "ar"
+          ? "وجبات يومية وماكروس ووصفات مضمّنة."
+          : locale === "es"
+            ? "Comidas diarias, macros y recetas incluidas."
+            : locale === "fr"
+              ? "Repas quotidiens, macros et recettes inclus."
+              : "Daily meals, macros, and recipes included.",
+    programPageTrust:
+      locale === "tr"
+        ? "Gercek bir koç plani gibi kurgulandi."
+        : locale === "ar"
+          ? "مبني مثل خطة مدرب حقيقية."
+          : locale === "es"
+            ? "Diseñado como un plan de coach real."
+            : locale === "fr"
+              ? "Conçu comme un plan coach réel."
+              : "Built like a real coach plan.",
+    dietPageTrust:
+      locale === "tr"
+        ? "Haftalik ilerleme. Gercek sonuclar."
+        : locale === "ar"
+          ? "تقدم أسبوعي. نتائج حقيقية."
+          : locale === "es"
+            ? "Progresión semanal. Resultados reales."
+            : locale === "fr"
+              ? "Progression hebdomadaire. Résultats réels."
+              : "Weekly progression. Real results.",
+    upgradeNoFluff:
+      locale === "tr"
+        ? "Gereksiz soz yok. Sadece sistem."
+        : locale === "ar"
+          ? "بلا فلسفة زائدة. النظام فقط."
+          : locale === "es"
+            ? "Sin relleno. Solo el sistema."
+            : locale === "fr"
+              ? "Pas de blabla. Juste le système."
+              : "No fluff. Just the system."
   };
 }
 

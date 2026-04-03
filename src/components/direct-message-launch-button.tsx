@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { AsyncButton } from "@/components/ui/AsyncButton";
 import { useAuth } from "@/components/auth-provider";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { ensureUserKeyPair } from "@/lib/chat-keyring";
@@ -10,6 +11,7 @@ import { createConversationKey, importPublicKeyJwk, wrapConversationKeyForRecipi
 import { getMessagesCopy } from "@/lib/feature-copy";
 import { getSocialCopy } from "@/lib/social-copy";
 import type { Locale } from "@/lib/i18n";
+import { isSafeRedirect } from "@/lib/safe-redirect";
 
 type Variant = "gradient" | "outline";
 
@@ -105,8 +107,10 @@ export function DirectMessageLaunchButton({
   };
 
   if (!user) {
-    const next = pathname ? encodeURIComponent(pathname) : "";
-    const href = next ? `/${locale}/login?next=${next}` : `/${locale}/login`;
+    const href =
+      pathname && isSafeRedirect(pathname, locale)
+        ? `/${locale}/login?redirect=${encodeURIComponent(pathname)}`
+        : `/${locale}/login`;
     return (
       <Link
         href={href}
@@ -118,13 +122,15 @@ export function DirectMessageLaunchButton({
   }
 
   return (
-    <button
+    <AsyncButton
       type="button"
-      disabled={busy}
+      variant="ghost"
+      loading={busy}
+      loadingText={s.saving}
       className={`${variant === "gradient" ? baseGradient : baseOutline} ${className}`}
-      onClick={() => void start()}
+      onClick={() => start()}
     >
-      {busy ? s.saving : s.startChat}
-    </button>
+      {s.startChat}
+    </AsyncButton>
   );
 }

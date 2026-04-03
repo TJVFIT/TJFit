@@ -9,7 +9,7 @@ const config: Config = {
         shell: "1.75rem"
       },
       colors: {
-        background: "#0A0A0B",
+        background: "#09090B",
         surface: {
           DEFAULT: "#111215",
           elevated: "#15171A"
@@ -18,7 +18,7 @@ const config: Config = {
         "accent-muted": "#67E8F9",
         "accent-violet": "#A78BFA",
         success: "#22C55E",
-        text: "#F4F4F5"
+        text: "#FFFFFF"
       },
       fontFamily: {
         sans: ["var(--font-sans)", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],

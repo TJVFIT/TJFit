@@ -8,6 +8,9 @@ export type DietsMarketplaceCopy = {
   bulking: string;
   clearFilters: string;
   noMatches: string;
+  emptyFilterTitle: string;
+  emptyFilterSub: string;
+  footerCta: string;
   eyebrow: string;
   title: string;
   body: string;
@@ -29,9 +32,12 @@ const copy: Record<Locale, DietsMarketplaceCopy> = {
     bulking: "Bulking",
     clearFilters: "Clear",
     noMatches: "No diets match these filters.",
+    emptyFilterTitle: "No diets match your filter",
+    emptyFilterSub: "Try adjusting your filters or browse all diets.",
+    footerCta: "Not sure which diet? Start with our free one →",
     eyebrow: "Nutrition Lab",
-    title: "Structured meal systems for cuts, lean gains, and consistency.",
-    body: "Filter by cutting or bulking. Free starters unlock after sign-in; full 12-week systems include complete protocols and upgrade paths.",
+    title: "10 Full Diet Systems",
+    body: "Cutting or bulking. Daily meals, macros, recipes, and progression.",
     typeTagCutting: "Cutting",
     typeTagBulking: "Bulking",
     macroFocused: "Macro-focused plan",
@@ -47,6 +53,9 @@ const copy: Record<Locale, DietsMarketplaceCopy> = {
     bulking: "Bulk",
     clearFilters: "Temizle",
     noMatches: "Bu filtrelere uyan plan yok.",
+    emptyFilterTitle: "Filtreye uyan diyet yok",
+    emptyFilterSub: "Filtreleri degistirin veya tum diyetlere bakin.",
+    footerCta: "Emin degil misiniz? Ucretsiz diyetle baslayin →",
     eyebrow: "Beslenme",
     title: "Kesim, kontrollu kas ve duzen icin yapilandirilmis ogun sistemleri.",
     body: "Kesim veya bulk ile filtrele. Ucretsiz baslangiclar giris sonrasi acilir; 12 haftalik sistemler tam protokol ve yukseltme yolu sunar.",
@@ -65,6 +74,9 @@ const copy: Record<Locale, DietsMarketplaceCopy> = {
     bulking: "كتلة",
     clearFilters: "مسح",
     noMatches: "لا توجد أنظمة غذائية مطابقة.",
+    emptyFilterTitle: "لا توجد أنظمة مطابقة",
+    emptyFilterSub: "جرّب تغيير الفلاتر أو تصفح كل الأنظمة.",
+    footerCta: "لست متأكداً؟ ابدأ بالمجاني ←",
     eyebrow: "التغذية",
     title: "أنظمة وجبات منظمة للتنشيف والزيادة الخالية والانتظام.",
     body: "صفِّ حسب التنشيف أو الكتلة. البدايات المجانية بعد تسجيل الدخول؛ أنظمة 12 أسبوعًا كاملة مع مسار ترقية.",
@@ -83,6 +95,9 @@ const copy: Record<Locale, DietsMarketplaceCopy> = {
     bulking: "Volumen",
     clearFilters: "Limpiar",
     noMatches: "Ninguna dieta coincide.",
+    emptyFilterTitle: "Ninguna dieta coincide",
+    emptyFilterSub: "Ajusta los filtros o mira todas las dietas.",
+    footerCta: "¿No sabes cuál? Empieza con la gratuita →",
     eyebrow: "Nutricion",
     title: "Sistemas de comidas para definicion, ganancia limpia y constancia.",
     body: "Filtra por definicion o volumen. Los starters gratis tras iniciar sesion; los sistemas de 12 semanas incluyen protocolo completo.",
@@ -101,6 +116,9 @@ const copy: Record<Locale, DietsMarketplaceCopy> = {
     bulking: "Prise de masse",
     clearFilters: "Reinitialiser",
     noMatches: "Aucun regime ne correspond.",
+    emptyFilterTitle: "Aucun régime ne correspond",
+    emptyFilterSub: "Modifiez les filtres ou parcourez tous les régimes.",
+    footerCta: "Pas sûr ? Commencez par le gratuit →",
     eyebrow: "Nutrition",
     title: "Systemes de repas structures pour seche, prise maigre et regularite.",
     body: "Filtrez seche ou prise de masse. Starters gratuits apres connexion; parcours 12 semaines complets avec montee de gamme.",

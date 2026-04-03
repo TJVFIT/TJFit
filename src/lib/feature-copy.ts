@@ -21,6 +21,7 @@ type MessagesCopy = {
   title: string;
   subtitle: string;
   noConversations: string;
+  noConversationsSub: string;
   startCall: string;
   startVideoCall: string;
   send: string;
@@ -142,7 +143,8 @@ const messagesCopy: Record<Locale, MessagesCopy> = {
   en: {
     title: "Messages",
     subtitle: "Encrypted direct messages and coach chat. Find people by username.",
-    noConversations: "No conversations yet.",
+    noConversations: "No messages yet",
+    noConversationsSub: "You can message coaches or other users by username.",
     startCall: "Call",
     startVideoCall: "Video call",
     send: "Send",
@@ -171,7 +173,7 @@ const messagesCopy: Record<Locale, MessagesCopy> = {
     inboxEncryptedPreview: "Encrypted message",
     inboxNoMessagesYet: "No messages yet",
     threadLoading: "Loading conversation…",
-    threadEmpty: "No messages yet. Say hello below.",
+    threadEmpty: "Start the conversation.",
     threadRetry: "Try again",
     messageInputPlaceholder: "Message",
     newChatSectionTitle: "New chat"
@@ -179,7 +181,8 @@ const messagesCopy: Record<Locale, MessagesCopy> = {
   tr: {
     title: "Mesajlar",
     subtitle: "Sifreli DM ve koç sohbeti. Kullanici adiyla kisi bulun.",
-    noConversations: "Henuz sohbet yok.",
+    noConversations: "Henuz mesaj yok",
+    noConversationsSub: "Koçlara veya diger kullanicilara kullanici adiyla mesaj atabilirsin.",
     startCall: "Ara",
     startVideoCall: "Goruntulu ara",
     send: "Gonder",
@@ -208,7 +211,7 @@ const messagesCopy: Record<Locale, MessagesCopy> = {
     inboxEncryptedPreview: "Sifreli mesaj",
     inboxNoMessagesYet: "Henuz mesaj yok",
     threadLoading: "Sohbet yukleniyor…",
-    threadEmpty: "Henuz mesaj yok. Asagidan yazin.",
+    threadEmpty: "Sohbeti baslat.",
     threadRetry: "Tekrar dene",
     messageInputPlaceholder: "Mesaj",
     newChatSectionTitle: "Yeni sohbet"
@@ -216,7 +219,8 @@ const messagesCopy: Record<Locale, MessagesCopy> = {
   ar: {
     title: "الرسائل",
     subtitle: "رسائل مباشرة مشفرة ومحادثة المدرب. ابحث بالاسم المستخدم.",
-    noConversations: "لا توجد محادثات بعد.",
+    noConversations: "لا رسائل بعد",
+    noConversationsSub: "يمكنك مراسلة المدربين أو الأعضاء باسم المستخدم.",
     startCall: "اتصال",
     startVideoCall: "مكالمة فيديو",
     send: "إرسال",
@@ -245,7 +249,7 @@ const messagesCopy: Record<Locale, MessagesCopy> = {
     inboxEncryptedPreview: "رسالة مشفرة",
     inboxNoMessagesYet: "لا رسائل بعد",
     threadLoading: "جار تحميل المحادثة…",
-    threadEmpty: "لا رسائل بعد. اكتب في الأسفل.",
+    threadEmpty: "ابدأ المحادثة.",
     threadRetry: "إعادة المحاولة",
     messageInputPlaceholder: "رسالة",
     newChatSectionTitle: "محادثة جديدة"
@@ -253,7 +257,8 @@ const messagesCopy: Record<Locale, MessagesCopy> = {
   es: {
     title: "Mensajes",
     subtitle: "DM cifrados y chat con coach. Busca por usuario.",
-    noConversations: "Aun no hay conversaciones.",
+    noConversations: "Sin mensajes aun",
+    noConversationsSub: "Puedes escribir a coaches u otros usuarios por nombre de usuario.",
     startCall: "Llamar",
     startVideoCall: "Videollamada",
     send: "Enviar",
@@ -282,7 +287,7 @@ const messagesCopy: Record<Locale, MessagesCopy> = {
     inboxEncryptedPreview: "Mensaje cifrado",
     inboxNoMessagesYet: "Sin mensajes aun",
     threadLoading: "Cargando conversacion…",
-    threadEmpty: "Sin mensajes. Escribe abajo.",
+    threadEmpty: "Empieza la conversacion.",
     threadRetry: "Reintentar",
     messageInputPlaceholder: "Mensaje",
     newChatSectionTitle: "Nuevo chat"
@@ -290,7 +295,8 @@ const messagesCopy: Record<Locale, MessagesCopy> = {
   fr: {
     title: "Messages",
     subtitle: "DM chiffres et chat coach. Trouvez des membres par pseudo.",
-    noConversations: "Aucune conversation pour le moment.",
+    noConversations: "Pas encore de messages",
+    noConversationsSub: "Vous pouvez ecrire aux coaches ou aux membres par pseudo.",
     startCall: "Appeler",
     startVideoCall: "Appel video",
     send: "Envoyer",
@@ -319,7 +325,7 @@ const messagesCopy: Record<Locale, MessagesCopy> = {
     inboxEncryptedPreview: "Message chiffre",
     inboxNoMessagesYet: "Pas encore de messages",
     threadLoading: "Chargement…",
-    threadEmpty: "Pas encore de messages. Ecrivez ci-dessous.",
+    threadEmpty: "Lancez la conversation.",
     threadRetry: "Reessayer",
     messageInputPlaceholder: "Message",
     newChatSectionTitle: "Nouvelle conversation"

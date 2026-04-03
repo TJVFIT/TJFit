@@ -9,12 +9,12 @@ import { getProgramTier, getProgramVisual } from "@/lib/program-card-visual";
 import { cn } from "@/lib/utils";
 
 const shellClass =
-  "group relative flex h-full min-h-0 flex-col overflow-hidden rounded-3xl border border-white/[0.07] bg-gradient-to-b from-white/[0.06] via-[#111215]/90 to-[#0a0a0b] shadow-[0_20px_50px_-28px_rgba(0,0,0,0.85)] backdrop-blur-md transition-[box-shadow,border-color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-[box-shadow,border-color] group-hover:-translate-y-1 group-hover:scale-[1.01] group-hover:border-cyan-400/22 group-hover:shadow-[0_28px_64px_-32px_rgba(0,0,0,0.9),0_0_0_1px_rgba(34,211,238,0.08),0_0_48px_-24px_rgba(34,211,238,0.14)] motion-reduce:group-hover:translate-y-0 motion-reduce:group-hover:scale-100";
+  "group tj-card-premium-hover relative flex h-full min-h-0 flex-col overflow-hidden rounded-[14px] border border-[#1E2028] bg-[#111215] shadow-[0_1px_3px_rgba(0,0,0,0.4),0_0_0_1px_#1E2028] motion-reduce:transition-none";
 
 const ctaPillClass = cn(
-  "inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-cyan-400 via-cyan-400 to-sky-500 px-4 py-3 text-xs font-semibold text-[#05080a] sm:w-auto sm:justify-start sm:py-2.5",
-  "shadow-[0_0_28px_-10px_rgba(34,211,238,0.5)] transition-[gap,box-shadow,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
-  "group-hover:gap-2 group-hover:shadow-[0_0_36px_-8px_rgba(34,211,238,0.55)] group-active:scale-[0.98]"
+  "inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-[#22D3EE] px-4 py-3 text-xs font-semibold text-[#09090B] sm:w-auto sm:justify-start sm:py-2.5",
+  "transition-[gap,box-shadow] duration-200 ease-out",
+  "group-hover:gap-2 group-hover:shadow-[0_0_20px_rgba(34,211,238,0.12)]"
 );
 
 function CtaPill({ label }: { label: string }) {
@@ -85,18 +85,18 @@ function PremiumProgramCardInner({
           aria-hidden
         />
         <div
-          className="absolute inset-0 bg-gradient-to-t from-[#0a0a0b] via-[#0a0a0b]/65 to-black/25"
+          className="absolute inset-0 bg-[linear-gradient(to_top,rgba(10,10,11,0.9)_0%,transparent_60%)]"
           aria-hidden
         />
 
         <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-4 pb-2">
           <div className="flex min-w-0 flex-1 flex-col gap-1.5">
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="max-w-[min(100%,12rem)] truncate rounded-full border border-white/[0.12] bg-black/45 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-100/95 backdrop-blur-md sm:max-w-[58%] sm:text-[10px] sm:tracking-[0.16em]">
+              <span className="max-w-[min(100%,12rem)] truncate rounded border border-cyan-400/25 bg-cyan-400/10 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.05em] text-[#22D3EE] backdrop-blur-md sm:max-w-[58%] sm:text-[10px]">
                 {categoryLabel}
               </span>
               {freeBadgeLabel ? (
-                <span className="shrink-0 rounded-full border border-cyan-400/35 bg-cyan-500/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-cyan-100 backdrop-blur-sm">
+                <span className="shrink-0 rounded border border-violet-400/25 bg-violet-400/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.05em] text-[#A78BFA] backdrop-blur-sm">
                   {freeBadgeLabel}
                 </span>
               ) : null}
@@ -140,7 +140,7 @@ function PremiumProgramCardInner({
           </h3>
           <p className="mt-1.5 text-[11px] font-medium uppercase tracking-[0.2em] text-zinc-400">{duration}</p>
           {metaLine ? (
-            <p className="mt-1.5 text-xs font-medium tabular-nums text-cyan-200/85 [text-shadow:0_1px_10px_rgba(0,0,0,0.5)]">
+            <p className="mt-1.5 text-xs font-medium tabular-nums text-[#A1A1AA] [text-shadow:0_1px_10px_rgba(0,0,0,0.5)]">
               {metaLine}
             </p>
           ) : null}
@@ -241,7 +241,7 @@ export function ProgramCard({
           href={href}
           className={cn(
             shellClass,
-            "focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/45 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0b]"
+            "focus:outline-none focus-visible:border-cyan-400/40 focus-visible:shadow-[0_0_20px_rgba(34,211,238,0.08)]"
           )}
         >
           {inner}
@@ -284,7 +284,7 @@ export function HomeProgramPreviewCard({
         onClick={onNavigate}
         className={cn(
           shellClass,
-          "focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/45 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0b]"
+          "focus:outline-none focus-visible:border-cyan-400/40 focus-visible:shadow-[0_0_20px_rgba(34,211,238,0.08)]"
         )}
       >
         <PremiumProgramCardInner
