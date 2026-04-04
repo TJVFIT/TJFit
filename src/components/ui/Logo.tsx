@@ -18,12 +18,13 @@ const SRC = {
 } as const;
 
 export type LogoVariant = "icon" | "full";
-export type LogoSize = "navbar" | "navFull" | "mobile" | "hero" | "footer" | "auth" | "card" | "mini";
+export type LogoSize = "navbar" | "navFull" | "sidebar" | "mobile" | "hero" | "footer" | "auth" | "card" | "mini";
 
 /** Pixel heights — width always auto, aspect preserved */
 const HEIGHT_PX: Record<LogoSize, number> = {
   navbar: 32,
   navFull: 46,
+  sidebar: 36,
   mobile: 28,
   hero: 60,
   footer: 40,

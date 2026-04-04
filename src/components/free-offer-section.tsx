@@ -56,7 +56,16 @@ function stripTrailingArrow(label: string) {
   return label.replace(/\s*[→←]\s*$/u, "").trim();
 }
 
-export function FreeOfferSection({ locale, freePrograms }: { locale: Locale; freePrograms: Program[] }) {
+export function FreeOfferSection({
+  locale,
+  freePrograms,
+  sectionClassName
+}: {
+  locale: Locale;
+  freePrograms: Program[];
+  /** Merged onto outer <section> (e.g. min-height for immersive layout) */
+  sectionClassName?: string;
+}) {
   const copy = getFreeOfferCopy(locale);
   const pathname = usePathname() ?? "";
   const { user, loading } = useAuth();
@@ -158,7 +167,10 @@ export function FreeOfferSection({ locale, freePrograms }: { locale: Locale; fre
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden border-b border-[#1E2028] bg-[#09090B] py-16 lg:py-24"
+      className={cn(
+        "relative overflow-hidden border-b border-[#1E2028] bg-[#09090B] py-16 lg:py-24",
+        sectionClassName
+      )}
       aria-labelledby="free-starters-heading"
     >
       <div

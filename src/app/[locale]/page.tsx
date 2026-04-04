@@ -2,14 +2,13 @@ import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 
 import { ClientErrorBoundary } from "@/components/client-error-boundary";
-import { FreeOfferSection } from "@/components/free-offer-section";
 import { coaches, programs } from "@/lib/content";
 import { getDietPhase, isCatalogDiet } from "@/lib/diet-catalog";
 import { getHomeLuxuryCopy } from "@/lib/home-luxury-copy";
 import { isLocale, type Locale } from "@/lib/i18n";
 
-/** Client-only home shell avoids hydration issues with viewport hooks and scroll observers. */
-const LuxuryHome = dynamic(() => import("@/components/luxury/luxury-home").then((m) => m.LuxuryHome), {
+/** Client-only immersive home — scroll observers, sidebar offset. */
+const ImmersiveHome = dynamic(() => import("@/components/immersive-home").then((m) => m.ImmersiveHome), {
   ssr: false,
   loading: () => <HomeLuxurySkeleton />
 });
@@ -40,6 +39,8 @@ export default function HomePage({ params }: { params: { locale: string } }) {
   const locale = raw as Locale;
   const copy = getHomeLuxuryCopy(locale);
   const freePrograms = programs.filter((p) => p.is_free);
+  const programCount = programs.filter((p) => !isCatalogDiet(p)).length;
+  const dietCount = programs.filter(isCatalogDiet).length;
   const programPreviews = programs
     .filter((p) => !p.is_free)
     .map((p) => ({
@@ -67,8 +68,6 @@ export default function HomePage({ params }: { params: { locale: string } }) {
   }));
 
   return (
-    <>
-      {freePrograms.length > 0 ? <FreeOfferSection locale={locale} freePrograms={freePrograms} /> : null}
     <ClientErrorBoundary
       sentryScope="home-luxury"
       fallback={
@@ -87,14 +86,16 @@ export default function HomePage({ params }: { params: { locale: string } }) {
         </div>
       }
     >
-      <LuxuryHome
+      <ImmersiveHome
         locale={locale}
         copy={copy}
         programs={programPreviews}
         diets={dietPreviews}
         coaches={coachPreviews}
+        freePrograms={freePrograms}
+        programCount={programCount}
+        dietCount={dietCount}
       />
     </ClientErrorBoundary>
-    </>
   );
 }

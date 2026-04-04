@@ -695,6 +695,57 @@ body {
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2) inset;
 }
 
+@keyframes tj-ticker-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes tj-ticker-right {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tj-ticker-track {
+    animation: none !important;
+  }
+}
+
+@keyframes tj-mobile-overlay-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.tj-mobile-overlay {
+  animation: tj-mobile-overlay-in 300ms ease forwards;
+}
+
+.tj-mobile-overlay--reduce {
+  animation: none !important;
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tj-sidebar-rail:hover {
+    width: 4rem !important;
+  }
+}
+
 /* Free starters: no hover lift on touch; keep border/shadow calm */
 @media (hover: none) {
   .free-starter-card:hover {
