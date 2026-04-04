@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight, Lock } from "lucide-react";
+import { ArrowRight, Lock } from "lucide-react";
 
 import { Logo } from "@/components/ui/Logo";
 import type { Program } from "@/lib/content";
@@ -12,17 +12,17 @@ const shellClass =
   "group tj-card-premium-hover relative flex h-full min-h-0 flex-col overflow-hidden rounded-[14px] border border-[#1E2028] bg-[#111215] shadow-[0_1px_3px_rgba(0,0,0,0.4),0_0_0_1px_#1E2028] motion-reduce:transition-none";
 
 const ctaPillClass = cn(
-  "inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-[#22D3EE] px-4 py-3 text-xs font-semibold text-[#09090B] sm:w-auto sm:justify-start sm:py-2.5",
-  "transition-[gap,box-shadow] duration-200 ease-out",
-  "group-hover:gap-2 group-hover:shadow-[0_0_20px_rgba(34,211,238,0.12)]"
+  "inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-[rgba(34,211,238,0.2)] bg-transparent px-4 py-3 text-xs font-semibold text-[#22D3EE] sm:w-auto sm:justify-start sm:py-2.5",
+  "transition-[gap,box-shadow,background-color,border-color] duration-200 ease-out",
+  "group-hover:gap-2 group-hover:border-[rgba(34,211,238,0.35)] group-hover:bg-[rgba(34,211,238,0.10)] group-hover:shadow-[0_0_20px_rgba(34,211,238,0.12)]"
 );
 
 function CtaPill({ label }: { label: string }) {
   return (
     <span className={ctaPillClass}>
       {label}
-      <ArrowUpRight
-        className="h-4 w-4 shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+      <ArrowRight
+        className="h-4 w-4 shrink-0 transition-transform duration-200 ease-out group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
         aria-hidden
       />
     </span>
@@ -70,7 +70,7 @@ function PremiumProgramCardInner({
     footerCta === "button" ? (
       <button type="button" className={cn(ctaPillClass, "cursor-default")}>
         {ctaLabel}
-        <ArrowUpRight className="h-4 w-4 shrink-0" aria-hidden />
+        <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
       </button>
     ) : (
       <CtaPill label={ctaLabel} />
@@ -79,15 +79,17 @@ function PremiumProgramCardInner({
   return (
     <>
       <div className="relative aspect-[4/3] w-full min-h-[11.5rem] shrink-0 overflow-hidden sm:aspect-[16/10] sm:min-h-0 sm:max-h-[200px]">
-        <div className={cn("absolute inset-0 bg-gradient-to-br opacity-95", visual.gradient)} aria-hidden />
-        <div
-          className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(255,255,255,0.12),transparent)]"
-          aria-hidden
-        />
-        <div
-          className="absolute inset-0 bg-[linear-gradient(to_top,rgba(10,10,11,0.9)_0%,transparent_60%)]"
-          aria-hidden
-        />
+        <div className="absolute inset-0 origin-center transition-transform duration-[400ms] ease-out motion-reduce:transition-none [@media(hover:hover)]:group-hover:scale-[1.04]">
+          <div className={cn("absolute inset-0 bg-gradient-to-br opacity-95", visual.gradient)} aria-hidden />
+          <div
+            className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(255,255,255,0.12),transparent)]"
+            aria-hidden
+          />
+          <div
+            className="absolute inset-0 bg-[linear-gradient(to_top,rgba(9,9,11,0.9)_0%,transparent_55%)]"
+            aria-hidden
+          />
+        </div>
 
         <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-4 pb-2">
           <div className="flex min-w-0 flex-1 flex-col gap-1.5">

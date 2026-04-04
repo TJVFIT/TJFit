@@ -1,13 +1,37 @@
 "use client";
 
 import Link from "next/link";
-import { Dumbbell } from "lucide-react";
+import { Activity, Dumbbell } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@/components/auth-provider";
 import { programs } from "@/lib/content";
 import type { Locale } from "@/lib/i18n";
 import { localizeProgram } from "@/lib/program-localization";
 import { getUserDashboardCopy } from "@/lib/user-dashboard-copy";
+import { cn } from "@/lib/utils";
+
+function greetingLead(locale: Locale, hour: number) {
+  const table: Record<Locale, [string, string, string]> = {
+    en: ["Good morning,", "Good afternoon,", "Good evening,"],
+    tr: ["Gunaydin,", "Iyi gunler,", "Iyi aksamlar,"],
+    ar: ["صباح الخير،", "مساء الخير،", "مساء الخير،"],
+    es: ["Buenos dias,", "Buenas tardes,", "Buenas noches,"],
+    fr: ["Bonjour,", "Bon apres-midi,", "Bonsoir,"]
+  };
+  const row = table[locale] ?? table.en;
+  const idx = hour < 12 ? 0 : hour < 17 ? 1 : 2;
+  return row[idx];
+}
+
+function formatDashboardDate(locale: Locale) {
+  const loc =
+    locale === "tr" ? "tr-TR" : locale === "ar" ? "ar" : locale === "es" ? "es" : locale === "fr" ? "fr-FR" : "en-US";
+  return new Intl.DateTimeFormat(loc, {
+    weekday: "long",
+    month: "long",
+    day: "numeric"
+  }).format(new Date());
+}
 
 type Summary = {
   latestPaidProgramSlug: string | null;
@@ -38,10 +62,35 @@ function DashboardSkeleton() {
 
 export function UserDashboardView({ locale }: { locale: Locale }) {
   const t = getUserDashboardCopy(locale);
-  const { loading: authLoading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [summary, setSummary] = useState<Summary | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [fetching, setFetching] = useState(true);
+  const [hour, setHour] = useState<number | null>(null);
+  const [headerOn, setHeaderOn] = useState(false);
+  const [progressOn, setProgressOn] = useState(false);
+
+  useEffect(() => {
+    setHour(new Date().getHours());
+  }, []);
+
+  useEffect(() => {
+    const tmr = requestAnimationFrame(() => setHeaderOn(true));
+    return () => cancelAnimationFrame(tmr);
+  }, []);
+
+  useEffect(() => {
+    if (!summary) return;
+    const paid = Boolean(summary.latestPaidProgramSlug);
+    const brandNew =
+      !paid && summary.progressEntryCount === 0 && summary.milestoneCount === 0;
+    if (brandNew || !paid) {
+      setProgressOn(false);
+      return;
+    }
+    const tmr = window.setTimeout(() => setProgressOn(true), 400);
+    return () => window.clearTimeout(tmr);
+  }, [summary]);
 
   const load = useCallback(async () => {
     setFetching(true);
@@ -102,8 +151,41 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
     : null;
   const programTitle = staticProgram ? localizeProgram(staticProgram, locale).title : summary.latestPaidProgramSlug;
 
+  const displayName =
+    (user?.user_metadata?.full_name as string | undefined)?.trim() ||
+    user?.email?.split("@")[0]?.trim() ||
+    "Athlete";
+
+  const progressPct = Math.min(
+    100,
+    Math.round(
+      summary.milestoneCount * 18 + summary.progressEntryCount * 6 + (hasPaidProgram ? 22 : 0)
+    )
+  );
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
+      <header
+        className={cn(
+          "transition-[opacity,transform] duration-[400ms] ease-out motion-reduce:translate-y-0 motion-reduce:opacity-100",
+          headerOn ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
+        )}
+      >
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <div className="min-w-0 flex-1">
+            <p className="text-base text-[#52525B]">{hour !== null ? greetingLead(locale, hour) : "\u00a0"}</p>
+            <p className="mt-1 break-words font-display text-[36px] font-extrabold leading-tight tracking-[-0.025em] text-white [hyphens:auto] md:text-[56px]">
+              {displayName}.
+            </p>
+          </div>
+          <p className="text-sm text-[#52525B]">{formatDashboardDate(locale)}</p>
+        </div>
+        <div
+          className="mt-8 h-px w-full bg-[linear-gradient(90deg,transparent,rgba(34,211,238,0.4),transparent)]"
+          aria-hidden
+        />
+      </header>
+
       {isBrandNew ? (
         <div className="tj-empty-state flex flex-col items-center">
           <Dumbbell className="mx-auto h-8 w-8 text-[var(--color-text-muted)]" aria-hidden strokeWidth={1.5} />
@@ -120,13 +202,25 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
 
       {!isBrandNew && hasPaidProgram ? (
         <section className="space-y-3">
-          <h2 className="text-sm font-medium uppercase tracking-wider text-zinc-500">{t.activeProgram}</h2>
+          <h2 className="text-[13px] font-medium uppercase tracking-widest text-[#52525B]">{t.activeProgram}</h2>
           <Link
             href={`/${locale}/programs/${encodeURIComponent(summary.latestPaidProgramSlug!)}`}
-            className="glass-panel block rounded-[24px] p-6 transition hover:border-white/15"
+            className="group/ap flex flex-col gap-6 rounded-2xl border border-[#1E2028] bg-[#111215] p-8 transition-[border-color,box-shadow,transform] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:border-[rgba(34,211,238,0.22)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.45)] motion-reduce:hover:transform-none [@media(hover:hover)]:hover:-translate-y-1"
           >
-            <p className="text-lg font-semibold text-white">{programTitle}</p>
-            <p className="mt-2 text-sm text-cyan-300/90">Continue program →</p>
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0 flex-1">
+                <p className="text-lg font-semibold text-white">{programTitle}</p>
+                <div className="mt-5 h-1 w-full max-w-md overflow-hidden rounded-full bg-[#1E2028]">
+                  <div
+                    className="h-full origin-left rounded-full bg-gradient-to-r from-[#22D3EE] to-[#A78BFA] transition-transform duration-1000 ease-[cubic-bezier(0,0,0.2,1)] motion-reduce:transition-none"
+                    style={{ transform: `scaleX(${progressOn ? progressPct / 100 : 0})` }}
+                  />
+                </div>
+              </div>
+              <span className="inline-flex min-h-[48px] shrink-0 items-center justify-center rounded-full border border-[rgba(34,211,238,0.25)] bg-[rgba(34,211,238,0.08)] px-6 py-2.5 text-sm font-semibold text-[#22D3EE] transition-[transform,box-shadow] duration-150 group-hover/ap:scale-[1.02] group-hover/ap:shadow-[0_0_24px_rgba(34,211,238,0.12)]">
+                Continue →
+              </span>
+            </div>
           </Link>
           {summary.milestoneCount === 0 ? (
             <p className="text-sm leading-relaxed text-[var(--color-text-muted)]">{t.quietComplete}</p>
@@ -136,17 +230,28 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
 
       {!isBrandNew && summary.progressEntryCount > 0 ? (
         <section className="space-y-3">
-          <h2 className="text-sm font-medium uppercase tracking-wider text-zinc-500">{t.recentActivity}</h2>
-          <div className="glass-panel rounded-[24px] p-6">
-            <ul className="space-y-0 divide-y divide-white/[0.06] text-sm text-zinc-300">
+          <h2 className="text-[13px] font-medium uppercase tracking-widest text-[#52525B]">{t.recentActivity}</h2>
+          <div className="rounded-2xl border border-[#1E2028] bg-[#111215] p-2 sm:p-4">
+            <ul className="text-sm text-[#A1A1AA]">
               {summary.recentEntryDates.map((d) => (
-                <li key={d} className="flex min-h-[48px] items-center justify-between gap-2 py-3 first:pt-0 last:pb-0">
-                  <span className="text-zinc-500">Log</span>
-                  <time dateTime={d}>{d}</time>
+                <li
+                  key={d}
+                  className="flex min-h-[48px] items-center justify-between gap-3 border-b border-[rgba(255,255,255,0.04)] py-3.5 transition-[background-color] duration-150 ease-out last:border-b-0 [@media(hover:hover)]:hover:rounded-lg [@media(hover:hover)]:hover:bg-[rgba(255,255,255,0.02)] [@media(hover:hover)]:hover:px-3"
+                >
+                  <span className="flex items-center gap-2 text-white">
+                    <Activity className="h-4 w-4 shrink-0 text-[#22D3EE]" strokeWidth={2} aria-hidden />
+                    Log entry
+                  </span>
+                  <time className="text-[13px] text-[#52525B]" dateTime={d}>
+                    {d}
+                  </time>
                 </li>
               ))}
             </ul>
-            <Link href={`/${locale}/progress`} className="mt-4 inline-block text-sm font-medium text-cyan-300/90 hover:text-cyan-200">
+            <Link
+              href={`/${locale}/progress`}
+              className="mt-4 inline-block text-sm font-medium text-[#22D3EE] transition-colors duration-150 hover:text-white"
+            >
               {t.progressLink}
             </Link>
           </div>
@@ -155,19 +260,22 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
       ) : null}
 
       {!isBrandNew ? (
-        <section className="grid grid-cols-3 gap-3">
-          <div className="glass-panel rounded-[20px] p-4 text-center">
-            <p className="text-2xl font-semibold text-white">{summary.paidOrderCount}</p>
-            <p className="mt-1 text-xs text-zinc-500">{t.statsPrograms}</p>
-          </div>
-          <div className="glass-panel rounded-[20px] p-4 text-center">
-            <p className="text-2xl font-semibold text-white">{summary.progressEntryCount}</p>
-            <p className="mt-1 text-xs text-zinc-500">{t.statsEntries}</p>
-          </div>
-          <div className="glass-panel rounded-[20px] p-4 text-center">
-            <p className="text-2xl font-semibold text-white">{summary.milestoneCount}</p>
-            <p className="mt-1 text-xs text-zinc-500">{t.statsMilestones}</p>
-          </div>
+        <section className="grid grid-cols-2 gap-4 lg:grid-cols-3">
+          {(
+            [
+              [summary.paidOrderCount, t.statsPrograms],
+              [summary.progressEntryCount, t.statsEntries],
+              [summary.milestoneCount, t.statsMilestones]
+            ] as const
+          ).map(([value, label]) => (
+            <div
+              key={label}
+              className="rounded-[14px] border border-[#1E2028] bg-[#111215] p-6 text-center transition-[border-color,box-shadow] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] [@media(hover:hover)]:hover:border-[rgba(34,211,238,0.2)] [@media(hover:hover)]:hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)]"
+            >
+              <p className="font-display text-[40px] font-extrabold leading-none text-[#22D3EE]">{value}</p>
+              <p className="mt-2 text-[13px] font-medium uppercase tracking-widest text-[#52525B]">{label}</p>
+            </div>
+          ))}
         </section>
       ) : null}
     </div>

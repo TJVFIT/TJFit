@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { notFound, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
+import { AuthPageFrame } from "@/components/auth-page-frame";
 import { AsyncButton } from "@/components/ui/AsyncButton";
 import { Logo } from "@/components/ui/Logo";
 import { getAuthCopy } from "@/lib/launch-copy";
@@ -91,16 +92,16 @@ function LoginForm({ params }: { params: { locale: string } }) {
   };
 
   return (
-    <div className="mx-auto flex min-h-[80vh] max-w-md items-center px-4 py-16 sm:px-6 lg:px-8">
-      <div className="tj-surface-panel w-full p-8 sm:p-9">
+    <AuthPageFrame>
+      <div className="w-full">
         <div className="mb-6 flex justify-center">
           <Logo variant="icon" size="auth" href={`/${params.locale}`} priority />
         </div>
         <span className="lux-badge inline-flex">{adminMode ? copy.adminLoginBadge : copy.loginBadge}</span>
-        <h1 className="tj-page-title mt-6">
+        <h1 className="mt-6 text-center font-display text-[32px] font-bold leading-tight tracking-[-0.015em] text-white">
           {adminMode ? copy.adminLoginTitle : copy.loginTitle}
         </h1>
-        <p className="tj-prose-muted mt-3">
+        <p className="mt-2 text-center text-sm leading-relaxed text-[#A1A1AA]">
           {adminMode ? copy.adminLoginSubtitle : copy.loginSubtitle}
         </p>
 
@@ -186,7 +187,7 @@ function LoginForm({ params }: { params: { locale: string } }) {
           </p>
         )}
       </div>
-    </div>
+    </AuthPageFrame>
   );
 }
 

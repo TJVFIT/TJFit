@@ -4,15 +4,19 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
+import { CinematicListingHeader } from "@/components/cinematic-listing-header";
+import { FilterPill, ListingFilterBar } from "@/components/listing-filter-bar";
 import { PremiumPageShell } from "@/components/premium";
-import { ProgramCard, SectionHeading } from "@/components/ui";
+import { StaggerRevealGrid } from "@/components/stagger-reveal-grid";
+import { ScrollTicker } from "@/components/ui/ScrollTicker";
+import { AmbientBackground } from "@/components/ui/AmbientBackground";
+import { ProgramCard } from "@/components/ui";
 import { programs, Program } from "@/lib/content";
 import { Locale, isLocale } from "@/lib/i18n";
 import { formatProgramPrice, getProgramBasePriceTry, getProgramUiCopy, localizeProgram } from "@/lib/program-localization";
 import { useAuth } from "@/components/auth-provider";
 import { getProgramManagementCopy } from "@/lib/program-management-copy";
 import { getProgramsMarketplaceCopy } from "@/lib/programs-marketplace-copy";
-import { cn } from "@/lib/utils";
 
 type CustomProgramCard = Program & { isCustomUpload?: boolean };
 
@@ -128,123 +132,94 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
           : locale === "fr"
             ? { elite: "Elite", popular: "Populaire", fresh: "Nouveau", signature: "Signature" }
             : { elite: "Elite", popular: "Popular", fresh: "New", signature: "Signature" };
-  const heading =
-    locale === "tr"
-      ? {
-          eyebrow: "Program Pazari",
-          title: "Hizli sonuc ve duzenli ilerleme icin dijital programlar.",
-          body: "Yag yakimi, kondisyon ve kas gelisimi hedefleri icin yapilandirilmis programlari kesfedin."
-        }
-      : locale === "ar"
-        ? {
-            eyebrow: "سوق البرامج",
-            title: "برامج رقمية لنتائج سريعة والتزام مستمر.",
-            body: "تصفح برامج منظمة لحرق الدهون وتحسين اللياقة وبناء العضلات."
-          }
-        : locale === "es"
-          ? {
-              eyebrow: "Marketplace de Programas",
-              title: "Programas digitales para resultados rapidos y constancia.",
-              body: "Explora planes estructurados para perdida de grasa, condicion y ganancia muscular."
-            }
-          : locale === "fr"
-            ? {
-                eyebrow: "Marketplace de Programmes",
-                title: "Programmes digitaux pour des resultats rapides et reguliers.",
-                body: "Decouvrez des plans structures pour perte de graisse, condition physique et prise de muscle."
-              }
-            : {
-                eyebrow: "Programs Marketplace",
-                title: "Digital programs built for fast results and consistency.",
-                body: "Browse structured training plans for fat loss, conditioning, and lean muscle goals. New programs are added weekly."
-              };
-
   return (
-    <PremiumPageShell className="max-w-7xl">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <SectionHeading eyebrow={heading.eyebrow} title={heading.title} copy={heading.body} />
-        <div className="flex shrink-0 flex-col gap-2 sm:items-end">
+    <>
+      <AmbientBackground />
+      <div className="relative z-[1]">
+        <CinematicListingHeader
+          eyebrow={filterCopy.cinematicEyebrow}
+          headlineBefore={filterCopy.cinematicHeadlineBefore}
+          headlineGradient={filterCopy.cinematicHeadlineGradient}
+          sub={filterCopy.cinematicSub}
+        >
           <Link
             href={`/${params.locale}/diets`}
-            className="text-sm font-medium text-cyan-300/90 transition hover:text-cyan-200"
+            className="text-sm font-medium text-[#22D3EE] transition-colors duration-150 hover:text-white"
           >
             {filterCopy.browseDietsLink}
           </Link>
           {canUpload ? (
             <Link
               href={`/${params.locale}/programs/upload`}
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm text-white hover:bg-white/5"
+              className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-[#1E2028] px-4 py-2 text-sm text-white transition-[border-color,background-color] duration-150 hover:border-[rgba(255,255,255,0.12)] hover:bg-[rgba(255,255,255,0.04)]"
               title={programManagementCopy.uploadCtaTitle}
             >
               <Plus className="h-4 w-4" />
               {programManagementCopy.upload}
             </Link>
           ) : null}
-        </div>
-      </div>
+        </CinematicListingHeader>
 
-      <div className="mt-8 flex flex-col gap-4 rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4 sm:flex-row sm:flex-wrap sm:items-center">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">{filterCopy.filterLabel}</p>
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs text-zinc-500">{filterCopy.filterGoal}:</span>
-          {(
-            [
-              ["all", filterCopy.all],
-              ["fat", filterCopy.goalFat],
-              ["muscle", filterCopy.goalMuscle]
-            ] as const
-          ).map(([k, label]) => (
-            <button
-              key={k}
-              type="button"
-              onClick={() => setGoalFilter(k)}
-              className={cn(
-                "min-h-[44px] rounded-full border px-3 py-2 text-xs font-medium transition duration-200",
-                goalFilter === k ? "border-cyan-400/40 bg-cyan-500/10 text-white" : "border-white/10 text-zinc-400 hover:border-white/20"
-              )}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs text-zinc-500">{filterCopy.filterLocation}:</span>
-          {(
-            [
-              ["all", filterCopy.all],
-              ["home", filterCopy.locHome],
-              ["gym", filterCopy.locGym]
-            ] as const
-          ).map(([k, label]) => (
-            <button
-              key={k}
-              type="button"
-              onClick={() => setLocFilter(k)}
-              className={cn(
-                "min-h-[44px] rounded-full border px-3 py-2 text-xs font-medium transition duration-200",
-                locFilter === k ? "border-cyan-400/40 bg-cyan-500/10 text-white" : "border-white/10 text-zinc-400 hover:border-white/20"
-              )}
-            >
-              {label}
-            </button>
-          ))}
-          {filterActive ? (
-            <button
-              type="button"
-              onClick={() => {
-                setGoalFilter("all");
-                setLocFilter("all");
-              }}
-              className="text-xs font-medium text-cyan-300 hover:text-cyan-200"
-            >
-              {filterCopy.clearFilters}
-            </button>
-          ) : null}
-        </div>
-      </div>
+        <PremiumPageShell className="relative z-[1] max-w-[1200px] px-6">
+          <ScrollTicker
+            speed={50}
+            items={[
+              "FAT LOSS",
+              "MUSCLE GAIN",
+              "HOME WORKOUTS",
+              "GYM TRAINING",
+              "12 WEEKS",
+              "PROGRESSIVE OVERLOAD",
+              "STRUCTURED SYSTEMS"
+            ]}
+            className="mb-10 text-[#1E2028]"
+          />
+
+          <ListingFilterBar label={filterCopy.filterLabel}>
+            <div className="flex flex-wrap items-center gap-1 px-1">
+              <span className="me-1 text-xs text-[#52525B]">{filterCopy.filterGoal}:</span>
+              {(
+                [
+                  ["all", filterCopy.all],
+                  ["fat", filterCopy.goalFat],
+                  ["muscle", filterCopy.goalMuscle]
+                ] as const
+              ).map(([k, label]) => (
+                <FilterPill key={k} active={goalFilter === k} onClick={() => setGoalFilter(k)}>
+                  {label}
+                </FilterPill>
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center gap-1 px-1">
+              <span className="me-1 text-xs text-[#52525B]">{filterCopy.filterLocation}:</span>
+              {(
+                [
+                  ["all", filterCopy.all],
+                  ["home", filterCopy.locHome],
+                  ["gym", filterCopy.locGym]
+                ] as const
+              ).map(([k, label]) => (
+                <FilterPill key={k} active={locFilter === k} onClick={() => setLocFilter(k)}>
+                  {label}
+                </FilterPill>
+              ))}
+              {filterActive ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setGoalFilter("all");
+                    setLocFilter("all");
+                  }}
+                  className="ms-1 min-h-[44px] px-2 text-[13px] font-medium text-[#22D3EE] transition-colors duration-150 hover:text-white sm:min-h-0"
+                >
+                  {filterCopy.clearFilters}
+                </button>
+              ) : null}
+            </div>
+          </ListingFilterBar>
 
       {!customCatalogReady ? (
-        <div className="mt-10 grid items-stretch gap-6 md:grid-cols-2 xl:grid-cols-4" aria-busy="true" aria-label="Loading programs">
+        <div className="grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3" aria-busy="true" aria-label="Loading programs">
           {Array.from({ length: 8 }).map((_, i) => (
             <div
               key={`sk-${i}`}
@@ -259,7 +234,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
           ))}
         </div>
       ) : (
-      <div className="mt-10 grid items-stretch gap-6 md:grid-cols-2 xl:grid-cols-4">
+      <StaggerRevealGrid className="grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {filteredPrograms.map((program) => {
           const m = programMeta(program);
           const goalBadge = m.goal === "fat" ? filterCopy.goalFat : m.goal === "muscle" ? filterCopy.goalMuscle : undefined;
@@ -300,7 +275,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
             />
           );
         })}
-      </div>
+      </StaggerRevealGrid>
       )}
       {customCatalogReady && filterActive && filteredPrograms.length === 0 && allPrograms.length > 0 ? (
         <div className="tj-empty-state mt-10">
@@ -342,6 +317,8 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
           </div>
         </>
       ) : null}
-    </PremiumPageShell>
+        </PremiumPageShell>
+      </div>
+    </>
   );
 }

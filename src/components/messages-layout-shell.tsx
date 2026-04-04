@@ -206,16 +206,18 @@ export function MessagesLayoutShell({
                   <Link
                     href={`/${locale}/messages/${c.id}`}
                     className={clsx(
-                      "mx-1 flex min-h-[4.25rem] items-stretch gap-3 rounded-lg px-2.5 py-2.5 transition sm:min-h-0 sm:py-2",
-                      activeId === c.id ? "bg-white/[0.06]" : "hover:bg-white/[0.03]",
-                      unread && activeId !== c.id && "bg-cyan-500/[0.04]"
+                      "flex min-h-[52px] items-stretch gap-3 px-5 py-3.5 transition-[background-color,border-color] duration-150 ease-out sm:min-h-0",
+                      activeId === c.id
+                        ? "border-l-[3px] border-l-[#22D3EE] bg-[rgba(34,211,238,0.06)]"
+                        : "border-l-[3px] border-l-transparent hover:bg-[rgba(255,255,255,0.04)]",
+                      unread && activeId !== c.id && "bg-[rgba(34,211,238,0.04)]"
                     )}
                   >
                     <div className="relative shrink-0">
                       <div
                         className={clsx(
-                          "flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border bg-zinc-900 text-sm font-semibold text-zinc-400",
-                          unread ? "border-cyan-400/35" : "border-white/10"
+                          "flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-[#1E2028] bg-[#18191E] text-xs font-semibold text-[#A1A1AA]",
+                          unread ? "border-[rgba(34,211,238,0.35)]" : ""
                         )}
                       >
                         {c.peer.avatar_url ? (
@@ -233,19 +235,19 @@ export function MessagesLayoutShell({
                     </div>
                     <div className="min-w-0 flex-1 py-0.5">
                       <div className="flex items-baseline justify-between gap-2">
-                        <p className={clsx("truncate text-[15px]", unread ? "font-semibold text-white" : "font-medium text-zinc-200")}>
+                        <p className={clsx("truncate text-sm font-semibold", unread ? "text-white" : "text-white")}>
                           {c.peer.display_name}
                         </p>
                         <time
-                          className="shrink-0 text-[11px] text-zinc-500"
+                          className="ms-auto shrink-0 text-[11px] text-[#52525B]"
                           dateTime={c.last_message_at ?? c.created_at}
                           suppressHydrationWarning
                         >
                           {formatInboxTime(c.last_message_at ?? c.created_at, locale)}
                         </time>
                       </div>
-                      <p className="truncate text-xs text-zinc-500">@{c.peer.username}</p>
-                      <p className={clsx("mt-0.5 truncate text-[13px] leading-snug", unread ? "text-zinc-300" : "text-zinc-500")}>
+                      <p className="truncate text-[13px] text-[#52525B]">@{c.peer.username}</p>
+                      <p className="mt-0.5 truncate text-[13px] leading-snug text-[#52525B]">
                         {previewLabel(c.last_message_preview)}
                       </p>
                     </div>
@@ -271,15 +273,15 @@ export function MessagesLayoutShell({
       {/* Inbox column: full width on mobile; sidebar on desktop */}
       <aside
         className={clsx(
-          "flex min-h-0 w-full flex-col border-white/[0.06] bg-background lg:max-w-[380px] lg:shrink-0 lg:border-r",
+          "flex min-h-0 w-full flex-col border-[#1E2028] bg-[#09090B] lg:w-[320px] lg:max-w-[320px] lg:shrink-0 lg:border-r",
           activeId ? "hidden lg:flex" : "flex flex-1 lg:flex-none"
         )}
       >
-        <div className="shrink-0 border-b border-white/[0.08] px-4 pb-4 pt-5 lg:pt-6">
+        <div className="shrink-0 border-b border-[#1E2028] px-5 pb-4 pt-5">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <h1 className="font-display text-2xl font-bold tracking-tight text-white">{t.title}</h1>
-              <p className="mt-0.5 text-[11px] text-zinc-500">{t.encrypted}</p>
+              <h1 className="font-display text-2xl font-semibold tracking-tight text-white">{t.title}</h1>
+              <p className="mt-0.5 text-[11px] text-[#52525B]">{t.encrypted}</p>
             </div>
             <Link
               href={`/${locale}/profile/edit`}
@@ -305,15 +307,15 @@ export function MessagesLayoutShell({
       {/* Desktop: new chat or thread */}
       <main
         className={clsx(
-          "flex h-full min-h-0 min-w-0 flex-1 flex-col bg-background lg:bg-transparent",
+          "flex h-full min-h-0 min-w-0 flex-1 flex-col border-[#1E2028] bg-[#09090B] lg:border-l",
           activeId ? "flex" : "hidden lg:flex"
         )}
       >
         {!activeId ? (
           <div className="hidden min-h-0 flex-1 flex-col overflow-y-auto lg:flex">
-            <div className="border-b border-white/[0.06] px-6 py-5">
+            <div className="border-b border-[#1E2028] px-6 py-5">
               <h2 className="font-display text-lg font-semibold text-white">{t.newChatSectionTitle}</h2>
-              <p className="mt-1 text-xs text-zinc-500">{t.subtitle}</p>
+              <p className="mt-1 text-xs text-[#52525B]">{t.subtitle}</p>
             </div>
             <div className="flex-1 px-6 py-6">{children}</div>
           </div>

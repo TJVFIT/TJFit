@@ -72,6 +72,10 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
   const [entered, setEntered] = useState(reduce);
   const [langOpen, setLangOpen] = useState(false);
   const [soonTip, setSoonTip] = useState<string | null>(null);
+  const [sidebarExpanded, setSidebarExpanded] = useState(false);
+  const [collapsedTipKey, setCollapsedTipKey] = useState<string | null>(null);
+  const expandTimerRef = useRef<number | null>(null);
+  const collapsedTipTimerRef = useRef<number | null>(null);
   const langRef = useRef<HTMLDivElement>(null);
 
   const isAdmin = role === "admin";
@@ -132,6 +136,39 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
     }
   };
 
+  const clearCollapsedTip = () => {
+    if (collapsedTipTimerRef.current) {
+      window.clearTimeout(collapsedTipTimerRef.current);
+      collapsedTipTimerRef.current = null;
+    }
+    setCollapsedTipKey(null);
+  };
+
+  const scheduleCollapsedTip = (key: string) => {
+    if (sidebarExpanded) return;
+    clearCollapsedTip();
+    const delay = reduce ? 0 : 300;
+    collapsedTipTimerRef.current = window.setTimeout(() => setCollapsedTipKey(key), delay);
+  };
+
+  const onSidebarEnter = () => {
+    if (expandTimerRef.current) window.clearTimeout(expandTimerRef.current);
+    if (reduce) {
+      setSidebarExpanded(true);
+      return;
+    }
+    expandTimerRef.current = window.setTimeout(() => setSidebarExpanded(true), 380);
+  };
+
+  const onSidebarLeave = () => {
+    if (expandTimerRef.current) {
+      window.clearTimeout(expandTimerRef.current);
+      expandTimerRef.current = null;
+    }
+    setSidebarExpanded(false);
+    clearCollapsedTip();
+  };
+
   const normalizedPath = pathname.replace(/^\/(en|tr|ar|es|fr)/, "") || "";
   const [search, setSearch] = useState("");
   useEffect(() => {
@@ -163,24 +200,49 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
     );
 
     const labelClass = cn(
-      "ms-3 min-w-0 max-w-0 flex-1 translate-x-[-8px] truncate text-start text-sm font-medium opacity-0 transition-[max-width,opacity,transform] duration-200 ease-out",
-      "group-hover/sidebar:max-w-[200px] group-hover/sidebar:translate-x-0 group-hover/sidebar:opacity-100 group-hover/sidebar:delay-[180ms]",
+      "ms-3 min-w-0 flex-1 truncate text-start text-sm font-medium transition-[max-width,opacity,transform] duration-200 ease-out",
+      sidebarExpanded ? "max-w-[200px] translate-x-0 opacity-100" : "max-w-0 -translate-x-2 opacity-0",
       active ? "text-white" : "text-[#A1A1AA] group-hover/row:text-white"
     );
 
     const soonBadge = (
-      <span className="ms-1 hidden shrink-0 rounded border border-[rgba(167,139,250,0.2)] bg-[rgba(167,139,250,0.12)] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-[#A78BFA] group-hover/sidebar:inline-flex">
+      <span
+        className={cn(
+          "ms-1 shrink-0 rounded border border-[rgba(167,139,250,0.2)] bg-[rgba(167,139,250,0.12)] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-[#A78BFA]",
+          sidebarExpanded ? "inline-flex" : "hidden"
+        )}
+      >
         SOON
       </span>
     );
+
+    const showCollapsedTooltip = !sidebarExpanded && collapsedTipKey === it.key;
 
     const inner = (
       <>
         <span className="relative flex w-16 shrink-0 justify-center">
           <Icon className={iconClass} strokeWidth={1.75} aria-hidden />
           {it.comingSoon ? (
-            <span className="absolute -end-0.5 -top-1 rounded border border-[rgba(167,139,250,0.2)] bg-[rgba(167,139,250,0.12)] px-1 py-px text-[7px] font-bold text-[#A78BFA] group-hover/sidebar:hidden">
+            <span
+              className={cn(
+                "absolute -end-0.5 -top-1 rounded border border-[rgba(167,139,250,0.2)] bg-[rgba(167,139,250,0.12)] px-1 py-px text-[7px] font-bold text-[#A78BFA]",
+                sidebarExpanded ? "hidden" : "inline-flex"
+              )}
+            >
               S
+            </span>
+          ) : null}
+          {showCollapsedTooltip ? (
+            <span
+              className="tj-collapsed-sidebar-tip pointer-events-none absolute left-[calc(100%+12px)] top-1/2 z-[100] rounded-lg border border-[#1E2028] bg-[#111215] px-3 py-1.5 text-[13px] font-medium text-white shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
+              role="tooltip"
+            >
+              <span className="block whitespace-nowrap">{it.label}</span>
+              {it.comingSoon ? (
+                <span className="mt-0.5 block whitespace-nowrap text-[11px] font-normal italic text-[#52525B]">
+                  Coming soon
+                </span>
+              ) : null}
             </span>
           ) : null}
         </span>
@@ -203,7 +265,9 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
         <div key={it.key} className="px-0" style={style}>
           <button
             type="button"
-            className={cn(rowClass, "w-full px-0 text-start")}
+            className={cn(rowClass, "relative w-full px-0 text-start")}
+            onMouseEnter={() => scheduleCollapsedTip(it.key)}
+            onMouseLeave={clearCollapsedTip}
             onClick={() => {
               setSoonTip(SOON_MSG);
               window.setTimeout(() => setSoonTip(null), 3200);
@@ -223,7 +287,13 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
 
     return (
       <div key={it.key} className="px-0" style={style}>
-        <Link href={href} className={cn(rowClass, "px-0")} title={it.label}>
+        <Link
+          href={href}
+          className={cn(rowClass, "relative px-0")}
+          title={sidebarExpanded ? undefined : it.label}
+          onMouseEnter={() => scheduleCollapsedTip(it.key)}
+          onMouseLeave={clearCollapsedTip}
+        >
           {inner}
         </Link>
       </div>
@@ -243,10 +313,12 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
 
       <aside
         dir={direction}
+        onMouseEnter={onSidebarEnter}
+        onMouseLeave={onSidebarLeave}
         className={cn(
-          "tj-sidebar-rail group/sidebar fixed left-0 top-0 z-50 hidden h-[100dvh] flex-col border-r border-[rgba(255,255,255,0.04)] will-change-[width] lg:flex",
-          "w-16 overflow-hidden transition-[width,transform,background-color,backdrop-filter] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
-          "hover:w-[260px]",
+          "tj-sidebar-rail fixed left-0 top-0 z-50 hidden h-[100dvh] flex-col overflow-x-visible overflow-y-hidden border-r border-[rgba(255,255,255,0.04)] will-change-[width] lg:flex",
+          "transition-[width,transform,background-color,backdrop-filter] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
+          sidebarExpanded ? "w-[260px]" : "w-16",
           scrolled ? "bg-[rgba(9,9,11,0.85)] backdrop-blur-[20px]" : "bg-transparent",
           reduce ? "translate-x-0" : entered ? "translate-x-0" : "-translate-x-full",
           reduce ? "" : "duration-[600ms] ease-[cubic-bezier(0,0,0.2,1)]"
@@ -257,7 +329,7 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
           <Logo variant="full" size="sidebar" href={`/${locale}`} suppressMinTouchTarget />
         </div>
 
-        <nav className="flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto overflow-x-hidden px-0 py-3 [scrollbar-width:thin]">
+        <nav className="flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto overflow-x-visible px-0 py-3 [scrollbar-width:thin]">
           {visibleItems.map((it, i) => renderNavRow(it, i))}
         </nav>
 
@@ -266,12 +338,27 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
             <button
               type="button"
               onClick={() => setLangOpen((o) => !o)}
-              className="group/lang flex h-11 w-full items-center rounded-lg text-[#52525B] transition-colors hover:bg-[rgba(255,255,255,0.04)] hover:text-[#A1A1AA]"
+              onMouseEnter={() => scheduleCollapsedTip("__lang")}
+              onMouseLeave={clearCollapsedTip}
+              className="group/lang relative flex h-11 w-full items-center rounded-lg text-[#52525B] transition-colors hover:bg-[rgba(255,255,255,0.04)] hover:text-[#A1A1AA]"
             >
-              <span className="flex w-16 shrink-0 justify-center">
+              <span className="relative flex w-16 shrink-0 justify-center">
                 <Globe className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+                {!sidebarExpanded && collapsedTipKey === "__lang" ? (
+                  <span
+                    className="tj-collapsed-sidebar-tip pointer-events-none absolute left-[calc(100%+12px)] top-1/2 z-[100] rounded-lg border border-[#1E2028] bg-[#111215] px-3 py-1.5 text-[13px] font-medium text-white shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
+                    role="tooltip"
+                  >
+                    Language
+                  </span>
+                ) : null}
               </span>
-              <span className="ms-3 max-w-0 translate-x-[-8px] overflow-hidden text-sm font-medium opacity-0 transition-[max-width,opacity,transform] duration-200 group-hover/sidebar:max-w-[120px] group-hover/sidebar:translate-x-0 group-hover/sidebar:opacity-100 group-hover/sidebar:delay-[180ms]">
+              <span
+                className={cn(
+                  "ms-3 overflow-hidden text-sm font-medium transition-[max-width,opacity,transform] duration-200",
+                  sidebarExpanded ? "max-w-[120px] translate-x-0 opacity-100" : "max-w-0 -translate-x-2 opacity-0"
+                )}
+              >
                 {locale.toUpperCase()}
                 <ChevronDown className="ms-1 inline h-4 w-4 opacity-60" aria-hidden />
               </span>
@@ -301,12 +388,27 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
           {!loading && !user ? (
             <Link
               href={`/${locale}/login`}
-              className="mt-2 flex h-11 w-full items-center rounded-lg text-[#52525B] transition-colors hover:bg-[rgba(255,255,255,0.04)] hover:text-white"
+              onMouseEnter={() => scheduleCollapsedTip("__login")}
+              onMouseLeave={clearCollapsedTip}
+              className="relative mt-2 flex h-11 w-full items-center rounded-lg text-[#52525B] transition-colors hover:bg-[rgba(255,255,255,0.04)] hover:text-white"
             >
-              <span className="flex w-16 shrink-0 justify-center">
+              <span className="relative flex w-16 shrink-0 justify-center">
                 <User className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+                {!sidebarExpanded && collapsedTipKey === "__login" ? (
+                  <span
+                    className="tj-collapsed-sidebar-tip pointer-events-none absolute left-[calc(100%+12px)] top-1/2 z-[100] rounded-lg border border-[#1E2028] bg-[#111215] px-3 py-1.5 text-[13px] font-medium text-white shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
+                    role="tooltip"
+                  >
+                    {dict.nav.login}
+                  </span>
+                ) : null}
               </span>
-              <span className="ms-3 max-w-0 translate-x-[-8px] overflow-hidden text-sm font-medium opacity-0 transition-[max-width,opacity,transform] duration-200 group-hover/sidebar:max-w-[140px] group-hover/sidebar:translate-x-0 group-hover/sidebar:opacity-100 group-hover/sidebar:delay-[180ms]">
+              <span
+                className={cn(
+                  "ms-3 overflow-hidden text-sm font-medium transition-[max-width,opacity,transform] duration-200",
+                  sidebarExpanded ? "max-w-[140px] translate-x-0 opacity-100" : "max-w-0 -translate-x-2 opacity-0"
+                )}
+              >
                 {dict.nav.login}
               </span>
             </Link>
@@ -319,7 +421,12 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
                   {(displayName || user.email || "?").slice(0, 1).toUpperCase()}
                 </div>
               </div>
-              <div className="min-w-0 max-w-0 flex-1 overflow-hidden pt-0.5 opacity-0 transition-[max-width,opacity] duration-200 group-hover/sidebar:max-w-[200px] group-hover/sidebar:opacity-100 group-hover/sidebar:delay-[180ms]">
+              <div
+                className={cn(
+                  "min-w-0 flex-1 overflow-hidden pt-0.5 transition-[max-width,opacity] duration-200",
+                  sidebarExpanded ? "max-w-[200px] opacity-100" : "max-w-0 opacity-0"
+                )}
+              >
                 <p className="truncate text-sm font-medium text-white">{displayName || user.email}</p>
                 <button
                   type="button"
@@ -421,25 +528,48 @@ function MobileNav({
     setOpen(false);
   };
 
+  const localeChipClass = (code: Locale) =>
+    cn(
+      "flex h-11 min-w-[44px] shrink-0 items-center justify-center rounded-lg border px-2 text-[11px] font-bold uppercase tracking-wider transition-colors",
+      code === locale
+        ? "border-[rgba(34,211,238,0.4)] text-[#22D3EE]"
+        : "border-[#1E2028] text-[#A1A1AA] active:bg-white/5"
+    );
+
   if (!mounted) {
     return (
-      <header className="fixed left-0 right-0 top-0 z-50 flex h-14 items-center justify-between border-b border-[rgba(255,255,255,0.06)] bg-[rgba(9,9,11,0.92)] px-4 pt-[env(safe-area-inset-top,0px)] backdrop-blur-[20px] lg:hidden">
-        <Logo variant="full" size="mobile" href={`/${locale}`} />
-        <div className="h-10 w-10" aria-hidden />
+      <header className="fixed left-0 right-0 top-0 z-50 flex h-14 items-center gap-2 border-b border-[rgba(255,255,255,0.06)] bg-[rgba(9,9,11,0.92)] px-3 pt-[env(safe-area-inset-top,0px)] backdrop-blur-[20px] sm:px-4 lg:hidden">
+        <div className="shrink-0">
+          <Logo variant="full" size="mobile" href={`/${locale}`} />
+        </div>
+        <div className="min-h-11 min-w-0 flex-1" aria-hidden />
+        <div className="h-11 w-11 shrink-0" aria-hidden />
       </header>
     );
   }
 
   return (
     <>
-      <header className="fixed left-0 right-0 top-0 z-50 flex h-14 items-center justify-between border-b border-[rgba(255,255,255,0.06)] bg-[rgba(9,9,11,0.92)] px-4 pt-[env(safe-area-inset-top,0px)] backdrop-blur-[20px] lg:hidden">
-        <Logo variant="full" size="mobile" href={`/${locale}`} />
+      <header className="fixed left-0 right-0 top-0 z-50 flex h-14 items-center gap-2 border-b border-[rgba(255,255,255,0.06)] bg-[rgba(9,9,11,0.92)] px-3 pt-[env(safe-area-inset-top,0px)] backdrop-blur-[20px] sm:px-4 lg:hidden">
+        <div className="shrink-0">
+          <Logo variant="full" size="mobile" href={`/${locale}`} />
+        </div>
+        <nav
+          aria-label={nav.language}
+          className="tj-nav-scroll flex min-h-11 min-w-0 max-w-[min(48vw,12.5rem)] flex-1 items-center justify-end gap-1 overflow-x-auto overscroll-x-contain py-0.5 sm:max-w-[min(52vw,14rem)]"
+        >
+          {locales.map((code) => (
+            <Link key={code} href={`/${code}${normalizedPath}${search}`} className={localeChipClass(code)}>
+              {code.toUpperCase()}
+            </Link>
+          ))}
+        </nav>
         <button
           type="button"
           aria-label={nav.menu}
           aria-expanded={open}
           onClick={() => setOpen(true)}
-          className="flex h-11 w-11 items-center justify-center rounded-lg border border-[#1E2028] text-[#A1A1AA] transition-colors hover:text-white"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-[#1E2028] text-[#A1A1AA] transition-colors hover:text-white"
         >
           <Menu className="h-6 w-6" strokeWidth={1.75} />
         </button>
@@ -448,7 +578,7 @@ function MobileNav({
       {open ? (
         <div
           className={cn(
-            "tj-mobile-overlay fixed inset-0 z-[220] flex flex-col bg-[#09090B] lg:hidden",
+            "tj-mobile-overlay fixed inset-0 z-[220] flex min-h-0 flex-col bg-[#09090B] lg:hidden",
             reduce && "tj-mobile-overlay--reduce"
           )}
         >
@@ -456,83 +586,101 @@ function MobileNav({
             type="button"
             aria-label={nav.close}
             onClick={() => setOpen(false)}
-            className="absolute end-4 top-[max(1rem,env(safe-area-inset-top))] flex h-11 w-11 items-center justify-center rounded-lg border border-[#1E2028] text-[#A1A1AA] hover:text-white"
+            className="absolute end-4 top-[max(1rem,env(safe-area-inset-top))] z-10 flex h-11 w-11 items-center justify-center rounded-lg border border-[#1E2028] text-[#A1A1AA] hover:text-white"
           >
             <X className="h-6 w-6" />
           </button>
-          <div className="flex flex-1 flex-col items-center justify-center px-6 pb-24 pt-20">
-            <Logo variant="full" size="footer" href={`/${locale}`} onNavigate={() => setOpen(false)} />
-            <nav className="mt-12 flex w-full max-w-sm flex-col gap-1" aria-label={nav.navigation}>
-              {items.map((it, i) => {
-                const active = !it.comingSoon && isActivePath(pathname, locale, it.href);
-                const Icon = it.Icon;
-                const delay = reduce ? 0 : i * 40;
-                if (it.comingSoon) {
-                  return (
-                    <button
-                      key={it.key}
-                      type="button"
-                      style={{ transitionDelay: `${delay}ms` }}
-                      className={cn(
-                        "flex w-full items-center justify-center gap-2 py-3 text-2xl font-semibold text-[#52525B] transition-[opacity,transform] duration-[350ms] ease-out",
-                        overlayReady || reduce ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
-                      )}
-                      onClick={onSoon}
-                    >
-                      <Icon className="h-6 w-6 shrink-0" strokeWidth={1.5} />
-                      {it.label}
-                      <span className="rounded border border-[rgba(167,139,250,0.2)] bg-[rgba(167,139,250,0.12)] px-2 py-0.5 text-[10px] font-bold uppercase text-[#A78BFA]">
-                        SOON
-                      </span>
-                    </button>
-                  );
-                }
-                let href = `/${locale}${it.href === "/" ? "" : it.href}`;
-                if ((it.key === "messages" || it.key === "profile") && !user) {
-                  href = `/${locale}/login?redirect=${encodeURIComponent(it.href)}`;
-                }
-                return (
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden pt-[max(3.5rem,env(safe-area-inset-top))]">
+            <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-y-contain px-6 pb-4">
+              <div className="mx-auto flex w-full max-w-sm flex-col items-center">
+                <Logo variant="full" size="footer" href={`/${locale}`} onNavigate={() => setOpen(false)} />
+                <nav className="mt-10 flex w-full flex-col gap-1" aria-label={nav.navigation}>
+                  {items.map((it, i) => {
+                    const active = !it.comingSoon && isActivePath(pathname, locale, it.href);
+                    const Icon = it.Icon;
+                    const delay = reduce ? 0 : i * 40;
+                    if (it.comingSoon) {
+                      return (
+                        <button
+                          key={it.key}
+                          type="button"
+                          style={{ transitionDelay: `${delay}ms` }}
+                          className={cn(
+                            "flex w-full items-center justify-center gap-2 py-3 text-2xl font-semibold text-[#52525B] transition-[opacity,transform] duration-[350ms] ease-out",
+                            overlayReady || reduce ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
+                          )}
+                          onClick={onSoon}
+                        >
+                          <Icon className="h-6 w-6 shrink-0" strokeWidth={1.5} />
+                          {it.label}
+                          <span className="rounded border border-[rgba(167,139,250,0.2)] bg-[rgba(167,139,250,0.12)] px-2 py-0.5 text-[10px] font-bold uppercase text-[#A78BFA]">
+                            SOON
+                          </span>
+                        </button>
+                      );
+                    }
+                    let href = `/${locale}${it.href === "/" ? "" : it.href}`;
+                    if ((it.key === "messages" || it.key === "profile") && !user) {
+                      href = `/${locale}/login?redirect=${encodeURIComponent(it.href)}`;
+                    }
+                    return (
+                      <Link
+                        key={it.key}
+                        href={href}
+                        onClick={() => setOpen(false)}
+                        style={{ transitionDelay: `${delay}ms` }}
+                        className={cn(
+                          "flex w-full items-center justify-center gap-3 py-3 text-2xl font-semibold transition-[opacity,transform,color] duration-[350ms] ease-out",
+                          active ? "text-white" : "text-[#A1A1AA] hover:text-white",
+                          overlayReady || reduce ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
+                        )}
+                      >
+                        <Icon className="h-6 w-6 shrink-0" strokeWidth={1.5} />
+                        {it.label}
+                      </Link>
+                    );
+                  })}
+                </nav>
+                {!loading && user ? (
+                  <button
+                    type="button"
+                    onClick={() => void handleLogout()}
+                    className="mt-8 text-sm text-[#52525B] hover:text-white"
+                  >
+                    {dict.nav.logout}
+                  </button>
+                ) : null}
+              </div>
+            </div>
+            <div
+              role="region"
+              aria-labelledby="tj-mobile-drawer-lang"
+              className="shrink-0 border-t border-[#1E2028] bg-[#09090B] px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4"
+            >
+              <p
+                id="tj-mobile-drawer-lang"
+                className="mb-3 text-center text-[11px] font-semibold uppercase tracking-[0.12em] text-[#52525B]"
+              >
+                {nav.language}
+              </p>
+              <div className="tj-nav-scroll flex justify-center gap-2 overflow-x-auto pb-1">
+                {locales.map((code) => (
                   <Link
-                    key={it.key}
-                    href={href}
+                    key={code}
+                    href={`/${code}${normalizedPath}${search}`}
                     onClick={() => setOpen(false)}
-                    style={{ transitionDelay: `${delay}ms` }}
                     className={cn(
-                      "flex w-full items-center justify-center gap-3 py-3 text-2xl font-semibold transition-[opacity,transform,color] duration-[350ms] ease-out",
-                      active ? "text-white" : "text-[#A1A1AA] hover:text-white",
-                      overlayReady || reduce ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
+                      "flex h-12 min-w-[48px] shrink-0 items-center justify-center rounded-lg border px-3 text-sm font-semibold transition-colors",
+                      code === locale
+                        ? "border-[rgba(34,211,238,0.4)] text-[#22D3EE]"
+                        : "border-[#1E2028] text-[#A1A1AA] active:bg-white/5"
                     )}
                   >
-                    <Icon className="h-6 w-6 shrink-0" strokeWidth={1.5} />
-                    {it.label}
+                    {code.toUpperCase()}
                   </Link>
-                );
-              })}
-            </nav>
-            <div className="mt-10 flex flex-wrap justify-center gap-2">
-              {locales.map((code) => (
-                <Link
-                  key={code}
-                  href={`/${code}${normalizedPath}${search}`}
-                  onClick={() => setOpen(false)}
-                  className={cn(
-                    "rounded-lg border border-[#1E2028] px-3 py-2 text-sm text-[#A1A1AA] hover:text-white",
-                    code === locale && "border-[rgba(255,255,255,0.15)] font-semibold text-white"
-                  )}
-                >
-                  {code.toUpperCase()}
-                </Link>
-              ))}
+                ))}
+              </div>
             </div>
-            {!loading && user ? (
-              <button
-                type="button"
-                onClick={() => void handleLogout()}
-                className="mt-8 text-sm text-[#52525B] hover:text-white"
-              >
-                {dict.nav.logout}
-              </button>
-            ) : null}
           </div>
         </div>
       ) : null}

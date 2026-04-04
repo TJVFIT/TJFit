@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { notFound, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
+import { AuthPageFrame } from "@/components/auth-page-frame";
 import { AsyncButton } from "@/components/ui/AsyncButton";
 import { Logo } from "@/components/ui/Logo";
 import { getAuthCopy } from "@/lib/launch-copy";
@@ -110,14 +111,16 @@ function SignupForm({ params }: { params: { locale: string } }) {
   };
 
   return (
-    <div className="mx-auto flex min-h-[80vh] max-w-md items-center px-4 py-16 sm:px-6 lg:px-8">
-      <div className="tj-surface-panel w-full p-8 sm:p-9">
+    <AuthPageFrame>
+      <div className="w-full">
         <div className="mb-6 flex justify-center">
           <Logo variant="icon" size="auth" href={`/${params.locale}`} priority />
         </div>
         <span className="lux-badge inline-flex">{copy.signupBadge}</span>
-        <h1 className="tj-page-title mt-6">{copy.signupTitle}</h1>
-        <p className="tj-prose-muted mt-3">{copy.signupSubtitle}</p>
+        <h1 className="mt-6 text-center font-display text-[32px] font-bold leading-tight tracking-[-0.015em] text-white">
+          {copy.signupTitle}
+        </h1>
+        <p className="mt-2 text-center text-sm leading-relaxed text-[#A1A1AA]">{copy.signupSubtitle}</p>
 
         <form
           onSubmit={(e) => {
@@ -202,14 +205,17 @@ function SignupForm({ params }: { params: { locale: string } }) {
 
         <p className="mt-4 text-center text-xs text-[var(--color-text-muted)]">Free to join. No credit card required.</p>
 
-        <p className="mt-6 text-center text-sm text-[var(--color-text-secondary)]">
+        <p className="mt-6 text-center text-sm text-[#52525B]">
           {copy.alreadyHaveAccount}{" "}
-          <Link href={loginHref} className="text-white underline underline-offset-4 transition-colors duration-150 hover:text-white">
+          <Link
+            href={loginHref}
+            className="text-[#22D3EE] underline-offset-4 transition-opacity duration-150 hover:opacity-80"
+          >
             {copy.logIn}
           </Link>
         </p>
       </div>
-    </div>
+    </AuthPageFrame>
   );
 }
 

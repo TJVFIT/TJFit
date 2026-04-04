@@ -1,6 +1,10 @@
 import type { Locale } from "@/lib/i18n";
 
 export type DietsMarketplaceCopy = {
+  cinematicEyebrow: string;
+  cinematicHeadlineBefore: string;
+  cinematicHeadlineGradient: string;
+  cinematicSub: string;
   filterLabel: string;
   filterType: string;
   all: string;
@@ -25,6 +29,10 @@ export type DietsMarketplaceCopy = {
 
 const copy: Record<Locale, DietsMarketplaceCopy> = {
   en: {
+    cinematicEyebrow: "NUTRITION SYSTEMS",
+    cinematicHeadlineBefore: "Find Your ",
+    cinematicHeadlineGradient: "Diet.",
+    cinematicSub: "10 complete diet systems. Cutting or bulking. Daily meals, macros, and recipes.",
     filterLabel: "Filters",
     filterType: "Plan type",
     all: "All",
@@ -46,6 +54,10 @@ const copy: Record<Locale, DietsMarketplaceCopy> = {
     formatRangeKcal: (min, max) => `~${min}–${max} kcal / day`
   },
   tr: {
+    cinematicEyebrow: "BESLENME SISTEMLERI",
+    cinematicHeadlineBefore: "Size uygun ",
+    cinematicHeadlineGradient: "diyeti bulun.",
+    cinematicSub: "10 tam diyet sistemi. Kesim veya bulk. Gunluk ogunler, makrolar ve tarifler.",
     filterLabel: "Filtreler",
     filterType: "Plan tipi",
     all: "Tumu",
@@ -67,6 +79,10 @@ const copy: Record<Locale, DietsMarketplaceCopy> = {
     formatRangeKcal: (min, max) => `~${min}–${max} kcal / gun`
   },
   ar: {
+    cinematicEyebrow: "أنظمة التغذية",
+    cinematicHeadlineBefore: "اعثر على ",
+    cinematicHeadlineGradient: "نظامك الغذائي.",
+    cinematicSub: "١٠ أنظمة غذائية كاملة. تنشيف أو كتلة. وجبات يومية وماكروز ووصفات.",
     filterLabel: "عوامل التصفية",
     filterType: "نوع الخطة",
     all: "الكل",
@@ -88,6 +104,10 @@ const copy: Record<Locale, DietsMarketplaceCopy> = {
     formatRangeKcal: (min, max) => `~${min}–${max} سعرة / يوم`
   },
   es: {
+    cinematicEyebrow: "SISTEMAS DE NUTRICION",
+    cinematicHeadlineBefore: "Encuentra tu ",
+    cinematicHeadlineGradient: "dieta.",
+    cinematicSub: "10 sistemas dieteticos completos. Definicion o volumen. Comidas diarias, macros y recetas.",
     filterLabel: "Filtros",
     filterType: "Tipo",
     all: "Todos",
@@ -109,6 +129,11 @@ const copy: Record<Locale, DietsMarketplaceCopy> = {
     formatRangeKcal: (min, max) => `~${min}–${max} kcal / dia`
   },
   fr: {
+    cinematicEyebrow: "SYSTEMES NUTRITION",
+    cinematicHeadlineBefore: "Trouvez votre ",
+    cinematicHeadlineGradient: "regime.",
+    cinematicSub:
+      "10 systemes alimentaires complets. Seche ou prise de masse. Repas quotidiens, macros et recettes.",
     filterLabel: "Filtres",
     filterType: "Type",
     all: "Tous",

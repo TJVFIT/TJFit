@@ -6,6 +6,7 @@ import { Play } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@/components/auth-provider";
 import { DirectMessageLaunchButton } from "@/components/direct-message-launch-button";
+import { AmbientBackground } from "@/components/ui/AmbientBackground";
 import { getSocialCopy } from "@/lib/social-copy";
 import type { Locale } from "@/lib/i18n";
 import { isSafeRedirect } from "@/lib/safe-redirect";
@@ -191,23 +192,35 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
     !profile.self && !profile.limited && !isPrivateProfile && !bioTrim && !authLoading;
 
   return (
-    <div className="mx-auto max-w-lg px-4 py-14 sm:px-6">
-      <Link href={`/${locale}/profile/search`} className="text-xs text-zinc-500 hover:text-zinc-300">
+    <>
+      <AmbientBackground variant="violet" intensity="low" />
+      <div className="relative z-[1] mx-auto max-w-lg px-4 py-14 sm:px-6">
+      <Link
+        href={`/${locale}/profile/search`}
+        className="text-xs text-[#52525B] transition-colors duration-150 hover:text-white"
+      >
         ← {s.backToSearch}
       </Link>
 
-      <div className="mt-6 rounded-2xl border border-white/[0.07] bg-surface/30 p-8 text-center sm:p-9">
-        <div className="mx-auto mb-5 h-24 w-24 overflow-hidden rounded-full border border-white/[0.1] bg-surface-elevated">
+      <div className="relative mt-6 overflow-hidden rounded-2xl border border-[#1E2028] bg-[#111215] p-8 text-center sm:p-9">
+        <div
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_0%,rgba(167,139,250,0.14),transparent_58%)] opacity-90"
+          aria-hidden
+        />
+        <div className="relative">
+        <div className="mx-auto mb-5 h-20 w-20 overflow-hidden rounded-full border-2 border-[#1E2028] bg-[#18191E] transition-[border-color] duration-200 [@media(hover:hover)]:hover:border-[#22D3EE] sm:h-[80px] sm:w-[80px]">
           {profile.avatar_url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" />
           ) : (
-            <div className="flex h-full w-full items-center justify-center text-xl font-semibold text-zinc-500">
-              {(profile.display_name || profile.username || "?").slice(0, 2).toUpperCase()}
+            <div className="flex h-full w-full items-center justify-center text-xl font-semibold text-[#22D3EE]">
+              {(profile.display_name || profile.username || "?").slice(0, 1).toUpperCase()}
             </div>
           )}
         </div>
-        <h1 className="font-display text-xl font-semibold text-white sm:text-2xl">{profile.display_name || profile.username || "—"}</h1>
+        <h1 className="font-display text-[32px] font-bold tracking-[-0.015em] text-white">
+          {profile.display_name || profile.username || "—"}
+        </h1>
         <p className="mt-1 text-sm text-zinc-500">@{profile.username || "—"}</p>
         <p className="mt-3 text-xs font-medium uppercase tracking-wider text-cyan-400/80">{roleLabel(profile.role)}</p>
 
@@ -218,9 +231,9 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
         ) : null}
 
         {bioTrim ? (
-          <p className="mt-6 text-left text-sm leading-relaxed text-zinc-300">{profile.bio}</p>
+          <p className="mt-6 text-left text-base leading-[1.7] text-[#A1A1AA]">{profile.bio}</p>
         ) : profile.limited ? null : (
-          <p className="mt-6 text-sm text-zinc-600">—</p>
+          <p className="mt-6 text-sm text-[#52525B]">—</p>
         )}
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
@@ -257,6 +270,7 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
         </div>
 
         {dmError ? <p className="mt-4 text-sm text-red-400">{dmError}</p> : null}
+        </div>
       </div>
 
       {showGuestNothingPublic ? (
@@ -264,6 +278,7 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
       ) : null}
 
       {profile.self ? <ProfileSelfActivity locale={locale} /> : null}
-    </div>
+      </div>
+    </>
   );
 }

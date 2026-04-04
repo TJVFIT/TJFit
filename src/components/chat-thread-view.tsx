@@ -377,7 +377,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
 
   return (
     <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-background">
-      <header className="flex shrink-0 items-center gap-2 border-b border-white/[0.06] px-3 py-3 sm:gap-3 sm:px-4">
+      <header className="flex shrink-0 items-center gap-2 border-b border-[#1E2028] bg-[#111215] px-3 py-3 sm:gap-3 sm:px-4">
         <Link
           href={`/${locale}/messages`}
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 text-zinc-300 transition hover:border-white/20 hover:text-white lg:hidden"
@@ -463,16 +463,16 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
                 >
                   <div
                     className={clsx(
-                      "flex max-w-[min(92%,28rem)] flex-col gap-0.5",
+                      "flex max-w-[min(70%,28rem)] flex-col gap-0.5",
                       mine ? "items-end" : "items-start"
                     )}
                   >
                     <div
                       className={clsx(
-                        "px-3.5 py-2 text-[15px] leading-snug",
+                        "w-full px-4 py-3 text-[15px] leading-snug text-white",
                         mine
-                          ? "rounded-2xl rounded-br-md bg-cyan-500/90 text-[#05080a]"
-                          : "rounded-2xl rounded-bl-md bg-white/[0.06] text-zinc-100"
+                          ? "rounded-2xl rounded-br rounded-tl-2xl border border-[rgba(34,211,238,0.2)] bg-[rgba(34,211,238,0.12)]"
+                          : "rounded-2xl rounded-bl rounded-tr-2xl border border-[#1E2028] bg-[#111215]"
                       )}
                     >
                       {msg.plaintext === null
@@ -499,7 +499,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
       ) : null}
 
       <div
-        className="sticky bottom-0 z-10 shrink-0 border-t border-white/[0.06] bg-background/92 px-3 pt-2 backdrop-blur-md supports-[backdrop-filter]:bg-background/80"
+        className="sticky bottom-0 z-10 shrink-0 border-t border-[#1E2028] bg-[#111215]/95 px-3 pt-2 backdrop-blur-md supports-[backdrop-filter]:bg-[#111215]/85"
         style={{ paddingBottom: "max(0.65rem, env(safe-area-inset-bottom, 0px))" }}
       >
         <div className="mx-auto flex max-w-3xl items-stretch gap-2 pb-2 sm:items-center">

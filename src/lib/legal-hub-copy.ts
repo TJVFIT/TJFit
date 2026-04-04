@@ -2,6 +2,10 @@ import type { Locale } from "@/lib/i18n";
 import { getCoachTermsSections } from "@/lib/coach-terms-copy";
 
 export type LegalHubCopy = {
+  heroEyebrow: string;
+  heroHeadlineBefore: string;
+  heroHeadlineGradient: string;
+  heroSub: string;
   pageTitle: string;
   pageIntro: string;
   navFaq: string;
@@ -107,6 +111,10 @@ const meta: Record<
   Omit<LegalHubCopy, "faq" | "userTermsParagraphs">
 > = {
   en: {
+    heroEyebrow: "SUPPORT & LEGAL",
+    heroHeadlineBefore: "Questions & ",
+    heroHeadlineGradient: "Terms.",
+    heroSub: "Everything you need to know about TJFit.",
     pageTitle: "Legal & Support Center",
     pageIntro: "FAQ, member terms, coach terms (reference), and privacy—all in one place.",
     navFaq: "FAQ",
@@ -124,6 +132,10 @@ const meta: Record<
     linkPrivacyPage: "Open full Privacy Policy"
   },
   tr: {
+    heroEyebrow: "DESTEK VE YASAL",
+    heroHeadlineBefore: "Sorular ve ",
+    heroHeadlineGradient: "sartlar.",
+    heroSub: "TJFit hakkinda bilmeniz gereken her sey.",
     pageTitle: "Yasal ve Destek",
     pageIntro: "SSS, uye sartlari, koç sartlari ozeti ve gizlilik.",
     navFaq: "SSS",
@@ -141,6 +153,10 @@ const meta: Record<
     linkPrivacyPage: "Gizlilik politikasi"
   },
   ar: {
+    heroEyebrow: "الدعم والقانونية",
+    heroHeadlineBefore: "أسئلة و",
+    heroHeadlineGradient: "شروط.",
+    heroSub: "كل ما تحتاج معرفته عن TJFit.",
     pageTitle: "القانونية والدعم",
     pageIntro: "أسئلة، شروط الأعضاء، شروط المدرب، والخصوصية.",
     navFaq: "الأسئلة",
@@ -157,6 +173,10 @@ const meta: Record<
     linkPrivacyPage: "سياسة الخصوصية"
   },
   es: {
+    heroEyebrow: "SOPORTE Y LEGAL",
+    heroHeadlineBefore: "Preguntas y ",
+    heroHeadlineGradient: "terminos.",
+    heroSub: "Todo lo que necesitas saber sobre TJFit.",
     pageTitle: "Legal y soporte",
     pageIntro: "FAQ, terminos, coach y privacidad.",
     navFaq: "FAQ",
@@ -173,6 +193,10 @@ const meta: Record<
     linkPrivacyPage: "Privacidad"
   },
   fr: {
+    heroEyebrow: "SUPPORT ET LEGAL",
+    heroHeadlineBefore: "Questions et ",
+    heroHeadlineGradient: "conditions.",
+    heroSub: "Tout ce qu'il faut savoir sur TJFit.",
     pageTitle: "Infos legales",
     pageIntro: "FAQ, conditions membre et coach, confidentialite.",
     navFaq: "FAQ",

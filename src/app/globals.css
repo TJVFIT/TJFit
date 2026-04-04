@@ -621,18 +621,28 @@ body {
 @media (hover: hover) and (pointer: fine) {
   .tj-card-premium-hover {
     transition:
-      transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1),
-      box-shadow 250ms ease,
-      border-color 250ms ease;
+      transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
+      box-shadow 300ms ease,
+      border-color 300ms ease;
   }
 
   .tj-card-premium-hover:hover {
-    transform: translateY(-4px);
-    border-color: rgba(34, 211, 238, 0.22);
+    transform: translateY(-6px);
+    border-color: rgba(34, 211, 238, 0.25);
     box-shadow:
-      0 4px 24px rgba(0, 0, 0, 0.5),
-      0 0 40px rgba(34, 211, 238, 0.05),
+      0 20px 60px rgba(0, 0, 0, 0.5),
+      0 0 60px rgba(34, 211, 238, 0.04),
       0 0 0 1px rgba(34, 211, 238, 0.2);
+  }
+}
+
+@media (hover: none) {
+  .tj-card-premium-hover:hover {
+    transform: none !important;
+    border-color: #1e2028 !important;
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.4),
+      0 0 0 1px #1e2028 !important;
   }
 }
 
@@ -740,10 +750,54 @@ body {
   transform: none;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .tj-sidebar-rail:hover {
-    width: 4rem !important;
+@keyframes tj-collapsed-tip-in {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(-6px);
   }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+.tj-collapsed-sidebar-tip {
+  animation: tj-collapsed-tip-in 150ms ease forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tj-collapsed-sidebar-tip {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: translateY(-50%) translateX(0) !important;
+  }
+}
+
+::selection {
+  background: rgba(34, 211, 238, 0.25);
+  color: #ffffff;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #09090b;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #1e2028;
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #22d3ee;
+}
+
+html {
+  scrollbar-color: #1e2028 #09090b;
 }
 
 /* Free starters: no hover lift on touch; keep border/shadow calm */

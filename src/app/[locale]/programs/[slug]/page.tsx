@@ -1,13 +1,16 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FreeProductBodyBlocks, FreeProductUpgradeFooter } from "@/components/free-product-detail-view";
+import { ProgramBlueprintNavigator } from "@/components/program-blueprint-navigator";
+import { ProgramDetailHero } from "@/components/program-detail-hero";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import { Logo } from "@/components/ui/Logo";
 import { ProgramViewTracker } from "@/components/marketing/program-view-tracker";
 import { ProgramContentLock } from "@/components/program-content-lock";
 import { coaches, products, programs } from "@/lib/content";
 import { localizeCustomProgramRow, type CustomProgramRow } from "@/lib/custom-programs";
 import { getFreeProductPageModel, isFreeProductSlug } from "@/lib/free-product-pages";
-import { programBlueprints, type ProgramBlueprint } from "@/lib/program-blueprints";
+import { programBlueprints } from "@/lib/program-blueprints";
 import { Locale, locales } from "@/lib/i18n";
 import {
   formatCoachCommissionLine,
@@ -35,39 +38,6 @@ function trainingLocationLabel(slug: string, copy: ReturnType<typeof getProgramU
   if (s.startsWith("home")) return copy.trainingLocationHome;
   if (s.startsWith("gym")) return copy.trainingLocationGym;
   return copy.trainingLocationAny;
-}
-
-function BlueprintPhaseCard({
-  phase,
-  copy
-}: {
-  phase: ProgramBlueprint["weeklyPhases"][number];
-  copy: ReturnType<typeof getProgramUiCopy>;
-}) {
-  return (
-    <div className="rounded-[24px] border border-white/10 bg-white/5 p-6">
-      <p className="text-lg font-semibold text-white">{phase.title}</p>
-      <p className="mt-2 text-sm text-zinc-400">{phase.focus}</p>
-      <div className="mt-4 grid gap-4 md:grid-cols-2">
-        <div>
-          <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{copy.blueprintTrainingDays}</p>
-          <div className="mt-3 space-y-2 text-sm text-zinc-300">
-            {phase.trainingDays.map((item) => (
-              <p key={item}>- {item}</p>
-            ))}
-          </div>
-        </div>
-        <div>
-          <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{copy.blueprintConditioning}</p>
-          <div className="mt-3 space-y-2 text-sm text-zinc-300">
-            {phase.conditioning.map((item) => (
-              <p key={item}>- {item}</p>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 }
 
 export default async function ProgramDetailPage({
@@ -154,10 +124,6 @@ export default async function ProgramDetailPage({
     ];
 
   const paidContentLocked = Boolean(program && !program.is_free && !access.showFullPaidContent);
-  const blueprintPhases = blueprint?.weeklyPhases ?? [];
-  const firstBlueprintPhase = blueprintPhases[0];
-  const restBlueprintPhases = blueprintPhases.slice(1);
-
   const freeModel = program && isFreeProductSlug(slug) ? getFreeProductPageModel(slug, locale) : null;
   const upgradeTargetProgram = freeModel ? programs.find((p) => p.slug === freeModel.upgrade.checkoutSlug) : undefined;
   const upgradeProgramTitle = upgradeTargetProgram ? localizeProgram(upgradeTargetProgram, locale).title : copy.upgradeSectionTitle;
@@ -174,58 +140,50 @@ export default async function ProgramDetailPage({
   const loginUnlockHref = `/${locale}/login?redirect=${encodeURIComponent(`/${locale}/programs/${slug}`)}`;
   const isDiet = programCategory.toLowerCase().includes("nutrition");
 
+  const heroGoal = blueprint?.goal ?? programCategory;
+  const heroLocation =
+    program && !program.category.toLowerCase().includes("nutrition")
+      ? trainingLocationLabel(slug, copy)
+      : isDiet
+        ? copy.dietPlanBadge
+        : programCategory;
+  const heroLevel = blueprint?.level ?? programDifficulty;
+  const heroMeta = blueprint
+    ? `${programDuration} · ${blueprint.equipment}`
+    : program
+      ? `${programDuration} · ${trainingLocationLabel(slug, copy)}`
+      : programDuration;
+
   return (
-    <div className="mx-auto max-w-6xl space-y-10 px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+    <div className="relative pb-16 pt-0 sm:pb-20 lg:pb-24">
       <ProgramViewTracker slug={slug} />
-      <nav className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-[var(--color-text-muted)]">
-        <Link href={`/${locale}`} className="transition-colors duration-150 hover:text-white">
-          {copy.breadcrumbHome}
-        </Link>
-        <span aria-hidden>/</span>
-        <Link
-          href={isDiet ? `/${locale}/diets` : `/${locale}/programs`}
-          className="transition-colors duration-150 hover:text-white"
-        >
-          {isDiet ? copy.breadcrumbDiets : copy.breadcrumbPrograms}
-        </Link>
-        <span aria-hidden>/</span>
-        <span className="text-[var(--color-text-secondary)]">{programTitle}</span>
-      </nav>
-      <Link
-        href={isDiet ? `/${locale}/diets` : `/${locale}/programs`}
-        className="inline-flex text-[13px] text-[var(--color-text-muted)] transition-colors duration-150 hover:text-white"
-      >
-        {isDiet ? copy.backToDiets : copy.backToPrograms}
-      </Link>
-      <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr]">
-        <section className="max-w-[800px] w-full rounded-[14px] border border-[var(--color-border)] bg-gradient-to-b from-white/[0.045] to-white/[0.015] p-6 shadow-[0_24px_64px_-32px_rgba(0,0,0,0.75)] sm:p-8 xl:mx-0">
+      <ProgramDetailHero
+        locale={locale}
+        programTitle={programTitle}
+        isDiet={isDiet}
+        programCategory={programCategory}
+        breadcrumbHome={copy.breadcrumbHome}
+        breadcrumbPrograms={copy.breadcrumbPrograms}
+        breadcrumbDiets={copy.breadcrumbDiets}
+        goalLabel={heroGoal}
+        locationOrTypeLabel={heroLocation}
+        levelLabel={heroLevel}
+        metaLine={heroMeta}
+      />
+
+      <div className="mx-auto mt-12 grid max-w-6xl gap-8 px-4 sm:px-6 lg:px-8 xl:grid-cols-[1.05fr_0.95fr]">
+        <section className="mx-auto w-full max-w-[800px] rounded-[14px] border border-[var(--color-border)] bg-gradient-to-b from-white/[0.045] to-white/[0.015] p-6 shadow-[0_24px_64px_-32px_rgba(0,0,0,0.75)] sm:p-8 xl:mx-0">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="badge">{programCategory}</span>
             {program?.is_free ? (
               <span className="rounded-full border border-cyan-400/35 bg-cyan-500/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-cyan-200">
                 {copy.freeBadge}
               </span>
             ) : null}
           </div>
-          <h1 className="mt-6 text-3xl font-semibold tracking-tight text-white sm:text-4xl">{programTitle}</h1>
-          <p className="mt-4 max-w-[680px] text-base leading-[1.7] text-[var(--color-text-secondary)]">{programDescription}</p>
+          <p className="mt-6 max-w-[680px] text-base leading-[1.7] text-[var(--color-text-secondary)]">{programDescription}</p>
           <p className="mt-3 text-sm italic text-[var(--color-text-muted)]">
             {isDiet ? copy.dietPageTrust : copy.programPageTrust}
           </p>
-
-          <div className="mt-6 flex flex-wrap gap-2">
-            <span className="rounded-full border border-white/12 bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-zinc-200">
-              {blueprint?.goal ?? programCategory}
-            </span>
-            <span className="rounded-full border border-white/12 bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-zinc-200">
-              {programDuration}
-            </span>
-            {program ? (
-              <span className="rounded-full border border-violet-400/20 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-100/95">
-                {program.category.toLowerCase().includes("nutrition") ? copy.dietPlanBadge : trainingLocationLabel(slug, copy)}
-              </span>
-            ) : null}
-          </div>
 
           <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4">
             <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{copy.languageOptionsLabel}</p>
@@ -379,69 +337,41 @@ export default async function ProgramDetailPage({
             </div>
           )}
 
-          {blueprint && (
-            <div className="mt-10 space-y-5">
-              <div className="rounded-[24px] border border-white/10 bg-white/5 p-6">
-                <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{copy.blueprintTitle}</p>
+          {blueprint ? (
+            <div className="mt-10 space-y-6">
+              <div className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
+                <p className="text-xs uppercase tracking-[0.24em] text-[#52525B]">{copy.blueprintTitle}</p>
                 <div className="mt-4 grid gap-3 md:grid-cols-3">
-                  <div className="rounded-xl border border-white/10 bg-black/20 p-3 text-sm text-zinc-300">
-                    <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">{copy.blueprintGoal}</p>
+                  <div className="rounded-xl border border-[#1E2028] bg-[#18191E] p-3 text-sm text-[#A1A1AA]">
+                    <p className="text-xs uppercase tracking-[0.2em] text-[#52525B]">{copy.blueprintGoal}</p>
                     <p className="mt-2 text-white">{blueprint.goal}</p>
                   </div>
-                  <div className="rounded-xl border border-white/10 bg-black/20 p-3 text-sm text-zinc-300">
-                    <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">{copy.blueprintLevel}</p>
+                  <div className="rounded-xl border border-[#1E2028] bg-[#18191E] p-3 text-sm text-[#A1A1AA]">
+                    <p className="text-xs uppercase tracking-[0.2em] text-[#52525B]">{copy.blueprintLevel}</p>
                     <p className="mt-2 text-white">{blueprint.level}</p>
                   </div>
-                  <div className="rounded-xl border border-white/10 bg-black/20 p-3 text-sm text-zinc-300">
-                    <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">{copy.blueprintEquipment}</p>
+                  <div className="rounded-xl border border-[#1E2028] bg-[#18191E] p-3 text-sm text-[#A1A1AA]">
+                    <p className="text-xs uppercase tracking-[0.2em] text-[#52525B]">{copy.blueprintEquipment}</p>
                     <p className="mt-2 text-white">{blueprint.equipment}</p>
                   </div>
                 </div>
               </div>
-
-              {firstBlueprintPhase ? <BlueprintPhaseCard phase={firstBlueprintPhase} copy={copy} /> : null}
-
-              {restBlueprintPhases.length > 0 || blueprint.safety.length > 0 ? (
-                paidContentLocked ? (
-                  <ProgramContentLock
-                    locked
-                    title={copy.paidPreviewTitle}
-                    subtitle={copy.paidPreviewSubtitle}
-                    ctaHref={checkoutHref}
-                    ctaLabel={copy.getFullAccess}
-                  >
-                    <div className="space-y-5 p-2">
-                      {restBlueprintPhases.map((phase) => (
-                        <BlueprintPhaseCard key={phase.title} phase={phase} copy={copy} />
-                      ))}
-                      <div className="rounded-[24px] border border-white/10 bg-white/5 p-6">
-                        <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{copy.blueprintSafety}</p>
-                        <div className="mt-3 space-y-2 text-sm text-zinc-300">
-                          {blueprint.safety.map((item) => (
-                            <p key={item}>- {item}</p>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </ProgramContentLock>
-                ) : (
-                  <>
-                    {restBlueprintPhases.map((phase) => (
-                      <BlueprintPhaseCard key={phase.title} phase={phase} copy={copy} />
-                    ))}
-                    <div className="rounded-[24px] border border-white/10 bg-white/5 p-6">
-                      <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{copy.blueprintSafety}</p>
-                      <div className="mt-3 space-y-2 text-sm text-zinc-300">
-                        {blueprint.safety.map((item) => (
-                          <p key={item}>- {item}</p>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )
-              ) : null}
+              <ProgramBlueprintNavigator
+                blueprint={blueprint}
+                copy={{
+                  blueprintTrainingDays: copy.blueprintTrainingDays,
+                  blueprintConditioning: copy.blueprintConditioning
+                }}
+                isDiet={isDiet}
+                paidLocked={paidContentLocked}
+                checkoutHref={checkoutHref}
+                lockTitle={copy.paidPreviewTitle}
+                lockSubtitle={copy.paidPreviewSubtitle}
+                lockCtaLabel={copy.getFullAccess}
+                safetyTitle={copy.blueprintSafety}
+              />
             </div>
-          )}
+          ) : null}
 
           {program && freeModel ? (
             <div className="mt-10 space-y-2">
@@ -546,16 +476,18 @@ export default async function ProgramDetailPage({
       </div>
 
       {paidContentLocked && program && !program.is_free ? (
-        <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-6 text-center sm:p-8">
-          <p className="text-base font-semibold text-white">{copy.paidPreviewTitle}</p>
-          <p className="mt-2 text-sm text-zinc-400">{copy.paidPreviewSubtitle}</p>
-          <Link
-            href={checkoutHref}
-            className="mt-5 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-sky-500 px-5 py-2.5 text-sm font-semibold text-[#05080a]"
-          >
-            {copy.getFullAccess} — {programTitle}
-          </Link>
-        </div>
+        <ScrollReveal className="mx-auto mt-12 max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="rounded-2xl border border-[rgba(34,211,238,0.15)] bg-[linear-gradient(135deg,rgba(34,211,238,0.05),rgba(167,139,250,0.05))] p-10 text-center sm:p-12">
+            <p className="text-base font-semibold text-white">{copy.paidPreviewTitle}</p>
+            <p className="mt-2 text-sm text-[#A1A1AA]">{copy.paidPreviewSubtitle}</p>
+            <Link
+              href={checkoutHref}
+              className="lux-btn-primary mt-6 inline-flex min-h-[48px] items-center justify-center rounded-full px-8 py-2.5 text-sm font-bold text-[#09090B] transition-[transform,box-shadow] duration-150 ease-out hover:scale-[1.02] active:scale-[0.97] motion-reduce:hover:scale-100 motion-reduce:active:scale-100"
+            >
+              {copy.getFullAccess} — {programTitle}
+            </Link>
+          </div>
+        </ScrollReveal>
       ) : null}
     </div>
   );

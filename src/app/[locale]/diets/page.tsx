@@ -3,14 +3,18 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useMemo, useState } from "react";
+import { CinematicListingHeader } from "@/components/cinematic-listing-header";
+import { FilterPill, ListingFilterBar } from "@/components/listing-filter-bar";
 import { PremiumPageShell } from "@/components/premium";
-import { ProgramCard, SectionHeading } from "@/components/ui";
+import { StaggerRevealGrid } from "@/components/stagger-reveal-grid";
+import { ScrollTicker } from "@/components/ui/ScrollTicker";
+import { AmbientBackground } from "@/components/ui/AmbientBackground";
+import { ProgramCard } from "@/components/ui";
 import { programs, type Program } from "@/lib/content";
 import { getDietCalorieSpec, getDietPhase, isCatalogDiet } from "@/lib/diet-catalog";
 import { getDietsMarketplaceCopy } from "@/lib/diets-marketplace-copy";
 import { Locale, isLocale } from "@/lib/i18n";
 import { formatProgramPrice, getProgramBasePriceTry, getProgramUiCopy, localizeProgram } from "@/lib/program-localization";
-import { cn } from "@/lib/utils";
 
 type PhaseFilter = "all" | "cutting" | "bulking";
 
@@ -55,53 +59,68 @@ export default function DietsPage({ params }: { params: { locale: string } }) {
             : { elite: "Elite", popular: "Popular", fresh: "Free", signature: "Signature" };
 
   return (
-    <PremiumPageShell className="max-w-7xl">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <SectionHeading eyebrow={pageCopy.eyebrow} title={pageCopy.title} copy={pageCopy.body} />
-        <Link
-          href={`/${params.locale}/programs`}
-          className="shrink-0 text-sm font-medium text-cyan-300/90 transition hover:text-cyan-200"
+    <>
+      <AmbientBackground />
+      <div className="relative z-[1]">
+        <CinematicListingHeader
+          eyebrow={pageCopy.cinematicEyebrow}
+          headlineBefore={pageCopy.cinematicHeadlineBefore}
+          headlineGradient={pageCopy.cinematicHeadlineGradient}
+          sub={pageCopy.cinematicSub}
         >
-          {pageCopy.browseProgramsLink}
-        </Link>
-      </div>
+          <Link
+            href={`/${params.locale}/programs`}
+            className="text-sm font-medium text-[#22D3EE] transition-colors duration-150 hover:text-white"
+          >
+            {pageCopy.browseProgramsLink}
+          </Link>
+        </CinematicListingHeader>
 
-      <div className="mt-8 flex flex-col gap-4 rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4 sm:flex-row sm:flex-wrap sm:items-center">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">{pageCopy.filterLabel}</p>
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs text-zinc-500">{pageCopy.filterType}:</span>
-          {(
-            [
-              ["all", pageCopy.all],
-              ["cutting", pageCopy.cutting],
-              ["bulking", pageCopy.bulking]
-            ] as const
-          ).map(([k, label]) => (
-            <button
-              key={k}
-              type="button"
-              onClick={() => setPhaseFilter(k)}
-              className={cn(
-                "min-h-[44px] rounded-full border px-3 py-2 text-xs font-medium transition duration-200",
-                phaseFilter === k ? "border-cyan-400/40 bg-cyan-500/10 text-white" : "border-white/10 text-zinc-400 hover:border-white/20"
-              )}
-            >
-              {label}
-            </button>
-          ))}
-          {filterActive ? (
-            <button
-              type="button"
-              onClick={() => setPhaseFilter("all")}
-              className="text-xs font-medium text-cyan-300 hover:text-cyan-200"
-            >
-              {pageCopy.clearFilters}
-            </button>
-          ) : null}
-        </div>
-      </div>
+        <PremiumPageShell className="max-w-[1200px] px-6">
+          <ScrollTicker
+            speed={50}
+            direction="right"
+            items={[
+              "CUTTING",
+              "BULKING",
+              "DAILY MEALS",
+              "MACRO TRACKING",
+              "LEAN BULK",
+              "CLEAN CUT",
+              "KETO",
+              "ATHLETE FUEL",
+              "WEEKLY PROGRESSION"
+            ]}
+            className="mb-10 text-[#1E2028]"
+          />
 
-      <div className="mt-10 grid items-stretch gap-6 md:grid-cols-2 xl:grid-cols-4">
+          <ListingFilterBar label={pageCopy.filterLabel}>
+            <div className="flex flex-wrap items-center gap-1 px-1">
+              <span className="me-1 text-xs text-[#52525B]">{pageCopy.filterType}:</span>
+              {(
+                [
+                  ["all", pageCopy.all],
+                  ["cutting", pageCopy.cutting],
+                  ["bulking", pageCopy.bulking]
+                ] as const
+              ).map(([k, label]) => (
+                <FilterPill key={k} active={phaseFilter === k} onClick={() => setPhaseFilter(k)}>
+                  {label}
+                </FilterPill>
+              ))}
+              {filterActive ? (
+                <button
+                  type="button"
+                  onClick={() => setPhaseFilter("all")}
+                  className="ms-1 min-h-[44px] px-2 text-[13px] font-medium text-[#22D3EE] transition-colors duration-150 hover:text-white sm:min-h-0"
+                >
+                  {pageCopy.clearFilters}
+                </button>
+              ) : null}
+            </div>
+          </ListingFilterBar>
+
+      <StaggerRevealGrid className="grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map((program) => {
           const phase = getDietPhase(program);
           const spec = getDietCalorieSpec(program);
@@ -136,7 +155,7 @@ export default function DietsPage({ params }: { params: { locale: string } }) {
             />
           );
         })}
-      </div>
+      </StaggerRevealGrid>
 
       {filterActive && filtered.length === 0 && allDiets.length > 0 ? (
         <div className="tj-empty-state mt-10">
@@ -166,6 +185,8 @@ export default function DietsPage({ params }: { params: { locale: string } }) {
           {pageCopy.footerCta}
         </Link>
       </div>
-    </PremiumPageShell>
+        </PremiumPageShell>
+      </div>
+    </>
   );
 }
