@@ -1,7 +1,8 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { AsyncButton } from "@/components/ui/AsyncButton";
+import type { Locale } from "@/lib/i18n";
 
 type Coach = {
   id: string;
@@ -9,7 +10,84 @@ type Coach = {
   role: string;
 };
 
-export function AdminCoachAuthorization() {
+type Copy = {
+  title: string;
+  subtitle: string;
+  emailPlaceholder: string;
+  passwordPlaceholder: string;
+  authorizeCta: string;
+  authorizing: string;
+  authorizedSuccess: string;
+  genericError: string;
+  listTitle: string;
+  empty: string;
+};
+
+const COPY: Record<Locale, Copy> = {
+  en: {
+    title: "Coach authorization",
+    subtitle: "Enter email and password to create a coach account. They can log in and access the coach dashboard.",
+    emailPlaceholder: "Coach email",
+    passwordPlaceholder: "Password (min 6 characters)",
+    authorizeCta: "Authorize as coach",
+    authorizing: "Authorizing...",
+    authorizedSuccess: "Coach authorized. They can now log in with this email and password.",
+    genericError: "Something went wrong",
+    listTitle: "Authorized coaches",
+    empty: "No coaches yet."
+  },
+  tr: {
+    title: "Koc yetkilendirme",
+    subtitle: "Koc hesabi olusturmak icin e-posta ve sifre girin. Ardindan koc paneline giris yapabilirler.",
+    emailPlaceholder: "Koc e-postasi",
+    passwordPlaceholder: "Sifre (en az 6 karakter)",
+    authorizeCta: "Koc olarak yetkilendir",
+    authorizing: "Yetkilendiriliyor...",
+    authorizedSuccess: "Koc yetkilendirildi. Artik bu e-posta ve sifre ile giris yapabilir.",
+    genericError: "Bir seyler ters gitti",
+    listTitle: "Yetkili koçlar",
+    empty: "Henuz koc yok."
+  },
+  ar: {
+    title: "????? ??????",
+    subtitle: "???? ?????? ????? ?????? ?????? ???? ????. ????? ????? ?????? ????? ??????.",
+    emailPlaceholder: "???? ??????",
+    passwordPlaceholder: "???? ?????? (6 ???? ??? ?????)",
+    authorizeCta: "????? ?????",
+    authorizing: "???? ???????...",
+    authorizedSuccess: "?? ????? ??????. ????? ????? ?????? ???? ?????? ????? ??????.",
+    genericError: "??? ??? ??",
+    listTitle: "???????? ????????",
+    empty: "?? ???? ?????? ???."
+  },
+  es: {
+    title: "Autorizacion de coach",
+    subtitle: "Introduce correo y contrasena para crear una cuenta de coach. Podra acceder al panel de coach.",
+    emailPlaceholder: "Correo del coach",
+    passwordPlaceholder: "Contrasena (minimo 6 caracteres)",
+    authorizeCta: "Autorizar como coach",
+    authorizing: "Autorizando...",
+    authorizedSuccess: "Coach autorizado. Ya puede iniciar sesion con este correo y contrasena.",
+    genericError: "Algo salio mal",
+    listTitle: "Coaches autorizados",
+    empty: "Aun no hay coaches."
+  },
+  fr: {
+    title: "Autorisation coach",
+    subtitle: "Saisissez email et mot de passe pour creer un compte coach. Il pourra acceder au tableau coach.",
+    emailPlaceholder: "Email du coach",
+    passwordPlaceholder: "Mot de passe (6 caracteres min)",
+    authorizeCta: "Autoriser comme coach",
+    authorizing: "Autorisation...",
+    authorizedSuccess: "Coach autorise. Il peut maintenant se connecter avec cet email et ce mot de passe.",
+    genericError: "Une erreur est survenue",
+    listTitle: "Coachs autorises",
+    empty: "Aucun coach pour le moment."
+  }
+};
+
+export function AdminCoachAuthorization({ locale }: { locale: Locale }) {
+  const copy = COPY[locale] ?? COPY.en;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [coaches, setCoaches] = useState<Coach[]>([]);
@@ -41,13 +119,13 @@ export function AdminCoachAuthorization() {
         body: JSON.stringify({ email: email.trim(), password })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Failed to authorize coach");
-      setSuccess("Coach authorized. They can now log in with this email and password.");
+      if (!res.ok) throw new Error(data.error ?? "failed");
+      setSuccess(copy.authorizedSuccess);
       setEmail("");
       setPassword("");
       fetchCoaches();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(err instanceof Error ? err.message : copy.genericError);
     } finally {
       setLoading(false);
     }
@@ -55,10 +133,8 @@ export function AdminCoachAuthorization() {
 
   return (
     <div className="glass-panel rounded-[32px] p-6">
-      <p className="text-lg font-semibold text-white">Coach authorization</p>
-      <p className="mt-2 text-sm text-zinc-400">
-        Enter email and password to create a coach account. They can log in and access the coach dashboard.
-      </p>
+      <p className="text-lg font-semibold text-white">{copy.title}</p>
+      <p className="mt-2 text-sm text-zinc-400">{copy.subtitle}</p>
 
       <form
         onSubmit={(e) => {
@@ -70,7 +146,7 @@ export function AdminCoachAuthorization() {
         <input
           className="input"
           type="email"
-          placeholder="Coach email"
+          placeholder={copy.emailPlaceholder}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -78,7 +154,7 @@ export function AdminCoachAuthorization() {
         <input
           className="input"
           type="password"
-          placeholder="Password (min 6 characters)"
+          placeholder={copy.passwordPlaceholder}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -91,21 +167,21 @@ export function AdminCoachAuthorization() {
           variant="primary"
           fullWidth
           loading={loading}
-          loadingText="Authorizing..."
+          loadingText={copy.authorizing}
           className="gradient-button rounded-full px-5 py-3 text-sm font-medium text-white"
           onClick={() => authorizeCoach()}
         >
-          Authorize as coach
+          {copy.authorizeCta}
         </AsyncButton>
       </form>
 
       <div className="mt-6">
         <p className="text-sm font-medium text-white">
-          Authorized coaches ({coaches.length})
+          {copy.listTitle} ({coaches.length})
         </p>
         <div className="mt-3 max-h-40 space-y-2 overflow-y-auto">
           {coaches.length === 0 ? (
-            <p className="text-sm text-zinc-500">No coaches yet.</p>
+            <p className="text-sm text-zinc-500">{copy.empty}</p>
           ) : (
             coaches.map((c) => (
               <div
@@ -121,3 +197,4 @@ export function AdminCoachAuthorization() {
     </div>
   );
 }
+

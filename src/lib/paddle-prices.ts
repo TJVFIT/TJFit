@@ -29,3 +29,8 @@ export {
 export function getPaddlePriceIdForProgramSlug(programSlug: string): string | null {
   return resolvePaddlePriceId(programSlug);
 }
+
+/** Generic alias for both program and diet slugs. */
+export function getPaddlePriceIdForSlug(slug: string): string | null {
+  return resolvePaddlePriceId(slug);
+}

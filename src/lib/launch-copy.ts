@@ -113,23 +113,22 @@ type CommunityCopy = {
 
 type FooterCopy = {
   description: string;
-  platformTitle: string;
-  operationsTitle: string;
-  coaches: string;
+  tagline: string;
+  productTitle: string;
+  companyTitle: string;
+  supportTitle: string;
+  startFree: string;
+  findCoach: string;
   programs: string;
   diets: string;
-  community: string;
-  membership: string;
+  legalHub: string;
+  faq: string;
   terms: string;
   privacy: string;
-  refund: string;
-  support: string;
-  legalHub: string;
-  coachDashboard: string;
-  adminPanel: string;
-  checkout: string;
-  leadColumnTitle: string;
-  leadColumnSub: string;
+  contact: string;
+  becomeCoach: string;
+  community: string;
+  companyComingSoon: string;
 };
 
 type NavChromeCopy = {
@@ -719,103 +718,98 @@ const communityCopy: Record<Locale, CommunityCopy> = {
 const footerCopy: Record<Locale, FooterCopy> = {
   en: {
     description: "Premium online coaching and digital programs platform for fitness, performance, and recovery.",
-    platformTitle: "Platform",
-    operationsTitle: "Operations",
-    coaches: "Coaches (Coming Soon)",
+    tagline: "Transform. Perform. Dominate.",
+    productTitle: "Product",
+    companyTitle: "Company",
+    supportTitle: "Support",
+    startFree: "Start Free",
+    findCoach: "Find a Coach",
     programs: "Programs Marketplace",
     diets: "Diets",
-    community: "Community",
-    membership: "Subscription (Coming Soon)",
+    legalHub: "About & Legal",
+    faq: "FAQ",
     terms: "Terms of Service",
     privacy: "Privacy Policy",
-    refund: "Refund Policy",
-    support: "Support",
-    legalHub: "Legal & FAQ",
-    coachDashboard: "Coach Dashboard",
-    adminPanel: "Admin Panel",
-    checkout: "Checkout",
-    leadColumnTitle: "Product updates",
-    leadColumnSub: "Roadmap and launch notes — no noise."
+    contact: "Contact Support",
+    becomeCoach: "Become a Coach",
+    community: "Community",
+    companyComingSoon: "(Coming Soon)"
   },
   tr: {
     description: "Fitness, performans ve toparlanma için premium online koçluk ve dijital programlar — tek platformda.",
-    platformTitle: "Platform",
-    operationsTitle: "Bilgi & işlemler",
-    coaches: "Koçlar (çok yakında)",
+    tagline: "Donus. Performans. Hukum.",
+    productTitle: "Urun",
+    companyTitle: "Sirket",
+    supportTitle: "Destek",
+    startFree: "Ucretsiz Basla",
+    findCoach: "Koc Bul",
     programs: "Programlar",
     diets: "Diyetler",
-    community: "Topluluk",
-    membership: "Üyelik (çok yakında)",
-    terms: "Kullanım şartları",
+    legalHub: "Hakkimizda ve Yasal",
+    faq: "SSS",
+    terms: "Kullanim sartlari",
     privacy: "Gizlilik",
-    refund: "İade politikası",
-    support: "Yardım",
-    legalHub: "Yasal ve SSS",
-    coachDashboard: "Koç paneli",
-    adminPanel: "Yönetim",
-    checkout: "Ödeme",
-    leadColumnTitle: "Yenilikler",
-    leadColumnSub: "Yol haritası ve lansman notları — gereksiz e-posta yok."
+    contact: "Destek iletisim",
+    becomeCoach: "Koc Ol",
+    community: "Topluluk",
+    companyComingSoon: "(Cok yakinda)"
   },
   ar: {
     description: "منصة تدريب اونلاين وبرامج رقمية مميزة للياقة والاداء والتعافي.",
-    platformTitle: "المنصة",
-    operationsTitle: "العمليات",
-    coaches: "المدربون (قريبا)",
-    programs: "سوق البرامج",
+    tagline: "تحول. أداء. هيمنة.",
+    productTitle: "المنتج",
+    companyTitle: "الشركة",
+    supportTitle: "الدعم",
+    startFree: "ابدأ مجاناً",
+    findCoach: "ابحث عن مدرب",
+    programs: "البرامج",
     diets: "الأنظمة الغذائية",
-    community: "المجتمع",
-    membership: "الاشتراك (قريبا)",
+    legalHub: "حول المنصة والقانوني",
+    faq: "الاسئلة الشائعة",
     terms: "شروط الخدمة",
     privacy: "سياسة الخصوصية",
-    refund: "سياسة الاسترداد",
-    support: "الدعم",
-    legalHub: "قانوني وأسئلة",
-    coachDashboard: "لوحة المدرب",
-    adminPanel: "لوحة الادارة",
-    checkout: "الدفع",
-    leadColumnTitle: "تحديثات المنتج",
-    leadColumnSub: "خارطة الطريق والإطلاق — بلا إزعاج."
+    contact: "تواصل مع الدعم",
+    becomeCoach: "كن مدرباً",
+    community: "المجتمع",
+    companyComingSoon: "(قريباً)"
   },
   es: {
     description: "Plataforma premium de coaching online y programas digitales para fitness, rendimiento y recuperacion.",
-    platformTitle: "Plataforma",
-    operationsTitle: "Operaciones",
-    coaches: "Coaches (Proximamente)",
-    programs: "Marketplace de Programas",
+    tagline: "Transforma. Rinde. Domina.",
+    productTitle: "Producto",
+    companyTitle: "Compania",
+    supportTitle: "Soporte",
+    startFree: "Empieza Gratis",
+    findCoach: "Encuentra Coach",
+    programs: "Programas",
     diets: "Dietas",
-    community: "Comunidad",
-    membership: "Suscripcion (Proximamente)",
+    legalHub: "Acerca de y Legal",
+    faq: "FAQ",
     terms: "Terminos del Servicio",
     privacy: "Politica de Privacidad",
-    refund: "Politica de Reembolso",
-    support: "Soporte",
-    legalHub: "Legal y FAQ",
-    coachDashboard: "Panel del Coach",
-    adminPanel: "Panel Admin",
-    checkout: "Checkout",
-    leadColumnTitle: "Novedades del producto",
-    leadColumnSub: "Hoja de ruta y lanzamientos — sin ruido."
+    contact: "Contactar Soporte",
+    becomeCoach: "Conviertete en Coach",
+    community: "Comunidad",
+    companyComingSoon: "(Proximamente)"
   },
   fr: {
     description: "Plateforme premium de coaching en ligne et de programmes digitaux pour fitness, performance et recuperation.",
-    platformTitle: "Plateforme",
-    operationsTitle: "Operations",
-    coaches: "Coachs (Bientot)",
-    programs: "Marketplace des Programmes",
+    tagline: "Transforme. Performe. Domine.",
+    productTitle: "Produit",
+    companyTitle: "Entreprise",
+    supportTitle: "Support",
+    startFree: "Commencer Gratuitement",
+    findCoach: "Trouver un Coach",
+    programs: "Programmes",
     diets: "Regimes",
-    community: "Communaute",
-    membership: "Abonnement (Bientot)",
+    legalHub: "A propos et legal",
+    faq: "FAQ",
     terms: "Conditions d'utilisation",
     privacy: "Politique de confidentialite",
-    refund: "Politique de remboursement",
-    support: "Support",
-    legalHub: "Infos legales",
-    coachDashboard: "Tableau Coach",
-    adminPanel: "Panneau Admin",
-    checkout: "Paiement",
-    leadColumnTitle: "Mises a jour produit",
-    leadColumnSub: "Feuille de route et lancements — sans bruit."
+    contact: "Contacter le support",
+    becomeCoach: "Devenir Coach",
+    community: "Communaute",
+    companyComingSoon: "(Bientot)"
   }
 };
 

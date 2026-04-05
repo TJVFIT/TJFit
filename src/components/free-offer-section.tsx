@@ -215,7 +215,7 @@ export function FreeOfferSection({
           {copy.subtitle}
         </p>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8">
           {training ? renderCard(training, "training", 200) : null}
           {diet ? renderCard(diet, "diet", 320) : null}
         </div>

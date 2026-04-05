@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { paddleCreateTransaction } from "@/lib/paddle-api";
 import { isPaddleServerConfigured, parsePaddlePriceMap } from "@/lib/paddle-config";
-import { getPaddlePriceIdForProgramSlug } from "@/lib/paddle-prices";
+import { getPaddlePriceIdForSlug } from "@/lib/paddle-prices";
 import { paddleLogDebug, redactPaddleId } from "@/lib/paddle-safe-log";
 import { isPaddleLiveCheckoutStored } from "@/lib/payments/stored-provider";
 import { readRequestJson } from "@/lib/read-request-json";
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
   }
 
   const map = parsePaddlePriceMap();
-  const priceId = getPaddlePriceIdForProgramSlug(order.program_slug);
+  const priceId = getPaddlePriceIdForSlug(order.program_slug);
   const priceSource = map[order.program_slug]
     ? "PADDLE_PRICE_MAP"
     : process.env.PADDLE_DEFAULT_PRICE_ID?.trim()
@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
     });
     return NextResponse.json(
       {
-        error: `No Paddle price configured for program "${order.program_slug}". Add it to PADDLE_PRICE_MAP or set PADDLE_DEFAULT_PRICE_ID.`
+        error: `No Paddle price configured for slug "${order.program_slug}". Add it to PADDLE_PRICE_MAP or set PADDLE_DEFAULT_PRICE_ID.`
       },
       { status: 400 }
     );

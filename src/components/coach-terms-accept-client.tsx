@@ -22,6 +22,20 @@ export function CoachTermsAcceptClient({
   const [checked, setChecked] = useState(false);
   const [working, setWorking] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const versionNoteByLocale: Record<Locale, string> = {
+    en: "Please retain a copy for your records.",
+    tr: "Lutfen kayitlariniz icin bir kopya saklayin.",
+    ar: "يرجى الاحتفاظ بنسخة لسجلاتك.",
+    es: "Conserva una copia para tus registros.",
+    fr: "Conservez une copie pour vos dossiers."
+  };
+  const bindingNoteByLocale: Record<Locale, string> = {
+    en: "Binding terms are provided in English.",
+    tr: "Baglayici sartlar Ingilizce olarak saglanir.",
+    ar: "الشروط الملزمة متاحة باللغة الإنجليزية.",
+    es: "Los terminos vinculantes se proporcionan en ingles.",
+    fr: "Les conditions contraignantes sont fournies en anglais."
+  };
 
   const onAccept = async () => {
     setError(null);
@@ -52,7 +66,8 @@ export function CoachTermsAcceptClient({
         <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">{copy.title}</h1>
         <p className="mt-3 text-sm leading-7 text-zinc-400">{copy.subtitle}</p>
         <p className="mt-2 text-xs text-zinc-500">
-          Version {termsVersion} — {locale !== "en" ? "Binding terms are provided in English." : "Please retain a copy for your records."}
+          Version {termsVersion} —{" "}
+          {locale !== "en" ? bindingNoteByLocale[locale] : versionNoteByLocale[locale]}
         </p>
       </div>
 

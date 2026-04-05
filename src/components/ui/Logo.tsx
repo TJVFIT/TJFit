@@ -100,7 +100,7 @@ export function Logo({
     <Link
       href={href}
       onClick={onNavigate}
-      aria-label="TJFit — Go to homepage"
+      aria-label={alt}
       className={cn(
         "inline-flex cursor-pointer items-center justify-center",
         "transition-opacity duration-150 ease-out hover:opacity-80",

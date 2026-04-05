@@ -50,6 +50,8 @@ export type CheckoutCopy = {
   /** Optional text field for site-wide promo codes (e.g. JOSEPH1407) */
   promoCodeLabel: string;
   promoCodePlaceholder: string;
+  promoApplyCta: string;
+  promoAppliedPrefix: string;
   noDiscount: string;
   ctaPay: string;
   ctaWorking: string;
@@ -327,6 +329,8 @@ const checkout: Record<Locale, CheckoutCopy> = {
     discountLabel: "Discount code",
     promoCodeLabel: "Or enter a promo code",
     promoCodePlaceholder: "e.g. JOSEPH1407",
+    promoApplyCta: "Apply",
+    promoAppliedPrefix: "Code applied:",
     noDiscount: "None",
     ctaPay: "Continue to payment",
     ctaWorking: "Processing…",
@@ -359,6 +363,8 @@ const checkout: Record<Locale, CheckoutCopy> = {
     discountLabel: "Indirim kodu",
     promoCodeLabel: "Veya promosyon kodu girin",
     promoCodePlaceholder: "ornek: JOSEPH1407",
+    promoApplyCta: "Uygula",
+    promoAppliedPrefix: "Kod uygulandi:",
     noDiscount: "Yok",
     ctaPay: "Odemeye devam",
     ctaWorking: "Isleniyor…",
@@ -391,6 +397,8 @@ const checkout: Record<Locale, CheckoutCopy> = {
     discountLabel: "رمز الخصم",
     promoCodeLabel: "أو أدخل رمز ترويجي",
     promoCodePlaceholder: "مثال: JOSEPH1407",
+    promoApplyCta: "تطبيق",
+    promoAppliedPrefix: "تم تطبيق الرمز:",
     noDiscount: "لا يوجد",
     ctaPay: "متابعة الدفع",
     ctaWorking: "جاري المعالجة…",
@@ -423,6 +431,8 @@ const checkout: Record<Locale, CheckoutCopy> = {
     discountLabel: "Codigo de descuento",
     promoCodeLabel: "O introduce un codigo promocional",
     promoCodePlaceholder: "ej. JOSEPH1407",
+    promoApplyCta: "Aplicar",
+    promoAppliedPrefix: "Codigo aplicado:",
     noDiscount: "Ninguno",
     ctaPay: "Continuar al pago",
     ctaWorking: "Procesando…",
@@ -455,6 +465,8 @@ const checkout: Record<Locale, CheckoutCopy> = {
     discountLabel: "Code de reduction",
     promoCodeLabel: "Ou saisissez un code promo",
     promoCodePlaceholder: "ex. JOSEPH1407",
+    promoApplyCta: "Appliquer",
+    promoAppliedPrefix: "Code applique :",
     noDiscount: "Aucun",
     ctaPay: "Continuer vers le paiement",
     ctaWorking: "Traitement…",

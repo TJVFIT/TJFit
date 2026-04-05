@@ -14,12 +14,19 @@ const allowPatterns: RegExp[] = [
   /^[a-z0-9_\-:/.]+$/,
   /^#[0-9a-f]{3,8}$/i,
   /^([A-Z][a-z]+){1,}$/,
+  /^@[^"\n]+$/,
+  /^className=$/,
+  /^label=$/,
+  /^source=$/,
+  /^afterInteractive$/,
+  /^navFull$/,
   /^[@{}()[\].,;:+\-*/\\|&!?<>=~`'"]+$/,
   /^$/
 ];
 
 const literalRegex = /"([^"\n]{3,})"|'([^'\n]{3,})'/g;
 const suspiciousAlphaRegex = /[A-Za-z]{3,}/;
+const tailwindLikeRegex = /^[a-z0-9_:[\]()%./-]+(?:\s+[a-z0-9_:[\]()%./-]+)*$/i;
 
 function walk(dir: string, out: string[]) {
   const items = fs.readdirSync(dir, { withFileTypes: true });
@@ -37,6 +44,10 @@ function walk(dir: string, out: string[]) {
 
 function shouldIgnoreLiteral(value: string) {
   const trimmed = value.trim();
+  if (trimmed.startsWith("@/")) return true;
+  if (trimmed.includes("{copy.") || trimmed.includes("sub={")) return true;
+  if (trimmed === "fill sizes=") return true;
+  if (tailwindLikeRegex.test(trimmed)) return true;
   if (!suspiciousAlphaRegex.test(trimmed)) return true;
   return allowPatterns.some((re) => re.test(trimmed));
 }
@@ -49,7 +60,8 @@ function isLikelyUIContext(line: string) {
     line.includes("aria-label=") ||
     line.includes("setError(") ||
     line.includes("toast") ||
-    line.includes("label")
+    line.includes("label") ||
+    line.includes("children:")
   );
 }
 
@@ -68,6 +80,8 @@ function scanFile(filePath: string) {
       const prefix = line.slice(Math.max(0, start - 24), start);
       if (
         prefix.includes("className=") ||
+        prefix.includes("children:") ||
+        prefix.includes("label:") ||
         prefix.includes("href=") ||
         prefix.includes("src=") ||
         prefix.includes("import ") ||

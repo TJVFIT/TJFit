@@ -63,6 +63,13 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
   const copy = getProgramUiCopy(locale);
   const filterCopy = getProgramsMarketplaceCopy(locale);
   const programManagementCopy = getProgramManagementCopy(locale);
+  const loadingProgramsAria: Record<Locale, string> = {
+    en: "Loading programs",
+    tr: "Programlar yukleniyor",
+    ar: "جار تحميل البرامج",
+    es: "Cargando programas",
+    fr: "Chargement des programmes"
+  };
   const { role } = useAuth();
   const [uploadedPrograms, setUploadedPrograms] = useState<CustomProgramCard[]>([]);
   const [customCatalogReady, setCustomCatalogReady] = useState(false);
@@ -219,7 +226,11 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
           </ListingFilterBar>
 
       {!customCatalogReady ? (
-        <div className="grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3" aria-busy="true" aria-label="Loading programs">
+        <div
+          className="grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          aria-busy="true"
+          aria-label={loadingProgramsAria[locale]}
+        >
           {Array.from({ length: 8 }).map((_, i) => (
             <div
               key={`sk-${i}`}

@@ -180,7 +180,7 @@ export function ImmersiveHome({
   return (
     <div className="bg-[#09090B] text-white">
       {/* —— 1 HERO —— */}
-      <section className="relative flex min-h-[100dvh] flex-col justify-center overflow-hidden px-6 pb-20 pt-24 lg:px-12 lg:pb-28 lg:pt-16">
+      <section className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden px-6 pb-16 pt-24 lg:px-12 lg:pb-24 lg:pt-16">
         <div
           className="pointer-events-none absolute left-1/2 top-0 h-[700px] w-[700px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.07)_0%,transparent_70%)]"
           aria-hidden
@@ -190,7 +190,7 @@ export function ImmersiveHome({
           aria-hidden
         />
 
-        <div className="relative z-10 mx-auto w-full max-w-5xl">
+        <div className="relative z-10 mx-auto w-full max-w-5xl text-center lg:text-left">
           <p
             className={cn(
               "text-[11px] font-medium uppercase tracking-[0.15em] text-[#22D3EE] transition-opacity duration-500 motion-reduce:transition-none",
@@ -201,7 +201,7 @@ export function ImmersiveHome({
             {copy.hero.eyebrow ?? copy.hero.badge}
           </p>
 
-          <h1 className="mt-8 font-sans text-[56px] font-extrabold leading-[0.95] tracking-[-0.04em] lg:text-[96px]">
+          <h1 className="mt-8 font-sans text-[clamp(2.5rem,8vw,4.5rem)] font-extrabold leading-[0.95] tracking-[-0.04em] lg:text-[96px]">
             <span className="block" style={lineMotion(300)}>
               {line1}
             </span>
@@ -216,7 +216,7 @@ export function ImmersiveHome({
 
           <p
             className={cn(
-              "mt-8 max-w-[480px] text-lg leading-relaxed text-[#A1A1AA] transition-opacity duration-500 ease-out motion-reduce:transition-none",
+              "mx-auto mt-8 max-w-[480px] text-base leading-relaxed text-[#A1A1AA] transition-opacity duration-500 ease-out motion-reduce:transition-none sm:text-lg lg:mx-0",
               heroEntered ? "opacity-100" : "opacity-0"
             )}
             style={{ transitionDelay: reduce ? "0ms" : "800ms" }}
@@ -243,7 +243,7 @@ export function ImmersiveHome({
               href={`/${locale}/programs`}
               className="inline-flex min-h-[52px] items-center justify-center rounded-full border border-[#1E2028] px-8 py-4 text-base font-semibold text-white transition-[border-color,background-color] duration-200 hover:border-[rgba(255,255,255,0.15)] hover:bg-[rgba(255,255,255,0.04)]"
             >
-              {copy.hero.ctaSecondary} →
+              {copy.hero.ctaSecondary} <span className="rtl:rotate-180">→</span>
             </Link>
           </div>
         </div>
@@ -265,7 +265,7 @@ export function ImmersiveHome({
       </section>
 
       {/* —— 2 WHAT YOU GET —— */}
-      <section className="relative min-h-[100dvh] border-t border-[#1E2028] bg-[#09090B] px-6 py-24 lg:px-12 lg:py-32">
+      <section className="relative min-h-[100svh] border-t border-[#1E2028] bg-[#09090B] px-6 py-16 lg:px-12 lg:py-24">
         <div className="absolute start-8 top-32 bottom-32 hidden w-px bg-gradient-to-b from-[#22D3EE]/40 via-[#22D3EE]/20 to-transparent lg:block" aria-hidden />
         <div className="relative mx-auto max-w-4xl space-y-24 lg:ps-12">
           {featureItems.map((item, i) => (
@@ -277,13 +277,13 @@ export function ImmersiveHome({
 
       {/* —— 3 FREE STARTERS —— */}
       {freePrograms.length > 0 ? (
-        <section className="relative min-h-[100dvh] bg-[#09090B] py-8">
-          <FreeOfferSection locale={locale} freePrograms={freePrograms} sectionClassName="min-h-[100dvh] flex flex-col justify-center border-b-0 py-20 lg:py-24" />
+        <section className="relative min-h-[100svh] bg-[#09090B] py-8">
+          <FreeOfferSection locale={locale} freePrograms={freePrograms} sectionClassName="min-h-[100svh] flex flex-col justify-center border-b-0 py-16 lg:py-24" />
         </section>
       ) : null}
 
       {/* —— 4 PROGRAMS —— */}
-      <section className="relative min-h-[100dvh] border-t border-[var(--color-border)] bg-[#111215] px-6 py-24 lg:px-12 lg:py-28">
+      <section className="relative min-h-[100svh] border-t border-[var(--color-border)] bg-[#111215] px-6 py-16 lg:px-12 lg:py-24">
         <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center">
           <div>
             <h2 className="text-[56px] font-extrabold leading-[0.95] tracking-[-0.04em] text-white lg:text-[80px]">
@@ -291,14 +291,14 @@ export function ImmersiveHome({
               <span className="block">Complete</span>
               <span className="block bg-gradient-to-br from-[#22D3EE] to-[#A78BFA] bg-clip-text text-transparent">Programs.</span>
             </h2>
-            <div className="mt-8 max-w-xl">
+            <div className="mt-8 max-w-xl overflow-hidden">
               <ScrollTicker items={tickerPrograms} speed={40} className="opacity-80" />
             </div>
             <Link
               href={`/${locale}/programs`}
               className="mt-8 inline-flex text-sm font-semibold text-[#22D3EE] transition-opacity hover:opacity-80"
             >
-              {copy.programs.viewAll} →
+              {copy.programs.viewAll} <span className="rtl:rotate-180">→</span>
             </Link>
           </div>
           <div className="grid max-h-[min(70vh,640px)] grid-cols-1 gap-4 overflow-y-auto pr-1 sm:grid-cols-2">
@@ -321,7 +321,7 @@ export function ImmersiveHome({
 
       {/* —— 5 DIETS —— */}
       {diets.length > 0 ? (
-        <section className="relative min-h-[100dvh] bg-[#09090B] px-6 py-24 lg:px-12 lg:py-28">
+        <section className="relative min-h-[100svh] bg-[#09090B] px-6 py-16 lg:px-12 lg:py-24">
           <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center">
             <div className="order-2 lg:order-1">
               <div className="grid max-h-[min(70vh,640px)] grid-cols-1 gap-4 overflow-y-auto pr-1 sm:grid-cols-2">
@@ -345,14 +345,14 @@ export function ImmersiveHome({
                 <span className="block">Diet</span>
                 <span className="block bg-gradient-to-br from-[#A78BFA] to-[#22D3EE] bg-clip-text text-transparent">Systems.</span>
               </h2>
-              <div className="mt-8 max-w-xl">
+              <div className="mt-8 max-w-xl overflow-hidden">
                 <ScrollTicker items={tickerDiets} speed={45} direction="right" className="opacity-80" />
               </div>
               <Link
                 href={`/${locale}/diets`}
                 className="mt-8 inline-flex text-sm font-semibold text-[#A78BFA] transition-opacity hover:opacity-80"
               >
-                {copy.dietsTeaser?.cta ?? programUi.viewProgram} →
+                {copy.dietsTeaser?.cta ?? programUi.viewProgram} <span className="rtl:rotate-180">→</span>
               </Link>
             </div>
           </div>
@@ -361,7 +361,7 @@ export function ImmersiveHome({
       ) : null}
 
       {/* —— 6 STATS —— */}
-      <section className="relative flex min-h-[100dvh] flex-col justify-center bg-[#09090B] px-6 py-24 lg:px-12">
+      <section className="relative flex min-h-[100svh] flex-col justify-center bg-[#09090B] px-6 py-16 lg:px-12 lg:py-24">
         <div className="mx-auto grid max-w-4xl grid-cols-2 gap-12 lg:gap-16">
           <CountCell target={Math.min(programCount, 99)} suffix="+" label="Complete Programs" reduce={reduce} />
           <CountCell target={Math.min(dietCount, 99)} suffix="+" label="Diet Systems" reduce={reduce} />
@@ -372,7 +372,7 @@ export function ImmersiveHome({
       </section>
 
       {/* —— 7 FINAL CTA —— */}
-      <section className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-[#09090B] px-6 py-24 text-center lg:px-12">
+      <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-[#09090B] px-6 py-16 text-center lg:px-12 lg:py-24">
         <div
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(34,211,238,0.06)_0%,transparent_55%)]"
           aria-hidden

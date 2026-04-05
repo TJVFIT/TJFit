@@ -1,13 +1,18 @@
 "use client";
 
-import { useEffect } from "react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+import { isLocale, type Locale } from "@/lib/i18n";
 
-import { isLocale } from "@/lib/i18n";
+const COPY: Record<Locale, { heading: string; sub: string; retry: string; back: string }> = {
+  en: { heading: "Something went wrong.", sub: "An unexpected error occurred. Please try again.", retry: "Try Again", back: "Back to TJFit" },
+  tr: { heading: "Bir seyler ters gitti.", sub: "Beklenmeyen bir hata olustu. Lutfen tekrar deneyin.", retry: "Tekrar Dene", back: "TJFit'e don" },
+  ar: { heading: "??? ??? ??.", sub: "??? ??? ??? ?????. ???? ???????? ??? ????.", retry: "???? ??????", back: "?????? ??? TJFit" },
+  es: { heading: "Algo salio mal.", sub: "Ocurrio un error inesperado. Intentalo de nuevo.", retry: "Intentar de nuevo", back: "Volver a TJFit" },
+  fr: { heading: "Une erreur est survenue.", sub: "Une erreur inattendue s'est produite. Veuillez reessayer.", retry: "Reessayer", back: "Retour a TJFit" }
+};
 
-/**
- * Locale segment error UI — keeps shell chrome from parent layout; recover without full reload when possible.
- */
 export default function LocaleError({
   error,
   reset
@@ -15,10 +20,11 @@ export default function LocaleError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  const pathname = usePathname();
-  const firstSegment = pathname?.split("/").filter(Boolean)[0];
-  const homeHref =
-    firstSegment && isLocale(firstSegment) ? `/${firstSegment}` : "/en";
+  const pathname = usePathname() || "/en";
+  const first = pathname.split("/").filter(Boolean)[0] ?? "en";
+  const locale = (isLocale(first) ? first : "en") as Locale;
+  const homeHref = `/${locale}`;
+  const c = COPY[locale] ?? COPY.en;
 
   useEffect(() => {
     if (process.env.NODE_ENV === "development") {
@@ -27,25 +33,28 @@ export default function LocaleError({
   }, [error]);
 
   return (
-    <div className="flex min-h-[50vh] flex-col items-center justify-center bg-[#0A0A0B] px-6 py-20 text-center">
-      <p className="max-w-md text-sm leading-relaxed text-zinc-400">
-        Something went wrong loading this page. You can try again or return home.
-      </p>
+    <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-[#09090B] px-6 text-center">
+      <div
+        className="pointer-events-none absolute left-1/2 top-0 h-[24rem] w-[24rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.06)_0%,transparent_72%)]"
+        aria-hidden
+      />
+      <h1 className="text-3xl font-bold text-white">{c.heading}</h1>
+      <p className="mt-3 max-w-md text-sm text-[#A1A1AA] sm:text-base">{c.sub}</p>
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <button
           type="button"
           onClick={() => reset()}
-          className="rounded-full border border-white/[0.12] bg-white/[0.06] px-6 py-2.5 text-sm font-medium text-zinc-100 transition hover:border-cyan-400/35 hover:bg-white/[0.1]"
+          className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-cyan-400/30 bg-cyan-400/10 px-6 py-2.5 text-sm font-semibold text-cyan-200 transition-colors hover:border-cyan-400/50 hover:text-white"
         >
-          Try again
+          {c.retry}
         </button>
-        <a
+        <Link
           href={homeHref}
-          className="rounded-full border border-transparent px-6 py-2.5 text-sm font-medium text-zinc-500 transition hover:text-zinc-300"
+          className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-white/15 px-6 py-2.5 text-sm font-semibold text-zinc-300 transition-colors hover:border-white/25 hover:text-white"
         >
-          Home
-        </a>
+          <span className="rtl:rotate-180 inline-block">?</span> {c.back}
+        </Link>
       </div>
-    </div>
+    </section>
   );
 }

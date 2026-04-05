@@ -66,7 +66,7 @@ export default async function AdminPage({ params }: { params: { locale: string }
         ))}
       </div>
 
-      <AdminCoachAuthorization />
+      <AdminCoachAuthorization locale={locale} />
 
       <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
         <aside className="glass-panel rounded-[32px] p-6">

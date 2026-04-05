@@ -125,7 +125,7 @@ export function ProgramBlueprintNavigator({
 
   return (
     <div className="mt-10 space-y-6">
-      <div className="inline-flex max-w-full flex-wrap gap-1 rounded-[10px] border border-[#1E2028] bg-[#111215] p-1.5">
+      <div className="tj-nav-scroll inline-flex max-w-full flex-nowrap gap-1 overflow-x-auto rounded-[10px] border border-[#1E2028] bg-[#111215] p-1.5">
         {phases.map((p, i) => (
           <button
             key={p.title}

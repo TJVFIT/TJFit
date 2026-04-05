@@ -29,7 +29,13 @@ import { Locale, getDictionary, getDirection, locales } from "@/lib/i18n";
 import { getNavChromeCopy } from "@/lib/launch-copy";
 import { cn } from "@/lib/utils";
 
-const SOON_MSG = "Coming soon — stay tuned.";
+const SOON_MSG_BY_LOCALE: Record<Locale, string> = {
+  en: "Coming soon — stay tuned.",
+  tr: "Cok yakinda — takipte kal.",
+  ar: "قريباً — ترقبوا الإطلاق.",
+  es: "Muy pronto — mantente atento.",
+  fr: "Bientot disponible — restez a l'ecoute."
+};
 
 type ItemDef = {
   key: string;
@@ -79,6 +85,7 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
   const langRef = useRef<HTMLDivElement>(null);
 
   const isAdmin = role === "admin";
+  const soonMessage = SOON_MSG_BY_LOCALE[locale] ?? SOON_MSG_BY_LOCALE.en;
 
   useEffect(() => {
     if (reduce) {
@@ -234,13 +241,13 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
           ) : null}
           {showCollapsedTooltip ? (
             <span
-              className="tj-collapsed-sidebar-tip pointer-events-none absolute left-[calc(100%+12px)] top-1/2 z-[100] rounded-lg border border-[#1E2028] bg-[#111215] px-3 py-1.5 text-[13px] font-medium text-white shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
+              className="tj-collapsed-sidebar-tip pointer-events-none absolute start-[calc(100%+12px)] top-1/2 z-[100] rounded-lg border border-[#1E2028] bg-[#111215] px-3 py-1.5 text-[13px] font-medium text-white shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
               role="tooltip"
             >
               <span className="block whitespace-nowrap">{it.label}</span>
               {it.comingSoon ? (
                 <span className="mt-0.5 block whitespace-nowrap text-[11px] font-normal italic text-[#52525B]">
-                  Coming soon
+                  {soonMessage}
                 </span>
               ) : null}
             </span>
@@ -269,7 +276,7 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
             onMouseEnter={() => scheduleCollapsedTip(it.key)}
             onMouseLeave={clearCollapsedTip}
             onClick={() => {
-              setSoonTip(SOON_MSG);
+              setSoonTip(soonMessage);
               window.setTimeout(() => setSoonTip(null), 3200);
             }}
             aria-label={it.label}
@@ -316,8 +323,9 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
         onMouseEnter={onSidebarEnter}
         onMouseLeave={onSidebarLeave}
         className={cn(
-          "tj-sidebar-rail fixed left-0 top-0 z-50 hidden h-[100dvh] flex-col overflow-x-visible overflow-y-hidden border-r border-[rgba(255,255,255,0.04)] will-change-[width] lg:flex",
+          "tj-sidebar-rail fixed top-0 z-50 hidden h-[100dvh] flex-col overflow-x-visible overflow-y-hidden border-[rgba(255,255,255,0.04)] will-change-[width] lg:flex",
           "transition-[width,transform,background-color,backdrop-filter] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
+          direction === "rtl" ? "right-0 border-l" : "left-0 border-r",
           sidebarExpanded ? "w-[260px]" : "w-16",
           scrolled ? "bg-[rgba(9,9,11,0.85)] backdrop-blur-[20px]" : "bg-transparent",
           reduce ? "translate-x-0" : entered ? "translate-x-0" : "-translate-x-full",
@@ -346,10 +354,10 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
                 <Globe className="h-5 w-5" strokeWidth={1.75} aria-hidden />
                 {!sidebarExpanded && collapsedTipKey === "__lang" ? (
                   <span
-                    className="tj-collapsed-sidebar-tip pointer-events-none absolute left-[calc(100%+12px)] top-1/2 z-[100] rounded-lg border border-[#1E2028] bg-[#111215] px-3 py-1.5 text-[13px] font-medium text-white shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
+                    className="tj-collapsed-sidebar-tip pointer-events-none absolute start-[calc(100%+12px)] top-1/2 z-[100] rounded-lg border border-[#1E2028] bg-[#111215] px-3 py-1.5 text-[13px] font-medium text-white shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
                     role="tooltip"
                   >
-                    Language
+                    {nav.language}
                   </span>
                 ) : null}
               </span>
@@ -365,7 +373,7 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
             </button>
             <div
               className={cn(
-                "absolute bottom-[calc(100%+6px)] left-0 z-[130] min-w-[140px] rounded-[10px] border border-[#1E2028] bg-[#111215] p-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-[opacity,transform] duration-150 ease-out",
+                "absolute bottom-[calc(100%+6px)] start-0 z-[130] min-w-[140px] rounded-[10px] border border-[#1E2028] bg-[#111215] p-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-[opacity,transform] duration-150 ease-out",
                 langOpen ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none translate-y-1 opacity-0"
               )}
             >
@@ -396,7 +404,7 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
                 <User className="h-5 w-5" strokeWidth={1.75} aria-hidden />
                 {!sidebarExpanded && collapsedTipKey === "__login" ? (
                   <span
-                    className="tj-collapsed-sidebar-tip pointer-events-none absolute left-[calc(100%+12px)] top-1/2 z-[100] rounded-lg border border-[#1E2028] bg-[#111215] px-3 py-1.5 text-[13px] font-medium text-white shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
+                    className="tj-collapsed-sidebar-tip pointer-events-none absolute start-[calc(100%+12px)] top-1/2 z-[100] rounded-lg border border-[#1E2028] bg-[#111215] px-3 py-1.5 text-[13px] font-medium text-white shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
                     role="tooltip"
                   >
                     {dict.nav.login}
@@ -450,7 +458,7 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
         user={user}
         loading={loading}
         onSoon={() => {
-          setSoonTip(SOON_MSG);
+          setSoonTip(soonMessage);
           window.setTimeout(() => setSoonTip(null), 3200);
         }}
       />
@@ -482,6 +490,8 @@ function MobileNav({
   const reduce = usePrefersReducedMotion();
   const [mounted, setMounted] = useState(false);
   const [search, setSearch] = useState("");
+  const [soonInline, setSoonInline] = useState<string | null>(null);
+  const soonMessage = SOON_MSG_BY_LOCALE[locale] ?? SOON_MSG_BY_LOCALE.en;
 
   useEffect(() => setMounted(true), []);
   useEffect(() => {
@@ -571,7 +581,7 @@ function MobileNav({
           onClick={() => setOpen(true)}
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-[#1E2028] text-[#A1A1AA] transition-colors hover:text-white"
         >
-          <Menu className="h-6 w-6" strokeWidth={1.75} />
+          <Menu className="h-[22px] w-[22px]" strokeWidth={1.75} />
         </button>
       </header>
 
@@ -588,9 +598,9 @@ function MobileNav({
             onClick={() => setOpen(false)}
             className="absolute end-4 top-[max(1rem,env(safe-area-inset-top))] z-10 flex h-11 w-11 items-center justify-center rounded-lg border border-[#1E2028] text-[#A1A1AA] hover:text-white"
           >
-            <X className="h-6 w-6" />
+            <X className="h-[22px] w-[22px]" />
           </button>
-          <div className="flex min-h-0 flex-1 flex-col overflow-hidden pt-[max(3.5rem,env(safe-area-inset-top))]">
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden pt-[max(2rem,env(safe-area-inset-top))]">
             <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-y-contain px-6 pb-4">
               <div className="mx-auto flex w-full max-w-sm flex-col items-center">
                 <Logo variant="full" size="footer" href={`/${locale}`} onNavigate={() => setOpen(false)} />
@@ -606,10 +616,13 @@ function MobileNav({
                           type="button"
                           style={{ transitionDelay: `${delay}ms` }}
                           className={cn(
-                            "flex w-full items-center justify-center gap-2 py-3 text-2xl font-semibold text-[#52525B] transition-[opacity,transform] duration-[350ms] ease-out",
+                            "flex min-h-[52px] w-full items-center justify-center gap-2 py-3 text-lg font-medium text-[#52525B] transition-[opacity,transform] duration-[350ms] ease-out",
                             overlayReady || reduce ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
                           )}
-                          onClick={onSoon}
+                          onClick={() => {
+                            setSoonInline(soonMessage);
+                            onSoon();
+                          }}
                         >
                           <Icon className="h-6 w-6 shrink-0" strokeWidth={1.5} />
                           {it.label}
@@ -630,7 +643,7 @@ function MobileNav({
                         onClick={() => setOpen(false)}
                         style={{ transitionDelay: `${delay}ms` }}
                         className={cn(
-                          "flex w-full items-center justify-center gap-3 py-3 text-2xl font-semibold transition-[opacity,transform,color] duration-[350ms] ease-out",
+                          "flex min-h-[52px] w-full items-center justify-center gap-3 py-3 text-lg font-medium transition-[opacity,transform,color] duration-[350ms] ease-out",
                           active ? "text-white" : "text-[#A1A1AA] hover:text-white",
                           overlayReady || reduce ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
                         )}
@@ -641,14 +654,29 @@ function MobileNav({
                     );
                   })}
                 </nav>
+                {soonInline ? <p className="mt-4 text-sm text-[#A1A1AA]">{soonInline}</p> : null}
+                {!loading && user ? (
+                  <p className="mt-7 max-w-[20rem] truncate text-center text-sm text-[#A1A1AA]">
+                    {(user.user_metadata?.full_name as string | undefined)?.trim() || user.email}
+                  </p>
+                ) : null}
                 {!loading && user ? (
                   <button
                     type="button"
                     onClick={() => void handleLogout()}
-                    className="mt-8 text-sm text-[#52525B] hover:text-white"
+                    className="mt-3 min-h-[44px] text-sm text-[#52525B] hover:text-white"
                   >
                     {dict.nav.logout}
                   </button>
+                ) : null}
+                {!loading && !user ? (
+                  <Link
+                    href={`/${locale}/login`}
+                    onClick={() => setOpen(false)}
+                    className="mt-8 inline-flex min-h-[44px] items-center justify-center rounded-full border border-[#1E2028] px-5 py-2 text-sm font-medium text-[#A1A1AA] hover:text-white"
+                  >
+                    {dict.nav.login}
+                  </Link>
                 ) : null}
               </div>
             </div>

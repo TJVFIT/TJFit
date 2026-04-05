@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Play } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
@@ -208,10 +209,9 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
           aria-hidden
         />
         <div className="relative">
-        <div className="mx-auto mb-5 h-20 w-20 overflow-hidden rounded-full border-2 border-[#1E2028] bg-[#18191E] transition-[border-color] duration-200 [@media(hover:hover)]:hover:border-[#22D3EE] sm:h-[80px] sm:w-[80px]">
+        <div className="relative mx-auto mb-5 h-20 w-20 overflow-hidden rounded-full border-2 border-[#1E2028] bg-[#18191E] transition-[border-color] duration-200 [@media(hover:hover)]:hover:border-[#22D3EE] sm:h-[80px] sm:w-[80px]">
           {profile.avatar_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" />
+            <Image src={profile.avatar_url} alt="" fill sizes="80px" className="object-cover" />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-xl font-semibold text-[#22D3EE]">
               {(profile.display_name || profile.username || "?").slice(0, 1).toUpperCase()}

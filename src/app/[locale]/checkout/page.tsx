@@ -59,6 +59,8 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
   const [selectedCode, setSelectedCode] = useState("");
   /** Typed promo (e.g. JOSEPH1407); takes precedence over wallet dropdown when non-empty. */
   const [promoCodeInput, setPromoCodeInput] = useState("");
+  const [appliedPromoCode, setAppliedPromoCode] = useState("");
+  const [promoMessage, setPromoMessage] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [statusTone, setStatusTone] = useState<"neutral" | "success" | "error" | "pending">("neutral");
   const [working, setWorking] = useState(false);
@@ -115,6 +117,8 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
           );
           setSelectedCode("");
           setPromoCodeInput("");
+          setAppliedPromoCode("");
+          setPromoMessage(null);
           setSavedOrderId(null);
           setPendingAmountTry(null);
           activeGatewayOrderRef.current = null;
@@ -290,7 +294,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
     setPendingAmountTry(null);
 
     const discountCodeForOrder =
-      promoCodeInput.trim().toUpperCase() || selectedCode || undefined;
+      appliedPromoCode || promoCodeInput.trim().toUpperCase() || selectedCode || undefined;
 
     const createRes = await fetch("/api/checkout/create-order", {
       method: "POST",
@@ -346,6 +350,8 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
     );
     setSelectedCode("");
     setPromoCodeInput("");
+    setAppliedPromoCode("");
+    setPromoMessage(null);
     setSavedOrderId(null);
     setPendingAmountTry(null);
     await refreshWallet();
@@ -451,13 +457,29 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
                   type="text"
                   className="input mt-2 font-mono uppercase"
                   value={promoCodeInput}
-                  onChange={(e) => setPromoCodeInput(e.target.value.toUpperCase())}
+                  onChange={(e) => {
+                    setPromoCodeInput(e.target.value.toUpperCase());
+                    setPromoMessage(null);
+                  }}
                   placeholder={copy.promoCodePlaceholder}
                   autoComplete="off"
                   spellCheck={false}
                   maxLength={64}
                 />
               </label>
+              <button
+                type="button"
+                onClick={() => {
+                  const code = promoCodeInput.trim().toUpperCase();
+                  setAppliedPromoCode(code);
+                  setPromoMessage(code ? `${copy.promoAppliedPrefix} ${code}` : null);
+                }}
+                disabled={working}
+                className="mt-3 inline-flex min-h-[44px] items-center justify-center rounded-full border border-white/15 px-4 py-2 text-xs font-semibold text-zinc-200 transition-colors hover:border-white/25 hover:text-white disabled:opacity-50"
+              >
+                {copy.promoApplyCta}
+              </button>
+              {promoMessage ? <p className="mt-2 text-xs text-cyan-300">{promoMessage}</p> : null}
             </div>
 
             <button

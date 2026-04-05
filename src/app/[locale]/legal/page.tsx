@@ -26,7 +26,7 @@ export default function LegalHubPage({ params }: { params: { locale: string } })
             <aside className="mb-10 lg:mb-0">
               <nav
                 className="sticky top-24 flex flex-row flex-wrap gap-2 border-b border-[#1E2028] pb-4 lg:flex-col lg:border-b-0 lg:border-e lg:border-[#1E2028] lg:pb-0 lg:pe-6"
-                aria-label="Legal sections"
+                aria-label={copy.pageTitle}
               >
                 <a
                   href="#faq"

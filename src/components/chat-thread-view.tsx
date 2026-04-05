@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import clsx from "clsx";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
@@ -388,8 +389,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
         <div className="flex min-w-0 flex-1 items-center gap-3">
           <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full border border-white/[0.08] bg-surface-elevated">
             {peer?.avatar_url ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={peer.avatar_url} alt="" className="h-full w-full object-cover" />
+              <Image src={peer.avatar_url} alt="" fill sizes="40px" className="object-cover" />
             ) : (
               <div className="flex h-full w-full items-center justify-center text-xs font-semibold text-zinc-400">
                 {(peer?.display_name || peer?.username || "?").slice(0, 2).toUpperCase()}
