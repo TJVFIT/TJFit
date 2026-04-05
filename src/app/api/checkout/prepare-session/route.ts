@@ -1,12 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCheckoutAdapterForStoredProvider } from "@/lib/payments";
+
+import { paddleCreateTransaction } from "@/lib/paddle-api";
+import { isPaddleServerConfigured, parsePaddlePriceMap } from "@/lib/paddle-config";
+import { getPaddlePriceIdForProgramSlug } from "@/lib/paddle-prices";
+import { paddleLogDebug, redactPaddleId } from "@/lib/paddle-safe-log";
+import { isPaddleLiveCheckoutStored } from "@/lib/payments/stored-provider";
 import { readRequestJson } from "@/lib/read-request-json";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
+const TJFIT_ORDER_CUSTOM_KEY = "tjfit_order_id";
+
 /**
- * Future: return iframe/token/redirect payload for the active gateway adapter.
- * Wire your PSP here without changing checkout UI — call when `clientFlow.action === "await_gateway"`.
+ * Creates a Paddle Billing transaction and returns `transactionId` for Paddle.js
+ * `Paddle.Checkout.open({ transactionId })`.
  */
 export async function POST(request: NextRequest) {
   const supabase = createServerSupabaseClient();
@@ -34,7 +41,7 @@ export async function POST(request: NextRequest) {
 
   const { data: order } = await adminClient
     .from("program_orders")
-    .select("id,user_id,status,provider")
+    .select("id,user_id,status,provider,program_slug,discount_percent,discount_code")
     .eq("id", orderId)
     .eq("user_id", user.id)
     .maybeSingle();
@@ -47,20 +54,89 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Order is not awaiting payment." }, { status: 409 });
   }
 
-  const adapter = getCheckoutAdapterForStoredProvider(order.provider);
-  if (!adapter || adapter.allowsSimulatedPaidCompletion) {
+  if (order.provider === "test") {
     return NextResponse.json(
-      { error: "No external payment session is required for this order." },
+      {
+        error:
+          "This order uses test checkout. Complete it with the simulated flow — Paddle is not used for test orders."
+      },
       { status: 400 }
     );
   }
 
-  return NextResponse.json(
-    {
-      code: "PAYMENT_ADAPTER_PENDING",
-      message:
-        "Gateway session creation is not implemented in this build. Implement the adapter hook for your provider."
+  if (!isPaddleLiveCheckoutStored(order.provider)) {
+    return NextResponse.json(
+      { error: "This order cannot be paid with Paddle (unrecognized provider)." },
+      { status: 400 }
+    );
+  }
+
+  if (!isPaddleServerConfigured()) {
+    return NextResponse.json(
+      {
+        code: "PADDLE_NOT_CONFIGURED",
+        error: "Set PADDLE_API_KEY and map catalog prices via PADDLE_PRICE_MAP or PADDLE_DEFAULT_PRICE_ID."
+      },
+      { status: 503 }
+    );
+  }
+
+  const map = parsePaddlePriceMap();
+  const priceId = getPaddlePriceIdForProgramSlug(order.program_slug);
+  const priceSource = map[order.program_slug]
+    ? "PADDLE_PRICE_MAP"
+    : process.env.PADDLE_DEFAULT_PRICE_ID?.trim()
+      ? "PADDLE_DEFAULT_PRICE_ID"
+      : "(none)";
+
+  if (!priceId) {
+    paddleLogDebug("prepare-session", "no price id for slug", {
+      programSlug: order.program_slug,
+      mapEntryCount: Object.keys(map).length,
+      hasDefault: Boolean(process.env.PADDLE_DEFAULT_PRICE_ID?.trim())
+    });
+    return NextResponse.json(
+      {
+        error: `No Paddle price configured for program "${order.program_slug}". Add it to PADDLE_PRICE_MAP or set PADDLE_DEFAULT_PRICE_ID.`
+      },
+      { status: 400 }
+    );
+  }
+
+  const discountPercent = Number(order.discount_percent ?? 0);
+  const paddleDiscountId =
+    discountPercent > 0 ? process.env.PADDLE_WALLET_DISCOUNT_ID?.trim() || null : null;
+
+  paddleLogDebug("prepare-session", "creating Paddle transaction", {
+    orderId: redactPaddleId(order.id, 12),
+    programSlug: order.program_slug,
+    priceSource,
+    priceId: redactPaddleId(priceId, 16),
+    discountPercent,
+    hasPaddleDiscountId: Boolean(paddleDiscountId)
+  });
+
+  const created = await paddleCreateTransaction({
+    items: [{ priceId, quantity: 1 }],
+    customData: {
+      [TJFIT_ORDER_CUSTOM_KEY]: order.id,
+      tjfit_user_id: user.id,
+      tjfit_program_slug: order.program_slug
     },
-    { status: 501 }
-  );
+    discountId: paddleDiscountId
+  });
+
+  if ("error" in created) {
+    return NextResponse.json({ error: created.error }, { status: 502 });
+  }
+
+  paddleLogDebug("prepare-session", "transaction ready for checkout.open", {
+    orderId: redactPaddleId(order.id, 12),
+    transactionId: redactPaddleId(created.id, 18)
+  });
+
+  return NextResponse.json({
+    transactionId: created.id,
+    customerEmail: user.email ?? undefined
+  });
 }

@@ -14,6 +14,7 @@
     "logo:rasters": "node scripts/generate-logo-rasters.mjs"
   },
   "dependencies": {
+    "@paddle/paddle-js": "^1.6.2",
     "@react-three/drei": "^9.114.3",
     "@react-three/fiber": "^8.17.14",
     "@sentry/nextjs": "^10.43.0",

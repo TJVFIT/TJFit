@@ -7,8 +7,7 @@ export type OrderRowForCheckoutFlow = {
 };
 
 /**
- * One implementation per stored `program_orders.provider` value.
- * Add gateway session creation in a server route that delegates here later.
+ * One implementation per stored `program_orders.provider` value (`paddle` | `test`; legacy `live` → paddle).
  */
 export interface CheckoutPaymentAdapter {
   readonly id: PaymentProviderId;

@@ -1,4 +1,5 @@
 import type { Program } from "@/lib/content";
+import { hasPurchasedProgram } from "@/lib/purchases";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export async function getOptionalServerUser(): Promise<{ userId: string; supabase: ReturnType<typeof createServerSupabaseClient> } | null> {
@@ -20,14 +21,7 @@ export async function userHasPaidProgram(
   userId: string,
   programSlug: string
 ): Promise<boolean> {
-  const { data } = await supabase
-    .from("program_orders")
-    .select("id")
-    .eq("user_id", userId)
-    .eq("program_slug", programSlug)
-    .eq("status", "paid")
-    .maybeSingle();
-  return Boolean(data);
+  return hasPurchasedProgram(supabase, userId, programSlug);
 }
 
 export type ProgramDetailAccess = {

@@ -22,7 +22,7 @@ Premium multilingual online coaching platform built with `Next.js 14`, `Tailwind
 - Coach dashboard
 - Admin panel
 - Login and signup pages
-- Checkout API with pluggable payment gateway (`PAYMENT_PROVIDER=live|test`)
+- Checkout API: Paddle Billing when `PAYMENT_PROVIDER=paddle` (or `live` alias), test mode when `ALLOW_TEST_CHECKOUT=true`
 - English, Turkish, Arabic, Spanish, and French route support
 
 ## Routes
@@ -83,7 +83,7 @@ npm run dev
 
 - Connect auth, bookings, and dashboards to Supabase
 - Replace mock data with PostgreSQL tables
-- Wire your payment provider (prepare-session + webhooks)
+- Paddle Billing: set env vars in `.env.example`, point Paddle webhooks to `POST /api/webhooks/paddle` (`transaction.completed`), map each program slug to a `pri_…` in `PADDLE_PRICE_MAP`
 - Add daily or WebRTC session room creation
 - Add role-based route protection
 - Persist transformations, wallet, challenges, and community to PostgreSQL

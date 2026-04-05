@@ -22,7 +22,7 @@ export type LogoSize = "navbar" | "navFull" | "sidebar" | "mobile" | "hero" | "f
 
 /** Pixel heights — width always auto, aspect preserved */
 const HEIGHT_PX: Record<LogoSize, number> = {
-  navbar: 32,
+  navbar: 36,
   navFull: 46,
   sidebar: 36,
   mobile: 28,

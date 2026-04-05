@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { acceptCoachTermsAction } from "@/lib/actions/coach-terms-accept";
 import type { Locale } from "@/lib/i18n";
 import { getCoachTermsCopy, getCoachTermsSections } from "@/lib/coach-terms-copy";
 
@@ -30,15 +31,9 @@ export function CoachTermsAcceptClient({
     }
     setWorking(true);
     try {
-      const res = await fetch("/api/coach/terms/accept", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ accepted: true })
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        setError(typeof data.error === "string" ? data.error : copy.errorGeneric);
+      const data = await acceptCoachTermsAction();
+      if (!data.ok) {
+        setError(data.error || copy.errorGeneric);
         setWorking(false);
         return;
       }

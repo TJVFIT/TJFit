@@ -1,11 +1,14 @@
 import type { PaymentProviderId, ResolvedPaymentBackend } from "@/lib/payments/types";
 
 /**
- * Single place to decide which payment backend is active.
+ * Server-only: which checkout backend is active.
  *
- * Optional override: PAYMENT_PROVIDER=live|test|none (server-only).
- * - live: real PSP handoff (`await_gateway`); wire your provider in prepare-session / webhooks.
- * - test: simulated completion when ALLOW_TEST_CHECKOUT=true.
+ * PAYMENT_PROVIDER:
+ * - `paddle` or `live` (alias) → Paddle Billing when PADDLE_* env is set on the server.
+ * - `test` → simulated completion (requires ALLOW_TEST_CHECKOUT=true).
+ * - `none` / `off` → checkout disabled.
+ *
+ * If PAYMENT_PROVIDER is unset: test mode when ALLOW_TEST_CHECKOUT=true, else disabled.
  */
 export function resolvePaymentBackend(): ResolvedPaymentBackend {
   const allowTestCheckout = process.env.ALLOW_TEST_CHECKOUT === "true";
@@ -16,8 +19,8 @@ export function resolvePaymentBackend(): ResolvedPaymentBackend {
   if (override === "test" && allowTestCheckout) {
     return { providerId: "test", allowTestCheckout };
   }
-  if (override === "live") {
-    return { providerId: "live", allowTestCheckout };
+  if (override === "paddle" || override === "live") {
+    return { providerId: "paddle", allowTestCheckout };
   }
   if (allowTestCheckout) {
     return { providerId: "test", allowTestCheckout };

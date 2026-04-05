@@ -124,7 +124,11 @@ export default function LegalHubPage({ params }: { params: { locale: string } })
 
               <section id="privacy" className="scroll-mt-28 space-y-4">
                 <h2 className="font-display text-2xl font-semibold tracking-[-0.01em] text-white">{copy.privacyTitle}</h2>
-                <p className="text-base leading-[1.8] text-[#A1A1AA]">{copy.privacyPlaceholder}</p>
+                <div className="space-y-4 text-base leading-[1.8] text-[#A1A1AA]">
+                  {copy.privacyParagraphs.map((p) => (
+                    <p key={p}>{p}</p>
+                  ))}
+                </div>
                 <Link
                   href={`/${locale}/privacy-policy`}
                   className="inline-flex text-sm font-medium text-[#22D3EE] transition-colors duration-150 hover:text-white"

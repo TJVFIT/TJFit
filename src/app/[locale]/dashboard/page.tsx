@@ -4,9 +4,11 @@ import { ProtectedRoute } from "@/components/protected-route";
 import { AmbientBackground } from "@/components/ui/AmbientBackground";
 import { gateDashboardForCoachTerms } from "@/lib/coach-area-server";
 import { requireLocaleParam } from "@/lib/require-locale";
+import { requireAuthenticatedUser } from "@/lib/require-authenticated-server";
 
 export default async function DashboardPage({ params }: { params: { locale: string } }) {
   const locale = requireLocaleParam(params.locale);
+  await requireAuthenticatedUser(locale, `/${locale}/dashboard`);
   await gateDashboardForCoachTerms(locale);
   return (
     <ProtectedRoute locale={locale}>

@@ -7,7 +7,7 @@ function safeOrigin(): string {
     new URL(u);
     return u.replace(/\/$/, "");
   } catch {
-    return "https://tjfit.org";
+    return "https://tjfit.com";
   }
 }
 
@@ -21,15 +21,10 @@ export function BrandOrganizationJsonLd() {
     "@type": "Organization",
     name: "TJFit",
     url: origin,
-    logo: {
-      "@type": "ImageObject",
-      url: logoSvg,
-      contentUrl: logoSvg
-    },
+    logo: logoSvg,
     image: ogImage,
     sameAs: [] as string[],
-    description:
-      "Premium fitness transformation platform offering complete 12-week workout programs and diet systems."
+    description: "Premium fitness transformation platform."
   };
 
   return (

@@ -33,13 +33,13 @@ export function ProgramContentLock({
   return (
     <div className={cn("relative rounded-[24px] border border-white/10", className)}>
       <div
-        className="pointer-events-none max-h-[min(70vh,36rem)] select-none overflow-hidden blur-[6px] opacity-[0.42] sm:max-h-[min(75vh,40rem)]"
+        className="pointer-events-none max-h-[min(70vh,36rem)] select-none overflow-hidden blur-[4px] opacity-[0.42] sm:max-h-[min(75vh,40rem)]"
         aria-hidden
       >
         {children}
       </div>
       <div
-        className="absolute inset-0 flex items-center justify-center bg-[rgba(9,9,11,0.75)] px-4 py-10 backdrop-blur-[2px]"
+        className="absolute inset-0 flex items-center justify-center bg-[rgba(9,9,11,0.7)] px-4 py-10 backdrop-blur-[4px]"
         role="region"
         aria-label={title}
       >

@@ -47,7 +47,7 @@ async function coachHasCurrentTerms(
   return data?.terms_version === expected;
 }
 
-type GuardKind = "admin" | "coach_area" | "upload";
+type GuardKind = "admin" | "coach_area" | "upload" | "auth_user" | "coach_terms";
 
 function matchHtmlGuard(pathname: string): { locale: string; kind: GuardKind } | null {
   if (pathname.startsWith("/api")) return null;
@@ -57,8 +57,13 @@ function matchHtmlGuard(pathname: string): { locale: string; kind: GuardKind } |
   if (!LOCALES.has(locale)) return null;
   const sub = `/${segments.slice(1).join("/")}`;
   if (sub === "/admin" || sub.startsWith("/admin/")) return { locale, kind: "admin" };
+  if (sub === "/coach/terms") return { locale, kind: "coach_terms" };
   if (sub === "/coach-dashboard" || sub.startsWith("/coach-dashboard/")) return { locale, kind: "coach_area" };
   if (sub === "/programs/upload" || sub.startsWith("/programs/upload/")) return { locale, kind: "upload" };
+  if (sub === "/dashboard" || sub.startsWith("/dashboard/")) return { locale, kind: "auth_user" };
+  if (sub === "/messages" || sub.startsWith("/messages/")) return { locale, kind: "auth_user" };
+  if (sub === "/profile/edit" || sub.startsWith("/profile/edit/")) return { locale, kind: "auth_user" };
+  if (sub === "/checkout" || sub.startsWith("/checkout/")) return { locale, kind: "auth_user" };
   return null;
 }
 
@@ -106,7 +111,33 @@ export async function middleware(request: NextRequest) {
 
     const role = await resolveMiddlewareRole(supabase, user);
 
+    if (kind === "auth_user") {
+      applyHtmlCacheHeaders(request, response);
+      return response;
+    }
+
+    if (kind === "coach_terms") {
+      if (role !== "coach") {
+        const redirectRes = NextResponse.redirect(
+          new URL(`/${locale}/dashboard?notice=${URL_NOTICE.FORBIDDEN_COACH}`, request.url)
+        );
+        copyCookies(response, redirectRes);
+        applyHtmlCacheHeaders(request, redirectRes);
+        return redirectRes;
+      }
+      applyHtmlCacheHeaders(request, response);
+      return response;
+    }
+
     if (kind === "admin") {
+      if (role === "coach") {
+        const redirectRes = NextResponse.redirect(
+          new URL(`/${locale}/coach-dashboard?notice=${URL_NOTICE.FORBIDDEN_ADMIN}`, request.url)
+        );
+        copyCookies(response, redirectRes);
+        applyHtmlCacheHeaders(request, redirectRes);
+        return redirectRes;
+      }
       if (role !== "admin") {
         const redirectRes = NextResponse.redirect(
           new URL(`/${locale}/dashboard?notice=${URL_NOTICE.FORBIDDEN_ADMIN}`, request.url)

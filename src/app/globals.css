@@ -113,6 +113,11 @@ body {
   font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
 }
 
+::selection {
+  background: rgba(34, 211, 238, 0.25);
+  color: #ffffff;
+}
+
 * {
   border-color: var(--tj-border);
 }
@@ -832,5 +837,15 @@ html {
   .free-starter-card::before,
   .free-starter-card:hover::before {
     transition: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

@@ -58,9 +58,14 @@ export type CheckoutCopy = {
   pendingTitle: string;
   pendingBody: string;
   amountDue: string;
-  gatewayPlaceholderCta: string;
+  gatewayPayCta: string;
+  paddleOpening: string;
+  paddleInitError: string;
+  paddleWebhookWait: string;
   errorPrefix: string;
   successPurchase: string;
+  /** Trust line near payment actions */
+  securePaymentTrust: string;
 };
 
 const coaches: Record<Locale, CoachesListingCopy> = {
@@ -325,14 +330,18 @@ const checkout: Record<Locale, CheckoutCopy> = {
     discountStore: "Redeem offers",
     redeem: "Redeem",
     footnote:
-      "When a payment provider is connected, you will finish on a secure hosted step. Test mode completes instantly for development.",
+      "Checkout uses Paddle for cards, PayPal, and other methods you enable in your Paddle dashboard. Test mode completes instantly for development.",
     pendingTitle: "Order secured",
     pendingBody:
-      "Your order is saved. Secure payment handoff will appear here once the payment integration is enabled — no charge has been taken yet.",
+      "Your order is saved. Open Paddle checkout below to pay — you are not charged until you complete the payment step.",
     amountDue: "Amount due",
-    gatewayPlaceholderCta: "Pay with card (adapter not connected)",
+    gatewayPayCta: "Open secure checkout",
+    paddleOpening: "Opening checkout…",
+    paddleInitError: "Add NEXT_PUBLIC_PADDLE_CLIENT_TOKEN to your site environment (Paddle seller dashboard → Developer tools).",
+    paddleWebhookWait: "Payment is processing. Your wallet may take a few seconds to update — you can refresh this page.",
     errorPrefix: "Something went wrong.",
-    successPurchase: "Purchase completed."
+    successPurchase: "Purchase completed.",
+    securePaymentTrust: "Secure payment via Paddle. Instant access after payment."
   },
   tr: {
     badge: "Odeme",
@@ -351,14 +360,18 @@ const checkout: Record<Locale, CheckoutCopy> = {
     discountStore: "Teklifleri kullan",
     redeem: "Kullan",
     footnote:
-      "Odeme saglayicisi baglandiginda guvenli bir adimda tamamlanir. Test modu gelistirme icin aninda tamamlar.",
+      "Odeme Paddle uzerinden yapilir; Paddle panelinde actiginiz yontemler gorunur. Test modu gelistirme icin aninda tamamlar.",
     pendingTitle: "Siparis kaydedildi",
     pendingBody:
-      "Siparisiniz saklandi. Entegrasyon acildiginda guvenli odeme adimi burada gorunecek — henuz tahsilat yok.",
+      "Siparisiniz saklandi. Asagidaki guvenli odeme adimini acin — odeme tamamlanana kadar tahsilat yapilmaz.",
     amountDue: "Odenecek tutar",
-    gatewayPlaceholderCta: "Kart ile odeme (adapter bagli degil)",
+    gatewayPayCta: "Guvenli odemeyi ac",
+    paddleOpening: "Odeme aciliyor…",
+    paddleInitError: "NEXT_PUBLIC_PADDLE_CLIENT_TOKEN ortam degiskenini ekleyin (Paddle gelistirici araclari).",
+    paddleWebhookWait: "Odeme isleniyor. Cuzdan birkaç saniye gecikebilir; sayfayi yenileyebilirsiniz.",
     errorPrefix: "Bir sorun olustu.",
-    successPurchase: "Satin alma tamamlandi."
+    successPurchase: "Satin alma tamamlandi.",
+    securePaymentTrust: "Guvenli odeme Paddle ile. Odeme sonrasi aninda erisim."
   },
   ar: {
     badge: "الدفع",
@@ -377,14 +390,18 @@ const checkout: Record<Locale, CheckoutCopy> = {
     discountStore: "استبدال العروض",
     redeem: "استبدال",
     footnote:
-      "عند ربط مزود الدفع، ستكمل في خطوة مستضافة آمنة. وضع الاختبار يكمل فوراً للتطوير.",
+      "الدفع عبر Paddle؛ تظهر الطرق التي تفعّلها في لوحة Paddle. وضع الاختبار يكمل فوراً للتطوير.",
     pendingTitle: "تم حفظ الطلب",
     pendingBody:
-      "طلبك محفوظ. ستظهر خطوة الدفع الآمنة هنا عند تفعيل التكامل — لم يتم خصم أي مبلغ بعد.",
+      "طلبك محفوظ. افتح نافذة الدفع الآمنة أدناه — لا يُخصم المبلغ حتى تكمل الدفع.",
     amountDue: "المبلغ المستحق",
-    gatewayPlaceholderCta: "الدفع بالبطاقة (لم يتم ربط المحول)",
+    gatewayPayCta: "افتح الدفع الآمن",
+    paddleOpening: "جاري فتح الدفع…",
+    paddleInitError: "أضف NEXT_PUBLIC_PADDLE_CLIENT_TOKEN إلى إعدادات الموقع (أدوات المطوّر في Paddle).",
+    paddleWebhookWait: "جاري معالجة الدفع. قد يتأخر تحديث المحفظة ثوانٍ — يمكنك تحديث الصفحة.",
     errorPrefix: "حدث خطأ.",
-    successPurchase: "اكتملت عملية الشراء."
+    successPurchase: "اكتملت عملية الشراء.",
+    securePaymentTrust: "دفع آمن عبر Paddle. وصول فوري بعد الدفع."
   },
   es: {
     badge: "Pago",
@@ -403,14 +420,18 @@ const checkout: Record<Locale, CheckoutCopy> = {
     discountStore: "Canjear ofertas",
     redeem: "Canjear",
     footnote:
-      "Con un proveedor de pago conectado, terminaras en un paso alojado seguro. El modo test completa al instante.",
+      "El pago es con Paddle; veras los metodos que actives en el panel de Paddle. El modo test completa al instante.",
     pendingTitle: "Pedido guardado",
     pendingBody:
-      "Tu pedido esta guardado. El paso de pago seguro aparecera cuando la integracion este activa — aun no se cobra.",
+      "Tu pedido esta guardado. Abre el checkout seguro abajo — no se cobra hasta que completes el pago.",
     amountDue: "Importe a pagar",
-    gatewayPlaceholderCta: "Pagar con tarjeta (adaptador no conectado)",
+    gatewayPayCta: "Abrir pago seguro",
+    paddleOpening: "Abriendo checkout…",
+    paddleInitError: "Anade NEXT_PUBLIC_PADDLE_CLIENT_TOKEN al entorno del sitio (herramientas para desarrolladores de Paddle).",
+    paddleWebhookWait: "Procesando el pago. La cartera puede tardar unos segundos; puedes actualizar la pagina.",
     errorPrefix: "Algo salio mal.",
-    successPurchase: "Compra completada."
+    successPurchase: "Compra completada.",
+    securePaymentTrust: "Pago seguro con Paddle. Acceso instantaneo tras pagar."
   },
   fr: {
     badge: "Paiement",
@@ -429,14 +450,20 @@ const checkout: Record<Locale, CheckoutCopy> = {
     discountStore: "Echanger des offres",
     redeem: "Echanger",
     footnote:
-      "Avec un prestataire connecte, vous finaliserez sur une etape hebergee securisee. Le mode test termine instantanement.",
+      "Paiement via Paddle ; les methodes affichees correspondent a votre tableau de bord Paddle. Le mode test termine instantanement.",
     pendingTitle: "Commande enregistree",
     pendingBody:
-      "Votre commande est sauvegardee. L'etape de paiement apparaitra quand l'integration sera active — aucun debit pour l'instant.",
+      "Votre commande est sauvegardee. Ouvrez le paiement securise ci-dessous — rien n'est debite tant que vous n'avez pas termine.",
     amountDue: "Montant du",
-    gatewayPlaceholderCta: "Payer par carte (adaptateur non connecte)",
+    gatewayPayCta: "Ouvrir le paiement securise",
+    paddleOpening: "Ouverture du paiement…",
+    paddleInitError:
+      "Ajoutez NEXT_PUBLIC_PADDLE_CLIENT_TOKEN a l'environnement du site (outils developpeur Paddle).",
+    paddleWebhookWait:
+      "Paiement en cours. Le portefeuille peut mettre quelques secondes a se mettre a jour — actualisez la page.",
     errorPrefix: "Une erreur s'est produite.",
-    successPurchase: "Achat termine."
+    successPurchase: "Achat termine.",
+    securePaymentTrust: "Paiement securise via Paddle. Acces immediat apres paiement."
   }
 };
 

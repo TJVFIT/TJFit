@@ -1,19 +1,21 @@
 import type { CheckoutPaymentAdapter } from "@/lib/payments/adapters/types";
-import { createGatewayCheckoutAdapter } from "@/lib/payments/adapters/gateway-adapter";
+import { paddleCheckoutAdapter } from "@/lib/payments/adapters/paddle-checkout-adapter";
 import { testCheckoutAdapter } from "@/lib/payments/adapters/test-adapter";
 import type { PaymentProviderId } from "@/lib/payments/types";
-
-const liveCheckoutAdapter = createGatewayCheckoutAdapter("live");
+import { isPaddleLiveCheckoutStored } from "@/lib/payments/stored-provider";
 
 export function getCheckoutPaymentAdapter(providerId: PaymentProviderId): CheckoutPaymentAdapter {
   if (providerId === "test") return testCheckoutAdapter;
-  return liveCheckoutAdapter;
+  return paddleCheckoutAdapter;
 }
 
-/** Resolve adapter from `program_orders.provider` (DB string). */
+/**
+ * Map a DB `program_orders.provider` string to the adapter that created the order.
+ * Accepts legacy `live` (same as `paddle`).
+ */
 export function getCheckoutAdapterForStoredProvider(stored: string): CheckoutPaymentAdapter | null {
   if (stored === "test") return testCheckoutAdapter;
-  if (stored === "live") return liveCheckoutAdapter;
+  if (isPaddleLiveCheckoutStored(stored)) return paddleCheckoutAdapter;
   return null;
 }
 

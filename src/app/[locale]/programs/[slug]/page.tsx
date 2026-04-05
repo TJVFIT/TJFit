@@ -1,11 +1,13 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { Suspense } from "react";
 import { FreeProductBodyBlocks, FreeProductUpgradeFooter } from "@/components/free-product-detail-view";
 import { ProgramBlueprintNavigator } from "@/components/program-blueprint-navigator";
 import { ProgramDetailHero } from "@/components/program-detail-hero";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { Logo } from "@/components/ui/Logo";
 import { ProgramViewTracker } from "@/components/marketing/program-view-tracker";
+import { ProgramPaymentSuccessNotice } from "@/components/program-payment-success-notice";
 import { ProgramContentLock } from "@/components/program-content-lock";
 import { coaches, products, programs } from "@/lib/content";
 import { localizeCustomProgramRow, type CustomProgramRow } from "@/lib/custom-programs";
@@ -89,6 +91,9 @@ export default async function ProgramDetailPage({
 
   const authCtx = await getOptionalServerUser();
   const userId = authCtx?.userId ?? null;
+  if (program && !program.is_free && !userId) {
+    redirect(`/${locale}/signup?redirect=${encodeURIComponent(`/${locale}/programs/${slug}`)}`);
+  }
   let hasPaidOrder = false;
   if (authCtx && program && !program.is_free) {
     hasPaidOrder = await userHasPaidProgram(authCtx.supabase, userId!, slug);
@@ -157,6 +162,14 @@ export default async function ProgramDetailPage({
   return (
     <div className="relative pb-16 pt-0 sm:pb-20 lg:pb-24">
       <ProgramViewTracker slug={slug} />
+      <div className="mx-auto max-w-6xl px-4 pt-4 sm:px-6 lg:px-8">
+        <Suspense fallback={null}>
+          <ProgramPaymentSuccessNotice
+            message={copy.paymentSuccessBanner}
+            dismissLabel={copy.dismissNotice}
+          />
+        </Suspense>
+      </div>
       <ProgramDetailHero
         locale={locale}
         programTitle={programTitle}

@@ -811,6 +811,26 @@ export function getProgramUiCopy(locale: Locale) {
             : locale === "fr"
               ? "Acces complet actif"
               : "You have full access",
+    paymentSuccessBanner:
+      locale === "tr"
+        ? "Odeme basarili — tam erisim acildi."
+        : locale === "ar"
+          ? "تم الدفع بنجاح — يمكنك الآن الوصول الكامل."
+          : locale === "es"
+            ? "Pago correcto — ya tienes acceso completo."
+            : locale === "fr"
+              ? "Paiement reussi — acces complet debloque."
+              : "Payment successful — you now have full access.",
+    dismissNotice:
+      locale === "tr"
+        ? "Kapat"
+        : locale === "ar"
+          ? "اغلاق"
+          : locale === "es"
+            ? "Cerrar"
+            : locale === "fr"
+              ? "Fermer"
+              : "Dismiss",
     languageOptionsLabel:
       locale === "tr"
         ? "Dil secenekleri"
@@ -1083,24 +1103,24 @@ export function getProgramUiCopy(locale: Locale) {
               : "Daily meals, macros, and recipes included.",
     programPageTrust:
       locale === "tr"
-        ? "Gercek bir koç plani gibi kurgulandi."
+        ? "Yapilandirilmis 12 haftalik sistem. Tahmine yer yok."
         : locale === "ar"
-          ? "مبني مثل خطة مدرب حقيقية."
+          ? "نظام منظم لمدة 12 أسبوعًا. بلا تخمين."
           : locale === "es"
-            ? "Diseñado como un plan de coach real."
+            ? "Sistema estructurado de 12 semanas. Sin adivinar."
             : locale === "fr"
-              ? "Conçu comme un plan coach réel."
-              : "Built like a real coach plan.",
+              ? "Systeme structure sur 12 semaines. Sans improvisation."
+              : "Structured 12-week system. No guesswork.",
     dietPageTrust:
       locale === "tr"
-        ? "Haftalik ilerleme. Gercek sonuclar."
+        ? "Gunluk ogunler, makrolar ve tarifler dahil."
         : locale === "ar"
-          ? "تقدم أسبوعي. نتائج حقيقية."
+          ? "وجبات يومية وماكروس ووصفات مضمّنة."
           : locale === "es"
-            ? "Progresión semanal. Resultados reales."
+            ? "Comidas diarias, macros y recetas incluidas."
             : locale === "fr"
-              ? "Progression hebdomadaire. Résultats réels."
-              : "Weekly progression. Real results.",
+              ? "Repas quotidiens, macros et recettes inclus."
+              : "Daily meals, macros, and recipes included.",
     upgradeNoFluff:
       locale === "tr"
         ? "Gereksiz soz yok. Sadece sistem."

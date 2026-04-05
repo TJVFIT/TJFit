@@ -26,7 +26,7 @@ try {
   siteUrl = getSiteUrl();
   new URL(siteUrl);
 } catch {
-  siteUrl = "https://tjfit.org";
+  siteUrl = "https://tjfit.com";
 }
 
 function googleVerificationToken(): string | undefined {
@@ -44,7 +44,7 @@ export const viewport: Viewport = {
 
 const defaultTitle = "TJFit — Premium Fitness Transformation Platform";
 const defaultDescription =
-  "Complete 12-week transformation programs and diet systems designed to transform your body. Premium fitness at your level.";
+  "Complete 12-week programs and diet systems built like a real coach plan. Home or gym. Fat loss or muscle gain.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

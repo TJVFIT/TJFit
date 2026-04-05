@@ -4,8 +4,9 @@ import { MessagesErrorFallback } from "@/components/messages-error-fallback";
 import { MessagesLayoutShell } from "@/components/messages-layout-shell";
 import { ProtectedRoute } from "@/components/protected-route";
 import { isLocale, type Locale } from "@/lib/i18n";
+import { requireAuthenticatedUser } from "@/lib/require-authenticated-server";
 
-export default function MessagesLayout({
+export default async function MessagesLayout({
   children,
   params
 }: {
@@ -17,6 +18,7 @@ export default function MessagesLayout({
   }
 
   const locale = params.locale as Locale;
+  await requireAuthenticatedUser(locale, `/${locale}/messages`);
 
   return (
     <ProtectedRoute locale={locale}>

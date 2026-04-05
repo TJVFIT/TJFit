@@ -38,14 +38,18 @@ export async function POST(request: NextRequest) {
   const ip = forwarded?.split(",")[0]?.trim() ?? request.headers.get("x-real-ip") ?? null;
   const termsVersion = getCoachTermsVersion();
 
-  const { error: insertError } = await supabase.from("coach_terms_acceptance").insert({
-    coach_id: user.id,
-    terms_version: termsVersion,
-    ip_address: ip
-  });
+  const { error: upsertError } = await supabase.from("coach_terms_acceptance").upsert(
+    {
+      coach_id: user.id,
+      terms_version: termsVersion,
+      ip_address: ip,
+      accepted_at: new Date().toISOString()
+    },
+    { onConflict: "coach_id" }
+  );
 
-  if (insertError) {
-    return NextResponse.json({ error: insertError.message }, { status: 500 });
+  if (upsertError) {
+    return NextResponse.json({ error: upsertError.message }, { status: 500 });
   }
 
   return NextResponse.json({ ok: true, termsVersion });
