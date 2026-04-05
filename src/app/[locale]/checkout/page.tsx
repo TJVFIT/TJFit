@@ -57,6 +57,8 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
   const [customPrograms, setCustomPrograms] = useState<CheckoutProgramOption[]>([]);
   const [walletData, setWalletData] = useState<WalletResponse | null>(null);
   const [selectedCode, setSelectedCode] = useState("");
+  /** Typed promo (e.g. JOSEPH1407); takes precedence over wallet dropdown when non-empty. */
+  const [promoCodeInput, setPromoCodeInput] = useState("");
   const [status, setStatus] = useState<string | null>(null);
   const [statusTone, setStatusTone] = useState<"neutral" | "success" | "error" | "pending">("neutral");
   const [working, setWorking] = useState(false);
@@ -112,6 +114,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
             `${copy.successPurchase} +${TJFIT_COINS_PER_PROGRAM_PURCHASE} TJFITcoin`
           );
           setSelectedCode("");
+          setPromoCodeInput("");
           setSavedOrderId(null);
           setPendingAmountTry(null);
           activeGatewayOrderRef.current = null;
@@ -286,13 +289,16 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
     setSavedOrderId(null);
     setPendingAmountTry(null);
 
+    const discountCodeForOrder =
+      promoCodeInput.trim().toUpperCase() || selectedCode || undefined;
+
     const createRes = await fetch("/api/checkout/create-order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({
         programSlug: selectedProgram.slug,
-        discountCode: selectedCode || undefined
+        discountCode: discountCodeForOrder
       })
     });
     const createData = await createRes.json();
@@ -339,6 +345,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
       `${copy.successPurchase} +${completeData.coinsEarned ?? TJFIT_COINS_PER_PROGRAM_PURCHASE} TJFITcoin`
     );
     setSelectedCode("");
+    setPromoCodeInput("");
     setSavedOrderId(null);
     setPendingAmountTry(null);
     await refreshWallet();
@@ -436,6 +443,21 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
                   </option>
                 ))}
               </select>
+              <label className="mt-4 block">
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-600">
+                  {copy.promoCodeLabel}
+                </span>
+                <input
+                  type="text"
+                  className="input mt-2 font-mono uppercase"
+                  value={promoCodeInput}
+                  onChange={(e) => setPromoCodeInput(e.target.value.toUpperCase())}
+                  placeholder={copy.promoCodePlaceholder}
+                  autoComplete="off"
+                  spellCheck={false}
+                  maxLength={64}
+                />
+              </label>
             </div>
 
             <button

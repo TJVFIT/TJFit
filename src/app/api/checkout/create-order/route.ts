@@ -9,6 +9,7 @@ import {
 import { readRequestJson } from "@/lib/read-request-json";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { resolvePromoDiscountPercent } from "@/lib/checkout-promo-codes";
 import { TJFIT_COINS_PER_PROGRAM_PURCHASE } from "@/lib/tjfit-coin";
 
 export async function POST(request: NextRequest) {
@@ -74,10 +75,15 @@ export async function POST(request: NextRequest) {
       .eq("status", "available")
       .maybeSingle();
 
-    if (!code) {
-      return NextResponse.json({ error: "Invalid or unavailable discount code." }, { status: 400 });
+    if (code) {
+      discountPercent = code.discount_percent;
+    } else {
+      const promoPercent = resolvePromoDiscountPercent(discountCode);
+      if (promoPercent === null) {
+        return NextResponse.json({ error: "Invalid or unavailable discount code." }, { status: 400 });
+      }
+      discountPercent = promoPercent;
     }
-    discountPercent = code.discount_percent;
   }
 
   const finalTry = Math.max(0, Math.round(baseTry * (1 - discountPercent / 100)));

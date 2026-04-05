@@ -47,6 +47,9 @@ export type CheckoutCopy = {
   price: string;
   coinsOnPurchase: string;
   discountLabel: string;
+  /** Optional text field for site-wide promo codes (e.g. JOSEPH1407) */
+  promoCodeLabel: string;
+  promoCodePlaceholder: string;
   noDiscount: string;
   ctaPay: string;
   ctaWorking: string;
@@ -322,6 +325,8 @@ const checkout: Record<Locale, CheckoutCopy> = {
     price: "Price",
     coinsOnPurchase: "Coins earned",
     discountLabel: "Discount code",
+    promoCodeLabel: "Or enter a promo code",
+    promoCodePlaceholder: "e.g. JOSEPH1407",
     noDiscount: "None",
     ctaPay: "Continue to payment",
     ctaWorking: "Processing…",
@@ -352,6 +357,8 @@ const checkout: Record<Locale, CheckoutCopy> = {
     price: "Fiyat",
     coinsOnPurchase: "Kazanilan coin",
     discountLabel: "Indirim kodu",
+    promoCodeLabel: "Veya promosyon kodu girin",
+    promoCodePlaceholder: "ornek: JOSEPH1407",
     noDiscount: "Yok",
     ctaPay: "Odemeye devam",
     ctaWorking: "Isleniyor…",
@@ -382,6 +389,8 @@ const checkout: Record<Locale, CheckoutCopy> = {
     price: "السعر",
     coinsOnPurchase: "العملات المكتسبة",
     discountLabel: "رمز الخصم",
+    promoCodeLabel: "أو أدخل رمز ترويجي",
+    promoCodePlaceholder: "مثال: JOSEPH1407",
     noDiscount: "لا يوجد",
     ctaPay: "متابعة الدفع",
     ctaWorking: "جاري المعالجة…",
@@ -412,6 +421,8 @@ const checkout: Record<Locale, CheckoutCopy> = {
     price: "Precio",
     coinsOnPurchase: "Monedas ganadas",
     discountLabel: "Codigo de descuento",
+    promoCodeLabel: "O introduce un codigo promocional",
+    promoCodePlaceholder: "ej. JOSEPH1407",
     noDiscount: "Ninguno",
     ctaPay: "Continuar al pago",
     ctaWorking: "Procesando…",
@@ -442,6 +453,8 @@ const checkout: Record<Locale, CheckoutCopy> = {
     price: "Prix",
     coinsOnPurchase: "Pieces gagnees",
     discountLabel: "Code de reduction",
+    promoCodeLabel: "Ou saisissez un code promo",
+    promoCodePlaceholder: "ex. JOSEPH1407",
     noDiscount: "Aucun",
     ctaPay: "Continuer vers le paiement",
     ctaWorking: "Traitement…",
