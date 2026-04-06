@@ -18,6 +18,8 @@ import {
   User,
   UtensilsCrossed,
   Users,
+  Trophy,
+  Coins,
   X,
   Dumbbell
 } from "lucide-react";
@@ -35,6 +37,14 @@ const SOON_MSG_BY_LOCALE: Record<Locale, string> = {
   ar: "قريباً — ترقبوا الإطلاق.",
   es: "Muy pronto — mantente atento.",
   fr: "Bientot disponible — restez a l'ecoute."
+};
+
+const LOCALE_LABELS: Record<Locale, string> = {
+  en: "English",
+  tr: "Türkçe",
+  ar: "العربية",
+  es: "Español",
+  fr: "Français"
 };
 
 type ItemDef = {
@@ -80,6 +90,7 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
   const [soonTip, setSoonTip] = useState<string | null>(null);
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [collapsedTipKey, setCollapsedTipKey] = useState<string | null>(null);
+  const [coinBalance, setCoinBalance] = useState(0);
   const expandTimerRef = useRef<number | null>(null);
   const collapsedTipTimerRef = useRef<number | null>(null);
   const langRef = useRef<HTMLDivElement>(null);
@@ -112,6 +123,25 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
     return () => document.removeEventListener("mousedown", close);
   }, [langOpen]);
 
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    const run = async () => {
+      try {
+        const res = await fetch("/api/coins/wallet", { credentials: "include" });
+        if (!res.ok) return;
+        const json = await res.json();
+        if (!cancelled) setCoinBalance(Number(json?.wallet?.balance ?? 0));
+      } catch {
+        // noop
+      }
+    };
+    void run();
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
   const items: ItemDef[] = useMemo(
     () => [
       { key: "home", href: "/", label: dict.nav.home, Icon: Home },
@@ -121,6 +151,9 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
       { key: "coaches", href: "/coaches", label: dict.nav.coaches, Icon: Users },
       { key: "community", href: "/community", label: dict.nav.community, Icon: MessageCircle, comingSoon: true },
       { key: "membership", href: "/membership", label: dict.nav.membership, Icon: CreditCard, comingSoon: true },
+      { key: "coins", href: "/coins", label: "TJCOIN Shop", Icon: Coins },
+      { key: "leaderboard", href: "/leaderboard", label: "Leaderboard", Icon: Trophy },
+      { key: "calculator", href: "/calculator", label: "TDEE Calculator", Icon: Scale },
       { key: "legal", href: "/legal", label: nav.legalCenterLabel, Icon: Scale },
       { key: "messages", href: "/messages", label: dict.nav.messages, Icon: Inbox },
       { key: "profile", href: "/profile/edit", label: dict.nav.profile, Icon: User },
@@ -383,11 +416,12 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
                   href={`/${code}${normalizedPath}${search}`}
                   onClick={() => setLangOpen(false)}
                   className={cn(
-                    "block rounded-md px-3 py-2 text-[13px] text-[#A1A1AA] transition-colors hover:bg-[rgba(255,255,255,0.05)] hover:text-white",
+                    "flex items-center justify-between rounded-md px-3 py-2 text-[13px] text-[#A1A1AA] transition-colors hover:bg-[rgba(255,255,255,0.05)] hover:text-white",
                     code === locale && "font-semibold text-white"
                   )}
                 >
-                  {code.toUpperCase()}
+                  <span>{LOCALE_LABELS[code]}</span>
+                  {code === locale ? <span className="text-[#22D3EE]">✓</span> : null}
                 </Link>
               ))}
             </div>
@@ -436,6 +470,9 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
                 )}
               >
                 <p className="truncate text-sm font-medium text-white">{displayName || user.email}</p>
+                <Link href={`/${locale}/coins`} className="mt-1 inline-flex items-center gap-1 text-xs text-[#22D3EE] hover:opacity-80">
+                  ⚡ {coinBalance.toLocaleString()}
+                </Link>
                 <button
                   type="button"
                   onClick={() => void handleLogout()}
@@ -698,13 +735,14 @@ function MobileNav({
                     href={`/${code}${normalizedPath}${search}`}
                     onClick={() => setOpen(false)}
                     className={cn(
-                      "flex h-12 min-w-[48px] shrink-0 items-center justify-center rounded-lg border px-3 text-sm font-semibold transition-colors",
+                      "flex h-12 min-w-[96px] shrink-0 items-center justify-between gap-2 rounded-lg border px-3 text-sm font-semibold transition-colors",
                       code === locale
-                        ? "border-[rgba(34,211,238,0.4)] text-[#22D3EE]"
+                        ? "border-[rgba(34,211,238,0.4)] text-white"
                         : "border-[#1E2028] text-[#A1A1AA] active:bg-white/5"
                     )}
                   >
-                    {code.toUpperCase()}
+                    <span className="truncate">{LOCALE_LABELS[code]}</span>
+                    {code === locale ? <span className="text-[#22D3EE]">✓</span> : null}
                   </Link>
                 ))}
               </div>

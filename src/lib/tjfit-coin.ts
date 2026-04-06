@@ -1,4 +1,4 @@
-export const TJFIT_COINS_PER_PROGRAM_PURCHASE = 10;
+export const TJFIT_COINS_PER_PROGRAM_PURCHASE = 50;
 export const TJFIT_COINS_PER_USD = 10;
 
 export type DiscountOffer = {

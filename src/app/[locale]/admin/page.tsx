@@ -4,6 +4,8 @@ import { requireLocaleParam } from "@/lib/require-locale";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { AdminCoachApplications } from "@/components/admin-coach-applications";
 import { AdminCoachAuthorization } from "@/components/admin-coach-authorization";
+import { AdminBlogPanel } from "@/components/admin-blog-panel";
+import { AdminChallengesPanel } from "@/components/admin-challenges-panel";
 import { AdminFeedbackList } from "@/components/admin-feedback-list";
 import { ProtectedRoute } from "@/components/protected-route";
 import { StatGrid } from "@/components/ui";
@@ -104,6 +106,8 @@ export default async function AdminPage({ params }: { params: { locale: string }
       </div>
 
       <div className="grid gap-6 xl:grid-cols-2">
+        <AdminChallengesPanel />
+        <AdminBlogPanel />
         <AdminFeedbackList initialSubmissions={submissions} />
         <div className="glass-panel rounded-[32px] p-6">
           <p className="text-lg font-semibold text-white">Advanced analytics</p>

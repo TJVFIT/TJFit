@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+
+import { WordReveal } from "@/components/ui/word-reveal";
 import { cn } from "@/lib/utils";
 
 type CinematicListingHeaderProps = {
@@ -72,9 +74,9 @@ export function CinematicListingHeader({
           )}
           style={{ transitionDelay: inView ? "200ms" : "0ms" }}
         >
-          {headlineBefore}
+          <WordReveal text={headlineBefore} />
           <span className="bg-gradient-to-r from-[#22D3EE] to-[#A78BFA] bg-clip-text text-transparent">
-            {headlineGradient}
+            <WordReveal text={headlineGradient} delay={120} />
           </span>
         </h1>
         <p

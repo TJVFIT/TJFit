@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/auth-provider";
-import { Challenge, Transformation, communityPosts, challenges, transformations } from "@/lib/content";
+import { Transformation, communityPosts, transformations } from "@/lib/content";
 import type { Locale } from "@/lib/i18n";
 import Image from "next/image";
 import { getCommunityCopy } from "@/lib/launch-copy";
 
-type TabKey = "threads" | "challenges" | "transformations" | "blogs";
+type TabKey = "threads" | "challenges" | "groups" | "transformations" | "blogs";
 
 type BlogPost = {
   id: string;
@@ -24,7 +24,7 @@ type BlogPost = {
 };
 
 function safeTab(value: string | null): TabKey {
-  if (value === "threads" || value === "challenges" || value === "transformations" || value === "blogs") {
+  if (value === "threads" || value === "challenges" || value === "groups" || value === "transformations" || value === "blogs") {
     return value;
   }
   return "blogs";
@@ -36,7 +36,17 @@ function formatDate(value: string, locale: Locale) {
   return new Intl.DateTimeFormat(locale).format(date);
 }
 
-function ThreadsPanel({ posts, emptyLabel }: { posts: typeof communityPosts; emptyLabel: string }) {
+function ThreadsPanel({
+  posts,
+  emptyLabel,
+  reactions,
+  onReact
+}: {
+  posts: typeof communityPosts;
+  emptyLabel: string;
+  reactions: Record<string, Record<string, number>>;
+  onReact: (postId: string, key: string) => void;
+}) {
   if (posts.length === 0) {
     return (
       <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-zinc-400">
@@ -54,6 +64,24 @@ function ThreadsPanel({ posts, emptyLabel }: { posts: typeof communityPosts; emp
             <span className="uppercase tracking-[0.2em]">{post.role}</span>
           </div>
           <p className="mt-3 text-sm text-zinc-200">{post.content}</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {[
+              ["fire", "🔥"],
+              ["muscle", "💪"],
+              ["crown", "👑"],
+              ["lightning", "⚡"],
+              ["target", "🎯"]
+            ].map(([key, emoji]) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => onReact(post.id, key)}
+                className="rounded-full border border-white/15 px-2.5 py-1 text-xs text-zinc-200 hover:border-cyan-300/40"
+              >
+                {emoji} {reactions[post.id]?.[key] ?? 0}
+              </button>
+            ))}
+          </div>
           <p className="mt-3 text-xs text-zinc-500">
             {post.likes} likes · {post.comments} comments
           </p>
@@ -63,7 +91,7 @@ function ThreadsPanel({ posts, emptyLabel }: { posts: typeof communityPosts; emp
   );
 }
 
-function ChallengesPanel({ items, emptyLabel }: { items: Challenge[]; emptyLabel: string }) {
+function ChallengesPanel({ items, emptyLabel }: { items: Array<{ slug: string; category: string; name: string; description: string; duration: string; participants: number }>; emptyLabel: string }) {
   if (items.length === 0) {
     return (
       <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-zinc-400">
@@ -82,6 +110,125 @@ function ChallengesPanel({ items, emptyLabel }: { items: Challenge[]; emptyLabel
           <p className="mt-3 text-xs text-zinc-500">
             {item.duration} · {item.participants} joined
           </p>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+type DbChallenge = {
+  id: string;
+  title: string;
+  description: string;
+  metric_type: string;
+  end_date: string;
+  participants: number;
+  joined: boolean;
+  todayLogged: boolean;
+  todayValue: number | null;
+  leaderboard: Array<{ userId: string; total: number }>;
+  myRank: number | null;
+  coin_prize_1st: number;
+  coin_prize_2nd: number;
+  coin_prize_3rd: number;
+};
+
+function ChallengesLivePanel({
+  items,
+  onJoin,
+  onLog
+}: {
+  items: DbChallenge[];
+  onJoin: (challengeId: string) => void;
+  onLog: (challengeId: string, value: number) => void;
+}) {
+  const [logValueById, setLogValueById] = useState<Record<string, string>>({});
+  if (items.length === 0) {
+    return <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-zinc-400">No active challenges.</div>;
+  }
+  return (
+    <div className="space-y-4">
+      {items.map((item) => (
+        <article key={item.id} className="rounded-[24px] border border-white/10 bg-white/5 p-5">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h3 className="text-lg font-semibold text-white">{item.title}</h3>
+              <p className="mt-1 text-sm text-zinc-300">{item.description}</p>
+              <p className="mt-2 text-xs text-zinc-500">
+                {item.metric_type} · ends {item.end_date} · {item.participants} joined
+              </p>
+              <p className="mt-1 text-xs text-cyan-300">
+                TJCOIN prizes: {item.coin_prize_1st}/{item.coin_prize_2nd}/{item.coin_prize_3rd}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => onJoin(item.id)}
+              className="rounded-full border border-cyan-400/35 bg-cyan-500/10 px-4 py-2 text-xs font-semibold text-cyan-100"
+            >
+              {item.joined ? "Joined" : "Join Challenge"}
+            </button>
+          </div>
+          {item.joined ? (
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <input
+                value={logValueById[item.id] ?? ""}
+                onChange={(e) => setLogValueById((prev) => ({ ...prev, [item.id]: e.target.value }))}
+                placeholder="Daily value"
+                type="number"
+                min={1}
+                className="w-36 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white"
+              />
+              <button
+                type="button"
+                disabled={item.todayLogged}
+                onClick={() => onLog(item.id, Number(logValueById[item.id] ?? 0))}
+                className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-zinc-100 disabled:opacity-50"
+              >
+                {item.todayLogged ? `Logged today ${item.todayValue ?? ""}` : "Log Today"}
+              </button>
+            </div>
+          ) : null}
+          <details className="mt-4 rounded-xl border border-white/10 bg-black/20 p-3">
+            <summary className="cursor-pointer text-sm text-zinc-200">Leaderboard (Top 10)</summary>
+            <div className="mt-3 space-y-1 text-sm">
+              {item.leaderboard.map((row, idx) => (
+                <p key={`${row.userId}-${idx}`} className="text-zinc-300">
+                  #{idx + 1} · {row.total}
+                </p>
+              ))}
+              {item.myRank ? <p className="mt-2 text-cyan-300">Your rank: #{item.myRank}</p> : null}
+            </div>
+          </details>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+type DbGroup = { id: string; name: string; description: string | null; memberCount: number; joined: boolean };
+
+function GroupsPanel({
+  groups,
+  onToggle
+}: {
+  groups: DbGroup[];
+  onToggle: (groupId: string, action: "join" | "leave") => void;
+}) {
+  return (
+    <div className="grid gap-4 md:grid-cols-2">
+      {groups.map((group) => (
+        <article key={group.id} className="rounded-[24px] border border-white/10 bg-white/5 p-5">
+          <h3 className="text-lg font-semibold text-white">{group.name}</h3>
+          <p className="mt-2 text-sm text-zinc-300">{group.description ?? ""}</p>
+          <p className="mt-2 text-xs text-zinc-500">{group.memberCount} members</p>
+          <button
+            type="button"
+            onClick={() => onToggle(group.id, group.joined ? "leave" : "join")}
+            className="mt-4 rounded-full border border-cyan-400/35 bg-cyan-500/10 px-4 py-2 text-xs font-semibold text-cyan-100"
+          >
+            {group.joined ? "Leave Group" : "Join Group"}
+          </button>
         </article>
       ))}
     </div>
@@ -137,6 +284,7 @@ export function CommunityHub({
     { key: "blogs", label: copy.tabs.blogs },
     { key: "threads", label: copy.tabs.threads },
     { key: "challenges", label: copy.tabs.challenges },
+    { key: "groups", label: "Groups" },
     { key: "transformations", label: copy.tabs.transformations }
   ];
 
@@ -153,6 +301,9 @@ export function CommunityHub({
   const [translatedView, setTranslatedView] = useState<Record<string, { title: string; content: string }>>({});
   const [translateLoadingId, setTranslateLoadingId] = useState<string | null>(null);
   const [targetLocaleByPost, setTargetLocaleByPost] = useState<Record<string, Locale>>({});
+  const [challengeItems, setChallengeItems] = useState<DbChallenge[]>([]);
+  const [groupItems, setGroupItems] = useState<DbGroup[]>([]);
+  const [threadReactions, setThreadReactions] = useState<Record<string, Record<string, number>>>({});
 
   useEffect(() => {
     setActiveTab(safeTab(initialTab ?? null));
@@ -188,6 +339,23 @@ export function CommunityHub({
       mounted = false;
     };
   }, [copy.blogLoadFailed]);
+
+  const loadChallenges = async () => {
+    const res = await fetch("/api/community/challenges", { credentials: "include" });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok) setChallengeItems(Array.isArray(data.challenges) ? data.challenges : []);
+  };
+
+  const loadGroups = async () => {
+    const res = await fetch("/api/community/groups", { credentials: "include" });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok) setGroupItems(Array.isArray(data.groups) ? data.groups : []);
+  };
+
+  useEffect(() => {
+    if (activeTab === "challenges") void loadChallenges();
+    if (activeTab === "groups") void loadGroups();
+  }, [activeTab]);
 
   const reloadBlogs = async () => {
     const reload = await fetch("/api/community/blogs", { credentials: "include" });
@@ -317,6 +485,36 @@ export function CommunityHub({
     }
   };
 
+  const joinChallenge = async (challengeId: string) => {
+    await fetch("/api/community/challenges/join", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ challengeId })
+    });
+    await loadChallenges();
+  };
+
+  const logChallenge = async (challengeId: string, value: number) => {
+    await fetch("/api/community/challenges/log", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ challengeId, value })
+    });
+    await loadChallenges();
+  };
+
+  const toggleGroup = async (groupId: string, action: "join" | "leave") => {
+    await fetch("/api/community/groups", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ groupId, action })
+    });
+    await loadGroups();
+  };
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
       <div className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.045] to-white/[0.015] p-6 shadow-[0_24px_64px_-32px_rgba(0,0,0,0.75)] sm:p-8">
@@ -353,8 +551,21 @@ export function CommunityHub({
         </div>
 
         <div className="mt-8">
-          {activeTab === "threads" && <ThreadsPanel posts={communityPosts} emptyLabel={copy.threadsEmpty} />}
-          {activeTab === "challenges" && <ChallengesPanel items={challenges} emptyLabel={copy.challengesEmpty} />}
+          {activeTab === "threads" && (
+            <ThreadsPanel
+              posts={communityPosts}
+              emptyLabel={copy.threadsEmpty}
+              reactions={threadReactions}
+              onReact={(postId, key) =>
+                setThreadReactions((prev) => ({
+                  ...prev,
+                  [postId]: { ...(prev[postId] ?? {}), [key]: Number(prev[postId]?.[key] ?? 0) + 1 }
+                }))
+              }
+            />
+          )}
+          {activeTab === "challenges" && <ChallengesLivePanel items={challengeItems} onJoin={joinChallenge} onLog={logChallenge} />}
+          {activeTab === "groups" && <GroupsPanel groups={groupItems} onToggle={toggleGroup} />}
           {activeTab === "transformations" && (
             <TransformationsPanel
               items={transformations}

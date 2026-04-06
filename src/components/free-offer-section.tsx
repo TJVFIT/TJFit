@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Check } from "lucide-react";
 
 import { useAuth } from "@/components/auth-provider";
+import { useMagneticButton } from "@/hooks/useMagneticButton";
 import type { Program } from "@/lib/content";
 import { getFreeOfferCopy } from "@/lib/free-offer-copy";
 import type { Locale } from "@/lib/i18n";
@@ -54,6 +55,15 @@ function renderTitleWithFreeGradient(title: string) {
 
 function stripTrailingArrow(label: string) {
   return label.replace(/\s*[→←]\s*$/u, "").trim();
+}
+
+function MagneticCtaLink({ href, className, children }: { href: string; className: string; children: React.ReactNode }) {
+  const ref = useMagneticButton<HTMLAnchorElement>(0.3);
+  return (
+    <Link href={href} className={className} ref={ref}>
+      {children}
+    </Link>
+  );
 }
 
 export function FreeOfferSection({
@@ -122,6 +132,7 @@ export function FreeOfferSection({
         <div
           className={cn(
             "free-starter-card group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[#1E2028] bg-[#111215] p-8",
+            "tj-card-aura",
             "before:pointer-events-none before:absolute before:-right-[60px] before:-top-[60px] before:h-[200px] before:w-[200px] before:rounded-full",
             "before:bg-[radial-gradient(circle,rgba(34,211,238,0.06)_0%,transparent_70%)] before:opacity-0 before:transition-opacity before:duration-300 before:ease-out",
             "transition-[transform,border-color,box-shadow] duration-300 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)]",
@@ -142,7 +153,7 @@ export function FreeOfferSection({
         {loading ? (
           <div className="tj-skeleton h-[50px] w-full rounded-[10px]" aria-hidden />
         ) : (
-          <Link
+          <MagneticCtaLink
             href={href}
             className={cn(
               "fo-cta group/cta relative inline-flex w-full items-center justify-center rounded-[10px] border border-[rgba(34,211,238,0.3)] bg-[rgba(34,211,238,0.10)]",
@@ -157,7 +168,7 @@ export function FreeOfferSection({
             <span className="fo-cta-arrow ml-1.5 inline-block transition-transform duration-200 ease-out group-hover/cta:translate-x-1 motion-reduce:group-hover/cta:translate-x-0">
               →
             </span>
-          </Link>
+          </MagneticCtaLink>
         )}
         </div>
       </div>

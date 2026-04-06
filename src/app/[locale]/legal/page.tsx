@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { BlurReveal } from "@/components/blur-reveal";
 import { CinematicListingHeader } from "@/components/cinematic-listing-header";
 import { AmbientBackground } from "@/components/ui/AmbientBackground";
 import { requireLocaleParam } from "@/lib/require-locale";
@@ -14,12 +15,14 @@ export default function LegalHubPage({ params }: { params: { locale: string } })
     <>
       <AmbientBackground variant="both" />
       <div className="relative z-[1]">
-        <CinematicListingHeader
-          eyebrow={copy.heroEyebrow}
-          headlineBefore={copy.heroHeadlineBefore}
-          headlineGradient={copy.heroHeadlineGradient}
-          sub={copy.heroSub}
-        />
+        <BlurReveal>
+          <CinematicListingHeader
+            eyebrow={copy.heroEyebrow}
+            headlineBefore={copy.heroHeadlineBefore}
+            headlineGradient={copy.heroHeadlineGradient}
+            sub={copy.heroSub}
+          />
+        </BlurReveal>
 
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
           <div className="lg:grid lg:grid-cols-[minmax(0,11rem)_minmax(0,1fr)] lg:gap-12">
@@ -64,10 +67,10 @@ export default function LegalHubPage({ params }: { params: { locale: string } })
               <section id="faq" className="scroll-mt-28">
                 <h2 className="font-display text-2xl font-semibold tracking-[-0.01em] text-white">{copy.faqTitle}</h2>
                 <div className="mt-6 space-y-2">
-                  {copy.faq.map((item) => (
+                  {copy.faq.map((item, idx) => (
                     <details
                       key={item.id}
-                      className="legal-faq-details group rounded-xl border border-[#1E2028] bg-[#111215] transition-[border-color] duration-200 ease-out open:border-[rgba(34,211,238,0.2)] hover:border-[rgba(255,255,255,0.1)]"
+                      className={`legal-faq-details tj-blur-reveal tj-revealed tj-stagger-${Math.min(6, (idx % 6) + 1)} group rounded-xl border border-[#1E2028] bg-[#111215] transition-[border-color] duration-200 ease-out open:border-[rgba(34,211,238,0.2)] hover:border-[rgba(255,255,255,0.1)]`}
                     >
                       <summary className="cursor-pointer list-none px-5 py-4 text-[15px] font-semibold text-white outline-none marker:content-none [&::-webkit-details-marker]:hidden">
                         <span className="flex items-center justify-between gap-3">

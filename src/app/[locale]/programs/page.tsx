@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
+import { BlurReveal } from "@/components/blur-reveal";
 import { CinematicListingHeader } from "@/components/cinematic-listing-header";
 import { FilterPill, ListingFilterBar } from "@/components/listing-filter-bar";
 import { PremiumPageShell } from "@/components/premium";
@@ -143,12 +144,13 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
     <>
       <AmbientBackground />
       <div className="relative z-[1]">
-        <CinematicListingHeader
-          eyebrow={filterCopy.cinematicEyebrow}
-          headlineBefore={filterCopy.cinematicHeadlineBefore}
-          headlineGradient={filterCopy.cinematicHeadlineGradient}
-          sub={filterCopy.cinematicSub}
-        >
+        <BlurReveal>
+          <CinematicListingHeader
+            eyebrow={filterCopy.cinematicEyebrow}
+            headlineBefore={filterCopy.cinematicHeadlineBefore}
+            headlineGradient={filterCopy.cinematicHeadlineGradient}
+            sub={filterCopy.cinematicSub}
+          >
           <Link
             href={`/${params.locale}/diets`}
             className="text-sm font-medium text-[#22D3EE] transition-colors duration-150 hover:text-white"
@@ -165,7 +167,8 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
               {programManagementCopy.upload}
             </Link>
           ) : null}
-        </CinematicListingHeader>
+          </CinematicListingHeader>
+        </BlurReveal>
 
         <PremiumPageShell className="relative z-[1] max-w-[1200px] px-6">
           <ScrollTicker
@@ -182,7 +185,8 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
             className="mb-10 text-[#1E2028]"
           />
 
-          <ListingFilterBar label={filterCopy.filterLabel}>
+          <BlurReveal delay={100}>
+            <ListingFilterBar label={filterCopy.filterLabel}>
             <div className="flex flex-wrap items-center gap-1 px-1">
               <span className="me-1 text-xs text-[#52525B]">{filterCopy.filterGoal}:</span>
               {(
@@ -223,7 +227,8 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
                 </button>
               ) : null}
             </div>
-          </ListingFilterBar>
+            </ListingFilterBar>
+          </BlurReveal>
 
       {!customCatalogReady ? (
         <div
@@ -255,7 +260,8 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
           const isPaidLocked = "isCustomUpload" in program && program.isCustomUpload ? true : !program.is_free;
 
           return (
-            <ProgramCard
+            <BlurReveal key={program.slug} delay={60}>
+              <ProgramCard
               key={program.slug}
               program={program}
               href={`/${params.locale}/programs/${program.slug}`}
@@ -283,7 +289,9 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
                       ? tierLabels.fresh
                       : tierLabels.signature
               }
-            />
+              flipOnHover
+              />
+            </BlurReveal>
           );
         })}
       </StaggerRevealGrid>

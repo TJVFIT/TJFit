@@ -1,15 +1,17 @@
 "use client";
 
 import Link from "next/link";
+import { useRef } from "react";
 import { ArrowRight, Lock } from "lucide-react";
 
+import { useCardInCenter } from "@/hooks/useCardInCenter";
 import { Logo } from "@/components/ui/Logo";
 import type { Program } from "@/lib/content";
 import { getProgramTier, getProgramVisual } from "@/lib/program-card-visual";
 import { cn } from "@/lib/utils";
 
 const shellClass =
-  "group tj-card-premium-hover relative flex h-full min-h-0 flex-col overflow-hidden rounded-[14px] border border-[#1E2028] bg-[#111215] shadow-[0_1px_3px_rgba(0,0,0,0.4),0_0_0_1px_#1E2028] motion-reduce:transition-none";
+  "group tj-card-premium-hover tj-card-aura relative flex h-full min-h-0 flex-col overflow-hidden rounded-[14px] border border-[#1E2028] bg-[#111215] shadow-[0_1px_3px_rgba(0,0,0,0.4),0_0_0_1px_#1E2028] motion-reduce:transition-none";
 
 const ctaPillClass = cn(
   "inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-[rgba(34,211,238,0.2)] bg-transparent px-4 py-3 text-xs font-semibold text-[#22D3EE] sm:w-auto sm:justify-start sm:py-2.5",
@@ -26,6 +28,22 @@ function CtaPill({ label }: { label: string }) {
         aria-hidden
       />
     </span>
+  );
+}
+
+function difficultyDots(difficulty?: string) {
+  const value = (difficulty ?? "").toLowerCase();
+  let filled = 3;
+  if (value.includes("beginner")) filled = 2;
+  if (value.includes("intermediate")) filled = 3;
+  if (value.includes("advanced")) filled = 4;
+  if (value.includes("expert")) filled = 5;
+  return (
+    <div className="flex items-center gap-1" aria-label={difficulty ?? "Difficulty"}>
+      {Array.from({ length: 5 }).map((_, idx) => (
+        <span key={idx} className={cn("h-1.5 w-1.5 rounded-full", idx < filled ? "bg-[#22D3EE]" : "bg-[#1E2028]")} />
+      ))}
+    </div>
   );
 }
 
@@ -159,11 +177,7 @@ function PremiumProgramCardInner({
         <div className="mt-auto border-t border-white/[0.06] pt-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-3">
             <div className="min-w-0">
-              {difficulty ? (
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-600 sm:text-[10px] sm:tracking-[0.2em]">
-                  {difficulty}
-                </p>
-              ) : null}
+              {difficulty ? <div className="pt-0.5">{difficultyDots(difficulty)}</div> : null}
               <p
                 className={cn(
                   "text-pretty text-base font-medium tabular-nums text-white",
@@ -193,7 +207,8 @@ export function ProgramCard({
   showPaidLock,
   premiumLockedHint,
   trainingGoalBadge,
-  trainingLocationBadge
+  trainingLocationBadge,
+  flipOnHover = false
 }: {
   program: Program;
   href?: string;
@@ -209,7 +224,10 @@ export function ProgramCard({
   premiumLockedHint?: string;
   trainingGoalBadge?: string;
   trainingLocationBadge?: string;
+  flipOnHover?: boolean;
 }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  useCardInCenter(cardRef);
   const visual = getProgramVisual(program);
   const tier = tierLabel ?? getProgramTier(program);
   const priceLine = priceLabel ?? String(program.price);
@@ -237,17 +255,53 @@ export function ProgramCard({
   );
 
   return (
-    <div className={cn("h-full", visual.glow)}>
+    <div ref={cardRef} className={cn("h-full", visual.glow)}>
       {href ? (
-        <Link
-          href={href}
-          className={cn(
-            shellClass,
-            "focus:outline-none focus-visible:border-cyan-400/40 focus-visible:shadow-[0_0_20px_rgba(34,211,238,0.08)]"
-          )}
-        >
-          {inner}
-        </Link>
+        flipOnHover ? (
+          <div className="tj-flip-card">
+            <div className="tj-flip-inner">
+              <Link
+                href={href}
+                className={cn(
+                  shellClass,
+                  "tj-flip-front focus:outline-none focus-visible:border-cyan-400/40 focus-visible:shadow-[0_0_20px_rgba(34,211,238,0.08)]"
+                )}
+              >
+                {inner}
+              </Link>
+              <div className="tj-flip-back flex flex-col rounded-[14px] border border-[#1E2028] bg-[#0A0B0F] p-5 text-center">
+                <h3 className="text-lg font-semibold text-white">{program.title}</h3>
+                <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-[#A1A1AA]">
+                  <div className="rounded-lg border border-[#1E2028] bg-[#111215] p-2">{program.duration}</div>
+                  <div className="rounded-lg border border-[#1E2028] bg-[#111215] p-2">{trainingLocationBadge ?? "Home / Gym"}</div>
+                  <div className="rounded-lg border border-[#1E2028] bg-[#111215] p-2">{trainingGoalBadge ?? program.category}</div>
+                  <div className="flex items-center justify-center rounded-lg border border-[#1E2028] bg-[#111215] p-2">
+                    {difficultyDots(program.difficulty)}
+                  </div>
+                </div>
+                <p className="mt-4 text-sm font-semibold text-[#22D3EE]">{program.category}</p>
+                <div className="mt-auto space-y-2 pt-5">
+                  <Link href={href} className="btn-primary-shimmer inline-flex w-full items-center justify-center rounded-full bg-gradient-to-br from-[#22D3EE] to-[#0EA5E9] px-4 py-2.5 text-sm font-bold text-[#09090B]">
+                    View Program →
+                  </Link>
+                  <button type="button" className="w-full rounded-full border border-[#1E2028] px-4 py-2 text-xs text-[#A1A1AA]">
+                    Add to Wishlist
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <Link
+            href={href}
+            className={cn(
+              shellClass,
+              "focus:outline-none focus-visible:border-cyan-400/40 focus-visible:shadow-[0_0_20px_rgba(34,211,238,0.08)]"
+            )}
+          >
+            {inner}
+          </Link>
+        )
       ) : (
         <div className={shellClass}>{inner}</div>
       )}
@@ -275,12 +329,14 @@ export function HomeProgramPreviewCard({
   ctaLabel: string;
   onNavigate?: () => void;
 }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  useCardInCenter(cardRef);
   const visual = getProgramVisual(program);
   const tier = tierLabel ?? getProgramTier(program);
   const priceLine = `${fromLabel} ${priceFormatted}`;
 
   return (
-    <div className={cn("h-full min-h-[320px] sm:min-h-[340px]", visual.glow)}>
+    <div ref={cardRef} className={cn("h-full min-h-[320px] sm:min-h-[340px]", visual.glow)}>
       <Link
         href={href}
         onClick={onNavigate}

@@ -453,7 +453,7 @@ export function LuxuryHome({
               const Icon = featureIcons[i] ?? Activity;
               return (
                 <Reveal key={`feature-${i}-${item.title}`} delay={i * 0.04} className="h-full">
-                  <div className="tj-card-premium-hover flex h-full flex-col rounded-[14px] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.4),0_0_0_1px_var(--color-border)]">
+                  <div className="tj-card-premium-hover tj-card-aura flex h-full flex-col rounded-[14px] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.4),0_0_0_1px_var(--color-border)]">
                     <Icon className="h-7 w-7 shrink-0 text-[#22D3EE]" strokeWidth={1.35} aria-hidden />
                     <h3 className="mt-5 text-lg font-semibold tracking-[-0.005em] text-white">{item.title}</h3>
                     <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-secondary)]">{item.desc}</p>

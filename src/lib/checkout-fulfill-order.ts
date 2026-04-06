@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { TJFIT_COINS_PER_PROGRAM_PURCHASE } from "@/lib/tjfit-coin";
 import { isPaddleLiveCheckoutStored } from "@/lib/payments/stored-provider";
+import { TJCOIN_REWARDS } from "@/lib/tjcoin-events";
 
 export type FulfillOrderResult =
   | { ok: true; alreadyPaid?: boolean; coinsEarned: number }
@@ -16,6 +17,7 @@ export async function fulfillProgramOrderPaid(
   orderId: string,
   opts?: { requirePaddleLiveOrder?: boolean }
 ): Promise<FulfillOrderResult> {
+  const rewardAmount = TJCOIN_REWARDS.program_purchase ?? TJFIT_COINS_PER_PROGRAM_PURCHASE;
   const { data: existingOrder, error: fetchErr } = await adminClient
     .from("program_orders")
     .select("id,user_id,status,discount_code,provider")
@@ -31,7 +33,7 @@ export async function fulfillProgramOrderPaid(
   }
 
   if (existingOrder.status === "paid") {
-    return { ok: true, alreadyPaid: true, coinsEarned: TJFIT_COINS_PER_PROGRAM_PURCHASE };
+    return { ok: true, alreadyPaid: true, coinsEarned: rewardAmount };
   }
 
   if (existingOrder.status !== "pending") {
@@ -43,7 +45,7 @@ export async function fulfillProgramOrderPaid(
     .update({
       status: "paid",
       paid_at: new Date().toISOString(),
-      tjfit_coins_earned: TJFIT_COINS_PER_PROGRAM_PURCHASE
+      tjfit_coins_earned: rewardAmount
     })
     .eq("id", existingOrder.id)
     .eq("status", "pending")
@@ -69,8 +71,8 @@ export async function fulfillProgramOrderPaid(
   await adminClient
     .from("tjfit_coin_wallets")
     .update({
-      balance: walletBalance + TJFIT_COINS_PER_PROGRAM_PURCHASE,
-      lifetime_earned: lifetimeEarned + TJFIT_COINS_PER_PROGRAM_PURCHASE,
+      balance: walletBalance + rewardAmount,
+      lifetime_earned: lifetimeEarned + rewardAmount,
       lifetime_spent: lifetimeSpent,
       updated_at: new Date().toISOString()
     })
@@ -79,10 +81,10 @@ export async function fulfillProgramOrderPaid(
 
   await adminClient.from("tjfit_coin_ledger").insert({
     user_id: existingOrder.user_id,
-    delta: TJFIT_COINS_PER_PROGRAM_PURCHASE,
+    delta: rewardAmount,
     reason: "program_purchase",
     order_id: existingOrder.id,
-    metadata: { source: "checkout_fulfill", coinsPerProgram: TJFIT_COINS_PER_PROGRAM_PURCHASE }
+    metadata: { source: "checkout_fulfill", coinsPerProgram: rewardAmount }
   });
 
   if (paidOrder.discount_code) {
@@ -98,5 +100,5 @@ export async function fulfillProgramOrderPaid(
       .eq("status", "available");
   }
 
-  return { ok: true, coinsEarned: TJFIT_COINS_PER_PROGRAM_PURCHASE };
+  return { ok: true, coinsEarned: rewardAmount };
 }

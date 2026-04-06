@@ -70,11 +70,29 @@ export async function POST(request: NextRequest) {
   }
 
   const code = generateDiscountCode();
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
   await adminClient.from("tjfit_discount_codes").insert({
     code,
     user_id: user.id,
     offer_key: offer.key,
     discount_percent: offer.discount_percent,
+    status: "available"
+  });
+
+  await adminClient.from("user_discount_codes").insert({
+    user_id: user.id,
+    code,
+    discount_percent: offer.discount_percent,
+    product_type: String(offer.key).includes("diet")
+      ? "diet"
+      : String(offer.key).includes("program")
+        ? "program"
+        : String(offer.key).includes("bundle")
+          ? "bundle"
+          : "any",
+    coins_spent: offer.coin_cost,
+    redeemed_at: new Date().toISOString(),
+    expires_at: expiresAt,
     status: "available"
   });
 

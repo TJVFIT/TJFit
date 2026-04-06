@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
 
+import { useMagneticButton } from "@/hooks/useMagneticButton";
 import { cn } from "@/lib/utils";
 
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "link";
@@ -40,11 +41,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   { variant = "primary", size = "md", className, children, href, type = "button", ...props },
   ref
 ) {
-  const cls = cn(base, variants[variant], variant !== "link" && sizes[size], className);
+  const cls = cn(base, variants[variant], variant !== "link" && sizes[size], variant === "primary" && "btn-primary-shimmer", className);
+  const magneticLinkRef = useMagneticButton<HTMLAnchorElement>(0.3);
 
   if (href) {
     return (
-      <Link href={href} className={cls}>
+      <Link href={href} className={cls} ref={variant === "primary" ? magneticLinkRef : undefined}>
         {children}
       </Link>
     );

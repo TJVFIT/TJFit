@@ -114,11 +114,11 @@ const en: HomeLuxuryCopy = {
   hero: {
     badge: "TJFit",
     eyebrow: "PREMIUM FITNESS TRANSFORMATION",
-    headline: "Train Smarter.",
-    headlineLine2: "Transform Completely.",
+    headline: "World-class Global Coaching.",
+    headlineLine2: "Transform.",
     headlineLine2Accent: "Transform",
-    headlineLine2Rest: " Completely.",
-    sub: "Complete 12-week programs and diet systems — structured like a real coach plan.",
+    headlineLine2Rest: ".",
+    sub: "Elite training programs, personalized diet systems, and AI coaching — built for real transformation.",
     ctaPrimary: "Start Free Today",
     ctaSecondary: "View Programs",
     ctaBrowsePrograms: "Browse programs",
@@ -248,8 +248,8 @@ const en: HomeLuxuryCopy = {
 const tr: HomeLuxuryCopy = {
   hero: {
     badge: "TJFit",
-    headline: "Ciddi antrenman için sakin, net bir sistem.",
-    sub: "Yapılandırılmış programlar, doğrulanmış koçlar ve derinleşmek istediğinde TJAI — gürültü için değil, bilinçle çalışanlar için.",
+    headline: "Dünya standartında global koçluk, spor ve sağlık platformu.",
+    sub: "Elit antrenman programları, kişiselleştirilmiş beslenme sistemleri ve yapay zekâ koçluğu — gerçek dönüşüm için tasarlandı.",
     ctaPrimary: "Ücretsiz yol haritanı al",
     ctaSecondary: "Hesap oluştur",
     ctaBrowsePrograms: "Programları keşfet",
@@ -360,8 +360,8 @@ const tr: HomeLuxuryCopy = {
 const ar: HomeLuxuryCopy = {
   hero: {
     badge: "TJFit",
-    headline: "نظام هادئ وواضح لتدريب جاد.",
-    sub: "برامج مُنظَّمة، مدربون موثوقون، وTJAI عندما تريد أن تتعمق — لمن يتدرب بوعي، لا لمن يبحث عن الضجيج.",
+    headline: "منصة عالمية للتدريب والرياضة والصحة.",
+    sub: "برامج تدريب نخبوية وأنظمة غذائية مخصصة وتدريب بالذكاء الاصطناعي — مصممة لتحول حقيقي.",
     ctaPrimary: "خارطتك المجانية",
     ctaSecondary: "ابدأ مجاناً",
     ctaBrowsePrograms: "البرامج",
@@ -472,8 +472,8 @@ const ar: HomeLuxuryCopy = {
 const es: HomeLuxuryCopy = {
   hero: {
     badge: "TJFit",
-    headline: "Un sistema calmado para entrenar en serio.",
-    sub: "Programas claros, coaches verificados y TJAI cuando quieras ir más allá — para quien entrena con intención, no por moda.",
+    headline: "Plataforma global de entrenamiento, deporte y salud de clase mundial.",
+    sub: "Programas de entrenamiento de élite, sistemas de nutrición personalizados y coaching con IA — diseñados para una transformación real.",
     ctaPrimary: "Consigue tu guía gratis",
     ctaSecondary: "Crear cuenta gratis",
     ctaBrowsePrograms: "Explorar programas",
@@ -584,8 +584,8 @@ const es: HomeLuxuryCopy = {
 const fr: HomeLuxuryCopy = {
   hero: {
     badge: "TJFit",
-    headline: "Un cadre posé pour s’entraîner sérieusement.",
-    sub: "Programmes structurés, coachs vérifiés, et TJAI quand vous voulez aller plus loin — pour celles et ceux qui s’entraînent avec intention, pas pour le bruit.",
+    headline: "Plateforme mondiale de coaching, sport et santé de classe mondiale.",
+    sub: "Programmes d'entraînement élite, systèmes nutritionnels personnalisés et coaching IA — conçus pour une transformation réelle.",
     ctaPrimary: "Recevoir la feuille de route",
     ctaSecondary: "Créer un compte gratuit",
     ctaBrowsePrograms: "Parcourir les programmes",

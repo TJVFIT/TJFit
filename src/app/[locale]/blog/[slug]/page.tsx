@@ -1,0 +1,45 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+
+import { PremiumPageShell } from "@/components/premium";
+import { requireLocaleParam } from "@/lib/require-locale";
+
+export const dynamic = "force-dynamic";
+
+export default async function BlogDetailPage({ params }: { params: { locale: string; slug: string } }) {
+  const locale = requireLocaleParam(params.locale);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/api/blog/posts/${params.slug}`, { cache: "no-store" }).catch(() => null);
+  if (!res || !res.ok) notFound();
+  const data = await res.json();
+  const post = data.post as {
+    id: string;
+    title: string;
+    content: string;
+    author_name: string;
+    author_type: string;
+    category: string;
+    created_at: string;
+    read_time_minutes: number;
+    views: number;
+  };
+
+  return (
+    <PremiumPageShell>
+      <article className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
+        <p className="text-xs uppercase tracking-[0.14em] text-cyan-300">{post.category ?? "General"}</p>
+        <h1 className="mt-2 text-3xl font-extrabold text-white">{post.title}</h1>
+        <p className="mt-2 text-xs text-[#52525B]">
+          {post.author_name} · {post.author_type} · {post.read_time_minutes ?? 5} min · {post.views ?? 0} views · {new Date(post.created_at).toLocaleDateString(locale)}
+        </p>
+        <div className="mt-6 whitespace-pre-wrap text-sm leading-7 text-zinc-200">{post.content}</div>
+      </article>
+      <section className="mt-8 rounded-xl border border-[#1E2028] bg-[#111215] p-5">
+        <h2 className="text-lg font-semibold text-white">Related posts</h2>
+        <Link href={`/${locale}/blog`} className="mt-3 inline-flex text-sm text-[#22D3EE]">
+          Back to all posts →
+        </Link>
+      </section>
+    </PremiumPageShell>
+  );
+}
+

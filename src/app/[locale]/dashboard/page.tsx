@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { BlurReveal } from "@/components/blur-reveal";
 import { DashboardRoleRouter } from "@/components/dashboard-role-router";
 import { ProtectedRoute } from "@/components/protected-route";
 import { AmbientBackground } from "@/components/ui/AmbientBackground";
@@ -31,7 +32,9 @@ export default async function DashboardPage({ params }: { params: { locale: stri
             </div>
           }
         >
-          <DashboardRoleRouter locale={locale} />
+          <BlurReveal>
+            <DashboardRoleRouter locale={locale} />
+          </BlurReveal>
         </Suspense>
       </div>
     </ProtectedRoute>

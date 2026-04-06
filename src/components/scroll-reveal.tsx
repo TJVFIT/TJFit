@@ -33,8 +33,8 @@ export function ScrollReveal({
     <div
       ref={ref}
       className={cn(
-        "transition-[opacity,transform] duration-500 ease-out motion-reduce:translate-y-0 motion-reduce:opacity-100",
-        on ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0",
+        "tj-blur-reveal",
+        on && "tj-revealed",
         className
       )}
     >

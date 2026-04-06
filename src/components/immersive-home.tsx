@@ -3,11 +3,17 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import { ChevronDown } from "lucide-react";
 
+import { BlurReveal } from "@/components/blur-reveal";
 import { FreeOfferSection } from "@/components/free-offer-section";
+import { ParticleField } from "@/components/particle-field";
 import { HomeProgramPreviewCard } from "@/components/program-card";
+import { SplitText } from "@/components/ui/split-text";
 import { ScrollTicker } from "@/components/ui/ScrollTicker";
+import { WordReveal } from "@/components/ui/word-reveal";
+import { useMagneticButton } from "@/hooks/useMagneticButton";
 import { useInView } from "@/hooks/useInView";
 import type { Program } from "@/lib/content";
 import { trackMarketingEvent } from "@/lib/analytics-events";
@@ -54,11 +60,13 @@ function CountCell({
   target,
   suffix,
   label,
+  subtitle,
   reduce
 }: {
   target: number;
   suffix: string;
   label: string;
+  subtitle: string;
   reduce: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -91,6 +99,109 @@ function CountCell({
         {suffix}
       </p>
       <p className="mt-3 text-base uppercase tracking-[0.2em] text-[#52525B]">{label}</p>
+      <p className="mt-1 text-[11px] text-[#52525B]">{subtitle}</p>
+    </div>
+  );
+}
+
+function MagneticHeroLink({
+  href,
+  className,
+  children,
+  onClick
+}: {
+  href: string;
+  className: string;
+  children: React.ReactNode;
+  onClick?: () => void;
+}) {
+  const ref = useMagneticButton<HTMLAnchorElement>(0.3);
+  return (
+    <Link href={href} className={className} onClick={onClick} ref={ref}>
+      {children}
+    </Link>
+  );
+}
+
+function HeroSilhouette({ entered, reduce }: { entered: boolean; reduce: boolean }) {
+  return (
+    <div
+      className={cn(
+        "pointer-events-none absolute inset-0 z-0 overflow-hidden",
+        "transition-[opacity,transform] duration-[1200ms] [transition-timing-function:cubic-bezier(0,0,0.2,1)]",
+        entered ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-5 scale-95"
+      )}
+      style={{ transitionDelay: reduce ? "0ms" : "800ms" }}
+      aria-hidden
+    >
+      <svg
+        viewBox="0 0 520 820"
+        className={cn(
+          "absolute bottom-0 right-[-5%] h-[95%] w-auto will-change-transform",
+          "opacity-[0.15] max-md:opacity-[0.08] max-md:right-auto max-md:left-1/2 max-md:-translate-x-1/2 max-md:scale-[0.7] max-md:opacity-[0.06]",
+          "motion-reduce:opacity-[0.1]"
+        )}
+        style={{ filter: "drop-shadow(0 0 8px rgba(34,211,238,0.6)) drop-shadow(0 0 20px rgba(34,211,238,0.3))" }}
+      >
+        <g className={cn("origin-bottom motion-safe:animate-[tj-hero-breathe_3s_ease-in-out_infinite]", reduce && "animate-none")}>
+          <circle cx="260" cy="86" r="30" fill="none" stroke="#22D3EE" strokeWidth="2" />
+          <path d="M260 116 L260 146" fill="none" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round" />
+          <path d="M198 166 Q260 136 322 166 L306 332 Q260 366 214 332 Z" fill="none" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M214 182 L170 286 L178 366" fill="none" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round" />
+          <path d="M322 182 L352 240" fill="none" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round" />
+          <g
+            className={cn("origin-[352px_240px] [transform-box:fill-box] motion-safe:animate-[tj-curl-rep_2.4s_ease-in-out_infinite]", reduce && "animate-none")}
+          >
+            <path d="M352 240 L390 204 L420 196" fill="none" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round" />
+            <path d="M420 196 L450 196" fill="none" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round" />
+            <circle cx="416" cy="196" r="12" fill="none" stroke="#22D3EE" strokeWidth="2" />
+            <circle cx="454" cy="196" r="12" fill="none" stroke="#22D3EE" strokeWidth="2" />
+          </g>
+          <path d="M236 366 L210 520 L222 702" fill="none" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round" />
+          <path d="M286 366 L320 520 L308 702" fill="none" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round" />
+          <path d="M220 702 L190 746" fill="none" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round" />
+          <path d="M306 702 L336 746" fill="none" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round" />
+        </g>
+      </svg>
+    </div>
+  );
+}
+
+function FloatingHeroStats({ entered, reduce }: { entered: boolean; reduce: boolean }) {
+  const cards = [
+    { a: "+2.3kg", b: "Muscle gained", c: "Week 12", pos: "right-[15%] top-[30%]" },
+    { a: "-4.1kg", b: "Fat lost", c: "Week 8", pos: "right-[5%] top-[55%]" },
+    { a: "12 Weeks", b: "Complete system", c: "", pos: "right-[25%] top-[70%]" },
+    { a: "+18kg", b: "Bench press PR", c: "", pos: "left-[5%] top-[40%]" },
+    { a: "Day 1→84", b: "Full transformation", c: "", pos: "left-[10%] top-[65%]" },
+    { a: "-8cm", b: "Waist reduction", c: "", pos: "right-[8%] top-[20%]" }
+  ];
+  return (
+    <div className="pointer-events-none absolute inset-0 z-0">
+      {cards.map((card, i) => (
+        <div
+          key={`${card.a}-${card.b}`}
+          className={cn(
+            "tj-float-stat absolute w-[110px] rounded-[10px] border border-[rgba(34,211,238,0.15)] bg-[rgba(17,18,21,0.7)] px-3.5 py-2.5 backdrop-blur-[8px] will-change-transform",
+            card.pos,
+            i > 2 && "max-md:hidden",
+            "max-md:opacity-50",
+            entered ? "opacity-100" : "opacity-0"
+          )}
+          style={{
+            transition: "opacity 600ms ease",
+            transitionDelay: entered && !reduce ? `${1200 + i * 150}ms` : "0ms",
+            animation: reduce
+              ? "none"
+              : `tj-float-up ${[6, 8, 7, 9, 6.5, 7.5][i]}s ease-in-out infinite ${[0, 1.2, 2.4, 0.6, 3, 1.8][i]}s, tj-card-pulse ${[6, 8, 7, 9, 6.5, 7.5][i]}s ease-in-out infinite ${[0, 1.2, 2.4, 0.6, 3, 1.8][i]}s`
+          }}
+          aria-hidden
+        >
+          <p className="text-base font-bold text-[#22D3EE]">{card.a}</p>
+          <p className="text-[11px] text-[#A1A1AA]">{card.b}</p>
+          {card.c ? <p className="text-[10px] text-[#52525B]">{card.c}</p> : null}
+        </div>
+      ))}
     </div>
   );
 }
@@ -120,6 +231,16 @@ export function ImmersiveHome({
   const navChrome = getNavChromeCopy(locale);
   const [heroEntered, setHeroEntered] = useState(reduce);
   const [hideScrollCue, setHideScrollCue] = useState(false);
+  const [liveStats, setLiveStats] = useState({ activeToday: 0, programsStartedToday: 0 });
+  const [livePulse, setLivePulse] = useState(false);
+  const heroRef = useRef<HTMLElement>(null);
+  const ambientRef = useRef<HTMLDivElement>(null);
+  const logo3DRef = useRef<HTMLDivElement>(null);
+  const particleRef = useRef<HTMLDivElement>(null);
+  const silhouetteRef = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+  const subCtaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (reduce) {
@@ -135,6 +256,72 @@ export function ImmersiveHome({
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    const loadLive = async () => {
+      try {
+        const res = await fetch("/api/stats/live", { cache: "no-store" });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (cancelled) return;
+        setLiveStats((prev) => {
+          if (prev.activeToday !== data.activeToday || prev.programsStartedToday !== data.programsStartedToday) {
+            setLivePulse(true);
+            window.setTimeout(() => setLivePulse(false), 220);
+          }
+          return {
+            activeToday: Number(data.activeToday ?? 0),
+            programsStartedToday: Number(data.programsStartedToday ?? 0)
+          };
+        });
+      } catch {
+        // silent fail for hero microstat
+      }
+    };
+    void loadLive();
+    const id = window.setInterval(loadLive, 300000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(id);
+    };
+  }, []);
+
+  useEffect(() => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const noHover = window.matchMedia("(hover: none)").matches;
+    if (reduced || noHover) return;
+
+    let raf = 0;
+    const current = { x: 0, y: 0 };
+    const target = { x: 0, y: 0 };
+    const apply = () => {
+      current.x += (target.x - current.x) * 0.08;
+      current.y += (target.y - current.y) * 0.08;
+
+      if (ambientRef.current) ambientRef.current.style.transform = `translate(${current.x * 0.02}px, ${current.y * 0.02}px)`;
+      if (logo3DRef.current) logo3DRef.current.style.transform = `translate(${current.x * 0.04}px, ${current.y * 0.04}px)`;
+      if (particleRef.current) particleRef.current.style.transform = `translate(${current.x * 0.01}px, ${current.y * 0.01}px)`;
+      if (silhouetteRef.current) silhouetteRef.current.style.transform = `translate(${current.x * 0.06}px, ${current.y * 0.06}px)`;
+      if (statsRef.current) statsRef.current.style.transform = `translate(${current.x * 0.08}px, ${current.y * 0.08}px)`;
+      if (headlineRef.current) headlineRef.current.style.transform = `translate(${current.x * 0.015}px, ${current.y * 0.015}px)`;
+      if (subCtaRef.current) subCtaRef.current.style.transform = `translate(${current.x * 0.01}px, ${current.y * 0.01}px)`;
+
+      raf = window.requestAnimationFrame(apply);
+    };
+
+    const onMove = (event: MouseEvent) => {
+      target.x = event.clientX - window.innerWidth / 2;
+      target.y = event.clientY - window.innerHeight / 2;
+    };
+
+    window.addEventListener("mousemove", onMove, { passive: true });
+    raf = window.requestAnimationFrame(apply);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.cancelAnimationFrame(raf);
+    };
   }, []);
 
   const h1 = copy.hero.headline.trim();
@@ -180,15 +367,31 @@ export function ImmersiveHome({
   return (
     <div className="bg-[#09090B] text-white">
       {/* —— 1 HERO —— */}
-      <section className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden px-6 pb-16 pt-24 lg:px-12 lg:pb-24 lg:pt-16">
+      <section
+        ref={heroRef}
+        className="hero-mesh relative flex min-h-[100svh] flex-col justify-center overflow-hidden px-6 pb-16 pt-24 lg:px-12 lg:pb-24 lg:pt-16"
+      >
+        <div ref={particleRef} className="pointer-events-none absolute inset-0 z-0" aria-hidden>
+          <ParticleField className="pointer-events-none absolute inset-0 z-0" />
+        </div>
+        <div ref={ambientRef} className="pointer-events-none absolute inset-0 z-0" aria-hidden>
+          <div className="orb-3d orb-3d-cyan absolute -left-20 -top-20 h-[500px] w-[500px] max-md:h-[280px] max-md:w-[280px]" />
+          <div className="orb-3d orb-3d-blue absolute -bottom-24 -right-10 h-[400px] w-[400px] max-md:h-[220px] max-md:w-[220px]" />
+          <div className="orb-3d orb-3d-deep absolute right-[22%] top-[20%] h-[300px] w-[300px] max-md:hidden" />
+        </div>
         <div
-          className="pointer-events-none absolute left-1/2 top-0 h-[700px] w-[700px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.07)_0%,transparent_70%)]"
+          ref={logo3DRef}
+          className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[400px] w-[400px] -translate-x-1/2 -translate-y-1/2 opacity-[0.06] max-md:h-[240px] max-md:w-[240px] max-md:opacity-[0.04]"
           aria-hidden
-        />
-        <div
-          className="pointer-events-none absolute -bottom-32 -right-24 h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle,rgba(167,139,250,0.05)_0%,transparent_70%)]"
-          aria-hidden
-        />
+        >
+          <Image src="/logo/tj-icon.svg" alt="" fill className="tj-logo-3d object-contain" />
+        </div>
+        <div ref={silhouetteRef}>
+          <HeroSilhouette entered={heroEntered} reduce={reduce} />
+        </div>
+        <div ref={statsRef}>
+          <FloatingHeroStats entered={heroEntered} reduce={reduce} />
+        </div>
 
         <div className="relative z-10 mx-auto w-full max-w-5xl text-center lg:text-left">
           <p
@@ -201,12 +404,12 @@ export function ImmersiveHome({
             {copy.hero.eyebrow ?? copy.hero.badge}
           </p>
 
-          <h1 className="mt-8 font-sans text-[clamp(2.5rem,8vw,4.5rem)] font-extrabold leading-[0.95] tracking-[-0.04em] lg:text-[96px]">
+          <h1 ref={headlineRef} className="mt-8 font-sans text-[clamp(2.5rem,8vw,4.5rem)] font-extrabold leading-[0.95] tracking-[-0.04em] lg:text-[96px]">
             <span className="block" style={lineMotion(300)}>
-              {line1}
+              <SplitText text={line1} delay={300} />
             </span>
             <span className="block" style={lineMotion(450)}>
-              {line2}
+              <SplitText text={line2} delay={450} />
             </span>
             <span className="block" style={lineMotion(600)}>
               <span className="bg-gradient-to-br from-[#22D3EE] to-[#A78BFA] bg-clip-text text-transparent">{line3Accent}</span>
@@ -214,37 +417,58 @@ export function ImmersiveHome({
             </span>
           </h1>
 
-          <p
-            className={cn(
-              "mx-auto mt-8 max-w-[480px] text-base leading-relaxed text-[#A1A1AA] transition-opacity duration-500 ease-out motion-reduce:transition-none sm:text-lg lg:mx-0",
-              heroEntered ? "opacity-100" : "opacity-0"
-            )}
-            style={{ transitionDelay: reduce ? "0ms" : "800ms" }}
-          >
-            {copy.hero.sub}
-          </p>
+          <div ref={subCtaRef}>
+            <p
+              className={cn(
+                "mx-auto mt-8 max-w-[480px] text-base leading-relaxed text-[#A1A1AA] transition-opacity duration-500 ease-out motion-reduce:transition-none sm:text-lg lg:mx-0",
+                heroEntered ? "opacity-100" : "opacity-0"
+              )}
+              style={{ transitionDelay: reduce ? "0ms" : "800ms" }}
+            >
+              {copy.hero.sub}
+            </p>
 
-          <div
-            className={cn(
-              "mt-10 flex flex-col gap-4 sm:flex-row sm:items-center",
-              "transition-opacity duration-500 motion-reduce:transition-none",
-              heroEntered ? "opacity-100" : "opacity-0"
-            )}
-            style={{ transitionDelay: reduce ? "0ms" : "1000ms" }}
-          >
-            <Link
-              href={`/${locale}/start`}
-              onClick={() => trackMarketingEvent("hero_cta_click", { cta: "start", surface: "immersive-hero" })}
-              className="inline-flex min-h-[52px] items-center justify-center rounded-full bg-gradient-to-br from-[#22D3EE] to-[#0EA5E9] px-8 py-4 text-base font-bold text-[#09090B] shadow-[0_0_30px_rgba(34,211,238,0.3)] transition-[transform,box-shadow] duration-200 hover:scale-[1.03] hover:shadow-[0_0_40px_rgba(34,211,238,0.45)] motion-reduce:hover:scale-100"
+            <div
+              className={cn(
+                "mt-10 flex flex-col gap-4 sm:flex-row sm:items-center",
+                "transition-opacity duration-500 motion-reduce:transition-none",
+                heroEntered ? "opacity-100" : "opacity-0"
+              )}
+              style={{ transitionDelay: reduce ? "0ms" : "1000ms" }}
             >
-              {copy.hero.ctaPrimary}
-            </Link>
-            <Link
-              href={`/${locale}/programs`}
-              className="inline-flex min-h-[52px] items-center justify-center rounded-full border border-[#1E2028] px-8 py-4 text-base font-semibold text-white transition-[border-color,background-color] duration-200 hover:border-[rgba(255,255,255,0.15)] hover:bg-[rgba(255,255,255,0.04)]"
-            >
-              {copy.hero.ctaSecondary} <span className="rtl:rotate-180">→</span>
-            </Link>
+              <MagneticHeroLink
+                href={`/${locale}/start`}
+                onClick={() => trackMarketingEvent("hero_cta_click", { cta: "start", surface: "immersive-hero" })}
+                className="btn-primary-shimmer inline-flex min-h-[52px] items-center justify-center rounded-full bg-gradient-to-br from-[#22D3EE] to-[#0EA5E9] px-8 py-4 text-base font-bold text-[#09090B] shadow-[0_0_30px_rgba(34,211,238,0.3)] transition-[transform,box-shadow] duration-200 hover:scale-[1.03] hover:shadow-[0_0_40px_rgba(34,211,238,0.45)] motion-reduce:hover:scale-100"
+              >
+                {copy.hero.ctaPrimary}
+              </MagneticHeroLink>
+              <Link
+                href={`/${locale}/programs`}
+                className="inline-flex min-h-[52px] items-center justify-center rounded-full border border-[#1E2028] px-8 py-4 text-base font-semibold text-white transition-[border-color,background-color] duration-200 hover:border-[rgba(255,255,255,0.15)] hover:bg-[rgba(255,255,255,0.04)]"
+              >
+                {copy.hero.ctaSecondary} <span className="rtl:rotate-180">→</span>
+              </Link>
+            </div>
+            <div className="mt-5 inline-flex flex-wrap gap-2 text-xs text-[#A1A1AA]">
+              <span
+                className={cn(
+                  "inline-flex items-center gap-2 rounded-full border border-[rgba(34,211,238,0.15)] bg-[rgba(34,211,238,0.06)] px-3 py-1.5",
+                  livePulse && "scale-[1.04]"
+                )}
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-[#22C55E] motion-safe:animate-pulse" />
+                {liveStats.activeToday} people training on TJFit right now
+              </span>
+              <span
+                className={cn(
+                  "inline-flex items-center gap-2 rounded-full border border-[rgba(34,211,238,0.15)] bg-[rgba(34,211,238,0.06)] px-3 py-1.5",
+                  livePulse && "scale-[1.04]"
+                )}
+              >
+                {liveStats.programsStartedToday} programs started today
+              </span>
+            </div>
           </div>
         </div>
 
@@ -285,10 +509,13 @@ export function ImmersiveHome({
       {/* —— 4 PROGRAMS —— */}
       <section className="relative min-h-[100svh] border-t border-[var(--color-border)] bg-[#111215] px-6 py-16 lg:px-12 lg:py-24">
         <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center">
-          <div>
+          <BlurReveal>
+            <div>
             <h2 className="text-[56px] font-extrabold leading-[0.95] tracking-[-0.04em] text-white lg:text-[80px]">
               <span className="block">{programCount}+</span>
-              <span className="block">Complete</span>
+              <span className="block">
+                <WordReveal text="Complete" />
+              </span>
               <span className="block bg-gradient-to-br from-[#22D3EE] to-[#A78BFA] bg-clip-text text-transparent">Programs.</span>
             </h2>
             <div className="mt-8 max-w-xl overflow-hidden">
@@ -300,19 +527,21 @@ export function ImmersiveHome({
             >
               {copy.programs.viewAll} <span className="rtl:rotate-180">→</span>
             </Link>
-          </div>
+            </div>
+          </BlurReveal>
           <div className="grid max-h-[min(70vh,640px)] grid-cols-1 gap-4 overflow-y-auto pr-1 sm:grid-cols-2">
-            {programSlice.map((p) => (
-              <HomeProgramPreviewCard
-                key={p.slug}
-                program={p}
-                href={`/${locale}/programs/${p.slug}`}
-                priceFormatted={formatMoney(locale, p.price)}
-                fromLabel={copy.programs.from}
-                reducedMotion={reduce}
-                ctaLabel={p.is_free ? programUi.viewProgram : programUi.getFullAccess}
-                onNavigate={() => trackMarketingEvent("program_view", { slug: p.slug, surface: "immersive-home" })}
-              />
+            {programSlice.map((p, i) => (
+              <BlurReveal key={p.slug} delay={i * 90}>
+                <HomeProgramPreviewCard
+                  program={p}
+                  href={`/${locale}/programs/${p.slug}`}
+                  priceFormatted={formatMoney(locale, p.price)}
+                  fromLabel={copy.programs.from}
+                  reducedMotion={reduce}
+                  ctaLabel={p.is_free ? programUi.viewProgram : programUi.getFullAccess}
+                  onNavigate={() => trackMarketingEvent("program_view", { slug: p.slug, surface: "immersive-home" })}
+                />
+              </BlurReveal>
             ))}
           </div>
         </div>
@@ -339,10 +568,12 @@ export function ImmersiveHome({
                 ))}
               </div>
             </div>
-            <div className="order-1 lg:order-2">
+            <BlurReveal className="order-1 lg:order-2">
               <h2 className="text-[56px] font-extrabold leading-[0.95] tracking-[-0.04em] text-white lg:text-[80px]">
                 <span className="block">{dietCount}+</span>
-                <span className="block">Diet</span>
+                <span className="block">
+                  <WordReveal text="Diet" />
+                </span>
                 <span className="block bg-gradient-to-br from-[#A78BFA] to-[#22D3EE] bg-clip-text text-transparent">Systems.</span>
               </h2>
               <div className="mt-8 max-w-xl overflow-hidden">
@@ -354,7 +585,7 @@ export function ImmersiveHome({
               >
                 {copy.dietsTeaser?.cta ?? programUi.viewProgram} <span className="rtl:rotate-180">→</span>
               </Link>
-            </div>
+            </BlurReveal>
           </div>
           <div className="tj-gradient-divider mx-auto mt-16 max-w-6xl opacity-80" aria-hidden />
         </section>
@@ -363,10 +594,10 @@ export function ImmersiveHome({
       {/* —— 6 STATS —— */}
       <section className="relative flex min-h-[100svh] flex-col justify-center bg-[#09090B] px-6 py-16 lg:px-12 lg:py-24">
         <div className="mx-auto grid max-w-4xl grid-cols-2 gap-12 lg:gap-16">
-          <CountCell target={Math.min(programCount, 99)} suffix="+" label="Complete Programs" reduce={reduce} />
-          <CountCell target={Math.min(dietCount, 99)} suffix="+" label="Diet Systems" reduce={reduce} />
-          <CountCell target={12} suffix="" label="Weeks Per Program" reduce={reduce} />
-          <CountCell target={100} suffix="%" label="Coach-Structured" reduce={reduce} />
+          <CountCell target={programCount} suffix="+" label="Programs" subtitle="Home & gym training" reduce={reduce} />
+          <CountCell target={dietCount} suffix="+" label="Diet Systems" subtitle="Cutting & bulking" reduce={reduce} />
+          <CountCell target={12} suffix="" label="Weeks Per Program" subtitle="Structured progression" reduce={reduce} />
+          <CountCell target={5} suffix="" label="Languages" subtitle="Global platform" reduce={reduce} />
         </div>
         <div className="tj-gradient-divider mx-auto mt-20 max-w-6xl opacity-80" aria-hidden />
       </section>
@@ -379,15 +610,17 @@ export function ImmersiveHome({
         />
         <h2 className="relative text-[48px] font-extrabold leading-[0.95] tracking-[-0.04em] lg:text-[88px]">
           <span className="text-white">Ready to </span>
-          <span className="bg-gradient-to-br from-[#22D3EE] to-[#A78BFA] bg-clip-text text-transparent">Transform?</span>
+          <span className="bg-gradient-to-br from-[#22D3EE] to-[#A78BFA] bg-clip-text text-transparent">
+            <WordReveal text="Transform?" />
+          </span>
         </h2>
         <p className="relative mt-6 max-w-md text-lg text-[#A1A1AA]">{copy.midCta.sub}</p>
-        <Link
+        <MagneticHeroLink
           href={`/${locale}/signup`}
           className="relative mt-10 inline-flex min-h-[56px] items-center justify-center rounded-full bg-gradient-to-br from-[#22D3EE] to-[#0EA5E9] px-10 py-4 text-base font-bold text-[#09090B] shadow-[0_0_28px_rgba(34,211,238,0.25)] transition-transform duration-200 hover:scale-[1.03] motion-reduce:hover:scale-100"
         >
           {navChrome.joinLabel}
-        </Link>
+        </MagneticHeroLink>
         <p className="relative mt-8 text-[13px] text-[#52525B]">{copy.hero.trustLine}</p>
       </section>
     </div>

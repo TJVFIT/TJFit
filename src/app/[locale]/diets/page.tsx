@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useMemo, useState } from "react";
+import { BlurReveal } from "@/components/blur-reveal";
 import { CinematicListingHeader } from "@/components/cinematic-listing-header";
 import { FilterPill, ListingFilterBar } from "@/components/listing-filter-bar";
 import { PremiumPageShell } from "@/components/premium";
@@ -62,19 +63,21 @@ export default function DietsPage({ params }: { params: { locale: string } }) {
     <>
       <AmbientBackground />
       <div className="relative z-[1]">
-        <CinematicListingHeader
-          eyebrow={pageCopy.cinematicEyebrow}
-          headlineBefore={pageCopy.cinematicHeadlineBefore}
-          headlineGradient={pageCopy.cinematicHeadlineGradient}
-          sub={pageCopy.cinematicSub}
-        >
+        <BlurReveal>
+          <CinematicListingHeader
+            eyebrow={pageCopy.cinematicEyebrow}
+            headlineBefore={pageCopy.cinematicHeadlineBefore}
+            headlineGradient={pageCopy.cinematicHeadlineGradient}
+            sub={pageCopy.cinematicSub}
+          >
           <Link
             href={`/${params.locale}/programs`}
             className="text-sm font-medium text-[#22D3EE] transition-colors duration-150 hover:text-white"
           >
             {pageCopy.browseProgramsLink}
           </Link>
-        </CinematicListingHeader>
+          </CinematicListingHeader>
+        </BlurReveal>
 
         <PremiumPageShell className="max-w-[1200px] px-6">
           <ScrollTicker
@@ -94,7 +97,8 @@ export default function DietsPage({ params }: { params: { locale: string } }) {
             className="mb-10 text-[#1E2028]"
           />
 
-          <ListingFilterBar label={pageCopy.filterLabel}>
+          <BlurReveal delay={100}>
+            <ListingFilterBar label={pageCopy.filterLabel}>
             <div className="flex flex-wrap items-center gap-1 px-1">
               <span className="me-1 text-xs text-[#52525B]">{pageCopy.filterType}:</span>
               {(
@@ -118,7 +122,8 @@ export default function DietsPage({ params }: { params: { locale: string } }) {
                 </button>
               ) : null}
             </div>
-          </ListingFilterBar>
+            </ListingFilterBar>
+          </BlurReveal>
 
       <StaggerRevealGrid className="grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map((program) => {
@@ -132,7 +137,8 @@ export default function DietsPage({ params }: { params: { locale: string } }) {
           const typeTag = phase === "cutting" ? pageCopy.typeTagCutting : pageCopy.typeTagBulking;
 
           return (
-            <ProgramCard
+            <BlurReveal key={program.slug} delay={60}>
+              <ProgramCard
               key={program.slug}
               program={program}
               href={`/${params.locale}/programs/${program.slug}`}
@@ -152,7 +158,8 @@ export default function DietsPage({ params }: { params: { locale: string } }) {
                     ? tierLabels.elite
                     : tierLabels.signature
               }
-            />
+              />
+            </BlurReveal>
           );
         })}
       </StaggerRevealGrid>

@@ -132,6 +132,8 @@ npm run dev
 | CHECKOUT_PROMO_PAIRS | Optional | Comma-separated promo pairs (`CODE:PERCENT`). |
 | CHECKOUT_PROMO_CODE | Optional | Single promo code helper env. |
 | CHECKOUT_PROMO_PERCENT | Optional | Single promo percent helper env. |
+| RESEND_API_KEY | Required for email automations | API key for transactional/system emails. |
+| EMAIL_UNSUBSCRIBE_SECRET | Recommended | HMAC secret used to sign one-click unsubscribe links. |
 | PADDLE_DEBUG_LOG | Optional | Enables debug-level Paddle logging on server routes. |
 | NEXT_PUBLIC_GA4_MEASUREMENT_ID | Optional | GA4 measurement id. |
 | NEXT_PUBLIC_META_PIXEL_ID | Optional | Meta pixel id. |
@@ -143,6 +145,8 @@ npm run dev
 ## TJFit Coin Note
 
 The `tjfit_coin_wallets` and `tjfit_coin_ledger` tables are created by migration `20260330000100_tjfit_coin.sql`. This must be applied before any purchase flow is tested, as `fulfillProgramOrderPaid` credits coins after every successful payment.
+
+TJCOIN is designed to work cross-platform. When the TJFit equipment store launches, coins earned on the main platform can be spent there via the same discount code system.
 
 ## Recommended Next Steps
 
