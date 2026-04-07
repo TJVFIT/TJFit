@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { requireAuth } from "@/lib/require-auth";
 import { enqueuePendingNotification } from "@/lib/pending-notifications";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
@@ -19,16 +20,26 @@ const PRESET_GROUPS = [
 ];
 
 export async function GET() {
-  const auth = await requireAuth();
-  if (!auth.ok) return auth.response;
   const admin = getSupabaseServerClient();
   if (!admin) return NextResponse.json({ error: "Server not configured" }, { status: 500 });
+  let viewerId: string | null = null;
+  try {
+    const supabase = createServerSupabaseClient();
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+    viewerId = user?.id ?? null;
+  } catch {
+    viewerId = null;
+  }
 
   await admin.from("community_groups").upsert(PRESET_GROUPS, { onConflict: "slug" });
-  const [{ data: groups }, { data: memberships }] = await Promise.all([
-    admin.from("community_groups").select("id,slug,name,description").order("name", { ascending: true }),
-    admin.from("group_members").select("group_id").eq("user_id", auth.user.id)
-  ]);
+  const groupsResult = await admin.from("community_groups").select("id,slug,name,description").order("name", { ascending: true });
+  const membershipsResult = viewerId
+    ? await admin.from("group_members").select("group_id").eq("user_id", viewerId)
+    : { data: [] as Array<{ group_id: string }> };
+  const groups = groupsResult.data ?? [];
+  const memberships = membershipsResult.data ?? [];
   const mySet = new Set((memberships ?? []).map((m) => m.group_id));
 
   const items = await Promise.all(

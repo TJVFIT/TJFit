@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { isAdminEmail } from "@/lib/auth-utils";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
@@ -9,6 +10,16 @@ export async function POST(_request: NextRequest) {
   const adminClient = getSupabaseServerClient();
   if (!adminClient) {
     return NextResponse.json({ error: "Server not configured" }, { status: 500 });
+  }
+
+  const isAdminByEmail = Boolean(authResult.user.email && isAdminEmail(authResult.user.email));
+  if (isAdminByEmail) {
+    return NextResponse.json({ ok: true, messagesUsed: 0, messageLimit: 999, unlimited: true });
+  }
+
+  const { data: adminProfile } = await adminClient.from("profiles").select("role").eq("id", authResult.user.id).maybeSingle();
+  if (adminProfile?.role === "admin") {
+    return NextResponse.json({ ok: true, messagesUsed: 0, messageLimit: 999, unlimited: true });
   }
 
   const { data: sub } = await adminClient

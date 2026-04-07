@@ -1,365 +1,220 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import type { ReactNode } from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { ArrowRight, Download, Dumbbell, Scale, ScrollText, UtensilsCrossed, Users } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
-import { useAuth } from "@/components/auth-provider";
 import { PremiumPageShell } from "@/components/premium";
 import type { Locale } from "@/lib/i18n";
 import { programs } from "@/lib/content";
 import { localizeProgram } from "@/lib/program-localization";
-import { formatQuizProgress, getStartFunnelCopy } from "@/lib/start-funnel-copy";
-import { resolveStartFunnelDietSlug, resolveStartFunnelProgramSlug } from "@/lib/start-funnel-resolve";
 import { cn } from "@/lib/utils";
 
-type Phase = "landing" | 1 | 2 | 3 | "result";
+type BlogItem = { id: string; title: string; content: string };
+
+const COPY: Record<
+  Locale,
+  {
+    title: string;
+    sub: string;
+    freePrograms: string;
+    freeDiets: string;
+    directDownload: string;
+    openDetails: string;
+    freeTools: string;
+    tdee: string;
+    blogs: string;
+    community: string;
+    noPayment: string;
+    emptyBlogs: string;
+  }
+> = {
+  en: {
+    title: "Start Free Map",
+    sub: "Everything free in one place: free programs, free diets, TDEE calculator, blogs, and community.",
+    freePrograms: "Free Programs",
+    freeDiets: "Free Diets",
+    directDownload: "Direct Download",
+    openDetails: "Open Details",
+    freeTools: "Free Tools",
+    tdee: "TDEE Calculator",
+    blogs: "Blogs",
+    community: "Community",
+    noPayment: "No payment required for these free resources.",
+    emptyBlogs: "No blog posts yet."
+  },
+  tr: {
+    title: "Ucretsiz Baslangic Haritasi",
+    sub: "Tum ucretsiz hizmetler tek yerde: programlar, diyetler, TDEE hesaplayici, bloglar ve topluluk.",
+    freePrograms: "Ucretsiz Programlar",
+    freeDiets: "Ucretsiz Diyetler",
+    directDownload: "Direkt Indir",
+    openDetails: "Detayi Ac",
+    freeTools: "Ucretsiz Araclar",
+    tdee: "TDEE Hesaplayici",
+    blogs: "Bloglar",
+    community: "Topluluk",
+    noPayment: "Bu ucretsiz kaynaklar icin odeme gerekmez.",
+    emptyBlogs: "Henuz blog yok."
+  },
+  ar: {
+    title: "خريطة ابدأ مجاناً",
+    sub: "كل الخدمات المجانية في مكان واحد: برامج مجانية، أنظمة غذائية مجانية، حاسبة TDEE، المدونات، والمجتمع.",
+    freePrograms: "البرامج المجانية",
+    freeDiets: "الأنظمة الغذائية المجانية",
+    directDownload: "تحميل مباشر",
+    openDetails: "فتح التفاصيل",
+    freeTools: "أدوات مجانية",
+    tdee: "حاسبة TDEE",
+    blogs: "المدونات",
+    community: "المجتمع",
+    noPayment: "لا حاجة لأي دفع لهذه الموارد المجانية.",
+    emptyBlogs: "لا توجد مقالات بعد."
+  },
+  es: {
+    title: "Mapa Empezar Gratis",
+    sub: "Todo lo gratis en un lugar: programas, dietas, calculadora TDEE, blogs y comunidad.",
+    freePrograms: "Programas Gratis",
+    freeDiets: "Dietas Gratis",
+    directDownload: "Descarga Directa",
+    openDetails: "Abrir Detalles",
+    freeTools: "Herramientas Gratis",
+    tdee: "Calculadora TDEE",
+    blogs: "Blogs",
+    community: "Comunidad",
+    noPayment: "No se requiere pago para estos recursos gratis.",
+    emptyBlogs: "Aun no hay blogs."
+  },
+  fr: {
+    title: "Carte Commencer Gratuitement",
+    sub: "Tous les services gratuits en un seul endroit : programmes, regimes, calculateur TDEE, blogs et communaute.",
+    freePrograms: "Programmes Gratuits",
+    freeDiets: "Regimes Gratuits",
+    directDownload: "Telechargement Direct",
+    openDetails: "Voir Details",
+    freeTools: "Outils Gratuits",
+    tdee: "Calculateur TDEE",
+    blogs: "Blogs",
+    community: "Communaute",
+    noPayment: "Aucun paiement requis pour ces ressources gratuites.",
+    emptyBlogs: "Pas encore de blogs."
+  }
+};
 
 export function StartFunnelClient({ locale }: { locale: Locale }) {
-  const copy = getStartFunnelCopy(locale);
-  const { user } = useAuth();
-  const [phase, setPhase] = useState<Phase>("landing");
-  const [goal, setGoal] = useState<"fat" | "muscle" | null>(null);
-  const [location, setLocation] = useState<"home" | "gym" | null>(null);
-  const [diet, setDiet] = useState<"cut" | "bulk" | null>(null);
-
-  const ioRef = useRef<HTMLElement | null>(null);
-  const [ioIn, setIoIn] = useState(false);
+  const copy = COPY[locale] ?? COPY.en;
+  const [blogs, setBlogs] = useState<BlogItem[]>([]);
+  const freeItems = useMemo(() => programs.filter((p) => p.is_free), []);
+  const freePrograms = useMemo(
+    () => freeItems.filter((p) => !p.category.toLowerCase().includes("nutrition")).map((p) => localizeProgram(p, locale)),
+    [freeItems, locale]
+  );
+  const freeDiets = useMemo(
+    () => freeItems.filter((p) => p.category.toLowerCase().includes("nutrition")).map((p) => localizeProgram(p, locale)),
+    [freeItems, locale]
+  );
 
   useEffect(() => {
-    const el = ioRef.current;
-    if (!el || typeof IntersectionObserver === "undefined") {
-      setIoIn(true);
-      return;
-    }
-    const obs = new IntersectionObserver(
-      ([e]) => {
-        if (e?.isIntersecting) {
-          setIoIn(true);
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -5% 0px" }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
+    void fetch("/api/blog/posts?status=published", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => setBlogs((data?.posts ?? []).slice(0, 4) as BlogItem[]))
+      .catch(() => setBlogs([]));
   }, []);
-
-  const programSlug = useMemo(() => {
-    if (goal === null || location === null) return null;
-    return resolveStartFunnelProgramSlug(goal, location);
-  }, [goal, location]);
-
-  const dietSlug = useMemo(() => {
-    if (diet === null) return null;
-    return resolveStartFunnelDietSlug(diet);
-  }, [diet]);
-
-  const programModel = useMemo(() => {
-    if (!programSlug) return null;
-    const p = programs.find((x) => x.slug === programSlug);
-    return p ? localizeProgram(p, locale) : null;
-  }, [programSlug, locale]);
-
-  const dietModel = useMemo(() => {
-    if (!dietSlug) return null;
-    const p = programs.find((x) => x.slug === dietSlug);
-    return p ? localizeProgram(p, locale) : null;
-  }, [dietSlug, locale]);
-
-  const programHref = programSlug ? `/${locale}/programs/${programSlug}` : "#";
-  const dietHref = dietSlug ? `/${locale}/programs/${dietSlug}` : "#";
-  const signupHref =
-    programSlug != null ? `/${locale}/signup?next=${encodeURIComponent(programHref)}` : `/${locale}/signup`;
-
-  const mismatchNote =
-    goal === "fat" && location === "gym"
-      ? copy.resultNoteFatGym
-      : goal === "muscle" && location === "home"
-        ? copy.resultNoteMuscleHome
-        : null;
-
-  const quizStepIndex = phase === 1 ? 1 : phase === 2 ? 2 : phase === 3 ? 3 : 0;
-
-  const reset = () => {
-    setPhase("landing");
-    setGoal(null);
-    setLocation(null);
-    setDiet(null);
-  };
 
   return (
     <PremiumPageShell className="max-w-3xl">
-      {phase === "landing" ? (
-        <section
-          ref={ioRef}
-          className={cn(
-            "mx-auto px-4 py-16 text-center sm:px-6 sm:py-24",
-            "tj-io-fade",
-            ioIn && "tj-io-in"
-          )}
-        >
-          <h1 className="font-display text-3xl font-semibold leading-tight tracking-tight text-white sm:text-4xl md:text-[2.75rem] md:leading-[1.1]">
-            {copy.landingHeadline}
-          </h1>
-          <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-zinc-400 sm:text-lg">
-            {copy.landingSubheadline}
-          </p>
-          <button
-            type="button"
-            onClick={() => setPhase(1)}
-            className="mx-auto mt-10 flex min-h-[52px] w-full max-w-sm items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-sky-500 px-8 text-sm font-semibold text-[#05080a] shadow-[0_0_40px_-12px_rgba(34,211,238,0.55)] transition hover:brightness-105 sm:text-base"
-          >
-            {copy.ctaFindPlan}
-            <ArrowRight className="h-5 w-5 shrink-0" aria-hidden />
-          </button>
-        </section>
-      ) : null}
+      <section className="mx-auto px-4 py-14 sm:px-6">
+        <h1 className="font-display text-3xl font-semibold text-white sm:text-4xl">{copy.title}</h1>
+        <p className="mt-3 max-w-2xl text-sm text-zinc-400 sm:text-base">{copy.sub}</p>
+        <p className="mt-2 text-xs text-cyan-300">{copy.noPayment}</p>
+      </section>
 
-      {phase !== "landing" && phase !== "result" ? (
-        <div className="mx-auto px-4 py-10 sm:px-6 sm:py-14">
-          <div className="mb-8 flex gap-1.5 sm:mb-10">
-            {[1, 2, 3].map((n) => (
-              <div
-                key={n}
-                className={cn(
-                  "h-1 flex-1 rounded-full transition-colors duration-300",
-                  quizStepIndex >= n ? "bg-cyan-400/90" : "bg-white/[0.08]"
-                )}
-                aria-hidden
-              />
-            ))}
-          </div>
-          <p className="text-center text-[11px] font-semibold uppercase tracking-[0.22em] text-zinc-500">
-            {formatQuizProgress(copy, quizStepIndex, 3)}
-          </p>
-
-          <div className="relative mt-6 min-h-[12rem] overflow-hidden rounded-[28px] border border-white/[0.08] bg-[#111215]/95 p-6 sm:min-h-[14rem] sm:p-8">
-            {phase === 1 ? (
-              <div key="q1" className="tj-quiz-step space-y-5">
-                <p className="text-lg font-semibold text-white sm:text-xl">{copy.question1Title}</p>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <Choice label={copy.goalFat} selected={goal === "fat"} onClick={() => setGoal("fat")} />
-                  <Choice label={copy.goalMuscle} selected={goal === "muscle"} onClick={() => setGoal("muscle")} />
-                </div>
-                <StepNav
-                  showBack
-                  onBack={reset}
-                  backLabel={copy.back}
-                  nextLabel={copy.next}
-                  canNext={goal !== null}
-                  onNext={() => setPhase(2)}
-                />
+      <section className="mx-auto px-4 pb-10 sm:px-6">
+        <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
+          <Dumbbell className="h-5 w-5 text-cyan-300" /> {copy.freePrograms}
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {freePrograms.map((p) => (
+            <article key={p.slug} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+              <p className="font-medium text-white">{p.title}</p>
+              <p className="mt-2 line-clamp-3 text-sm text-zinc-400">{p.description}</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <a
+                  href={`/api/free/download?slug=${encodeURIComponent(p.slug)}&locale=${locale}`}
+                  className="inline-flex items-center gap-1 rounded-full border border-cyan-300/30 bg-cyan-500/10 px-3 py-1.5 text-xs text-cyan-100"
+                >
+                  <Download className="h-3.5 w-3.5" /> {copy.directDownload}
+                </a>
+                <Link href={`/${locale}/programs/${p.slug}`} className="inline-flex items-center gap-1 rounded-full border border-white/15 px-3 py-1.5 text-xs text-zinc-200">
+                  {copy.openDetails} <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
               </div>
-            ) : null}
-
-            {phase === 2 ? (
-              <div key="q2" className="tj-quiz-step space-y-5">
-                <p className="text-lg font-semibold text-white sm:text-xl">{copy.question2Title}</p>
-                <p className="text-sm text-zinc-500">{copy.stepLocationNote}</p>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <Choice label={copy.locHome} selected={location === "home"} onClick={() => setLocation("home")} />
-                  <Choice label={copy.locGym} selected={location === "gym"} onClick={() => setLocation("gym")} />
-                </div>
-                <StepNav
-                  showBack
-                  onBack={() => setPhase(1)}
-                  backLabel={copy.back}
-                  nextLabel={copy.next}
-                  canNext={location !== null}
-                  onNext={() => setPhase(3)}
-                />
-              </div>
-            ) : null}
-
-            {phase === 3 ? (
-              <div key="q3" className="tj-quiz-step space-y-5">
-                <p className="text-lg font-semibold text-white sm:text-xl">{copy.question3Title}</p>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <Choice
-                    label={
-                      <span className="flex flex-col items-start gap-0.5 text-left">
-                        <span>{copy.dietCut}</span>
-                        <span className="text-xs font-normal text-zinc-500">{copy.dietCutHint}</span>
-                      </span>
-                    }
-                    selected={diet === "cut"}
-                    onClick={() => setDiet("cut")}
-                  />
-                  <Choice
-                    label={
-                      <span className="flex flex-col items-start gap-0.5 text-left">
-                        <span>{copy.dietBulk}</span>
-                        <span className="text-xs font-normal text-zinc-500">{copy.dietBulkHint}</span>
-                      </span>
-                    }
-                    selected={diet === "bulk"}
-                    onClick={() => setDiet("bulk")}
-                  />
-                </div>
-                <StepNav
-                  showBack
-                  onBack={() => setPhase(2)}
-                  backLabel={copy.back}
-                  nextLabel={copy.next}
-                  canNext={diet !== null}
-                  onNext={() => setPhase("result")}
-                />
-              </div>
-            ) : null}
-          </div>
+            </article>
+          ))}
         </div>
-      ) : null}
+      </section>
 
-      {phase === "result" && programModel && dietModel && programSlug && dietSlug ? (
-        <div className="mx-auto space-y-8 px-4 py-10 sm:px-6 sm:py-14">
-          <div className="text-center">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-300/80">{copy.resultTitle}</p>
-            <p className="mt-3 text-sm text-zinc-400">{copy.resultSubtitle}</p>
-          </div>
+      <section className="mx-auto px-4 pb-10 sm:px-6">
+        <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
+          <UtensilsCrossed className="h-5 w-5 text-cyan-300" /> {copy.freeDiets}
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {freeDiets.map((p) => (
+            <article key={p.slug} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+              <p className="font-medium text-white">{p.title}</p>
+              <p className="mt-2 line-clamp-3 text-sm text-zinc-400">{p.description}</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <a
+                  href={`/api/free/download?slug=${encodeURIComponent(p.slug)}&locale=${locale}`}
+                  className="inline-flex items-center gap-1 rounded-full border border-cyan-300/30 bg-cyan-500/10 px-3 py-1.5 text-xs text-cyan-100"
+                >
+                  <Download className="h-3.5 w-3.5" /> {copy.directDownload}
+                </a>
+                <Link href={`/${locale}/programs/${p.slug}`} className="inline-flex items-center gap-1 rounded-full border border-white/15 px-3 py-1.5 text-xs text-zinc-200">
+                  {copy.openDetails} <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
 
-          {mismatchNote ? (
-            <p className="rounded-2xl border border-violet-400/20 bg-violet-500/5 p-4 text-sm leading-relaxed text-zinc-300">
-              {mismatchNote}
-            </p>
-          ) : null}
+      <section className="mx-auto px-4 pb-10 sm:px-6">
+        <h2 className="mb-4 text-lg font-semibold text-white">{copy.freeTools}</h2>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <Link href={`/${locale}/calculator`} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-zinc-100">
+            <Scale className="h-5 w-5 text-cyan-300" />
+            <p className="mt-3 text-sm font-medium">{copy.tdee}</p>
+          </Link>
+          <Link href={`/${locale}/community?tab=blogs`} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-zinc-100">
+            <ScrollText className="h-5 w-5 text-cyan-300" />
+            <p className="mt-3 text-sm font-medium">{copy.blogs}</p>
+          </Link>
+          <Link href={`/${locale}/community`} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-zinc-100">
+            <Users className="h-5 w-5 text-cyan-300" />
+            <p className="mt-3 text-sm font-medium">{copy.community}</p>
+          </Link>
+        </div>
+      </section>
 
-          <div className="grid gap-5 sm:grid-cols-2">
-            <ResultCard
-              label={copy.resultProgramLabel}
-              title={programModel.title}
-              description={programModel.description}
-              href={programHref}
-            />
-            <ResultCard
-              label={copy.resultDietLabel}
-              title={dietModel.title}
-              description={dietModel.description}
-              href={dietHref}
-            />
-          </div>
-
-          {user ? (
-            <Link
-              href={programHref}
-              className="flex min-h-[52px] w-full items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-sky-500 text-sm font-semibold text-[#05080a] shadow-[0_0_36px_-10px_rgba(34,211,238,0.5)]"
-            >
-              {copy.ctaStartFree}
-            </Link>
+      <section className="mx-auto px-4 pb-14 sm:px-6">
+        <h2 className="mb-4 text-lg font-semibold text-white">{copy.blogs}</h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {blogs.length === 0 ? (
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-sm text-zinc-400">{copy.emptyBlogs}</div>
           ) : (
-            <Link
-              href={signupHref}
-              className="flex min-h-[52px] w-full items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-sky-500 text-sm font-semibold text-[#05080a] shadow-[0_0_36px_-10px_rgba(34,211,238,0.5)]"
-            >
-              {copy.ctaStartFree}
-            </Link>
+            blogs.map((post) => (
+              <article key={post.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                <p className="font-medium text-white">{post.title}</p>
+                <p className="mt-2 line-clamp-3 text-sm text-zinc-400">{post.content}</p>
+                <Link href={`/${locale}/community?tab=blogs`} className="mt-3 inline-flex text-xs text-cyan-300">
+                  {copy.openDetails}
+                </Link>
+              </article>
+            ))
           )}
-
-          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <Link
-              href={`/${locale}/programs`}
-              className="flex min-h-[48px] items-center justify-center rounded-full border border-white/15 text-sm font-medium text-zinc-200 transition hover:bg-white/[0.04]"
-            >
-              {copy.ctaBrowsePrograms}
-            </Link>
-            <Link
-              href={`/${locale}/diets`}
-              className="flex min-h-[48px] items-center justify-center rounded-full border border-white/15 text-sm font-medium text-zinc-200 transition hover:bg-white/[0.04]"
-            >
-              {copy.ctaBrowseDiets}
-            </Link>
-          </div>
-
-          <button type="button" onClick={reset} className="w-full text-center text-sm text-zinc-500 transition hover:text-zinc-300">
-            {copy.retakeQuiz}
-          </button>
         </div>
-      ) : null}
+      </section>
     </PremiumPageShell>
-  );
-}
-
-function Choice({
-  label,
-  selected,
-  onClick
-}: {
-  label: ReactNode;
-  selected: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "min-h-[56px] rounded-2xl border px-4 py-4 text-left text-sm font-medium transition duration-200",
-        selected ? "border-cyan-400/55 bg-cyan-500/10 text-white ring-1 ring-cyan-400/25" : "border-white/10 text-zinc-300 hover:border-white/20 hover:bg-white/[0.03]"
-      )}
-    >
-      {label}
-    </button>
-  );
-}
-
-function StepNav({
-  showBack,
-  onBack,
-  backLabel,
-  nextLabel,
-  canNext,
-  onNext
-}: {
-  showBack: boolean;
-  onBack: () => void;
-  backLabel: string;
-  nextLabel: string;
-  canNext: boolean;
-  onNext: () => void;
-}) {
-  return (
-    <div className="flex flex-wrap items-center gap-3 pt-2">
-      {showBack ? (
-        <button
-          type="button"
-          onClick={onBack}
-          className="min-h-[48px] rounded-full border border-white/12 px-5 py-3 text-sm text-zinc-300 transition hover:bg-white/[0.04]"
-        >
-          {backLabel}
-        </button>
-      ) : null}
-      <button
-        type="button"
-        disabled={!canNext}
-        onClick={onNext}
-        className="min-h-[48px] rounded-full bg-gradient-to-r from-cyan-400 to-sky-500 px-6 py-3 text-sm font-semibold text-[#05080a] transition disabled:cursor-not-allowed disabled:opacity-40"
-      >
-        {nextLabel}
-      </button>
-    </div>
-  );
-}
-
-function ResultCard({
-  label,
-  title,
-  description,
-  href
-}: {
-  label: string;
-  title: string;
-  description: string;
-  href: string;
-}) {
-  return (
-    <div className="flex flex-col rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5 sm:p-6">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-500">{label}</p>
-      <p className="mt-2 font-display text-lg font-semibold text-white">{title}</p>
-      <p className="mt-2 line-clamp-4 text-sm leading-relaxed text-zinc-400">{description}</p>
-      <Link href={href} className="mt-4 text-sm font-medium text-cyan-300 hover:text-cyan-200">
-        {title} →
-      </Link>
-    </div>
   );
 }

@@ -14,21 +14,34 @@ import { cn } from "@/lib/utils";
 
 type TabKey = "my-plan" | "chat" | "meal-swap" | "progress";
 
-const TAB_ITEMS: Array<{ key: TabKey; label: string }> = [
-  { key: "my-plan", label: "My Plan" },
-  { key: "chat", label: "Chat" },
-  { key: "meal-swap", label: "Meal Swap" },
-  { key: "progress", label: "Progress" }
-];
+const TAB_LABELS: Record<Locale, Record<TabKey, string>> = {
+  en: { "my-plan": "My Plan", chat: "Chat", "meal-swap": "Meal Swap", progress: "Progress" },
+  tr: { "my-plan": "Planim", chat: "Sohbet", "meal-swap": "Ogün Degistir", progress: "Ilerleme" },
+  ar: { "my-plan": "خطتي", chat: "الدردشة", "meal-swap": "تبديل الوجبة", progress: "التقدم" },
+  es: { "my-plan": "Mi Plan", chat: "Chat", "meal-swap": "Cambiar Comida", progress: "Progreso" },
+  fr: { "my-plan": "Mon Plan", chat: "Chat", "meal-swap": "Changer le Repas", progress: "Progression" }
+};
+
+const HUB_SUBTITLE: Record<Locale, string> = {
+  en: "Your AI-powered transformation coach",
+  tr: "Yapay zeka destekli donusum koçunuz",
+  ar: "مدرب التحول المدعوم بالذكاء الاصطناعي",
+  es: "Tu coach de transformacion con IA",
+  fr: "Votre coach de transformation propulse par IA"
+};
 
 function normalizeTab(raw: string | null): TabKey {
   if (raw === "chat" || raw === "meal-swap" || raw === "progress" || raw === "my-plan") return raw;
   return "my-plan";
 }
 
-function tierLabel(tier: string) {
+function tierLabel(locale: Locale, tier: string) {
   if (tier === "apex") return "Apex";
   if (tier === "pro") return "Pro";
+  if (locale === "ar") return "أساسي";
+  if (locale === "tr") return "Cekirdek";
+  if (locale === "es") return "Basico";
+  if (locale === "fr") return "Essentiel";
   return "Core";
 }
 
@@ -39,6 +52,14 @@ export function TJAIHub({ locale }: { locale: Locale }) {
   const direction = getDirection(locale);
   const [tier, setTier] = useState<"core" | "pro" | "apex">("core");
   const [tab, setTab] = useState<TabKey>(normalizeTab(searchParams.get("tab")));
+  const tabItems = useMemo(
+    () =>
+      (Object.keys(TAB_LABELS[locale]) as TabKey[]).map((key) => ({
+        key,
+        label: TAB_LABELS[locale][key]
+      })),
+    [locale]
+  );
 
   useEffect(() => {
     setTab(normalizeTab(searchParams.get("tab")));
@@ -66,7 +87,7 @@ export function TJAIHub({ locale }: { locale: Locale }) {
     if (tab === "my-plan") return <TJAIMyPlanTab locale={locale} />;
     if (tab === "chat") return <TJAIChatStandalone locale={locale} />;
     if (tab === "meal-swap") return <TJAIMealSwapTab locale={locale} />;
-    return <TJAIProgressTab />;
+    return <TJAIProgressTab locale={locale} />;
   }, [locale, tab]);
 
   return (
@@ -81,14 +102,14 @@ export function TJAIHub({ locale }: { locale: Locale }) {
                   <Sparkles className="h-7 w-7" />
                   TJAI
                 </p>
-                <p className="text-[13px] text-[#A1A1AA]">Your AI-powered transformation coach</p>
+                <p className="text-[13px] text-[#A1A1AA]">{HUB_SUBTITLE[locale]}</p>
               </div>
               <span className="rounded-full border border-[rgba(34,211,238,0.35)] bg-[rgba(34,211,238,0.15)] px-3 py-1 text-xs font-semibold text-[#22D3EE]">
-                {tierLabel(tier)}
+                {tierLabel(locale, tier)}
               </span>
             </div>
             <nav className="mt-4 flex flex-wrap gap-2">
-              {TAB_ITEMS.map((item) => (
+              {tabItems.map((item) => (
                 <button
                   key={item.key}
                   type="button"

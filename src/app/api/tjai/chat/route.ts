@@ -1,10 +1,83 @@
 import { NextResponse } from "next/server";
 
+import { isAdminEmail } from "@/lib/auth-utils";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
+
+const DOMAIN_GUARD =
+  "Please ask me stuff related to health, sports, coaching, or the website.";
+
+function isFitnessDomainMessage(message: string) {
+  const m = message.toLowerCase();
+  const keywords = [
+    "fitness",
+    "health",
+    "sport",
+    "sports",
+    "workout",
+    "training",
+    "coach",
+    "coaching",
+    "diet",
+    "nutrition",
+    "protein",
+    "calorie",
+    "macro",
+    "fat loss",
+    "muscle",
+    "gym",
+    "home workout",
+    "injury",
+    "recovery",
+    "tdee",
+    "tjfit",
+    "website",
+    "program",
+    "community",
+    "blog"
+  ];
+  return keywords.some((k) => m.includes(k));
+}
+
+function buildFallbackReply(message: string, locale: string) {
+  const m = message.toLowerCase();
+  if (!isFitnessDomainMessage(message)) return DOMAIN_GUARD;
+  if (m.includes("chest") || m.includes("push")) {
+    return locale === "ar"
+      ? "بعد يوم الصدر: اعمل سحب خفيف (ظهر + بايسبس) أو كارديو منخفض الشدة. حافظ على التعافي: نوم 7-9 ساعات، بروتين كافٍ، وإحماء الكتف قبل أي تمارين ضغط."
+      : "After chest day, do a light pull session (back + biceps) or low-intensity cardio. Prioritize recovery: 7-9h sleep, enough protein, and shoulder warm-up before pressing again.";
+  }
+  if (m.includes("fat") || m.includes("lose weight")) {
+    return locale === "ar"
+      ? "لخسارة الدهون: ابدأ بعجز 300-500 سعرة يومياً، بروتين 1.6-2.2 غ/كغ، تمارين مقاومة 3-4 أيام، و8-10 آلاف خطوة."
+      : "For fat loss: start with a 300-500 kcal daily deficit, protein around 1.6-2.2 g/kg, resistance training 3-4 days/week, and 8-10k daily steps.";
+  }
+  if (m.includes("muscle") || m.includes("bulk")) {
+    return locale === "ar"
+      ? "لبناء العضلات: فائض 200-300 سعرة، بروتين 1.6-2.2 غ/كغ، حمل تدريجي، وتتبّع الأداء أسبوعياً."
+      : "For muscle gain: use a 200-300 kcal surplus, protein 1.6-2.2 g/kg, progressive overload, and weekly performance tracking.";
+  }
+  if (m.includes("tdee")) {
+    return locale === "ar"
+      ? "يمكنك استخدام حاسبة TDEE في الموقع من قسم Start Free لتحديد سعرات الصيانة ثم ضبط الهدف (تنشيف/زيادة)."
+      : "Use the website TDEE calculator in Start Free to estimate maintenance calories, then adjust for your goal (cut or gain).";
+  }
+  return locale === "ar"
+    ? "أقدر أساعدك في التدريب، التغذية، التعافي، وبرامج TJFit. اذكر هدفك الحالي وسأعطيك خطة واضحة."
+    : "I can help with training, nutrition, recovery, and TJFit programs. Tell me your current goal and I will give you a clear plan.";
+}
+
+function textResponse(text: string) {
+  return new Response(text, {
+    headers: {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "no-cache"
+    }
+  });
+}
 
 export async function POST(request: Request) {
   const auth = await requireAuth();
@@ -20,7 +93,23 @@ export async function POST(request: Request) {
   if (!conversationId) return NextResponse.json({ error: "conversationId required" }, { status: 400 });
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) return NextResponse.json({ error: "AI not configured" }, { status: 503 });
+  const isAdminByEmail = Boolean(auth.user.email && isAdminEmail(auth.user.email));
+  let isAdminByRole = false;
+  if (!isAdminByEmail) {
+    const { data: profile } = await admin.from("profiles").select("role").eq("id", auth.user.id).maybeSingle();
+    isAdminByRole = profile?.role === "admin";
+  }
+  const isAdmin = isAdminByEmail || isAdminByRole;
+
+  if (!isAdmin && !isFitnessDomainMessage(message)) {
+    await admin.from("tjai_chat_messages").insert({
+      user_id: auth.user.id,
+      conversation_id: conversationId,
+      role: "assistant",
+      content: DOMAIN_GUARD
+    });
+    return textResponse(DOMAIN_GUARD);
+  }
 
   const [{ data: subscription }, { data: historyRows }, { data: planRow }] = await Promise.all([
     admin.from("user_subscriptions").select("tier").eq("user_id", auth.user.id).maybeSingle(),
@@ -41,7 +130,7 @@ export async function POST(request: Request) {
   ]);
 
   const tier = (subscription?.tier ?? "core") as "core" | "pro" | "apex";
-  if (tier === "core") {
+  if (!isAdmin && tier === "core") {
     const { data: usage } = await admin
       .from("tjai_trial_usage")
       .select("messages_used")
@@ -51,7 +140,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Trial message limit reached.", code: "LIMIT_REACHED" }, { status: 402 });
     }
   }
-  if (tier === "pro") {
+  if (!isAdmin && tier === "pro") {
     return NextResponse.json({ error: "TJAI chat is available for Apex or Core trial users.", code: "TJAI_CHAT_UPGRADE_REQUIRED" }, { status: 402 });
   }
 
@@ -72,6 +161,17 @@ export async function POST(request: Request) {
 
   const planSummary = (planRow?.plan_json as { summary?: Record<string, unknown> } | null)?.summary ?? {};
 
+  if (!apiKey) {
+    const fallback = buildFallbackReply(message, locale);
+    await admin.from("tjai_chat_messages").insert({
+      user_id: auth.user.id,
+      conversation_id: conversationId,
+      role: "assistant",
+      content: fallback
+    });
+    return textResponse(fallback);
+  }
+
   const upstream = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
@@ -89,13 +189,21 @@ Always respond in the user's language.
 Preferred locale: ${locale}
 User's plan summary: ${JSON.stringify(planSummary)}
 You have full context of this user's goals, body stats, training split, and dietary targets.
-Reference their specific plan data when relevant.`,
+Reference their specific plan data when relevant.
+If the user asks about topics unrelated to fitness, health, sports, coaching, or the TJFit website, reply exactly with:
+"${DOMAIN_GUARD}"`,
       messages: [...history, { role: "user", content: message }]
     })
   });
   if (!upstream.ok || !upstream.body) {
-    const raw = await upstream.text();
-    return NextResponse.json({ error: "Chat generation failed", details: raw.slice(0, 300) }, { status: 502 });
+    const fallback = buildFallbackReply(message, locale);
+    await admin.from("tjai_chat_messages").insert({
+      user_id: auth.user.id,
+      conversation_id: conversationId,
+      role: "assistant",
+      content: fallback
+    });
+    return textResponse(fallback);
   }
 
   const encoder = new TextEncoder();

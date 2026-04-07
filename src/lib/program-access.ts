@@ -1,8 +1,11 @@
 import type { Program } from "@/lib/content";
+import { isAdminEmail } from "@/lib/auth-utils";
 import { hasPurchasedProgram } from "@/lib/purchases";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
-export async function getOptionalServerUser(): Promise<{ userId: string; supabase: ReturnType<typeof createServerSupabaseClient> } | null> {
+export async function getOptionalServerUser(): Promise<
+  { userId: string; role: "admin" | "coach" | "user"; supabase: ReturnType<typeof createServerSupabaseClient> } | null
+> {
   try {
     const supabase = createServerSupabaseClient();
     const {
@@ -10,7 +13,12 @@ export async function getOptionalServerUser(): Promise<{ userId: string; supabas
       error
     } = await supabase.auth.getUser();
     if (error || !user?.id) return null;
-    return { userId: user.id, supabase };
+    if (user.email && isAdminEmail(user.email)) {
+      return { userId: user.id, role: "admin", supabase };
+    }
+    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
+    const role = profile?.role === "admin" ? "admin" : profile?.role === "coach" ? "coach" : "user";
+    return { userId: user.id, role, supabase };
   } catch {
     return null;
   }
@@ -38,8 +46,17 @@ export type ProgramDetailAccess = {
 export function resolveStaticProgramAccess(
   program: Program | null,
   userId: string | null,
-  hasPaidOrder: boolean
+  hasPaidOrder: boolean,
+  isAdmin = false
 ): ProgramDetailAccess {
+  if (isAdmin) {
+    return {
+      showFullFreeContent: true,
+      showFullPaidContent: true,
+      needsSignupForFree: false,
+      needsPurchaseForPaid: false
+    };
+  }
   if (!program) {
     return {
       showFullFreeContent: false,

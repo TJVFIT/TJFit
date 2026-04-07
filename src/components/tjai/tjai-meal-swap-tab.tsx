@@ -15,6 +15,42 @@ type MealOption = {
 };
 
 export function TJAIMealSwapTab({ locale }: { locale: string }) {
+  const isArabic = locale === "ar";
+  const t = isArabic
+    ? {
+        locked: "تبديل الوجبات مقفل",
+        lockedSub: "تبديل الوجبات متاح لأعضاء Pro و Apex.",
+        upgrade: "ترقية",
+        selectMeal: "اختر وجبة لتبديلها",
+        pickMeal: "اختر وجبة...",
+        whySwap: "لماذا تريد التبديل؟ (اختياري)",
+        noIngredients: "لا أملك المكونات",
+        dislike: "لا أحب هذا الطعام",
+        dietary: "تفضيل غذائي",
+        variety: "أريد التنويع",
+        finding: "جارٍ البحث...",
+        findAlt: "ابحث عن بديل",
+        swapsRemaining: "عمليات تبديل متبقية اليوم",
+        useMeal: "استخدم هذه الوجبة",
+        mealWord: "وجبة"
+      }
+    : {
+        locked: "Meal Swap is locked",
+        lockedSub: "Meal Swap is available for Pro and Apex members.",
+        upgrade: "Upgrade",
+        selectMeal: "Select a meal to swap",
+        pickMeal: "Pick a meal...",
+        whySwap: "Why are you swapping? (optional)",
+        noIngredients: "Don&apos;t have the ingredients",
+        dislike: "Don&apos;t like this food",
+        dietary: "Dietary preference",
+        variety: "Just want variety",
+        finding: "Finding...",
+        findAlt: "Find Alternative",
+        swapsRemaining: "swaps remaining today",
+        useMeal: "Use This Meal",
+        mealWord: "Meal"
+      };
   const [tier, setTier] = useState<"core" | "pro" | "apex">("core");
   const [planId, setPlanId] = useState<string>("");
   const [plan, setPlan] = useState<TJAIPlan | null>(null);
@@ -58,14 +94,14 @@ export function TJAIMealSwapTab({ locale }: { locale: string }) {
             weekIndex,
             dayIndex,
             mealIndex,
-            label: `${day.label}, Meal ${mealIndex + 1}: ${meal.name}`,
+            label: `${day.label}, ${t.mealWord} ${mealIndex + 1}: ${meal.name}`,
             meal
           });
         });
       });
     });
     return list;
-  }, [plan]);
+  }, [plan, t.mealWord]);
 
   const doSwap = async () => {
     if (!selected || swapsRemaining <= 0) return;
@@ -110,10 +146,10 @@ export function TJAIMealSwapTab({ locale }: { locale: string }) {
   if (!access.canUseMealSwap) {
     return (
       <div className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
-        <h3 className="text-lg font-semibold text-white">Meal Swap is locked</h3>
-        <p className="mt-2 text-sm text-zinc-400">Meal Swap is available for Pro and Apex members.</p>
+        <h3 className="text-lg font-semibold text-white">{t.locked}</h3>
+        <p className="mt-2 text-sm text-zinc-400">{t.lockedSub}</p>
         <a href={`/${locale}/membership?tier=pro`} className="mt-4 inline-flex rounded-full bg-[#22D3EE] px-4 py-2 text-sm font-semibold text-[#09090B]">
-          Upgrade
+          {t.upgrade}
         </a>
       </div>
     );
@@ -121,13 +157,13 @@ export function TJAIMealSwapTab({ locale }: { locale: string }) {
 
   return (
     <div className="space-y-4 rounded-2xl border border-[#1E2028] bg-[#111215] p-5">
-      <h3 className="text-lg font-semibold text-white">Select a meal to swap</h3>
+      <h3 className="text-lg font-semibold text-white">{t.selectMeal}</h3>
       <select
         value={selected?.key ?? ""}
         onChange={(e) => setSelected(options.find((o) => o.key === e.target.value) ?? null)}
         className="w-full rounded-xl border border-[#1E2028] bg-[#0E0F12] px-3 py-2 text-sm text-white"
       >
-        <option value="">Pick a meal...</option>
+        <option value="">{t.pickMeal}</option>
         {options.map((option) => (
           <option key={option.key} value={option.key}>
             {option.label}
@@ -136,11 +172,11 @@ export function TJAIMealSwapTab({ locale }: { locale: string }) {
       </select>
 
       <select value={reason} onChange={(e) => setReason(e.target.value)} className="w-full rounded-xl border border-[#1E2028] bg-[#0E0F12] px-3 py-2 text-sm text-white">
-        <option value="">Why are you swapping? (optional)</option>
-        <option value="ingredients">Don&apos;t have the ingredients</option>
-        <option value="taste">Don&apos;t like this food</option>
-        <option value="diet">Dietary preference</option>
-        <option value="variety">Just want variety</option>
+        <option value="">{t.whySwap}</option>
+        <option value="ingredients">{t.noIngredients}</option>
+        <option value="taste">{t.dislike}</option>
+        <option value="diet">{t.dietary}</option>
+        <option value="variety">{t.variety}</option>
       </select>
 
       <div className="flex flex-wrap gap-2">
@@ -157,9 +193,9 @@ export function TJAIMealSwapTab({ locale }: { locale: string }) {
       </div>
 
       <button type="button" onClick={() => void doSwap()} disabled={!selected || loading || swapsRemaining <= 0} className="rounded-full bg-[#22D3EE] px-4 py-2 text-sm font-semibold text-[#09090B] disabled:opacity-50">
-        {loading ? "Finding..." : "Find Alternative"}
+        {loading ? t.finding : t.findAlt}
       </button>
-      <p className="text-xs text-zinc-500">{swapsRemaining} swaps remaining today</p>
+      <p className="text-xs text-zinc-500">{swapsRemaining} {t.swapsRemaining}</p>
 
       <div className="grid gap-3 md:grid-cols-3">
         {alternatives.map((meal) => (
@@ -169,7 +205,7 @@ export function TJAIMealSwapTab({ locale }: { locale: string }) {
               {meal.calories} kcal · P {meal.protein} C {meal.carbs} F {meal.fat}
             </p>
             <button type="button" onClick={() => void applyAlternative(meal)} className="mt-3 rounded-full border border-[#1E2028] px-3 py-1 text-xs text-zinc-200">
-              Use This Meal
+              {t.useMeal}
             </button>
           </article>
         ))}

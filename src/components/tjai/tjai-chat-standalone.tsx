@@ -21,12 +21,51 @@ type ConversationPreview = {
   created_at: string;
 };
 
-const SUGGESTED = [
-  "What should I eat before training?",
-  "How do I break a plateau?",
-  "Can I swap leg day to Saturday?",
-  "My shoulder hurts — what do I modify?"
-];
+const COPY = {
+  en: {
+    suggested: [
+      "What should I eat before training?",
+      "How do I break a plateau?",
+      "Can I swap leg day to Saturday?",
+      "My shoulder hurts — what do I modify?"
+    ],
+    newChat: "New Chat",
+    fallbackConversation: "New chat",
+    chatFailed: "I could not respond right now. Please try again.",
+    voiceUnsupported: "Voice not supported in this browser",
+    voiceInput: "Voice input",
+    voiceUnsupportedInline: "Voice input is not supported in this browser.",
+    askPlaceholder: "Ask TJAI...",
+    listening: "Listening...",
+    voice: "Voice",
+    coreRemaining: "messages remaining",
+    proLocked: "Chat is Apex-only",
+    apexUnlimited: "Unlimited chat",
+    trialUsed: "You&apos;ve used your free TJAI trial",
+    trialSub: "Upgrade to Apex for unlimited coaching conversations.",
+    upgrade: "Upgrade to Apex",
+    close: "Close"
+  },
+  ar: {
+    suggested: ["ماذا آكل قبل التمرين؟", "كيف أتجاوز ثبات المستوى؟", "هل يمكن نقل يوم الأرجل إلى السبت؟", "كتفي يؤلمني — ماذا أعدّل؟"],
+    newChat: "محادثة جديدة",
+    fallbackConversation: "محادثة جديدة",
+    chatFailed: "تعذر الرد الآن. حاول مرة أخرى.",
+    voiceUnsupported: "الإدخال الصوتي غير مدعوم في هذا المتصفح",
+    voiceInput: "إدخال صوتي",
+    voiceUnsupportedInline: "الإدخال الصوتي غير مدعوم في هذا المتصفح.",
+    askPlaceholder: "اسأل TJAI...",
+    listening: "جاري الاستماع...",
+    voice: "صوت",
+    coreRemaining: "رسائل متبقية",
+    proLocked: "الدردشة متاحة فقط في Apex",
+    apexUnlimited: "دردشة غير محدودة",
+    trialUsed: "لقد استخدمت التجربة المجانية لـ TJAI",
+    trialSub: "قم بالترقية إلى Apex لمحادثات تدريب غير محدودة.",
+    upgrade: "الترقية إلى Apex",
+    close: "إغلاق"
+  }
+} as const;
 
 function voiceLang(locale: Locale) {
   if (locale === "tr") return "tr-TR";
@@ -37,6 +76,7 @@ function voiceLang(locale: Locale) {
 }
 
 export function TJAIChatStandalone({ locale }: { locale: Locale }) {
+  const t = locale === "ar" ? COPY.ar : COPY.en;
   const island = useDynamicIsland();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -148,7 +188,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
         setMessages((prev) => prev.map((m) => (m.id === assistantId ? { ...m, content: `${m.content}${chunk}` } : m)));
       }
     } catch {
-      setMessages((prev) => prev.map((m) => (m.id === assistantId ? { ...m, content: "I could not respond right now. Please try again." } : m)));
+      setMessages((prev) => prev.map((m) => (m.id === assistantId ? { ...m, content: t.chatFailed } : m)));
     } finally {
       setIsStreaming(false);
       void fetch("/api/tjai/chat/conversations", { credentials: "include", cache: "no-store" })
@@ -162,7 +202,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
       setVoiceSupported(false);
-      island?.showNotification("signup", "Voice not supported in this browser");
+      island?.showNotification("signup", t.voiceUnsupported);
       return;
     }
     if (recognitionRef.current && isListening) {
@@ -203,7 +243,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
           }}
           className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#1E2028] px-3 py-2 text-xs text-zinc-200"
         >
-          <Plus className="h-4 w-4" /> New Chat
+          <Plus className="h-4 w-4" /> {t.newChat}
         </button>
         <div className="mt-3 space-y-2">
           {conversations.map((item) => (
@@ -213,7 +253,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
               onClick={() => void loadConversation(item.conversation_id)}
               className="block w-full rounded-lg border border-[#1E2028] bg-[#0E0F12] px-3 py-2 text-left text-xs text-zinc-300"
             >
-              {item.starter || "New chat"}
+              {item.starter || t.fallbackConversation}
             </button>
           ))}
         </div>
@@ -223,7 +263,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
         <div ref={listRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
           {messages.length === 0 ? (
             <div className="grid gap-2 sm:grid-cols-2">
-              {SUGGESTED.map((item) => (
+              {t.suggested.map((item) => (
                 <button
                   key={item}
                   type="button"
@@ -251,8 +291,8 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
         </div>
 
         <div className="border-t border-[#1E2028] px-3 py-3">
-          {showVoiceTip ? <p className="mb-2 text-xs text-zinc-500">Voice input</p> : null}
-          {!voiceSupported ? <p className="mb-2 text-xs text-red-300">Voice input is not supported in this browser.</p> : null}
+          {showVoiceTip ? <p className="mb-2 text-xs text-zinc-500">{t.voiceInput}</p> : null}
+          {!voiceSupported ? <p className="mb-2 text-xs text-red-300">{t.voiceUnsupportedInline}</p> : null}
           <form
             className="flex items-end gap-2"
             onSubmit={(event) => {
@@ -264,7 +304,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
               value={input}
               onChange={(event) => setInput(event.target.value)}
               rows={1}
-              placeholder="Ask TJAI..."
+              placeholder={t.askPlaceholder}
               className="max-h-[120px] min-h-[42px] flex-1 resize-none rounded-xl border border-[#1E2028] bg-[#0E0F12] px-3 py-2 text-sm text-white outline-none"
             />
             <button
@@ -273,26 +313,26 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
               className={cn("inline-flex h-10 items-center gap-2 rounded-full border px-3 text-xs", isListening ? "border-red-400/50 text-red-300" : "border-[#1E2028] text-zinc-200")}
             >
               <Mic className={cn("h-4 w-4", isListening && "animate-pulse")} />
-              {isListening ? "Listening..." : "Voice"}
+              {isListening ? t.listening : t.voice}
             </button>
             <button type="submit" className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#22D3EE] text-[#09090B]">
               <Send className="h-4 w-4" />
             </button>
           </form>
-          <p className="mt-2 text-xs text-zinc-500">{tier === "core" ? `${remaining} messages remaining` : tier === "pro" ? "Chat is Apex-only" : "Unlimited chat"}</p>
+          <p className="mt-2 text-xs text-zinc-500">{tier === "core" ? `${remaining} ${t.coreRemaining}` : tier === "pro" ? t.proLocked : t.apexUnlimited}</p>
         </div>
       </section>
 
       {showLimitOverlay ? (
         <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/60 p-4">
           <div className="w-full max-w-md rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
-            <h3 className="text-lg font-semibold text-white">You&apos;ve used your free TJAI trial</h3>
-            <p className="mt-2 text-sm text-zinc-400">Upgrade to Apex for unlimited coaching conversations.</p>
+            <h3 className="text-lg font-semibold text-white">{t.trialUsed}</h3>
+            <p className="mt-2 text-sm text-zinc-400">{t.trialSub}</p>
             <a href={`/${locale}/membership?tier=apex`} className="mt-4 inline-flex rounded-full bg-[#22D3EE] px-4 py-2 text-sm font-semibold text-[#09090B]">
-              Upgrade to Apex
+              {t.upgrade}
             </a>
             <button type="button" className="mt-3 block text-xs text-zinc-500" onClick={() => setShowLimitOverlay(false)}>
-              Close
+              {t.close}
             </button>
           </div>
         </div>

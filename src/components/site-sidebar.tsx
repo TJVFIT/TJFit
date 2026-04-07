@@ -49,6 +49,17 @@ const LOCALE_LABELS: Record<Locale, string> = {
   fr: "Français"
 };
 
+const SIDEBAR_COPY: Record<
+  Locale,
+  { tjaiTooltip: string; calculator: string; feed: string; coinsShop: string; leaderboard: string; aiTools: string }
+> = {
+  en: { tjaiTooltip: "TJAI — Your AI Coach", calculator: "Calculator", feed: "Feed", coinsShop: "TJCOIN Shop", leaderboard: "Leaderboard", aiTools: "AI & Tools" },
+  tr: { tjaiTooltip: "TJAI — Yapay Zeka Kocun", calculator: "Hesaplayici", feed: "Akis", coinsShop: "TJCOIN Magazasi", leaderboard: "Liderlik Tablosu", aiTools: "Yapay Zeka ve Araclar" },
+  ar: { tjaiTooltip: "TJAI — مدربك الذكي", calculator: "الحاسبة", feed: "الخلاصة", coinsShop: "متجر TJCOIN", leaderboard: "لوحة الصدارة", aiTools: "الذكاء والأدوات" },
+  es: { tjaiTooltip: "TJAI — Tu entrenador IA", calculator: "Calculadora", feed: "Feed", coinsShop: "Tienda TJCOIN", leaderboard: "Clasificacion", aiTools: "IA y Herramientas" },
+  fr: { tjaiTooltip: "TJAI — Votre coach IA", calculator: "Calculateur", feed: "Flux", coinsShop: "Boutique TJCOIN", leaderboard: "Classement", aiTools: "IA et Outils" }
+};
+
 type ItemDef = {
   key: string;
   href: string;
@@ -101,6 +112,7 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
 
   const isAdmin = role === "admin";
   const soonMessage = SOON_MSG_BY_LOCALE[locale] ?? SOON_MSG_BY_LOCALE.en;
+  const side = SIDEBAR_COPY[locale] ?? SIDEBAR_COPY.en;
 
   useEffect(() => {
     if (reduce) {
@@ -149,23 +161,23 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
   const items: ItemDef[] = useMemo(
     () => [
       { key: "home", href: "/", label: dict.nav.home, Icon: Home },
-      { key: "tjai", href: "/ai", label: "TJAI", Icon: Sparkles, badgeText: "AI", collapsedTooltip: "TJAI — Your AI Coach" },
-      { key: "calculator", href: "/calculator", label: "Calculator", Icon: Scale },
+      { key: "tjai", href: "/ai", label: "TJAI", Icon: Sparkles, badgeText: "AI", collapsedTooltip: side.tjaiTooltip },
+      { key: "calculator", href: "/calculator", label: side.calculator, Icon: Scale },
       { key: "programs", href: "/programs", label: dict.nav.programs, Icon: Dumbbell },
       { key: "diets", href: "/diets", label: dict.nav.diets, Icon: UtensilsCrossed },
       { key: "start", href: "/start", label: nav.startFreeLabel, Icon: Rocket },
       { key: "coaches", href: "/coaches", label: dict.nav.coaches, Icon: Users },
-      { key: "feed", href: "/feed", label: "Feed", Icon: Users },
-      { key: "community", href: "/community", label: dict.nav.community, Icon: MessageCircle, comingSoon: true },
+      { key: "feed", href: "/feed", label: side.feed, Icon: Users },
+      { key: "community", href: "/community", label: dict.nav.community, Icon: MessageCircle },
       { key: "membership", href: "/membership", label: dict.nav.membership, Icon: CreditCard, comingSoon: true },
-      { key: "coins", href: "/coins", label: "TJCOIN Shop", Icon: Coins },
-      { key: "leaderboard", href: "/leaderboard", label: "Leaderboard", Icon: Trophy },
+      { key: "coins", href: "/coins", label: side.coinsShop, Icon: Coins },
+      { key: "leaderboard", href: "/leaderboard", label: side.leaderboard, Icon: Trophy },
       { key: "legal", href: "/legal", label: nav.legalCenterLabel, Icon: Scale },
       { key: "messages", href: "/messages", label: dict.nav.messages, Icon: Inbox },
       { key: "profile", href: "/profile/edit", label: dict.nav.profile, Icon: User },
       { key: "admin", href: "/admin", label: dict.nav.admin, Icon: Shield, adminOnly: true }
     ],
-    [dict.nav, nav.startFreeLabel, nav.legalCenterLabel]
+    [dict.nav, nav.startFreeLabel, nav.legalCenterLabel, side]
   );
 
   const visibleItems = useMemo(
@@ -389,7 +401,7 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
           {primaryItems.map((it, i) => renderNavRow(it, i))}
           <div className={cn("my-2 px-3", sidebarExpanded ? "opacity-100" : "opacity-0")}>
             <div className="h-px w-full bg-[#1E2028]" />
-            <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#52525B]">AI & Tools</p>
+            <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#52525B]">{side.aiTools}</p>
           </div>
           {aiToolsItems.map((it, i) => renderNavRow(it, i + primaryItems.length))}
         </nav>
@@ -513,6 +525,7 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
         aiToolsItems={aiToolsItems}
         dict={dict}
         nav={nav}
+        side={side}
         user={user}
         loading={loading}
         onSoon={() => {
@@ -530,6 +543,7 @@ function MobileNav({
   aiToolsItems,
   dict,
   nav,
+  side,
   user,
   loading,
   onSoon
@@ -539,6 +553,7 @@ function MobileNav({
   aiToolsItems: ItemDef[];
   dict: ReturnType<typeof getDictionary>;
   nav: ReturnType<typeof getNavChromeCopy>;
+  side: (typeof SIDEBAR_COPY)[Locale];
   user: ReturnType<typeof useAuth>["user"];
   loading: boolean;
   onSoon: () => void;
@@ -638,6 +653,11 @@ function MobileNav({
           aria-label={nav.language}
           className="tj-nav-scroll flex min-h-11 min-w-0 max-w-[min(48vw,12.5rem)] flex-1 items-center justify-end gap-1 overflow-x-auto overscroll-x-contain py-0.5 sm:max-w-[min(52vw,14rem)]"
         >
+          {locale !== "en" ? (
+            <Link href={`/en${normalizedPath}${search}`} className="flex h-11 min-w-[56px] shrink-0 items-center justify-center rounded-lg border border-[rgba(34,211,238,0.4)] bg-[rgba(34,211,238,0.08)] px-2 text-[11px] font-bold uppercase tracking-wider text-[#22D3EE]">
+              EN
+            </Link>
+          ) : null}
           {locales.map((code) => (
             <Link key={code} href={`/${code}${normalizedPath}${search}`} className={localeChipClass(code)}>
               {code.toUpperCase()}
@@ -729,7 +749,7 @@ function MobileNav({
                     );
                   })}
                   <div className="my-2 border-t border-[#1E2028] pt-3 text-center text-[10px] font-semibold uppercase tracking-[0.14em] text-[#52525B]">
-                    AI & Tools
+                    {side.aiTools}
                   </div>
                   {aiToolsItems.map((it, i) => {
                     const active = !it.comingSoon && isActivePath(pathname, locale, it.href);

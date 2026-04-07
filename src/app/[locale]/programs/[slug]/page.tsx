@@ -91,6 +91,7 @@ export default async function ProgramDetailPage({
 
   const authCtx = await getOptionalServerUser();
   const userId = authCtx?.userId ?? null;
+  const isAdmin = authCtx?.role === "admin";
   if (program && !program.is_free && !userId) {
     redirect(`/${locale}/signup?redirect=${encodeURIComponent(`/${locale}/programs/${slug}`)}`);
   }
@@ -98,7 +99,7 @@ export default async function ProgramDetailPage({
   if (authCtx && program && !program.is_free) {
     hasPaidOrder = await userHasPaidProgram(authCtx.supabase, userId!, slug);
   }
-  const access = resolveStaticProgramAccess(program ?? null, userId, hasPaidOrder);
+  const access = resolveStaticProgramAccess(program ?? null, userId, hasPaidOrder, isAdmin);
 
   const baseTry = program ? getProgramBasePriceTry(program) : customProgram?.price_try ?? 400;
   const localizedPrice = program?.is_free ? copy.freePriceLabel : formatProgramPrice(baseTry, locale);

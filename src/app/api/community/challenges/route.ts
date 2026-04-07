@@ -1,13 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 export async function GET() {
-  const auth = await requireAuth();
-  if (!auth.ok) return auth.response;
   const admin = getSupabaseServerClient();
   if (!admin) return NextResponse.json({ error: "Server not configured" }, { status: 500 });
+  let viewerId: string | null = null;
+  try {
+    const supabase = createServerSupabaseClient();
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+    viewerId = user?.id ?? null;
+  } catch {
+    viewerId = null;
+  }
 
   const today = new Date().toISOString().slice(0, 10);
   const { data: challenges } = await admin
@@ -20,21 +29,25 @@ export async function GET() {
     (challenges ?? []).map(async (challenge) => {
       const [{ count: participants }, { data: joined }, { data: todayLog }, { data: logs }] = await Promise.all([
         admin.from("challenge_participants").select("*", { head: true, count: "exact" }).eq("challenge_id", challenge.id),
-        admin
-          .from("challenge_participants")
-          .select("user_id")
-          .eq("challenge_id", challenge.id)
-          .eq("user_id", auth.user.id)
-          .maybeSingle(),
-        admin
-          .from("challenge_logs")
-          .select("value,logged_at")
-          .eq("challenge_id", challenge.id)
-          .eq("user_id", auth.user.id)
-          .gte("logged_at", `${today}T00:00:00.000Z`)
-          .order("logged_at", { ascending: false })
-          .limit(1)
-          .maybeSingle(),
+        viewerId
+          ? admin
+              .from("challenge_participants")
+              .select("user_id")
+              .eq("challenge_id", challenge.id)
+              .eq("user_id", viewerId)
+              .maybeSingle()
+          : Promise.resolve({ data: null }),
+        viewerId
+          ? admin
+              .from("challenge_logs")
+              .select("value,logged_at")
+              .eq("challenge_id", challenge.id)
+              .eq("user_id", viewerId)
+              .gte("logged_at", `${today}T00:00:00.000Z`)
+              .order("logged_at", { ascending: false })
+              .limit(1)
+              .maybeSingle()
+          : Promise.resolve({ data: null }),
         admin.from("challenge_logs").select("user_id,value").eq("challenge_id", challenge.id)
       ]);
 
@@ -50,7 +63,7 @@ export async function GET() {
       const myRank = [...scoreMap.entries()]
         .map(([userId, total]) => ({ userId, total }))
         .sort((a, b) => b.total - a.total)
-        .findIndex((entry) => entry.userId === auth.user.id);
+        .findIndex((entry) => entry.userId === viewerId);
       return {
         ...challenge,
         participants: participants ?? 0,
@@ -58,7 +71,7 @@ export async function GET() {
         todayLogged: Boolean(todayLog),
         todayValue: todayLog?.value ?? null,
         leaderboard: topUsers,
-        myRank: myRank >= 0 ? myRank + 1 : null
+        myRank: viewerId && myRank >= 0 ? myRank + 1 : null
       };
     })
   );

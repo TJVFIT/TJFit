@@ -8,7 +8,106 @@ import type { Locale } from "@/lib/i18n";
 import type { TJAIPlan } from "@/lib/tjai-types";
 import { cn } from "@/lib/utils";
 
+const COPY = {
+  en: {
+    loading: "Loading your plan...",
+    buildTitle: "Build Your 12-Week Plan",
+    buildSub: "Answer 19 questions. TJAI does the rest in minutes.",
+    start: "Start Building",
+    oneTime: "Or get just your plan — one time (€9.99)",
+    note: "~5 minutes · Completely personalized · Science-based",
+    dailyCalories: "Daily calories",
+    proteinTarget: "Protein target",
+    trainingDays: "Training days/week",
+    goal: "Goal",
+    workout: "Workout",
+    nutrition: "Nutrition",
+    dailyTotals: "Daily totals",
+    downloadPdf: "Download as PDF",
+    regenerate: "Regenerate Plan",
+    days: "days",
+    transformation: "Transformation"
+  },
+  tr: {
+    loading: "Planim yukleniyor...",
+    buildTitle: "12 Haftalik Planini Olustur",
+    buildSub: "19 soruyu cevapla. TJAI kalanini dakikalar icinde yapar.",
+    start: "Olusturmaya Basla",
+    oneTime: "Veya sadece planini al — tek seferlik (€9.99)",
+    note: "~5 dakika · Tamamen kisisel · Bilim temelli",
+    dailyCalories: "Gunluk kalori",
+    proteinTarget: "Protein hedefi",
+    trainingDays: "Antrenman gunu/hafta",
+    goal: "Hedef",
+    workout: "Antrenman",
+    nutrition: "Beslenme",
+    dailyTotals: "Gunluk toplamlar",
+    downloadPdf: "PDF olarak indir",
+    regenerate: "Plani yenile",
+    days: "gun",
+    transformation: "Donusum"
+  },
+  ar: {
+    loading: "جارٍ تحميل خطتك...",
+    buildTitle: "ابنِ خطتك لمدة 12 أسبوعاً",
+    buildSub: "أجب عن 19 سؤالاً وTJAI يتكفّل بالباقي خلال دقائق.",
+    start: "ابدأ البناء",
+    oneTime: "أو احصل على خطتك فقط — مرة واحدة (€9.99)",
+    note: "~5 دقائق · مخصص بالكامل · مبني على العلم",
+    dailyCalories: "سعرات يومية",
+    proteinTarget: "هدف البروتين",
+    trainingDays: "أيام التدريب/الأسبوع",
+    goal: "الهدف",
+    workout: "التمرين",
+    nutrition: "التغذية",
+    dailyTotals: "إجمالي اليوم",
+    downloadPdf: "تحميل PDF",
+    regenerate: "إعادة توليد الخطة",
+    days: "أيام",
+    transformation: "تحول"
+  },
+  es: {
+    loading: "Cargando tu plan...",
+    buildTitle: "Crea tu Plan de 12 Semanas",
+    buildSub: "Responde 19 preguntas. TJAI hace el resto en minutos.",
+    start: "Comenzar",
+    oneTime: "O consigue solo tu plan — pago unico (€9.99)",
+    note: "~5 minutos · Totalmente personalizado · Basado en ciencia",
+    dailyCalories: "Calorias diarias",
+    proteinTarget: "Objetivo de proteina",
+    trainingDays: "Dias de entrenamiento/semana",
+    goal: "Objetivo",
+    workout: "Entrenamiento",
+    nutrition: "Nutricion",
+    dailyTotals: "Totales diarios",
+    downloadPdf: "Descargar PDF",
+    regenerate: "Regenerar plan",
+    days: "dias",
+    transformation: "Transformacion"
+  },
+  fr: {
+    loading: "Chargement de votre plan...",
+    buildTitle: "Construisez votre plan sur 12 semaines",
+    buildSub: "Repondez a 19 questions. TJAI fait le reste en quelques minutes.",
+    start: "Commencer",
+    oneTime: "Ou obtenez uniquement votre plan — en une fois (€9.99)",
+    note: "~5 minutes · Entierement personnalise · Base sur la science",
+    dailyCalories: "Calories quotidiennes",
+    proteinTarget: "Objectif proteines",
+    trainingDays: "Jours d'entrainement/semaine",
+    goal: "Objectif",
+    workout: "Entrainement",
+    nutrition: "Nutrition",
+    dailyTotals: "Totaux journaliers",
+    downloadPdf: "Telecharger en PDF",
+    regenerate: "Regenerer le plan",
+    days: "jours",
+    transformation: "Transformation"
+  }
+} as const;
+
 export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
+  const t = COPY[locale] ?? COPY.en;
   const [loading, setLoading] = useState(true);
   const [showBuilder, setShowBuilder] = useState(false);
   const [plan, setPlan] = useState<TJAIPlan | null>(null);
@@ -42,13 +141,13 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
     () =>
       plan
         ? [
-            { label: "Daily calories", value: `${plan.summary.calorieTarget} kcal` },
-            { label: "Protein target", value: `${plan.summary.protein}g` },
-            { label: "Training days/week", value: "7 days" },
-            { label: "Goal", value: String(plan.summary.timeToGoal || "Transformation") }
+            { label: t.dailyCalories, value: `${plan.summary.calorieTarget} kcal` },
+            { label: t.proteinTarget, value: `${plan.summary.protein}g` },
+            { label: t.trainingDays, value: `7 ${t.days}` },
+            { label: t.goal, value: String(plan.summary.timeToGoal || t.transformation) }
           ]
         : [],
-    [plan]
+    [plan, t.dailyCalories, t.goal, t.proteinTarget, t.trainingDays, t.days, t.transformation]
   );
 
   if (showBuilder) {
@@ -56,7 +155,7 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
   }
 
   if (loading) {
-    return <div className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6 text-sm text-zinc-400">Loading your plan...</div>;
+    return <div className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6 text-sm text-zinc-400">{t.loading}</div>;
   }
 
   if (!plan) {
@@ -66,15 +165,15 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
           <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-500/10 text-[#22D3EE] shadow-[0_0_24px_rgba(34,211,238,0.35)]">
             <Sparkles className="h-6 w-6" />
           </div>
-          <h3 className="mt-4 text-2xl font-bold text-white">Build Your 12-Week Plan</h3>
-          <p className="mt-2 text-sm text-zinc-400">Answer 19 questions. TJAI does the rest in minutes.</p>
+          <h3 className="mt-4 text-2xl font-bold text-white">{t.buildTitle}</h3>
+          <p className="mt-2 text-sm text-zinc-400">{t.buildSub}</p>
           <button type="button" onClick={() => setShowBuilder(true)} className="mt-5 rounded-full bg-[#22D3EE] px-5 py-2 text-sm font-semibold text-[#09090B]">
-            Start Building
+            {t.start}
           </button>
           <a href={`/${locale}/membership?tjai_onetime=1`} className="mt-3 inline-flex rounded-full border border-[#1E2028] px-4 py-2 text-xs text-zinc-300">
-            Or get just your plan — one time (€9.99)
+            {t.oneTime}
           </a>
-          <p className="mt-3 text-xs text-zinc-500">~5 minutes · Completely personalized · Science-based</p>
+          <p className="mt-3 text-xs text-zinc-500">{t.note}</p>
         </div>
       </div>
     );
@@ -123,7 +222,7 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
         {activeDay ? (
           <div className="mt-4 grid gap-4 lg:grid-cols-2">
             <article className="rounded-xl border border-[#1E2028] bg-[#0E0F12] p-4">
-              <h4 className="font-semibold text-white">Workout</h4>
+              <h4 className="font-semibold text-white">{t.workout}</h4>
               <div className="mt-2 space-y-2">
                 {(plan.program.weeks[phaseIdx]?.days[dayIdx]?.exercises ?? []).map((exercise) => (
                   <div key={`${exercise.name}-${exercise.reps}`} className="rounded-lg border border-[#1E2028] p-2 text-sm text-zinc-300">
@@ -136,7 +235,7 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
               </div>
             </article>
             <article className="rounded-xl border border-[#1E2028] bg-[#0E0F12] p-4">
-              <h4 className="font-semibold text-white">Nutrition</h4>
+              <h4 className="font-semibold text-white">{t.nutrition}</h4>
               <div className="mt-2 space-y-2">
                 {activeDay.meals.map((meal) => (
                   <div key={`${meal.name}-${meal.time}`} className="rounded-lg border border-[#1E2028] p-2 text-sm text-zinc-300">
@@ -148,7 +247,7 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
                 ))}
               </div>
               <p className="mt-3 text-xs text-zinc-400">
-                Daily totals: {activeDay.totals.calories} kcal · P {activeDay.totals.protein} · C {activeDay.totals.carbs} · F {activeDay.totals.fat}
+                {t.dailyTotals}: {activeDay.totals.calories} kcal · P {activeDay.totals.protein} · C {activeDay.totals.carbs} · F {activeDay.totals.fat}
               </p>
             </article>
           </div>
@@ -162,7 +261,7 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
           onClick={() => window.open("/api/tjai/generate-pdf", "_blank")}
           className="rounded-full border border-[#1E2028] px-4 py-2 text-sm text-zinc-200 disabled:opacity-50"
         >
-          Download as PDF
+          {t.downloadPdf}
         </button>
         <button
           type="button"
@@ -170,7 +269,7 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
           onClick={() => setShowBuilder(true)}
           className="rounded-full border border-[#1E2028] px-4 py-2 text-sm text-zinc-200 disabled:opacity-50"
         >
-          Regenerate Plan
+          {t.regenerate}
         </button>
       </div>
     </div>

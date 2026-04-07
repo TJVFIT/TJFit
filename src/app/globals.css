@@ -1301,10 +1301,6 @@ html {
   right: calc(100% + 12px);
 }
 
-[dir="rtl"] .flex-row {
-  flex-direction: row-reverse;
-}
-
 [dir="rtl"] input,
 [dir="rtl"] textarea {
   text-align: right;

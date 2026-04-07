@@ -20,7 +20,7 @@ import { trackMarketingEvent } from "@/lib/analytics-events";
 import type { HomeLuxuryCopy } from "@/lib/home-luxury-copy";
 import { getNavChromeCopy } from "@/lib/launch-copy";
 import { getProgramUiCopy } from "@/lib/program-localization";
-import type { Locale } from "@/lib/i18n";
+import { getDirection, type Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 import type { HomeCoachPreview, HomeProgramPreview } from "@/components/luxury/luxury-home";
@@ -170,16 +170,28 @@ function HeroSilhouette({ entered, reduce }: { entered: boolean; reduce: boolean
 function FloatingHeroStats({
   entered,
   reduce,
-  activeUsers
+  activeUsers,
+  locale,
+  direction
 }: {
   entered: boolean;
   reduce: boolean;
   activeUsers: number;
+  locale: Locale;
+  direction: "ltr" | "rtl";
 }) {
+  const t = {
+    en: { programs: "Expert Programs", online: "Members Training Now", languages: "Languages", onlineSuffix: "Online" },
+    tr: { programs: "Uzman Program", online: "Su an aktif uyeler", languages: "Diller", onlineSuffix: "Aktif" },
+    ar: { programs: "برامج احترافية", online: "أعضاء يتدرّبون الآن", languages: "لغات", onlineSuffix: "متصل" },
+    es: { programs: "Programas Expertos", online: "Miembros entrenando ahora", languages: "Idiomas", onlineSuffix: "En linea" },
+    fr: { programs: "Programmes Experts", online: "Membres en entrainement", languages: "Langues", onlineSuffix: "En ligne" }
+  }[locale];
+  const onlineCount = new Intl.NumberFormat(locale === "ar" ? "ar-SA" : locale === "tr" ? "tr-TR" : locale === "es" ? "es-ES" : locale === "fr" ? "fr-FR" : "en-US").format(activeUsers || 0);
   const cards = [
-    { a: "20+", b: "Expert Programs", c: "", pos: "left-[5%] top-[35%]" },
-    { a: `${activeUsers || 0} Online`, b: "Members Training Now", c: "", pos: "right-[5%] top-[25%]" },
-    { a: "5", b: "Languages", c: "", pos: "right-[8%] top-[55%]" }
+    { a: "20+", b: t.programs, c: "", ltr: "left-[5%] top-[35%]", rtl: "right-[5%] top-[35%]" },
+    { a: `${onlineCount} ${t.onlineSuffix}`, b: t.online, c: "", ltr: "right-[5%] top-[25%]", rtl: "left-[5%] top-[25%]" },
+    { a: "5", b: t.languages, c: "", ltr: "right-[8%] top-[55%]", rtl: "left-[8%] top-[55%]" }
   ];
   return (
     <div className="pointer-events-none absolute inset-0 z-0 max-md:hidden">
@@ -188,7 +200,7 @@ function FloatingHeroStats({
           key={`${card.a}-${card.b}`}
           className={cn(
             "tj-float-stat absolute w-[210px] rounded-2xl border border-[rgba(34,211,238,0.2)] bg-[rgba(17,18,21,0.85)] px-5 py-4 backdrop-blur-[12px] shadow-[0_8px_32px_rgba(0,0,0,0.4)] will-change-transform",
-            card.pos,
+            direction === "rtl" ? card.rtl : card.ltr,
             entered ? "opacity-100" : "opacity-0"
           )}
           style={{
@@ -230,6 +242,8 @@ export function ImmersiveHome({
 }) {
   void _coaches;
   const reduce = useReducedMotion();
+  const direction = getDirection(locale);
+  const isRtl = direction === "rtl";
   const programUi = getProgramUiCopy(locale);
   const navChrome = getNavChromeCopy(locale);
   const [heroEntered, setHeroEntered] = useState(reduce);
@@ -330,8 +344,8 @@ export function ImmersiveHome({
   const h1 = copy.hero.headline.trim();
   const line1 = h1.split(/\s+/)[0] ?? "Train";
   const line2 = h1.slice(line1.length).trim() || "Smarter.";
-  const line3Accent = copy.hero.headlineLine2Accent ?? "Transform";
-  const line3Rest = copy.hero.headlineLine2Rest ?? ".";
+  const line3Accent = copy.hero.headlineLine2Accent ?? "";
+  const line3Rest = copy.hero.headlineLine2Rest ?? "";
 
   const featureItems = copy.features.items.slice(0, 3);
   const programSlice = useMemo(() => programs.slice(0, 4), [programs]);
@@ -393,7 +407,7 @@ export function ImmersiveHome({
           <HeroSilhouette entered={heroEntered} reduce={reduce} />
         </div>
         <div ref={statsRef}>
-          <FloatingHeroStats entered={heroEntered} reduce={reduce} activeUsers={liveStats.activeToday} />
+          <FloatingHeroStats entered={heroEntered} reduce={reduce} activeUsers={liveStats.activeToday} locale={locale} direction={direction} />
         </div>
 
         <div className="relative z-10 mx-auto w-full max-w-5xl text-center lg:text-left">
@@ -408,16 +422,26 @@ export function ImmersiveHome({
           </p>
 
           <h1 ref={headlineRef} className="mt-8 font-sans text-[clamp(2.5rem,8vw,4.5rem)] font-extrabold leading-[0.95] tracking-[-0.04em] lg:text-[96px]">
-            <span className="block" style={lineMotion(300)}>
-              <SplitText text={line1} delay={300} />
-            </span>
-            <span className="block" style={lineMotion(450)}>
-              <SplitText text={line2} delay={450} />
-            </span>
-            <span className="block" style={lineMotion(600)}>
-              <span className="bg-gradient-to-br from-[#22D3EE] to-[#A78BFA] bg-clip-text text-transparent">{line3Accent}</span>
-              <span className="text-white">{line3Rest}</span>
-            </span>
+            {isRtl ? (
+              <span className="block" style={lineMotion(300)}>
+                {h1}
+              </span>
+            ) : (
+              <>
+                <span className="block" style={lineMotion(300)}>
+                  <SplitText text={line1} delay={300} />
+                </span>
+                <span className="block" style={lineMotion(450)}>
+                  <SplitText text={line2} delay={450} />
+                </span>
+                {line3Accent || line3Rest ? (
+                  <span className="block" style={lineMotion(600)}>
+                    <span className="bg-gradient-to-br from-[#22D3EE] to-[#A78BFA] bg-clip-text text-transparent">{line3Accent}</span>
+                    <span className="text-white">{line3Rest}</span>
+                  </span>
+                ) : null}
+              </>
+            )}
           </h1>
 
           <div ref={subCtaRef}>
@@ -461,7 +485,7 @@ export function ImmersiveHome({
                 )}
               >
                 <span className="h-1.5 w-1.5 rounded-full bg-[#22C55E] motion-safe:animate-pulse" />
-                {liveStats.activeToday} people training on TJFit right now
+                {locale === "ar" ? `${new Intl.NumberFormat("ar-SA").format(liveStats.activeToday)} يتدرّبون الآن على TJFit` : `${liveStats.activeToday} people training on TJFit right now`}
               </span>
               <span
                 className={cn(
@@ -469,7 +493,7 @@ export function ImmersiveHome({
                   livePulse && "scale-[1.04]"
                 )}
               >
-                {liveStats.programsStartedToday} programs started today
+                {locale === "ar" ? `${new Intl.NumberFormat("ar-SA").format(liveStats.programsStartedToday)} بدأوا برنامجاً اليوم` : `${liveStats.programsStartedToday} programs started today`}
               </span>
             </div>
           </div>

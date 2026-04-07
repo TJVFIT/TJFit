@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { isAdminEmail } from "@/lib/auth-utils";
 import { buildTJAISystemPrompt, buildTJAIUserPrompt } from "@/lib/tjai-prompts";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
@@ -20,6 +21,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Server not configured" }, { status: 500 });
   }
 
+  const isAdminByEmail = Boolean(authResult.user.email && isAdminEmail(authResult.user.email));
   const [{ data: subscription }, { data: purchase }] = await Promise.all([
     adminClient.from("user_subscriptions").select("tier,status,trial_ends_at").eq("user_id", authResult.user.id).maybeSingle(),
     adminClient
@@ -33,9 +35,16 @@ export async function POST(request: NextRequest) {
 
   const tier = (subscription?.tier ?? "core") as "core" | "pro" | "apex";
   const isTrialActive = subscription?.trial_ends_at ? new Date(subscription.trial_ends_at).getTime() > Date.now() : false;
+  let isAdminByRole = false;
+  if (!isAdminByEmail) {
+    const { data: profile } = await adminClient.from("profiles").select("role").eq("id", authResult.user.id).maybeSingle();
+    isAdminByRole = profile?.role === "admin";
+  }
+  const isAdmin = isAdminByEmail || isAdminByRole;
   const access = getTJAIAccess(tier, {
     hasOneTimePlanPurchase: Boolean(purchase?.id),
-    coreTrialMessagesRemaining: isTrialActive ? 10 : 0
+    coreTrialMessagesRemaining: isTrialActive ? 10 : 0,
+    isAdmin
   });
   if (!access.canGeneratePlan) {
     return NextResponse.json(
