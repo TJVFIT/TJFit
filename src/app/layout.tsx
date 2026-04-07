@@ -54,14 +54,13 @@ export const metadata: Metadata = {
   },
   description: defaultDescription,
   applicationName: "TJFit",
-  themeColor: "#0A0A0B",
-  manifest: "/site.webmanifest",
+  themeColor: "#09090B",
+  manifest: "/manifest.json",
   icons: {
     icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-      { url: "/favicon.ico", sizes: "any" }
+      { url: "/favicon.svg", type: "image/svg+xml" }
     ],
-    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }]
+    apple: [{ url: "/favicon.svg", type: "image/svg+xml" }]
   },
   appleWebApp: {
     capable: true,

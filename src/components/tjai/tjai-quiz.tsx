@@ -34,12 +34,14 @@ function hasAnswer(step: QuizStep, answer: QuizAnswers[string] | undefined): boo
 export function TJAIQuiz({ copy, steps, direction, onSubmit, onAnswersChange }: Props) {
   const [answers, setAnswers] = useState<QuizAnswers>({});
   const [idx, setIdx] = useState(0);
+  const [displayIdx, setDisplayIdx] = useState(0);
+  const [transitioning, setTransitioning] = useState(false);
   const [showError, setShowError] = useState(false);
   const [shake, setShake] = useState(false);
   const magneticGenerateRef = useMagneticButton<HTMLButtonElement>(0.3);
 
   const filteredSteps = useMemo(() => steps.filter((step) => !isSkipped(step, answers)), [steps, answers]);
-  const step = filteredSteps[idx];
+  const step = filteredSteps[displayIdx] ?? filteredSteps[idx];
   const total = filteredSteps.length;
   const progress = total > 0 ? ((idx + 1) / total) * 100 : 0;
 
@@ -47,6 +49,21 @@ export function TJAIQuiz({ copy, steps, direction, onSubmit, onAnswersChange }: 
     if (!step) return;
     if (idx > total - 1) setIdx(Math.max(0, total - 1));
   }, [idx, step, total]);
+
+  useEffect(() => {
+    if (idx === displayIdx) return;
+    setTransitioning(true);
+    const switchTimer = window.setTimeout(() => {
+      setDisplayIdx(idx);
+    }, 200);
+    const doneTimer = window.setTimeout(() => {
+      setTransitioning(false);
+    }, 400);
+    return () => {
+      window.clearTimeout(switchTimer);
+      window.clearTimeout(doneTimer);
+    };
+  }, [displayIdx, idx]);
 
   useEffect(() => {
     if (!step) return;
@@ -300,7 +317,7 @@ export function TJAIQuiz({ copy, steps, direction, onSubmit, onAnswersChange }: 
         <div className="pt-1">
           <div className="h-[2px] overflow-hidden rounded-full bg-[#1E2028]">
             <div
-              className="h-full bg-[linear-gradient(90deg,#22D3EE,#A78BFA)] transition-[width] duration-[600ms] [transition-timing-function:cubic-bezier(0,0,0.2,1)]"
+              className="tjai-progress-fill h-full bg-[linear-gradient(90deg,#22D3EE,#A78BFA)]"
               style={{ width: `${progress}%`, marginLeft: direction === "rtl" ? "auto" : undefined }}
             />
           </div>
@@ -309,7 +326,13 @@ export function TJAIQuiz({ copy, steps, direction, onSubmit, onAnswersChange }: 
           </p>
         </div>
 
-        <div key={step.id} className="mt-8 flex-1 animate-[tjai-step-enter_420ms_ease]">
+        <div
+          key={step.id}
+          className={cn(
+            "tjai-question mt-8 flex-1",
+            transitioning ? "exiting" : "entering"
+          )}
+        >
           <div className="mb-4 text-[11px] uppercase tracking-[0.2em] text-[#22D3EE]">{step.section}</div>
           <h1 className="text-[clamp(1.375rem,3vw,1.75rem)] font-bold leading-[1.3] text-white">{step.question}</h1>
           {step.sub ? <p className="mt-2 text-sm leading-6 text-[#A1A1AA]">{step.sub}</p> : null}

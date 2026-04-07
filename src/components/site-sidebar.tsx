@@ -168,6 +168,7 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
   );
 
   const handleLogout = async () => {
+    if (!window.confirm("Sign out of TJFit?")) return;
     const supabase = getSupabaseBrowserClient();
     if (supabase) {
       await supabase.auth.signOut();
@@ -356,7 +357,7 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
         onMouseEnter={onSidebarEnter}
         onMouseLeave={onSidebarLeave}
         className={cn(
-          "tj-sidebar-rail fixed top-0 z-50 hidden h-[100dvh] flex-col overflow-x-visible overflow-y-hidden border-[rgba(255,255,255,0.04)] will-change-[width] lg:flex",
+          "site-sidebar tj-sidebar-rail fixed top-0 z-50 hidden h-[100dvh] flex-col overflow-x-visible overflow-y-hidden border-[rgba(255,255,255,0.04)] will-change-[width] lg:flex",
           "transition-[width,transform,background-color,backdrop-filter] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
           direction === "rtl" ? "right-0 border-l" : "left-0 border-r",
           sidebarExpanded ? "w-[260px]" : "w-16",
@@ -563,9 +564,19 @@ function MobileNav({
     };
   }, [open]);
 
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open]);
+
   const normalizedPath = pathname.replace(/^\/(en|tr|ar|es|fr)/, "") || "";
 
   const handleLogout = async () => {
+    if (!window.confirm("Sign out of TJFit?")) return;
     const supabase = getSupabaseBrowserClient();
     if (supabase) {
       await supabase.auth.signOut();

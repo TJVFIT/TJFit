@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { useMemo, useState } from "react";
+import { notFound, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { BlurReveal } from "@/components/blur-reveal";
 import { CinematicListingHeader } from "@/components/cinematic-listing-header";
 import { FilterPill, ListingFilterBar } from "@/components/listing-filter-bar";
@@ -30,6 +30,8 @@ export default function DietsPage({ params }: { params: { locale: string } }) {
   const locale = (localeValid ? rawLocale : "en") as Locale;
   const copy = getProgramUiCopy(locale);
   const pageCopy = getDietsMarketplaceCopy(locale);
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [phaseFilter, setPhaseFilter] = useState<PhaseFilter>("all");
 
   const allDiets = useMemo(
@@ -43,6 +45,19 @@ export default function DietsPage({ params }: { params: { locale: string } }) {
   );
 
   const filterActive = phaseFilter !== "all";
+
+  useEffect(() => {
+    const phase = searchParams.get("phase");
+    setPhaseFilter(phase === "cutting" || phase === "bulking" ? phase : "all");
+  }, [searchParams]);
+
+  const syncPhaseToUrl = (nextPhase: PhaseFilter) => {
+    const qs = new URLSearchParams(searchParams.toString());
+    if (nextPhase === "all") qs.delete("phase");
+    else qs.set("phase", nextPhase);
+    const query = qs.toString();
+    router.replace(query ? `/${locale}/diets?${query}` : `/${locale}/diets`);
+  };
 
   if (!localeValid) {
     notFound();
@@ -108,14 +123,24 @@ export default function DietsPage({ params }: { params: { locale: string } }) {
                   ["bulking", pageCopy.bulking]
                 ] as const
               ).map(([k, label]) => (
-                <FilterPill key={k} active={phaseFilter === k} onClick={() => setPhaseFilter(k)}>
+                <FilterPill
+                  key={k}
+                  active={phaseFilter === k}
+                  onClick={() => {
+                    setPhaseFilter(k);
+                    syncPhaseToUrl(k);
+                  }}
+                >
                   {label}
                 </FilterPill>
               ))}
               {filterActive ? (
                 <button
                   type="button"
-                  onClick={() => setPhaseFilter("all")}
+                  onClick={() => {
+                    setPhaseFilter("all");
+                    syncPhaseToUrl("all");
+                  }}
                   className="ms-1 min-h-[44px] px-2 text-[13px] font-medium text-[#22D3EE] transition-colors duration-150 hover:text-white sm:min-h-0"
                 >
                   {pageCopy.clearFilters}
@@ -174,7 +199,10 @@ export default function DietsPage({ params }: { params: { locale: string } }) {
             <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-muted)]">{pageCopy.emptyFilterSub}</p>
             <button
               type="button"
-              onClick={() => setPhaseFilter("all")}
+              onClick={() => {
+                setPhaseFilter("all");
+                syncPhaseToUrl("all");
+              }}
               className="mt-6 inline-flex min-h-[44px] items-center justify-center rounded-[10px] border border-[var(--color-border)] px-5 py-2 text-sm font-medium text-white transition-colors duration-150 hover:border-[rgba(255,255,255,0.12)] hover:bg-[rgba(255,255,255,0.04)]"
             >
               {pageCopy.clearFilters}

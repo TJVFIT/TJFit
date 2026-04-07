@@ -1,0 +1,14 @@
+{
+  "name": "TJFit",
+  "short_name": "TJFit",
+  "theme_color": "#09090B",
+  "background_color": "#09090B",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

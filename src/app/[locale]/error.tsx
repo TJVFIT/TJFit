@@ -3,19 +3,45 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
+import { ParticleField } from "@/components/particle-field";
 import { isLocale, type Locale } from "@/lib/i18n";
 
-const COPY: Record<Locale, { heading: string; sub: string; retry: string; back: string }> = {
-  en: { heading: "Something went wrong.", sub: "An unexpected error occurred. Please try again.", retry: "Try Again", back: "Back to TJFit" },
-  tr: { heading: "Bir seyler ters gitti.", sub: "Beklenmeyen bir hata olustu. Lutfen tekrar deneyin.", retry: "Tekrar Dene", back: "TJFit'e don" },
-  ar: { heading: "??? ??? ??.", sub: "??? ??? ??? ?????. ???? ???????? ??? ????.", retry: "???? ??????", back: "?????? ??? TJFit" },
-  es: { heading: "Algo salio mal.", sub: "Ocurrio un error inesperado. Intentalo de nuevo.", retry: "Intentar de nuevo", back: "Volver a TJFit" },
-  fr: { heading: "Une erreur est survenue.", sub: "Une erreur inattendue s'est produite. Veuillez reessayer.", retry: "Reessayer", back: "Retour a TJFit" }
+const COPY: Record<Locale, { heading: string; sub: string; refresh: string; back: string }> = {
+  en: {
+    heading: "Something went wrong",
+    sub: "Our team has been notified. Please try again.",
+    refresh: "Refresh Page",
+    back: "Back to TJFit"
+  },
+  tr: {
+    heading: "Bir sorun olustu",
+    sub: "Ekibimiz bilgilendirildi. Lutfen tekrar deneyin.",
+    refresh: "Sayfayi Yenile",
+    back: "TJFit'e Don"
+  },
+  ar: {
+    heading: "حدث خطا ما",
+    sub: "تم ابلاغ فريقنا. يرجى المحاولة مرة اخرى.",
+    refresh: "تحديث الصفحة",
+    back: "العودة الى TJFit"
+  },
+  es: {
+    heading: "Algo salio mal",
+    sub: "Nuestro equipo fue notificado. Intentalo otra vez.",
+    refresh: "Actualizar pagina",
+    back: "Volver a TJFit"
+  },
+  fr: {
+    heading: "Une erreur est survenue",
+    sub: "Notre equipe a ete notifiee. Veuillez reessayer.",
+    refresh: "Rafraichir la page",
+    back: "Retour a TJFit"
+  }
 };
 
 export default function LocaleError({
   error,
-  reset
+  reset: _reset
 }: {
   error: Error & { digest?: string };
   reset: () => void;
@@ -34,27 +60,34 @@ export default function LocaleError({
 
   return (
     <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-[#09090B] px-6 text-center">
-      <div
-        className="pointer-events-none absolute left-1/2 top-0 h-[24rem] w-[24rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.06)_0%,transparent_72%)]"
-        aria-hidden
-      />
-      <h1 className="text-3xl font-bold text-white">{c.heading}</h1>
+      <ParticleField className="pointer-events-none absolute inset-0 opacity-20" />
+      <LogoMark />
+      <p className="text-[clamp(6rem,20vw,120px)] font-extrabold leading-none text-[#EF4444]">500</p>
+      <h1 className="mt-2 text-3xl font-bold text-white">{c.heading}</h1>
       <p className="mt-3 max-w-md text-sm text-[#A1A1AA] sm:text-base">{c.sub}</p>
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <button
           type="button"
-          onClick={() => reset()}
+          onClick={() => window.location.reload()}
           className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-cyan-400/30 bg-cyan-400/10 px-6 py-2.5 text-sm font-semibold text-cyan-200 transition-colors hover:border-cyan-400/50 hover:text-white"
         >
-          {c.retry}
+          {c.refresh}
         </button>
         <Link
           href={homeHref}
           className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-white/15 px-6 py-2.5 text-sm font-semibold text-zinc-300 transition-colors hover:border-white/25 hover:text-white"
         >
-          <span className="rtl:rotate-180 inline-block">?</span> {c.back}
+          {c.back}
         </Link>
       </div>
     </section>
+  );
+}
+
+function LogoMark() {
+  return (
+    <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
+      <span className="text-xl font-bold text-white">TJ</span>
+    </div>
   );
 }

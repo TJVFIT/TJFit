@@ -91,17 +91,16 @@ function SignupForm({ params }: { params: { locale: string } }) {
         return;
       }
 
-      if (data.session && redirectTarget) {
-        router.push(redirectTarget);
-        router.refresh();
-        return;
-      }
+      const emailParam = encodeURIComponent(email.trim());
+      const verifyRedirect = redirectTarget
+        ? `/${locale}/verify-email?redirect=${encodeURIComponent(redirectTarget)}&email=${emailParam}`
+        : `/${locale}/verify-email?email=${emailParam}`;
 
-      setSuccess(copy.signupSuccess);
-      setEmail("");
-      setPassword("");
-      setConfirmPassword("");
-      setAcceptedTerms(false);
+      if (data.session) {
+        await supabase.auth.signOut();
+      }
+      router.push(verifyRedirect);
+      router.refresh();
     } catch (err) {
       console.error("[signup] submit failed", err);
       setError(copy.signupFailed);

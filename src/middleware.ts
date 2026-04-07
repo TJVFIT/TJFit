@@ -64,6 +64,8 @@ function matchHtmlGuard(pathname: string): { locale: string; kind: GuardKind } |
   if (sub === "/messages" || sub.startsWith("/messages/")) return { locale, kind: "auth_user" };
   if (sub === "/profile/edit" || sub.startsWith("/profile/edit/")) return { locale, kind: "auth_user" };
   if (sub === "/checkout" || sub.startsWith("/checkout/")) return { locale, kind: "auth_user" };
+  if (sub === "/purchase" || sub.startsWith("/purchase/")) return { locale, kind: "auth_user" };
+  if (sub === "/payment" || sub.startsWith("/payment/")) return { locale, kind: "auth_user" };
   if (sub === "/progress" || sub.startsWith("/progress/")) return { locale, kind: "auth_user" };
   if (sub === "/settings" || sub.startsWith("/settings/")) return { locale, kind: "auth_user" };
   return null;
@@ -104,8 +106,17 @@ export async function middleware(request: NextRequest) {
 
     if (!user) {
       const login = new URL(`/${locale}/login`, request.url);
-      login.searchParams.set("next", path);
+      login.searchParams.set("redirect", path);
       const redirectRes = NextResponse.redirect(login);
+      copyCookies(response, redirectRes);
+      applyHtmlCacheHeaders(request, redirectRes);
+      return redirectRes;
+    }
+
+    if (!user.email_confirmed_at && path !== `/${locale}/verify-email`) {
+      const verify = new URL(`/${locale}/verify-email`, request.url);
+      verify.searchParams.set("redirect", path);
+      const redirectRes = NextResponse.redirect(verify);
       copyCookies(response, redirectRes);
       applyHtmlCacheHeaders(request, redirectRes);
       return redirectRes;

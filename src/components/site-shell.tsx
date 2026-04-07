@@ -14,6 +14,7 @@ import { ShellNoticeGate } from "@/components/shell-notice-gate";
 import { SiteSidebar } from "@/components/site-sidebar";
 import { SpotlightCursor } from "@/components/spotlight-cursor";
 import { DynamicIslandProvider } from "@/components/ui/dynamic-island";
+import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { useScrollVelocity } from "@/hooks/useScrollVelocity";
 import { Locale, getDirection } from "@/lib/i18n";
 
@@ -52,6 +53,7 @@ export function SiteShell({
         {!introDone ? <LogoIntro onComplete={handleIntroComplete} /> : null}
         <CursorTrail />
         <SpotlightCursor />
+        <ScrollToTop />
         <ScrollProgressBar />
         <SiteSidebar locale={locale} />
         <ShellNoticeGate locale={locale} />

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 import { BlurReveal } from "@/components/blur-reveal";
@@ -72,6 +72,8 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
     fr: "Chargement des programmes"
   };
   const { role } = useAuth();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [uploadedPrograms, setUploadedPrograms] = useState<CustomProgramCard[]>([]);
   const [customCatalogReady, setCustomCatalogReady] = useState(false);
   const [goalFilter, setGoalFilter] = useState<GoalFilter>("all");
@@ -111,6 +113,23 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
       cancelled = true;
     };
   }, [locale, programManagementCopy.uploadedPdfAsset, programManagementCopy.uploadedProgramPreview]);
+
+  useEffect(() => {
+    const goal = searchParams.get("goal");
+    const location = searchParams.get("location");
+    setGoalFilter(goal === "fat" || goal === "muscle" ? goal : "all");
+    setLocFilter(location === "home" || location === "gym" ? location : "all");
+  }, [searchParams]);
+
+  const syncFiltersToUrl = (nextGoal: GoalFilter, nextLoc: LocFilter) => {
+    const qs = new URLSearchParams(searchParams.toString());
+    if (nextGoal === "all") qs.delete("goal");
+    else qs.set("goal", nextGoal);
+    if (nextLoc === "all") qs.delete("location");
+    else qs.set("location", nextLoc);
+    const query = qs.toString();
+    router.replace(query ? `/${locale}/programs?${query}` : `/${locale}/programs`);
+  };
 
   const allPrograms = useMemo(() => {
     const training = programs
@@ -196,7 +215,14 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
                   ["muscle", filterCopy.goalMuscle]
                 ] as const
               ).map(([k, label]) => (
-                <FilterPill key={k} active={goalFilter === k} onClick={() => setGoalFilter(k)}>
+                <FilterPill
+                  key={k}
+                  active={goalFilter === k}
+                  onClick={() => {
+                    setGoalFilter(k);
+                    syncFiltersToUrl(k, locFilter);
+                  }}
+                >
                   {label}
                 </FilterPill>
               ))}
@@ -210,7 +236,14 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
                   ["gym", filterCopy.locGym]
                 ] as const
               ).map(([k, label]) => (
-                <FilterPill key={k} active={locFilter === k} onClick={() => setLocFilter(k)}>
+                <FilterPill
+                  key={k}
+                  active={locFilter === k}
+                  onClick={() => {
+                    setLocFilter(k);
+                    syncFiltersToUrl(goalFilter, k);
+                  }}
+                >
                   {label}
                 </FilterPill>
               ))}
@@ -220,6 +253,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
                   onClick={() => {
                     setGoalFilter("all");
                     setLocFilter("all");
+                    syncFiltersToUrl("all", "all");
                   }}
                   className="ms-1 min-h-[44px] px-2 text-[13px] font-medium text-[#22D3EE] transition-colors duration-150 hover:text-white sm:min-h-0"
                 >
@@ -309,6 +343,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
               onClick={() => {
                 setGoalFilter("all");
                 setLocFilter("all");
+                syncFiltersToUrl("all", "all");
               }}
               className="mt-6 inline-flex min-h-[44px] items-center justify-center rounded-[10px] border border-[var(--color-border)] px-5 py-2 text-sm font-medium text-white transition-colors duration-150 hover:border-[rgba(255,255,255,0.12)] hover:bg-[rgba(255,255,255,0.04)]"
             >
