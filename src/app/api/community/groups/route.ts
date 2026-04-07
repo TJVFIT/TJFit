@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { requireAuth } from "@/lib/require-auth";
+import { enqueuePendingNotification } from "@/lib/pending-notifications";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 const PRESET_GROUPS = [
@@ -56,6 +57,7 @@ export async function POST(request: NextRequest) {
       .from("group_members")
       .upsert({ group_id: groupId, user_id: auth.user.id }, { onConflict: "group_id,user_id" });
     if (error) return NextResponse.json({ error: "Failed to join group" }, { status: 500 });
+    await enqueuePendingNotification(auth.user.id, "success", "Welcome to the group!");
     return NextResponse.json({ ok: true });
   }
   const { error } = await admin.from("group_members").delete().eq("group_id", groupId).eq("user_id", auth.user.id);

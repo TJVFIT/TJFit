@@ -167,25 +167,28 @@ function HeroSilhouette({ entered, reduce }: { entered: boolean; reduce: boolean
   );
 }
 
-function FloatingHeroStats({ entered, reduce }: { entered: boolean; reduce: boolean }) {
+function FloatingHeroStats({
+  entered,
+  reduce,
+  activeUsers
+}: {
+  entered: boolean;
+  reduce: boolean;
+  activeUsers: number;
+}) {
   const cards = [
-    { a: "+2.3kg", b: "Muscle gained", c: "Week 12", pos: "right-[15%] top-[30%]" },
-    { a: "-4.1kg", b: "Fat lost", c: "Week 8", pos: "right-[5%] top-[55%]" },
-    { a: "12 Weeks", b: "Complete system", c: "", pos: "right-[25%] top-[70%]" },
-    { a: "+18kg", b: "Bench press PR", c: "", pos: "left-[5%] top-[40%]" },
-    { a: "Day 1→84", b: "Full transformation", c: "", pos: "left-[10%] top-[65%]" },
-    { a: "-8cm", b: "Waist reduction", c: "", pos: "right-[8%] top-[20%]" }
+    { a: "20+", b: "Expert Programs", c: "", pos: "left-[5%] top-[35%]" },
+    { a: `${activeUsers || 0} Online`, b: "Members Training Now", c: "", pos: "right-[5%] top-[25%]" },
+    { a: "5", b: "Languages", c: "", pos: "right-[8%] top-[55%]" }
   ];
   return (
-    <div className="pointer-events-none absolute inset-0 z-0">
+    <div className="pointer-events-none absolute inset-0 z-0 max-md:hidden">
       {cards.map((card, i) => (
         <div
           key={`${card.a}-${card.b}`}
           className={cn(
-            "tj-float-stat absolute w-[110px] rounded-[10px] border border-[rgba(34,211,238,0.15)] bg-[rgba(17,18,21,0.7)] px-3.5 py-2.5 backdrop-blur-[8px] will-change-transform",
+            "tj-float-stat absolute w-[210px] rounded-2xl border border-[rgba(34,211,238,0.2)] bg-[rgba(17,18,21,0.85)] px-5 py-4 backdrop-blur-[12px] shadow-[0_8px_32px_rgba(0,0,0,0.4)] will-change-transform",
             card.pos,
-            i > 2 && "max-md:hidden",
-            "max-md:opacity-50",
             entered ? "opacity-100" : "opacity-0"
           )}
           style={{
@@ -193,12 +196,12 @@ function FloatingHeroStats({ entered, reduce }: { entered: boolean; reduce: bool
             transitionDelay: entered && !reduce ? `${1200 + i * 150}ms` : "0ms",
             animation: reduce
               ? "none"
-              : `tj-float-up ${[6, 8, 7, 9, 6.5, 7.5][i]}s ease-in-out infinite ${[0, 1.2, 2.4, 0.6, 3, 1.8][i]}s, tj-card-pulse ${[6, 8, 7, 9, 6.5, 7.5][i]}s ease-in-out infinite ${[0, 1.2, 2.4, 0.6, 3, 1.8][i]}s`
+              : `tj-float-up ${[4, 5, 3.5][i]}s ease-in-out infinite ${[0, 1, 2][i]}s`
           }}
           aria-hidden
         >
-          <p className="text-base font-bold text-[#22D3EE]">{card.a}</p>
-          <p className="text-[11px] text-[#A1A1AA]">{card.b}</p>
+          <p className="text-[32px] font-bold text-[#22D3EE]">{card.a}</p>
+          <p className="text-[12px] uppercase tracking-[0.12em] text-[#A1A1AA]">{card.b}</p>
           {card.c ? <p className="text-[10px] text-[#52525B]">{card.c}</p> : null}
         </div>
       ))}
@@ -390,7 +393,7 @@ export function ImmersiveHome({
           <HeroSilhouette entered={heroEntered} reduce={reduce} />
         </div>
         <div ref={statsRef}>
-          <FloatingHeroStats entered={heroEntered} reduce={reduce} />
+          <FloatingHeroStats entered={heroEntered} reduce={reduce} activeUsers={liveStats.activeToday} />
         </div>
 
         <div className="relative z-10 mx-auto w-full max-w-5xl text-center lg:text-left">

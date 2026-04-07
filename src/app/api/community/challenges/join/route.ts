@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { requireAuth } from "@/lib/require-auth";
+import { enqueuePendingNotification } from "@/lib/pending-notifications";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 export async function POST(request: NextRequest) {
@@ -16,6 +17,7 @@ export async function POST(request: NextRequest) {
     .from("challenge_participants")
     .upsert({ challenge_id: challengeId, user_id: auth.user.id }, { onConflict: "challenge_id,user_id" });
   if (error) return NextResponse.json({ error: "Failed to join challenge" }, { status: 500 });
+  await enqueuePendingNotification(auth.user.id, "success", "Challenge joined! Good luck 💪");
   return NextResponse.json({ ok: true });
 }
 

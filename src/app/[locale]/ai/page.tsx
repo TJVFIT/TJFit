@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { TJAIShell } from "@/components/tjai/tjai-shell";
+import { TJAIHub } from "@/components/tjai/tjai-hub";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { requireLocaleParam } from "@/lib/require-locale";
 
@@ -23,5 +23,5 @@ export default async function AiPage({ params }: { params: { locale: string } })
     redirect(`/${locale}/login?redirect=/${locale}/ai`);
   }
 
-  return <TJAIShell locale={locale} />;
+  return <TJAIHub locale={locale} />;
 }

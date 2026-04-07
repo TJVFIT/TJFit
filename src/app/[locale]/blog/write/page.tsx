@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 import { PremiumPageShell } from "@/components/premium";
 import { Button } from "@/components/ui/Button";
@@ -8,6 +9,7 @@ import type { Locale } from "@/lib/i18n";
 
 export default function BlogWritePage({ params }: { params: { locale: string } }) {
   const locale = params.locale as Locale;
+  const searchParams = useSearchParams();
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("Training");
   const [content, setContent] = useState("");
@@ -16,6 +18,7 @@ export default function BlogWritePage({ params }: { params: { locale: string } }
   const [allowed, setAllowed] = useState<boolean | null>(null);
   const [progress, setProgress] = useState<{ paidPrograms: number; daysActive: number }>({ paidPrograms: 0, daysActive: 0 });
   const [status, setStatus] = useState("");
+  const [draftId, setDraftId] = useState<string | null>(null);
 
   useEffect(() => {
     void fetch("/api/blog/eligibility", { credentials: "include" })
@@ -30,6 +33,23 @@ export default function BlogWritePage({ params }: { params: { locale: string } }
       })
       .catch(() => setAllowed(false));
   }, []);
+
+  useEffect(() => {
+    const id = searchParams.get("draft_id");
+    if (!id) return;
+    setDraftId(id);
+    void fetch(`/api/blog/drafts/${encodeURIComponent(id)}`, { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        const d = data?.draft;
+        if (!d) return;
+        setTitle(String(d.title ?? ""));
+        setCategory(String(d.category ?? "Training"));
+        setContent(String(d.content ?? ""));
+        setTags(Array.isArray(d.tags) ? d.tags.join(", ") : "");
+      })
+      .catch(() => null);
+  }, [searchParams]);
 
   const seoDescription = useMemo(() => content.slice(0, 160), [content]);
 
@@ -54,10 +74,11 @@ export default function BlogWritePage({ params }: { params: { locale: string } }
     formData.set("category", category);
     formData.set("content", content);
     formData.set("tags", tags);
+    if (draftId) formData.set("draft_id", draftId);
     if (image) formData.set("image", image);
     const res = await fetch("/api/blog/posts", { method: "POST", body: formData, credentials: "include" });
     const data = await res.json().catch(() => ({}));
-    setStatus(res.ok ? "Submitted for review." : String(data.error ?? "Failed to submit."));
+    setStatus(res.ok ? "Post saved successfully." : String(data.error ?? "Failed to submit."));
   };
 
   return (

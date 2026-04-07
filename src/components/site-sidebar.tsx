@@ -14,6 +14,7 @@ import {
   MessageCircle,
   Rocket,
   Scale,
+  Sparkles,
   Shield,
   User,
   UtensilsCrossed,
@@ -25,6 +26,7 @@ import {
 } from "lucide-react";
 
 import { useAuth } from "@/components/auth-provider";
+import { GlobalSearch } from "@/components/global-search";
 import { Logo } from "@/components/ui/Logo";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { Locale, getDictionary, getDirection, locales } from "@/lib/i18n";
@@ -54,6 +56,8 @@ type ItemDef = {
   Icon: typeof Home;
   adminOnly?: boolean;
   comingSoon?: boolean;
+  badgeText?: string;
+  collapsedTooltip?: string;
 };
 
 function usePrefersReducedMotion() {
@@ -145,15 +149,17 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
   const items: ItemDef[] = useMemo(
     () => [
       { key: "home", href: "/", label: dict.nav.home, Icon: Home },
+      { key: "tjai", href: "/ai", label: "TJAI", Icon: Sparkles, badgeText: "AI", collapsedTooltip: "TJAI — Your AI Coach" },
+      { key: "calculator", href: "/calculator", label: "Calculator", Icon: Scale },
       { key: "programs", href: "/programs", label: dict.nav.programs, Icon: Dumbbell },
       { key: "diets", href: "/diets", label: dict.nav.diets, Icon: UtensilsCrossed },
       { key: "start", href: "/start", label: nav.startFreeLabel, Icon: Rocket },
       { key: "coaches", href: "/coaches", label: dict.nav.coaches, Icon: Users },
+      { key: "feed", href: "/feed", label: "Feed", Icon: Users },
       { key: "community", href: "/community", label: dict.nav.community, Icon: MessageCircle, comingSoon: true },
       { key: "membership", href: "/membership", label: dict.nav.membership, Icon: CreditCard, comingSoon: true },
       { key: "coins", href: "/coins", label: "TJCOIN Shop", Icon: Coins },
       { key: "leaderboard", href: "/leaderboard", label: "Leaderboard", Icon: Trophy },
-      { key: "calculator", href: "/calculator", label: "TDEE Calculator", Icon: Scale },
       { key: "legal", href: "/legal", label: nav.legalCenterLabel, Icon: Scale },
       { key: "messages", href: "/messages", label: dict.nav.messages, Icon: Inbox },
       { key: "profile", href: "/profile/edit", label: dict.nav.profile, Icon: User },
@@ -166,6 +172,8 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
     () => items.filter((it) => !it.adminOnly || isAdmin),
     [items, isAdmin]
   );
+  const aiToolsItems = useMemo(() => visibleItems.filter((it) => it.key === "tjai" || it.key === "calculator"), [visibleItems]);
+  const primaryItems = useMemo(() => visibleItems.filter((it) => !aiToolsItems.some((x) => x.key === it.key)), [aiToolsItems, visibleItems]);
 
   const handleLogout = async () => {
     if (!window.confirm("Sign out of TJFit?")) return;
@@ -278,7 +286,7 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
               className="tj-collapsed-sidebar-tip pointer-events-none absolute start-[calc(100%+12px)] top-1/2 z-[100] rounded-lg border border-[#1E2028] bg-[#111215] px-3 py-1.5 text-[13px] font-medium text-white shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
               role="tooltip"
             >
-              <span className="block whitespace-nowrap">{it.label}</span>
+              <span className="block whitespace-nowrap">{it.collapsedTooltip ?? it.label}</span>
               {it.comingSoon ? (
                 <span className="mt-0.5 block whitespace-nowrap text-[11px] font-normal italic text-[#52525B]">
                   {soonMessage}
@@ -288,6 +296,11 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
           ) : null}
         </span>
         <span className={labelClass}>{it.label}</span>
+        {it.badgeText && sidebarExpanded ? (
+          <span className="ms-1 rounded-full border border-[rgba(34,211,238,0.35)] bg-[rgba(34,211,238,0.15)] px-1.5 py-0.5 text-[10px] font-bold text-[#22D3EE]">
+            {it.badgeText}
+          </span>
+        ) : null}
         {it.comingSoon ? soonBadge : null}
       </>
     );
@@ -372,7 +385,13 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
         </div>
 
         <nav className="flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto overflow-x-visible px-0 py-3 [scrollbar-width:thin]">
-          {visibleItems.map((it, i) => renderNavRow(it, i))}
+          <GlobalSearch locale={locale} collapsed={!sidebarExpanded} onExpand={() => setSidebarExpanded(true)} />
+          {primaryItems.map((it, i) => renderNavRow(it, i))}
+          <div className={cn("my-2 px-3", sidebarExpanded ? "opacity-100" : "opacity-0")}>
+            <div className="h-px w-full bg-[#1E2028]" />
+            <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#52525B]">AI & Tools</p>
+          </div>
+          {aiToolsItems.map((it, i) => renderNavRow(it, i + primaryItems.length))}
         </nav>
 
         <div className="mt-auto shrink-0 border-t border-[#1E2028] px-3 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4">
@@ -490,7 +509,8 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
 
       <MobileNav
         locale={locale}
-        items={visibleItems}
+        primaryItems={primaryItems}
+        aiToolsItems={aiToolsItems}
         dict={dict}
         nav={nav}
         user={user}
@@ -506,7 +526,8 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
 
 function MobileNav({
   locale,
-  items,
+  primaryItems,
+  aiToolsItems,
   dict,
   nav,
   user,
@@ -514,7 +535,8 @@ function MobileNav({
   onSoon
 }: {
   locale: Locale;
-  items: ItemDef[];
+  primaryItems: ItemDef[];
+  aiToolsItems: ItemDef[];
   dict: ReturnType<typeof getDictionary>;
   nav: ReturnType<typeof getNavChromeCopy>;
   user: ReturnType<typeof useAuth>["user"];
@@ -653,7 +675,7 @@ function MobileNav({
               <div className="mx-auto flex w-full max-w-sm flex-col items-center">
                 <Logo variant="full" size="footer" href={`/${locale}`} onNavigate={() => setOpen(false)} />
                 <nav className="mt-10 flex w-full flex-col gap-1" aria-label={nav.navigation}>
-                  {items.map((it, i) => {
+                  {primaryItems.map((it, i) => {
                     const active = !it.comingSoon && isActivePath(pathname, locale, it.href);
                     const Icon = it.Icon;
                     const delay = reduce ? 0 : i * 40;
@@ -698,6 +720,44 @@ function MobileNav({
                       >
                         <Icon className="h-6 w-6 shrink-0" strokeWidth={1.5} />
                         {it.label}
+                        {it.badgeText ? (
+                          <span className="rounded-full border border-[rgba(34,211,238,0.35)] bg-[rgba(34,211,238,0.15)] px-1.5 py-0.5 text-[10px] font-bold text-[#22D3EE]">
+                            {it.badgeText}
+                          </span>
+                        ) : null}
+                      </Link>
+                    );
+                  })}
+                  <div className="my-2 border-t border-[#1E2028] pt-3 text-center text-[10px] font-semibold uppercase tracking-[0.14em] text-[#52525B]">
+                    AI & Tools
+                  </div>
+                  {aiToolsItems.map((it, i) => {
+                    const active = !it.comingSoon && isActivePath(pathname, locale, it.href);
+                    const Icon = it.Icon;
+                    const delay = reduce ? 0 : (primaryItems.length + i) * 40;
+                    let href = `/${locale}${it.href === "/" ? "" : it.href}`;
+                    if ((it.key === "messages" || it.key === "profile") && !user) {
+                      href = `/${locale}/login?redirect=${encodeURIComponent(it.href)}`;
+                    }
+                    return (
+                      <Link
+                        key={it.key}
+                        href={href}
+                        onClick={() => setOpen(false)}
+                        style={{ transitionDelay: `${delay}ms` }}
+                        className={cn(
+                          "flex min-h-[52px] w-full items-center justify-center gap-3 py-3 text-lg font-medium transition-[opacity,transform,color] duration-[350ms] ease-out",
+                          active ? "text-white" : "text-[#A1A1AA] hover:text-white",
+                          overlayReady || reduce ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
+                        )}
+                      >
+                        <Icon className="h-6 w-6 shrink-0" strokeWidth={1.5} />
+                        {it.label}
+                        {it.badgeText ? (
+                          <span className="rounded-full border border-[rgba(34,211,238,0.35)] bg-[rgba(34,211,238,0.15)] px-1.5 py-0.5 text-[10px] font-bold text-[#22D3EE]">
+                            {it.badgeText}
+                          </span>
+                        ) : null}
                       </Link>
                     );
                   })}

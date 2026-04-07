@@ -1,14 +1,17 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/auth-provider";
+import { useDynamicIsland } from "@/components/ui/dynamic-island";
+import { FollowButton } from "@/components/ui/follow-button";
 import { Transformation, communityPosts, transformations } from "@/lib/content";
 import type { Locale } from "@/lib/i18n";
 import Image from "next/image";
 import { getCommunityCopy } from "@/lib/launch-copy";
 
-type TabKey = "threads" | "challenges" | "groups" | "transformations" | "blogs";
+type TabKey = "threads" | "challenges" | "groups" | "transformations" | "blogs" | "people";
 
 type BlogPost = {
   id: string;
@@ -24,7 +27,14 @@ type BlogPost = {
 };
 
 function safeTab(value: string | null): TabKey {
-  if (value === "threads" || value === "challenges" || value === "groups" || value === "transformations" || value === "blogs") {
+  if (
+    value === "threads" ||
+    value === "challenges" ||
+    value === "groups" ||
+    value === "transformations" ||
+    value === "blogs" ||
+    value === "people"
+  ) {
     return value;
   }
   return "blogs";
@@ -207,6 +217,14 @@ function ChallengesLivePanel({
 }
 
 type DbGroup = { id: string; name: string; description: string | null; memberCount: number; joined: boolean };
+type DiscoverUser = {
+  id: string;
+  username: string;
+  display_name: string;
+  avatar_url: string | null;
+  current_streak?: number;
+  coins_earned?: number;
+};
 
 function GroupsPanel({
   groups,
@@ -231,6 +249,87 @@ function GroupsPanel({
           </button>
         </article>
       ))}
+    </div>
+  );
+}
+
+function PeoplePanel({ locale }: { locale: Locale }) {
+  const [query, setQuery] = useState("");
+  const [debounced, setDebounced] = useState("");
+  const [discover, setDiscover] = useState<{
+    top_earners: DiscoverUser[];
+    coaches: DiscoverUser[];
+    new_members: DiscoverUser[];
+    similar_goal: DiscoverUser[];
+  }>({ top_earners: [], coaches: [], new_members: [], similar_goal: [] });
+  const [searchResults, setSearchResults] = useState<DiscoverUser[]>([]);
+
+  useEffect(() => {
+    void fetch("/api/users/discover", { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) =>
+        setDiscover({
+          top_earners: (data?.top_earners ?? []) as DiscoverUser[],
+          coaches: (data?.coaches ?? []) as DiscoverUser[],
+          new_members: (data?.new_members ?? []) as DiscoverUser[],
+          similar_goal: (data?.similar_goal ?? []) as DiscoverUser[]
+        })
+      );
+  }, []);
+
+  useEffect(() => {
+    const t = window.setTimeout(() => setDebounced(query.trim()), 300);
+    return () => window.clearTimeout(t);
+  }, [query]);
+
+  useEffect(() => {
+    if (debounced.length < 2) {
+      setSearchResults([]);
+      return;
+    }
+    void fetch(`/api/users/search?q=${encodeURIComponent(debounced)}`, { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => setSearchResults((data?.users ?? []) as DiscoverUser[]));
+  }, [debounced]);
+
+  const Section = ({ title, users }: { title: string; users: DiscoverUser[] }) => (
+    <div className="space-y-3">
+      <h3 className="text-sm font-semibold text-white">{title}</h3>
+      {users.slice(0, 5).map((u) => (
+        <div key={`${title}-${u.id}`} className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 p-3">
+          <div>
+            <p className="text-sm font-medium text-white">{u.display_name || u.username}</p>
+            <p className="text-xs text-zinc-500">@{u.username}</p>
+          </div>
+          <FollowButton targetUserId={u.id} initialFollowing={false} initialCount={0} />
+        </div>
+      ))}
+    </div>
+  );
+
+  return (
+    <div className="space-y-6">
+      <input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search people"
+        className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white"
+      />
+      {searchResults.length > 0 ? (
+        <Section title="Search Results" users={searchResults} />
+      ) : (
+        <div className="grid gap-5 md:grid-cols-2">
+          <Section title="Top Members This Week" users={discover.top_earners} />
+          <Section title="Active Coaches" users={discover.coaches} />
+          <Section title="New Members" users={discover.new_members} />
+          <Section title="Similar Goals" users={discover.similar_goal} />
+        </div>
+      )}
+      <p className="text-xs text-zinc-600">
+        <Link href={`/${locale}/feed`} className="text-cyan-300">
+          Open feed
+        </Link>
+      </p>
     </div>
   );
 }
@@ -279,9 +378,11 @@ export function CommunityHub({
   const { role, user } = useAuth();
   const canPublishBlog = role === "coach" || role === "admin";
   const isAdmin = role === "admin";
+  const island = useDynamicIsland();
   const copy = getCommunityCopy(locale);
   const tabs: { key: TabKey; label: string }[] = [
     { key: "blogs", label: copy.tabs.blogs },
+    { key: "people", label: "People" },
     { key: "threads", label: copy.tabs.threads },
     { key: "challenges", label: copy.tabs.challenges },
     { key: "groups", label: "Groups" },
@@ -388,6 +489,7 @@ export function CommunityHub({
         setBlogError(data.error ?? copy.publishFailed);
       } else {
         setBlogSuccess(copy.publishSuccess);
+        island?.showNotification("signup", "Post submitted — admin will review soon");
         setTitle("");
         setContent("");
         setImage(null);
@@ -492,6 +594,7 @@ export function CommunityHub({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ challengeId })
     });
+    island?.showNotification("signup", "Challenge joined! Good luck 💪");
     await loadChallenges();
   };
 
@@ -502,6 +605,7 @@ export function CommunityHub({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ challengeId, value })
     });
+    island?.showNotification("coins", "+5 TJCOIN for logging today");
     await loadChallenges();
   };
 
@@ -512,6 +616,9 @@ export function CommunityHub({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ groupId, action })
     });
+    if (action === "join") {
+      island?.showNotification("signup", "Welcome to the group!");
+    }
     await loadGroups();
   };
 
@@ -556,12 +663,18 @@ export function CommunityHub({
               posts={communityPosts}
               emptyLabel={copy.threadsEmpty}
               reactions={threadReactions}
-              onReact={(postId, key) =>
+              onReact={(postId, key) => {
                 setThreadReactions((prev) => ({
                   ...prev,
                   [postId]: { ...(prev[postId] ?? {}), [key]: Number(prev[postId]?.[key] ?? 0) + 1 }
-                }))
-              }
+                }));
+                void fetch("/api/community/reactions", {
+                  method: "POST",
+                  credentials: "include",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ postId })
+                });
+              }}
             />
           )}
           {activeTab === "challenges" && <ChallengesLivePanel items={challengeItems} onJoin={joinChallenge} onLog={logChallenge} />}
@@ -725,6 +838,7 @@ export function CommunityHub({
               )}
             </div>
           )}
+          {activeTab === "people" && <PeoplePanel locale={locale} />}
         </div>
       </div>
     </div>

@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import Link from "next/link";
 
 type PendingPost = {
   id: string;
@@ -11,10 +13,13 @@ type PendingPost = {
 };
 
 export function AdminBlogPanel() {
+  const params = useParams<{ locale?: string }>();
+  const locale = typeof params?.locale === "string" ? params.locale : "en";
   const [pending, setPending] = useState<PendingPost[]>([]);
   const [topic, setTopic] = useState("");
   const [keyword, setKeyword] = useState("");
   const [generated, setGenerated] = useState("");
+  const [draftId, setDraftId] = useState<string | null>(null);
 
   const load = async () => {
     const res = await fetch("/api/blog/posts?status=pending", { cache: "no-store", credentials: "include" });
@@ -55,6 +60,7 @@ export function AdminBlogPanel() {
     });
     const data = await res.json().catch(() => ({}));
     setGenerated(String(data.content ?? ""));
+    setDraftId(typeof data?.draft?.id === "string" ? data.draft.id : null);
   };
 
   return (
@@ -91,6 +97,14 @@ export function AdminBlogPanel() {
           Generate Draft
         </button>
         {generated ? <textarea readOnly className="mt-3 min-h-[180px] w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs text-zinc-200" value={generated} /> : null}
+        {draftId ? (
+          <Link
+            href={`/${locale}/blog/write?draft_id=${encodeURIComponent(draftId)}`}
+            className="mt-3 inline-flex rounded-full border border-cyan-300/35 px-4 py-2 text-xs text-cyan-200"
+          >
+            Open in Editor
+          </Link>
+        ) : null}
       </div>
     </section>
   );

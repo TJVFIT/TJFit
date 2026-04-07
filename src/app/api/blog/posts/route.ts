@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { requireAuth } from "@/lib/require-auth";
 import { sendEmail } from "@/lib/email";
+import { enqueuePendingNotification } from "@/lib/pending-notifications";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 const BLOG_BUCKET = "community-blog-images";
@@ -72,6 +73,7 @@ export async function POST(request: NextRequest) {
     .map((v) => v.trim())
     .filter(Boolean);
   const readTime = Math.max(1, Math.round(content.split(/\s+/).length / 200));
+  const draftId = String(formData.get("draft_id") ?? "").trim();
   if (!title || !content) return NextResponse.json({ error: "Title and content required." }, { status: 400 });
 
   let coverImageUrl: string | null = null;
@@ -94,27 +96,60 @@ export async function POST(request: NextRequest) {
 
   const authorName = String(profile.full_name || profile.username || auth.user.email || "TJFit User");
   const authorType = profile.role === "admin" ? "team" : profile.role === "coach" ? "coach" : "user";
-  const { data, error } = await admin
-    .from("community_blog_posts")
-    .insert({
-      author_id: auth.user.id,
-      author_name: authorName,
-      author_role: profile.role === "admin" ? "admin" : "coach",
-      author_type: authorType,
-      title,
-      content,
-      category,
-      tags,
-      status: "pending",
-      read_time_minutes: readTime,
-      cover_image_url: coverImageUrl
-    })
-    .select("id,title,status")
-    .single();
+  let data: { id: string; title: string; status: string } | null = null;
+  let error: { message?: string } | null = null;
+
+  if (draftId && profile.role === "admin") {
+    const updateResult = await admin
+      .from("community_blog_posts")
+      .update({
+        title,
+        content,
+        category,
+        tags,
+        status: "published",
+        author_type: "admin",
+        author_role: "admin",
+        read_time_minutes: readTime,
+        cover_image_url: coverImageUrl
+      })
+      .eq("id", draftId)
+      .select("id,title,status")
+      .single();
+    data = updateResult.data as { id: string; title: string; status: string } | null;
+    error = updateResult.error as { message?: string } | null;
+  } else {
+    const insertResult = await admin
+      .from("community_blog_posts")
+      .insert({
+        author_id: auth.user.id,
+        author_name: authorName,
+        author_role: profile.role === "admin" ? "admin" : "coach",
+        author_type: authorType,
+        title,
+        content,
+        category,
+        tags,
+        status: profile.role === "admin" ? "published" : "pending",
+        read_time_minutes: readTime,
+        cover_image_url: coverImageUrl
+      })
+      .select("id,title,status")
+      .single();
+    data = insertResult.data as { id: string; title: string; status: string } | null;
+    error = insertResult.error as { message?: string } | null;
+  }
+
   if (error) return NextResponse.json({ error: "Failed to submit post." }, { status: 500 });
 
+  if (data?.status === "published") {
+    await enqueuePendingNotification(auth.user.id, "achievement", "Post published successfully");
+  } else {
+    await enqueuePendingNotification(auth.user.id, "success", "Post submitted — admin will review soon");
+  }
+
   const adminEmail = process.env.ADMIN_EMAILS?.split(",")[0]?.trim();
-  if (adminEmail) {
+  if (adminEmail && data?.status !== "published") {
     await sendEmail({
       to: adminEmail,
       subject: "New blog post pending review",

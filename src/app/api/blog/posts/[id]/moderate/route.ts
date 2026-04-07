@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { sendEmail } from "@/lib/email";
 import { EmailTemplates } from "@/lib/email-templates";
 import { signUnsubscribeToken } from "@/lib/email-preferences";
+import { enqueuePendingNotification } from "@/lib/pending-notifications";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { awardTJCoin } from "@/lib/tjcoin-server";
@@ -29,6 +30,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
   if (action === "approve") {
     await admin.from("community_blog_posts").update({ status: "published" }).eq("id", id);
     await awardTJCoin(post.author_id, "blog_post_approved", 100, { metadata: { postId: id } });
+    await enqueuePendingNotification(post.author_id, "achievement", "Your blog post is live! +100 TJCOIN");
     const user = await admin.auth.admin.getUserById(post.author_id);
     const email = user.data.user?.email;
     if (email) {

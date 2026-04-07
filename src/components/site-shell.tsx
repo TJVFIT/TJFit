@@ -14,6 +14,7 @@ import { ShellNoticeGate } from "@/components/shell-notice-gate";
 import { SiteSidebar } from "@/components/site-sidebar";
 import { SpotlightCursor } from "@/components/spotlight-cursor";
 import { DynamicIslandProvider } from "@/components/ui/dynamic-island";
+import { PendingNotificationPoller } from "@/components/pending-notification-poller";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { useScrollVelocity } from "@/hooks/useScrollVelocity";
 import { Locale, getDirection } from "@/lib/i18n";
@@ -49,6 +50,7 @@ export function SiteShell({
 
   return (
     <DynamicIslandProvider>
+      <PendingNotificationPoller />
       <div className="min-h-screen overflow-x-hidden bg-background text-text">
         {!introDone ? <LogoIntro onComplete={handleIntroComplete} /> : null}
         <CursorTrail />

@@ -21,7 +21,22 @@ export default async function BlogDetailPage({ params }: { params: { locale: str
     created_at: string;
     read_time_minutes: number;
     views: number;
+    cover_image_url?: string | null;
   };
+  const relatedRes = await fetch(
+    `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/api/blog/posts/related?id=${encodeURIComponent(post.id)}&category=${encodeURIComponent(post.category ?? "")}`,
+    { cache: "no-store" }
+  ).catch(() => null);
+  const relatedData = relatedRes && relatedRes.ok ? await relatedRes.json().catch(() => ({})) : {};
+  const related = (relatedData.posts ?? []) as Array<{
+    id: string;
+    title: string;
+    content: string;
+    author_name: string;
+    category: string | null;
+    views: number;
+    created_at: string;
+  }>;
 
   return (
     <PremiumPageShell>
@@ -34,8 +49,20 @@ export default async function BlogDetailPage({ params }: { params: { locale: str
         <div className="mt-6 whitespace-pre-wrap text-sm leading-7 text-zinc-200">{post.content}</div>
       </article>
       <section className="mt-8 rounded-xl border border-[#1E2028] bg-[#111215] p-5">
-        <h2 className="text-lg font-semibold text-white">Related posts</h2>
-        <Link href={`/${locale}/blog`} className="mt-3 inline-flex text-sm text-[#22D3EE]">
+        <h2 className="text-lg font-semibold text-white">You might also like</h2>
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
+          {related.map((item) => (
+            <article key={item.id} className="rounded-lg border border-[#1E2028] bg-[#0E0F12] p-3">
+              <p className="text-[11px] uppercase tracking-[0.12em] text-cyan-300">{item.category ?? "General"}</p>
+              <h3 className="mt-2 line-clamp-2 text-sm font-semibold text-white">{item.title}</h3>
+              <p className="mt-2 line-clamp-3 text-xs text-zinc-400">{item.content}</p>
+              <Link href={`/${locale}/blog/${item.id}`} className="mt-3 inline-flex text-xs text-[#22D3EE]">
+                Read →
+              </Link>
+            </article>
+          ))}
+        </div>
+        <Link href={`/${locale}/blog`} className="mt-4 inline-flex text-sm text-[#22D3EE]">
           Back to all posts →
         </Link>
       </section>

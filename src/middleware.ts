@@ -62,7 +62,9 @@ function matchHtmlGuard(pathname: string): { locale: string; kind: GuardKind } |
   if (sub === "/programs/upload" || sub.startsWith("/programs/upload/")) return { locale, kind: "upload" };
   if (sub === "/dashboard" || sub.startsWith("/dashboard/")) return { locale, kind: "auth_user" };
   if (sub === "/messages" || sub.startsWith("/messages/")) return { locale, kind: "auth_user" };
+  if (sub === "/feed" || sub.startsWith("/feed/")) return { locale, kind: "auth_user" };
   if (sub === "/profile/edit" || sub.startsWith("/profile/edit/")) return { locale, kind: "auth_user" };
+  if (sub === "/settings/profile" || sub.startsWith("/settings/profile/")) return { locale, kind: "auth_user" };
   if (sub === "/checkout" || sub.startsWith("/checkout/")) return { locale, kind: "auth_user" };
   if (sub === "/purchase" || sub.startsWith("/purchase/")) return { locale, kind: "auth_user" };
   if (sub === "/payment" || sub.startsWith("/payment/")) return { locale, kind: "auth_user" };

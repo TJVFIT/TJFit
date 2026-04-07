@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { AsyncButton } from "@/components/ui/AsyncButton";
+import { useDynamicIsland } from "@/components/ui/dynamic-island";
 import { getSocialCopy } from "@/lib/social-copy";
 import type { Locale } from "@/lib/i18n";
 import { isValidUsername } from "@/lib/username";
@@ -17,6 +18,14 @@ type ProfileRow = {
   message_privacy: string;
   created_at?: string | null;
   updated_at?: string | null;
+  privacy_settings?: {
+    show_streak?: boolean;
+    show_coins?: boolean;
+    show_programs?: boolean;
+    show_posts?: boolean;
+  };
+  banner_color?: string | null;
+  display_badge_key?: string | null;
 };
 
 function normalizePrivacy(raw: string | undefined) {
@@ -34,6 +43,7 @@ function formatProfileDate(iso: string | null | undefined, locale: Locale): stri
 
 export function ProfileEditForm({ locale }: { locale: Locale }) {
   const s = getSocialCopy(locale);
+  const island = useDynamicIsland();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
@@ -51,8 +61,12 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
     bio: "",
     is_private: false,
     is_searchable: true,
-    message_privacy: "everyone"
+    message_privacy: "everyone",
+    privacy_settings: { show_streak: true, show_coins: true, show_programs: true, show_posts: true },
+    banner_color: "#111215",
+    display_badge_key: null
   });
+  const [earnedBadges, setEarnedBadges] = useState<string[]>([]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -80,12 +94,26 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
         bio: typeof p.bio === "string" ? p.bio : "",
         is_private: Boolean(p.is_private),
         is_searchable: typeof p.is_searchable === "boolean" ? p.is_searchable : Boolean(p.searchable),
-        message_privacy: normalizePrivacy(p.message_privacy)
+        message_privacy: normalizePrivacy(p.message_privacy),
+        privacy_settings: {
+          show_streak: p.privacy_settings?.show_streak !== false,
+          show_coins: p.privacy_settings?.show_coins !== false,
+          show_programs: p.privacy_settings?.show_programs !== false,
+          show_posts: p.privacy_settings?.show_posts !== false
+        },
+        banner_color: typeof p.banner_color === "string" && p.banner_color ? p.banner_color : "#111215",
+        display_badge_key: typeof p.display_badge_key === "string" ? p.display_badge_key : null
       });
       setMeta({
         created_at: p.created_at ?? null,
         updated_at: p.updated_at ?? null
       });
+      if (typeof p.username === "string" && p.username) {
+        const extra = await fetch(`/api/profile/${encodeURIComponent(p.username)}`, { credentials: "include" });
+        const extraData = await extra.json().catch(() => ({}));
+        const badgeRows = (extraData?.badges ?? []) as Array<{ badge_key: string }>;
+        setEarnedBadges([...new Set(badgeRows.map((b) => b.badge_key).filter(Boolean))]);
+      }
     } catch {
       setError(s.profileReloadHint);
       setInitialLoadError(s.profileReloadHint);
@@ -129,6 +157,7 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
         return;
       }
       setSavedFlash(true);
+      island?.showNotification("achievement", "Profile updated ✓");
       window.setTimeout(() => setSavedFlash(false), 2000);
       if (data.profile) {
         const p = data.profile as ProfileRow;
@@ -143,6 +172,36 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
           updated_at: p.updated_at ?? null
         });
       }
+    } catch {
+      setError(s.errorGeneric);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const saveAppearance = async () => {
+    setSaving(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          banner_color: form.banner_color,
+          display_badge_key: form.display_badge_key,
+          bio: form.bio,
+          privacy_settings: form.privacy_settings
+        })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(typeof data.error === "string" ? data.error : s.errorGeneric);
+        return;
+      }
+      setSavedFlash(true);
+      island?.showNotification("achievement", "Profile updated ✓");
+      window.setTimeout(() => setSavedFlash(false), 2000);
     } catch {
       setError(s.errorGeneric);
     } finally {
@@ -264,8 +323,9 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
           <textarea
             className="input mt-1.5 min-h-[100px] w-full resize-y"
             value={form.bio}
-            onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value }))}
+            onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value.slice(0, 160) }))}
           />
+          <p className="mt-1 text-xs text-zinc-500">{form.bio.length} / 160</p>
         </label>
 
         <div>
@@ -332,6 +392,75 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
           onClick={() => save()}
         >
           {s.saveProfile}
+        </AsyncButton>
+      </div>
+
+      <div className="glass-panel space-y-5 rounded-[28px] p-6">
+        <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-zinc-400">Profile Appearance</h2>
+        <div className="grid grid-cols-4 gap-2">
+          {["#111215", "#0F172A", "#1A0B2E", "#0B1A2E", "#0B2E0B", "#2E0B0B", "#1A1A0B", "#1C1412"].map((color) => (
+            <button
+              key={color}
+              type="button"
+              onClick={() => setForm((f) => ({ ...f, banner_color: color }))}
+              className={`h-9 rounded-lg border ${form.banner_color === color ? "border-cyan-300" : "border-white/15"}`}
+              style={{ backgroundColor: color }}
+            />
+          ))}
+        </div>
+
+        <label className="block">
+          <span className="text-xs font-medium uppercase tracking-wider text-zinc-500">Featured Badge</span>
+          <select
+            value={form.display_badge_key ?? ""}
+            onChange={(e) => setForm((f) => ({ ...f, display_badge_key: e.target.value || null }))}
+            className="input mt-1.5 w-full"
+          >
+            <option value="">None</option>
+            {earnedBadges.map((badge) => (
+              <option key={badge} value={badge}>
+                {badge}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <div className="space-y-2">
+          <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">Privacy Settings</p>
+          {[
+            ["show_streak", "Show my streak"],
+            ["show_coins", "Show my TJCOIN balance"],
+            ["show_programs", "Show programs I'm doing"],
+            ["show_posts", "Show my community posts"]
+          ].map(([key, label]) => (
+            <label key={key} className="flex items-center gap-3 text-sm text-zinc-300">
+              <input
+                type="checkbox"
+                checked={Boolean(form.privacy_settings?.[key as keyof NonNullable<ProfileRow["privacy_settings"]>])}
+                onChange={(e) =>
+                  setForm((f) => ({
+                    ...f,
+                    privacy_settings: {
+                      ...(f.privacy_settings ?? {}),
+                      [key]: e.target.checked
+                    }
+                  }))
+                }
+              />
+              {label}
+            </label>
+          ))}
+        </div>
+
+        <AsyncButton
+          type="button"
+          variant="primary"
+          loading={saving}
+          loadingText={s.saving}
+          className="gradient-button w-full rounded-full py-2.5 text-sm font-medium text-white sm:w-auto sm:px-10"
+          onClick={() => saveAppearance()}
+        >
+          Save Appearance
         </AsyncButton>
       </div>
     </div>

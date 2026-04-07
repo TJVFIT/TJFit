@@ -5,6 +5,16 @@ import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 type LeaderboardType = "coins" | "streaks" | "blog" | "coaches" | "programs";
 type LeaderboardPeriod = "week" | "alltime";
+type SnapshotRow = {
+  user_id: string;
+  coins_earned: number | null;
+  streak_days: number | null;
+  blog_views: number | null;
+  posts_count: number | null;
+  programs_done: number | null;
+  is_coach?: boolean | null;
+  week_start?: string | null;
+};
 
 function getMetricColumn(type: LeaderboardType) {
   switch (type) {
@@ -49,11 +59,25 @@ export async function GET(request: NextRequest) {
   }
 
   const { data, error } = await query.order(metric, { ascending: false }).limit(100);
+  let rows: SnapshotRow[] = (data ?? []) as SnapshotRow[];
   if (error) {
-    return NextResponse.json({ error: "Failed to load leaderboard" }, { status: 500 });
+    // Graceful fallback when snapshot table is missing/unseeded.
+    const { data: fallbackProfiles } = await adminClient
+      .from("profiles")
+      .select("id,username,full_name,avatar_url,is_verified,current_streak")
+      .order("current_streak", { ascending: false })
+      .limit(100);
+    rows = (fallbackProfiles ?? []).map((row) => ({
+      user_id: row.id,
+      coins_earned: 0,
+      streak_days: row.current_streak ?? 0,
+      blog_views: 0,
+      posts_count: 0,
+      programs_done: 0,
+      is_coach: false,
+      week_start: null
+    }));
   }
-
-  const rows = data ?? [];
   const userIds = [...new Set(rows.map((r) => r.user_id))];
   const { data: profiles } = userIds.length
     ? await adminClient.from("profiles").select("id,username,full_name,avatar_url,is_verified,current_streak").in("id", userIds)

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
@@ -221,8 +222,7 @@ export function MessagesLayoutShell({
                         )}
                       >
                         {c.peer.avatar_url ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={c.peer.avatar_url} alt="" className="h-full w-full object-cover" />
+                          <Image src={c.peer.avatar_url} alt="" fill sizes="36px" className="h-full w-full object-cover" />
                         ) : (
                           (c.peer.display_name || c.peer.username).slice(0, 2).toUpperCase()
                         )}

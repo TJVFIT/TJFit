@@ -5,7 +5,7 @@ import { requireAuth } from "@/lib/require-auth";
 import { normalizeUsername } from "@/lib/username";
 
 const PROFILE_SELECT =
-  "id, email, role, username, username_normalized, display_name, avatar_url, bio, is_private, is_searchable, message_privacy, created_at, updated_at";
+  "id, email, role, username, username_normalized, display_name, avatar_url, bio, is_private, is_searchable, message_privacy, privacy_settings, banner_color, display_badge_key, created_at, updated_at";
 
 export async function GET() {
   const auth = await requireAuth();

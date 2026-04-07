@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { buildTJAISystemPrompt, buildTJAIUserPrompt } from "@/lib/tjai-prompts";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
-import { hasTJAIFullAccess } from "@/lib/subscription-tiers";
+import { getTJAIAccess } from "@/lib/tjai-access";
 import { calculateTJAIMetrics } from "@/lib/tjai-science";
 
 export const dynamic = "force-dynamic";
@@ -20,22 +20,29 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Server not configured" }, { status: 500 });
   }
 
-  const { data: subscription } = await adminClient
-    .from("user_subscriptions")
-    .select("tier,status,trial_ends_at")
-    .eq("user_id", authResult.user.id)
-    .maybeSingle();
+  const [{ data: subscription }, { data: purchase }] = await Promise.all([
+    adminClient.from("user_subscriptions").select("tier,status,trial_ends_at").eq("user_id", authResult.user.id).maybeSingle(),
+    adminClient
+      .from("tjai_plan_purchases")
+      .select("id")
+      .eq("user_id", authResult.user.id)
+      .order("purchased_at", { ascending: false })
+      .limit(1)
+      .maybeSingle()
+  ]);
 
   const tier = (subscription?.tier ?? "core") as "core" | "pro" | "apex";
-  const isTrialActive = subscription?.trial_ends_at
-    ? new Date(subscription.trial_ends_at).getTime() > Date.now()
-    : false;
-  if (!hasTJAIFullAccess(tier) && !isTrialActive) {
+  const isTrialActive = subscription?.trial_ends_at ? new Date(subscription.trial_ends_at).getTime() > Date.now() : false;
+  const access = getTJAIAccess(tier, {
+    hasOneTimePlanPurchase: Boolean(purchase?.id),
+    coreTrialMessagesRemaining: isTrialActive ? 10 : 0
+  });
+  if (!access.canGeneratePlan) {
     return NextResponse.json(
       {
-        error: "TJAI full generation is available for Apex or active trial users.",
+        error: "TJAI full generation is available for Pro, Apex, or one-time plan purchase users.",
         code: "TJAI_UPGRADE_REQUIRED",
-        upsell: { proMonthlyEur: 20, apexMonthlyEur: 35 }
+        upsell: { proMonthlyEur: 20, apexMonthlyEur: 35, oneTimeEur: 9.99 }
       },
       { status: 402 }
     );

@@ -24,6 +24,25 @@ Include: introduction, 5-7 subheadings with content, practical tips, conclusion,
 Tone: expert but accessible. Length: ~1200 words.`;
 
   const content = await callClaude({ system, user, maxTokens: 4500 });
-  return NextResponse.json({ content });
+  const { data: draft, error } = await admin
+    .from("community_blog_posts")
+    .insert({
+      author_id: auth.user.id,
+      author_name: "TJAI",
+      author_role: "admin",
+      author_type: "ai",
+      status: "admin_draft",
+      title: topic,
+      content,
+      category: "Training"
+    })
+    .select("id,title,content,category,status")
+    .single();
+
+  if (error) {
+    return NextResponse.json({ error: "Failed to store AI draft" }, { status: 500 });
+  }
+
+  return NextResponse.json({ content, draft });
 }
 

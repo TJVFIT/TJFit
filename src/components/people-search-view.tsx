@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Search } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AuthRequiredPanel } from "@/components/auth-required-panel";
@@ -223,8 +224,7 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
                     <div className="flex min-w-0 flex-1 gap-4">
                       <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 shadow-inner ring-1 ring-white/5">
                         {r.avatar_url ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={r.avatar_url} alt="" className="h-full w-full object-cover" />
+                          <Image src={r.avatar_url} alt="" fill sizes="64px" className="h-full w-full object-cover" />
                         ) : (
                           <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-zinc-800 to-zinc-900 text-sm font-semibold text-zinc-400">
                             {initials(displayName, uname)}

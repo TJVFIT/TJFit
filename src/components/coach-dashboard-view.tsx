@@ -1,5 +1,6 @@
 import { coachDashboardStats, walletTransactions } from "@/lib/content";
 import { CoachMyStudentsPanel } from "@/components/coach-my-students-panel";
+import { CoachAnalyticsWidget } from "@/components/coach-analytics-widget";
 import { Logo } from "@/components/ui/Logo";
 import { StatGrid } from "@/components/ui";
 import { getDictionary } from "@/lib/i18n";
@@ -24,6 +25,7 @@ export function CoachDashboardView({ locale }: { locale: Locale }) {
       </div>
 
       <StatGrid stats={coachDashboardStats} />
+      <CoachAnalyticsWidget />
 
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
         <section className="space-y-6">

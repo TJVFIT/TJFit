@@ -1,54 +1,76 @@
-import Link from "next/link";
-import { PremiumPageShell, PremiumPanel, PremiumSectionTitle } from "@/components/premium";
-import { getCoachesListingCopy } from "@/lib/premium-public-copy";
-import { requireLocaleParam } from "@/lib/require-locale";
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { CoachCard } from "@/components/coach-card";
+import { PremiumPageShell } from "@/components/premium";
+import { isLocale } from "@/lib/i18n";
+import { searchNormalize } from "@/lib/turkish-chars";
 
 export default function CoachesPage({ params }: { params: { locale: string } }) {
-  const locale = requireLocaleParam(params.locale);
-  const copy = getCoachesListingCopy(locale);
+  const locale = isLocale(params.locale) ? params.locale : "en";
+  const [loading, setLoading] = useState(true);
+  const [coaches, setCoaches] = useState<any[]>([]);
+  const [q, setQ] = useState("");
+  const [specialty, setSpecialty] = useState("");
+  const [acceptingOnly, setAcceptingOnly] = useState(false);
+
+  useEffect(() => {
+    const fetchList = async () => {
+      setLoading(true);
+      const qs = new URLSearchParams();
+      if (q.trim()) qs.set("q", searchNormalize(q));
+      if (specialty.trim()) qs.set("specialty", specialty);
+      if (acceptingOnly) qs.set("accepting", "1");
+      const res = await fetch(`/api/coaches?${qs.toString()}`, { cache: "no-store" });
+      const data = await res.json().catch(() => ({}));
+      setCoaches((data.coaches ?? []) as any[]);
+      setLoading(false);
+    };
+    void fetchList();
+  }, [acceptingOnly, q, specialty]);
+
+  const specialtyOptions = useMemo(() => {
+    const set = new Set<string>();
+    for (const coach of coaches) {
+      for (const tag of coach.specialty_tags ?? []) set.add(String(tag));
+    }
+    return [...set].sort((a, b) => a.localeCompare(b));
+  }, [coaches]);
 
   return (
     <PremiumPageShell>
-      <PremiumSectionTitle eyebrow={copy.badge} title={copy.title} subtitle={copy.body} />
-
-      <h2 className="mt-12 text-center font-display text-lg font-semibold text-white sm:text-xl">{copy.standardsTitle}</h2>
-      <div className="mt-8 grid gap-4 md:grid-cols-3">
-        {copy.standards.map((line) => (
-          <div
-            key={line}
-            className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.05] to-transparent px-6 py-8"
-          >
-            <div className="h-px w-12 rounded-full bg-cyan-400/40" aria-hidden />
-            <p className="mt-6 text-sm leading-relaxed text-zinc-400">{line}</p>
-          </div>
-        ))}
-      </div>
-
-      <PremiumPanel className="mt-14 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
-        <Link
-          href={`/${locale}/programs`}
-          className="lux-btn-primary inline-flex flex-1 items-center justify-center rounded-full px-6 py-3 text-center text-sm font-semibold text-[#05080a] sm:min-w-[200px]"
-        >
-          {copy.ctaPrograms}
-        </Link>
-        <Link
-          href={`/${locale}/signup`}
-          className="lux-btn-secondary inline-flex flex-1 items-center justify-center rounded-full px-6 py-3 text-center text-sm font-medium sm:min-w-[200px]"
-        >
-          {copy.ctaSignup}
-        </Link>
-        <div
-          className="inline-flex flex-1 cursor-not-allowed flex-col items-center justify-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-6 py-3 text-center sm:min-w-[200px]"
-          role="group"
-          aria-disabled="true"
-          aria-label={`${copy.comingSoonLabel}: ${copy.ctaBecomeCoach}`}
-        >
-          <span className="rounded border border-cyan-400/25 bg-cyan-400/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-cyan-200/90">
-            {copy.comingSoonLabel}
-          </span>
-          <span className="text-sm font-medium text-zinc-500">{copy.ctaBecomeCoach}</span>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-white">Coaches</h1>
+          <p className="mt-1 text-sm text-zinc-400">Find the right coach by specialty and availability.</p>
         </div>
-      </PremiumPanel>
+        <div className="grid gap-2 md:grid-cols-[1fr,220px,220px]">
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search coach name or username"
+            className="rounded-xl border border-[#1E2028] bg-[#111215] px-3 py-2 text-sm text-white"
+          />
+          <select value={specialty} onChange={(e) => setSpecialty(e.target.value)} className="rounded-xl border border-[#1E2028] bg-[#111215] px-3 py-2 text-sm text-white">
+            <option value="">All specialties</option>
+            {specialtyOptions.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          <label className="inline-flex items-center gap-2 rounded-xl border border-[#1E2028] bg-[#111215] px-3 py-2 text-sm text-zinc-300">
+            <input type="checkbox" checked={acceptingOnly} onChange={(e) => setAcceptingOnly(e.target.checked)} />
+            Accepting clients only
+          </label>
+        </div>
+        {loading ? <p className="text-sm text-zinc-500">Loading coaches...</p> : null}
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {coaches.map((coach) => (
+            <CoachCard key={coach.id} locale={locale} coach={coach} />
+          ))}
+        </div>
+      </div>
     </PremiumPageShell>
   );
 }
