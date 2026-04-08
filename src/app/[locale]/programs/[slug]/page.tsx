@@ -376,6 +376,7 @@ export default async function ProgramDetailPage({
                   blueprintTrainingDays: copy.blueprintTrainingDays,
                   blueprintConditioning: copy.blueprintConditioning
                 }}
+                locale={locale}
                 isDiet={isDiet}
                 paidLocked={paidContentLocked}
                 checkoutHref={checkoutHref}

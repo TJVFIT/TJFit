@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import type { ProgramBlueprint } from "@/lib/program-blueprints";
 import { ProgramContentLock } from "@/components/program-content-lock";
+import type { Locale } from "@/lib/i18n";
+import { getProgramQualityPack } from "@/lib/program-quality-copy";
 import { cn } from "@/lib/utils";
 
 type Copy = {
@@ -85,6 +87,7 @@ function PhasePanel({
 export function ProgramBlueprintNavigator({
   blueprint,
   copy,
+  locale,
   isDiet,
   paidLocked,
   checkoutHref,
@@ -95,6 +98,7 @@ export function ProgramBlueprintNavigator({
 }: {
   blueprint: ProgramBlueprint;
   copy: Copy;
+  locale: Locale;
   isDiet: boolean;
   paidLocked: boolean;
   checkoutHref: string;
@@ -104,6 +108,7 @@ export function ProgramBlueprintNavigator({
   safetyTitle: string;
 }) {
   const phases = blueprint.weeklyPhases;
+  const qualityPack = getProgramQualityPack(locale, blueprint, isDiet);
   const [tab, setTab] = useState(0);
   const [contentOn, setContentOn] = useState(true);
 
@@ -164,6 +169,27 @@ export function ProgramBlueprintNavigator({
           inner
         )}
       </div>
+
+      {!lockedTab ? (
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="rounded-2xl border border-[#1E2028] bg-[#111215] p-5">
+            <p className="text-xs uppercase tracking-[0.2em] text-[#52525B]">{qualityPack.standardsTitle}</p>
+            <ul className="mt-3 space-y-2 text-sm leading-relaxed text-[#A1A1AA]">
+              {qualityPack.standards.map((item) => (
+                <li key={item}>- {item}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-2xl border border-[#1E2028] bg-[#111215] p-5">
+            <p className="text-xs uppercase tracking-[0.2em] text-[#52525B]">{qualityPack.checkinsTitle}</p>
+            <ul className="mt-3 space-y-2 text-sm leading-relaxed text-[#A1A1AA]">
+              {qualityPack.checkins.map((item) => (
+                <li key={item}>- {item}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      ) : null}
 
       {blueprint.safety.length > 0 && !paidLocked ? (
         <div className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
