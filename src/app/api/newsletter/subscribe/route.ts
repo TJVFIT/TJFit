@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { rateLimit } from "@/lib/rate-limit";
+import { sendEmail } from "@/lib/email";
+import { EmailTemplates } from "@/lib/email-templates";
+import { signNewsletterConfirmToken } from "@/lib/newsletter-confirmation";
 import { readRequestJson } from "@/lib/read-request-json";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
@@ -30,6 +33,34 @@ export async function POST(request: NextRequest) {
   const supabase = getSupabaseServerClient();
   if (!supabase) {
     return NextResponse.json({ error: "Server not configured." }, { status: 500 });
+  }
+
+  if (source === "homepage-newsletter") {
+    const { data: existing } = await supabase
+      .from("newsletter_subscribers")
+      .select("id,email,unsubscribed_at")
+      .eq("email", email)
+      .limit(1)
+      .maybeSingle();
+
+    if (existing && !existing.unsubscribed_at) {
+      return NextResponse.json({ error: "This email is already subscribed." }, { status: 409 });
+    }
+
+    const token = signNewsletterConfirmToken({ email, source, locale, ttlMinutes: 60 * 24 });
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://tjfit.org";
+    const confirmUrl = `${baseUrl}/api/newsletter/confirm?token=${encodeURIComponent(token)}`;
+    const sendResult = await sendEmail({
+      to: email,
+      subject: "Confirm your TJFit newsletter subscription",
+      html: EmailTemplates.newsletterConfirm(confirmUrl)
+    });
+
+    if (!sendResult.ok) {
+      return NextResponse.json({ error: "Could not send confirmation email." }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, pendingConfirmation: true });
   }
 
   const { error } = await supabase

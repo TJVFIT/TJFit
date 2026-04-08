@@ -13,6 +13,7 @@ import { HomeProgramPreviewCard } from "@/components/program-card";
 import { SplitText } from "@/components/ui/split-text";
 import { ScrollTicker } from "@/components/ui/ScrollTicker";
 import { WordReveal } from "@/components/ui/word-reveal";
+import { HomeNewsletterBar } from "@/components/home-newsletter-bar";
 import { useMagneticButton } from "@/hooks/useMagneticButton";
 import { useInView } from "@/hooks/useInView";
 import type { Program } from "@/lib/content";
@@ -629,7 +630,10 @@ export function ImmersiveHome({
         <div className="tj-gradient-divider mx-auto mt-20 max-w-6xl opacity-80" aria-hidden />
       </section>
 
-      {/* —— 7 FINAL CTA —— */}
+      {/* —— 7 NEWSLETTER —— */}
+      <HomeNewsletterBar locale={locale} />
+
+      {/* —— 8 FINAL CTA —— */}
       <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-[#09090B] px-6 py-16 text-center lg:px-12 lg:py-24">
         <div
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(34,211,238,0.06)_0%,transparent_55%)]"

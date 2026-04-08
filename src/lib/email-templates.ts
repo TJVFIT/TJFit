@@ -27,6 +27,27 @@ function renderTemplate({ title, body, ctaLabel, ctaUrl, footerUrl }: BaseTempla
 }
 
 export const EmailTemplates = {
+  newsletterConfirm: (url: string) =>
+    renderTemplate({
+      title: "Confirm your TJFit newsletter subscription",
+      body: "Tap the button below to confirm your email and unlock your free 3-day workout plan.",
+      ctaLabel: "Confirm subscription",
+      ctaUrl: url
+    }),
+  newsletterPlanWelcome: (url: string) =>
+    renderTemplate({
+      title: "Your Free 3-Day Workout Plan from TJFit 💪",
+      body: [
+        "Day 1 — Upper Body: Push-ups 4x10, DB Row 4x12, DB Shoulder Press 3x10, Tricep Dips 3x12, Plank 3x40s.",
+        "Day 2 — Lower Body: Squats 4x12, Romanian Deadlift 4x10, Reverse Lunges 3x12/side, Glute Bridge 3x15, Calf Raises 4x20.",
+        "Day 3 — Full Body Cardio Circuit: 5 rounds — 40s work / 20s rest (Jumping Jacks, Mountain Climbers, Bodyweight Squats, Push-ups, High Knees).",
+        "Rest 60-90s between rounds and finish with 5 minutes of easy cooldown.",
+        "",
+        "Ready for a full 12 weeks? Start free on TJFit."
+      ].join("\n"),
+      ctaLabel: "Start free on TJFit",
+      ctaUrl: url
+    }),
   welcome: (name: string, url: string, unsubscribeUrl: string) =>
     renderTemplate({
       title: `Welcome to TJFit, ${name} 💪`,
