@@ -27,7 +27,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
   const supportLinks = [
     { href: `/${locale}/support`, label: copy.contact },
     { href: `/${locale}/become-a-coach`, label: copy.becomeCoach },
-    { href: `/${locale}/community`, label: `${copy.community} ${copy.companyComingSoon}` }
+    { href: `/${locale}/community`, label: copy.community }
   ];
 
   return (

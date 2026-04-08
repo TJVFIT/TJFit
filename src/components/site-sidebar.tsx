@@ -169,7 +169,7 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
       { key: "coaches", href: "/coaches", label: dict.nav.coaches, Icon: Users },
       { key: "feed", href: "/feed", label: side.feed, Icon: Users },
       { key: "community", href: "/community", label: dict.nav.community, Icon: MessageCircle },
-      { key: "membership", href: "/membership", label: dict.nav.membership, Icon: CreditCard, comingSoon: true },
+      { key: "membership", href: "/membership", label: "Membership", Icon: CreditCard },
       { key: "coins", href: "/coins", label: side.coinsShop, Icon: Coins },
       { key: "leaderboard", href: "/leaderboard", label: side.leaderboard, Icon: Trophy },
       { key: "legal", href: "/legal", label: nav.legalCenterLabel, Icon: Scale },
