@@ -14,6 +14,7 @@ import { SplitText } from "@/components/ui/split-text";
 import { ScrollTicker } from "@/components/ui/ScrollTicker";
 import { WordReveal } from "@/components/ui/word-reveal";
 import { HomeNewsletterBar } from "@/components/home-newsletter-bar";
+import { HomeTestimonials } from "@/components/home-testimonials";
 import { useMagneticButton } from "@/hooks/useMagneticButton";
 import { useInView } from "@/hooks/useInView";
 import type { Program } from "@/lib/content";
@@ -534,7 +535,10 @@ export function ImmersiveHome({
         </section>
       ) : null}
 
-      {/* —— 4 PROGRAMS —— */}
+      {/* —— 4 TESTIMONIALS —— */}
+      <HomeTestimonials locale={locale} />
+
+      {/* —— 5 PROGRAMS —— */}
       <section className="relative min-h-[100svh] border-t border-[var(--color-border)] bg-[#111215] px-6 py-16 lg:px-12 lg:py-24">
         <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center">
           <BlurReveal>
@@ -576,7 +580,7 @@ export function ImmersiveHome({
         <div className="tj-gradient-divider mx-auto mt-16 max-w-6xl opacity-80" aria-hidden />
       </section>
 
-      {/* —— 5 DIETS —— */}
+      {/* —— 6 DIETS —— */}
       {diets.length > 0 ? (
         <section className="relative min-h-[100svh] bg-[#09090B] px-6 py-16 lg:px-12 lg:py-24">
           <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center">
@@ -619,7 +623,7 @@ export function ImmersiveHome({
         </section>
       ) : null}
 
-      {/* —— 6 STATS —— */}
+      {/* —— 7 STATS —— */}
       <section className="relative flex min-h-[100svh] flex-col justify-center bg-[#09090B] px-6 py-16 lg:px-12 lg:py-24">
         <div className="mx-auto grid max-w-4xl grid-cols-2 gap-12 lg:gap-16">
           <CountCell target={programCount} suffix="+" label="Programs" subtitle="Home & gym training" reduce={reduce} />
@@ -630,10 +634,10 @@ export function ImmersiveHome({
         <div className="tj-gradient-divider mx-auto mt-20 max-w-6xl opacity-80" aria-hidden />
       </section>
 
-      {/* —— 7 NEWSLETTER —— */}
+      {/* —— 8 NEWSLETTER —— */}
       <HomeNewsletterBar locale={locale} />
 
-      {/* —— 8 FINAL CTA —— */}
+      {/* —— 9 FINAL CTA —— */}
       <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-[#09090B] px-6 py-16 text-center lg:px-12 lg:py-24">
         <div
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(34,211,238,0.06)_0%,transparent_55%)]"
