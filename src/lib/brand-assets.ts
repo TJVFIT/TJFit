@@ -10,6 +10,6 @@ export const BRAND = {
   logoFull: "/logo/tjfit-brand.png",
   /** Square monogram @192 — structured data / PWA */
   logoIcon192: "/icons/icon-192.png",
-  ogDefault: "/og-image.png",
+  ogDefault: "/og-image.jpg",
   faviconIco: "/favicon.ico"
 } as const;

@@ -718,7 +718,7 @@ const communityCopy: Record<Locale, CommunityCopy> = {
 const footerCopy: Record<Locale, FooterCopy> = {
   en: {
     description: "Premium online coaching and digital programs platform for fitness, performance, and recovery.",
-    tagline: "Transform. Perform. Dominate.",
+    tagline: "Train smarter. Eat better. Transform faster.",
     productTitle: "Product",
     companyTitle: "Company",
     supportTitle: "Support",
@@ -737,7 +737,7 @@ const footerCopy: Record<Locale, FooterCopy> = {
   },
   tr: {
     description: "Fitness, performans ve toparlanma için premium online koçluk ve dijital programlar — tek platformda.",
-    tagline: "Donus. Performans. Hukum.",
+    tagline: "Daha akilli antrenman. Daha iyi beslenme. Daha hizli donusum.",
     productTitle: "Urun",
     companyTitle: "Sirket",
     supportTitle: "Destek",
@@ -756,7 +756,7 @@ const footerCopy: Record<Locale, FooterCopy> = {
   },
   ar: {
     description: "منصة تدريب اونلاين وبرامج رقمية مميزة للياقة والاداء والتعافي.",
-    tagline: "تحول. أداء. هيمنة.",
+    tagline: "تدرّب بذكاء. كُل أفضل. تحوّل أسرع.",
     productTitle: "المنتج",
     companyTitle: "الشركة",
     supportTitle: "الدعم",
@@ -775,7 +775,7 @@ const footerCopy: Record<Locale, FooterCopy> = {
   },
   es: {
     description: "Plataforma premium de coaching online y programas digitales para fitness, rendimiento y recuperacion.",
-    tagline: "Transforma. Rinde. Domina.",
+    tagline: "Entrena mas inteligente. Come mejor. Transforma mas rapido.",
     productTitle: "Producto",
     companyTitle: "Compania",
     supportTitle: "Soporte",
@@ -794,7 +794,7 @@ const footerCopy: Record<Locale, FooterCopy> = {
   },
   fr: {
     description: "Plateforme premium de coaching en ligne et de programmes digitaux pour fitness, performance et recuperation.",
-    tagline: "Transforme. Performe. Domine.",
+    tagline: "Entrainez-vous plus intelligemment. Mangez mieux. Transformez-vous plus vite.",
     productTitle: "Produit",
     companyTitle: "Entreprise",
     supportTitle: "Support",

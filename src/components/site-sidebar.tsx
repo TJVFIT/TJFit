@@ -60,6 +60,14 @@ const SIDEBAR_COPY: Record<
   fr: { tjaiTooltip: "TJAI — Votre coach IA", calculator: "Calculateur", feed: "Flux", coinsShop: "Boutique TJCOIN", leaderboard: "Classement", aiTools: "IA et Outils" }
 };
 
+const PRIMARY_CTA_COPY: Record<Locale, { start: string; dashboard: string }> = {
+  en: { start: "Start Training", dashboard: "Dashboard" },
+  tr: { start: "Antrenmana Basla", dashboard: "Panel" },
+  ar: { start: "ابدأ التدريب", dashboard: "لوحة التحكم" },
+  es: { start: "Empezar a entrenar", dashboard: "Panel" },
+  fr: { start: "Commencer l'entrainement", dashboard: "Tableau de bord" }
+};
+
 type ItemDef = {
   key: string;
   href: string;
@@ -113,6 +121,9 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
   const isAdmin = role === "admin";
   const soonMessage = SOON_MSG_BY_LOCALE[locale] ?? SOON_MSG_BY_LOCALE.en;
   const side = SIDEBAR_COPY[locale] ?? SIDEBAR_COPY.en;
+  const primaryCtaCopy = PRIMARY_CTA_COPY[locale] ?? PRIMARY_CTA_COPY.en;
+  const primaryCtaHref = user ? `/${locale}/dashboard` : `/${locale}/start`;
+  const primaryCtaLabel = user ? primaryCtaCopy.dashboard : primaryCtaCopy.start;
 
   useEffect(() => {
     if (reduce) {
@@ -396,6 +407,15 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
           <Logo variant="full" size="sidebar" href={`/${locale}`} suppressMinTouchTarget />
         </div>
 
+        <div className="px-3 pb-2 pt-3">
+          <Link
+            href={primaryCtaHref}
+            className="inline-flex h-11 w-full items-center justify-center rounded-full bg-[#22D3EE] px-4 text-sm font-bold text-[#09090B] transition-opacity hover:opacity-90"
+          >
+            {primaryCtaLabel}
+          </Link>
+        </div>
+
         <nav className="flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto overflow-x-visible px-0 py-3 [scrollbar-width:thin]">
           <GlobalSearch locale={locale} collapsed={!sidebarExpanded} onExpand={() => setSidebarExpanded(true)} />
           {primaryItems.map((it, i) => renderNavRow(it, i))}
@@ -567,6 +587,9 @@ function MobileNav({
   const [search, setSearch] = useState("");
   const [soonInline, setSoonInline] = useState<string | null>(null);
   const soonMessage = SOON_MSG_BY_LOCALE[locale] ?? SOON_MSG_BY_LOCALE.en;
+  const primaryCtaCopy = PRIMARY_CTA_COPY[locale] ?? PRIMARY_CTA_COPY.en;
+  const primaryCtaHref = user ? `/${locale}/dashboard` : `/${locale}/start`;
+  const primaryCtaLabel = user ? primaryCtaCopy.dashboard : primaryCtaCopy.start;
 
   useEffect(() => setMounted(true), []);
   useEffect(() => {
@@ -694,6 +717,13 @@ function MobileNav({
             <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-y-contain px-6 pb-4">
               <div className="mx-auto flex w-full max-w-sm flex-col items-center">
                 <Logo variant="full" size="footer" href={`/${locale}`} onNavigate={() => setOpen(false)} />
+                <Link
+                  href={primaryCtaHref}
+                  onClick={() => setOpen(false)}
+                  className="mt-6 inline-flex min-h-[48px] w-full items-center justify-center rounded-full bg-[#22D3EE] px-5 py-2 text-sm font-bold text-[#09090B]"
+                >
+                  {primaryCtaLabel}
+                </Link>
                 <nav className="mt-10 flex w-full flex-col gap-1" aria-label={nav.navigation}>
                   {primaryItems.map((it, i) => {
                     const active = !it.comingSoon && isActivePath(pathname, locale, it.href);
