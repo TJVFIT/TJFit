@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { isAdminEmail } from "@/lib/auth-utils";
+import { recordPlanGeneration, getSimilarUserInsight } from "@/lib/tjai-analytics";
 import { buildTJAISystemPrompt, buildTJAIUserPrompt } from "@/lib/tjai-prompts";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
@@ -91,8 +92,10 @@ export async function POST(request: NextRequest) {
 
     const quizAnswers = effectiveAnswers as QuizAnswers;
     const metrics = calculateTJAIMetrics(quizAnswers);
+    const learningInsight = await getSimilarUserInsight(adminClient, effectiveAnswers);
     const systemPrompt = buildTJAISystemPrompt();
-    const userPrompt = buildTJAIUserPrompt(quizAnswers, metrics);
+    const userPrompt = buildTJAIUserPrompt(quizAnswers, metrics) + (learningInsight ? `\n\n${learningInsight}` : "");
+    console.log("TJAI generate called for user:", authResult.user.id);
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
@@ -162,6 +165,10 @@ export async function POST(request: NextRequest) {
     if (saveError) {
       console.error("TJAI generate save error:", saveError);
     }
+    console.log("TJAI plan generated successfully for user:", authResult.user.id);
+
+    // Record anonymous analytics (non-blocking)
+    void recordPlanGeneration(adminClient, effectiveAnswers, Number(metrics.calorieTarget ?? 0), Number(metrics.protein ?? 0));
 
     return NextResponse.json({
       plan,

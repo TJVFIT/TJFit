@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
 
@@ -21,6 +21,13 @@ export default function CalculatorPage({ params }: { params: { locale: string } 
   const [activity, setActivity] = useState<Activity>(1.55);
   const [goal, setGoal] = useState<Goal>("lose");
   const [submitted, setSubmitted] = useState(false);
+  const resultRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (submitted && resultRef.current) {
+      resultRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [submitted]);
 
   const result = useMemo(() => {
     const bmr = calculateBmr(age, gender, height, weight);
@@ -85,28 +92,40 @@ export default function CalculatorPage({ params }: { params: { locale: string } 
       </section>
 
       {submitted ? (
-        <section className="mt-8 rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
-          <p className="text-xs uppercase tracking-[0.14em] text-[#52525B]">Your Result</p>
-          <p className="mt-2 text-4xl font-extrabold text-[#22D3EE]">{result.tdee} kcal</p>
-          <p className="text-sm text-[#A1A1AA]">Your Total Daily Energy Expenditure</p>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-lg border border-[#1E2028] bg-[#0D0F14] p-4">
-              <p className="text-xs text-[#52525B]">Goal calories</p>
-              <p className="mt-1 text-xl font-semibold text-white">{result.calories} kcal</p>
+        <section ref={resultRef} className="mt-8 rounded-2xl border border-[#22D3EE]/30 bg-[#111215] p-6 shadow-[0_0_32px_rgba(34,211,238,0.08)]">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#22D3EE]">✓ Your Results</p>
+          <p className="mt-2 text-5xl font-extrabold text-[#22D3EE]">{result.calories} <span className="text-2xl font-semibold text-zinc-400">kcal/day</span></p>
+          <p className="text-sm text-[#A1A1AA]">Your personalized daily calorie target</p>
+          <div className="mt-4 grid gap-2 sm:grid-cols-3">
+            <div className="rounded-lg border border-[#1E2028] bg-[#0D0F14] p-3 text-center">
+              <p className="text-xs text-zinc-500">Protein</p>
+              <p className="mt-1 text-lg font-bold text-white">{result.protein}g</p>
             </div>
-            <div className="rounded-lg border border-[#1E2028] bg-[#0D0F14] p-4">
-              <p className="text-xs text-[#52525B]">Water target</p>
-              <p className="mt-1 text-xl font-semibold text-white">{result.waterMl} ml/day</p>
+            <div className="rounded-lg border border-[#1E2028] bg-[#0D0F14] p-3 text-center">
+              <p className="text-xs text-zinc-500">Carbs</p>
+              <p className="mt-1 text-lg font-bold text-white">{result.carbs}g</p>
+            </div>
+            <div className="rounded-lg border border-[#1E2028] bg-[#0D0F14] p-3 text-center">
+              <p className="text-xs text-zinc-500">Fat</p>
+              <p className="mt-1 text-lg font-bold text-white">{result.fat}g</p>
             </div>
           </div>
-          <div className="mt-4 rounded-lg border border-[#1E2028] bg-[#0D0F14] p-4 text-sm text-[#A1A1AA]">
-            Protein {result.protein}g • Carbs {result.carbs}g • Fat {result.fat}g
+          <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm text-zinc-400">
+            <span>BMR: <span className="text-white">{calculateBmr(age, gender, height, weight).toFixed(0)} kcal</span></span>
+            <span>TDEE: <span className="text-white">{result.tdee} kcal</span></span>
+            <span>Water: <span className="text-white">{(result.waterMl / 1000).toFixed(1)}L/day</span></span>
           </div>
           <div className="mt-6 rounded-xl border border-cyan-400/25 bg-cyan-400/10 p-4">
-            <p className="text-sm text-white">Want a complete 12-week plan built around these numbers?</p>
-            <Button href={`/${locale}/ai`} className="mt-3">
-              Try TJAI Free →
-            </Button>
+            <p className="text-sm font-semibold text-white">Ready to put these numbers into action?</p>
+            <p className="mt-1 text-xs text-zinc-400">TJAI will build a full 12-week plan around your exact numbers.</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Button href={`/${locale}/ai`} className="text-sm">
+                Build My TJAI Plan →
+              </Button>
+              <Button href={`/${locale}/programs`} className="text-sm" variant="secondary">
+                Browse Programs →
+              </Button>
+            </div>
           </div>
         </section>
       ) : null}

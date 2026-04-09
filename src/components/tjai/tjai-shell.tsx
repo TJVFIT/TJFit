@@ -52,22 +52,34 @@ export function TJAIShell({ locale }: { locale: Locale }) {
       return;
     }
     setPhase("calculating");
+    console.log("TJAI generate called for user:", "client");
 
     try {
-      const response = await fetch("/api/tjai/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers: submittedAnswers, paceOverride })
-      });
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), 120000); // 2 min max
+      let response: Response;
+      try {
+        response = await fetch("/api/tjai/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ answers: submittedAnswers, paceOverride }),
+          signal: controller.signal
+        });
+      } finally {
+        window.clearTimeout(timeout);
+      }
       const data = await response.json();
       if (!response.ok) {
+        console.error("TJAI generate error:", data?.error ?? "Failed to generate plan");
         throw new Error(data?.error ?? "Failed to generate plan");
       }
+      console.log("TJAI plan generated successfully");
       setPlan(data.plan as TJAIPlan);
       setMetrics((data.metrics as TJAIMetrics) ?? localMetrics);
       setGeneratedAt(data.generatedAt ?? new Date().toISOString());
       setPhase("result");
-    } catch {
+    } catch (err) {
+      console.error("TJAI generate client error:", err);
       setPhase("quiz");
     }
   };
@@ -145,44 +157,61 @@ export function TJAIShell({ locale }: { locale: Locale }) {
   if (phase === "approach") {
     const moderate = calculateTJAIMetrics({ ...draftAnswers, s2_pace: "Moderate" });
     const aggressive = calculateTJAIMetrics({ ...draftAnswers, s2_pace: "Aggressive" });
-    const discipline = String(draftAnswers.s18_discipline ?? "");
+    const paceFromQuiz = String(draftAnswers.s2_pace ?? "");
+    const recommendAggressive = paceFromQuiz.includes("Fast");
     return (
       <section className="min-h-[100svh] bg-[#09090B] px-4 py-12 text-white">
-        <div className="mx-auto max-w-4xl">
-          <h2 className="text-3xl font-bold">{accessCopy.approachTitle}</h2>
+        <div className="mx-auto max-w-3xl">
+          <p className="text-xs uppercase tracking-[0.2em] text-[#22D3EE]">Almost there</p>
+          <h2 className="mt-2 text-3xl font-bold">{accessCopy.approachTitle}</h2>
           <p className="mt-2 text-sm text-[#A1A1AA]">{accessCopy.approachSub}</p>
-          <div className="mt-5 rounded-xl border border-[#1E2028] bg-[#111215] p-4">
-            <p className="text-sm font-semibold text-white">{accessCopy.metricsTitle}</p>
-            <div className="mt-3 grid grid-cols-2 gap-3 text-sm md:grid-cols-5">
-              <p className="rounded-lg border border-[#1E2028] p-2 text-center">{accessCopy.metrics.bmr}: {moderate.bmr}</p>
-              <p className="rounded-lg border border-[#1E2028] p-2 text-center">{accessCopy.metrics.tdee}: {moderate.tdee}</p>
-              <p className="rounded-lg border border-[#1E2028] p-2 text-center">{accessCopy.metrics.protein}: {moderate.protein}</p>
-              <p className="rounded-lg border border-[#1E2028] p-2 text-center">{accessCopy.metrics.carbs}: {moderate.carbs}</p>
-              <p className="rounded-lg border border-[#1E2028] p-2 text-center">{accessCopy.metrics.fat}: {moderate.fat}</p>
-            </div>
+
+          <div className="mt-5 grid grid-cols-2 gap-3 rounded-xl border border-[#1E2028] bg-[#111215] p-4 sm:grid-cols-4">
+            {[
+              { label: "BMR", value: `${moderate.bmr} kcal` },
+              { label: "TDEE", value: `${moderate.tdee} kcal` },
+              { label: "Protein", value: `${moderate.protein}g` },
+              { label: "Goal calories", value: `${moderate.calorieTarget} kcal` }
+            ].map((s) => (
+              <div key={s.label} className="rounded-lg border border-[#1E2028] p-3 text-center">
+                <p className="text-xs text-[#A1A1AA]">{s.label}</p>
+                <p className="mt-1 font-semibold text-[#22D3EE]">{s.value}</p>
+              </div>
+            ))}
           </div>
+
           <div className="mt-6 grid gap-4 md:grid-cols-2">
-            <article className="rounded-xl border border-[#22D3EE] bg-[#111215] p-5">
-              <h3 className="text-xl font-semibold text-[#22D3EE]">{accessCopy.moderateTitle}</h3>
+            <article className={`rounded-xl border p-5 ${!recommendAggressive ? "border-[#22D3EE] bg-[rgba(34,211,238,0.04)]" : "border-[#1E2028] bg-[#111215]"}`}>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-[#22D3EE]">{accessCopy.moderateTitle}</h3>
+                {!recommendAggressive && <span className="rounded-full bg-[#22D3EE]/20 px-2 py-0.5 text-[10px] font-bold text-[#22D3EE]">RECOMMENDED</span>}
+              </div>
               <p className="mt-2 text-sm text-[#A1A1AA]">{accessCopy.moderateBody}</p>
-              <p className="mt-2 text-sm text-white">Expected weekly change: {moderate.weeklyWeightChange} kg/week</p>
-              <button type="button" className="mt-4 rounded-full bg-[#22D3EE] px-4 py-2 text-sm font-bold text-[#09090B]" onClick={() => void handleGenerate(draftAnswers, "Moderate")}>
+              <p className="mt-2 text-xs text-zinc-500">{moderate.weeklyWeightChange} kg/week expected</p>
+              <button type="button" className="mt-4 w-full rounded-full bg-[#22D3EE] px-4 py-2.5 text-sm font-bold text-[#09090B]" onClick={() => void handleGenerate(draftAnswers, "Moderate")}>
                 {accessCopy.moderateCta}
               </button>
             </article>
-            <article className="rounded-xl border border-[#1E2028] bg-[#111215] p-5">
-              <h3 className="text-xl font-semibold text-[#A78BFA]">{accessCopy.aggressiveTitle}</h3>
+            <article className={`rounded-xl border p-5 ${recommendAggressive ? "border-[#A78BFA] bg-[rgba(167,139,250,0.04)]" : "border-[#1E2028] bg-[#111215]"}`}>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-[#A78BFA]">{accessCopy.aggressiveTitle}</h3>
+                {recommendAggressive && <span className="rounded-full bg-[#A78BFA]/20 px-2 py-0.5 text-[10px] font-bold text-[#A78BFA]">RECOMMENDED</span>}
+              </div>
               <p className="mt-2 text-sm text-[#A1A1AA]">{accessCopy.aggressiveBody}</p>
-              <p className="mt-2 text-sm text-white">Expected weekly change: {aggressive.weeklyWeightChange} kg/week</p>
-              {discipline.startsWith("Low") ? <p className="mt-2 text-xs text-[#EF4444]">Not recommended if discipline is Low.</p> : null}
-              <button type="button" className="mt-4 rounded-full border border-[#A78BFA] px-4 py-2 text-sm text-[#D4D4D8]" onClick={() => void handleGenerate(draftAnswers, "Aggressive")}>
+              <p className="mt-2 text-xs text-zinc-500">{aggressive.weeklyWeightChange} kg/week expected</p>
+              <button type="button" className="mt-4 w-full rounded-full border border-[#A78BFA] px-4 py-2.5 text-sm font-semibold text-[#D4D4D8]" onClick={() => void handleGenerate(draftAnswers, "Aggressive")}>
                 {accessCopy.aggressiveCta}
               </button>
             </article>
           </div>
-          <button type="button" onClick={() => void handleCompareBoth(draftAnswers)} className="mt-6 rounded-full border border-[#1E2028] px-5 py-2 text-sm text-[#A1A1AA] hover:border-[#22D3EE] hover:text-white">
-            {accessCopy.compareCta}
-          </button>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button type="button" onClick={() => void handleCompareBoth(draftAnswers)} className="rounded-full border border-[#1E2028] px-5 py-2 text-sm text-[#A1A1AA] hover:border-[#22D3EE] hover:text-white">
+              {accessCopy.compareCta}
+            </button>
+            <button type="button" onClick={() => handleStartOver()} className="rounded-full border border-[#1E2028] px-5 py-2 text-sm text-[#A1A1AA] hover:text-white">
+              ← Retake Quiz
+            </button>
+          </div>
         </div>
         {showUpgrade ? (
           <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/60 p-4">

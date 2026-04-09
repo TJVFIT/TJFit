@@ -119,17 +119,27 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
   useEffect(() => {
     const load = async () => {
       setLoading(true);
-      const [plansRes, accessRes] = await Promise.all([
-        fetch("/api/tjai/save", { credentials: "include", cache: "no-store" }),
-        fetch("/api/tjai/access", { credentials: "include", cache: "no-store" })
-      ]);
-      const plansData = await plansRes.json().catch(() => ({}));
-      const accessData = await accessRes.json().catch(() => ({}));
-      const latest = (plansData?.plans?.[0]?.plan_json ?? null) as TJAIPlan | null;
-      setPlan(latest);
-      setCanRegenerate(Boolean(accessData?.canRegeneratePlan));
-      setCanDownloadPdf(Boolean(accessData?.canDownloadPdf));
-      setLoading(false);
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), 5000);
+      try {
+        const [plansRes, accessRes] = await Promise.all([
+          fetch("/api/tjai/save", { credentials: "include", cache: "no-store", signal: controller.signal }),
+          fetch("/api/tjai/access", { credentials: "include", cache: "no-store", signal: controller.signal })
+        ]);
+        window.clearTimeout(timeout);
+        const plansData = await plansRes.json().catch(() => ({}));
+        const accessData = await accessRes.json().catch(() => ({}));
+        const latest = (plansData?.plans?.[0]?.plan_json ?? null) as TJAIPlan | null;
+        setPlan(latest);
+        setCanRegenerate(Boolean(accessData?.canRegeneratePlan));
+        setCanDownloadPdf(Boolean(accessData?.canDownloadPdf));
+      } catch {
+        // Timeout or network error — show empty state so user can start the quiz
+        window.clearTimeout(timeout);
+        setPlan(null);
+      } finally {
+        setLoading(false);
+      }
     };
     void load();
   }, []);

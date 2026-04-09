@@ -2,111 +2,11 @@ import type { Locale } from "@/lib/i18n";
 import type { QuizStep, TJAICopy } from "@/lib/tjai-types";
 
 const SECTION_TITLES: Record<Locale, string[]> = {
-  en: [
-    "Basic Profile",
-    "Main Goal",
-    "Body Composition",
-    "Daily Activity",
-    "Training",
-    "Cardio",
-    "Metabolism",
-    "Sleep",
-    "Stress",
-    "Diet History",
-    "Eating Habits",
-    "Food Preferences",
-    "Restrictions",
-    "Lifestyle",
-    "Hydration",
-    "Supplements",
-    "Health",
-    "Compliance",
-    "Goals"
-  ],
-  tr: [
-    "Temel Profil",
-    "Ana Hedef",
-    "Vucut Kompozisyonu",
-    "Gunluk Aktivite",
-    "Antrenman",
-    "Kardiyo",
-    "Metabolizma",
-    "Uyku",
-    "Stres",
-    "Diyet Gecmisi",
-    "Yeme Aliskanliklari",
-    "Besin Tercihleri",
-    "Kisitlamalar",
-    "Yasam Tarzi",
-    "Hidrasyon",
-    "Takviyeler",
-    "Saglik",
-    "Uyum",
-    "Hedefler"
-  ],
-  ar: [
-    "الملف الاساسي",
-    "الهدف الرئيسي",
-    "تركيب الجسم",
-    "النشاط اليومي",
-    "التدريب",
-    "الكارديو",
-    "التمثيل الغذائي",
-    "النوم",
-    "الضغط",
-    "سجل الدايت",
-    "عادات الاكل",
-    "تفضيلات الطعام",
-    "القيود",
-    "نمط الحياة",
-    "الترطيب",
-    "المكملات",
-    "الصحة",
-    "الالتزام",
-    "الاهداف"
-  ],
-  es: [
-    "Perfil Basico",
-    "Objetivo Principal",
-    "Composicion Corporal",
-    "Actividad Diaria",
-    "Entrenamiento",
-    "Cardio",
-    "Metabolismo",
-    "Sueno",
-    "Estres",
-    "Historial de Dieta",
-    "Habitos Alimentarios",
-    "Preferencias de Comida",
-    "Restricciones",
-    "Estilo de Vida",
-    "Hidratacion",
-    "Suplementos",
-    "Salud",
-    "Cumplimiento",
-    "Objetivos"
-  ],
-  fr: [
-    "Profil de Base",
-    "Objectif Principal",
-    "Composition Corporelle",
-    "Activite Quotidienne",
-    "Entrainement",
-    "Cardio",
-    "Metabolisme",
-    "Sommeil",
-    "Stress",
-    "Historique Alimentaire",
-    "Habitudes Alimentaires",
-    "Preferences Alimentaires",
-    "Restrictions",
-    "Mode de Vie",
-    "Hydratation",
-    "Supplements",
-    "Sante",
-    "Discipline",
-    "Objectifs"
-  ]
+  en: ["The Basics", "Your Body", "Your Lifestyle", "Your Training", "Your Nutrition", "Finishing Up"],
+  tr: ["Temel Bilgiler", "Vucut Olculeri", "Yasam Tarzi", "Antrenman", "Beslenme", "Son Detaylar"],
+  ar: ["الأساسيات", "جسمك", "نمط حياتك", "تدريبك", "تغذيتك", "إنهاء"],
+  es: ["Lo Basico", "Tu Cuerpo", "Tu Estilo de Vida", "Tu Entrenamiento", "Tu Nutricion", "Finalizando"],
+  fr: ["Les Bases", "Votre Corps", "Votre Mode de Vie", "Votre Entrainement", "Votre Nutrition", "Finalisation"]
 };
 
 export const tjaiCopy: Record<Locale, TJAICopy> = {
@@ -399,55 +299,229 @@ export const tjaiCopy: Record<Locale, TJAICopy> = {
 
 type BaseStep = Omit<QuizStep, "section" | "sectionNumber" | "totalSections"> & { sectionIdx: number };
 
+// 25 questions across 6 sections. Field IDs preserved for science/API compatibility.
 const BASE_STEPS: BaseStep[] = [
-  { id: "s1_age", sectionIdx: 0, question: "How old are you?", type: "number", min: 13, max: 80, unit: "years", required: true },
-  { id: "s1_gender", sectionIdx: 0, question: "What is your gender?", type: "single", options: ["Male", "Female", "Prefer not to say"], required: true },
-  { id: "s1_height", sectionIdx: 0, question: "What is your height?", type: "slider", min: 140, max: 220, unit: "cm", step: 1, defaultValue: 170, required: true },
-  { id: "s1_weight", sectionIdx: 0, question: "What is your current weight?", type: "slider", min: 40, max: 200, unit: "kg", step: 1, defaultValue: 70, required: true },
-  { id: "s2_goal", sectionIdx: 1, question: "What is your main goal?", sub: "This determines your calorie direction and program structure.", type: "single", options: ["Lose fat", "Gain muscle", "Recomposition (lose fat + gain muscle)", "Maintain weight"], required: true },
-  { id: "s2_pace", sectionIdx: 1, question: "How fast do you want results?", sub: "Faster results require more discipline.", type: "single", options: ["Slow and safe", "Moderate", "Aggressive"], required: true },
-  { id: "s3_body_silhouette", sectionIdx: 2, question: "Select the silhouette closest to your current body shape.", sub: "This gives TJAI a practical body-fat estimate for macro precision.", type: "single", options: ["Very Lean", "Lean", "Average", "Overweight", "Obese"], required: true },
-  { id: "s3_fat_storage", sectionIdx: 2, question: "Where do you store most of your fat?", type: "single", options: ["Belly / midsection", "Lower body (hips, thighs)", "Evenly distributed"], required: true },
-  { id: "s4_daily_activity", sectionIdx: 3, question: "What is your daily activity level?", sub: "This is your activity OUTSIDE of training.", type: "single", options: ["Very low — mostly sitting (desk job, minimal movement)", "Low — light movement, mostly sedentary", "Moderate — walking, light movement throughout day", "Active — standing or walking job", "Very active — physical labor job"], required: true },
-  { id: "s4_steps", sectionIdx: 3, question: "How many steps do you walk per day?", type: "single", options: ["Under 3,000", "3,000–7,000", "7,000–10,000", "Over 10,000"], required: true },
-  { id: "s5_trains", sectionIdx: 4, question: "Do you currently train?", type: "single", options: ["Yes", "No"], required: true },
-  { id: "s5_days", sectionIdx: 4, question: "How many days per week do you train?", type: "single", options: ["1–2 days", "3–4 days", "5–6 days", "7 days"], skipIf: { stepId: "s5_trains", value: "No" }, required: false },
-  { id: "s5_type", sectionIdx: 4, question: "What type of training do you do?", sub: "Select all that apply.", type: "multi", options: ["Gym (weights)", "Home workout (bodyweight)", "Cardio / running", "Sports", "Martial arts / combat sports"], skipIf: { stepId: "s5_trains", value: "No" }, required: false },
-  { id: "s5_duration", sectionIdx: 4, question: "How long is your average training session?", type: "single", options: ["Under 30 min", "30–45 min", "45–60 min", "60–90 min", "Over 90 min"], skipIf: { stepId: "s5_trains", value: "No" }, required: false },
-  { id: "s6_cardio", sectionIdx: 5, question: "How often do you do cardio?", type: "single", options: ["Never", "1–2 times/week", "3–5 times/week", "Daily"], required: true },
-  { id: "s6_cardio_type", sectionIdx: 5, question: "What type of cardio do you do?", type: "multi", options: ["Walking", "Running / jogging", "Cycling", "HIIT", "Swimming", "Rowing"], skipIf: { stepId: "s6_cardio", value: "Never" }, required: false },
-  { id: "s7_gain_easy", sectionIdx: 6, question: "Do you gain weight easily?", type: "single", options: ["Yes — I gain weight fast", "No — I struggle to gain", "Not sure"], required: true },
-  { id: "s7_lose_easy", sectionIdx: 6, question: "Do you lose weight easily?", type: "single", options: ["Yes — I drop weight fast", "No — I struggle to lose", "Not sure"], required: true },
-  { id: "s7_appetite", sectionIdx: 6, question: "How is your appetite?", type: "single", options: ["Low — I forget to eat", "Normal", "High — I'm always hungry"], required: true },
-  { id: "s8_hours", sectionIdx: 7, question: "How many hours do you sleep per night?", type: "slider", min: 4, max: 12, unit: "hrs", step: 1, defaultValue: 7, required: true },
-  { id: "s8_quality", sectionIdx: 7, question: "How is your sleep quality?", type: "single", options: ["Poor — I wake up often", "Average", "Good — I sleep well"], required: true },
-  { id: "s9_stress", sectionIdx: 8, question: "What is your current stress level?", sub: "Stress affects cortisol which directly impacts fat loss and muscle gain.", type: "single", options: ["Low", "Moderate", "High", "Very high"], required: true },
-  { id: "s10_dieted", sectionIdx: 9, question: "Have you followed a structured diet before?", type: "single", options: ["Yes", "No"], required: true },
-  { id: "s10_diet_result", sectionIdx: 9, question: "What was the result of your previous diet?", type: "single", options: ["Lost weight and kept it off", "Lost weight but gained it back", "Gained weight consistently", "Didn't see results"], skipIf: { stepId: "s10_dieted", value: "No" }, required: false },
-  { id: "s11_meals", sectionIdx: 10, question: "How many meals per day do you prefer?", type: "single", options: ["2 meals", "3 meals", "4 meals", "5+ meals", "I prefer intermittent fasting"], required: true },
-  { id: "s11_snacks", sectionIdx: 10, question: "Do you snack frequently?", type: "single", options: ["Rarely", "Sometimes", "Often — I snack between most meals"], required: true },
-  { id: "s11_late_eating", sectionIdx: 10, question: "Do you eat late at night?", type: "single", options: ["Never", "Sometimes", "Often", "Almost every night"], required: true },
-  { id: "s11_skip_meals", sectionIdx: 10, question: "Do you skip meals?", type: "single", options: ["Never", "Occasionally", "Often"], required: true },
-  { id: "s12_diet_style", sectionIdx: 11, question: "Do you follow any specific diet style?", type: "single", options: ["No preference — I eat everything", "High protein focus", "Low carb / keto", "Balanced macros", "Vegetarian", "Vegan"], required: true },
-  { id: "s12_foods_like", sectionIdx: 11, question: "Which foods do you enjoy eating?", sub: "List your favorites — the AI will include them in your meal plan.", type: "text", placeholder: "e.g. chicken, rice, eggs, pasta, Greek yogurt...", required: false },
-  { id: "s12_foods_hate", sectionIdx: 11, question: "Which foods do you dislike or avoid?", sub: "The AI will not include these in your plan.", type: "text", placeholder: "e.g. fish, broccoli, mushrooms...", required: false },
-  { id: "s13_allergies", sectionIdx: 12, question: "Do you have any food allergies?", type: "multi", options: ["None", "Gluten / wheat", "Dairy / lactose", "Nuts / tree nuts", "Eggs", "Shellfish", "Soy"], required: true },
-  { id: "s13_cannot_eat", sectionIdx: 12, question: "Are there foods you cannot eat for any other reason?", type: "text", placeholder: "Any other restrictions or intolerances...", required: false },
-  { id: "s13_religious", sectionIdx: 12, question: "Do you have any religious dietary restrictions?", type: "single", options: ["None", "Halal", "Kosher", "Hindu (no beef)", "Other"], required: true },
-  { id: "s14_cooks", sectionIdx: 13, question: "Do you cook your own food?", type: "single", options: ["Yes — I cook daily", "Sometimes — mixed cooking and eating out", "Rarely — mostly eat out or ready meals"], required: true },
-  { id: "s14_budget", sectionIdx: 13, question: "What is your food budget level?", type: "single", options: ["Low — I need budget-friendly meals", "Medium", "High — budget is not a concern"], required: true },
-  { id: "s14_time", sectionIdx: 13, question: "How much time do you have to prepare meals?", type: "single", options: ["Very low — under 15 min per meal", "Medium — 15–30 min", "High — I enjoy cooking"], required: true },
-  { id: "s15_water", sectionIdx: 14, question: "How much water do you drink daily?", type: "single", options: ["Under 1L", "1–2L", "2–3L", "Over 3L"], required: true },
-  { id: "s16_uses_supps", sectionIdx: 15, question: "Do you currently use any supplements?", type: "single", options: ["Yes", "No"], required: true },
-  { id: "s16_which_supps", sectionIdx: 15, question: "Which supplements do you take?", type: "multi", options: ["Protein powder / whey", "Creatine", "Pre-workout", "Multivitamin", "Omega-3 / fish oil", "Vitamin D", "BCAAs", "Fat burner", "Other"], skipIf: { stepId: "s16_uses_supps", value: "No" }, required: false },
-  { id: "s17_injuries", sectionIdx: 16, question: "Do you have any injuries?", type: "text", placeholder: "e.g. bad knee, lower back pain, shoulder injury...", required: false },
-  { id: "s17_conditions", sectionIdx: 16, question: "Do you have any medical conditions relevant to diet or exercise?", type: "text", placeholder: "e.g. diabetes, hypothyroidism, PCOS...", required: false },
-  { id: "s17_medications", sectionIdx: 16, question: "Are you taking any medications that may affect weight or energy?", type: "text", placeholder: "e.g. antidepressants, steroids, thyroid medication...", required: false },
-  { id: "s18_discipline", sectionIdx: 17, question: "How disciplined are you with your habits?", sub: "Be honest — this helps design a plan you will actually follow.", type: "single", options: ["Low — I struggle to stay consistent", "Medium — I'm fairly consistent", "High — I follow plans strictly"], required: true },
-  { id: "s18_biggest_problem", sectionIdx: 17, question: "What is your biggest challenge with fitness?", type: "multi", options: ["Cravings and hunger", "Consistency over time", "Not enough time", "Lack of motivation", "Not knowing what to do", "Injuries or physical limitations"], required: true },
-  { id: "s19_target_weight", sectionIdx: 18, question: "Do you have a target weight?", type: "slider", min: 40, max: 200, unit: "kg", step: 1, defaultValue: 70, sub: "Set to your current weight if you just want to recomp.", required: true },
-  { id: "s19_timeframe", sectionIdx: 18, question: "What is your timeframe for this goal?", type: "single", options: ["4 weeks", "8 weeks", "12 weeks", "6 months", "1 year", "Ongoing / lifestyle"], required: true },
-  { id: "s19_daily_routine", sectionIdx: 18, question: "Describe a typical day in your life.", sub: "Include: when you wake up, work schedule, when you train, how many meals, when you sleep. The more detail, the more accurate your plan.", type: "text", placeholder: "e.g. Wake at 7am, desk job 9-5, gym at 6pm for 1hr, eat 3 meals, sleep at 11pm...", required: true }
+  // ── SECTION 0: The Basics ─────────────────────────────────────────────────
+  {
+    id: "s2_goal", sectionIdx: 0,
+    question: "What's your primary goal?",
+    sub: "This shapes your entire 12-week plan.",
+    type: "single",
+    options: [
+      "🔥 Lose Fat — Burn fat, get lean",
+      "💪 Build Muscle — Get bigger and stronger",
+      "⚖️ Body Recomposition — Lose fat AND gain muscle",
+      "🏃 Improve Fitness — Endurance, health, energy",
+      "🏠 Stay Active — Move more, feel better"
+    ],
+    required: true
+  },
+  {
+    id: "s2_pace", sectionIdx: 0,
+    question: "How fast do you want results?",
+    sub: "Be honest — this affects your calorie deficit and training intensity.",
+    type: "single",
+    options: ["🐢 Slow & Sustainable — I want lasting results, no rush", "⚡ Moderate Pace — Steady progress, good balance", "🚀 Fast Results — I'm committed to pushing hard"],
+    required: true
+  },
+  {
+    id: "s1_gender", sectionIdx: 0,
+    question: "What's your sex?",
+    sub: "Used for accurate BMR and hormonal adjustments.",
+    type: "single",
+    options: ["Male", "Female"],
+    required: true
+  },
+  {
+    id: "s1_age", sectionIdx: 0,
+    question: "How old are you?",
+    type: "number", min: 16, max: 80, unit: "years", required: true
+  },
+
+  // ── SECTION 1: Your Body ──────────────────────────────────────────────────
+  {
+    id: "s1_weight", sectionIdx: 1,
+    question: "What's your current weight?",
+    type: "number", min: 30, max: 250, unit: "kg", required: true
+  },
+  {
+    id: "s1_height", sectionIdx: 1,
+    question: "What's your height?",
+    type: "slider", min: 140, max: 220, unit: "cm", step: 1, defaultValue: 170, required: true
+  },
+  {
+    id: "s3_body_silhouette", sectionIdx: 1,
+    question: "Which body type best describes you?",
+    sub: "This helps TJAI estimate body fat for macro precision.",
+    type: "single",
+    options: ["Ectomorph — Naturally Slim (hard to gain weight, fast metabolism)", "Mesomorph — Athletic Build (gain and lose weight relatively easily)", "Endomorph — Naturally Bigger (gain weight easily, slower metabolism)"],
+    required: true
+  },
+  {
+    id: "s17_injuries", sectionIdx: 1,
+    question: "Do you have any injuries or physical limitations?",
+    sub: "Select all that apply. TJAI will modify exercises accordingly.",
+    type: "multi",
+    options: ["None", "Knee pain", "Lower back pain", "Shoulder pain", "Hip pain", "Wrist / elbow pain", "Recent surgery", "Chronic condition"],
+    required: true
+  },
+
+  // ── SECTION 2: Your Lifestyle ─────────────────────────────────────────────
+  {
+    id: "s4_daily_activity", sectionIdx: 2,
+    question: "How active are you outside of training?",
+    sub: "This is your daily movement — NOT your workouts.",
+    type: "single",
+    options: [
+      "Very low — Desk job, mostly sitting",
+      "Low — Some walking, mostly sedentary",
+      "Moderate — Regular movement, active job",
+      "Active — Physical job or very active lifestyle"
+    ],
+    required: true
+  },
+  {
+    id: "s8_hours", sectionIdx: 2,
+    question: "How many hours do you sleep per night on average?",
+    type: "slider", min: 4, max: 10, unit: "hrs", step: 1, defaultValue: 7, required: true
+  },
+  {
+    id: "s9_stress", sectionIdx: 2,
+    question: "What is your current stress level?",
+    sub: "Stress affects cortisol — which directly impacts fat loss and muscle gain.",
+    type: "single",
+    options: ["😌 Very Low", "😐 Low", "😤 Moderate", "😰 High", "🤯 Very High"],
+    required: true
+  },
+  {
+    id: "s14_budget", sectionIdx: 2,
+    question: "What is your food budget?",
+    type: "single",
+    options: ["💰 Budget-Conscious — Keep meals affordable", "💵 Moderate — Normal grocery spending", "💎 No Limit — Best foods for results"],
+    required: true
+  },
+  {
+    id: "s13_allergies", sectionIdx: 2,
+    question: "Do you have any dietary restrictions?",
+    sub: "Select all that apply.",
+    type: "multi",
+    options: ["None", "Vegetarian", "Vegan", "Halal", "Kosher", "No dairy", "No gluten", "No pork", "No nuts", "Other"],
+    required: true
+  },
+
+  // ── SECTION 3: Your Training ──────────────────────────────────────────────
+  {
+    id: "s5_trains", sectionIdx: 3,
+    question: "What is your current fitness level?",
+    type: "single",
+    options: [
+      "🌱 Complete Beginner — Never trained consistently",
+      "📈 Some Experience — Trained on and off (less than 1 year)",
+      "💪 Intermediate — Training consistently (1–3 years)",
+      "🏆 Advanced — Serious training (3+ years)"
+    ],
+    required: true
+  },
+  {
+    id: "s5_type", sectionIdx: 3,
+    question: "Where will you train?",
+    type: "single",
+    options: ["🏠 Home — No equipment or minimal equipment", "🏋️ Gym — Full gym access", "🔀 Both — Mix of home and gym"],
+    required: true
+  },
+  {
+    id: "s5_days", sectionIdx: 3,
+    question: "How many days per week can you train?",
+    type: "single",
+    options: ["1–2 days", "3–4 days", "4–5 days", "5–6 days"],
+    required: true
+  },
+  {
+    id: "s5_duration", sectionIdx: 3,
+    question: "How long can each session be?",
+    sub: "TJAI will structure workouts around this time.",
+    type: "slider", min: 20, max: 90, unit: "min", step: 5, defaultValue: 45, required: true
+  },
+  {
+    id: "s5_equipment", sectionIdx: 3,
+    question: "What equipment do you have access to?",
+    sub: "Select all that apply.",
+    type: "multi",
+    options: ["No equipment (bodyweight only)", "Dumbbells", "Resistance bands", "Pull-up bar", "Barbell + weights", "Kettlebells", "Cables / machines", "Full home gym"],
+    skipIf: { stepId: "s5_type", value: "🏋️ Gym — Full gym access" },
+    required: false
+  },
+
+  // ── SECTION 4: Your Nutrition ─────────────────────────────────────────────
+  {
+    id: "s12_diet_style", sectionIdx: 4,
+    question: "How would you describe your current eating habits?",
+    type: "single",
+    options: [
+      "🍕 Mostly Unhealthy — Fast food, irregular meals",
+      "🥗 Mixed — Sometimes healthy, sometimes not",
+      "🥩 Mostly Healthy — I try to eat well",
+      "🥦 Very Healthy — I track and plan my meals"
+    ],
+    required: true
+  },
+  {
+    id: "s11_meals", sectionIdx: 4,
+    question: "How many meals do you prefer per day?",
+    sub: "TJAI will structure your plan around this.",
+    type: "single",
+    options: ["2 meals", "3 meals", "4 meals", "5+ meals", "Intermittent fasting"],
+    required: true
+  },
+  {
+    id: "s14_time", sectionIdx: 4,
+    question: "How comfortable are you with cooking?",
+    type: "single",
+    options: ["🍳 Beginner — Simple, quick meals only", "👨‍🍳 Moderate — I can follow a recipe", "🎯 Advanced — I enjoy cooking, no limits"],
+    required: true
+  },
+  {
+    id: "s12_foods_like", sectionIdx: 4,
+    question: "Which foods do you enjoy? (optional)",
+    sub: "TJAI will include these in your meal plan where possible.",
+    type: "text", placeholder: "e.g. chicken, rice, eggs, Greek yogurt, oats...", required: false
+  },
+
+  // ── SECTION 5: Finishing Up ───────────────────────────────────────────────
+  {
+    id: "s10_dieted", sectionIdx: 5,
+    question: "Have you tried fitness programs before?",
+    type: "single",
+    options: [
+      "🚫 Never tried — First time doing a structured program",
+      "😕 Tried but quit — Couldn't stick to it",
+      "📉 Tried, some results — Worked partially",
+      "💪 Yes, successfully — Done programs before"
+    ],
+    required: true
+  },
+  {
+    id: "s18_biggest_problem", sectionIdx: 5,
+    question: "What is your biggest obstacle to getting results?",
+    sub: "Select all that apply. TJAI will address these in your plan.",
+    type: "multi",
+    options: ["Lack of time", "Lack of motivation", "Not knowing what to do", "Diet is the hard part", "Injuries holding me back", "Past failed attempts", "Busy schedule", "Budget constraints"],
+    required: true
+  },
+  {
+    id: "s19_success_vision", sectionIdx: 5,
+    question: "What does success look like to you in 12 weeks?",
+    sub: "Pick the one that resonates most.",
+    type: "single",
+    options: [
+      "🪞 I look noticeably different in the mirror",
+      "⚡ I feel energetic and strong every day",
+      "👗 I fit into clothes I couldn't wear before",
+      "🏋️ I'm lifting heavier than I ever have",
+      "🧘 I've built a sustainable healthy routine"
+    ],
+    required: true
+  }
 ];
 
 export function getTjaiCopy(locale: Locale): TJAICopy {
@@ -460,7 +534,7 @@ export function getTjaiSteps(locale: Locale): QuizStep[] {
     ...step,
     section: sections[step.sectionIdx] ?? SECTION_TITLES.en[step.sectionIdx],
     sectionNumber: step.sectionIdx + 1,
-    totalSections: 19
+    totalSections: 6
   }));
 }
 
