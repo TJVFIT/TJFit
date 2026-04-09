@@ -30,12 +30,20 @@ export async function GET(_: NextRequest, { params }: { params: { conversationId
     .eq("user_id", auth.user.id)
     .single();
 
-  const { data: messages, error } = await auth.supabase
+  const url = new URL(_.url);
+  const limitRaw = Number(url.searchParams.get("limit") ?? 50);
+  const limit = Number.isFinite(limitRaw) ? Math.max(1, Math.min(200, Math.trunc(limitRaw))) : 50;
+  const before = url.searchParams.get("before");
+  let query = auth.supabase
     .from("messages")
-    .select("id, sender_id, message_type, ciphertext, nonce, metadata, created_at")
+    .select("id, sender_id, message_type, ciphertext, nonce, metadata, created_at, read_at")
     .eq("conversation_id", params.conversationId)
-    .order("created_at", { ascending: true })
-    .limit(500);
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (before) {
+    query = query.lt("created_at", before);
+  }
+  const { data: messages, error } = await query;
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -43,7 +51,8 @@ export async function GET(_: NextRequest, { params }: { params: { conversationId
 
   return NextResponse.json({
     encrypted_conversation_key: participant?.encrypted_conversation_key ?? null,
-    messages: messages ?? []
+    messages: (messages ?? []).slice().reverse(),
+    has_more: Array.isArray(messages) ? messages.length === limit : false
   });
 }
 
@@ -91,7 +100,7 @@ export async function POST(request: NextRequest, { params }: { params: { convers
       nonce: body.nonce,
       metadata: typeof body.metadata === "object" && body.metadata ? body.metadata : null
     })
-    .select("id, sender_id, message_type, ciphertext, nonce, metadata, created_at")
+    .select("id, sender_id, message_type, ciphertext, nonce, metadata, created_at, read_at")
     .single();
 
   if (error) {

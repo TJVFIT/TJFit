@@ -717,7 +717,7 @@ const communityCopy: Record<Locale, CommunityCopy> = {
 
 const footerCopy: Record<Locale, FooterCopy> = {
   en: {
-    description: "Premium online coaching and digital programs platform for fitness, performance, and recovery.",
+    description: "Train smarter. Eat better. Transform faster.",
     tagline: "Train smarter. Eat better. Transform faster.",
     productTitle: "Product",
     companyTitle: "Company",
@@ -736,7 +736,7 @@ const footerCopy: Record<Locale, FooterCopy> = {
     companyComingSoon: "(Coming Soon)"
   },
   tr: {
-    description: "Fitness, performans ve toparlanma için premium online koçluk ve dijital programlar — tek platformda.",
+    description: "Daha akilli antrenman. Daha iyi beslenme. Daha hizli donusum.",
     tagline: "Daha akilli antrenman. Daha iyi beslenme. Daha hizli donusum.",
     productTitle: "Urun",
     companyTitle: "Sirket",
@@ -755,7 +755,7 @@ const footerCopy: Record<Locale, FooterCopy> = {
     companyComingSoon: "(Cok yakinda)"
   },
   ar: {
-    description: "منصة تدريب اونلاين وبرامج رقمية مميزة للياقة والاداء والتعافي.",
+    description: "تدرّب بذكاء. كُل أفضل. تحوّل أسرع.",
     tagline: "تدرّب بذكاء. كُل أفضل. تحوّل أسرع.",
     productTitle: "المنتج",
     companyTitle: "الشركة",
@@ -774,7 +774,7 @@ const footerCopy: Record<Locale, FooterCopy> = {
     companyComingSoon: "(قريباً)"
   },
   es: {
-    description: "Plataforma premium de coaching online y programas digitales para fitness, rendimiento y recuperacion.",
+    description: "Entrena mas inteligente. Come mejor. Transforma mas rapido.",
     tagline: "Entrena mas inteligente. Come mejor. Transforma mas rapido.",
     productTitle: "Producto",
     companyTitle: "Compania",
@@ -793,7 +793,7 @@ const footerCopy: Record<Locale, FooterCopy> = {
     companyComingSoon: "(Proximamente)"
   },
   fr: {
-    description: "Plateforme premium de coaching en ligne et de programmes digitaux pour fitness, performance et recuperation.",
+    description: "Entrainez-vous plus intelligemment. Mangez mieux. Transformez-vous plus vite.",
     tagline: "Entrainez-vous plus intelligemment. Mangez mieux. Transformez-vous plus vite.",
     productTitle: "Produit",
     companyTitle: "Entreprise",

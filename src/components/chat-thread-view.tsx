@@ -21,9 +21,10 @@ type MessageRow = {
   nonce: string;
   metadata: Record<string, unknown> | null;
   created_at: string;
+  read_at?: string | null;
 };
 
-type DecryptedMessage = MessageRow & { plaintext: string | null };
+type DecryptedMessage = MessageRow & { plaintext: string | null; pending?: boolean };
 
 type PeerInfo = {
   id: string;
@@ -96,6 +97,8 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [initializing, setInitializing] = useState(true);
   const [sending, setSending] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingOlder, setLoadingOlder] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const conversationIdRef = useRef(conversationId);
@@ -155,14 +158,18 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
   }, [conversationId, user?.id]);
 
   const loadMessages = useCallback(
-    async (opts?: { silent?: boolean }) => {
+    async (opts?: { silent?: boolean; before?: string; appendOlder?: boolean }) => {
       const silent = Boolean(opts?.silent);
+      const appendOlder = Boolean(opts?.appendOlder);
       const cid = conversationId;
       if (!silent) {
         setInitializing(true);
         setFetchError(null);
       }
-      const res = await fetch(`/api/chat/messages/${cid}`, { credentials: "include" });
+      const sp = new URLSearchParams();
+      sp.set("limit", "50");
+      if (opts?.before) sp.set("before", opts.before);
+      const res = await fetch(`/api/chat/messages/${cid}?${sp.toString()}`, { credentials: "include" });
       const data = await res.json().catch(() => ({}));
       if (conversationIdRef.current !== cid) return;
 
@@ -192,7 +199,8 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
           typeof m.nonce === "string" &&
           typeof m.created_at === "string"
       );
-      setMessages((prev) => mergeFetchedMessages(prev, safeRows));
+      setHasMore(Boolean(data.has_more));
+      setMessages((prev) => (appendOlder ? mergeFetchedMessages(prev, safeRows) : mergeFetchedMessages([], safeRows)));
       if (!wk && !silent) {
         setInitializing(false);
       }
@@ -229,6 +237,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
           const messageType: MessageRow["message_type"] =
             mt === "image" || mt === "file" || mt === "link" || mt === "call_event" ? mt : "text";
           const createdAt = typeof row.created_at === "string" ? row.created_at : new Date().toISOString();
+          const readAt = typeof row.read_at === "string" ? row.read_at : null;
           if (!ciphertext || !nonce || !senderId) return;
 
           const safeRow: MessageRow = {
@@ -238,7 +247,8 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
             ciphertext,
             nonce,
             metadata: row.metadata && typeof row.metadata === "object" ? (row.metadata as Record<string, unknown>) : null,
-            created_at: createdAt
+            created_at: createdAt,
+            read_at: readAt
           };
 
           const key = conversationKeyRef.current;
@@ -257,6 +267,19 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
             if (prev.some((m) => m.id === safeRow.id)) return prev;
             return [...prev, { ...safeRow, plaintext }];
           });
+
+          if (senderId !== myId && typeof window !== "undefined" && document.visibilityState !== "visible") {
+            if ("Notification" in window) {
+              if (Notification.permission === "granted") {
+                new Notification("TJFit — New Message", {
+                  body: "You received a new message.",
+                  icon: "/favicon.ico"
+                });
+              } else if (Notification.permission === "default") {
+                void Notification.requestPermission();
+              }
+            }
+          }
         }
       )
       .subscribe();
@@ -265,7 +288,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
       cancelled = true;
       void supabase.removeChannel(channel);
     };
-  }, [conversationId, t.decryptError]);
+  }, [conversationId, myId, t.decryptError]);
 
   useEffect(() => {
     let wasHidden = false;
@@ -337,10 +360,30 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
   }, [messages, t.decryptError]);
 
   useEffect(() => {
+    const unreadInbound = sorted.find((msg) => msg.sender_id !== myId && !msg.read_at);
+    if (!unreadInbound) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const hit = entries.some((e) => e.isIntersecting);
+        if (!hit) return;
+        void fetch(`/api/chat/conversations/${conversationId}/read`, {
+          method: "POST",
+          credentials: "include"
+        });
+      },
+      { threshold: 0.4 }
+    );
+    const el = document.getElementById(`msg-${unreadInbound.id}`);
+    if (el) observer.observe(el);
+    return () => observer.disconnect();
+  }, [conversationId, myId, sorted]);
+
+  useEffect(() => {
+    if (loadingOlder) return;
     const el = listRef.current;
     if (!el) return;
     el.scrollTop = el.scrollHeight;
-  }, [sorted.length, initializing]);
+  }, [sorted.length, initializing, loadingOlder]);
 
   const sendText = async () => {
     const key = conversationKeyRef.current;
@@ -349,6 +392,20 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
     setSending(true);
     setError(null);
     try {
+      const optimisticId = `pending-${Date.now()}`;
+      const optimistic: DecryptedMessage = {
+        id: optimisticId,
+        sender_id: myId,
+        message_type: "text",
+        ciphertext: "",
+        nonce: "",
+        metadata: null,
+        created_at: new Date().toISOString(),
+        read_at: null,
+        plaintext: trimmed,
+        pending: true
+      };
+      setMessages((prev) => [...prev, optimistic]);
       const encrypted = await encryptText(trimmed, key);
       const res = await fetch(`/api/chat/messages/${conversationId}`, {
         method: "POST",
@@ -362,8 +419,29 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
+        setMessages((prev) => prev.filter((m) => m.id !== optimisticId));
         setError(typeof data.error === "string" ? data.error : t.sendError);
         return;
+      }
+      const created = data.message as MessageRow | undefined;
+      if (created?.id) {
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === optimisticId
+              ? {
+                  ...m,
+                  id: created.id,
+                  ciphertext: created.ciphertext,
+                  nonce: created.nonce,
+                  created_at: created.created_at,
+                  read_at: created.read_at ?? null,
+                  pending: false
+                }
+              : m
+          )
+        );
+      } else {
+        setMessages((prev) => prev.filter((m) => m.id !== optimisticId));
       }
       setMessageText("");
       inputRef.current?.focus();
@@ -375,6 +453,18 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
   };
 
   const showComposer = !fetchError && !initializing && conversationKeyRef.current !== null;
+
+  const loadOlder = async () => {
+    if (loadingOlder || !hasMore) return;
+    const oldest = sorted[0]?.created_at;
+    if (!oldest) return;
+    setLoadingOlder(true);
+    try {
+      await loadMessages({ silent: true, before: oldest, appendOlder: true });
+    } finally {
+      setLoadingOlder(false);
+    }
+  };
 
   return (
     <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-background">
@@ -454,11 +544,24 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
           </div>
         ) : (
           <div className="mx-auto max-w-3xl space-y-1 pb-2">
+            {hasMore ? (
+              <div className="mb-2 flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => void loadOlder()}
+                  disabled={loadingOlder}
+                  className="rounded-full border border-white/15 px-3 py-1 text-xs text-zinc-300 hover:border-white/25 disabled:opacity-60"
+                >
+                  {loadingOlder ? "Loading..." : "Load older messages"}
+                </button>
+              </div>
+            ) : null}
             {sorted.map((msg, idx) => {
               const mine = Boolean(myId) && msg.sender_id === myId;
               return (
                 <div
                   key={msg.id ?? `msg-${idx}-${msg.created_at ?? ""}`}
+                  id={`msg-${msg.id}`}
                   className={clsx("flex w-full", mine ? "justify-end" : "justify-start")}
                 >
                   <div
@@ -486,6 +589,11 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
                     >
                       {bubbleTime(msg.created_at, locale)}
                     </time>
+                    {mine ? (
+                      <span className={clsx("px-1 text-[10px] tabular-nums", msg.pending ? "text-zinc-500" : msg.read_at ? "text-cyan-300" : "text-zinc-500")}>
+                        {msg.pending ? "✓" : "✓✓"}
+                      </span>
+                    ) : null}
                   </div>
                 </div>
               );

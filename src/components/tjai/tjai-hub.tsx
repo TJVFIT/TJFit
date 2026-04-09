@@ -1,6 +1,6 @@
 "use client";
 
-import { Sparkles } from "lucide-react";
+import { FileText, MessageCircle, RefreshCw, Sparkles, TrendingUp } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
@@ -13,6 +13,13 @@ import { getDirection, type Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 type TabKey = "my-plan" | "chat" | "meal-swap" | "progress";
+
+const TAB_ICONS: Record<TabKey, typeof FileText> = {
+  "my-plan": FileText,
+  chat: MessageCircle,
+  "meal-swap": RefreshCw,
+  progress: TrendingUp
+};
 
 const TAB_LABELS: Record<Locale, Record<TabKey, string>> = {
   en: { "my-plan": "My Plan", chat: "Chat", "meal-swap": "Meal Swap", progress: "Progress" },
@@ -105,22 +112,31 @@ export function TJAIHub({ locale }: { locale: Locale }) {
                 <p className="text-[13px] text-[#A1A1AA]">{HUB_SUBTITLE[locale]}</p>
               </div>
               <span className="rounded-full border border-[rgba(34,211,238,0.35)] bg-[rgba(34,211,238,0.15)] px-3 py-1 text-xs font-semibold text-[#22D3EE]">
-                {tierLabel(locale, tier)}
+                [{tierLabel(locale, tier).toUpperCase()}]
               </span>
+              {tier === "core" ? (
+                <a href={`/${locale}/membership?tier=apex`} className="text-xs font-semibold text-[#22D3EE] hover:text-white">
+                  Upgrade →
+                </a>
+              ) : null}
             </div>
-            <nav className="mt-4 flex flex-wrap gap-2">
+            <nav className="mt-4 flex flex-wrap gap-1 rounded-[10px] border border-[#1E2028] bg-[#0D0F12] p-1.5">
               {tabItems.map((item) => (
                 <button
                   key={item.key}
                   type="button"
                   onClick={() => setTabInUrl(item.key)}
                   className={cn(
-                    "rounded-full px-4 py-2 text-sm transition-colors",
+                    "inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm transition-colors duration-150",
                     tab === item.key
-                      ? "border-b-2 border-[#22D3EE] bg-[rgba(34,211,238,0.08)] text-white"
-                      : "text-[#A1A1AA] hover:text-white"
+                      ? "bg-[#22D3EE] font-bold text-[#09090B]"
+                      : "bg-transparent text-[#A1A1AA] hover:bg-[rgba(255,255,255,0.04)] hover:text-white"
                   )}
                 >
+                  {(() => {
+                    const Icon = TAB_ICONS[item.key];
+                    return <Icon className="h-4 w-4" />;
+                  })()}
                   {item.label}
                 </button>
               ))}

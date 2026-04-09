@@ -12,7 +12,6 @@ import {
   LogOut,
   Menu,
   MessageCircle,
-  Rocket,
   Scale,
   Sparkles,
   Shield,
@@ -61,7 +60,7 @@ const SIDEBAR_COPY: Record<
 };
 
 const PRIMARY_CTA_COPY: Record<Locale, { start: string; dashboard: string }> = {
-  en: { start: "Start Training", dashboard: "Dashboard" },
+  en: { start: "Start Free", dashboard: "Dashboard" },
   tr: { start: "Antrenmana Basla", dashboard: "Panel" },
   ar: { start: "ابدأ التدريب", dashboard: "لوحة التحكم" },
   es: { start: "Empezar a entrenar", dashboard: "Panel" },
@@ -176,7 +175,6 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
       { key: "calculator", href: "/calculator", label: side.calculator, Icon: Scale },
       { key: "programs", href: "/programs", label: dict.nav.programs, Icon: Dumbbell },
       { key: "diets", href: "/diets", label: dict.nav.diets, Icon: UtensilsCrossed },
-      { key: "start", href: "/start", label: nav.startFreeLabel, Icon: Rocket },
       { key: "coaches", href: "/coaches", label: dict.nav.coaches, Icon: Users },
       { key: "feed", href: "/feed", label: side.feed, Icon: Users },
       { key: "community", href: "/community", label: dict.nav.community, Icon: MessageCircle },
@@ -188,7 +186,7 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
       { key: "profile", href: "/profile/edit", label: dict.nav.profile, Icon: User },
       { key: "admin", href: "/admin", label: dict.nav.admin, Icon: Shield, adminOnly: true }
     ],
-    [dict.nav, nav.startFreeLabel, nav.legalCenterLabel, side]
+    [dict.nav, nav.legalCenterLabel, side]
   );
 
   const visibleItems = useMemo(

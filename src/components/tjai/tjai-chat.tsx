@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import type { QuizAnswers, TJAIMetrics, TJAIPlan } from "@/lib/tjai-types";
 import { cn } from "@/lib/utils";
@@ -8,9 +8,9 @@ import { cn } from "@/lib/utils";
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
 export function TJAIChat({
-  plan,
-  metrics,
-  answers,
+  plan: _plan,
+  metrics: _metrics,
+  answers: _answers,
   coreLimited = false,
   onLimitReached
 }: {
@@ -23,12 +23,20 @@ export function TJAIChat({
   const [history, setHistory] = useState<ChatMessage[]>([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [conversationId, setConversationId] = useState<string>("");
+  const [apiError, setApiError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setConversationId(crypto.randomUUID());
+  }, []);
 
   const suggestions = [
-    "Can I replace chicken with beef?",
-    "What if I miss a training day?",
-    "Is my plan right for my goal?",
-    "Can I eat out and stay on track?"
+    { label: "📋 Explain my plan", prompt: "Can you give me an overview of my TJAI plan and explain the main principles?" },
+    { label: "🍌 What to eat before training?", prompt: "What should I eat before my workout, and when should I eat it?" },
+    { label: "❌ I missed a workout", prompt: "I missed yesterday's workout. What should I do — make it up or skip it?" },
+    { label: "🔄 Swap a meal", prompt: "Can you suggest an alternative for one of my meals? I'll tell you which one." },
+    { label: "🦵 I have knee pain", prompt: "I'm experiencing knee pain. Which exercises should I avoid and what are safe alternatives?" },
+    { label: "📈 How do I break a plateau?", prompt: "I've been stuck at the same weight for 2 weeks. What changes should I make to break through?" }
   ];
 
   const ask = async (text: string) => {
@@ -43,22 +51,23 @@ export function TJAIChat({
     setHistory(nextHistory);
     setLoading(true);
     setMessage("");
+    setApiError(null);
     try {
       const response = await fetch("/api/tjai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, planContext: plan, metricsContext: metrics, answersContext: answers, history })
+        body: JSON.stringify({ message: text, conversationId })
       });
-      if (!response.ok || !response.body) throw new Error("Chat request failed");
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let acc = "";
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        acc += decoder.decode(value, { stream: true });
-        setHistory((prev) => [...prev.slice(0, -1), { role: "assistant", content: acc }]);
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        setApiError("TJAI is having trouble. Please try again.");
+        throw new Error(String(data?.error ?? "Chat request failed"));
       }
+      if (typeof data?.conversationId === "string" && data.conversationId) {
+        setConversationId(data.conversationId);
+      }
+      const assistantText = String(data?.message ?? "").trim();
+      setHistory((prev) => [...prev.slice(0, -1), { role: "assistant", content: assistantText || "I could not respond right now. Please try again." }]);
     } catch {
       setHistory((prev) => [...prev.slice(0, -1), { role: "assistant", content: "I could not respond right now. Please try again." }]);
     } finally {
@@ -70,12 +79,13 @@ export function TJAIChat({
     <section className="rounded-xl border border-[#1E2028] bg-[#111215] p-5">
       <h3 className="text-lg font-semibold text-white">Ask TJAI Anything About Your Plan</h3>
       <p className="mt-1 text-sm text-[#A1A1AA]">Your AI coach knows your exact plan. Ask anything.</p>
+      {apiError ? <p className="mt-2 text-xs text-[#F87171]">{apiError}</p> : null}
 
       {history.length === 0 ? (
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="mt-4 grid gap-2 sm:grid-cols-2">
           {suggestions.map((s) => (
-            <button key={s} type="button" onClick={() => ask(s)} className="rounded-full border border-[#1E2028] px-3 py-1.5 text-xs text-[#A1A1AA] hover:border-[#22D3EE] hover:text-white">
-              {s}
+            <button key={s.label} type="button" onClick={() => ask(s.prompt)} className="rounded-xl border border-[#1E2028] bg-[#111215] px-4 py-3 text-start text-sm text-white transition-colors duration-150 hover:border-[#22D3EE] hover:bg-[rgba(34,211,238,0.04)]">
+              {s.label}
             </button>
           ))}
         </div>

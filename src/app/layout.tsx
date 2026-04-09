@@ -29,6 +29,14 @@ try {
   siteUrl = "https://tjfit.com";
 }
 
+if (!process.env.ANTHROPIC_API_KEY) {
+  console.error("FATAL: ANTHROPIC_API_KEY is not set");
+}
+
+if (!process.env.RESEND_API_KEY) {
+  console.error("FATAL: RESEND_API_KEY is not set");
+}
+
 function googleVerificationToken(): string | undefined {
   const raw = process.env.GOOGLE_SITE_VERIFICATION?.trim();
   if (!raw) return undefined;

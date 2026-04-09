@@ -24,10 +24,12 @@ type ConversationPreview = {
 const COPY = {
   en: {
     suggested: [
-      "What should I eat before training?",
-      "How do I break a plateau?",
-      "Can I swap leg day to Saturday?",
-      "My shoulder hurts — what do I modify?"
+      "📋 Explain my plan",
+      "🍌 What to eat before training?",
+      "❌ I missed a workout",
+      "🔄 Swap a meal",
+      "🦵 I have knee pain",
+      "📈 How do I break a plateau?"
     ],
     newChat: "New Chat",
     fallbackConversation: "New chat",
@@ -47,7 +49,14 @@ const COPY = {
     close: "Close"
   },
   ar: {
-    suggested: ["ماذا آكل قبل التمرين؟", "كيف أتجاوز ثبات المستوى؟", "هل يمكن نقل يوم الأرجل إلى السبت؟", "كتفي يؤلمني — ماذا أعدّل؟"],
+    suggested: [
+      "📋 اشرح خطتي",
+      "🍌 ماذا آكل قبل التمرين؟",
+      "❌ فاتتني حصة تدريب",
+      "🔄 بدّل وجبة",
+      "🦵 لدي ألم في الركبة",
+      "📈 كيف أتجاوز الثبات؟"
+    ],
     newChat: "محادثة جديدة",
     fallbackConversation: "محادثة جديدة",
     chatFailed: "تعذر الرد الآن. حاول مرة أخرى.",
@@ -67,6 +76,15 @@ const COPY = {
   }
 } as const;
 
+const STARTER_PROMPTS = [
+  "Can you give me an overview of my TJAI plan and explain the main principles?",
+  "What should I eat before my workout, and when should I eat it?",
+  "I missed yesterday's workout. What should I do — make it up or skip it?",
+  "Can you suggest an alternative for one of my meals? I'll tell you which one.",
+  "I'm experiencing knee pain. Which exercises should I avoid and what are safe alternatives?",
+  "I've been stuck at the same weight for 2 weeks. What changes should I make to break through?"
+];
+
 function voiceLang(locale: Locale) {
   if (locale === "tr") return "tr-TR";
   if (locale === "ar") return "ar-SA";
@@ -84,6 +102,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
   const [isListening, setIsListening] = useState(false);
   const [voiceSupported, setVoiceSupported] = useState(true);
   const [showVoiceTip, setShowVoiceTip] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
   const [tier, setTier] = useState<"core" | "pro" | "apex">("core");
   const [remaining, setRemaining] = useState(10);
   const [showLimitOverlay, setShowLimitOverlay] = useState(false);
@@ -168,6 +187,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
     const assistantId = crypto.randomUUID();
     setMessages((prev) => [...prev, userMessage, { id: assistantId, role: "assistant", content: "", created_at: new Date().toISOString() }]);
     setInput("");
+    setApiError(null);
     setIsStreaming(true);
 
     try {
@@ -177,16 +197,18 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message, conversationId, locale })
       });
-      if (!response.ok || !response.body) throw new Error("Chat request failed");
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        const chunk = decoder.decode(value);
-        setMessages((prev) => prev.map((m) => (m.id === assistantId ? { ...m, content: `${m.content}${chunk}` } : m)));
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        setApiError("TJAI is having trouble. Please try again.");
+        throw new Error(String(data?.error ?? "Chat request failed"));
       }
+      if (typeof data?.conversationId === "string" && data.conversationId) {
+        setConversationId(data.conversationId);
+      }
+      const assistantText = String(data?.message ?? "").trim();
+      setMessages((prev) =>
+        prev.map((m) => (m.id === assistantId ? { ...m, content: assistantText || t.chatFailed } : m))
+      );
     } catch {
       setMessages((prev) => prev.map((m) => (m.id === assistantId ? { ...m, content: t.chatFailed } : m)));
     } finally {
@@ -263,12 +285,12 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
         <div ref={listRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
           {messages.length === 0 ? (
             <div className="grid gap-2 sm:grid-cols-2">
-              {t.suggested.map((item) => (
+              {t.suggested.map((item, index) => (
                 <button
                   key={item}
                   type="button"
-                  onClick={() => void sendMessage(item)}
-                  className="rounded-full border border-[#1E2028] bg-[#0E0F12] px-3 py-2 text-xs text-zinc-300 hover:border-[#22D3EE]"
+                  onClick={() => void sendMessage(STARTER_PROMPTS[index] ?? item)}
+                  className="rounded-xl border border-[#1E2028] bg-[#111215] px-4 py-3 text-start text-sm text-white transition-colors duration-150 hover:border-[#22D3EE] hover:bg-[rgba(34,211,238,0.04)]"
                 >
                   {item}
                 </button>
@@ -278,9 +300,18 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
           {messages.map((message) => (
             <article
               key={message.id}
-              className={cn("max-w-[85%] rounded-2xl px-4 py-3 text-sm", message.role === "user" ? "ms-auto bg-[#22D3EE] text-[#09090B]" : "me-auto border border-[#1E2028] bg-[#111215] text-white")}
+              className={cn("group relative max-w-[85%] rounded-2xl px-4 py-3 text-sm", message.role === "user" ? "ms-auto bg-[#22D3EE] text-[#09090B]" : "me-auto border border-[#1E2028] bg-[#111215] text-white")}
             >
               {message.role === "assistant" ? <Sparkles className="mb-1 h-3.5 w-3.5 text-[#22D3EE]" /> : null}
+              {message.role === "assistant" ? (
+                <button
+                  type="button"
+                  onClick={() => navigator.clipboard.writeText(message.content)}
+                  className="absolute end-2 top-2 hidden rounded-md border border-[#1E2028] px-1.5 py-0.5 text-[10px] text-[#A1A1AA] group-hover:inline-flex"
+                >
+                  Copy
+                </button>
+              ) : null}
               <p className="whitespace-pre-wrap">
                 {message.content}
                 {isStreaming && message.id === messages[messages.length - 1]?.id ? <span className="ms-1 animate-pulse text-[#22D3EE]">▋</span> : null}
@@ -293,6 +324,8 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
         <div className="border-t border-[#1E2028] px-3 py-3">
           {showVoiceTip ? <p className="mb-2 text-xs text-zinc-500">{t.voiceInput}</p> : null}
           {!voiceSupported ? <p className="mb-2 text-xs text-red-300">{t.voiceUnsupportedInline}</p> : null}
+          {apiError ? <p className="mb-2 text-xs text-red-300">{apiError}</p> : null}
+          {messages.length > 0 ? (
           <form
             className="flex items-end gap-2"
             onSubmit={(event) => {
@@ -319,6 +352,9 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
               <Send className="h-4 w-4" />
             </button>
           </form>
+          ) : (
+            <p className="text-xs text-zinc-500">Or type any fitness question below after choosing a starter.</p>
+          )}
           <p className="mt-2 text-xs text-zinc-500">{tier === "core" ? `${remaining} ${t.coreRemaining}` : tier === "pro" ? t.proLocked : t.apexUnlimited}</p>
         </div>
       </section>

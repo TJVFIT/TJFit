@@ -17,14 +17,25 @@ export default function CoachesPage({ params }: { params: { locale: string } }) 
   useEffect(() => {
     const fetchList = async () => {
       setLoading(true);
-      const qs = new URLSearchParams();
-      if (q.trim()) qs.set("q", searchNormalize(q));
-      if (specialty.trim()) qs.set("specialty", specialty);
-      if (acceptingOnly) qs.set("accepting", "1");
-      const res = await fetch(`/api/coaches?${qs.toString()}`, { cache: "no-store" });
-      const data = await res.json().catch(() => ({}));
-      setCoaches((data.coaches ?? []) as any[]);
-      setLoading(false);
+      try {
+        const qs = new URLSearchParams();
+        if (q.trim()) qs.set("q", searchNormalize(q));
+        if (specialty.trim()) qs.set("specialty", specialty);
+        if (acceptingOnly) qs.set("accepting", "1");
+        const res = await fetch(`/api/coaches?${qs.toString()}`, { cache: "no-store" });
+        if (!res.ok) {
+          console.error("Coaches fetch error:", { status: res.status, statusText: res.statusText });
+          setCoaches([]);
+          return;
+        }
+        const data = await res.json().catch(() => ({}));
+        setCoaches((data.coaches ?? []) as any[]);
+      } catch (error) {
+        console.error("Coaches fetch error:", error);
+        setCoaches([]);
+      } finally {
+        setLoading(false);
+      }
     };
     void fetchList();
   }, [acceptingOnly, q, specialty]);

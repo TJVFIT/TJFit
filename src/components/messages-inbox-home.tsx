@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AsyncButton } from "@/components/ui/AsyncButton";
 import { useAuth } from "@/components/auth-provider";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
@@ -12,6 +12,13 @@ import { getMessagesCopy } from "@/lib/feature-copy";
 import { getSocialCopy } from "@/lib/social-copy";
 import type { Locale } from "@/lib/i18n";
 
+type SearchUser = {
+  id: string;
+  username: string;
+  display_name: string;
+  avatar_url?: string | null;
+};
+
 export function MessagesInboxHome({ locale }: { locale: Locale }) {
   const t = getMessagesCopy(locale);
   const s = getSocialCopy(locale);
@@ -20,6 +27,41 @@ export function MessagesInboxHome({ locale }: { locale: Locale }) {
   const [usernameInput, setUsernameInput] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [debouncedUsername, setDebouncedUsername] = useState("");
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchResults, setSearchResults] = useState<SearchUser[]>([]);
+
+  useEffect(() => {
+    const id = window.setTimeout(() => {
+      setDebouncedUsername(usernameInput.trim().replace(/^@/, ""));
+    }, 300);
+    return () => window.clearTimeout(id);
+  }, [usernameInput]);
+
+  useEffect(() => {
+    if (debouncedUsername.length < 2) {
+      setSearchResults([]);
+      setSearchLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setSearchLoading(true);
+    void fetch(`/api/users/search?q=${encodeURIComponent(debouncedUsername)}`, { credentials: "include" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (cancelled) return;
+        setSearchResults(Array.isArray(data?.users) ? (data.users as SearchUser[]).slice(0, 8) : []);
+      })
+      .catch(() => {
+        if (!cancelled) setSearchResults([]);
+      })
+      .finally(() => {
+        if (!cancelled) setSearchLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [debouncedUsername]);
 
   const startChatWithPeerId = async (peerId: string) => {
     if (!user?.id || !peerId.trim()) return;
@@ -128,19 +170,44 @@ export function MessagesInboxHome({ locale }: { locale: Locale }) {
       <div className="rounded-xl border border-white/[0.07] bg-surface/25 p-4 sm:p-5">
         <p className="text-xs text-zinc-500">{s.newChatTitle}</p>
         <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-stretch">
-          <input
-            className="input min-h-[48px] flex-1 rounded-xl border-white/10 bg-[#0c0c0f] py-3 text-[15px]"
-            placeholder={s.newChatPlaceholder}
-            value={usernameInput}
-            onChange={(e) => setUsernameInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") void resolveUsernameAndStart();
-            }}
-            disabled={busy}
-            autoComplete="off"
-            spellCheck={false}
-            aria-label={s.newChatPlaceholder}
-          />
+          <div className="relative flex-1">
+            <input
+              className="input min-h-[48px] w-full flex-1 rounded-xl border-white/10 bg-[#0c0c0f] py-3 text-[15px]"
+              placeholder={s.newChatPlaceholder}
+              value={usernameInput}
+              onChange={(e) => setUsernameInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") void resolveUsernameAndStart();
+              }}
+              disabled={busy}
+              autoComplete="off"
+              spellCheck={false}
+              aria-label={s.newChatPlaceholder}
+            />
+            {(searchLoading || searchResults.length > 0) && usernameInput.trim().length >= 2 ? (
+              <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-20 overflow-hidden rounded-xl border border-white/10 bg-[#0c0c0f]">
+                {searchLoading ? (
+                  <p className="px-3 py-2 text-xs text-zinc-500">Searching...</p>
+                ) : (
+                  searchResults.map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-zinc-200 hover:bg-white/5"
+                      onClick={() => {
+                        setUsernameInput(`@${item.username}`);
+                        setSearchResults([]);
+                        void startChatWithPeerId(item.id);
+                      }}
+                    >
+                      <span className="truncate">{item.display_name || item.username}</span>
+                      <span className="ml-2 shrink-0 text-xs text-zinc-500">@{item.username}</span>
+                    </button>
+                  ))
+                )}
+              </div>
+            ) : null}
+          </div>
           <AsyncButton
             type="button"
             variant="primary"

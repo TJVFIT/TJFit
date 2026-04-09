@@ -157,6 +157,16 @@ export function MessagesLayoutShell({
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "messages" },
         () => {
+          if (typeof window !== "undefined" && document.visibilityState !== "visible" && "Notification" in window) {
+            if (Notification.permission === "granted") {
+              new Notification("TJFit — New Message", {
+                body: "You received a new message.",
+                icon: "/favicon.ico"
+              });
+            } else if (Notification.permission === "default") {
+              void Notification.requestPermission();
+            }
+          }
           scheduleReload();
         }
       )

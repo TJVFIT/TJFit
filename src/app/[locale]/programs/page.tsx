@@ -75,7 +75,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
   const router = useRouter();
   const searchParams = useSearchParams();
   const [uploadedPrograms, setUploadedPrograms] = useState<CustomProgramCard[]>([]);
-  const [customCatalogReady, setCustomCatalogReady] = useState(false);
+  const [customCatalogReady, setCustomCatalogReady] = useState(true);
   const [goalFilter, setGoalFilter] = useState<GoalFilter>("all");
   const [locFilter, setLocFilter] = useState<LocFilter>("all");
 
@@ -83,10 +83,16 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
 
   useEffect(() => {
     let cancelled = false;
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 6000);
     const loadCustomPrograms = async () => {
+      setCustomCatalogReady(false);
       try {
-        const res = await fetch(`/api/programs/custom?locale=${locale}`, { credentials: "include" });
-        if (!res.ok) return;
+        const res = await fetch(`/api/programs/custom?locale=${locale}`, { credentials: "include", signal: controller.signal });
+        if (!res.ok) {
+          console.error("Programs fetch error:", { status: res.status, statusText: res.statusText });
+          return;
+        }
         const data = await res.json();
         const mapped = (data.programs ?? []).map((item: any) => ({
           slug: item.slug,
@@ -104,13 +110,20 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
           isCustomUpload: true
         })) as CustomProgramCard[];
         if (!cancelled) setUploadedPrograms(mapped);
+      } catch (error) {
+        if (!cancelled) {
+          console.error("Programs fetch error:", error);
+        }
       } finally {
+        window.clearTimeout(timeout);
         if (!cancelled) setCustomCatalogReady(true);
       }
     };
     loadCustomPrograms();
     return () => {
       cancelled = true;
+      window.clearTimeout(timeout);
+      controller.abort();
     };
   }, [locale, programManagementCopy.uploadedPdfAsset, programManagementCopy.uploadedProgramPreview]);
 
@@ -264,7 +277,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
             </ListingFilterBar>
           </BlurReveal>
 
-      {!customCatalogReady ? (
+      {!customCatalogReady && allPrograms.length === 0 ? (
         <div
           className="grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3"
           aria-busy="true"
@@ -330,7 +343,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
         })}
       </StaggerRevealGrid>
       )}
-      {customCatalogReady && filterActive && filteredPrograms.length === 0 && allPrograms.length > 0 ? (
+      {filterActive && filteredPrograms.length === 0 && allPrograms.length > 0 ? (
         <div className="tj-empty-state mt-10">
           <div className="mx-auto max-w-[300px]">
             <p className="text-[32px] text-[var(--color-text-muted)]" aria-hidden>
@@ -358,7 +371,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
         </div>
       ) : null}
 
-      {customCatalogReady ? (
+      {allPrograms.length > 0 ? (
         <>
           <p className="mt-10 text-center text-xs text-[var(--color-text-muted)]">{copy.trustProgramsGrid}</p>
           <div className="mt-12 border-t border-[var(--color-border)] pt-12 text-center">

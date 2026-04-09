@@ -7,6 +7,9 @@ import { useMagneticButton } from "@/hooks/useMagneticButton";
 import { cn } from "@/lib/utils";
 import type { QuizAnswers, QuizStep, TJAICopy } from "@/lib/tjai-types";
 
+const QUIZ_PROGRESS_KEY = "tjai_quiz_progress";
+const QUIZ_PROGRESS_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+
 type Props = {
   copy: TJAICopy;
   steps: QuizStep[];
@@ -38,12 +41,53 @@ export function TJAIQuiz({ copy, steps, direction, onSubmit, onAnswersChange }: 
   const [transitioning, setTransitioning] = useState(false);
   const [showError, setShowError] = useState(false);
   const [shake, setShake] = useState(false);
+  const [resumePrompt, setResumePrompt] = useState<{ currentStep: number; answers: QuizAnswers } | null>(null);
+  const [resumeHandled, setResumeHandled] = useState(false);
   const magneticGenerateRef = useMagneticButton<HTMLButtonElement>(0.3);
 
   const filteredSteps = useMemo(() => steps.filter((step) => !isSkipped(step, answers)), [steps, answers]);
   const step = filteredSteps[displayIdx] ?? filteredSteps[idx];
   const total = filteredSteps.length;
   const progress = total > 0 ? ((idx + 1) / total) * 100 : 0;
+
+  useEffect(() => {
+    if (typeof window === "undefined" || resumeHandled) return;
+    const raw = window.localStorage.getItem(QUIZ_PROGRESS_KEY);
+    if (!raw) {
+      setResumeHandled(true);
+      return;
+    }
+    try {
+      const parsed = JSON.parse(raw) as { currentStep?: number; answers?: QuizAnswers; savedAt?: number };
+      const savedAt = Number(parsed?.savedAt ?? 0);
+      if (!savedAt || Date.now() - savedAt > QUIZ_PROGRESS_MAX_AGE_MS) {
+        window.localStorage.removeItem(QUIZ_PROGRESS_KEY);
+        setResumeHandled(true);
+        return;
+      }
+      const savedStep = Number(parsed?.currentStep ?? 0);
+      const savedAnswers = parsed?.answers ?? {};
+      if (savedStep > 0 && savedAnswers && typeof savedAnswers === "object") {
+        setResumePrompt({ currentStep: savedStep, answers: savedAnswers });
+      }
+    } catch {
+      window.localStorage.removeItem(QUIZ_PROGRESS_KEY);
+    } finally {
+      setResumeHandled(true);
+    }
+  }, [resumeHandled]);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !resumeHandled || resumePrompt) return;
+    window.localStorage.setItem(
+      QUIZ_PROGRESS_KEY,
+      JSON.stringify({
+        currentStep: idx,
+        answers,
+        savedAt: Date.now()
+      })
+    );
+  }, [answers, idx, resumeHandled, resumePrompt]);
 
   useEffect(() => {
     if (!step) return;
@@ -80,6 +124,59 @@ export function TJAIQuiz({ copy, steps, direction, onSubmit, onAnswersChange }: 
   const currentAnswer = answers[step.id];
   const canContinue = !step.required || hasAnswer(step, currentAnswer);
 
+  const questionNumber = idx + 1;
+  const categoryLabel =
+    questionNumber <= 2
+      ? "Personal Info"
+      : questionNumber <= 5
+        ? "Body Statistics"
+        : questionNumber <= 8
+          ? "Your Goal"
+          : questionNumber <= 11
+            ? "Training History"
+            : questionNumber <= 14
+              ? "Lifestyle"
+              : questionNumber <= 17
+                ? "Preferences"
+                : "Final Details";
+
+  const weight = Number(answers.s1_weight ?? 0);
+  const height = Number(answers.s1_height ?? 0);
+  const age = Number(answers.s1_age ?? 0);
+  const sex = String(answers.s1_gender ?? "Male").toLowerCase();
+  const goal = String(answers.s2_goal ?? "Lose fat").toLowerCase();
+  const activity = String(answers.s4_daily_activity ?? "Moderate");
+  const multipliers: Record<string, number> = {
+    very_low: 1.2,
+    low: 1.375,
+    moderate: 1.55,
+    active: 1.725,
+    very_active: 1.9
+  };
+  const activityKey = activity.startsWith("Very low")
+    ? "very_low"
+    : activity.startsWith("Low")
+      ? "low"
+      : activity.startsWith("Active")
+        ? "active"
+        : activity.startsWith("Very active")
+          ? "very_active"
+          : "moderate";
+  const bmr =
+    weight > 0 && height > 0 && age > 0
+      ? sex.includes("male")
+        ? (10 * weight) + (6.25 * height) - (5 * age) + 5
+        : (10 * weight) + (6.25 * height) - (5 * age) - 161
+      : null;
+  const tdee = bmr ? bmr * (multipliers[activityKey] ?? 1.55) : null;
+  const targetCalories = tdee
+    ? goal.includes("gain")
+      ? Math.round(tdee + 300)
+      : goal.includes("maintain")
+        ? Math.round(tdee)
+        : Math.round(tdee - 500)
+    : null;
+
   const goNext = () => {
     if (!canContinue) {
       setShowError(true);
@@ -89,6 +186,9 @@ export function TJAIQuiz({ copy, steps, direction, onSubmit, onAnswersChange }: 
     }
     setShowError(false);
     if (idx >= total - 1) {
+      if (typeof window !== "undefined") {
+        window.localStorage.removeItem(QUIZ_PROGRESS_KEY);
+      }
       onSubmit(answers);
       return;
     }
@@ -315,6 +415,9 @@ export function TJAIQuiz({ copy, steps, direction, onSubmit, onAnswersChange }: 
 
       <div className="mx-auto flex min-h-[90svh] w-full max-w-[640px] flex-col">
         <div className="pt-1">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-[#22D3EE]">
+            Question {questionNumber} of {total} · {categoryLabel}
+          </p>
           <div className="h-[2px] overflow-hidden rounded-full bg-[#1E2028]">
             <div
               className="tjai-progress-fill h-full bg-[linear-gradient(90deg,#22D3EE,#A78BFA)]"
@@ -325,6 +428,57 @@ export function TJAIQuiz({ copy, steps, direction, onSubmit, onAnswersChange }: 
             {copy.nav.sectionOf} {step.sectionNumber} / {step.totalSections} - {step.section}
           </p>
         </div>
+
+        {resumePrompt ? (
+          <div className="mt-4 rounded-xl border border-[#1E2028] bg-[#111215] p-4">
+            <p className="text-sm text-white">Resume your TJAI quiz? You left off at question {resumePrompt.currentStep + 1}.</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setAnswers(resumePrompt.answers);
+                  setIdx(resumePrompt.currentStep);
+                  setDisplayIdx(resumePrompt.currentStep);
+                  setResumePrompt(null);
+                }}
+                className="rounded-full bg-[#22D3EE] px-4 py-2 text-xs font-semibold text-[#09090B]"
+              >
+                Resume
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (typeof window !== "undefined") {
+                    window.localStorage.removeItem(QUIZ_PROGRESS_KEY);
+                  }
+                  setResumePrompt(null);
+                }}
+                className="rounded-full border border-[#1E2028] px-4 py-2 text-xs text-[#A1A1AA]"
+              >
+                Start Over
+              </button>
+            </div>
+          </div>
+        ) : null}
+
+        <aside className="mt-4 rounded-xl border border-[rgba(34,211,238,0.15)] bg-[rgba(34,211,238,0.05)] p-4">
+          <p className="text-sm font-semibold text-white">Your Numbers So Far</p>
+          <div className="mt-3 grid grid-cols-1 gap-2 text-sm sm:grid-cols-3">
+            <div className="rounded-lg border border-[#1E2028] bg-[#0F1116] p-3">
+              <p className="text-xs text-[#A1A1AA]">BMR</p>
+              <p className="text-lg font-bold text-[#22D3EE]">{bmr ? Math.round(bmr) : "..."} {bmr ? "kcal" : ""}</p>
+            </div>
+            <div className="rounded-lg border border-[#1E2028] bg-[#0F1116] p-3">
+              <p className="text-xs text-[#A1A1AA]">TDEE</p>
+              <p className="text-lg font-bold text-[#22D3EE]">{tdee ? Math.round(tdee) : "..."} {tdee ? "kcal" : ""}</p>
+            </div>
+            <div className="rounded-lg border border-[#1E2028] bg-[#0F1116] p-3">
+              <p className="text-xs text-[#A1A1AA]">Daily Target</p>
+              <p className="text-lg font-bold text-[#22D3EE]">{targetCalories ?? "..."} {targetCalories ? "kcal" : ""}</p>
+            </div>
+          </div>
+          <p className="mt-2 text-xs text-[#A1A1AA]">Estimates based on Mifflin-St Jeor formula.</p>
+        </aside>
 
         <div
           key={step.id}
