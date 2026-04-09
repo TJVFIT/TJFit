@@ -190,12 +190,15 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
     setApiError(null);
     setIsStreaming(true);
 
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), 35000);
     try {
       const response = await fetch("/api/tjai/chat", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, conversationId, locale })
+        body: JSON.stringify({ message, conversationId, locale }),
+        signal: controller.signal
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
@@ -209,9 +212,13 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
       setMessages((prev) =>
         prev.map((m) => (m.id === assistantId ? { ...m, content: assistantText || t.chatFailed } : m))
       );
-    } catch {
+    } catch (error) {
+      if (error instanceof Error && error.name === "AbortError") {
+        setApiError("TJAI request timed out. Please try again.");
+      }
       setMessages((prev) => prev.map((m) => (m.id === assistantId ? { ...m, content: t.chatFailed } : m)));
     } finally {
+      window.clearTimeout(timer);
       setIsStreaming(false);
       void fetch("/api/tjai/chat/conversations", { credentials: "include", cache: "no-store" })
         .then((r) => (r.ok ? r.json() : null))

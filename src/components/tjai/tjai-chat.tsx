@@ -52,11 +52,14 @@ export function TJAIChat({
     setLoading(true);
     setMessage("");
     setApiError(null);
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), 35000);
     try {
       const response = await fetch("/api/tjai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, conversationId })
+        body: JSON.stringify({ message: text, conversationId }),
+        signal: controller.signal
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
@@ -68,9 +71,13 @@ export function TJAIChat({
       }
       const assistantText = String(data?.message ?? "").trim();
       setHistory((prev) => [...prev.slice(0, -1), { role: "assistant", content: assistantText || "I could not respond right now. Please try again." }]);
-    } catch {
+    } catch (error) {
+      if (error instanceof Error && error.name === "AbortError") {
+        setApiError("TJAI request timed out. Please try again.");
+      }
       setHistory((prev) => [...prev.slice(0, -1), { role: "assistant", content: "I could not respond right now. Please try again." }]);
     } finally {
+      window.clearTimeout(timer);
       setLoading(false);
     }
   };

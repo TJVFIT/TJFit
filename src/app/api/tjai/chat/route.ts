@@ -10,10 +10,20 @@ const DOMAIN_GUARD = "Please ask me stuff related to health, sports, coaching, o
 type HistoryRow = { role: "user" | "assistant"; content: string };
 type PreferenceRow = { preference_key: string; preference_value: string };
 
+async function fetchWithTimeout(url: string, init: RequestInit, timeoutMs: number) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...init, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function extractPreference(apiKey: string, message: string): Promise<{ key: string | null; value: string | null }> {
   const wordCount = message.split(/\s+/).filter(Boolean).length;
   if (wordCount < 10) return { key: null, value: null };
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
+  const response = await fetchWithTimeout("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -27,7 +37,7 @@ async function extractPreference(apiKey: string, message: string): Promise<{ key
         'Extract user food/training preferences only. Return strict JSON: {"key":"...","value":"..."} or {"key":null}. No markdown.',
       messages: [{ role: "user", content: message }]
     })
-  });
+  }, 8000);
   if (!response.ok) return { key: null, value: null };
   const payload = await response.json();
   const text = String(payload?.content?.[0]?.text ?? "").trim();
@@ -145,7 +155,7 @@ RULES:
       console.error("TJAI chat preference extract error:", prefExtractError);
     }
 
-    const upstream = await fetch("https://api.anthropic.com/v1/messages", {
+    const upstream = await fetchWithTimeout("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -158,7 +168,7 @@ RULES:
         system: systemPrompt,
         messages: [...history, { role: "user", content: message }]
       })
-    });
+    }, 30000);
 
     if (!upstream.ok) {
       const raw = await upstream.text();
@@ -196,6 +206,9 @@ RULES:
     return NextResponse.json({ message: assistantMessage, conversationId });
   } catch (error) {
     console.error("TJAI chat error:", error);
+    if (error instanceof Error && error.name === "AbortError") {
+      return NextResponse.json({ error: "TJAI timed out. Please try again." }, { status: 504 });
+    }
     return NextResponse.json({ error: "Failed to get response. Please try again." }, { status: 500 });
   }
 }
