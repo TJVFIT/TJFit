@@ -131,8 +131,6 @@ function hasAnswer(step: QuizStep, answer: QuizAnswers[string] | undefined): boo
 export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersChange }: Props) {
   const [answers, setAnswers] = useState<QuizAnswers>({});
   const [idx, setIdx] = useState(0);
-  const [displayIdx, setDisplayIdx] = useState(0);
-  const [transitioning, setTransitioning] = useState(false);
   const [showError, setShowError] = useState(false);
   const [shake, setShake] = useState(false);
   const [resumePrompt, setResumePrompt] = useState<{ currentStep: number; answers: QuizAnswers } | null>(null);
@@ -144,8 +142,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
   const filteredSteps = useMemo(() => steps.filter((step) => !isSkipped(step, answers)), [steps, answers]);
   const total = filteredSteps.length;
   const safeIdx = total > 0 ? Math.min(Math.max(idx, 0), total - 1) : 0;
-  const safeDisplayIdx = total > 0 ? Math.min(Math.max(displayIdx, 0), total - 1) : 0;
-  const step = filteredSteps[safeDisplayIdx] ?? filteredSteps[safeIdx];
+  const step = filteredSteps[safeIdx];
   const progress = total > 0 ? ((safeIdx + 1) / total) * 100 : 0;
 
   useEffect(() => {
@@ -191,21 +188,6 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
     if (!step) return;
     if (idx > total - 1) setIdx(Math.max(0, total - 1));
   }, [idx, step, total]);
-
-  useEffect(() => {
-    if (idx === displayIdx) return;
-    setTransitioning(true);
-    const switchTimer = window.setTimeout(() => {
-      setDisplayIdx(idx);
-    }, 200);
-    const doneTimer = window.setTimeout(() => {
-      setTransitioning(false);
-    }, 400);
-    return () => {
-      window.clearTimeout(switchTimer);
-      window.clearTimeout(doneTimer);
-    };
-  }, [displayIdx, idx]);
 
   useEffect(() => {
     if (!step) return;
@@ -341,9 +323,21 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
     }
 
     if (step.type === "single") {
+      const fallbackSingleOptions: Record<string, string[]> = {
+        s1_gender: ["Male", "Female", "Prefer not to say"]
+      };
+      const singleOptions =
+        Array.isArray(step.options) && step.options.length > 0 ? step.options : (fallbackSingleOptions[step.id] ?? []);
+      if (singleOptions.length === 0) {
+        return (
+          <div className="rounded-[10px] border border-[#1E2028] bg-[#111215] p-4 text-sm text-[#A1A1AA]">
+            This question failed to load options. Please tap Continue to move to the next question.
+          </div>
+        );
+      }
       return (
         <div className="grid gap-3">
-          {(step.options ?? []).map((option) => {
+          {singleOptions.map((option) => {
             const selected = currentAnswer === option;
             return (
               <button
@@ -375,6 +369,14 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
 
     if (step.type === "multi") {
       const selected = Array.isArray(currentAnswer) ? currentAnswer : [];
+      const multiOptions = Array.isArray(step.options) ? step.options : [];
+      if (multiOptions.length === 0) {
+        return (
+          <div className="rounded-[10px] border border-[#1E2028] bg-[#111215] p-4 text-sm text-[#A1A1AA]">
+            This question failed to load options. Please tap Continue to move to the next question.
+          </div>
+        );
+      }
       const toggle = (option: string) => {
         if (selected.includes(option)) {
           updateAnswer(selected.filter((v) => v !== option));
@@ -384,7 +386,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
       };
       return (
         <div className="grid gap-3">
-          {(step.options ?? []).map((option) => {
+          {multiOptions.map((option) => {
             const active = selected.includes(option);
             return (
               <button
@@ -544,7 +546,6 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
                 onClick={() => {
                   setAnswers(resumePrompt.answers);
                   setIdx(resumePrompt.currentStep);
-                  setDisplayIdx(resumePrompt.currentStep);
                   setResumePrompt(null);
                 }}
                 className="rounded-full bg-[#22D3EE] px-4 py-2 text-xs font-semibold text-[#09090B]"
@@ -588,10 +589,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
 
         <div
           key={step.id}
-          className={cn(
-            "tjai-question mt-8 flex-1",
-            transitioning ? "exiting" : "entering"
-          )}
+          className="tjai-question entering mt-8 flex-1"
         >
           <div className="mb-4 text-[11px] uppercase tracking-[0.2em] text-[#22D3EE]">{step.section}</div>
           <h1 className="text-[clamp(1.375rem,3vw,1.75rem)] font-bold leading-[1.3] text-white">{step.question}</h1>

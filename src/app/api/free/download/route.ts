@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { jsPDF } from "jspdf";
 
 import { programs } from "@/lib/content";
 import { type FreeProductBlock, getFreeProductPageModel, isFreeProductSlug } from "@/lib/free-product-pages";
@@ -94,43 +95,6 @@ const COPY: Record<
   }
 };
 
-function renderBlocksAsText(blocks: FreeProductBlock[], locale: Locale) {
-  const c = COPY[locale];
-  const lines: string[] = [];
-  for (const block of blocks) {
-    if (block.type === "h2") {
-      lines.push("", block.text, "-".repeat(Math.max(12, block.text.length)));
-      continue;
-    }
-    if (block.type === "h3") {
-      lines.push("", block.text);
-      continue;
-    }
-    if (block.type === "p") {
-      lines.push(block.text);
-      continue;
-    }
-    if (block.type === "ul") {
-      lines.push(...block.items.map((item) => `- ${item}`));
-      continue;
-    }
-    if (block.type === "day") {
-      lines.push("", block.day.title);
-      lines.push(`${c.warmup}:`);
-      lines.push(...block.day.warmupLines.map((line) => `- ${line}`));
-      lines.push(`${c.main}:`);
-      lines.push(
-        ...block.day.exercises.map((exercise, idx) =>
-          exercise.note ? `${idx + 1}. ${exercise.line} (${exercise.note})` : `${idx + 1}. ${exercise.line}`
-        )
-      );
-      lines.push(`${c.cooldown}:`);
-      lines.push(...block.day.cooldownLines.map((line) => `- ${line}`));
-    }
-  }
-  return lines;
-}
-
 function evidenceRules(locale: Locale, isNutrition: boolean) {
   const text: Record<Locale, string[]> = {
     en: [
@@ -182,6 +146,166 @@ function evidenceRules(locale: Locale, isNutrition: boolean) {
   return text[locale];
 }
 
+function buildFreeGuidePdf(args: {
+  locale: Locale;
+  title: string;
+  category: string;
+  difficulty: string;
+  duration: string;
+  description: string;
+  assets: string[];
+  blocks: FreeProductBlock[];
+  evidenceLines: string[];
+  safetyLines: string[];
+  footer1: string;
+  footer2: string;
+}) {
+  const { locale, title, category, difficulty, duration, description, assets, blocks, evidenceLines, safetyLines, footer1, footer2 } = args;
+  const c = COPY[locale];
+  const pdf = new jsPDF({ unit: "pt", format: "a4" });
+  const pageWidth = 595;
+  const pageHeight = 842;
+  const margin = 40;
+  let y = margin;
+
+  const drawCover = () => {
+    pdf.setFillColor(9, 9, 11);
+    pdf.rect(0, 0, pageWidth, pageHeight, "F");
+    pdf.setFillColor(34, 211, 238);
+    pdf.rect(0, 0, pageWidth, 10, "F");
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(14);
+    pdf.setTextColor(34, 211, 238);
+    pdf.text("TJFit", margin, 36);
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(28);
+    pdf.text(title, margin, 84, { maxWidth: pageWidth - margin * 2 });
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(12);
+    pdf.setTextColor(161, 161, 170);
+    pdf.text(`${c.category}: ${category}`, margin, 128);
+    pdf.text(`${c.difficulty}: ${difficulty}`, margin, 146);
+    pdf.text(`${c.duration}: ${duration}`, margin, 164);
+
+    pdf.setTextColor(212, 212, 216);
+    const overview = pdf.splitTextToSize(description, pageWidth - margin * 2) as string[];
+    pdf.text(overview, margin, 200);
+    y = 250;
+  };
+
+  const drawBodyPage = () => {
+    pdf.addPage();
+    pdf.setFillColor(255, 255, 255);
+    pdf.rect(0, 0, pageWidth, pageHeight, "F");
+    pdf.setDrawColor(34, 211, 238);
+    pdf.setLineWidth(1);
+    pdf.line(0, 16, pageWidth, 16);
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(12);
+    pdf.setTextColor(20, 20, 20);
+    pdf.text(title, margin, 36, { maxWidth: pageWidth - margin * 2 });
+    y = 58;
+  };
+
+  const ensureSpace = (need = 22) => {
+    if (y + need <= pageHeight - margin) return;
+    drawBodyPage();
+  };
+
+  const writeWrapped = (text: string, fontSize = 11, color: [number, number, number] = [39, 39, 42], lineHeight = 16) => {
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(fontSize);
+    pdf.setTextColor(color[0], color[1], color[2]);
+    const lines = pdf.splitTextToSize(text, pageWidth - margin * 2) as string[];
+    ensureSpace(lines.length * lineHeight + 10);
+    pdf.text(lines, margin, y);
+    y += lines.length * lineHeight + 8;
+  };
+
+  const writeH2 = (text: string) => {
+    ensureSpace(34);
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(17);
+    pdf.setTextColor(8, 145, 178);
+    pdf.text(text, margin, y);
+    y += 20;
+    pdf.setDrawColor(186, 230, 253);
+    pdf.setLineWidth(0.8);
+    pdf.line(margin, y, pageWidth - margin, y);
+    y += 12;
+  };
+
+  const writeH3 = (text: string) => {
+    ensureSpace(24);
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(12);
+    pdf.setTextColor(17, 24, 39);
+    pdf.text(text, margin, y);
+    y += 16;
+  };
+
+  const writeBullets = (items: string[]) => {
+    for (const item of items) {
+      const lines = pdf.splitTextToSize(item, pageWidth - margin * 2 - 14) as string[];
+      ensureSpace(lines.length * 15 + 8);
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(11);
+      pdf.setTextColor(39, 39, 42);
+      pdf.text("•", margin, y);
+      pdf.text(lines, margin + 12, y);
+      y += lines.length * 15 + 5;
+    }
+  };
+
+  drawCover();
+  drawBodyPage();
+
+  writeH2(c.includedAssets);
+  writeBullets(assets);
+  y += 4;
+
+  for (const block of blocks) {
+    if (block.type === "h2") {
+      writeH2(block.text);
+      continue;
+    }
+    if (block.type === "h3") {
+      writeH3(block.text);
+      continue;
+    }
+    if (block.type === "p") {
+      writeWrapped(block.text);
+      continue;
+    }
+    if (block.type === "ul") {
+      writeBullets(block.items);
+      continue;
+    }
+    if (block.type === "day") {
+      writeH3(block.day.title);
+      writeWrapped(`${c.warmup}:`, 11, [8, 145, 178], 14);
+      writeBullets(block.day.warmupLines);
+      writeWrapped(`${c.main}:`, 11, [8, 145, 178], 14);
+      writeBullets(
+        block.day.exercises.map((ex, i) => (ex.note ? `${i + 1}. ${ex.line} (${ex.note})` : `${i + 1}. ${ex.line}`))
+      );
+      writeWrapped(`${c.cooldown}:`, 11, [8, 145, 178], 14);
+      writeBullets(block.day.cooldownLines);
+      y += 4;
+    }
+  }
+
+  writeH2(c.evidenceTitle);
+  writeBullets(evidenceLines);
+  writeH2(c.safetyTitle);
+  writeBullets(safetyLines);
+  y += 10;
+  writeWrapped(footer1, 10, [82, 82, 91], 14);
+  writeWrapped(footer2, 10, [82, 82, 91], 14);
+
+  return pdf.output("arraybuffer");
+}
+
 export async function GET(request: NextRequest) {
   const sp = request.nextUrl.searchParams;
   const slug = String(sp.get("slug") ?? "").trim();
@@ -200,67 +324,57 @@ export async function GET(request: NextRequest) {
   const copy = COPY[locale];
   const isNutrition = localized.category.toLowerCase().includes("nutrition");
 
-  const body = [
-    `${localized.title}`,
-    copy.line,
-    `${copy.category}: ${localized.category}`,
-    `${copy.difficulty}: ${localized.difficulty}`,
-    `${copy.duration}: ${localized.duration}`,
-    "",
-    `${localized.description}`,
-    "",
-    `${copy.includedAssets}:`,
-    ...program.assets.map((a, i) => `${i + 1}. ${a.label}`),
-    "",
-    ...(isFreeProductSlug(slug) ? renderBlocksAsText(getFreeProductPageModel(slug, locale).blocks, locale) : []),
-    "",
-    copy.evidenceTitle,
-    "-".repeat(copy.evidenceTitle.length),
-    ...evidenceRules(locale, isNutrition).map((line) => `- ${line}`),
-    "",
-    copy.safetyTitle,
-    "-".repeat(copy.safetyTitle.length),
-    ...(
-      locale === "ar"
+  const model = isFreeProductSlug(slug) ? getFreeProductPageModel(slug, locale) : null;
+  const safetyLines =
+    locale === "ar"
+      ? [
+          "ابدأ بمستواك الحالي وعدّل الشدة عند الحاجة.",
+          "أوقف التمرين فوراً عند ألم حاد أو دوخة أو ضيق نفس.",
+          "النتائج تختلف حسب الالتزام، النوم، التغذية، والحالة الصحية."
+        ]
+      : locale === "tr"
         ? [
-            "- ابدأ بمستواك الحالي وعدّل الشدة عند الحاجة.",
-            "- أوقف التمرين فوراً عند ألم حاد أو دوخة أو ضيق نفس.",
-            "- النتائج تختلف حسب الالتزام، النوم، التغذية، والحالة الصحية."
+            "Her zaman mevcut seviyenden basla, siddeti ihtiyaca gore ayarla.",
+            "Keskin agri, bas donmesi veya nefes darliginda antrenmani hemen durdur.",
+            "Sonuclar kisiden kisiye; tutarlilik, uyku, beslenme ve saglik durumuna gore degisir."
           ]
-        : locale === "tr"
+        : locale === "es"
           ? [
-              "- Her zaman mevcut seviyenden basla, siddeti ihtiyaca gore ayarla.",
-              "- Keskin agri, bas donmesi veya nefes darliginda antrenmani hemen durdur.",
-              "- Sonuclar kisiden kisiye; tutarlilik, uyku, beslenme ve saglik durumuna gore degisir."
+              "Empieza desde tu nivel actual y ajusta la intensidad cuando sea necesario.",
+              "Deten el entrenamiento si aparece dolor agudo, mareo o falta de aire.",
+              "Los resultados varian segun adherencia, sueno, nutricion y estado de salud."
             ]
-          : locale === "es"
+          : locale === "fr"
             ? [
-                "- Empieza desde tu nivel actual y ajusta la intensidad cuando sea necesario.",
-                "- Deten el entrenamiento si aparece dolor agudo, mareo o falta de aire.",
-                "- Los resultados varian segun adherencia, sueno, nutricion y estado de salud."
+                "Commencez a votre niveau actuel et ajustez l'intensite selon le besoin.",
+                "Arretez immediatement en cas de douleur vive, vertige ou essoufflement.",
+                "Les resultats varient selon la regularite, le sommeil, l'alimentation et l'etat de sante."
               ]
-            : locale === "fr"
-              ? [
-                  "- Commencez a votre niveau actuel et ajustez l'intensite selon le besoin.",
-                  "- Arretez immediatement en cas de douleur vive, vertige ou essoufflement.",
-                  "- Les resultats varient selon la regularite, le sommeil, l'alimentation et l'etat de sante."
-                ]
-              : [
-                  "- Start from your current level and scale intensity as needed.",
-                  "- Stop immediately for sharp pain, dizziness, or shortness of breath.",
-                  "- Results vary based on consistency, sleep, nutrition, and baseline health."
-                ]
-    ),
-    "",
-    copy.footer1,
-    copy.footer2
-  ].join("\n");
+            : [
+                "Start from your current level and scale intensity as needed.",
+                "Stop immediately for sharp pain, dizziness, or shortness of breath.",
+                "Results vary based on consistency, sleep, nutrition, and baseline health."
+              ];
+  const pdf = buildFreeGuidePdf({
+    locale,
+    title: localized.title,
+    category: localized.category,
+    difficulty: localized.difficulty,
+    duration: localized.duration,
+    description: localized.description,
+    assets: program.assets.map((a, i) => `${i + 1}. ${a.label}`),
+    blocks: model?.blocks ?? [],
+    evidenceLines: evidenceRules(locale, isNutrition),
+    safetyLines,
+    footer1: copy.footer1,
+    footer2: copy.footer2
+  });
 
   const safeName = slug.replace(/[^a-z0-9\-]/gi, "-");
-  return new Response(body, {
+  return new Response(pdf, {
     headers: {
-      "Content-Type": "text/plain; charset=utf-8",
-      "Content-Disposition": `attachment; filename="${safeName}.txt"`
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment; filename="${safeName}.pdf"`
     }
   });
 }

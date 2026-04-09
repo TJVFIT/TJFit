@@ -14,20 +14,61 @@ function isLikelyFitnessQuestion(message: string) {
   const m = message.toLowerCase();
   return [
     "workout",
+    "work out",
     "training",
+    "train",
     "exercise",
+    "lift",
+    "lifting",
+    "strength",
+    "hypertrophy",
+    "reps",
+    "sets",
+    "rest day",
+    "split",
     "fitness",
     "fat",
     "muscle",
+    "body fat",
+    "bulk",
+    "cut",
+    "lose weight",
+    "gain weight",
     "diet",
     "nutrition",
+    "meal",
+    "meal prep",
     "calorie",
     "protein",
+    "carb",
+    "fat intake",
     "cardio",
+    "tdee",
+    "bmr",
     "coach",
+    "coaching",
     "health",
+    "wellness",
+    "sleep",
+    "hydration",
+    "injury",
     "recovery",
-    "program"
+    "rehab",
+    "recovery",
+    "program",
+    "tjai",
+    "tjfit",
+    "community",
+    "website",
+    "supplement",
+    "gym",
+    "home workout",
+    "chest",
+    "back",
+    "legs",
+    "shoulders",
+    "arm",
+    "abs"
   ].some((k) => m.includes(k));
 }
 
@@ -100,6 +141,15 @@ export async function POST(request: NextRequest) {
 
     if (!message) {
       return NextResponse.json({ error: "Invalid message" }, { status: 400 });
+    }
+    if (!isLikelyFitnessQuestion(message)) {
+      const guarded = DOMAIN_GUARD;
+      const persistedId = conversationId || crypto.randomUUID();
+      await auth.supabase.from("tjai_chat_messages").insert([
+        { user_id: auth.user.id, conversation_id: persistedId, role: "user", content: message },
+        { user_id: auth.user.id, conversation_id: persistedId, role: "assistant", content: guarded }
+      ]);
+      return NextResponse.json({ message: guarded, conversationId: persistedId });
     }
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -175,7 +225,6 @@ TJFIT PROGRAMS YOU CAN RECOMMEND:
 - Gym Muscle Starter (4 weeks, gym, free, beginner)
 
 RULES:
-- If the question is unrelated to fitness, health, sports, coaching, or TJFit website topics, reply exactly with: "${DOMAIN_GUARD}"
 - For injury or medical topics: include a short safety disclaimer.
 - Keep responses concise but complete (150-300 words unless user asks for depth).
 - Use bullet points for lists and numbered steps for action plans.`;

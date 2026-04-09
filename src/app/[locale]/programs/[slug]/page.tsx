@@ -141,12 +141,13 @@ export default async function ProgramDetailPage({
     cooldown: copy.workoutCooldownLabel
   };
   const freeDownloadLabel: Record<Locale, string> = {
-    en: "Download Free Guide",
-    tr: "Ucretsiz Rehberi Indir",
-    ar: "تحميل الدليل المجاني",
-    es: "Descargar Guia Gratis",
-    fr: "Telecharger le Guide Gratuit"
+    en: "Download Free PDF",
+    tr: "Ucretsiz PDF Indir",
+    ar: "تحميل PDF مجاني",
+    es: "Descargar PDF Gratis",
+    fr: "Telecharger PDF Gratuit"
   };
+  const freeDownloadHref = `/api/free/download?slug=${encodeURIComponent(slug)}&locale=${encodeURIComponent(locale)}`;
 
   const checkoutHref = `/${locale}/checkout?program=${slug}`;
   const premiumBannerLabel = program?.is_free ? copy.programKindFree : copy.programKindPremium;
@@ -417,7 +418,13 @@ export default async function ProgramDetailPage({
               ) : (
                 <FreeProductBodyBlocks model={freeModel} dayLabels={dayLabels} />
               )}
-              <FreeProductUpgradeFooter model={freeModel} locale={locale} upgradeProgramTitle={upgradeProgramTitle} />
+              <FreeProductUpgradeFooter
+                model={freeModel}
+                locale={locale}
+                upgradeProgramTitle={upgradeProgramTitle}
+                freeDownloadHref={freeDownloadHref}
+                freeDownloadLabel={freeDownloadLabel[locale]}
+              />
             </div>
           ) : null}
         </section>
@@ -447,7 +454,7 @@ export default async function ProgramDetailPage({
               {program?.is_free ? (
                 <>
                   <a
-                    href={`/api/free/download?slug=${encodeURIComponent(slug)}&locale=${encodeURIComponent(locale)}`}
+                    href={freeDownloadHref}
                     className="lux-btn-primary inline-flex min-h-[44px] justify-center rounded-full px-5 py-2.5 text-center text-sm font-bold text-[#09090B]"
                   >
                     {freeDownloadLabel[locale]}
