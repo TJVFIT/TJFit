@@ -10,6 +10,44 @@ const DOMAIN_GUARD = "Please ask me stuff related to health, sports, coaching, o
 type HistoryRow = { role: "user" | "assistant"; content: string };
 type PreferenceRow = { preference_key: string; preference_value: string };
 
+function isLikelyFitnessQuestion(message: string) {
+  const m = message.toLowerCase();
+  return [
+    "workout",
+    "training",
+    "exercise",
+    "fitness",
+    "fat",
+    "muscle",
+    "diet",
+    "nutrition",
+    "calorie",
+    "protein",
+    "cardio",
+    "coach",
+    "health",
+    "recovery",
+    "program"
+  ].some((k) => m.includes(k));
+}
+
+function fallbackCoachReply(message: string, locale: string) {
+  if (!isLikelyFitnessQuestion(message)) return DOMAIN_GUARD;
+  if (locale === "tr") {
+    return "Hizli plan: 3-4 gun kuvvet + gunluk adim hedefi + protein odakli beslenme ile basla. Her hafta agirlik veya tekrar arttir, 7-9 saat uyku ve duzenli su tuketimi ekle. Saglik sorunun varsa doktoruna danis.";
+  }
+  if (locale === "ar") {
+    return "ابدأ بخطة بسيطة: 3-4 أيام مقاومة أسبوعياً + خطوات يومية + بروتين كافٍ. زِد الحمل تدريجياً كل أسبوع، ونَم 7-9 ساعات مع ترطيب جيد. إذا لديك حالة صحية خاصة فاستشر مختصاً.";
+  }
+  if (locale === "es") {
+    return "Empieza simple: 3-4 dias de fuerza por semana + objetivo de pasos diarios + proteina suficiente. Sube carga o repeticiones progresivamente, duerme 7-9h y mantente hidratado. Si tienes una condicion medica, consulta a un profesional.";
+  }
+  if (locale === "fr") {
+    return "Commencez simple: 3-4 seances de musculation/semaine + objectif de pas quotidiens + apport proteique suffisant. Augmentez progressivement la charge ou les repetitions, dormez 7-9h et hydratez-vous. En cas de probleme de sante, consultez un professionnel.";
+  }
+  return "Start simple: train strength 3-4 days/week, hit a daily step goal, and prioritize protein. Progress load or reps weekly, sleep 7-9 hours, and stay hydrated. If you have a medical condition, check with a qualified professional.";
+}
+
 async function fetchWithTimeout(url: string, init: RequestInit, timeoutMs: number) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -67,7 +105,12 @@ export async function POST(request: NextRequest) {
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
       console.error("TJAI chat error: ANTHROPIC_API_KEY is not set");
-      return NextResponse.json({ error: "TJAI is not configured yet." }, { status: 503 });
+      const fallback = fallbackCoachReply(message, locale);
+      await auth.supabase.from("tjai_chat_messages").insert([
+        { user_id: auth.user.id, conversation_id: conversationId, role: "user", content: message },
+        { user_id: auth.user.id, conversation_id: conversationId, role: "assistant", content: fallback }
+      ]);
+      return NextResponse.json({ message: fallback, conversationId });
     }
 
     const [{ data: planRow }, { data: historyRows }, { data: prefRows }] = await Promise.all([
@@ -173,7 +216,8 @@ RULES:
     if (!upstream.ok) {
       const raw = await upstream.text();
       console.error("TJAI chat error: Anthropic non-200", raw);
-      return NextResponse.json({ error: "Failed to get response. Please try again." }, { status: 502 });
+      const fallback = fallbackCoachReply(message, locale);
+      return NextResponse.json({ message: fallback, conversationId });
     }
 
     const payload = await upstream.json();
@@ -207,9 +251,15 @@ RULES:
   } catch (error) {
     console.error("TJAI chat error:", error);
     if (error instanceof Error && error.name === "AbortError") {
-      return NextResponse.json({ error: "TJAI timed out. Please try again." }, { status: 504 });
+      return NextResponse.json({
+        message: "TJAI timed out. Quick fallback: do 3 full-body sessions this week, walk daily, hit protein, and recover with 7-9h sleep.",
+        conversationId: crypto.randomUUID()
+      });
     }
-    return NextResponse.json({ error: "Failed to get response. Please try again." }, { status: 500 });
+    return NextResponse.json({
+      message: "TJAI had a temporary issue. Keep your plan simple today: train, hydrate, and hit protein. Ask again in a moment.",
+      conversationId: crypto.randomUUID()
+    });
   }
 }
 

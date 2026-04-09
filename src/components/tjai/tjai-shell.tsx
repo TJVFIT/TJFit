@@ -129,6 +129,7 @@ export function TJAIShell({ locale }: { locale: Locale }) {
   if (phase === "quiz") {
     return (
       <TJAIQuiz
+        locale={locale}
         copy={copy}
         steps={steps}
         direction={direction}

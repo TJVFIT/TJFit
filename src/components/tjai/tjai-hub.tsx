@@ -23,7 +23,7 @@ const TAB_ICONS: Record<TabKey, typeof FileText> = {
 
 const TAB_LABELS: Record<Locale, Record<TabKey, string>> = {
   en: { "my-plan": "My Plan", chat: "Chat", "meal-swap": "Meal Swap", progress: "Progress" },
-  tr: { "my-plan": "Planim", chat: "Sohbet", "meal-swap": "Ogün Degistir", progress: "Ilerleme" },
+  tr: { "my-plan": "Planim", chat: "Sohbet", "meal-swap": "Ogun Degistir", progress: "Ilerleme" },
   ar: { "my-plan": "خطتي", chat: "الدردشة", "meal-swap": "تبديل الوجبة", progress: "التقدم" },
   es: { "my-plan": "Mi Plan", chat: "Chat", "meal-swap": "Cambiar Comida", progress: "Progreso" },
   fr: { "my-plan": "Mon Plan", chat: "Chat", "meal-swap": "Changer le Repas", progress: "Progression" }
@@ -31,7 +31,7 @@ const TAB_LABELS: Record<Locale, Record<TabKey, string>> = {
 
 const HUB_SUBTITLE: Record<Locale, string> = {
   en: "Your AI-powered transformation coach",
-  tr: "Yapay zeka destekli donusum koçunuz",
+  tr: "Yapay zeka destekli donusum kocunuz",
   ar: "مدرب التحول المدعوم بالذكاء الاصطناعي",
   es: "Tu coach de transformacion con IA",
   fr: "Votre coach de transformation propulse par IA"

@@ -23,6 +23,7 @@ type CustomProgramCard = Program & { isCustomUpload?: boolean };
 
 type GoalFilter = "all" | "fat" | "muscle";
 type LocFilter = "all" | "home" | "gym";
+type FreeFilter = "all" | "free";
 
 function programMeta(p: Program | CustomProgramCard) {
   const slug = p.slug.toLowerCase();
@@ -78,8 +79,16 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
   const [customCatalogReady, setCustomCatalogReady] = useState(true);
   const [goalFilter, setGoalFilter] = useState<GoalFilter>("all");
   const [locFilter, setLocFilter] = useState<LocFilter>("all");
+  const [freeFilter, setFreeFilter] = useState<FreeFilter>("all");
 
   const canUpload = role === "admin" || role === "coach";
+  const freeFilterCopy: Record<Locale, { label: string; all: string; free: string }> = {
+    en: { label: "Access", all: "All", free: "Free" },
+    tr: { label: "Erisim", all: "Tum", free: "Ucretsiz" },
+    ar: { label: "الوصول", all: "الكل", free: "مجاني" },
+    es: { label: "Acceso", all: "Todo", free: "Gratis" },
+    fr: { label: "Acces", all: "Tous", free: "Gratuit" }
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -130,16 +139,25 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
   useEffect(() => {
     const goal = searchParams.get("goal");
     const location = searchParams.get("location");
+    const free = searchParams.get("free") === "1" || searchParams.get("filter") === "free";
     setGoalFilter(goal === "fat" || goal === "muscle" ? goal : "all");
     setLocFilter(location === "home" || location === "gym" ? location : "all");
+    setFreeFilter(free ? "free" : "all");
   }, [searchParams]);
 
-  const syncFiltersToUrl = (nextGoal: GoalFilter, nextLoc: LocFilter) => {
+  const syncFiltersToUrl = (nextGoal: GoalFilter, nextLoc: LocFilter, nextFree: FreeFilter) => {
     const qs = new URLSearchParams(searchParams.toString());
     if (nextGoal === "all") qs.delete("goal");
     else qs.set("goal", nextGoal);
     if (nextLoc === "all") qs.delete("location");
     else qs.set("location", nextLoc);
+    if (nextFree === "all") {
+      qs.delete("free");
+      qs.delete("filter");
+    } else {
+      qs.set("free", "1");
+      qs.set("filter", "free");
+    }
     const query = qs.toString();
     router.replace(query ? `/${locale}/programs?${query}` : `/${locale}/programs`);
   };
@@ -152,11 +170,18 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
   }, [uploadedPrograms, locale]);
 
   const filteredPrograms = useMemo(
-    () => allPrograms.filter((p) => programMatchesFilters(p, goalFilter, locFilter)),
-    [allPrograms, goalFilter, locFilter]
+    () =>
+      allPrograms
+        .filter((p) => programMatchesFilters(p, goalFilter, locFilter))
+        .filter((p) => {
+          if (freeFilter !== "free") return true;
+          if ("isCustomUpload" in p && p.isCustomUpload) return false;
+          return Boolean(p.is_free);
+        }),
+    [allPrograms, goalFilter, locFilter, freeFilter]
   );
 
-  const filterActive = goalFilter !== "all" || locFilter !== "all";
+  const filterActive = goalFilter !== "all" || locFilter !== "all" || freeFilter !== "all";
 
   if (!localeValid) {
     notFound();
@@ -233,7 +258,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
                   active={goalFilter === k}
                   onClick={() => {
                     setGoalFilter(k);
-                    syncFiltersToUrl(k, locFilter);
+                    syncFiltersToUrl(k, locFilter, freeFilter);
                   }}
                 >
                   {label}
@@ -254,19 +279,42 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
                   active={locFilter === k}
                   onClick={() => {
                     setLocFilter(k);
-                    syncFiltersToUrl(goalFilter, k);
+                    syncFiltersToUrl(goalFilter, k, freeFilter);
                   }}
                 >
                   {label}
                 </FilterPill>
               ))}
+            <div className="flex flex-wrap items-center gap-1 px-1">
+              <span className="me-1 text-xs text-[#52525B]">{freeFilterCopy[locale].label}:</span>
+              {(
+                [
+                  ["all", freeFilterCopy[locale].all],
+                  ["free", freeFilterCopy[locale].free]
+                ] as const
+              ).map(([k, label]) => (
+                <FilterPill
+                  key={k}
+                  active={freeFilter === k}
+                  onClick={() => {
+                    const next = k as FreeFilter;
+                    setFreeFilter(next);
+                    syncFiltersToUrl(goalFilter, locFilter, next);
+                  }}
+                >
+                  {label}
+                </FilterPill>
+              ))}
+            </div>
+            
               {filterActive ? (
                 <button
                   type="button"
                   onClick={() => {
                     setGoalFilter("all");
                     setLocFilter("all");
-                    syncFiltersToUrl("all", "all");
+                    setFreeFilter("all");
+                    syncFiltersToUrl("all", "all", "all");
                   }}
                   className="ms-1 min-h-[44px] px-2 text-[13px] font-medium text-[#22D3EE] transition-colors duration-150 hover:text-white sm:min-h-0"
                 >
@@ -356,7 +404,8 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
               onClick={() => {
                 setGoalFilter("all");
                 setLocFilter("all");
-                syncFiltersToUrl("all", "all");
+                setFreeFilter("all");
+                syncFiltersToUrl("all", "all", "all");
               }}
               className="mt-6 inline-flex min-h-[44px] items-center justify-center rounded-[10px] border border-[var(--color-border)] px-5 py-2 text-sm font-medium text-white transition-colors duration-150 hover:border-[rgba(255,255,255,0.12)] hover:bg-[rgba(255,255,255,0.04)]"
             >

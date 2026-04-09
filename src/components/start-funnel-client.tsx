@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Brain, Calculator, Dumbbell, Sparkles } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import { PremiumPageShell } from "@/components/premium";
 import type { Locale } from "@/lib/i18n";
@@ -33,6 +33,9 @@ const COPY: Record<
     trustNoCard: string;
     trustLanguages: string;
     trustCoaches: string;
+    freeProgramsTab: string;
+    freeDietsTab: string;
+    browseDiets: string;
   }
 > = {
   en: {
@@ -56,7 +59,10 @@ const COPY: Record<
     trustSecure: "Secure Payments",
     trustNoCard: "No Credit Card",
     trustLanguages: "5 Languages",
-    trustCoaches: "Expert Coaches"
+    trustCoaches: "Expert Coaches",
+    freeProgramsTab: "Programs",
+    freeDietsTab: "Diets",
+    browseDiets: "Browse Free Diets"
   },
   tr: {
     heroTitle: "Nereden baslamak istersin?",
@@ -79,7 +85,10 @@ const COPY: Record<
     trustSecure: "Guvenli Odeme",
     trustNoCard: "Kredi Karti Yok",
     trustLanguages: "5 Dil",
-    trustCoaches: "Uzman Koclar"
+    trustCoaches: "Uzman Koclar",
+    freeProgramsTab: "Programlar",
+    freeDietsTab: "Diyetler",
+    browseDiets: "Ucretsiz Diyetleri Gor"
   },
   ar: {
     heroTitle: "من أين تريد أن تبدأ؟",
@@ -102,7 +111,10 @@ const COPY: Record<
     trustSecure: "مدفوعات آمنة",
     trustNoCard: "بدون بطاقة",
     trustLanguages: "5 لغات",
-    trustCoaches: "مدربون خبراء"
+    trustCoaches: "مدربون خبراء",
+    freeProgramsTab: "البرامج",
+    freeDietsTab: "الأنظمة الغذائية",
+    browseDiets: "استعرض الأنظمة المجانية"
   },
   es: {
     heroTitle: "¿Donde quieres empezar?",
@@ -125,7 +137,10 @@ const COPY: Record<
     trustSecure: "Pagos Seguros",
     trustNoCard: "Sin Tarjeta",
     trustLanguages: "5 Idiomas",
-    trustCoaches: "Coaches Expertos"
+    trustCoaches: "Coaches Expertos",
+    freeProgramsTab: "Programas",
+    freeDietsTab: "Dietas",
+    browseDiets: "Ver Dietas Gratis"
   },
   fr: {
     heroTitle: "Ou voulez-vous commencer ?",
@@ -148,15 +163,23 @@ const COPY: Record<
     trustSecure: "Paiements Securises",
     trustNoCard: "Sans Carte",
     trustLanguages: "5 Langues",
-    trustCoaches: "Coachs Experts"
+    trustCoaches: "Coachs Experts",
+    freeProgramsTab: "Programmes",
+    freeDietsTab: "Regimes",
+    browseDiets: "Voir les Regimes Gratuits"
   }
 };
 
 export function StartFunnelClient({ locale }: { locale: Locale }) {
   const copy = COPY[locale] ?? COPY.en;
+  const [freeTab, setFreeTab] = useState<"programs" | "diets">("programs");
   const freeItems = useMemo(() => programs.filter((p) => p.is_free), []);
   const freePrograms = useMemo(() => freeItems.filter((p) => !p.category.toLowerCase().includes("nutrition")), [freeItems]);
-  const starterNames = useMemo(() => freePrograms.slice(0, 2).map((p) => localizeProgram(p, locale).title), [freePrograms, locale]);
+  const freeDiets = useMemo(() => freeItems.filter((p) => p.category.toLowerCase().includes("nutrition")), [freeItems]);
+  const starterNames = useMemo(
+    () => (freeTab === "programs" ? freePrograms : freeDiets).slice(0, 2).map((p) => localizeProgram(p, locale).title),
+    [freeDiets, freePrograms, freeTab, locale]
+  );
 
   return (
     <PremiumPageShell className="max-w-6xl">
@@ -172,16 +195,32 @@ export function StartFunnelClient({ locale }: { locale: Locale }) {
             <Dumbbell className="h-10 w-10 text-[#22D3EE]" />
             <h2 className="mt-4 text-xl font-bold text-white">{copy.freePrograms}</h2>
             <p className="mt-2 text-sm text-[#A1A1AA]">{copy.freeProgramsSub}</p>
+            <div className="mt-4 flex gap-2">
+              <button
+                type="button"
+                onClick={() => setFreeTab("programs")}
+                className={`rounded-full border px-3 py-1.5 text-xs ${freeTab === "programs" ? "border-[#22D3EE] bg-[#22D3EE]/20 text-[#22D3EE]" : "border-white/20 text-zinc-300"}`}
+              >
+                {copy.freeProgramsTab}
+              </button>
+              <button
+                type="button"
+                onClick={() => setFreeTab("diets")}
+                className={`rounded-full border px-3 py-1.5 text-xs ${freeTab === "diets" ? "border-[#22D3EE] bg-[#22D3EE]/20 text-[#22D3EE]" : "border-white/20 text-zinc-300"}`}
+              >
+                {copy.freeDietsTab}
+              </button>
+            </div>
             <ul className="mt-4 space-y-2 text-sm text-zinc-200">
               {starterNames.map((name) => (
                 <li key={name}>- {name}</li>
               ))}
             </ul>
             <Link
-              href={`/${locale}/programs?filter=free`}
+              href={freeTab === "programs" ? `/${locale}/programs?free=1&filter=free` : `/${locale}/diets?free=1&filter=free`}
               className="mt-5 inline-flex min-h-[46px] w-full items-center justify-center rounded-full bg-[#22D3EE] px-4 text-sm font-bold text-[#09090B]"
             >
-              {copy.browsePrograms}
+              {freeTab === "programs" ? copy.browsePrograms : copy.browseDiets}
             </Link>
           </article>
 

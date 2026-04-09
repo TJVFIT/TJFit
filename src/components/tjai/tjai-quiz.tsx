@@ -4,13 +4,107 @@ import { useEffect, useMemo, useState } from "react";
 
 import { BodySilhouetteSelector } from "@/components/tjai/body-silhouette-selector";
 import { useMagneticButton } from "@/hooks/useMagneticButton";
+import type { Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import type { QuizAnswers, QuizStep, TJAICopy } from "@/lib/tjai-types";
 
 const QUIZ_PROGRESS_KEY = "tjai_quiz_progress";
 const QUIZ_PROGRESS_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+const QUIZ_UI_COPY = {
+  en: {
+    categoryPersonal: "Personal Info",
+    categoryBody: "Body Statistics",
+    categoryGoal: "Your Goal",
+    categoryHistory: "Training History",
+    categoryLifestyle: "Lifestyle",
+    categoryPrefs: "Preferences",
+    categoryFinal: "Final Details",
+    resumeTitle: "Resume your TJAI quiz? You left off at question",
+    resume: "Resume",
+    startOver: "Start Over",
+    numbersTitle: "Your Numbers So Far",
+    bmr: "BMR",
+    tdee: "TDEE",
+    target: "Daily Target",
+    formula: "Estimates based on Mifflin-St Jeor formula.",
+    question: "Question"
+  },
+  tr: {
+    categoryPersonal: "Kisisel Bilgiler",
+    categoryBody: "Vucut Olculeri",
+    categoryGoal: "Hedefin",
+    categoryHistory: "Antrenman Gecmisi",
+    categoryLifestyle: "Yasam Tarzi",
+    categoryPrefs: "Tercihler",
+    categoryFinal: "Son Detaylar",
+    resumeTitle: "TJAI testine devam etmek ister misin? Kaldigin soru:",
+    resume: "Devam Et",
+    startOver: "Bastan Basla",
+    numbersTitle: "Simdiki Tahmini Degerlerin",
+    bmr: "BMR",
+    tdee: "TDEE",
+    target: "Gunluk Hedef",
+    formula: "Tahminler Mifflin-St Jeor formulune gore hesaplanir.",
+    question: "Soru"
+  },
+  ar: {
+    categoryPersonal: "المعلومات الشخصية",
+    categoryBody: "قياسات الجسم",
+    categoryGoal: "هدفك",
+    categoryHistory: "سجل التدريب",
+    categoryLifestyle: "نمط الحياة",
+    categoryPrefs: "التفضيلات",
+    categoryFinal: "التفاصيل النهائية",
+    resumeTitle: "هل تريد المتابعة من حيث توقفت؟ توقفت عند السؤال",
+    resume: "متابعة",
+    startOver: "ابدأ من جديد",
+    numbersTitle: "أرقامك الحالية",
+    bmr: "BMR",
+    tdee: "TDEE",
+    target: "الهدف اليومي",
+    formula: "تقديرات مبنية على معادلة Mifflin-St Jeor.",
+    question: "السؤال"
+  },
+  es: {
+    categoryPersonal: "Informacion Personal",
+    categoryBody: "Estadisticas Corporales",
+    categoryGoal: "Tu Objetivo",
+    categoryHistory: "Historial de Entrenamiento",
+    categoryLifestyle: "Estilo de Vida",
+    categoryPrefs: "Preferencias",
+    categoryFinal: "Detalles Finales",
+    resumeTitle: "Quieres continuar tu quiz de TJAI? Te quedaste en la pregunta",
+    resume: "Continuar",
+    startOver: "Empezar de Nuevo",
+    numbersTitle: "Tus Numeros Hasta Ahora",
+    bmr: "BMR",
+    tdee: "TDEE",
+    target: "Objetivo Diario",
+    formula: "Estimaciones basadas en la formula de Mifflin-St Jeor.",
+    question: "Pregunta"
+  },
+  fr: {
+    categoryPersonal: "Infos Personnelles",
+    categoryBody: "Statistiques Corporelles",
+    categoryGoal: "Votre Objectif",
+    categoryHistory: "Historique d'Entrainement",
+    categoryLifestyle: "Mode de Vie",
+    categoryPrefs: "Preferences",
+    categoryFinal: "Details Finaux",
+    resumeTitle: "Reprendre votre quiz TJAI ? Vous etiez a la question",
+    resume: "Reprendre",
+    startOver: "Recommencer",
+    numbersTitle: "Vos Chiffres Actuels",
+    bmr: "BMR",
+    tdee: "TDEE",
+    target: "Objectif Quotidien",
+    formula: "Estimations basees sur la formule Mifflin-St Jeor.",
+    question: "Question"
+  }
+} as const;
 
 type Props = {
+  locale: Locale;
   copy: TJAICopy;
   steps: QuizStep[];
   direction: "ltr" | "rtl";
@@ -34,7 +128,7 @@ function hasAnswer(step: QuizStep, answer: QuizAnswers[string] | undefined): boo
   return typeof answer === "string" && answer.trim().length > 0;
 }
 
-export function TJAIQuiz({ copy, steps, direction, onSubmit, onAnswersChange }: Props) {
+export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersChange }: Props) {
   const [answers, setAnswers] = useState<QuizAnswers>({});
   const [idx, setIdx] = useState(0);
   const [displayIdx, setDisplayIdx] = useState(0);
@@ -45,10 +139,14 @@ export function TJAIQuiz({ copy, steps, direction, onSubmit, onAnswersChange }: 
   const [resumeHandled, setResumeHandled] = useState(false);
   const magneticGenerateRef = useMagneticButton<HTMLButtonElement>(0.3);
 
+  const localeKey = locale as keyof typeof QUIZ_UI_COPY;
+  const uiCopy = QUIZ_UI_COPY[localeKey] ?? QUIZ_UI_COPY.en;
   const filteredSteps = useMemo(() => steps.filter((step) => !isSkipped(step, answers)), [steps, answers]);
-  const step = filteredSteps[displayIdx] ?? filteredSteps[idx];
   const total = filteredSteps.length;
-  const progress = total > 0 ? ((idx + 1) / total) * 100 : 0;
+  const safeIdx = total > 0 ? Math.min(Math.max(idx, 0), total - 1) : 0;
+  const safeDisplayIdx = total > 0 ? Math.min(Math.max(displayIdx, 0), total - 1) : 0;
+  const step = filteredSteps[safeDisplayIdx] ?? filteredSteps[safeIdx];
+  const progress = total > 0 ? ((safeIdx + 1) / total) * 100 : 0;
 
   useEffect(() => {
     if (typeof window === "undefined" || resumeHandled) return;
@@ -119,26 +217,34 @@ export function TJAIQuiz({ copy, steps, direction, onSubmit, onAnswersChange }: 
     setAnswers((prev) => ({ ...prev, [step.id]: defaultValue }));
   }, [answers, step]);
 
-  if (!step) return null;
+  if (!step) {
+    return (
+      <section className="relative min-h-[100svh] overflow-hidden bg-[#09090B] px-4 py-6 text-white sm:py-10">
+        <div className="mx-auto flex min-h-[50svh] w-full max-w-[640px] items-center justify-center">
+          <p className="text-sm text-[#A1A1AA]">Loading quiz...</p>
+        </div>
+      </section>
+    );
+  }
 
   const currentAnswer = answers[step.id];
   const canContinue = !step.required || hasAnswer(step, currentAnswer);
 
-  const questionNumber = idx + 1;
+  const questionNumber = safeIdx + 1;
   const categoryLabel =
     questionNumber <= 2
-      ? "Personal Info"
+      ? uiCopy.categoryPersonal
       : questionNumber <= 5
-        ? "Body Statistics"
+        ? uiCopy.categoryBody
         : questionNumber <= 8
-          ? "Your Goal"
+          ? uiCopy.categoryGoal
           : questionNumber <= 11
-            ? "Training History"
+            ? uiCopy.categoryHistory
             : questionNumber <= 14
-              ? "Lifestyle"
+              ? uiCopy.categoryLifestyle
               : questionNumber <= 17
-                ? "Preferences"
-                : "Final Details";
+                ? uiCopy.categoryPrefs
+                : uiCopy.categoryFinal;
 
   const weight = Number(answers.s1_weight ?? 0);
   const height = Number(answers.s1_height ?? 0);
@@ -416,7 +522,7 @@ export function TJAIQuiz({ copy, steps, direction, onSubmit, onAnswersChange }: 
       <div className="mx-auto flex min-h-[90svh] w-full max-w-[640px] flex-col">
         <div className="pt-1">
           <p className="text-[11px] uppercase tracking-[0.2em] text-[#22D3EE]">
-            Question {questionNumber} of {total} · {categoryLabel}
+            {uiCopy.question} {questionNumber} of {total} · {categoryLabel}
           </p>
           <div className="h-[2px] overflow-hidden rounded-full bg-[#1E2028]">
             <div
@@ -431,7 +537,7 @@ export function TJAIQuiz({ copy, steps, direction, onSubmit, onAnswersChange }: 
 
         {resumePrompt ? (
           <div className="mt-4 rounded-xl border border-[#1E2028] bg-[#111215] p-4">
-            <p className="text-sm text-white">Resume your TJAI quiz? You left off at question {resumePrompt.currentStep + 1}.</p>
+            <p className="text-sm text-white">{uiCopy.resumeTitle} {resumePrompt.currentStep + 1}.</p>
             <div className="mt-3 flex flex-wrap gap-2">
               <button
                 type="button"
@@ -443,7 +549,7 @@ export function TJAIQuiz({ copy, steps, direction, onSubmit, onAnswersChange }: 
                 }}
                 className="rounded-full bg-[#22D3EE] px-4 py-2 text-xs font-semibold text-[#09090B]"
               >
-                Resume
+                {uiCopy.resume}
               </button>
               <button
                 type="button"
@@ -455,29 +561,29 @@ export function TJAIQuiz({ copy, steps, direction, onSubmit, onAnswersChange }: 
                 }}
                 className="rounded-full border border-[#1E2028] px-4 py-2 text-xs text-[#A1A1AA]"
               >
-                Start Over
+                {uiCopy.startOver}
               </button>
             </div>
           </div>
         ) : null}
 
         <aside className="mt-4 rounded-xl border border-[rgba(34,211,238,0.15)] bg-[rgba(34,211,238,0.05)] p-4">
-          <p className="text-sm font-semibold text-white">Your Numbers So Far</p>
+          <p className="text-sm font-semibold text-white">{uiCopy.numbersTitle}</p>
           <div className="mt-3 grid grid-cols-1 gap-2 text-sm sm:grid-cols-3">
             <div className="rounded-lg border border-[#1E2028] bg-[#0F1116] p-3">
-              <p className="text-xs text-[#A1A1AA]">BMR</p>
+              <p className="text-xs text-[#A1A1AA]">{uiCopy.bmr}</p>
               <p className="text-lg font-bold text-[#22D3EE]">{bmr ? Math.round(bmr) : "..."} {bmr ? "kcal" : ""}</p>
             </div>
             <div className="rounded-lg border border-[#1E2028] bg-[#0F1116] p-3">
-              <p className="text-xs text-[#A1A1AA]">TDEE</p>
+              <p className="text-xs text-[#A1A1AA]">{uiCopy.tdee}</p>
               <p className="text-lg font-bold text-[#22D3EE]">{tdee ? Math.round(tdee) : "..."} {tdee ? "kcal" : ""}</p>
             </div>
             <div className="rounded-lg border border-[#1E2028] bg-[#0F1116] p-3">
-              <p className="text-xs text-[#A1A1AA]">Daily Target</p>
+              <p className="text-xs text-[#A1A1AA]">{uiCopy.target}</p>
               <p className="text-lg font-bold text-[#22D3EE]">{targetCalories ?? "..."} {targetCalories ? "kcal" : ""}</p>
             </div>
           </div>
-          <p className="mt-2 text-xs text-[#A1A1AA]">Estimates based on Mifflin-St Jeor formula.</p>
+          <p className="mt-2 text-xs text-[#A1A1AA]">{uiCopy.formula}</p>
         </aside>
 
         <div
@@ -500,7 +606,7 @@ export function TJAIQuiz({ copy, steps, direction, onSubmit, onAnswersChange }: 
               {copy.nav.stepOf} {idx + 1} / {total}
             </span>
             <div className="flex items-center gap-2">
-              {idx > 0 ? (
+              {safeIdx > 0 ? (
                 <button
                   type="button"
                   onClick={() => setIdx((v) => Math.max(0, v - 1))}
@@ -512,18 +618,18 @@ export function TJAIQuiz({ copy, steps, direction, onSubmit, onAnswersChange }: 
               ) : null}
               <button
                 type="button"
-                ref={idx === total - 1 ? magneticGenerateRef : undefined}
+                ref={safeIdx === total - 1 ? magneticGenerateRef : undefined}
                 onClick={goNext}
                 disabled={!canContinue}
                 className={cn(
                   "min-h-11 rounded-full px-5 text-sm font-bold text-[#09090B] transition-all disabled:cursor-not-allowed disabled:opacity-40",
-                  idx === total - 1
+                  safeIdx === total - 1
                     ? "bg-[linear-gradient(135deg,#22D3EE,#A78BFA)] shadow-[0_0_24px_rgba(34,211,238,0.25)] hover:scale-[1.02] animate-[tjai-pulse_1.8s_ease-in-out_infinite]"
                     : "bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] hover:scale-[1.02]",
                   shake && "animate-[tjai-shake_300ms_ease]"
                 )}
               >
-                {idx === total - 1 ? copy.nav.generate : copy.nav.continue}
+                {safeIdx === total - 1 ? copy.nav.generate : copy.nav.continue}
               </button>
             </div>
           </div>

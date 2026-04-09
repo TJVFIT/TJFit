@@ -18,6 +18,7 @@ import { Locale, isLocale } from "@/lib/i18n";
 import { formatProgramPrice, getProgramBasePriceTry, getProgramUiCopy, localizeProgram } from "@/lib/program-localization";
 
 type PhaseFilter = "all" | "cutting" | "bulking";
+type FreeFilter = "all" | "free";
 
 function dietMatches(program: Program, phase: PhaseFilter) {
   if (phase === "all") return true;
@@ -33,6 +34,14 @@ export default function DietsPage({ params }: { params: { locale: string } }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [phaseFilter, setPhaseFilter] = useState<PhaseFilter>("all");
+  const [freeFilter, setFreeFilter] = useState<FreeFilter>("all");
+  const freeFilterCopy: Record<Locale, { all: string; free: string }> = {
+    en: { all: "All", free: "Free" },
+    tr: { all: "Tum", free: "Ucretsiz" },
+    ar: { all: "الكل", free: "مجاني" },
+    es: { all: "Todo", free: "Gratis" },
+    fr: { all: "Tous", free: "Gratuit" }
+  };
 
   const allDiets = useMemo(
     () => programs.filter(isCatalogDiet).map((item) => localizeProgram(item, locale)),
@@ -40,21 +49,33 @@ export default function DietsPage({ params }: { params: { locale: string } }) {
   );
 
   const filtered = useMemo(
-    () => allDiets.filter((p) => dietMatches(p, phaseFilter)),
-    [allDiets, phaseFilter]
+    () =>
+      allDiets
+        .filter((p) => dietMatches(p, phaseFilter))
+        .filter((p) => (freeFilter === "free" ? Boolean(p.is_free) : true)),
+    [allDiets, phaseFilter, freeFilter]
   );
 
-  const filterActive = phaseFilter !== "all";
+  const filterActive = phaseFilter !== "all" || freeFilter !== "all";
 
   useEffect(() => {
     const phase = searchParams.get("phase");
+    const free = searchParams.get("free") === "1" || searchParams.get("filter") === "free";
     setPhaseFilter(phase === "cutting" || phase === "bulking" ? phase : "all");
+    setFreeFilter(free ? "free" : "all");
   }, [searchParams]);
 
-  const syncPhaseToUrl = (nextPhase: PhaseFilter) => {
+  const syncPhaseToUrl = (nextPhase: PhaseFilter, nextFree: FreeFilter) => {
     const qs = new URLSearchParams(searchParams.toString());
     if (nextPhase === "all") qs.delete("phase");
     else qs.set("phase", nextPhase);
+    if (nextFree === "all") {
+      qs.delete("free");
+      qs.delete("filter");
+    } else {
+      qs.set("free", "1");
+      qs.set("filter", "free");
+    }
     const query = qs.toString();
     router.replace(query ? `/${locale}/diets?${query}` : `/${locale}/diets`);
   };
@@ -128,7 +149,25 @@ export default function DietsPage({ params }: { params: { locale: string } }) {
                   active={phaseFilter === k}
                   onClick={() => {
                     setPhaseFilter(k);
-                    syncPhaseToUrl(k);
+                    syncPhaseToUrl(k, freeFilter);
+                  }}
+                >
+                  {label}
+                </FilterPill>
+              ))}
+              {(
+                [
+                  ["all", freeFilterCopy[locale].all],
+                  ["free", freeFilterCopy[locale].free]
+                ] as const
+              ).map(([k, label]) => (
+                <FilterPill
+                  key={`free-${k}`}
+                  active={freeFilter === k}
+                  onClick={() => {
+                    const next = k as FreeFilter;
+                    setFreeFilter(next);
+                    syncPhaseToUrl(phaseFilter, next);
                   }}
                 >
                   {label}
@@ -139,7 +178,8 @@ export default function DietsPage({ params }: { params: { locale: string } }) {
                   type="button"
                   onClick={() => {
                     setPhaseFilter("all");
-                    syncPhaseToUrl("all");
+                    setFreeFilter("all");
+                    syncPhaseToUrl("all", "all");
                   }}
                   className="ms-1 min-h-[44px] px-2 text-[13px] font-medium text-[#22D3EE] transition-colors duration-150 hover:text-white sm:min-h-0"
                 >
@@ -201,7 +241,8 @@ export default function DietsPage({ params }: { params: { locale: string } }) {
               type="button"
               onClick={() => {
                 setPhaseFilter("all");
-                syncPhaseToUrl("all");
+                setFreeFilter("all");
+                syncPhaseToUrl("all", "all");
               }}
               className="mt-6 inline-flex min-h-[44px] items-center justify-center rounded-[10px] border border-[var(--color-border)] px-5 py-2 text-sm font-medium text-white transition-colors duration-150 hover:border-[rgba(255,255,255,0.12)] hover:bg-[rgba(255,255,255,0.04)]"
             >

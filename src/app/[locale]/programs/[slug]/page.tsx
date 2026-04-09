@@ -130,6 +130,7 @@ export default async function ProgramDetailPage({
     ];
 
   const paidContentLocked = Boolean(program && !program.is_free && !access.showFullPaidContent);
+  const freeContentUnlocked = Boolean(program?.is_free);
   const freeModel = program && isFreeProductSlug(slug) ? getFreeProductPageModel(slug, locale) : null;
   const upgradeTargetProgram = freeModel ? programs.find((p) => p.slug === freeModel.upgrade.checkoutSlug) : undefined;
   const upgradeProgramTitle = upgradeTargetProgram ? localizeProgram(upgradeTargetProgram, locale).title : copy.upgradeSectionTitle;
@@ -138,6 +139,13 @@ export default async function ProgramDetailPage({
     warmup: copy.workoutWarmupLabel,
     main: copy.workoutMainLabel,
     cooldown: copy.workoutCooldownLabel
+  };
+  const freeDownloadLabel: Record<Locale, string> = {
+    en: "Download Free Guide",
+    tr: "Ucretsiz Rehberi Indir",
+    ar: "تحميل الدليل المجاني",
+    es: "Descargar Guia Gratis",
+    fr: "Telecharger le Guide Gratuit"
   };
 
   const checkoutHref = `/${locale}/checkout?program=${slug}`;
@@ -390,7 +398,9 @@ export default async function ProgramDetailPage({
 
           {program && freeModel ? (
             <div className="mt-10 space-y-2">
-              {!access.showFullFreeContent ? (
+              {freeContentUnlocked ? (
+                <FreeProductBodyBlocks model={freeModel} dayLabels={dayLabels} />
+              ) : !access.showFullFreeContent ? (
                 <ProgramContentLock
                   locked
                   title={copy.freeContentTeaserTitle}
@@ -435,24 +445,15 @@ export default async function ProgramDetailPage({
 
             <div className="mt-6 flex flex-col flex-wrap gap-3 sm:flex-row">
               {program?.is_free ? (
-                access.showFullFreeContent ? (
+                <>
+                  <a
+                    href={`/api/free/download?slug=${encodeURIComponent(slug)}&locale=${encodeURIComponent(locale)}`}
+                    className="lux-btn-primary inline-flex min-h-[44px] justify-center rounded-full px-5 py-2.5 text-center text-sm font-bold text-[#09090B]"
+                  >
+                    {freeDownloadLabel[locale]}
+                  </a>
                   <p className="text-sm font-medium text-emerald-300/95">{copy.youHaveFullAccess}</p>
-                ) : (
-                  <>
-                    <Link
-                      href={signupUnlockHref}
-                      className="lux-btn-primary inline-flex min-h-[44px] justify-center rounded-full px-5 py-2.5 text-center text-sm font-bold text-[#09090B]"
-                    >
-                      {copy.signUpToUnlockFree}
-                    </Link>
-                    <Link
-                      href={loginUnlockHref}
-                      className="inline-flex min-h-[44px] justify-center rounded-[10px] border border-[var(--color-border)] px-5 py-2.5 text-center text-sm font-medium text-white transition-colors duration-150 hover:border-[rgba(255,255,255,0.12)] hover:bg-[rgba(255,255,255,0.04)]"
-                    >
-                      {copy.logInToUnlockFree}
-                    </Link>
-                  </>
-                )
+                </>
               ) : program && !access.showFullPaidContent ? (
                 <Link href={checkoutHref} className="gradient-button rounded-full px-5 py-2.5 text-sm font-medium text-white">
                   {copy.getFullAccess}

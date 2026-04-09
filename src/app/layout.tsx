@@ -65,10 +65,12 @@ export const metadata: Metadata = {
   themeColor: "#09090B",
   manifest: "/manifest.json",
   icons: {
-    icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" }
-    ],
-    apple: [{ url: "/favicon.svg", type: "image/svg+xml" }]
+    icon: [{ url: "/favicon.ico", type: "image/x-icon" }],
+    apple: [{ url: "/apple-touch-icon.png", type: "image/png" }],
+    other: [
+      { rel: "icon", url: "/icons/icon-192.png", type: "image/png", sizes: "192x192" },
+      { rel: "icon", url: "/icons/icon-512.png", type: "image/png", sizes: "512x512" }
+    ]
   },
   appleWebApp: {
     capable: true,
