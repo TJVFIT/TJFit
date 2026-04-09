@@ -21,7 +21,9 @@ import {
   Trophy,
   Coins,
   X,
-  Dumbbell
+  Dumbbell,
+  Lightbulb,
+  ShoppingBag
 } from "lucide-react";
 
 import { useAuth } from "@/components/auth-provider";
@@ -61,7 +63,7 @@ const SIDEBAR_COPY: Record<
 
 const PRIMARY_CTA_COPY: Record<Locale, { start: string; dashboard: string }> = {
   en: { start: "Start Free", dashboard: "Dashboard" },
-  tr: { start: "Antrenmana Basla", dashboard: "Panel" },
+  tr: { start: "Ücretsiz Başla", dashboard: "Panel" },
   ar: { start: "ابدأ التدريب", dashboard: "لوحة التحكم" },
   es: { start: "Empezar a entrenar", dashboard: "Panel" },
   fr: { start: "Commencer l'entrainement", dashboard: "Tableau de bord" }
@@ -181,6 +183,8 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
       { key: "membership", href: "/membership", label: "Membership", Icon: CreditCard },
       { key: "coins", href: "/coins", label: side.coinsShop, Icon: Coins },
       { key: "leaderboard", href: "/leaderboard", label: side.leaderboard, Icon: Trophy },
+      { key: "suggestions", href: "/suggestions", label: "Suggestions", Icon: Lightbulb },
+      { key: "equipment", href: "/equipment", label: "Equipment", Icon: ShoppingBag },
       { key: "legal", href: "/legal", label: nav.legalCenterLabel, Icon: Scale },
       { key: "messages", href: "/messages", label: dict.nav.messages, Icon: Inbox },
       { key: "profile", href: "/profile/edit", label: dict.nav.profile, Icon: User },

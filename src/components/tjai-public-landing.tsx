@@ -121,7 +121,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
           {[
             ["🧠 Personalized Science", "Mifflin-St Jeor BMR, TDEE math, and evidence-based macro targets."],
             ["📅 12-Week Plan", "Weekly training schedule + daily meals, sets, reps, rest, and structure."],
-            ["💬 24/7 AI Chat", "Ask about form, swaps, injury modifications, or plateaus in 5 languages."],
+            ["📊 Science-Based Numbers", "BMR, TDEE, and evidence-based macros. Calculated for YOUR body using Mifflin-St Jeor formula."],
             ["🔄 Adaptive", "If progress stalls, TJAI updates training load and nutrition targets."]
           ].map(([title, body]) => (
             <article key={title} className="rounded-2xl border border-[#1E2028] bg-[#111215] p-5">

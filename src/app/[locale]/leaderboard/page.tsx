@@ -88,6 +88,22 @@ export default function LeaderboardPage() {
               <div key={idx} className="h-12 animate-pulse rounded-lg bg-[#0F1116]" />
             ))}
           </div>
+        ) : items.length === 0 ? (
+          <div className="flex flex-col items-center py-16 text-center">
+            <Trophy className="mx-auto h-12 w-12 text-zinc-600" />
+            <p className="mt-4 text-lg font-semibold text-white">No rankings yet.</p>
+            <p className="mt-2 max-w-sm text-sm text-zinc-400">
+              Be the first to earn TJCOIN and claim the top spot.
+            </p>
+            <div className="mt-5 flex flex-wrap justify-center gap-3">
+              <a href="/en/coins" className="rounded-full border border-[#22D3EE]/35 bg-[#22D3EE]/10 px-4 py-2 text-sm font-semibold text-[#22D3EE]">
+                How to earn TJCOIN →
+              </a>
+              <a href="/en/programs" className="rounded-full border border-[#1E2028] px-4 py-2 text-sm text-zinc-300">
+                Start Earning →
+              </a>
+            </div>
+          </div>
         ) : (
           <div className="space-y-2">
             {items.map((item) => {

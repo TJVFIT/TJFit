@@ -191,11 +191,12 @@ function FloatingHeroStats({
     fr: { programs: "Programmes Experts", online: "Membres en entrainement", languages: "Langues", onlineSuffix: "En ligne" }
   }[locale];
   const onlineCount = new Intl.NumberFormat(locale === "ar" ? "ar-SA" : locale === "tr" ? "tr-TR" : locale === "es" ? "es-ES" : locale === "fr" ? "fr-FR" : "en-US").format(activeUsers || 0);
+  const showOnlineCard = (activeUsers ?? 0) > 0;
   const cards = [
-    { a: "20+", b: t.programs, c: "", ltr: "left-[5%] top-[35%]", rtl: "right-[5%] top-[35%]" },
-    { a: `${onlineCount} ${t.onlineSuffix}`, b: t.online, c: "", ltr: "right-[5%] top-[25%]", rtl: "left-[5%] top-[25%]" },
-    { a: "5", b: t.languages, c: "", ltr: "right-[8%] top-[55%]", rtl: "left-[8%] top-[55%]" }
-  ];
+    { a: "20+", b: t.programs, c: "", ltr: "left-[5%] top-[35%]", rtl: "right-[5%] top-[35%]", show: true },
+    { a: `${onlineCount} ${t.onlineSuffix}`, b: t.online, c: "", ltr: "right-[5%] top-[25%]", rtl: "left-[5%] top-[25%]", show: showOnlineCard },
+    { a: "5", b: t.languages, c: "", ltr: "right-[8%] top-[55%]", rtl: "left-[8%] top-[55%]", show: true }
+  ].filter((c) => c.show);
   return (
     <div className="pointer-events-none absolute inset-0 z-0 max-md:hidden">
       {cards.map((card, i) => (

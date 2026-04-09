@@ -48,9 +48,9 @@ const COPY: Record<Locale, { title: string; sub: string; disclaimer: string }> =
     disclaimer: "Results vary. Individual outcomes depend on consistency, diet, and starting fitness level."
   },
   tr: {
-    title: "Gercek insanlar. Gercek sonuclar.",
-    sub: "TJFit ile donusen binlerce kisiye katilin.",
-    disclaimer: "Sonuclar kisiden kisiye degisir. Sonuc; tutarlilik, beslenme ve baslangic seviyesine baglidir."
+    title: "Gerçek İnsanlar. Gerçek Sonuçlar.",
+    sub: "TJFit ile dönüşen binlerce kişiye katılın.",
+    disclaimer: "Sonuçlar kişiden kişiye değişir. Sonuç; tutarlılık, beslenme ve başlangıç seviyesine bağlıdır."
   },
   ar: {
     title: "أشخاص حقيقيون. نتائج حقيقية.",

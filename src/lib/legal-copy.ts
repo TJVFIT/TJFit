@@ -139,56 +139,102 @@ export function getTermsCopy(locale: Locale, billingProvider: string, version: s
 }
 
 export function getPrivacyCopy(locale: Locale): PolicyCopy {
+  const enParagraphs = [
+    "Last updated: April 2026 | Contact: tjfit.org@gmail.com",
+    "1. WHO WE ARE — TJFit (\"we\", \"us\", \"our\") operates the website tjfit.org. We provide AI-powered fitness programs, nutrition plans, and coach marketplace services.",
+    "2. WHAT DATA WE COLLECT — (a) Account data: email address, display name, profile photo, username. (b) Health & fitness data: weight, height, age, fitness goals, workout logs, meal tracking. (c) Payment data: processed entirely by Paddle. TJFit never stores card numbers or CVV. (d) Usage data: pages visited, features used, session duration. (e) Communications: messages sent through TJFit messaging system. (f) AI interaction data: TJAI quiz answers and generated plans.",
+    "3. HOW WE USE YOUR DATA — To provide and improve TJFit services. To generate personalized fitness and nutrition plans via TJAI. To process payments through Paddle. To send transactional emails (receipts, verification). To send newsletters (with your consent). To display your public profile to other TJFit members.",
+    "4. WHO WE SHARE DATA WITH — We do NOT sell your personal data. We share with: Paddle (payment processing) — paddle.com/privacy. Supabase (database hosting) — supabase.com/privacy. Resend (email delivery) — resend.com/privacy. Anthropic/Claude API (AI plan generation — anonymized prompts only, no personal identifiers sent). Coaches on TJFit see: your username and messages you send them. Coaches do NOT see your email, payment details, or private data.",
+    "5. YOUR RIGHTS (GDPR) — Access: request a copy of all data we hold. Correction: update incorrect data via profile settings. Deletion: delete your account and all associated data. Portability: export your data in machine-readable format. Objection: opt out of non-essential data processing. Withdraw consent: unsubscribe from marketing anytime. To exercise rights: email tjfit.org@gmail.com. We respond within 30 days.",
+    "6. DATA RETENTION — Active accounts: data retained while account is active. Deleted accounts: personal data deleted within 30 days. Anonymized analytics: retained indefinitely. Payment records: retained as required by tax law (7 years).",
+    "7. HEALTH DATA — Body metrics, weight logs, and fitness data are sensitive. We store them encrypted. We never sell health data. TJAI sends anonymized prompts to Claude API. No personally identifiable information is sent to Anthropic.",
+    "8. COOKIES — Essential cookies for login sessions and preferences. Analytics cookies to understand site usage (anonymized). You can disable non-essential cookies in your browser settings.",
+    "9. CHILDREN — TJFit is not intended for users under 16. If we discover a user is under 16, we delete their account immediately.",
+    "10. SECURITY — Industry-standard encryption (HTTPS, encrypted database). Passwords are hashed and never stored in plain text. We regularly review our security practices.",
+    "11. CHANGES — We may update this policy. We notify users by email for major changes. Continued use after changes = acceptance.",
+    "12. CONTACT — Privacy questions: tjfit.org@gmail.com"
+  ];
   const copy: Record<Locale, PolicyCopy> = {
-    en: {
-      badge: "Privacy Policy",
-      title: "Privacy Policy",
-      paragraphs: [
-        "TJFit collects account details, progress data, and service activity required to provide coaching and program services.",
-        "Payment processing is handled by third-party payment providers. We do not store full payment card details on TJFit servers.",
-        "You can request access, correction, or deletion of your personal data by contacting support."
-      ],
-      lastUpdatedLabel: "Last updated: 2026-03-29"
-    },
+    en: { badge: "Privacy Policy", title: "Privacy Policy", paragraphs: enParagraphs, lastUpdatedLabel: "Last updated: April 2026" },
     tr: {
-      badge: "Gizlilik Politikasi",
-      title: "Gizlilik Politikasi",
+      badge: "Gizlilik Politikası",
+      title: "Gizlilik Politikası",
       paragraphs: [
-        "TJFit, koçluk ve program hizmetlerini sunmak icin gerekli hesap bilgilerini, ilerleme verilerini ve hizmet etkinligini toplar.",
-        "Odeme islemleri ucuncu taraf odeme saglayicilari tarafindan yapilir. TJFit sunucularinda kart bilgileri tam olarak saklanmaz.",
-        "Kisisel verilerine erisim, duzeltme veya silme talebi icin destek iletisime gecebilirsin."
+        "Son güncelleme: Nisan 2026 | İletişim: tjfit.org@gmail.com",
+        "1. BİZ KİMİZ — TJFit tjfit.org adresinde faaliyet göstermektedir. Yapay zeka destekli fitness programları, beslenme planları ve koç platformu hizmetleri sunuyoruz.",
+        "2. HANGİ VERİLERİ TOPLUYORUZ — (a) Hesap verileri: e-posta, görünen ad, profil fotoğrafı, kullanıcı adı. (b) Sağlık ve fitness verileri: kilo, boy, yaş, hedefler, antrenman kayıtları. (c) Ödeme verileri: tamamen Paddle tarafından işlenir. Kart numarası veya CVV saklamıyoruz. (d) Kullanım verileri: ziyaret edilen sayfalar, kullanılan özellikler. (e) İletişim: TJFit üzerinden gönderilen mesajlar. (f) Yapay zeka etkileşim verileri: TJAI quiz yanıtları ve oluşturulan planlar.",
+        "3. VERİLERİNİZİ NASIL KULLANIYORUZ — TJFit hizmetlerini sunmak ve iyileştirmek. TJAI aracılığıyla kişiselleştirilmiş planlar oluşturmak. Paddle üzerinden ödemeleri işlemek. İşlemsel e-postalar göndermek. Bülten göndermek (onayınızla). Profilinizi diğer üyelere göstermek.",
+        "4. VERİLERİNİZİ KİMLERLE PAYLAŞIYORUZ — Kişisel verilerinizi SATMIYORUZ. Şunlarla paylaşıyoruz: Paddle (ödeme işleme), Supabase (veritabanı barındırma), Resend (e-posta iletimi), Anthropic/Claude API (yapay zeka plan üretimi — anonimleştirilmiş istemler, kişisel tanımlayıcı yok).",
+        "5. HAKLARINIZ (GDPR) — Erişim, düzeltme, silme, taşıma, itiraz, onay geri çekme. Talepler için: tjfit.org@gmail.com. 30 gün içinde yanıt veriyoruz.",
+        "6. VERİ SAKLAMA — Aktif hesaplar: hesap aktif olduğu sürece. Silinen hesaplar: 30 gün içinde kişisel veriler silinir. Anonim analizler: süresiz.",
+        "7. SAĞLIK VERİLERİ — Şifreli olarak saklanır. Satılmaz. TJAI, Claude API'ye anonimleştirilmiş istemler gönderir.",
+        "8. ÇEREZLER — Oturum ve tercihler için zorunlu çerezler. Analitik çerezler (anonimleştirilmiş).",
+        "9. ÇOCUKLAR — TJFit 16 yaş altı kullanıcılara yönelik değildir.",
+        "10. GÜVENLİK — HTTPS ve şifreli veritabanı. Şifreler hashlenir.",
+        "11. DEĞİŞİKLİKLER — Büyük değişiklikler için e-posta bildirimi yapılır.",
+        "12. İLETİŞİM — tjfit.org@gmail.com"
       ],
-      lastUpdatedLabel: "Son guncelleme: 2026-03-29"
+      lastUpdatedLabel: "Son güncelleme: Nisan 2026"
     },
     ar: {
       badge: "سياسة الخصوصية",
       title: "سياسة الخصوصية",
       paragraphs: [
-        "يجمع TJFit بيانات الحساب والتقدم ونشاط الخدمة اللازمة لتقديم خدمات التدريب والبرامج.",
-        "تتم معالجة المدفوعات بواسطة مزودي دفع خارجيين، ولا نقوم بتخزين تفاصيل البطاقة الكاملة على خوادم TJFit.",
-        "يمكنك طلب الوصول الى بياناتك الشخصية او تصحيحها او حذفها عبر التواصل مع الدعم."
+        "آخر تحديث: أبريل 2026 | التواصل: tjfit.org@gmail.com",
+        "1. من نحن — يشغّل TJFit الموقع tjfit.org ويوفر برامج لياقة بالذكاء الاصطناعي وخطط تغذية وسوق للمدربين.",
+        "2. البيانات التي نجمعها — (أ) بيانات الحساب: البريد الإلكتروني، الاسم، الصورة، اسم المستخدم. (ب) بيانات الصحة: الوزن والطول والعمر والأهداف. (ج) بيانات الدفع: تُعالَج بالكامل عبر Paddle، لا نحفظ أرقام البطاقات. (د) بيانات الاستخدام: الصفحات والميزات. (هـ) الاتصالات. (و) بيانات الذكاء الاصطناعي.",
+        "3. كيف نستخدم بياناتك — لتقديم الخدمات وتحسينها، وإنشاء خطط مخصصة، ومعالجة المدفوعات، وإرسال رسائل خدمة، وعرض ملفك الشخصي.",
+        "4. من يتلقى بياناتك — لا نبيع بياناتك. نشاركها مع: Paddle وSupabase وResend وAnthropic/Claude API (موجّهات مجهولة فقط).",
+        "5. حقوقك (GDPR) — الوصول والتصحيح والحذف والنقل والاعتراض. للتواصل: tjfit.org@gmail.com. الرد خلال 30 يوماً.",
+        "6. الاحتفاظ بالبيانات — الحسابات النشطة: طوال فترة النشاط. المحذوفة: حذف خلال 30 يوماً.",
+        "7. بيانات الصحة — مشفرة ولا تُباع. TJAI يرسل موجّهات مجهولة فقط لـ Claude API.",
+        "8. ملفات تعريف الارتباط — أساسية للجلسات والتحليلات المجهولة.",
+        "9. الأطفال — TJFit ليس مخصصاً لمن هم دون 16 عاماً.",
+        "10. الأمان — تشفير HTTPS وقاعدة بيانات مشفرة وكلمات مرور مجزأة.",
+        "11. التغييرات — إشعار بالبريد للتغييرات الكبرى.",
+        "12. التواصل — tjfit.org@gmail.com"
       ],
-      lastUpdatedLabel: "اخر تحديث: 2026-03-29"
+      lastUpdatedLabel: "آخر تحديث: أبريل 2026"
     },
     es: {
-      badge: "Politica de Privacidad",
-      title: "Politica de Privacidad",
+      badge: "Política de Privacidad",
+      title: "Política de Privacidad",
       paragraphs: [
-        "TJFit recopila datos de cuenta, progreso y actividad necesarios para ofrecer coaching y programas.",
-        "Los pagos son procesados por proveedores externos. No almacenamos los datos completos de la tarjeta en servidores de TJFit.",
-        "Puedes solicitar acceso, correccion o eliminacion de tus datos personales contactando al soporte."
+        "Última actualización: Abril 2026 | Contacto: tjfit.org@gmail.com",
+        "1. QUIÉNES SOMOS — TJFit opera el sitio web tjfit.org con programas de fitness con IA, planes de nutrición y un marketplace de entrenadores.",
+        "2. DATOS QUE RECOPILAMOS — (a) Datos de cuenta: email, nombre, foto, usuario. (b) Salud y fitness: peso, altura, edad, objetivos. (c) Pagos: procesados íntegramente por Paddle, no almacenamos datos de tarjeta. (d) Uso: páginas visitadas. (e) Comunicaciones. (f) Datos de IA: respuestas del cuestionario TJAI.",
+        "3. USO DE TUS DATOS — Proveer y mejorar los servicios, generar planes personalizados, procesar pagos, enviar emails transaccionales, mostrar tu perfil público.",
+        "4. CON QUIÉN COMPARTIMOS — No vendemos tus datos. Compartimos con: Paddle, Supabase, Resend, Anthropic/Claude API (prompts anónimos).",
+        "5. TUS DERECHOS (GDPR) — Acceso, corrección, eliminación, portabilidad, oposición. Contacto: tjfit.org@gmail.com. Respondemos en 30 días.",
+        "6. RETENCIÓN DE DATOS — Cuentas activas: mientras estén activas. Eliminadas: datos borrados en 30 días.",
+        "7. DATOS DE SALUD — Cifrados, no vendidos. TJAI envía prompts anónimos a Claude API.",
+        "8. COOKIES — Esenciales para sesiones y analíticas anónimas.",
+        "9. MENORES — TJFit no está dirigido a menores de 16 años.",
+        "10. SEGURIDAD — HTTPS, base de datos cifrada, contraseñas hasheadas.",
+        "11. CAMBIOS — Notificación por email en cambios importantes.",
+        "12. CONTACTO — tjfit.org@gmail.com"
       ],
-      lastUpdatedLabel: "Ultima actualizacion: 2026-03-29"
+      lastUpdatedLabel: "Última actualización: Abril 2026"
     },
     fr: {
-      badge: "Politique de confidentialite",
-      title: "Politique de confidentialite",
+      badge: "Politique de confidentialité",
+      title: "Politique de confidentialité",
       paragraphs: [
-        "TJFit collecte les informations de compte, de progression et d'activite necessaires pour fournir les services de coaching et de programmes.",
-        "Le paiement est traite par des prestataires tiers. Nous ne stockons pas les donnees completes de carte sur les serveurs TJFit.",
-        "Vous pouvez demander l'acces, la correction ou la suppression de vos donnees personnelles en contactant le support."
+        "Dernière mise à jour : Avril 2026 | Contact : tjfit.org@gmail.com",
+        "1. QUI SOMMES-NOUS — TJFit exploite le site web tjfit.org et propose des programmes fitness par IA, des plans nutritionnels et une marketplace de coachs.",
+        "2. DONNÉES COLLECTÉES — (a) Compte : email, nom, photo, pseudo. (b) Santé et fitness : poids, taille, âge, objectifs. (c) Paiements : traités par Paddle, nous ne stockons pas les données de carte. (d) Utilisation : pages visitées. (e) Communications. (f) Données IA : réponses au quiz TJAI.",
+        "3. UTILISATION DES DONNÉES — Fournir et améliorer nos services, générer des plans personnalisés, traiter les paiements, envoyer des emails de service, afficher votre profil public.",
+        "4. PARTAGE DES DONNÉES — Nous ne vendons pas vos données. Nous partageons avec : Paddle, Supabase, Resend, Anthropic/Claude API (prompts anonymisés).",
+        "5. VOS DROITS (RGPD) — Accès, correction, suppression, portabilité, opposition. Contact : tjfit.org@gmail.com. Réponse sous 30 jours.",
+        "6. CONSERVATION — Comptes actifs : tant que le compte est actif. Comptes supprimés : données supprimées sous 30 jours.",
+        "7. DONNÉES DE SANTÉ — Chiffrées, non vendues. TJAI envoie des prompts anonymisés à Claude API.",
+        "8. COOKIES — Essentiels pour les sessions et les analyses anonymisées.",
+        "9. MINEURS — TJFit n'est pas destiné aux moins de 16 ans.",
+        "10. SÉCURITÉ — HTTPS, base de données chiffrée, mots de passe hachés.",
+        "11. MODIFICATIONS — Notification par email pour les changements majeurs.",
+        "12. CONTACT — tjfit.org@gmail.com"
       ],
-      lastUpdatedLabel: "Derniere mise a jour : 2026-03-29"
+      lastUpdatedLabel: "Dernière mise à jour : Avril 2026"
     }
   };
 

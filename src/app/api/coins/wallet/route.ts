@@ -3,6 +3,7 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 export async function GET() {
+  try {
   const supabase = createServerSupabaseClient();
   const {
     data: { user },
@@ -51,4 +52,8 @@ export async function GET() {
     offers: offers ?? [],
     codes: codes ?? []
   });
+  } catch (err) {
+    console.error("Wallet route crash:", err);
+    return NextResponse.json({ wallet: { balance: 0, lifetime_earned: 0, lifetime_spent: 0 }, ledger: [], offers: [], codes: [] });
+  }
 }

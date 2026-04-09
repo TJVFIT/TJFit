@@ -104,6 +104,11 @@ function LoginForm({ params }: { params: { locale: string } }) {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+          <div className="flex justify-end">
+            <Link href={`/${locale}/forgot-password`} className="text-xs text-zinc-500 hover:text-zinc-300">
+              Forgot password?
+            </Link>
+          </div>
           {error ? <div className="tj-api-error-block">{error}</div> : null}
           <AsyncButton
             type="button"
