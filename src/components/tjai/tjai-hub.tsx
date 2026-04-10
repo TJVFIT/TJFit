@@ -141,19 +141,34 @@ export function TJAIHub({ locale }: { locale: Locale }) {
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="inline-flex items-center gap-2 text-[28px] font-extrabold text-[#22D3EE]">
-                  <Sparkles className="h-7 w-7" />
+                  <Sparkles className="sparkle-pulse h-7 w-7" />
                   TJAI
                 </p>
                 <p className="text-[13px] text-[#A1A1AA]">{HUB_SUBTITLE[locale]}</p>
               </div>
-              <span className="rounded-full border border-[rgba(34,211,238,0.35)] bg-[rgba(34,211,238,0.15)] px-3 py-1 text-xs font-semibold text-[#22D3EE]">
-                [{tierLabel(locale, tier).toUpperCase()}]
-              </span>
-              {tier === "core" ? (
-                <a href={`/${locale}/membership?tier=apex`} className="text-xs font-semibold text-[#22D3EE] hover:text-white">
-                  Upgrade →
-                </a>
-              ) : null}
+              <div className="flex items-center gap-3">
+                {tier === "apex" ? (
+                  <div className="apex-rotating-border">
+                    <div className="apex-rotating-border-inner">
+                      [{tierLabel(locale, tier).toUpperCase()}]
+                    </div>
+                  </div>
+                ) : (
+                  <span className={cn(
+                    "rounded-full border px-3 py-1 text-xs font-semibold",
+                    tier === "pro"
+                      ? "border-blue-400/35 bg-blue-400/10 text-blue-300"
+                      : "border-[rgba(34,211,238,0.35)] bg-[rgba(34,211,238,0.15)] text-[#22D3EE]"
+                  )}>
+                    [{tierLabel(locale, tier).toUpperCase()}]
+                  </span>
+                )}
+                {tier === "core" ? (
+                  <a href={`/${locale}/membership?tier=apex`} className="text-xs font-semibold text-[#22D3EE] hover:text-white">
+                    Upgrade →
+                  </a>
+                ) : null}
+              </div>
             </div>
             <nav className="mt-4 flex flex-wrap gap-1 rounded-[10px] border border-[#1E2028] bg-[#0D0F12] p-1.5">
               {tabItems.map((item) => (

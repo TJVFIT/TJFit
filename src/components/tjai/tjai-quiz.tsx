@@ -589,7 +589,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
 
         <div
           key={step.id}
-          className="tjai-question entering mt-8 flex-1"
+          className="question-enter mt-8 flex-1"
         >
           <div className="mb-4 text-[11px] uppercase tracking-[0.2em] text-[#22D3EE]">{step.section}</div>
           <h1 className="text-[clamp(1.375rem,3vw,1.75rem)] font-bold leading-[1.3] text-white">{step.question}</h1>

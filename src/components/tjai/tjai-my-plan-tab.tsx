@@ -190,7 +190,7 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="plan-result space-y-5">
       <section className="grid gap-3 md:grid-cols-4">
         {summaryCards.map((item) => (
           <article key={item.label} className="rounded-xl border border-[#1E2028] bg-[#111215] p-4">

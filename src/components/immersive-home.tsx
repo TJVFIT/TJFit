@@ -16,6 +16,7 @@ import { WordReveal } from "@/components/ui/word-reveal";
 import { HomeNewsletterBar } from "@/components/home-newsletter-bar";
 import { HomeTestimonials } from "@/components/home-testimonials";
 import { HomeCoachCta } from "@/components/home-coach-cta";
+import { TJAITypingShowcase } from "@/components/tjai-typing-showcase";
 import { useMagneticButton } from "@/hooks/useMagneticButton";
 import { useInView } from "@/hooks/useInView";
 import type { Program } from "@/lib/content";
@@ -42,6 +43,8 @@ function useReducedMotion() {
 
 function formatMoney(locale: Locale, value: number) {
   const n = Number.isFinite(value) ? value : 0;
+  // Convert TRY base price to EUR (rate: 0.029)
+  const eur = n * 0.029;
   const loc =
     locale === "tr"
       ? "tr-TR"
@@ -51,11 +54,11 @@ function formatMoney(locale: Locale, value: number) {
           ? "es-ES"
           : locale === "fr"
             ? "fr-FR"
-            : "en-US";
+            : "en-GB";
   try {
-    return new Intl.NumberFormat(loc, { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
+    return new Intl.NumberFormat(loc, { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(eur);
   } catch {
-    return `$${Math.round(n)}`;
+    return `€${Math.round(eur)}`;
   }
 }
 
@@ -544,6 +547,7 @@ export function ImmersiveHome({
       ) : null}
 
       {/* —— 4 TESTIMONIALS —— */}
+      <TJAITypingShowcase locale={locale} />
       <HomeTestimonials locale={locale} />
 
       {/* —— 5 PROGRAMS —— */}

@@ -1422,3 +1422,142 @@ html {
     display: none;
   }
 }
+
+/* ── Quiz question transitions ─────────────────────────────────── */
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slide-out-left {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-40px); }
+}
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slide-out-right {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(40px); }
+}
+.question-enter { animation: slide-in-right 0.35s cubic-bezier(0.22,1,0.36,1) both; }
+.question-exit  { animation: slide-out-left 0.25s ease forwards; }
+.question-enter-back { animation: slide-in-left 0.35s cubic-bezier(0.22,1,0.36,1) both; }
+.question-exit-back  { animation: slide-out-right 0.25s ease forwards; }
+
+/* ── Plan result entrance ──────────────────────────────────────── */
+@keyframes plan-appear {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.plan-result { animation: plan-appear 0.6s cubic-bezier(0.22,1,0.36,1) both; }
+
+/* ── Word rise (hero headline) ─────────────────────────────────── */
+@keyframes word-rise {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.word-animate {
+  display: inline-block;
+  animation: word-rise 0.6s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+/* ── Scroll-triggered reveals ──────────────────────────────────── */
+.reveal-section {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1),
+              transform 0.7s cubic-bezier(0.22,1,0.36,1);
+}
+.reveal-section.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Blinking cursor (TJAI typing) ─────────────────────────────── */
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+.cursor-blink { animation: blink 1s step-end infinite; }
+
+/* ── Dynamic island animations ─────────────────────────────────── */
+@keyframes island-enter {
+  from { opacity: 0; transform: translateY(-20px) scale(0.9); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes island-exit {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(-10px) scale(0.95); }
+}
+
+/* ── Apex badge rotating border ────────────────────────────────── */
+@property --apex-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes apex-spin { to { --apex-angle: 360deg; } }
+.apex-rotating-border {
+  background: conic-gradient(from var(--apex-angle), #a78bfa, #22d3ee, #a78bfa);
+  animation: apex-spin 3s linear infinite;
+  padding: 2px;
+  border-radius: 99px;
+}
+.apex-rotating-border-inner {
+  background: #0d0f12;
+  border-radius: 97px;
+  padding: 4px 12px;
+  color: #a78bfa;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ── Sparkle pulse (TJAI header icon) ──────────────────────────── */
+@keyframes sparkle-pulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.7; transform: scale(0.95); }
+}
+.sparkle-pulse { animation: sparkle-pulse 2s ease-in-out infinite; }
+
+/* ── Testimonials carousel ─────────────────────────────────────── */
+.testimonials-carousel {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.testimonials-carousel::-webkit-scrollbar { display: none; }
+.testimonials-carousel > * {
+  min-width: 300px;
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+
+/* ── Card tilt glare ────────────────────────────────────────────── */
+.card-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  transition: background 0.1s ease;
+  z-index: 1;
+}
+
+/* ── Reduced motion: disable all non-essential animations ──────── */
+@media (prefers-reduced-motion: reduce) {
+  .word-animate,
+  .question-enter,
+  .question-exit,
+  .question-enter-back,
+  .question-exit-back,
+  .plan-result,
+  .reveal-section,
+  .sparkle-pulse,
+  .apex-rotating-border,
+  .cursor-blink {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}

@@ -1,5 +1,7 @@
 "use client";
 
+import { useRef } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { Locale } from "@/lib/i18n";
 
 type Testimonial = {
@@ -71,18 +73,55 @@ const COPY: Record<Locale, { title: string; sub: string; disclaimer: string }> =
 
 export function HomeTestimonials({ locale }: { locale: Locale }) {
   const copy = COPY[locale] ?? COPY.en;
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (dir: "left" | "right") => {
+    carouselRef.current?.scrollBy({ left: dir === "right" ? 316 : -316, behavior: "smooth" });
+  };
+
   return (
     <section className="border-y border-[#1E2028] bg-[#09090B] px-6 py-16 lg:px-12 lg:py-24">
       <div className="mx-auto max-w-6xl">
-        <h3 className="text-3xl font-extrabold text-white sm:text-4xl">{copy.title}</h3>
-        <p className="mt-2 text-sm text-[#A1A1AA] sm:text-base">{copy.sub}</p>
-        <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <h3 className="text-3xl font-extrabold text-white sm:text-4xl">{copy.title}</h3>
+            <p className="mt-2 text-sm text-[#A1A1AA] sm:text-base">{copy.sub}</p>
+          </div>
+          {/* Desktop arrow navigation */}
+          <div className="hidden shrink-0 items-center gap-2 sm:flex">
+            <button
+              type="button"
+              onClick={() => scroll("left")}
+              aria-label="Previous testimonial"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-[#1E2028] bg-[#111215] text-zinc-400 transition hover:border-[rgba(34,211,238,0.3)] hover:text-[#22D3EE]"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => scroll("right")}
+              aria-label="Next testimonial"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-[#1E2028] bg-[#111215] text-zinc-400 transition hover:border-[rgba(34,211,238,0.3)] hover:text-[#22D3EE]"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Carousel */}
+        <div
+          ref={carouselRef}
+          className="testimonials-carousel mt-8 pb-2"
+        >
           {TESTIMONIALS.map((item) => (
-            <article key={item.name} className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
+            <article
+              key={item.name}
+              className="w-[300px] min-w-[300px] rounded-2xl border border-[#1E2028] bg-[#111215] p-6 sm:w-[340px] sm:min-w-[340px]"
+            >
               <p className="text-[#FBBF24]">★★★★★</p>
               <p className="mt-3 text-[15px] italic leading-[1.6] text-white">{item.quote}</p>
               <div className="mt-5 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#1E2028] bg-[#0D0F14] text-sm font-semibold text-[#22D3EE]">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#1E2028] bg-[#0D0F14] text-sm font-semibold text-[#22D3EE]">
                   {item.name.slice(0, 1)}
                 </div>
                 <div>
