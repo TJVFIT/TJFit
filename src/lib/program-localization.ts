@@ -416,9 +416,9 @@ const descriptionTemplates = {
 };
 
 const currencyConfig: Record<Locale, { locale: string; currency: string; rate: number }> = {
-  en: { locale: "en-US", currency: "USD", rate: 0.031 },
+  en: { locale: "en-GB", currency: "EUR", rate: 0.029 },
   tr: { locale: "tr-TR", currency: "TRY", rate: 1 },
-  ar: { locale: "ar-SA", currency: "SAR", rate: 0.12 },
+  ar: { locale: "ar-SA", currency: "EUR", rate: 0.029 },
   es: { locale: "es-ES", currency: "EUR", rate: 0.029 },
   fr: { locale: "fr-FR", currency: "EUR", rate: 0.029 }
 };

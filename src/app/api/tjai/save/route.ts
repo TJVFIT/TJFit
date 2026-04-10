@@ -5,46 +5,67 @@ import { requireAuth } from "@/lib/require-auth";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
-  const auth = await requireAuth();
-  if (!auth.ok) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  try {
+    const auth = await requireAuth();
+    if (!auth.ok) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-  const body = await request.json().catch(() => null);
-  const { plan, answers, metrics } = body ?? {};
-  if (!plan || !answers || !metrics) {
-    return NextResponse.json({ error: "Missing payload" }, { status: 400 });
-  }
+    const body = await request.json().catch(() => null);
+    const { plan, answers, metrics } = body ?? {};
+    if (!plan || !answers) {
+      return NextResponse.json({ error: "Missing payload" }, { status: 400 });
+    }
 
-  const { error } = await auth.supabase.from("saved_tjai_plans").insert({
-    user_id: auth.user.id,
-    plan_json: plan,
-    answers_json: answers,
-    metrics_json: metrics
-  });
+    const { error } = await auth.supabase.from("saved_tjai_plans").upsert(
+      {
+        user_id: auth.user.id,
+        plan_json: plan,
+        answers_json: answers,
+        metrics_json: metrics ?? null,
+        updated_at: new Date().toISOString()
+      },
+      { onConflict: "user_id" }
+    );
 
-  if (error) {
-    return NextResponse.json({ error: "Failed to save plan" }, { status: 500 });
+    if (error) {
+      console.error("[TJAI Save POST] DB error:", error.message, error.code);
+      // Still return ok — client shouldn't crash because save failed
+      return NextResponse.json({ ok: true, warning: "Plan generated but not saved" });
+    }
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error("[TJAI Save POST] Crash:", err);
+    return NextResponse.json({ ok: true, warning: "Save error" });
   }
-  return NextResponse.json({ ok: true });
 }
 
 export async function GET() {
-  const auth = await requireAuth();
-  if (!auth.ok) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  try {
+    const auth = await requireAuth();
+    if (!auth.ok) {
+      // Not logged in — return null plan, never 500
+      return NextResponse.json({ plan: null, plans: [] });
+    }
 
-  const { data, error } = await auth.supabase
-    .from("saved_tjai_plans")
-    .select("id, plan_json, answers_json, metrics_json, created_at")
-    .eq("user_id", auth.user.id)
-    .order("created_at", { ascending: false })
-    .limit(20);
+    const { data, error } = await auth.supabase
+      .from("saved_tjai_plans")
+      .select("id, plan_json, answers_json, metrics_json, created_at, updated_at")
+      .eq("user_id", auth.user.id)
+      .order("updated_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
 
-  if (error) {
-    return NextResponse.json({ error: "Failed to fetch plans" }, { status: 500 });
+    if (error) {
+      // Table may not exist yet or permission error — never crash
+      console.error("[TJAI Save GET] DB error:", error.message, error.code);
+      return NextResponse.json({ plan: null, plans: [] });
+    }
+
+    return NextResponse.json({ plan: data ?? null, plans: data ? [data] : [] });
+  } catch (err) {
+    console.error("[TJAI Save GET] Crash:", err);
+    return NextResponse.json({ plan: null, plans: [] });
   }
-  return NextResponse.json({ plans: data ?? [] });
 }
 

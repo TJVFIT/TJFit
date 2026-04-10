@@ -481,25 +481,31 @@ export function ImmersiveHome({
                 {copy.hero.ctaSecondary} <span className="rtl:rotate-180">→</span>
               </Link>
             </div>
-            <div className="mt-5 inline-flex flex-wrap gap-2 text-xs text-[#A1A1AA]">
-              <span
-                className={cn(
-                  "inline-flex items-center gap-2 rounded-full border border-[rgba(34,211,238,0.15)] bg-[rgba(34,211,238,0.06)] px-3 py-1.5",
-                  livePulse && "scale-[1.04]"
+            {(liveStats.activeToday > 0 || liveStats.programsStartedToday > 0) && (
+              <div className="mt-5 inline-flex flex-wrap gap-2 text-xs text-[#A1A1AA]">
+                {liveStats.activeToday > 0 && (
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-2 rounded-full border border-[rgba(34,211,238,0.15)] bg-[rgba(34,211,238,0.06)] px-3 py-1.5",
+                      livePulse && "scale-[1.04]"
+                    )}
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#22C55E] motion-safe:animate-pulse" />
+                    {locale === "ar" ? `${new Intl.NumberFormat("ar-SA").format(liveStats.activeToday)} يتدرّبون الآن على TJFit` : `${liveStats.activeToday} people training on TJFit right now`}
+                  </span>
                 )}
-              >
-                <span className="h-1.5 w-1.5 rounded-full bg-[#22C55E] motion-safe:animate-pulse" />
-                {locale === "ar" ? `${new Intl.NumberFormat("ar-SA").format(liveStats.activeToday)} يتدرّبون الآن على TJFit` : `${liveStats.activeToday} people training on TJFit right now`}
-              </span>
-              <span
-                className={cn(
-                  "inline-flex items-center gap-2 rounded-full border border-[rgba(34,211,238,0.15)] bg-[rgba(34,211,238,0.06)] px-3 py-1.5",
-                  livePulse && "scale-[1.04]"
+                {liveStats.programsStartedToday > 0 && (
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-2 rounded-full border border-[rgba(34,211,238,0.15)] bg-[rgba(34,211,238,0.06)] px-3 py-1.5",
+                      livePulse && "scale-[1.04]"
+                    )}
+                  >
+                    {locale === "ar" ? `${new Intl.NumberFormat("ar-SA").format(liveStats.programsStartedToday)} بدأوا برنامجاً اليوم` : `${liveStats.programsStartedToday} programs started today`}
+                  </span>
                 )}
-              >
-                {locale === "ar" ? `${new Intl.NumberFormat("ar-SA").format(liveStats.programsStartedToday)} بدأوا برنامجاً اليوم` : `${liveStats.programsStartedToday} programs started today`}
-              </span>
-            </div>
+              </div>
+            )}
           </div>
         </div>
 

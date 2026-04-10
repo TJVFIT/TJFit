@@ -56,6 +56,21 @@ export default function CoinsPage() {
     }
   };
 
+  const earningMethods = [
+    { action: "Buy a program", coins: 50 },
+    { action: "Complete a program (12 weeks)", coins: 200 },
+    { action: "Complete a week", coins: 25 },
+    { action: "Daily activity streak", coins: 5 },
+    { action: "7-day streak milestone", coins: 50 },
+    { action: "30-day streak milestone", coins: 200 },
+    { action: "Community post", coins: 3 },
+    { action: "Blog post approved", coins: 100 },
+    { action: "Refer a friend (signup)", coins: 30 },
+    { action: "Refer a friend (purchase)", coins: 75 },
+    { action: "Pro subscription (monthly)", coins: 30 },
+    { action: "Apex subscription (monthly)", coins: 75 }
+  ];
+
   return (
     <PremiumPageShell>
       <section className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6 sm:p-8">
@@ -72,6 +87,26 @@ export default function CoinsPage() {
               {data?.wallet.balance ?? 0}
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* How to Earn section */}
+      <section id="how-to-earn" className="mt-8 rounded-2xl border border-[#1E2028] bg-[#111215] p-6 sm:p-8">
+        <p className="text-xs uppercase tracking-[0.18em] text-[#52525B]">⚡ How to Earn</p>
+        <h2 className="mt-2 text-2xl font-extrabold text-white">Every Action Earns TJCOIN</h2>
+        <p className="mt-2 text-sm text-[#A1A1AA]">Coins accumulate automatically as you train, post, and progress.</p>
+        <div className="mt-6 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {earningMethods.map((m) => (
+            <div
+              key={m.action}
+              className="flex items-center justify-between rounded-xl border border-[#1E2028] bg-[#0D0F12] px-4 py-3"
+            >
+              <span className="text-sm text-[#D4D4D8]">{m.action}</span>
+              <span className="ml-3 shrink-0 rounded-full border border-yellow-400/30 bg-yellow-400/10 px-2.5 py-0.5 text-xs font-bold text-yellow-300">
+                +{m.coins} ⚡
+              </span>
+            </div>
+          ))}
         </div>
       </section>
 

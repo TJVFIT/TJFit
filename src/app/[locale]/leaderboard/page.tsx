@@ -24,8 +24,34 @@ const TABS = [
   { key: "programs", label: "Programs" }
 ] as const;
 
-export default function LeaderboardPage() {
-  const [tab, setTab] = useState<(typeof TABS)[number]["key"]>("coins");
+type TabKey = (typeof TABS)[number]["key"];
+
+const EMPTY_MESSAGES: Record<TabKey, { title: string; sub: string }> = {
+  coins: {
+    title: "No rankings yet.",
+    sub: "Earn TJCOIN by buying programs, posting, and training daily to claim the top spot."
+  },
+  streaks: {
+    title: "No streaks yet.",
+    sub: "Log a workout today to start your streak and appear on the board."
+  },
+  blog: {
+    title: "No blog rankings yet.",
+    sub: "Publish your first post to appear here and earn TJCOIN."
+  },
+  coaches: {
+    title: "No coaches ranked yet.",
+    sub: "Coaches appear here based on student ratings and activity."
+  },
+  programs: {
+    title: "No program completions yet.",
+    sub: "Complete a 12-week program to appear on the programs leaderboard."
+  }
+};
+
+export default function LeaderboardPage({ params }: { params: { locale: string } }) {
+  const locale = params?.locale ?? "en";
+  const [tab, setTab] = useState<TabKey>("coins");
   const [period, setPeriod] = useState<"week" | "alltime">("week");
   const [items, setItems] = useState<LeaderboardItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -91,15 +117,13 @@ export default function LeaderboardPage() {
         ) : items.length === 0 ? (
           <div className="flex flex-col items-center py-16 text-center">
             <Trophy className="mx-auto h-12 w-12 text-zinc-600" />
-            <p className="mt-4 text-lg font-semibold text-white">No rankings yet.</p>
-            <p className="mt-2 max-w-sm text-sm text-zinc-400">
-              Be the first to earn TJCOIN and claim the top spot.
-            </p>
+            <p className="mt-4 text-lg font-semibold text-white">{EMPTY_MESSAGES[tab].title}</p>
+            <p className="mt-2 max-w-sm text-sm text-zinc-400">{EMPTY_MESSAGES[tab].sub}</p>
             <div className="mt-5 flex flex-wrap justify-center gap-3">
-              <a href="/en/coins" className="rounded-full border border-[#22D3EE]/35 bg-[#22D3EE]/10 px-4 py-2 text-sm font-semibold text-[#22D3EE]">
+              <a href={`/${locale}/coins#how-to-earn`} className="rounded-full border border-[#22D3EE]/35 bg-[#22D3EE]/10 px-4 py-2 text-sm font-semibold text-[#22D3EE]">
                 How to earn TJCOIN →
               </a>
-              <a href="/en/programs" className="rounded-full border border-[#1E2028] px-4 py-2 text-sm text-zinc-300">
+              <a href={`/${locale}/programs`} className="rounded-full border border-[#1E2028] px-4 py-2 text-sm text-zinc-300">
                 Start Earning →
               </a>
             </div>

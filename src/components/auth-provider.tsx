@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 
@@ -107,6 +107,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<AuthProfileSnippet | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [sessionCheckFailed, setSessionCheckFailed] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const inFlightRef = useRef(false);
 
   useEffect(() => {
     const supabase = getSupabaseBrowserClient();
@@ -117,6 +119,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     const syncFromServer = async () => {
+      if (inFlightRef.current) return;
+      inFlightRef.current = true;
       try {
         const result = await fetchAuthState();
         setUser(result.user);
@@ -127,7 +131,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSessionCheckFailed(result.sessionCheckFailed);
       } finally {
         setLoading(false);
+        inFlightRef.current = false;
       }
+    };
+
+    // Debounced version for auth state changes — prevents triple-firing
+    const debouncedSync = () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => void syncFromServer(), 150);
     };
 
     void syncFromServer();
@@ -135,7 +146,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let subscription: { unsubscribe: () => void } | null = null;
     try {
       const { data } = supabase.auth.onAuthStateChange(() => {
-        void syncFromServer();
+        debouncedSync();
       });
       subscription = data.subscription;
     } catch (e) {
@@ -143,7 +154,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       subscription = null;
     }
 
-    return () => subscription?.unsubscribe();
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      subscription?.unsubscribe();
+    };
   }, []);
 
   return (
