@@ -172,23 +172,23 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
 
   const items: ItemDef[] = useMemo(
     () => [
-      { key: "home", href: "/", label: dict.nav.home, Icon: Home },
+      { key: "home", href: "/", label: dict.nav.home, Icon: Home, collapsedTooltip: dict.nav.home },
       { key: "tjai", href: "/ai", label: "TJAI", Icon: Sparkles, badgeText: "AI", collapsedTooltip: side.tjaiTooltip },
-      { key: "calculator", href: "/calculator", label: side.calculator, Icon: Scale },
-      { key: "programs", href: "/programs", label: dict.nav.programs, Icon: Dumbbell },
-      { key: "diets", href: "/diets", label: dict.nav.diets, Icon: UtensilsCrossed },
-      { key: "coaches", href: "/coaches", label: dict.nav.coaches, Icon: Users },
-      { key: "feed", href: "/feed", label: side.feed, Icon: Users },
-      { key: "community", href: "/community", label: dict.nav.community, Icon: MessageCircle },
-      { key: "membership", href: "/membership", label: "Membership", Icon: CreditCard },
-      { key: "coins", href: "/coins", label: side.coinsShop, Icon: Coins },
-      { key: "leaderboard", href: "/leaderboard", label: side.leaderboard, Icon: Trophy },
-      { key: "suggestions", href: "/suggestions", label: "Suggestions", Icon: Lightbulb },
-      { key: "equipment", href: "/equipment", label: "Equipment", Icon: ShoppingBag },
-      { key: "legal", href: "/legal", label: nav.legalCenterLabel, Icon: Scale },
-      { key: "messages", href: "/messages", label: dict.nav.messages, Icon: Inbox },
-      { key: "profile", href: "/profile/edit", label: dict.nav.profile, Icon: User },
-      { key: "admin", href: "/admin", label: dict.nav.admin, Icon: Shield, adminOnly: true }
+      { key: "calculator", href: "/calculator", label: side.calculator, Icon: Scale, collapsedTooltip: side.calculator },
+      { key: "programs", href: "/programs", label: dict.nav.programs, Icon: Dumbbell, collapsedTooltip: dict.nav.programs },
+      { key: "diets", href: "/diets", label: dict.nav.diets, Icon: UtensilsCrossed, collapsedTooltip: dict.nav.diets },
+      { key: "coaches", href: "/coaches", label: dict.nav.coaches, Icon: Users, collapsedTooltip: dict.nav.coaches },
+      { key: "feed", href: "/feed", label: side.feed, Icon: Users, collapsedTooltip: side.feed },
+      { key: "community", href: "/community", label: dict.nav.community, Icon: MessageCircle, collapsedTooltip: dict.nav.community },
+      { key: "membership", href: "/membership", label: "Membership", Icon: CreditCard, collapsedTooltip: "Membership" },
+      { key: "coins", href: "/coins", label: side.coinsShop, Icon: Coins, collapsedTooltip: side.coinsShop },
+      { key: "leaderboard", href: "/leaderboard", label: side.leaderboard, Icon: Trophy, collapsedTooltip: side.leaderboard },
+      { key: "suggestions", href: "/suggestions", label: "Suggestions", Icon: Lightbulb, collapsedTooltip: "Suggestions" },
+      { key: "equipment", href: "/equipment", label: "Equipment", Icon: ShoppingBag, collapsedTooltip: "Equipment" },
+      { key: "legal", href: "/legal", label: nav.legalCenterLabel, Icon: Scale, collapsedTooltip: nav.legalCenterLabel },
+      { key: "messages", href: "/messages", label: dict.nav.messages, Icon: Inbox, collapsedTooltip: dict.nav.messages },
+      { key: "profile", href: "/profile/edit", label: dict.nav.profile, Icon: User, collapsedTooltip: dict.nav.profile },
+      { key: "admin", href: "/admin", label: dict.nav.admin, Icon: Shield, adminOnly: true, collapsedTooltip: dict.nav.admin }
     ],
     [dict.nav, nav.legalCenterLabel, side]
   );

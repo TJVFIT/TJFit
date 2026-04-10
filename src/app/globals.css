@@ -1543,6 +1543,53 @@ html {
   z-index: 1;
 }
 
+/* ── Active sidebar item subtle pulse ──────────────────────────── */
+@keyframes active-nav-pulse {
+  0%,100% { opacity: 1; }
+  50%      { opacity: 0.7; }
+}
+
+/* ── Gradient mesh background for section containers ───────────── */
+.mesh-bg {
+  background-image:
+    radial-gradient(at 20% 30%, rgba(34,211,238,0.06) 0px, transparent 50%),
+    radial-gradient(at 80% 70%, rgba(167,139,250,0.06) 0px, transparent 50%);
+}
+
+/* ── Premium glow on focus-visible inputs ───────────────────────── */
+.input:focus-visible,
+input[type="text"]:focus-visible,
+input[type="email"]:focus-visible,
+input[type="number"]:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  border-color: rgba(34,211,238,0.5) !important;
+  box-shadow: 0 0 0 3px rgba(34,211,238,0.12) !important;
+}
+
+/* ── Program card category accent border ───────────────────────── */
+.tj-card-premium-hover {
+  border-left: 2px solid transparent;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+.tj-card-premium-hover:hover {
+  border-left-color: color-mix(in srgb, var(--card-accent, #22d3ee) 60%, transparent);
+  box-shadow: 0 0 30px -8px color-mix(in srgb, var(--card-accent, #22d3ee) 40%, transparent);
+}
+
+/* ── Floating TJAI CTA ──────────────────────────────────────────── */
+.floating-tjai-cta {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 50;
+  animation: float-up 0.4s cubic-bezier(0.22,1,0.36,1) both;
+}
+@keyframes float-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* ── Reduced motion: disable all non-essential animations ──────── */
 @media (prefers-reduced-motion: reduce) {
   .word-animate,

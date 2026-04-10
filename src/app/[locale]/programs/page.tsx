@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { notFound, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Sparkles } from "lucide-react";
 import { BlurReveal } from "@/components/blur-reveal";
 import { CinematicListingHeader } from "@/components/cinematic-listing-header";
 import { FilterPill, ListingFilterBar } from "@/components/listing-filter-bar";
@@ -423,6 +423,30 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
       {allPrograms.length > 0 ? (
         <>
           <p className="mt-10 text-center text-xs text-[var(--color-text-muted)]">{copy.trustProgramsGrid}</p>
+
+          {/* Bundle upsell banner */}
+          <div className="mt-10 overflow-hidden rounded-2xl border border-cyan-400/20 bg-[linear-gradient(135deg,rgba(34,211,238,0.06)_0%,rgba(167,139,250,0.06)_100%)] p-6 sm:p-8">
+            <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#22D3EE]">
+                  {locale === "tr" ? "ÖZEL TEKLİF" : locale === "ar" ? "عرض خاص" : locale === "es" ? "OFERTA ESPECIAL" : locale === "fr" ? "OFFRE SPÉCIALE" : "BUNDLE DEAL"}
+                </p>
+                <h3 className="mt-2 text-xl font-bold text-white">
+                  {locale === "tr" ? "Tüm planını TJAI ile ücretsiz al" : locale === "ar" ? "احصل على خطتك الكاملة مجاناً مع TJAI" : locale === "es" ? "Obtén tu plan completo gratis con TJAI" : locale === "fr" ? "Obtenez votre plan complet gratuitement avec TJAI" : "Get a full 12-week plan built around YOU — free with TJAI"}
+                </h3>
+                <p className="mt-1 text-sm text-zinc-400">
+                  {locale === "tr" ? "25 soruyu cevapla, TJAI senin için özel plan oluştursun." : locale === "ar" ? "أجب عن 25 سؤالاً وسيبني TJAI خطة مخصصة لك." : locale === "es" ? "Responde 25 preguntas y TJAI crea tu plan personalizado." : locale === "fr" ? "Répondez à 25 questions et TJAI crée votre plan personnalisé." : "Answer 25 questions. TJAI builds a personalized training + nutrition plan in minutes."}
+                </p>
+              </div>
+              <Link
+                href={`/${locale}/ai`}
+                className="shrink-0 rounded-full bg-[#22D3EE] px-6 py-3 text-sm font-bold text-[#09090B] transition hover:scale-105 hover:bg-white"
+              >
+                {locale === "tr" ? "TJAI'yı Dene →" : locale === "ar" ? "جرّب TJAI ←" : locale === "es" ? "Probar TJAI →" : locale === "fr" ? "Essayer TJAI →" : "Try TJAI Free →"}
+              </Link>
+            </div>
+          </div>
+
           <div className="mt-12 border-t border-[var(--color-border)] pt-12 text-center">
             <Link
               href={`/${params.locale}/programs/${programs.find((p) => p.is_free && p.category.toLowerCase() !== "nutrition")?.slug ?? "home-fat-loss-starter"}`}
@@ -434,6 +458,17 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
         </>
       ) : null}
         </PremiumPageShell>
+      </div>
+
+      {/* Floating TJAI CTA */}
+      <div className="floating-tjai-cta">
+        <Link
+          href={`/${locale}/ai`}
+          className="group flex items-center gap-2.5 rounded-full bg-[#22D3EE] px-5 py-3 text-sm font-bold text-[#09090B] shadow-[0_4px_24px_rgba(34,211,238,0.35)] transition-all duration-200 hover:scale-105 hover:shadow-[0_6px_32px_rgba(34,211,238,0.5)]"
+        >
+          <Sparkles className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" />
+          {locale === "tr" ? "TJAI ile Plan Al" : locale === "ar" ? "احصل على خطة مع TJAI" : locale === "es" ? "Obtén un plan con TJAI" : locale === "fr" ? "Obtenir un plan TJAI" : "Build My Plan with TJAI"}
+        </Link>
       </div>
     </>
   );

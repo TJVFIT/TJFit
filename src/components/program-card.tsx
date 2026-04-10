@@ -11,7 +11,7 @@ import { getProgramTier, getProgramVisual } from "@/lib/program-card-visual";
 import { cn } from "@/lib/utils";
 
 const shellClass =
-  "group tj-card-premium-hover tj-card-aura relative flex h-full min-h-0 flex-col overflow-hidden rounded-[14px] border border-[#1E2028] bg-[#111215] shadow-[0_1px_3px_rgba(0,0,0,0.4),0_0_0_1px_#1E2028] motion-reduce:transition-none";
+  "group tj-card-premium-hover tj-card-aura relative flex h-full min-h-0 flex-col overflow-hidden rounded-[14px] border border-[#1E2028] bg-[#111215] shadow-[0_1px_3px_rgba(0,0,0,0.4),0_0_0_1px_#1E2028] motion-reduce:transition-none transition-[border-color,box-shadow] duration-200";
 
 const ctaPillClass = cn(
   "inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-[rgba(34,211,238,0.2)] bg-transparent px-4 py-3 text-xs font-semibold text-[#22D3EE] sm:w-auto sm:justify-start sm:py-2.5",
@@ -255,7 +255,11 @@ export function ProgramCard({
   );
 
   return (
-    <div ref={cardRef} className={cn("h-full", visual.glow)}>
+    <div
+      ref={cardRef}
+      className={cn("h-full", visual.glow)}
+      style={{ "--card-accent": visual.accentColor } as React.CSSProperties}
+    >
       {href ? (
         flipOnHover ? (
           <div className="tj-flip-card">
