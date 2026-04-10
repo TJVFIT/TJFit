@@ -1,28 +1,34 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 118" fill="none" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 118" fill="none" aria-hidden="true">
   <defs>
-    <filter id="tj-cyan-glow-full" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="2.2" result="b"/>
-      <feFlood flood-color="#22d3ee" flood-opacity="0.95" result="f"/>
-      <feComposite in="f" in2="b" operator="in" result="g"/>
-      <feGaussianBlur in="g" stdDeviation="1.2" result="g2"/>
+    <filter id="glow-full" x="-40%" y="-40%" width="180%" height="180%" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2.5" result="blur"/>
+      <feFlood flood-color="#22d3ee" flood-opacity="0.9" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feGaussianBlur in="glow" stdDeviation="1.5" result="glow2"/>
       <feMerge>
-        <feMergeNode in="g2"/>
+        <feMergeNode in="glow2"/>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
   </defs>
-  <g transform="translate(36,11) scale(1.4)" filter="url(#tj-cyan-glow-full)" fill="#ffffff">
-    <path d="M0 0h26v8H17.75V68H8.25V8H0V0z"/>
-    <path d="M30 0H52V8H43V58H28V68H52v-60H30V0z"/>
-  </g>
+  <!-- TJ monogram mark -->
+  <path
+    fill-rule="evenodd"
+    clip-rule="evenodd"
+    fill="#ffffff"
+    filter="url(#glow-full)"
+    d="M 5,0 L 95,0 L 95,58 L 50,86 L 5,58 Z
+       M 38,14 L 62,14 L 62,52 L 50,70 L 38,52 Z"
+  />
+  <!-- FIT wordmark -->
   <text
-    x="72"
-    y="114"
+    x="50"
+    y="112"
     text-anchor="middle"
     fill="#ffffff"
     font-family="system-ui, -apple-system, 'Segoe UI', sans-serif"
-    font-size="17"
+    font-size="16"
     font-weight="800"
-    letter-spacing="0.32em"
+    letter-spacing="0.3em"
   >FIT</text>
 </svg>

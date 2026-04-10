@@ -5,16 +5,14 @@ import Link from "next/link";
 
 import { cn } from "@/lib/utils";
 
-/** Official lockup raster (transparent PNG) — source artwork, unchanged. */
-const LOCKUP = {
-  src: "/logo/tjfit-brand.png",
-  width: 348,
-  height: 506
+const SRC = {
+  icon: "/logo/tj-icon.svg",
+  full: "/logo/tj-full.svg"
 } as const;
 
-const SRC = {
-  icon: LOCKUP.src,
-  full: LOCKUP.src
+const DIMS = {
+  icon: { width: 100, height: 92 },
+  full: { width: 144, height: 118 }
 } as const;
 
 export type LogoVariant = "icon" | "full";
@@ -46,9 +44,6 @@ export type LogoProps = {
   linked?: boolean;
 };
 
-/**
- * Site logo: official TJ FIT lockup PNG (`/public/logo/tjfit-brand.png`).
- */
 export function Logo({
   variant = "icon",
   size = "navbar",
@@ -62,15 +57,15 @@ export function Logo({
   linked = true
 }: LogoProps) {
   const src = SRC[variant];
+  const dims = DIMS[variant];
   const h = HEIGHT_PX[size];
-  const builtInGlow = src === LOCKUP.src;
 
   const img = (
     <Image
       src={src}
       alt={linked ? alt : ""}
-      width={LOCKUP.width}
-      height={LOCKUP.height}
+      width={dims.width}
+      height={dims.height}
       priority={priority}
       unoptimized
       draggable={false}
@@ -78,8 +73,7 @@ export function Logo({
       style={{
         height: h,
         width: "auto",
-        // Lockup already includes cyan glow in the artwork
-        ...(glow && !builtInGlow ? { filter: "drop-shadow(0 0 14px rgba(34, 211, 238, 0.35))" } : {})
+        ...(glow ? { filter: "drop-shadow(0 0 14px rgba(34, 211, 238, 0.45))" } : {})
       }}
       className={cn(
         "bg-transparent object-contain object-left [image-rendering:auto]",
