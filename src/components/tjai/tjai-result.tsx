@@ -234,7 +234,16 @@ export function TJAIResult({
   return (
     <section className="bg-[#09090B] px-4 py-10 text-white">
       <div className="mx-auto w-full max-w-5xl space-y-8">
-        <div ref={summaryRef} className={cn("reveal-up", inSummary && "is-in")}>
+
+        {/* Medical disclaimer */}
+        <div className="flex items-start gap-3 rounded-xl border border-amber-400/20 bg-amber-400/5 px-4 py-3">
+          <span className="mt-0.5 shrink-0 text-amber-400">⚠️</span>
+          <p className="text-xs text-amber-200/80">
+            Consult a physician before starting any new training or nutrition program. TJAI generates personalized guidance but is not a substitute for professional medical advice.
+          </p>
+        </div>
+
+        <div ref={summaryRef} className={cn("plan-result reveal-up", inSummary && "is-in")}>
           <p className="text-[11px] uppercase tracking-[0.2em] text-[#22D3EE]">{copy.result.eyebrow}</p>
           <h1 className="mt-3 text-3xl font-bold leading-tight sm:text-4xl">{mutablePlan.summary?.greeting}</h1>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-[#A1A1AA]">{mutablePlan.summary?.keyInsight}</p>
@@ -244,7 +253,7 @@ export function TJAIResult({
               <article
                 key={card.label}
                 className={cn(
-                  "rounded-xl border border-[#1E2028] bg-[#111215] p-5 reveal-up",
+                  "rounded-xl border border-[#1E2028] bg-[linear-gradient(135deg,#111215,#0D0F12)] p-5 reveal-up shadow-[0_2px_12px_rgba(0,0,0,0.3)]",
                   inSummary && "is-in",
                   i === 0 && "delay-75",
                   i === 1 && "delay-100",
