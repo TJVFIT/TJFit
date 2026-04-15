@@ -43,10 +43,14 @@ export async function POST(_request: NextRequest) {
   }
 
   const nextUsed = used + 1;
-  await adminClient
+  const { error: updateError } = await adminClient
     .from("tjai_trial_usage")
     .update({ messages_used: nextUsed })
     .eq("user_id", authResult.user.id);
+  if (updateError) {
+    console.error("trial-consume-message: update failed", updateError);
+    return NextResponse.json({ error: "Failed to record trial usage. Please try again." }, { status: 500 });
+  }
 
   return NextResponse.json({ ok: true, messagesUsed: nextUsed, messageLimit: 10 });
 }

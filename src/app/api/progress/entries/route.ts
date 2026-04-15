@@ -9,7 +9,7 @@ export async function GET() {
 
   const { data, error } = await auth.supabase
     .from("progress_entries")
-    .select("*")
+    .select("id,user_id,entry_date,weight_kg,body_fat_percent,waist_cm,chest_cm,hips_cm,notes,created_at")
     .eq("user_id", auth.user.id)
     .order("entry_date", { ascending: false })
     .limit(200);
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
   const { data, error } = await auth.supabase
     .from("progress_entries")
     .insert(payload)
-    .select("*")
+    .select("id,user_id,entry_date,weight_kg,body_fat_percent,waist_cm,chest_cm,hips_cm,notes,created_at")
     .single();
 
   if (error) {
@@ -60,4 +60,3 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json({ entry: data }, { status: 201 });
 }
-

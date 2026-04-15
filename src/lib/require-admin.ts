@@ -39,11 +39,18 @@ export async function requireAdmin(): Promise<RequireAdminResult> {
   if (user.email && isAdminEmail(user.email)) {
     isAdmin = true;
   } else {
-    const { data } = await supabase
+    const { data, error: profileError } = await supabase
       .from("profiles")
       .select("role")
       .eq("id", user.id)
       .single();
+    if (profileError) {
+      console.error("requireAdmin: profile fetch failed", profileError);
+      return {
+        ok: false,
+        response: NextResponse.json({ error: "Admin check failed. Please try again." }, { status: 500 })
+      };
+    }
     if (data?.role === "admin") isAdmin = true;
   }
 

@@ -13,26 +13,17 @@ export async function GET(request: NextRequest) {
 
   const { data: baseRows, error } = await admin
     .from("profiles")
-    .select("id,username,display_name,avatar_url,bio")
+    .select("id,username,display_name,avatar_url,bio,specialty_tags,accepting_clients")
     .eq("role", "coach")
     .order("id", { ascending: true })
     .limit(120);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  let specialtyRows: Array<{ id: string; specialty_tags?: string[] | null; accepting_clients?: boolean | null }> = [];
-  const extra = await admin.from("profiles").select("id,specialty_tags,accepting_clients").eq("role", "coach").limit(120);
-  if (!extra.error) {
-    specialtyRows = (extra.data ?? []) as Array<{ id: string; specialty_tags?: string[] | null; accepting_clients?: boolean | null }>;
-  }
-  const extrasById = new Map(specialtyRows.map((row) => [row.id, row]));
-  const rows = (baseRows ?? []).map((row) => {
-    const ex = extrasById.get(row.id);
-    return {
-      ...row,
-      specialty_tags: ex?.specialty_tags ?? [],
-      accepting_clients: ex?.accepting_clients ?? true,
-      current_streak: 0
-    };
-  });
+  const rows = (baseRows ?? []).map((row) => ({
+    ...row,
+    specialty_tags: row.specialty_tags ?? [],
+    accepting_clients: row.accepting_clients ?? true,
+    current_streak: 0
+  }));
 
   let filtered = rows;
   if (q) {
@@ -96,5 +87,8 @@ export async function GET(request: NextRequest) {
     };
   });
 
-  return NextResponse.json({ coaches });
+  const res = NextResponse.json({ coaches });
+  // Coaches list changes infrequently — cache for 5 min, serve stale for 10 min while revalidating
+  res.headers.set("Cache-Control", "public, s-maxage=300, stale-while-revalidate=600");
+  return res;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { Locale } from "@/lib/i18n";
 
@@ -73,11 +73,22 @@ const COPY: Record<Locale, { title: string; sub: string; disclaimer: string }> =
 
 export function HomeTestimonials({ locale }: { locale: Locale }) {
   const copy = COPY[locale] ?? COPY.en;
-  const carouselRef = useRef<HTMLDivElement>(null);
+  const [activeIdx, setActiveIdx] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const total = TESTIMONIALS.length;
 
-  const scroll = (dir: "left" | "right") => {
-    carouselRef.current?.scrollBy({ left: dir === "right" ? 316 : -316, behavior: "smooth" });
-  };
+  // ME20 — auto-scroll carousel
+  useEffect(() => {
+    if (paused) return;
+    const id = setInterval(() => {
+      setActiveIdx((i) => (i + 1) % total);
+    }, 3500);
+    return () => clearInterval(id);
+  }, [paused, total]);
+
+  const prev = () => setActiveIdx((i) => (i - 1 + total) % total);
+  const next = () => setActiveIdx((i) => (i + 1) % total);
 
   return (
     <section className="border-y border-[#1E2028] bg-[#09090B] px-6 py-16 lg:px-12 lg:py-24">
@@ -87,52 +98,81 @@ export function HomeTestimonials({ locale }: { locale: Locale }) {
             <h3 className="text-3xl font-extrabold text-white sm:text-4xl">{copy.title}</h3>
             <p className="mt-2 text-sm text-[#A1A1AA] sm:text-base">{copy.sub}</p>
           </div>
-          {/* Desktop arrow navigation */}
           <div className="hidden shrink-0 items-center gap-2 sm:flex">
-            <button
-              type="button"
-              onClick={() => scroll("left")}
-              aria-label="Previous testimonial"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-[#1E2028] bg-[#111215] text-zinc-400 transition hover:border-[rgba(34,211,238,0.3)] hover:text-[#22D3EE]"
-            >
+            <button type="button" onClick={prev} aria-label="Previous testimonial"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-[#1E2028] bg-[#111215] text-zinc-400 transition hover:border-[rgba(34,211,238,0.3)] hover:text-[#22D3EE]">
               <ChevronLeft className="h-5 w-5" />
             </button>
-            <button
-              type="button"
-              onClick={() => scroll("right")}
-              aria-label="Next testimonial"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-[#1E2028] bg-[#111215] text-zinc-400 transition hover:border-[rgba(34,211,238,0.3)] hover:text-[#22D3EE]"
-            >
+            <button type="button" onClick={next} aria-label="Next testimonial"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-[#1E2028] bg-[#111215] text-zinc-400 transition hover:border-[rgba(34,211,238,0.3)] hover:text-[#22D3EE]">
               <ChevronRight className="h-5 w-5" />
             </button>
           </div>
         </div>
 
-        {/* Carousel */}
+        {/* Auto-scrolling carousel track */}
         <div
-          ref={carouselRef}
-          className="testimonials-carousel mt-8 pb-2"
+          className="mt-8 overflow-hidden"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          style={{
+            maskImage: "linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)"
+          }}
         >
-          {TESTIMONIALS.map((item) => (
-            <article
-              key={item.name}
-              className="w-[300px] min-w-[300px] rounded-2xl border border-[#1E2028] bg-[#111215] p-6 sm:w-[340px] sm:min-w-[340px]"
-            >
-              <p className="text-[#FBBF24]">★★★★★</p>
-              <p className="mt-3 text-[15px] italic leading-[1.6] text-white">{item.quote}</p>
-              <div className="mt-5 flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#1E2028] bg-[#0D0F14] text-sm font-semibold text-[#22D3EE]">
-                  {item.name.slice(0, 1)}
+          <div
+            ref={trackRef}
+            className="flex gap-4 pb-2"
+            style={{
+              transform: `translateX(calc(-${activeIdx * (340 + 16)}px))`,
+              transition: "transform 500ms cubic-bezier(0.25,0.1,0.25,1)"
+            }}
+          >
+            {TESTIMONIALS.map((item, idx) => (
+              <article
+                key={item.name}
+                className="w-[300px] min-w-[300px] shrink-0 rounded-2xl border bg-[#111215] p-6 transition-[border-color,box-shadow] duration-300 sm:w-[340px] sm:min-w-[340px]"
+                style={{
+                  borderColor: idx === activeIdx ? "rgba(34,211,238,0.3)" : "#1E2028",
+                  boxShadow: idx === activeIdx ? "0 0 30px rgba(34,211,238,0.08)" : "none"
+                }}
+              >
+                <p className="text-[#FBBF24]">★★★★★</p>
+                <p className="mt-3 text-[15px] italic leading-[1.6] text-white">{item.quote}</p>
+                <div className="mt-5 flex items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#1E2028] bg-[#0D0F14] text-sm font-semibold text-[#22D3EE]">
+                    {item.name.slice(0, 1)}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-white">{item.name}</p>
+                    <p className="text-xs text-[#A1A1AA]">{item.tag}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-white">{item.name}</p>
-                  <p className="text-xs text-[#A1A1AA]">{item.tag}</p>
-                </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            ))}
+          </div>
         </div>
-        <p className="mt-6 text-xs text-[#52525B]">{copy.disclaimer}</p>
+
+        {/* Dot indicators */}
+        <div className="mt-6 flex items-center justify-between">
+          <p className="text-xs text-[#52525B]">{copy.disclaimer}</p>
+          <div className="flex gap-1.5">
+            {TESTIMONIALS.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setActiveIdx(idx)}
+                className="rounded-full transition-all duration-300"
+                style={{
+                  width: idx === activeIdx ? 20 : 6,
+                  height: 6,
+                  background: idx === activeIdx ? "#22D3EE" : "#1E2028"
+                }}
+                aria-label={`Go to testimonial ${idx + 1}`}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

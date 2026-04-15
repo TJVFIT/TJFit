@@ -4,30 +4,32 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Route change: opacity fade (150ms out, 300ms in). Content swaps on navigation; brief dim masks swap.
+ * Route change: opacity + Y-slide fade (150ms out, 300ms in).
  */
 export function PageTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const first = useRef(true);
-  const [visible, setVisible] = useState(true);
+  const [phase, setPhase] = useState<"in" | "out">("in");
 
   useEffect(() => {
     if (first.current) {
       first.current = false;
       return;
     }
-    setVisible(false);
-    const t = window.setTimeout(() => setVisible(true), 150);
+    setPhase("out");
+    const t = window.setTimeout(() => setPhase("in"), 160);
     return () => window.clearTimeout(t);
   }, [pathname]);
 
   return (
     <div
-      className={
-        visible
-          ? "transition-opacity duration-300 ease-out opacity-100"
-          : "transition-opacity duration-150 ease-out opacity-0"
-      }
+      style={{
+        opacity: phase === "in" ? 1 : 0,
+        transform: phase === "in" ? "translateY(0)" : "translateY(10px)",
+        transition: phase === "in"
+          ? "opacity 300ms cubic-bezier(0,0,0.2,1), transform 300ms cubic-bezier(0,0,0.2,1)"
+          : "opacity 150ms ease-out, transform 150ms ease-out"
+      }}
     >
       {children}
     </div>

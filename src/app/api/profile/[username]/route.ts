@@ -30,9 +30,7 @@ export async function GET(_request: NextRequest, { params }: { params: { usernam
   let viewerId: string | null = null;
   try {
     const browser = createServerSupabaseClient();
-    const {
-      data: { user }
-    } = await browser.auth.getUser();
+    const { data: { user } } = await browser.auth.getUser();
     viewerId = user?.id ?? null;
   } catch {
     viewerId = null;
@@ -49,7 +47,7 @@ export async function GET(_request: NextRequest, { params }: { params: { usernam
   const isSelf = viewerId === profile.id;
   const privacy = { ...DEFAULT_PRIVACY, ...(profile.privacy_settings as PrivacySettings | null) };
 
-  const [wallet, programOrders, blogPosts, followers, following, badges, activeProgress, recentBlogs, recentCommunity] =
+  const [wallet, programOrders, blogPosts, followers, following, badges, activeProgress, recentBlogsMerged] =
     await Promise.all([
       admin.from("tjfit_coin_wallets").select("balance").eq("user_id", profile.id).maybeSingle(),
       admin.from("program_orders").select("id", { head: true, count: "exact" }).eq("user_id", profile.id).eq("status", "paid"),
@@ -63,16 +61,10 @@ export async function GET(_request: NextRequest, { params }: { params: { usernam
         .eq("user_id", profile.id)
         .order("week_number", { ascending: false })
         .limit(24),
+      // Single query replaces two duplicate blog queries
       admin
         .from("community_blog_posts")
-        .select("id,title,created_at,views")
-        .eq("author_id", profile.id)
-        .eq("status", "published")
-        .order("created_at", { ascending: false })
-        .limit(3),
-      admin
-        .from("community_blog_posts")
-        .select("id,title,content,created_at")
+        .select("id,title,content,created_at,views")
         .eq("author_id", profile.id)
         .eq("status", "published")
         .order("created_at", { ascending: false })
@@ -102,6 +94,9 @@ export async function GET(_request: NextRequest, { params }: { params: { usernam
         .maybeSingle()
     : { data: null };
 
+  type BlogRow = { id: string; title: string; content: string; created_at: string; views: number };
+  const blogRows: BlogRow[] = recentBlogsMerged.data ?? [];
+
   return NextResponse.json({
     profile: {
       id: profile.id,
@@ -121,13 +116,13 @@ export async function GET(_request: NextRequest, { params }: { params: { usernam
     badges: badges.data ?? [],
     active_program:
       activeProgramSlug && (isSelf || privacy.show_programs)
-        ? {
-            program_slug: activeProgramSlug,
-            week: maxWeek,
-            completion_percent: completionPercent
-          }
+        ? { program_slug: activeProgramSlug, week: maxWeek, completion_percent: completionPercent }
         : null,
-    recent_blog_posts: isSelf || privacy.show_posts ? recentBlogs.data ?? [] : [],
-    recent_community_posts: isSelf || privacy.show_posts ? recentCommunity.data ?? [] : []
+    recent_blog_posts: isSelf || privacy.show_posts
+      ? blogRows.map((p) => ({ id: p.id, title: p.title, created_at: p.created_at, views: p.views }))
+      : [],
+    recent_community_posts: isSelf || privacy.show_posts
+      ? blogRows.map((p) => ({ id: p.id, title: p.title, content: p.content, created_at: p.created_at }))
+      : []
   });
 }

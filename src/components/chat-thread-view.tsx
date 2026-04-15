@@ -562,7 +562,11 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
                 <div
                   key={msg.id ?? `msg-${idx}-${msg.created_at ?? ""}`}
                   id={`msg-${msg.id}`}
-                  className={clsx("flex w-full", mine ? "justify-end" : "justify-start")}
+                  className={clsx(
+                    "flex w-full chat-bubble-enter",
+                    mine ? "justify-end" : "justify-start"
+                  )}
+                  style={{ animationDelay: `${Math.min(idx * 30, 300)}ms` }}
                 >
                   <div
                     className={clsx(
@@ -572,10 +576,10 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
                   >
                     <div
                       className={clsx(
-                        "w-full px-4 py-3 text-[15px] leading-snug text-white",
+                        "w-full px-4 py-3 text-[15px] leading-snug text-white transition-[box-shadow] duration-200",
                         mine
-                          ? "rounded-2xl rounded-br rounded-tl-2xl border border-[rgba(34,211,238,0.2)] bg-[rgba(34,211,238,0.12)]"
-                          : "rounded-2xl rounded-bl rounded-tr-2xl border border-[#1E2028] bg-[#111215]"
+                          ? "rounded-2xl rounded-br rounded-tl-2xl border border-[rgba(34,211,238,0.2)] bg-[rgba(34,211,238,0.12)] hover:shadow-[0_0_20px_rgba(34,211,238,0.1)]"
+                          : "rounded-2xl rounded-bl rounded-tr-2xl border border-[#1E2028] bg-[#111215] hover:border-white/10"
                       )}
                     >
                       {msg.plaintext === null

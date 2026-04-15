@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { ArrowRight, Lock } from "lucide-react";
 
 import { useCardInCenter } from "@/hooks/useCardInCenter";
@@ -11,7 +11,21 @@ import { getProgramTier, getProgramVisual } from "@/lib/program-card-visual";
 import { cn } from "@/lib/utils";
 
 const shellClass =
-  "group tj-card-premium-hover tj-card-aura relative flex h-full min-h-0 flex-col overflow-hidden rounded-[14px] border border-[#1E2028] bg-[#111215] shadow-[0_1px_3px_rgba(0,0,0,0.4),0_0_0_1px_#1E2028] motion-reduce:transition-none transition-[border-color,box-shadow] duration-200";
+  "group tj-card-premium-hover tj-card-aura relative flex h-full min-h-0 flex-col overflow-hidden rounded-[14px] border border-[#1E2028] bg-[#111215] shadow-[0_1px_3px_rgba(0,0,0,0.4),0_0_0_1px_#1E2028] motion-reduce:transition-none transition-[border-color,box-shadow,transform] duration-200";
+
+function useCardSpotlight() {
+  const [pos, setPos] = useState({ x: 50, y: 50, visible: false });
+  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setPos({
+      x: ((e.clientX - rect.left) / rect.width) * 100,
+      y: ((e.clientY - rect.top) / rect.height) * 100,
+      visible: true
+    });
+  };
+  const onLeave = () => setPos((p) => ({ ...p, visible: false }));
+  return { pos, onMove, onLeave };
+}
 
 const ctaPillClass = cn(
   "inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-[rgba(34,211,238,0.2)] bg-transparent px-4 py-3 text-xs font-semibold text-[#22D3EE] sm:w-auto sm:justify-start sm:py-2.5",
@@ -231,6 +245,18 @@ export function ProgramCard({
   const visual = getProgramVisual(program);
   const tier = tierLabel ?? getProgramTier(program);
   const priceLine = priceLabel ?? String(program.price);
+  const { pos, onMove, onLeave } = useCardSpotlight();
+
+  const spotlightOverlay = (
+    <div
+      className="pointer-events-none absolute inset-0 z-10 transition-opacity duration-300"
+      style={{
+        opacity: pos.visible ? 1 : 0,
+        background: `radial-gradient(200px circle at ${pos.x}% ${pos.y}%, rgba(34,211,238,0.07), transparent 70%)`
+      }}
+      aria-hidden
+    />
+  );
 
   const inner = (
     <PremiumProgramCardInner
@@ -259,6 +285,8 @@ export function ProgramCard({
       ref={cardRef}
       className={cn("h-full", visual.glow)}
       style={{ "--card-accent": visual.accentColor } as React.CSSProperties}
+      onMouseMove={onMove}
+      onMouseLeave={onLeave}
     >
       {href ? (
         flipOnHover ? (
@@ -271,6 +299,7 @@ export function ProgramCard({
                   "tj-flip-front focus:outline-none focus-visible:border-cyan-400/40 focus-visible:shadow-[0_0_20px_rgba(34,211,238,0.08)]"
                 )}
               >
+                {spotlightOverlay}
                 {inner}
               </Link>
               <div className="tj-flip-back flex flex-col rounded-[14px] border border-[#1E2028] bg-[#0A0B0F] p-5 text-center">

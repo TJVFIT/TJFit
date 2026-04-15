@@ -83,7 +83,9 @@ export async function POST(request: NextRequest) {
     const requiredAge = Number(effectiveAnswers.s1_age ?? effectiveAnswers.age ?? 0);
     const requiredWeight = Number(effectiveAnswers.s1_weight ?? effectiveAnswers.weight ?? 0);
     const requiredHeight = Number(effectiveAnswers.s1_height ?? effectiveAnswers.height ?? 0);
-    if (!requiredAge || !requiredWeight || !requiredHeight) {
+    if (!Number.isFinite(requiredAge) || requiredAge <= 0 ||
+        !Number.isFinite(requiredWeight) || requiredWeight <= 0 ||
+        !Number.isFinite(requiredHeight) || requiredHeight <= 0) {
       return NextResponse.json(
         { error: "Missing required fields: age, weight, height" },
         { status: 400 }
@@ -164,6 +166,7 @@ export async function POST(request: NextRequest) {
       .maybeSingle();
     if (saveError) {
       console.error("TJAI generate save error:", saveError);
+      return NextResponse.json({ error: "Plan generated but could not be saved. Please try again." }, { status: 500 });
     }
     console.log("TJAI plan generated successfully for user:", authResult.user.id);
 

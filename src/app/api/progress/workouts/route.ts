@@ -9,7 +9,7 @@ export async function GET() {
 
   const { data, error } = await auth.supabase
     .from("workout_logs")
-    .select("*")
+    .select("id,user_id,workout_date,exercise,sets,reps,weight_kg,duration_minutes,notes,created_at")
     .eq("user_id", auth.user.id)
     .order("workout_date", { ascending: false })
     .limit(300);
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
   const { data, error } = await auth.supabase
     .from("workout_logs")
     .insert(payload)
-    .select("*")
+    .select("id,user_id,workout_date,exercise,sets,reps,weight_kg,duration_minutes,notes,created_at")
     .single();
 
   if (error) {
@@ -64,4 +64,3 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json({ workout: data }, { status: 201 });
 }
-

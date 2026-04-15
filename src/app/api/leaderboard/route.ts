@@ -144,6 +144,9 @@ export async function GET(request: NextRequest) {
     // no-op for anonymous requests
   }
 
-  return NextResponse.json({ type, period, items, me });
-}
+  const res = NextResponse.json({ type, period, items, me })
 
+  // Leaderboard is the same for everyone — cache for 2 min, serve stale for 5 min
+  res.headers.set("Cache-Control", "public, s-maxage=120, stale-while-revalidate=300");
+  return res;
+}

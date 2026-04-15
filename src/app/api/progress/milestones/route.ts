@@ -9,7 +9,7 @@ export async function GET() {
 
   const { data, error } = await auth.supabase
     .from("progress_milestones")
-    .select("*")
+    .select("id,user_id,title,target_value,status,due_date,completed_at,created_at,updated_at")
     .eq("user_id", auth.user.id)
     .order("created_at", { ascending: false });
 
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       target_value: typeof body.target_value === "string" ? body.target_value.trim() : null,
       due_date: typeof body.due_date === "string" ? body.due_date : null
     })
-    .select("*")
+    .select("id,user_id,title,target_value,status,due_date,completed_at,created_at,updated_at")
     .single();
 
   if (error) {
@@ -84,7 +84,7 @@ export async function PATCH(request: NextRequest) {
     .update(patch)
     .eq("id", body.id)
     .eq("user_id", auth.user.id)
-    .select("*")
+    .select("id,user_id,title,target_value,status,due_date,completed_at,created_at,updated_at")
     .single();
 
   if (error) {
@@ -93,4 +93,3 @@ export async function PATCH(request: NextRequest) {
 
   return NextResponse.json({ milestone: data });
 }
-

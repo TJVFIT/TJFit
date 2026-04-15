@@ -12,13 +12,15 @@ import "./globals.css";
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin", "latin-ext"],
   display: "swap",
-  variable: "--font-sans"
+  variable: "--font-sans",
+  preload: true
 });
 
 const outfit = Outfit({
   subsets: ["latin", "latin-ext"],
   display: "swap",
-  variable: "--font-display"
+  variable: "--font-display",
+  preload: true
 });
 
 let siteUrl: string;
@@ -56,10 +58,7 @@ const defaultDescription =
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: {
-    default: defaultTitle,
-    template: "%s | TJFit"
-  },
+  title: { default: defaultTitle, template: "%s | TJFit" },
   description: defaultDescription,
   applicationName: "TJFit",
   themeColor: "#09090B",
@@ -72,14 +71,8 @@ export const metadata: Metadata = {
       { rel: "icon", url: "/icons/icon-512.png", type: "image/png", sizes: "512x512" }
     ]
   },
-  appleWebApp: {
-    capable: true,
-    title: "TJFit",
-    statusBarStyle: "black-translucent"
-  },
-  ...(googleVerification
-    ? { verification: { google: googleVerification } }
-    : {}),
+  appleWebApp: { capable: true, title: "TJFit", statusBarStyle: "black-translucent" },
+  ...(googleVerification ? { verification: { google: googleVerification } } : {}),
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -87,14 +80,7 @@ export const metadata: Metadata = {
     siteName: "TJFit",
     title: defaultTitle,
     description: defaultDescription,
-    images: [
-      {
-        url: BRAND.ogDefault,
-        width: 1200,
-        height: 630,
-        alt: defaultTitle
-      }
-    ]
+    images: [{ url: BRAND.ogDefault, width: 1200, height: 630, alt: defaultTitle }]
   },
   twitter: {
     card: "summary_large_image",
@@ -102,10 +88,7 @@ export const metadata: Metadata = {
     description: defaultDescription,
     images: [BRAND.ogDefault]
   },
-  robots: {
-    index: true,
-    follow: true
-  }
+  robots: { index: true, follow: true }
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

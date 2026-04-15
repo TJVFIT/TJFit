@@ -33,6 +33,55 @@ function formatDashboardDate(locale: Locale) {
   }).format(new Date());
 }
 
+// M7 — Text scramble hook
+function useTextScramble(target: string, active: boolean) {
+  const [display, setDisplay] = useState("");
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  useEffect(() => {
+    if (!active || !target) return;
+    let frame = 0;
+    const totalFrames = 20;
+    let raf = 0;
+    const tick = () => {
+      frame++;
+      const progress = frame / totalFrames;
+      const revealed = Math.floor(progress * target.length);
+      let result = target.slice(0, revealed);
+      for (let i = revealed; i < target.length; i++) {
+        result += target[i] === " " ? " " : chars[Math.floor(Math.random() * chars.length)];
+      }
+      setDisplay(result);
+      if (frame < totalFrames) raf = requestAnimationFrame(tick);
+      else setDisplay(target);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, active]);
+  return display || target;
+}
+
+// ME6 — Count-up hook
+function useCountUp(target: number, duration = 1200, active = true) {
+  const [value, setValue] = useState(0);
+  const ran = useRef(false);
+  useEffect(() => {
+    if (!active || ran.current) return;
+    ran.current = true;
+    const start = performance.now();
+    let raf = 0;
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setValue(Math.round(eased * target));
+      if (t < 1) raf = requestAnimationFrame(tick);
+      else setValue(target);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, duration, active]);
+  return value;
+}
+
 type Summary = {
   latestPaidProgramSlug: string | null;
   paidOrderCount: number;
@@ -57,6 +106,25 @@ function DashboardSkeleton() {
           <div key={i} className="tj-skeleton tj-shimmer h-20 rounded-xl" />
         ))}
       </div>
+    </div>
+  );
+}
+
+// M7 — Animated stat card with flip-in + count-up
+function StatCard({ value, label, delay, active }: { value: number; label: string; delay: number; active: boolean }) {
+  const count = useCountUp(value, 1200, active);
+  return (
+    <div
+      className="rounded-[14px] border border-[#1E2028] bg-[#111215] p-6 text-center transition-[border-color,box-shadow,opacity,transform] duration-500 ease-out [@media(hover:hover)]:hover:border-[rgba(34,211,238,0.2)] [@media(hover:hover)]:hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)]"
+      style={{
+        transitionDelay: `${delay}ms`,
+        opacity: active ? 1 : 0,
+        transform: active ? "rotateY(0deg)" : "rotateY(-90deg)",
+        perspective: "800px"
+      }}
+    >
+      <p className="font-display text-[40px] font-extrabold leading-none text-[#22D3EE]">{count}</p>
+      <p className="mt-2 text-[13px] font-medium uppercase tracking-widest text-[#52525B]">{label}</p>
     </div>
   );
 }
@@ -99,11 +167,11 @@ function QuickLogWidget({ locale }: { locale: Locale }) {
   const placeholder = locale === "tr" ? "Egzersiz adı" : locale === "ar" ? "اسم التمرين" : locale === "es" ? "Ejercicio" : locale === "fr" ? "Exercice" : "Exercise name";
 
   return (
-    <section className="rounded-2xl border border-[#1E2028] bg-[#111215]">
+    <section className="rounded-2xl border border-[#1E2028] bg-[#111215] transition-[border-color] duration-200 hover:border-white/[0.08]">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between px-6 py-4 text-left transition-colors hover:bg-white/[0.02]"
+        className="flex w-full items-center justify-between px-6 py-4 text-left"
       >
         <div className="flex items-center gap-2.5">
           <Dumbbell className="h-4 w-4 text-[#22D3EE]" strokeWidth={2} />
@@ -112,7 +180,10 @@ function QuickLogWidget({ locale }: { locale: Locale }) {
         <Plus className={cn("h-4 w-4 text-zinc-500 transition-transform duration-200", open && "rotate-45")} />
       </button>
 
-      {open && (
+      <div
+        className="overflow-hidden transition-all duration-300 ease-out"
+        style={{ maxHeight: open ? "300px" : "0px" }}
+      >
         <div className="border-t border-[#1E2028] px-6 pb-5 pt-4">
           {saved ? (
             <div className="flex items-center gap-2 rounded-xl border border-green-500/25 bg-[#0D1F17] px-4 py-3 text-sm font-medium text-green-400">
@@ -125,7 +196,7 @@ function QuickLogWidget({ locale }: { locale: Locale }) {
                 placeholder={placeholder}
                 value={exercise}
                 onChange={(e) => setExercise(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && submit()}
+                onKeyDown={(e) => e.key === "Enter" && void submit()}
               />
               <div className="grid grid-cols-3 gap-2">
                 <input className="input text-sm" placeholder="Sets" type="number" min="1" value={sets} onChange={(e) => setSets(e.target.value)} />
@@ -135,7 +206,7 @@ function QuickLogWidget({ locale }: { locale: Locale }) {
               <div className="flex items-center gap-3">
                 <button
                   type="button"
-                  onClick={submit}
+                  onClick={() => void submit()}
                   disabled={saving || !exercise.trim()}
                   className="inline-flex min-h-[38px] items-center justify-center rounded-full bg-[#22D3EE] px-5 text-sm font-bold text-black transition-opacity disabled:opacity-50"
                 >
@@ -148,7 +219,7 @@ function QuickLogWidget({ locale }: { locale: Locale }) {
             </div>
           )}
         </div>
-      )}
+      </div>
     </section>
   );
 }
@@ -162,6 +233,7 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
   const [hour, setHour] = useState<number | null>(null);
   const [headerOn, setHeaderOn] = useState(false);
   const [progressOn, setProgressOn] = useState(false);
+  const [statsActive, setStatsActive] = useState(false);
 
   useEffect(() => {
     setHour(new Date().getHours());
@@ -175,8 +247,7 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
   useEffect(() => {
     if (!summary) return;
     const paid = Boolean(summary.latestPaidProgramSlug);
-    const brandNew =
-      !paid && summary.progressEntryCount === 0 && summary.milestoneCount === 0;
+    const brandNew = !paid && summary.progressEntryCount === 0 && summary.milestoneCount === 0;
     if (brandNew || !paid) {
       setProgressOn(false);
       return;
@@ -204,6 +275,8 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
         recentEntryDates: Array.isArray(data.recentEntryDates) ? data.recentEntryDates.filter((x: unknown) => typeof x === "string") : [],
         currentStreak: Number(data.currentStreak ?? 0)
       });
+      // Trigger stat card animation after data loads
+      window.setTimeout(() => setStatsActive(true), 200);
     } catch {
       setLoadError(t.loadError);
       setSummary(null);
@@ -245,10 +318,13 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
     : null;
   const programTitle = staticProgram ? localizeProgram(staticProgram, locale).title : summary.latestPaidProgramSlug;
 
-  const displayName =
+  const rawName =
     (user?.user_metadata?.full_name as string | undefined)?.trim() ||
     user?.email?.split("@")[0]?.trim() ||
     "Athlete";
+
+  // M7 — scramble display name on load
+  const displayName = useTextScramble(rawName, headerOn);
 
   const progressPct = Math.min(
     100,
@@ -276,7 +352,7 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
             {/* F3 — Streak counter */}
             {summary.currentStreak > 0 && (
               <div className="flex items-center gap-2 rounded-full border border-orange-500/30 bg-orange-500/10 px-4 py-1.5">
-                <Flame className="h-4 w-4 text-orange-400" />
+                <Flame className="flame-flicker h-4 w-4 text-orange-400" />
                 <span className="text-sm font-bold text-orange-300">{summary.currentStreak} day streak</span>
               </div>
             )}
@@ -365,24 +441,13 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
         </section>
       ) : null}
 
+      {/* M7 — Stat cards with flip-in + count-up */}
       {!isBrandNew ? (
-        <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {(
-            [
-              [summary.paidOrderCount, t.statsPrograms],
-              [summary.progressEntryCount, t.statsEntries],
-              [summary.milestoneCount, t.statsMilestones],
-              [summary.currentStreak, "Day streak"]
-            ] as const
-          ).map(([value, label]) => (
-            <div
-              key={label}
-              className="rounded-[14px] border border-[#1E2028] bg-[#111215] p-6 text-center transition-[border-color,box-shadow] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] [@media(hover:hover)]:hover:border-[rgba(34,211,238,0.2)] [@media(hover:hover)]:hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)]"
-            >
-              <p className="font-display text-[40px] font-extrabold leading-none text-[#22D3EE]">{value}</p>
-              <p className="mt-2 text-[13px] font-medium uppercase tracking-widest text-[#52525B]">{label}</p>
-            </div>
-          ))}
+        <section className="grid grid-cols-2 gap-4 lg:grid-cols-4" style={{ perspective: "800px" }}>
+          <StatCard value={summary.paidOrderCount} label={t.statsPrograms} delay={0} active={statsActive} />
+          <StatCard value={summary.progressEntryCount} label={t.statsEntries} delay={80} active={statsActive} />
+          <StatCard value={summary.milestoneCount} label={t.statsMilestones} delay={160} active={statsActive} />
+          <StatCard value={summary.currentStreak} label="Day streak" delay={240} active={statsActive} />
         </section>
       ) : null}
     </div>

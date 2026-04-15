@@ -3,6 +3,7 @@
 import { ReactNode, useEffect, useState } from "react";
 
 import { CursorTrail } from "@/components/cursor-trail";
+import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { DelayedEarlyAccessPopup } from "@/components/delayed-early-access-popup";
 import { GuestOnboardingPopup } from "@/components/guest-onboarding-popup";
 import { LogoIntro } from "@/components/logo-intro";
@@ -18,6 +19,7 @@ import { PendingNotificationPoller } from "@/components/pending-notification-pol
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { useScrollVelocity } from "@/hooks/useScrollVelocity";
 import { Locale, getDirection } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 
 export function SiteShell({
   locale,
@@ -72,10 +74,11 @@ export function SiteShell({
             </main>
           </MainErrorBoundary>
 
-          <div className={desktopOffsetClass}>
+          <div className={cn(desktopOffsetClass, "pb-16 lg:pb-0")}>
             <ShellFooterGate locale={locale} />
           </div>
         </div>
+        <MobileBottomNav locale={locale} />
       </div>
     </DynamicIslandProvider>
   );

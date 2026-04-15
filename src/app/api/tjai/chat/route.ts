@@ -145,10 +145,13 @@ export async function POST(request: NextRequest) {
     if (!isLikelyFitnessQuestion(message)) {
       const guarded = DOMAIN_GUARD;
       const persistedId = conversationId || crypto.randomUUID();
-      await auth.supabase.from("tjai_chat_messages").insert([
+      const { error: domainInsertError } = await auth.supabase.from("tjai_chat_messages").insert([
         { user_id: auth.user.id, conversation_id: persistedId, role: "user", content: message },
         { user_id: auth.user.id, conversation_id: persistedId, role: "assistant", content: guarded }
       ]);
+      if (domainInsertError) {
+        console.error("TJAI chat: failed to save domain-guard messages", domainInsertError);
+      }
       return NextResponse.json({ message: guarded, conversationId: persistedId });
     }
 
@@ -156,10 +159,13 @@ export async function POST(request: NextRequest) {
     if (!apiKey) {
       console.error("TJAI chat error: ANTHROPIC_API_KEY is not set");
       const fallback = fallbackCoachReply(message, locale);
-      await auth.supabase.from("tjai_chat_messages").insert([
+      const { error: fallbackInsertError } = await auth.supabase.from("tjai_chat_messages").insert([
         { user_id: auth.user.id, conversation_id: conversationId, role: "user", content: message },
         { user_id: auth.user.id, conversation_id: conversationId, role: "assistant", content: fallback }
       ]);
+      if (fallbackInsertError) {
+        console.error("TJAI chat: failed to save fallback messages", fallbackInsertError);
+      }
       return NextResponse.json({ message: fallback, conversationId });
     }
 
@@ -173,10 +179,10 @@ export async function POST(request: NextRequest) {
         .maybeSingle(),
       auth.supabase
         .from("tjai_chat_messages")
-        .select("role,content")
+        .select("role,content,created_at")
         .eq("user_id", auth.user.id)
         .eq("conversation_id", conversationId)
-        .order("created_at", { ascending: true })
+        .order("created_at", { ascending: false })
         .limit(20),
       auth.supabase
         .from("user_chat_preferences")
@@ -184,7 +190,8 @@ export async function POST(request: NextRequest) {
         .eq("user_id", auth.user.id)
     ]);
 
-    const history: HistoryRow[] = (historyRows ?? []).flatMap((row) => {
+    // Rows fetched newest-first (limit 20), reverse to oldest-first for prompt order
+    const history: HistoryRow[] = (historyRows ?? []).reverse().flatMap((row) => {
       if ((row.role === "user" || row.role === "assistant") && typeof row.content === "string") {
         return [{ role: row.role, content: row.content }];
       }
@@ -229,23 +236,26 @@ RULES:
 - Keep responses concise but complete (150-300 words unless user asks for depth).
 - Use bullet points for lists and numbered steps for action plans.`;
 
-    try {
-      const preference = await extractPreference(apiKey, message);
-      if (preference.key && preference.value) {
-        const { error: prefError } = await auth.supabase.from("user_chat_preferences").upsert({
-          user_id: auth.user.id,
-          preference_key: preference.key,
-          preference_value: preference.value,
-          source: "chat",
-          updated_at: new Date().toISOString()
-        });
-        if (prefError) {
-          console.error("TJAI chat preference save error:", prefError);
+    // Fire-and-forget: extract and save user preferences in background — don't block main response
+    void (async () => {
+      try {
+        const preference = await extractPreference(apiKey, message);
+        if (preference.key && preference.value) {
+          const { error: prefError } = await auth.supabase.from("user_chat_preferences").upsert({
+            user_id: auth.user.id,
+            preference_key: preference.key,
+            preference_value: preference.value,
+            source: "chat",
+            updated_at: new Date().toISOString()
+          });
+          if (prefError) {
+            console.error("TJAI chat preference save error:", prefError);
+          }
         }
+      } catch (prefExtractError) {
+        console.error("TJAI chat preference extract error:", prefExtractError);
       }
-    } catch (prefExtractError) {
-      console.error("TJAI chat preference extract error:", prefExtractError);
-    }
+    })();
 
     const upstream = await fetchWithTimeout("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -311,4 +321,3 @@ RULES:
     });
   }
 }
-

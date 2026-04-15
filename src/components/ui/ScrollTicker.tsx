@@ -31,6 +31,10 @@ export function ScrollTicker({
         "w-full overflow-hidden motion-reduce:[animation-play-state:paused]",
         className
       )}
+      style={{
+        maskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+        WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)"
+      }}
     >
       <div
         className={cn(

@@ -755,6 +755,116 @@ body {
   inherits: false;
 }
 
+@property --apex-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes apex-spin {
+  to { --apex-angle: 360deg; }
+}
+
+.apex-card {
+  --apex-angle: 0deg;
+  animation: apex-spin 4s linear infinite;
+}
+
+@keyframes crown-glow-pulse {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(245,158,11,0.5)); }
+  50% { filter: drop-shadow(0 0 14px rgba(245,158,11,0.9)); }
+}
+
+.crown-glow-gold {
+  animation: crown-glow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes chat-bubble-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.chat-bubble-enter {
+  animation: chat-bubble-in 280ms cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+
+@keyframes thinking-bounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+  40% { transform: translateY(-6px); opacity: 1; }
+}
+
+.thinking-dot {
+  animation: thinking-bounce 1.2s ease-in-out infinite;
+}
+
+/* ME18 — TJAI badge pulse */
+@keyframes tjai-badge-pulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(34,211,238,0.4); }
+  50% { box-shadow: 0 0 12px rgba(34,211,238,0.6); }
+}
+
+.tjai-pulse-badge {
+  animation: tjai-badge-pulse 3s ease-in-out infinite;
+}
+
+/* MI11 — Logo breathe glow */
+@keyframes logo-breathe {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(34,211,238,0.15)); }
+  50% { filter: drop-shadow(0 0 14px rgba(34,211,238,0.45)); }
+}
+
+.logo-breathe {
+  animation: logo-breathe 4s ease-in-out infinite;
+}
+
+/* MI12 — Badge hover glow */
+.badge:hover, .lux-badge:hover {
+  box-shadow: 0 0 16px rgba(34,211,238,0.2);
+  transition: box-shadow 200ms ease;
+}
+
+/* M8 — PR card gold shimmer */
+@keyframes pr-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.pr-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(245,158,11,0.15) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: pr-shimmer 2.5s ease-in-out infinite;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* ME10 — Workout entry slide-in */
+@keyframes workout-slide-in {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* MI4 — flame flicker */
+@keyframes flame-flicker {
+  0%, 100% { transform: scale(1) rotate(-1deg); opacity: 0.9; }
+  33% { transform: scale(1.08) rotate(1deg); opacity: 1; }
+  66% { transform: scale(0.95) rotate(-0.5deg); opacity: 0.85; }
+}
+
+.flame-flicker {
+  animation: flame-flicker 1.8s ease-in-out infinite;
+}
+
+/* MI10 — Glassmorphic tooltips */
+.tj-collapsed-sidebar-tip {
+  backdrop-filter: blur(12px) !important;
+  background: rgba(13,14,18,0.92) !important;
+  border: 1px solid rgba(34,211,238,0.2) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,0,0,0.3) inset !important;
+}
+
 .tj-card-aura {
   position: relative;
   isolation: isolate;
@@ -1255,7 +1365,11 @@ html {
 }
 
 .spotlight {
-  background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(34, 211, 238, 0.04) 0%, transparent 50%);
+  background: radial-gradient(900px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(34, 211, 238, 0.065) 0%, rgba(167, 139, 250, 0.02) 40%, transparent 70%);
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .word-visible {
@@ -1608,3 +1722,80 @@ textarea:focus-visible {
     transition: none !important;
   }
 }
+
+
+/* -------------------------------------------
+   MICRO-POLISH � Batch 13
+------------------------------------------- */
+
+/* MI2 - Spinning arc button loading state */
+@keyframes btn-spin {
+  to { transform: rotate(360deg); }
+}
+.btn-loading {
+  position: relative;
+  color: transparent !important;
+}
+.btn-loading::after {
+  content: '';
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 16px; height: 16px;
+  margin: -8px 0 0 -8px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  animation: btn-spin 0.7s linear infinite;
+}
+
+/* MI6 - Difficulty dot sequential fill on hover */
+.difficulty-dots span { transition: background-color 200ms ease; }
+.difficulty-dots:hover span:nth-child(1) { transition-delay: 0ms; background-color: #22D3EE; }
+.difficulty-dots:hover span:nth-child(2) { transition-delay: 60ms; background-color: #22D3EE; }
+.difficulty-dots:hover span:nth-child(3) { transition-delay: 120ms; background-color: #22D3EE; }
+.difficulty-dots:hover span:nth-child(4) { transition-delay: 180ms; background-color: #22D3EE; }
+.difficulty-dots:hover span:nth-child(5) { transition-delay: 240ms; background-color: #22D3EE; }
+
+/* MI7 - Animated underline slide-in for text links */
+.tj-link-underline {
+  background-image: linear-gradient(#22D3EE, #22D3EE);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size 220ms ease;
+}
+.tj-link-underline:hover { background-size: 100% 1px; }
+
+/* MI8 - Coin balance flash gold on change */
+@keyframes coin-flash {
+  0% { color: inherit; }
+  30% { color: #F59E0B; }
+  60% { color: #FBBF24; }
+  100% { color: #22D3EE; }
+}
+.coin-flash { animation: coin-flash 600ms ease forwards; }
+
+/* MI19 - Notification bell ring */
+@keyframes bell-ring {
+  0%, 100% { transform: rotate(0deg); }
+  10% { transform: rotate(-12deg); }
+  30% { transform: rotate(12deg); }
+  50% { transform: rotate(-8deg); }
+  70% { transform: rotate(6deg); }
+  90% { transform: rotate(-3deg); }
+}
+.bell-ring { animation: bell-ring 1s ease-out; transform-origin: top center; }
+
+/* MI9 - Animated empty state icon */
+@keyframes dumbbell-pulse {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.4; }
+  50% { transform: translateY(-4px) scale(1.05); opacity: 0.7; }
+}
+.empty-state-icon { animation: dumbbell-pulse 2s ease-in-out infinite; }
+
+/* ME11 - Custom thin scrollbar */
+.tj-scrollbar { scrollbar-width: thin; scrollbar-color: rgba(34,211,238,0.2) transparent; }
+.tj-scrollbar::-webkit-scrollbar { width: 3px; }
+.tj-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.tj-scrollbar::-webkit-scrollbar-thumb { background: rgba(34,211,238,0.2); border-radius: 9999px; }
+.tj-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(34,211,238,0.4); }

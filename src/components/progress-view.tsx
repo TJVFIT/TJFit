@@ -8,9 +8,13 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  CartesianGrid
+  CartesianGrid,
+  Area,
+  AreaChart,
+  type TooltipProps
 } from "recharts";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Scale, Dumbbell, Flag } from "lucide-react";
+import confetti from "canvas-confetti";
 import type { Locale } from "@/lib/i18n";
 import { getProgressCopy } from "@/lib/feature-copy";
 
@@ -44,6 +48,24 @@ type Milestone = {
 
 type ToastMsg = { id: number; text: string };
 
+// MI4 — relative time formatter
+function relativeDate(dateStr: string): string {
+  try {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    if (diffDays === 0) return "Today";
+    if (diffDays === 1) return "Yesterday";
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 14) return "Last week";
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+    return dateStr.slice(5);
+  } catch {
+    return dateStr;
+  }
+}
+
 function Toast({ messages }: { messages: ToastMsg[] }) {
   if (messages.length === 0) return null;
   return (
@@ -52,6 +74,7 @@ function Toast({ messages }: { messages: ToastMsg[] }) {
         <div
           key={m.id}
           className="flex items-center gap-2 rounded-xl border border-green-500/30 bg-[#0D1F17] px-4 py-3 text-sm font-medium text-green-400 shadow-lg"
+          style={{ animation: "chat-bubble-in 280ms cubic-bezier(0.34,1.56,0.64,1) forwards" }}
         >
           <CheckCircle2 className="h-4 w-4 shrink-0" />
           {m.text}
@@ -71,17 +94,34 @@ function groupByDate(workouts: Workout[]): [string, Workout[]][] {
   return Array.from(map.entries());
 }
 
-const chartTooltipStyle = {
-  backgroundColor: "#111215",
-  border: "1px solid rgba(255,255,255,0.08)",
-  borderRadius: 10,
-  color: "#fff",
-  fontSize: 12
-};
+// ME19 — Custom Recharts tooltip showing both metrics
+function ChartTooltip({ active, payload, label }: TooltipProps<number, string>) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div
+      style={{
+        background: "rgba(13,14,18,0.95)",
+        border: "1px solid rgba(34,211,238,0.3)",
+        borderRadius: 12,
+        padding: "10px 14px",
+        boxShadow: "0 0 20px rgba(34,211,238,0.12), 0 8px 32px rgba(0,0,0,0.5)",
+        fontSize: 12
+      }}
+    >
+      <p style={{ color: "#52525B", marginBottom: 6, fontSize: 11 }}>{label}</p>
+      {payload.map((p) => (
+        <p key={p.name} style={{ color: p.color, margin: "2px 0" }}>
+          {p.name === "weight" ? "Weight" : "Body Fat"}: <strong>{p.value}{p.name === "weight" ? " kg" : "%"}</strong>
+        </p>
+      ))}
+    </div>
+  );
+}
 
 export function ProgressView({ locale }: { locale: Locale }) {
   const t = getProgressCopy(locale);
   const toastId = useRef(0);
+  const newEntryIds = useRef(new Set<string>());
 
   const [entries, setEntries] = useState<ProgressEntry[]>([]);
   const [workouts, setWorkouts] = useState<Workout[]>([]);
@@ -146,7 +186,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
 
   const addWorkout = async () => {
     if (!exercise.trim()) return;
-    await fetch("/api/progress/workouts", {
+    const res = await fetch("/api/progress/workouts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -158,9 +198,13 @@ export function ProgressView({ locale }: { locale: Locale }) {
         duration_minutes: duration ? Number(duration) : null
       })
     });
+    const data = await res.json();
+    if (data.workout?.id) newEntryIds.current.add(data.workout.id);
     setExercise(""); setSets(""); setReps(""); setWorkoutWeight(""); setDuration("");
     showToast("Workout logged ✓");
     await load();
+    // Clear new entry IDs after animation
+    setTimeout(() => newEntryIds.current.clear(), 600);
   };
 
   const addMilestone = async () => {
@@ -186,11 +230,18 @@ export function ProgressView({ locale }: { locale: Locale }) {
       credentials: "include",
       body: JSON.stringify({ id, status: "completed" })
     });
+    // ME5 — confetti burst
+    confetti({
+      particleCount: 70,
+      spread: 80,
+      origin: { y: 0.6 },
+      colors: ["#22D3EE", "#A78BFA", "#F59E0B", "#22C55E"]
+    });
     showToast("Milestone completed 🎉");
     await load();
   };
 
-  // Chart data — chronological order
+  // Chart data — chronological order, last 20 points
   const chartData = [...entries]
     .reverse()
     .slice(-20)
@@ -201,6 +252,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
     }));
 
   const groupedWorkouts = groupByDate(workouts);
+  const showCharts = chartData.length >= 2;
 
   return (
     <div className="mx-auto max-w-7xl space-y-10 px-4 py-16 sm:px-6 lg:px-8">
@@ -212,40 +264,77 @@ export function ProgressView({ locale }: { locale: Locale }) {
         <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-400">{t.subtitle}</p>
       </div>
 
-      {/* U1 — Trend charts */}
-      {chartData.length >= 2 && (
+      {/* ME1 — Recharts gradient area charts with animated draw-on */}
+      {showCharts && (
         <div className="grid gap-4 lg:grid-cols-2">
           <div className="glass-panel rounded-[28px] p-6">
             <p className="mb-4 text-sm font-semibold text-white">Weight trend (kg)</p>
             <ResponsiveContainer width="100%" height={180}>
-              <LineChart data={chartData}>
+              <AreaChart data={chartData}>
+                <defs>
+                  <linearGradient id="weightGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#22D3EE" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#22D3EE" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
                 <CartesianGrid stroke="rgba(255,255,255,0.05)" strokeDasharray="3 3" />
                 <XAxis dataKey="date" tick={{ fill: "#52525B", fontSize: 11 }} />
-                <YAxis tick={{ fill: "#52525B", fontSize: 11 }} domain={["auto", "auto"]} />
-                <Tooltip contentStyle={chartTooltipStyle} />
-                <Line type="monotone" dataKey="weight" stroke="#22D3EE" strokeWidth={2} dot={{ r: 3, fill: "#22D3EE" }} connectNulls />
-              </LineChart>
+                <YAxis tick={{ fill: "#52525B", fontSize: 11 }} domain={["auto", "auto"]} tickFormatter={(v) => `${v}kg`} />
+                <Tooltip content={<ChartTooltip />} />
+                <Area
+                  type="monotone"
+                  dataKey="weight"
+                  stroke="#22D3EE"
+                  strokeWidth={2}
+                  fill="url(#weightGrad)"
+                  dot={{ r: 3, fill: "#22D3EE" }}
+                  connectNulls
+                  isAnimationActive
+                  animationDuration={1200}
+                  animationEasing="ease-in-out"
+                />
+              </AreaChart>
             </ResponsiveContainer>
           </div>
           <div className="glass-panel rounded-[28px] p-6">
             <p className="mb-4 text-sm font-semibold text-white">Body fat trend (%)</p>
             <ResponsiveContainer width="100%" height={180}>
-              <LineChart data={chartData}>
+              <AreaChart data={chartData}>
+                <defs>
+                  <linearGradient id="fatGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#A78BFA" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#A78BFA" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
                 <CartesianGrid stroke="rgba(255,255,255,0.05)" strokeDasharray="3 3" />
                 <XAxis dataKey="date" tick={{ fill: "#52525B", fontSize: 11 }} />
-                <YAxis tick={{ fill: "#52525B", fontSize: 11 }} domain={["auto", "auto"]} />
-                <Tooltip contentStyle={chartTooltipStyle} />
-                <Line type="monotone" dataKey="fat" stroke="#A78BFA" strokeWidth={2} dot={{ r: 3, fill: "#A78BFA" }} connectNulls />
-              </LineChart>
+                <YAxis tick={{ fill: "#52525B", fontSize: 11 }} domain={["auto", "auto"]} tickFormatter={(v) => `${v}%`} />
+                <Tooltip content={<ChartTooltip />} />
+                <Area
+                  type="monotone"
+                  dataKey="fat"
+                  stroke="#A78BFA"
+                  strokeWidth={2}
+                  fill="url(#fatGrad)"
+                  dot={{ r: 3, fill: "#A78BFA" }}
+                  connectNulls
+                  isAnimationActive
+                  animationDuration={1200}
+                  animationEasing="ease-in-out"
+                />
+              </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
       )}
 
       <div className="grid gap-6 lg:grid-cols-3">
-        {/* U2+U3 — Body metrics form with measurements */}
+        {/* Body metrics — MI13 section icon */}
         <section className="glass-panel rounded-[28px] p-6">
-          <p className="text-lg font-semibold text-white">{t.metrics}</p>
+          <div className="flex items-center gap-2">
+            <Scale className="h-4 w-4 text-[#22D3EE]" />
+            <p className="text-lg font-semibold text-white">{t.metrics}</p>
+          </div>
           <div className="mt-4 grid gap-3">
             <div className="grid grid-cols-2 gap-3">
               <input className="input" placeholder={t.weightPlaceholder} value={weight} onChange={(e) => setWeight(e.target.value)} type="number" step="0.1" min="0" />
@@ -268,7 +357,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
               entries.slice(0, 6).map((entry) => (
                 <div key={entry.id} className="rounded-xl border border-white/10 p-3 text-xs text-zinc-300">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium text-zinc-100">{entry.entry_date}</span>
+                    <span className="font-medium text-zinc-400">{relativeDate(entry.entry_date)}</span>
                     <span className="text-[#22D3EE]">{entry.weight_kg ?? "–"} kg · {entry.body_fat_percent ?? "–"}%</span>
                   </div>
                   {(entry.waist_cm || entry.chest_cm || entry.hips_cm) && (
@@ -284,9 +373,12 @@ export function ProgressView({ locale }: { locale: Locale }) {
           </div>
         </section>
 
-        {/* U2 — Workout form with full fields + F4 grouped by date */}
+        {/* Workouts — MI13 section icon + F4 grouped + ME10 slide-in */}
         <section className="glass-panel rounded-[28px] p-6">
-          <p className="text-lg font-semibold text-white">{t.workouts}</p>
+          <div className="flex items-center gap-2">
+            <Dumbbell className="h-4 w-4 text-[#22D3EE]" />
+            <p className="text-lg font-semibold text-white">{t.workouts}</p>
+          </div>
           <div className="mt-4 grid gap-3">
             <input className="input" placeholder={t.exercisePlaceholder} value={exercise} onChange={(e) => setExercise(e.target.value)} />
             <div className="grid grid-cols-2 gap-2">
@@ -301,18 +393,20 @@ export function ProgressView({ locale }: { locale: Locale }) {
               {t.add}
             </button>
           </div>
-
-          {/* F4 — Grouped by date */}
           <div className="mt-5 space-y-4 overflow-y-auto" style={{ maxHeight: 340 }}>
             {workouts.length === 0 ? (
               <p className="text-sm text-zinc-500">{t.noData}</p>
             ) : (
               groupedWorkouts.map(([date, ws]) => (
                 <div key={date}>
-                  <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-widest text-zinc-600">{date}</p>
+                  <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-widest text-zinc-600">{relativeDate(date)}</p>
                   <div className="space-y-1.5">
                     {ws.map((w) => (
-                      <div key={w.id} className="rounded-xl border border-white/10 p-3 text-xs text-zinc-300">
+                      <div
+                        key={w.id}
+                        className="rounded-xl border border-white/10 p-3 text-xs text-zinc-300"
+                        style={newEntryIds.current.has(w.id) ? { animation: "workout-slide-in 400ms ease-out forwards" } : undefined}
+                      >
                         <span className="font-medium text-white">{w.exercise}</span>
                         <div className="mt-0.5 flex flex-wrap gap-2 text-zinc-500">
                           {w.sets ? <span>{w.sets} sets</span> : null}
@@ -329,9 +423,12 @@ export function ProgressView({ locale }: { locale: Locale }) {
           </div>
         </section>
 
-        {/* U6 — Milestones with target_value */}
+        {/* Milestones — MI13 section icon + U6 target value */}
         <section className="glass-panel rounded-[28px] p-6">
-          <p className="text-lg font-semibold text-white">{t.milestones}</p>
+          <div className="flex items-center gap-2">
+            <Flag className="h-4 w-4 text-[#22D3EE]" />
+            <p className="text-lg font-semibold text-white">{t.milestones}</p>
+          </div>
           <div className="mt-4 grid gap-3">
             <input className="input" placeholder={t.milestonePlaceholder} value={milestoneTitle} onChange={(e) => setMilestoneTitle(e.target.value)} />
             <input className="input text-sm" placeholder='Target (e.g. "Bench 100kg")' value={milestoneTarget} onChange={(e) => setMilestoneTarget(e.target.value)} />

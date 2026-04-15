@@ -56,19 +56,29 @@ export async function fulfillProgramOrderPaid(
     return { ok: false, error: "Order could not be completed." };
   }
 
-  await adminClient.from("tjfit_coin_wallets").upsert({ user_id: existingOrder.user_id }, { onConflict: "user_id" });
+  const { error: walletUpsertError } = await adminClient
+    .from("tjfit_coin_wallets")
+    .upsert({ user_id: existingOrder.user_id }, { onConflict: "user_id" });
+  if (walletUpsertError) {
+    console.error("fulfillProgramOrderPaid: wallet upsert failed", walletUpsertError);
+    return { ok: false, error: "Failed to initialize coin wallet." };
+  }
 
-  const { data: walletBefore } = await adminClient
+  const { data: walletBefore, error: walletFetchError } = await adminClient
     .from("tjfit_coin_wallets")
     .select("balance,lifetime_earned,lifetime_spent")
     .eq("user_id", existingOrder.user_id)
     .single();
+  if (walletFetchError || !walletBefore) {
+    console.error("fulfillProgramOrderPaid: wallet fetch failed", walletFetchError);
+    return { ok: false, error: "Failed to read coin wallet." };
+  }
 
-  const walletBalance = walletBefore?.balance ?? 0;
-  const lifetimeEarned = walletBefore?.lifetime_earned ?? 0;
-  const lifetimeSpent = walletBefore?.lifetime_spent ?? 0;
+  const walletBalance = walletBefore.balance ?? 0;
+  const lifetimeEarned = walletBefore.lifetime_earned ?? 0;
+  const lifetimeSpent = walletBefore.lifetime_spent ?? 0;
 
-  await adminClient
+  const { error: walletUpdateError } = await adminClient
     .from("tjfit_coin_wallets")
     .update({
       balance: walletBalance + rewardAmount,
@@ -78,17 +88,25 @@ export async function fulfillProgramOrderPaid(
     })
     .eq("user_id", existingOrder.user_id)
     .eq("balance", walletBalance);
+  if (walletUpdateError) {
+    console.error("fulfillProgramOrderPaid: wallet update failed", walletUpdateError);
+    return { ok: false, error: "Failed to update coin wallet." };
+  }
 
-  await adminClient.from("tjfit_coin_ledger").insert({
+  const { error: ledgerError } = await adminClient.from("tjfit_coin_ledger").insert({
     user_id: existingOrder.user_id,
     delta: rewardAmount,
     reason: "program_purchase",
     order_id: existingOrder.id,
     metadata: { source: "checkout_fulfill", coinsPerProgram: rewardAmount }
   });
+  if (ledgerError) {
+    console.error("fulfillProgramOrderPaid: ledger insert failed", ledgerError);
+    // Non-fatal: coins were credited to wallet; ledger is for history only
+  }
 
   if (paidOrder.discount_code) {
-    await adminClient
+    const { error: discountUpdateError } = await adminClient
       .from("tjfit_discount_codes")
       .update({
         status: "used",
@@ -98,6 +116,10 @@ export async function fulfillProgramOrderPaid(
       .eq("code", paidOrder.discount_code)
       .eq("user_id", existingOrder.user_id)
       .eq("status", "available");
+    if (discountUpdateError) {
+      console.error("fulfillProgramOrderPaid: discount code update failed", discountUpdateError);
+      // Non-fatal: order is already paid; discount code may remain in an inconsistent state
+    }
   }
 
   return { ok: true, coinsEarned: rewardAmount };

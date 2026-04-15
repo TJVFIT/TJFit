@@ -10,9 +10,7 @@ export async function GET() {
   let viewerId: string | null = null;
   try {
     const supabase = createServerSupabaseClient();
-    const {
-      data: { user }
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     viewerId = user?.id ?? null;
   } catch {
     viewerId = null;
@@ -25,56 +23,85 @@ export async function GET() {
     .lte("start_date", today)
     .order("end_date", { ascending: true });
 
-  const items = await Promise.all(
-    (challenges ?? []).map(async (challenge) => {
-      const [{ count: participants }, { data: joined }, { data: todayLog }, { data: logs }] = await Promise.all([
-        admin.from("challenge_participants").select("*", { head: true, count: "exact" }).eq("challenge_id", challenge.id),
-        viewerId
-          ? admin
-              .from("challenge_participants")
-              .select("user_id")
-              .eq("challenge_id", challenge.id)
-              .eq("user_id", viewerId)
-              .maybeSingle()
-          : Promise.resolve({ data: null }),
-        viewerId
-          ? admin
-              .from("challenge_logs")
-              .select("value,logged_at")
-              .eq("challenge_id", challenge.id)
-              .eq("user_id", viewerId)
-              .gte("logged_at", `${today}T00:00:00.000Z`)
-              .order("logged_at", { ascending: false })
-              .limit(1)
-              .maybeSingle()
-          : Promise.resolve({ data: null }),
-        admin.from("challenge_logs").select("user_id,value").eq("challenge_id", challenge.id)
-      ]);
+  const challengeList = challenges ?? [];
+  if (challengeList.length === 0) {
+    return NextResponse.json({ challenges: [] });
+  }
 
-      const scoreMap = new Map<string, number>();
-      for (const row of logs ?? []) {
-        const prev = scoreMap.get(row.user_id) ?? 0;
-        scoreMap.set(row.user_id, prev + Number(row.value ?? 0));
-      }
-      const topUsers = [...scoreMap.entries()]
-        .map(([userId, total]) => ({ userId, total }))
-        .sort((a, b) => b.total - a.total)
-        .slice(0, 10);
-      const myRank = [...scoreMap.entries()]
-        .map(([userId, total]) => ({ userId, total }))
-        .sort((a, b) => b.total - a.total)
-        .findIndex((entry) => entry.userId === viewerId);
-      return {
-        ...challenge,
-        participants: participants ?? 0,
-        joined: Boolean(joined),
-        todayLogged: Boolean(todayLog),
-        todayValue: todayLog?.value ?? null,
-        leaderboard: topUsers,
-        myRank: viewerId && myRank >= 0 ? myRank + 1 : null
-      };
-    })
-  );
+  const challengeIds = challengeList.map((c) => c.id);
+
+  // Batch all queries across challenges — replaces N×4 queries with 4 total
+  const [
+    { data: allParticipants },
+    { data: viewerJoined },
+    { data: viewerTodayLogs },
+    { data: allLogs }
+  ] = await Promise.all([
+    admin
+      .from("challenge_participants")
+      .select("challenge_id,user_id")
+      .in("challenge_id", challengeIds),
+    viewerId
+      ? admin
+          .from("challenge_participants")
+          .select("challenge_id,user_id")
+          .in("challenge_id", challengeIds)
+          .eq("user_id", viewerId)
+      : Promise.resolve({ data: [] as Array<{ challenge_id: string; user_id: string }> }),
+    viewerId
+      ? admin
+          .from("challenge_logs")
+          .select("challenge_id,value,logged_at")
+          .in("challenge_id", challengeIds)
+          .eq("user_id", viewerId)
+          .gte("logged_at", `${today}T00:00:00.000Z`)
+      : Promise.resolve({ data: [] as Array<{ challenge_id: string; value: number; logged_at: string }> }),
+    admin
+      .from("challenge_logs")
+      .select("challenge_id,user_id,value")
+      .in("challenge_id", challengeIds)
+  ]);
+
+  // Index all fetched data by challenge_id
+  const participantCountMap = new Map<string, number>();
+  for (const row of allParticipants ?? []) {
+    participantCountMap.set(row.challenge_id, (participantCountMap.get(row.challenge_id) ?? 0) + 1);
+  }
+  const viewerJoinedSet = new Set((viewerJoined ?? []).map((r) => r.challenge_id));
+  const viewerTodayMap = new Map<string, { value: number; logged_at: string }>();
+  for (const row of viewerTodayLogs ?? []) {
+    if (!viewerTodayMap.has(row.challenge_id)) viewerTodayMap.set(row.challenge_id, row);
+  }
+  const logsByChallengeId = new Map<string, Array<{ user_id: string; value: number }>>();
+  for (const row of allLogs ?? []) {
+    const arr = logsByChallengeId.get(row.challenge_id) ?? [];
+    arr.push(row);
+    logsByChallengeId.set(row.challenge_id, arr);
+  }
+
+  const items = challengeList.map((challenge) => {
+    const logs = logsByChallengeId.get(challenge.id) ?? [];
+    const scoreMap = new Map<string, number>();
+    for (const row of logs) {
+      scoreMap.set(row.user_id, (scoreMap.get(row.user_id) ?? 0) + Number(row.value ?? 0));
+    }
+    const sorted = [...scoreMap.entries()]
+      .map(([userId, total]) => ({ userId, total }))
+      .sort((a, b) => b.total - a.total);
+    const topUsers = sorted.slice(0, 10);
+    const myRank = viewerId ? sorted.findIndex((entry) => entry.userId === viewerId) : -1;
+    const todayLog = viewerTodayMap.get(challenge.id) ?? null;
+
+    return {
+      ...challenge,
+      participants: participantCountMap.get(challenge.id) ?? 0,
+      joined: viewerJoinedSet.has(challenge.id),
+      todayLogged: Boolean(todayLog),
+      todayValue: todayLog?.value ?? null,
+      leaderboard: topUsers,
+      myRank: viewerId && myRank >= 0 ? myRank + 1 : null
+    };
+  });
 
   return NextResponse.json({ challenges: items });
 }
@@ -112,4 +139,3 @@ export async function POST(request: NextRequest) {
   if (error) return NextResponse.json({ error: "Failed to create challenge" }, { status: 500 });
   return NextResponse.json({ ok: true });
 }
-

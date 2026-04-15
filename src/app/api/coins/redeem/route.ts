@@ -28,7 +28,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Server not configured" }, { status: 500 });
   }
 
-  await adminClient.from("tjfit_coin_wallets").upsert({ user_id: user.id }, { onConflict: "user_id" });
+  const { error: walletUpsertError } = await adminClient
+    .from("tjfit_coin_wallets")
+    .upsert({ user_id: user.id }, { onConflict: "user_id" });
+  if (walletUpsertError) {
+    console.error("coins/redeem: wallet upsert failed", walletUpsertError);
+    return NextResponse.json({ error: "Failed to initialize wallet. Please try again." }, { status: 500 });
+  }
 
   const { data: offer } = await adminClient
     .from("tjfit_discount_offers")
@@ -43,13 +49,18 @@ export async function POST(request: NextRequest) {
 
   // Supabase update does not support arithmetic update directly.
   // Fetch current and apply safe decrement manually with a compare-and-set step.
-  const { data: wallet } = await adminClient
+  const { data: wallet, error: walletFetchError } = await adminClient
     .from("tjfit_coin_wallets")
     .select("balance,lifetime_earned,lifetime_spent")
     .eq("user_id", user.id)
     .single();
 
-  if (!wallet || wallet.balance < offer.coin_cost) {
+  if (walletFetchError || !wallet) {
+    console.error("coins/redeem: wallet fetch failed", walletFetchError);
+    return NextResponse.json({ error: "Could not read wallet. Please try again." }, { status: 500 });
+  }
+
+  if (wallet.balance < offer.coin_cost) {
     return NextResponse.json({ error: "Insufficient TJFITcoin balance" }, { status: 400 });
   }
 
@@ -71,15 +82,20 @@ export async function POST(request: NextRequest) {
 
   const code = generateDiscountCode();
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
-  await adminClient.from("tjfit_discount_codes").insert({
+
+  const { error: discountInsertError } = await adminClient.from("tjfit_discount_codes").insert({
     code,
     user_id: user.id,
     offer_key: offer.key,
     discount_percent: offer.discount_percent,
     status: "available"
   });
+  if (discountInsertError) {
+    console.error("coins/redeem: discount code insert failed", discountInsertError);
+    return NextResponse.json({ error: "Failed to generate discount code. Your coins have not been deducted." }, { status: 500 });
+  }
 
-  await adminClient.from("user_discount_codes").insert({
+  const { error: userDiscountInsertError } = await adminClient.from("user_discount_codes").insert({
     user_id: user.id,
     code,
     discount_percent: offer.discount_percent,
@@ -95,13 +111,21 @@ export async function POST(request: NextRequest) {
     expires_at: expiresAt,
     status: "available"
   });
+  if (userDiscountInsertError) {
+    console.error("coins/redeem: user_discount_codes insert failed", userDiscountInsertError);
+    // Non-fatal: primary discount code was created; user_discount_codes is a secondary record
+  }
 
-  await adminClient.from("tjfit_coin_ledger").insert({
+  const { error: ledgerInsertError } = await adminClient.from("tjfit_coin_ledger").insert({
     user_id: user.id,
     delta: -offer.coin_cost,
     reason: "discount_code_redeem",
     metadata: { offerKey: offer.key, discountPercent: offer.discount_percent, code }
   });
+  if (ledgerInsertError) {
+    console.error("coins/redeem: ledger insert failed", ledgerInsertError);
+    // Non-fatal: wallet was already debited; ledger is for history only
+  }
 
   return NextResponse.json({ code, offer, wallet: finalWallet });
 }

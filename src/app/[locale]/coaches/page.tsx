@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CoachCard } from "@/components/coach-card";
 import { PremiumPageShell } from "@/components/premium";
 import { isLocale } from "@/lib/i18n";
@@ -13,9 +13,11 @@ export default function CoachesPage({ params }: { params: { locale: string } }) 
   const [q, setQ] = useState("");
   const [specialty, setSpecialty] = useState("");
   const [acceptingOnly, setAcceptingOnly] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const fetchList = async () => {
+    // Debounce text search by 350ms; filters (specialty, accepting) apply immediately
+    const doFetch = async () => {
       setLoading(true);
       try {
         const qs = new URLSearchParams();
@@ -37,7 +39,10 @@ export default function CoachesPage({ params }: { params: { locale: string } }) 
         setLoading(false);
       }
     };
-    void fetchList();
+
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => { void doFetch(); }, q ? 350 : 0);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
   }, [acceptingOnly, q, specialty]);
 
   const specialtyOptions = useMemo(() => {
@@ -65,9 +70,7 @@ export default function CoachesPage({ params }: { params: { locale: string } }) 
           <select value={specialty} onChange={(e) => setSpecialty(e.target.value)} className="rounded-xl border border-[#1E2028] bg-[#111215] px-3 py-2 text-sm text-white">
             <option value="">All specialties</option>
             {specialtyOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
+              <option key={option} value={option}>{option}</option>
             ))}
           </select>
           <label className="inline-flex items-center gap-2 rounded-xl border border-[#1E2028] bg-[#111215] px-3 py-2 text-sm text-zinc-300">
@@ -100,7 +103,7 @@ export default function CoachesPage({ params }: { params: { locale: string } }) 
               href={`/${locale}/become-a-coach`}
               className="mt-5 inline-flex min-h-[44px] items-center justify-center rounded-full bg-[#22D3EE] px-6 py-2.5 text-sm font-bold text-[#09090B]"
             >
-              Apply to Join →
+              Apply to Join
             </a>
             <button
               type="button"

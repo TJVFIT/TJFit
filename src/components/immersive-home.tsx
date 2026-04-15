@@ -28,6 +28,8 @@ import { getDirection, type Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 import type { HomeCoachPreview, HomeProgramPreview } from "@/components/luxury/luxury-home";
+import { LuxuryHero3DExperience } from "@/components/luxury/luxury-hero-3d";
+import type { HeroMouseRef } from "@/components/luxury/luxury-hero-3d-canvas";
 
 function useReducedMotion() {
   const [r, setR] = useState(false);
@@ -265,6 +267,7 @@ export function ImmersiveHome({
   const statsRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const subCtaRef = useRef<HTMLDivElement>(null);
+  const heroMouseRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 }) as HeroMouseRef;
 
   useEffect(() => {
     if (reduce) {
@@ -338,6 +341,8 @@ export function ImmersiveHome({
     const onMove = (event: MouseEvent) => {
       target.x = event.clientX - window.innerWidth / 2;
       target.y = event.clientY - window.innerHeight / 2;
+      heroMouseRef.current.x = (event.clientX / window.innerWidth) * 2 - 1;
+      heroMouseRef.current.y = -((event.clientY / window.innerHeight) * 2 - 1);
     };
 
     window.addEventListener("mousemove", onMove, { passive: true });
@@ -395,6 +400,11 @@ export function ImmersiveHome({
         ref={heroRef}
         className="hero-mesh relative flex min-h-[100svh] flex-col justify-center overflow-hidden px-6 pb-16 pt-24 lg:px-12 lg:pb-24 lg:pt-16"
       >
+        {!reduce && (
+          <div className="pointer-events-none absolute inset-0 z-[1] hidden lg:block" aria-hidden>
+            <LuxuryHero3DExperience mouseRef={heroMouseRef} />
+          </div>
+        )}
         <div ref={particleRef} className="pointer-events-none absolute inset-0 z-0" aria-hidden>
           <ParticleField className="pointer-events-none absolute inset-0 z-0" />
         </div>

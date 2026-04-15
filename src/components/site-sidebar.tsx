@@ -29,6 +29,7 @@ import {
 import { useAuth } from "@/components/auth-provider";
 import { GlobalSearch } from "@/components/global-search";
 import { Logo } from "@/components/ui/Logo";
+import { AnimatedAvatar } from "@/components/animated-avatar";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { Locale, getDictionary, getDirection, locales } from "@/lib/i18n";
 import { getNavChromeCopy } from "@/lib/launch-copy";
@@ -115,6 +116,7 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [collapsedTipKey, setCollapsedTipKey] = useState<string | null>(null);
   const [coinBalance, setCoinBalance] = useState(0);
+  const [coinDisplayed, setCoinDisplayed] = useState(0);
   const expandTimerRef = useRef<number | null>(null);
   const collapsedTipTimerRef = useRef<number | null>(null);
   const langRef = useRef<HTMLDivElement>(null);
@@ -159,7 +161,21 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
         const res = await fetch("/api/coins/wallet", { credentials: "include" });
         if (!res.ok) return;
         const json = await res.json();
-        if (!cancelled) setCoinBalance(Number(json?.wallet?.balance ?? 0));
+        if (!cancelled) {
+          const balance = Number(json?.wallet?.balance ?? 0);
+          setCoinBalance(balance);
+          // ME4 — animate coin count from 0
+          const start = performance.now();
+          const dur = 800;
+          const tick = (now: number) => {
+            const t = Math.min(1, (now - start) / dur);
+            const eased = 1 - Math.pow(1 - t, 3);
+            setCoinDisplayed(Math.round(eased * balance));
+            if (t < 1) requestAnimationFrame(tick);
+            else setCoinDisplayed(balance);
+          };
+          requestAnimationFrame(tick);
+        }
       } catch {
         // noop
       }
@@ -322,7 +338,7 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
         </span>
         <span className={labelClass}>{it.label}</span>
         {it.badgeText && sidebarExpanded ? (
-          <span className="ms-1 rounded-full border border-[rgba(34,211,238,0.35)] bg-[rgba(34,211,238,0.15)] px-1.5 py-0.5 text-[10px] font-bold text-[#22D3EE]">
+          <span className="ms-1 rounded-full border border-[rgba(34,211,238,0.35)] bg-[rgba(34,211,238,0.15)] px-1.5 py-0.5 text-[10px] font-bold text-[#22D3EE] tjai-pulse-badge">
             {it.badgeText}
           </span>
         ) : null}
@@ -406,7 +422,9 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
         style={reduce ? undefined : { transitionDelay: entered ? undefined : "100ms" }}
       >
         <div className="flex h-[72px] shrink-0 items-center border-b border-transparent ps-4 pt-[env(safe-area-inset-top,0px)]">
-          <Logo variant="full" size="sidebar" href={`/${locale}`} suppressMinTouchTarget />
+          <div className={cn(!sidebarExpanded && "logo-breathe")}>
+            <Logo variant="full" size="sidebar" href={`/${locale}`} suppressMinTouchTarget />
+          </div>
         </div>
 
         <div className="px-3 pb-2 pt-3">
@@ -418,7 +436,7 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
           </Link>
         </div>
 
-        <nav className="flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto overflow-x-visible px-0 py-3 [scrollbar-width:thin]">
+        <nav className="tj-scrollbar flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto overflow-x-visible px-0 py-3">
           <GlobalSearch locale={locale} collapsed={!sidebarExpanded} onExpand={() => setSidebarExpanded(true)} />
           {primaryItems.map((it, i) => renderNavRow(it, i))}
           <div className={cn("my-2 px-3", sidebarExpanded ? "opacity-100" : "opacity-0")}>
@@ -513,9 +531,11 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
           {!loading && user ? (
             <div className="mt-3 flex w-full items-start gap-1">
               <div className="flex w-16 shrink-0 justify-center pt-1">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[#1E2028] bg-[#111215] text-xs font-semibold text-[#A1A1AA]">
-                  {(displayName || user.email || "?").slice(0, 1).toUpperCase()}
-                </div>
+                <AnimatedAvatar
+                  url={(user?.user_metadata?.avatar_url as string | undefined) ?? null}
+                  name={displayName || user.email}
+                  size={32}
+                />
               </div>
               <div
                 className={cn(
@@ -525,7 +545,7 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
               >
                 <p className="truncate text-sm font-medium text-white">{displayName || user.email}</p>
                 <Link href={`/${locale}/coins`} className="mt-1 inline-flex items-center gap-1 text-xs text-[#22D3EE] hover:opacity-80">
-                  ⚡ {coinBalance.toLocaleString()}
+                  ⚡ {coinDisplayed.toLocaleString()}
                 </Link>
                 <button
                   type="button"
