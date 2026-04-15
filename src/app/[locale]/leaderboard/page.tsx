@@ -145,7 +145,15 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
                 <div key={item.userId} className={`flex items-center justify-between rounded-xl border bg-[#0D0E12] px-4 py-3 ${rankClass}`}>
                   <div className="flex items-center gap-3">
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#14161D] text-sm font-bold text-white">
-                      {item.rank <= 3 ? <Crown className="h-4 w-4 text-[#22D3EE]" /> : item.rank}
+                      {item.rank === 1 ? (
+                        <Crown className="h-4 w-4 text-[#F59E0B]" />
+                      ) : item.rank === 2 ? (
+                        <Crown className="h-4 w-4 text-[#9CA3AF]" />
+                      ) : item.rank === 3 ? (
+                        <Crown className="h-4 w-4 text-[#CD7F32]" />
+                      ) : (
+                        item.rank
+                      )}
                     </div>
                     <div>
                       <p className="font-medium text-white">

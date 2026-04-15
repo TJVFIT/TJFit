@@ -28,6 +28,7 @@ export function getTermsCopy(locale: Locale, billingProvider: string, version: s
         {
           title: "1. Acceptance of Terms",
           body: [
+            "These Terms of Service are provided by TJFit (\"TJFit\", \"we\", \"us\", or \"our\"), the brand and platform operator of tjfit.org.",
             "By creating an account or using TJFit, you agree to these Terms, our Privacy Policy, and our Refund Policy.",
             "If you do not agree, you must not use the platform."
           ]
@@ -247,51 +248,61 @@ export function getRefundCopy(locale: Locale): PolicyCopy {
       badge: "Refund Policy",
       title: "Refund Policy",
       paragraphs: [
-        "Digital programs and coaching services may be refunded according to the service type and usage status.",
-        "Program purchases are generally non-refundable after meaningful content access, unless required by law or in cases of duplicate or failed charges.",
-        "To request a refund, submit a request through Support with your order reference and account email."
+        "Last updated: April 15, 2026",
+        "Payments for TJFit products and subscriptions are processed by Paddle (paddle.com), who acts as the Merchant of Record for all transactions. All refund requests are handled directly by Paddle in accordance with their refund policy.",
+        "You are entitled to a full refund if you submit your request within 14 days of the transaction date. To request a refund, use the 'View receipt' or 'Manage subscription' link in your purchase confirmation email, or visit paddle.net and select 'Request refund'.",
+        "Refund requests submitted within 14 days of purchase are reviewed by Paddle. Paddle's decision is final and applies to all purchases made through TJFit.",
+        "For refund inquiries, contact Paddle's buyer support at paddle.net. For general TJFit support, email tjfit.org@gmail.com."
       ],
-      lastUpdatedLabel: "Last updated: 2026-03-29"
+      lastUpdatedLabel: "Last updated: April 15, 2026"
     },
     tr: {
-      badge: "Iade Politikasi",
-      title: "Iade Politikasi",
+      badge: "İade Politikası",
+      title: "İade Politikası",
       paragraphs: [
-        "Dijital programlar ve koçluk hizmetleri, hizmet turu ve kullanim durumuna gore iade edilebilir.",
-        "Program satin alimlari, icerige anlamli erisim saglandiktan sonra genellikle iade edilmez; kanunun gerektirdigi durumlar ve cift/hatali tahsilatlar haric.",
-        "Iade talebi icin Siparis referansin ve hesap e-postan ile Destek uzerinden basvuru gonder."
+        "Son güncelleme: 15 Nisan 2026",
+        "TJFit ürünleri ve abonelikleri için ödemeler, tüm işlemlerde Kayıtlı Satıcı olarak hareket eden Paddle (paddle.com) tarafından işlenir. Tüm iade talepleri doğrudan Paddle tarafından, kendi iade politikasına göre karşılanır.",
+        "İşlem tarihinden itibaren 14 gün içinde talepte bulunmanız halinde tam iade hakkına sahipsiniz. İade talebinde bulunmak için satın alma onay e-postanızdaki 'Makbuzu görüntüle' veya 'Aboneliği yönet' bağlantısını kullanın ya da paddle.net adresini ziyaret edip 'İade talebi' seçeneğini belirleyin.",
+        "Satın alma tarihinden itibaren 14 gün içinde iletilen iade talepleri Paddle tarafından incelenir. Paddle'ın kararı kesin olup TJFit üzerinden yapılan tüm satın alımlar için geçerlidir.",
+        "İade sorularınız için Paddle alıcı desteğine paddle.net adresinden ulaşabilirsiniz. Genel TJFit desteği için tjfit.org@gmail.com adresine e-posta gönderin."
       ],
-      lastUpdatedLabel: "Son guncelleme: 2026-03-29"
+      lastUpdatedLabel: "Son güncelleme: 15 Nisan 2026"
     },
     ar: {
       badge: "سياسة الاسترداد",
       title: "سياسة الاسترداد",
       paragraphs: [
-        "قد يتم استرداد البرامج الرقمية وخدمات التدريب بحسب نوع الخدمة وحالة الاستخدام.",
-        "عادة لا يتم رد قيمة البرامج بعد الوصول الفعلي للمحتوى الا اذا كان القانون يفرض ذلك او في حالات التكرار او فشل السحب.",
-        "لطلب استرداد، ارسل طلبا عبر الدعم مع مرجع الطلب وبريد الحساب."
+        "آخر تحديث: 15 أبريل 2026",
+        "تتم معالجة المدفوعات لمنتجات TJFit والاشتراكات عبر Paddle (paddle.com)، التي تعمل بصفة التاجر الرسمي لجميع المعاملات. تُعالج جميع طلبات الاسترداد مباشرةً من قِبل Paddle وفقًا لسياسة الاسترداد الخاصة بها.",
+        "يحق لك الحصول على استرداد كامل إذا قدّمت طلبك خلال 14 يومًا من تاريخ المعاملة. لتقديم طلب الاسترداد، استخدم رابط 'عرض الإيصال' أو 'إدارة الاشتراك' في بريد تأكيد الشراء، أو تفضل بزيارة paddle.net واختر 'طلب استرداد'.",
+        "تُراجَع طلبات الاسترداد المقدَّمة خلال 14 يومًا من تاريخ الشراء من قِبل Paddle. قرار Paddle نهائي ويُطبَّق على جميع عمليات الشراء التي تُجرى عبر TJFit.",
+        "للاستفسار عن الاسترداد، تواصل مع دعم المشترين في Paddle عبر paddle.net. للحصول على دعم TJFit العام، أرسل بريدًا إلكترونيًا إلى tjfit.org@gmail.com."
       ],
-      lastUpdatedLabel: "اخر تحديث: 2026-03-29"
+      lastUpdatedLabel: "آخر تحديث: 15 أبريل 2026"
     },
     es: {
-      badge: "Politica de Reembolso",
-      title: "Politica de Reembolso",
+      badge: "Política de Reembolso",
+      title: "Política de Reembolso",
       paragraphs: [
-        "Los programas digitales y servicios de coaching pueden reembolsarse segun el tipo de servicio y su uso.",
-        "Las compras de programas normalmente no son reembolsables tras un acceso relevante al contenido, salvo exigencia legal o cargos duplicados/fallidos.",
-        "Para solicitar un reembolso, envia una solicitud por Soporte con tu referencia de pedido y correo de cuenta."
+        "Última actualización: 15 de abril de 2026",
+        "Los pagos de productos y suscripciones de TJFit son procesados por Paddle (paddle.com), que actúa como Merchant of Record para todas las transacciones. Todas las solicitudes de reembolso son gestionadas directamente por Paddle conforme a su política de reembolsos.",
+        "Tienes derecho a un reembolso completo si presentas tu solicitud dentro de los 14 días siguientes a la fecha de la transacción. Para solicitarlo, usa el enlace 'Ver recibo' o 'Gestionar suscripción' en el correo de confirmación de tu compra, o visita paddle.net y selecciona 'Solicitar reembolso'.",
+        "Las solicitudes de reembolso presentadas dentro de los 14 días posteriores a la compra son revisadas por Paddle. La decisión de Paddle es definitiva y se aplica a todas las compras realizadas a través de TJFit.",
+        "Para consultas sobre reembolsos, contacta el soporte al comprador de Paddle en paddle.net. Para soporte general de TJFit, escribe a tjfit.org@gmail.com."
       ],
-      lastUpdatedLabel: "Ultima actualizacion: 2026-03-29"
+      lastUpdatedLabel: "Última actualización: 15 de abril de 2026"
     },
     fr: {
       badge: "Politique de remboursement",
       title: "Politique de remboursement",
       paragraphs: [
-        "Les programmes digitaux et services de coaching peuvent etre rembourses selon le type de service et le niveau d'utilisation.",
-        "Les achats de programmes ne sont generalement pas remboursables apres un acces significatif au contenu, sauf obligation legale ou doubles/echecs de paiement.",
-        "Pour demander un remboursement, envoyez une demande via Support avec votre reference de commande et l'email du compte."
+        "Dernière mise à jour : 15 avril 2026",
+        "Les paiements pour les produits et abonnements TJFit sont traités par Paddle (paddle.com), qui agit en tant que Merchant of Record pour toutes les transactions. Toutes les demandes de remboursement sont traitées directement par Paddle conformément à sa politique de remboursement.",
+        "Vous avez droit à un remboursement complet si vous soumettez votre demande dans les 14 jours suivant la date de la transaction. Pour demander un remboursement, utilisez le lien 'Voir le reçu' ou 'Gérer l'abonnement' dans votre e-mail de confirmation d'achat, ou rendez-vous sur paddle.net et sélectionnez 'Demander un remboursement'.",
+        "Les demandes de remboursement soumises dans les 14 jours suivant l'achat sont examinées par Paddle. La décision de Paddle est définitive et s'applique à tous les achats effectués via TJFit.",
+        "Pour toute question concernant les remboursements, contactez le support acheteur de Paddle sur paddle.net. Pour le support général TJFit, écrivez à tjfit.org@gmail.com."
       ],
-      lastUpdatedLabel: "Derniere mise a jour : 2026-03-29"
+      lastUpdatedLabel: "Dernière mise à jour : 15 avril 2026"
     }
   };
 

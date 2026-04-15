@@ -125,6 +125,7 @@ type FooterCopy = {
   faq: string;
   terms: string;
   privacy: string;
+  refundPolicy: string;
   contact: string;
   becomeCoach: string;
   community: string;
@@ -730,6 +731,7 @@ const footerCopy: Record<Locale, FooterCopy> = {
     faq: "FAQ",
     terms: "Terms of Service",
     privacy: "Privacy Policy",
+    refundPolicy: "Refund Policy",
     contact: "Contact Support",
     becomeCoach: "Become a Coach",
     community: "Community",
@@ -749,6 +751,7 @@ const footerCopy: Record<Locale, FooterCopy> = {
     faq: "SSS",
     terms: "Kullanim sartlari",
     privacy: "Gizlilik",
+    refundPolicy: "İade Politikası",
     contact: "Destek iletisim",
     becomeCoach: "Koc Ol",
     community: "Topluluk",
@@ -768,6 +771,7 @@ const footerCopy: Record<Locale, FooterCopy> = {
     faq: "الاسئلة الشائعة",
     terms: "شروط الخدمة",
     privacy: "سياسة الخصوصية",
+    refundPolicy: "سياسة الاسترداد",
     contact: "تواصل مع الدعم",
     becomeCoach: "كن مدرباً",
     community: "المجتمع",
@@ -787,6 +791,7 @@ const footerCopy: Record<Locale, FooterCopy> = {
     faq: "FAQ",
     terms: "Terminos del Servicio",
     privacy: "Politica de Privacidad",
+    refundPolicy: "Politica de Reembolso",
     contact: "Contactar Soporte",
     becomeCoach: "Conviertete en Coach",
     community: "Comunidad",
@@ -806,6 +811,7 @@ const footerCopy: Record<Locale, FooterCopy> = {
     faq: "FAQ",
     terms: "Conditions d'utilisation",
     privacy: "Politique de confidentialite",
+    refundPolicy: "Politique de remboursement",
     contact: "Contacter le support",
     becomeCoach: "Devenir Coach",
     community: "Communaute",

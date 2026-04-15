@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Activity, Dumbbell } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { Activity, Dumbbell, Flame, Plus, CheckCircle2 } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/components/auth-provider";
 import { programs } from "@/lib/content";
 import type { Locale } from "@/lib/i18n";
@@ -39,6 +39,7 @@ type Summary = {
   progressEntryCount: number;
   milestoneCount: number;
   recentEntryDates: string[];
+  currentStreak: number;
 };
 
 function DashboardSkeleton() {
@@ -57,6 +58,98 @@ function DashboardSkeleton() {
         ))}
       </div>
     </div>
+  );
+}
+
+// F2 — Quick log widget
+function QuickLogWidget({ locale }: { locale: Locale }) {
+  const [open, setOpen] = useState(false);
+  const [exercise, setExercise] = useState("");
+  const [sets, setSets] = useState("");
+  const [reps, setReps] = useState("");
+  const [weight, setWeight] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const submit = async () => {
+    if (!exercise.trim()) return;
+    setSaving(true);
+    try {
+      await fetch("/api/progress/workouts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          exercise: exercise.trim(),
+          sets: sets ? Number(sets) : null,
+          reps: reps ? Number(reps) : null,
+          weight_kg: weight ? Number(weight) : null
+        })
+      });
+      setExercise(""); setSets(""); setReps(""); setWeight("");
+      setSaved(true);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => { setSaved(false); setOpen(false); }, 2000);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const placeholder = locale === "tr" ? "Egzersiz adı" : locale === "ar" ? "اسم التمرين" : locale === "es" ? "Ejercicio" : locale === "fr" ? "Exercice" : "Exercise name";
+
+  return (
+    <section className="rounded-2xl border border-[#1E2028] bg-[#111215]">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-between px-6 py-4 text-left transition-colors hover:bg-white/[0.02]"
+      >
+        <div className="flex items-center gap-2.5">
+          <Dumbbell className="h-4 w-4 text-[#22D3EE]" strokeWidth={2} />
+          <span className="text-sm font-semibold text-white">Log today&apos;s workout</span>
+        </div>
+        <Plus className={cn("h-4 w-4 text-zinc-500 transition-transform duration-200", open && "rotate-45")} />
+      </button>
+
+      {open && (
+        <div className="border-t border-[#1E2028] px-6 pb-5 pt-4">
+          {saved ? (
+            <div className="flex items-center gap-2 rounded-xl border border-green-500/25 bg-[#0D1F17] px-4 py-3 text-sm font-medium text-green-400">
+              <CheckCircle2 className="h-4 w-4" /> Logged!
+            </div>
+          ) : (
+            <div className="grid gap-3">
+              <input
+                className="input"
+                placeholder={placeholder}
+                value={exercise}
+                onChange={(e) => setExercise(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && submit()}
+              />
+              <div className="grid grid-cols-3 gap-2">
+                <input className="input text-sm" placeholder="Sets" type="number" min="1" value={sets} onChange={(e) => setSets(e.target.value)} />
+                <input className="input text-sm" placeholder="Reps" type="number" min="1" value={reps} onChange={(e) => setReps(e.target.value)} />
+                <input className="input text-sm" placeholder="kg" type="number" step="0.5" min="0" value={weight} onChange={(e) => setWeight(e.target.value)} />
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={submit}
+                  disabled={saving || !exercise.trim()}
+                  className="inline-flex min-h-[38px] items-center justify-center rounded-full bg-[#22D3EE] px-5 text-sm font-bold text-black transition-opacity disabled:opacity-50"
+                >
+                  {saving ? "Logging…" : "Log workout"}
+                </button>
+                <Link href={`/${locale}/progress`} className="text-xs text-zinc-500 hover:text-zinc-300">
+                  Full progress log →
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </section>
   );
 }
 
@@ -108,7 +201,8 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
         paidOrderCount: Number(data.paidOrderCount ?? 0),
         progressEntryCount: Number(data.progressEntryCount ?? 0),
         milestoneCount: Number(data.milestoneCount ?? 0),
-        recentEntryDates: Array.isArray(data.recentEntryDates) ? data.recentEntryDates.filter((x: unknown) => typeof x === "string") : []
+        recentEntryDates: Array.isArray(data.recentEntryDates) ? data.recentEntryDates.filter((x: unknown) => typeof x === "string") : [],
+        currentStreak: Number(data.currentStreak ?? 0)
       });
     } catch {
       setLoadError(t.loadError);
@@ -178,7 +272,16 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
               {displayName}.
             </p>
           </div>
-          <p className="text-sm text-[#52525B]">{formatDashboardDate(locale)}</p>
+          <div className="flex flex-col items-end gap-2">
+            {/* F3 — Streak counter */}
+            {summary.currentStreak > 0 && (
+              <div className="flex items-center gap-2 rounded-full border border-orange-500/30 bg-orange-500/10 px-4 py-1.5">
+                <Flame className="h-4 w-4 text-orange-400" />
+                <span className="text-sm font-bold text-orange-300">{summary.currentStreak} day streak</span>
+              </div>
+            )}
+            <p className="text-sm text-[#52525B]">{formatDashboardDate(locale)}</p>
+          </div>
         </div>
         <div
           className="mt-8 h-px w-full bg-[linear-gradient(90deg,transparent,rgba(34,211,238,0.4),transparent)]"
@@ -228,6 +331,9 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
         </section>
       ) : null}
 
+      {/* F2 — Quick log widget */}
+      {!isBrandNew && <QuickLogWidget locale={locale} />}
+
       {!isBrandNew && summary.progressEntryCount > 0 ? (
         <section className="space-y-3">
           <h2 className="text-[13px] font-medium uppercase tracking-widest text-[#52525B]">{t.recentActivity}</h2>
@@ -260,12 +366,13 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
       ) : null}
 
       {!isBrandNew ? (
-        <section className="grid grid-cols-2 gap-4 lg:grid-cols-3">
+        <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           {(
             [
               [summary.paidOrderCount, t.statsPrograms],
               [summary.progressEntryCount, t.statsEntries],
-              [summary.milestoneCount, t.statsMilestones]
+              [summary.milestoneCount, t.statsMilestones],
+              [summary.currentStreak, "Day streak"]
             ] as const
           ).map(([value, label]) => (
             <div

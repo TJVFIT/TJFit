@@ -305,7 +305,7 @@ const userTermsBody: Record<Locale, string[]> = {
     "1. Eligibility — You must be 16 years or older to use TJFit.",
     "2. Account responsibility — You are responsible for maintaining the security of your account. Do not share your login credentials.",
     "3. Acceptable use — You may not use TJFit to harass other users, distribute harmful content, or attempt to access other users' data.",
-    "4. Purchases — All program and diet purchases are non-refundable unless required by law. Access is granted immediately upon payment confirmation.",
+    "4. Purchases — Payments are processed by Paddle, our Merchant of Record. You are entitled to a full refund if requested within 14 days of purchase. Refund requests are handled directly by Paddle in accordance with their refund policy at paddle.net.",
     "5. Content — TJFit programs and diet plans are for informational purposes. Consult a medical professional before starting any fitness program.",
     "6. Termination — TJFit reserves the right to suspend accounts that violate these terms."
   ],
@@ -314,7 +314,7 @@ const userTermsBody: Record<Locale, string[]> = {
     "1. Uygunluk — TJFit 16 yas ve uzeri icindir.",
     "2. Hesap — Guvenlik sizin sorumlulugunuzdur; giris bilgilerini paylasmayin.",
     "3. Kullanim — Taciz, zararli icerik veya baskalarinin verilerine yetkisiz erisim yasaktir.",
-    "4. Satinalmalar — Yasal zorunluluk disinda iade yoktur; odeme onayinda erisim acilir.",
+    "4. Satinalmalar — Odemeler, Kayitli Satici olarak Paddle tarafindan islenir. Satin alma tarihinden itibaren 14 gun icerisinde yapilan iade talepleri Paddle tarafindan paddle.net uzerinden karsilanir.",
     "5. Icerik — Programlar bilgilendiricidir; baslamadan once doktorunuza danisin.",
     "6. Sonlandirma — Ihlalde hesap askiya alinabilir."
   ],
@@ -323,7 +323,7 @@ const userTermsBody: Record<Locale, string[]> = {
     "1. الأهلية — يجب أن يكون عمرك 16 عامًا فأكثر.",
     "2. الحساب — أنت مسؤول عن أمان حسابك.",
     "3. الاستخدام المقبول — ممنوع المضايقة أو المحتوى الضار أو الوصول غير المصرح به لبيانات الآخرين.",
-    "4. المشتريات — غير قابلة للاسترداد إلا حيث يقتضي القانون؛ يُمنح الوصول فور تأكيد الدفع.",
+    "4. المشتريات — تُعالَج المدفوعات عبر Paddle بصفتها التاجر الرسمي. يحق لك استرداد كامل المبلغ إذا طلبت ذلك خلال 14 يومًا من تاريخ الشراء عبر paddle.net.",
     "5. المحتوى — لأغراض معلوماتية؛ استشر مختصًا صحيًا قبل البدء.",
     "6. الإيقاف — يجوز تعليق الحسابات المخالفة."
   ],
@@ -332,7 +332,7 @@ const userTermsBody: Record<Locale, string[]> = {
     "1. Elegibilidad — debes tener 16 años o más.",
     "2. Cuenta — eres responsable de la seguridad de tu cuenta.",
     "3. Uso aceptable — no acosar, no contenido dañino ni acceso no autorizado a datos ajenos.",
-    "4. Compras — no reembolsables salvo ley; acceso al confirmar el pago.",
+    "4. Compras — Los pagos son procesados por Paddle como Merchant of Record. Tienes derecho a un reembolso completo si lo solicitas dentro de los 14 días de la compra a través de paddle.net.",
     "5. Contenido — informativo; consulta a un profesional de salud antes de empezar.",
     "6. Terminacion — TJFit puede suspender cuentas que incumplan."
   ],
@@ -341,7 +341,7 @@ const userTermsBody: Record<Locale, string[]> = {
     "1. Eligibilite — 16 ans minimum.",
     "2. Compte — vous assurez la securite de votre compte.",
     "3. Usage — pas de harcelement, contenu nuisible ou acces non autorise aux donnees d'autrui.",
-    "4. Achats — non remboursables sauf obligation legale ; acces apres confirmation du paiement.",
+    "4. Achats — Les paiements sont traités par Paddle en tant que Merchant of Record. Vous avez droit à un remboursement complet si vous en faites la demande dans les 14 jours suivant l'achat via paddle.net.",
     "5. Contenu — a titre informatif ; consultez un professionnel de sante avant de commencer.",
     "6. Resiliation — suspension possible en cas de violation."
   ]

@@ -22,6 +22,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
     { href: `/${locale}/legal#faq`, label: copy.faq },
     { href: `/${locale}/terms-and-conditions`, label: copy.terms },
     { href: `/${locale}/privacy-policy`, label: copy.privacy },
+    { href: `/${locale}/refund-policy`, label: copy.refundPolicy },
     { href: `/${locale}/press`, label: "Press & Media" }
   ];
 
