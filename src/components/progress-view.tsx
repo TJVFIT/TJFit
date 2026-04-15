@@ -2,16 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   Tooltip,
   ResponsiveContainer,
   CartesianGrid,
   Area,
-  AreaChart,
-  type TooltipProps
+  AreaChart
 } from "recharts";
 import { CheckCircle2, Scale, Dumbbell, Flag } from "lucide-react";
 import confetti from "canvas-confetti";
@@ -95,7 +92,12 @@ function groupByDate(workouts: Workout[]): [string, Workout[]][] {
 }
 
 // ME19 — Custom Recharts tooltip showing both metrics
-function ChartTooltip({ active, payload, label }: TooltipProps<number, string>) {
+function ChartTooltip(props: Record<string, unknown>) {
+  const { active, payload, label } = props as {
+    active?: boolean;
+    payload?: Array<{ name: string; value: number; color: string }>;
+    label?: string;
+  };
   if (!active || !payload?.length) return null;
   return (
     <div

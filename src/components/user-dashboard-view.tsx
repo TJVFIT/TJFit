@@ -235,6 +235,13 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
   const [progressOn, setProgressOn] = useState(false);
   const [statsActive, setStatsActive] = useState(false);
 
+  // M7 — must be computed before early returns so the hook is always called
+  const rawName =
+    (user?.user_metadata?.full_name as string | undefined)?.trim() ||
+    user?.email?.split("@")[0]?.trim() ||
+    "Athlete";
+  const displayName = useTextScramble(rawName, headerOn);
+
   useEffect(() => {
     setHour(new Date().getHours());
   }, []);
@@ -317,14 +324,6 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
     ? programs.find((p) => p.slug === summary.latestPaidProgramSlug)
     : null;
   const programTitle = staticProgram ? localizeProgram(staticProgram, locale).title : summary.latestPaidProgramSlug;
-
-  const rawName =
-    (user?.user_metadata?.full_name as string | undefined)?.trim() ||
-    user?.email?.split("@")[0]?.trim() ||
-    "Athlete";
-
-  // M7 — scramble display name on load
-  const displayName = useTextScramble(rawName, headerOn);
 
   const progressPct = Math.min(
     100,
