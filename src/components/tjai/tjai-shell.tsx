@@ -26,6 +26,9 @@ export function TJAIShell({ locale }: { locale: Locale }) {
   const [selectedPlanMode, setSelectedPlanMode] = useState<"moderate" | "aggressive">("moderate");
   const [tier, setTier] = useState<"core" | "pro" | "apex">("core");
   const [showUpgrade, setShowUpgrade] = useState(false);
+  const [generateError, setGenerateError] = useState<string | null>(null);
+  const [pendingAnswers, setPendingAnswers] = useState<QuizAnswers | null>(null);
+  const [pendingPace, setPendingPace] = useState<"Moderate" | "Aggressive" | undefined>(undefined);
 
   const copy = useMemo(() => getTjaiCopy(locale), [locale]);
   const steps = useMemo(() => getTjaiSteps(locale), [locale]);
@@ -44,15 +47,17 @@ export function TJAIShell({ locale }: { locale: Locale }) {
 
   const handleGenerate = async (submittedAnswers: QuizAnswers, paceOverride?: "Moderate" | "Aggressive") => {
     setAnswers(submittedAnswers);
+    setPendingAnswers(submittedAnswers);
+    setPendingPace(paceOverride);
+    setGenerateError(null);
     const effective = paceOverride ? { ...submittedAnswers, s2_pace: paceOverride } : submittedAnswers;
     const localMetrics = calculateTJAIMetrics(effective);
     setMetrics(localMetrics);
     setPhase("calculating");
-    console.log("TJAI generate called for user:", "client");
 
     try {
       const controller = new AbortController();
-      const timeout = window.setTimeout(() => controller.abort(), 120000); // 2 min max
+      const timeout = window.setTimeout(() => controller.abort(), 150000); // 2.5 min max
       let response: Response;
       try {
         response = await fetch("/api/tjai/generate", {
@@ -66,17 +71,20 @@ export function TJAIShell({ locale }: { locale: Locale }) {
       }
       const data = await response.json();
       if (!response.ok) {
-        console.error("TJAI generate error:", data?.error ?? "Failed to generate plan");
-        throw new Error(data?.error ?? "Failed to generate plan");
+        const errMsg = data?.error ?? "Plan generation failed. Please try again.";
+        console.error("[TJAI] generate error:", errMsg);
+        setGenerateError(errMsg);
+        return; // Stay on calculating phase, show error overlay
       }
-      console.log("TJAI plan generated successfully");
       setPlan(data.plan as TJAIPlan);
       setMetrics((data.metrics as TJAIMetrics) ?? localMetrics);
       setGeneratedAt(data.generatedAt ?? new Date().toISOString());
+      setGenerateError(null);
       setPhase("result");
     } catch (err) {
-      console.error("TJAI generate client error:", err);
-      setPhase("quiz");
+      const msg = err instanceof Error ? err.message : "Connection error. Please check your internet and try again.";
+      console.error("[TJAI] generate client error:", msg);
+      setGenerateError(msg);
     }
   };
 
@@ -233,7 +241,40 @@ export function TJAIShell({ locale }: { locale: Locale }) {
   }
 
   if (phase === "calculating") {
-    return <TJAICalculating copy={copy} metrics={metrics} done={Boolean(plan)} />;
+    return (
+      <div className="relative">
+        <TJAICalculating copy={copy} metrics={metrics} done={Boolean(plan) && !generateError} />
+        {generateError && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+            <div className="w-full max-w-md rounded-2xl border border-red-500/30 bg-[#0F0A0A] p-6 text-center shadow-2xl">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-500/10 text-red-400">
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+              </div>
+              <h3 className="mt-4 text-lg font-semibold text-white">Generation Failed</h3>
+              <p className="mt-2 text-sm text-zinc-400">{generateError}</p>
+              <div className="mt-6 flex flex-col gap-3">
+                <button
+                  type="button"
+                  className="w-full rounded-full bg-[#22D3EE] px-5 py-2.5 text-sm font-bold text-black transition-opacity hover:opacity-90"
+                  onClick={() => {
+                    if (pendingAnswers) void handleGenerate(pendingAnswers, pendingPace);
+                  }}
+                >
+                  Try Again
+                </button>
+                <button
+                  type="button"
+                  className="text-sm text-zinc-500 hover:text-white"
+                  onClick={() => { setGenerateError(null); setPhase("approach"); }}
+                >
+                  ← Go Back
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
   }
 
   if (phase === "compare" && comparePlans && compareMetrics) {

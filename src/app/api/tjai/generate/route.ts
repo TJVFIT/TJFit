@@ -7,10 +7,11 @@ import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { getTJAIAccess } from "@/lib/tjai-access";
 import { calculateTJAIMetrics, parseRangeToNumber } from "@/lib/tjai-science";
+import { callOpenAI, safeParseJSON } from "@/lib/tjai-openai";
 import type { QuizAnswers } from "@/lib/tjai-types";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 60;
+export const maxDuration = 90;
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,13 +28,7 @@ export async function POST(request: NextRequest) {
     const isAdminByEmail = Boolean(authResult.user.email && isAdminEmail(authResult.user.email));
     const [{ data: subscription }, { data: purchase }] = await Promise.all([
       adminClient.from("user_subscriptions").select("tier,status,trial_ends_at").eq("user_id", authResult.user.id).maybeSingle(),
-      adminClient
-        .from("tjai_plan_purchases")
-        .select("id")
-        .eq("user_id", authResult.user.id)
-        .order("purchased_at", { ascending: false })
-        .limit(1)
-        .maybeSingle()
+      adminClient.from("tjai_plan_purchases").select("id").eq("user_id", authResult.user.id).order("purchased_at", { ascending: false }).limit(1).maybeSingle()
     ]);
 
     const tier = (subscription?.tier ?? "core") as "core" | "pro" | "apex";
@@ -44,139 +39,106 @@ export async function POST(request: NextRequest) {
       isAdminByRole = profile?.role === "admin";
     }
     const isAdmin = isAdminByEmail || isAdminByRole;
-    const access = getTJAIAccess(tier, {
-      hasOneTimePlanPurchase: Boolean(purchase?.id),
-      coreTrialMessagesRemaining: isTrialActive ? 10 : 0,
-      isAdmin
-    });
+    getTJAIAccess(tier, { hasOneTimePlanPurchase: Boolean(purchase?.id), coreTrialMessagesRemaining: isTrialActive ? 10 : 0, isAdmin });
     // Plan generation is open to all authenticated users
 
     const body = await request.json().catch(() => null);
     const rawAnswers = body?.answers ?? body;
     const paceOverride = typeof body?.paceOverride === "string" ? body.paceOverride : null;
     if (!rawAnswers || typeof rawAnswers !== "object") {
-      return NextResponse.json({ error: "Invalid answers" }, { status: 400 });
+      return NextResponse.json({ error: "Invalid answers payload" }, { status: 400 });
     }
 
     const answers = rawAnswers as Record<string, unknown>;
     const effectiveAnswers: Record<string, unknown> = paceOverride ? { ...answers, s2_pace: paceOverride } : answers;
-    const trainingDaysRaw = String(effectiveAnswers.s5_days ?? effectiveAnswers.training_days ?? "3-4");
-    const inferredTrainingDays = trainingDaysRaw.startsWith("1")
-      ? 2
-      : trainingDaysRaw.startsWith("3")
-        ? 4
-        : trainingDaysRaw.startsWith("5")
-          ? 6
-          : trainingDaysRaw.startsWith("7")
-            ? 7
-            : 4;
 
-    // Support both raw numbers and range strings like "25–34 years", "65–80 kg"
+    const trainingDaysRaw = String(effectiveAnswers.s5_days ?? effectiveAnswers.training_days ?? "3-4");
+    const inferredTrainingDays = trainingDaysRaw.startsWith("1") ? 2 : trainingDaysRaw.startsWith("3") ? 4 : trainingDaysRaw.startsWith("5") ? 6 : trainingDaysRaw.startsWith("7") ? 7 : 4;
+
+    // Support range strings ("25–34 years", "65–80 kg") or plain numbers
     const requiredAge = parseRangeToNumber(effectiveAnswers.s1_age ?? effectiveAnswers.age, 0);
     const requiredWeight = parseRangeToNumber(effectiveAnswers.s1_weight ?? effectiveAnswers.weight, 0);
     const requiredHeight = parseRangeToNumber(effectiveAnswers.s1_height ?? effectiveAnswers.height, 0);
-    if (!Number.isFinite(requiredAge) || requiredAge <= 0 ||
-        !Number.isFinite(requiredWeight) || requiredWeight <= 0 ||
-        !Number.isFinite(requiredHeight) || requiredHeight <= 0) {
-      return NextResponse.json(
-        { error: "Missing required fields: age, weight, height" },
-        { status: 400 }
-      );
+
+    if (!Number.isFinite(requiredAge) || requiredAge <= 0 || !Number.isFinite(requiredWeight) || requiredWeight <= 0 || !Number.isFinite(requiredHeight) || requiredHeight <= 0) {
+      return NextResponse.json({ error: "Missing required fields: age, weight, height. Please complete all questions." }, { status: 400 });
     }
 
     const quizAnswers = effectiveAnswers as QuizAnswers;
     const metrics = calculateTJAIMetrics(quizAnswers);
     const learningInsight = await getSimilarUserInsight(adminClient, effectiveAnswers);
+
     const systemPrompt = buildTJAISystemPrompt();
-    const userPrompt = buildTJAIUserPrompt(quizAnswers, metrics) + (learningInsight ? `\n\n${learningInsight}` : "");
-    console.log("TJAI generate called for user:", authResult.user.id);
+    const userPrompt = buildTJAIUserPrompt(quizAnswers, metrics) + (learningInsight ? `\n\n== LEARNING FROM SIMILAR USERS ==\n${learningInsight}` : "");
 
-    const apiKey = process.env.ANTHROPIC_API_KEY;
-    if (!apiKey) {
-      console.error("TJAI generate error: ANTHROPIC_API_KEY is not set");
-      return NextResponse.json({ error: "AI not configured" }, { status: 503 });
+    console.log("[TJAI] Generating plan for user:", authResult.user.id, "| tier:", tier);
+
+    // Verify OpenAI key is set
+    if (!process.env.OPENAI_API_KEY) {
+      console.error("[TJAI] OPENAI_API_KEY is not set");
+      return NextResponse.json({ error: "AI not configured. Please contact support." }, { status: 503 });
     }
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01"
-      },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 10000,
+    let rawText: string;
+    try {
+      rawText = await callOpenAI({
         system: systemPrompt,
-        messages: [{ role: "user", content: userPrompt }]
-      })
-    });
-
-    if (!response.ok) {
-      const raw = await response.text();
-      return NextResponse.json({ error: "AI generation failed", details: raw.slice(0, 400) }, { status: 502 });
-    }
-
-    const data = await response.json();
-    const text = data?.content?.[0]?.text ?? "";
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      console.error("TJAI generate error: invalid response format", text);
-      return NextResponse.json({ error: "Invalid AI response format" }, { status: 502 });
+        user: userPrompt,
+        maxTokens: 16000,
+        jsonMode: true // Guarantees valid JSON — no parsing failures
+      });
+    } catch (aiError) {
+      const msg = aiError instanceof Error ? aiError.message : "AI generation failed";
+      console.error("[TJAI] AI call failed:", msg);
+      return NextResponse.json({ error: `AI generation failed: ${msg}` }, { status: 502 });
     }
 
     let plan: unknown;
     try {
-      plan = JSON.parse(jsonMatch[0]);
+      plan = safeParseJSON(rawText);
     } catch (parseError) {
-      console.error("TJAI generate JSON parse error:", parseError);
-      console.error("TJAI generate full response:", text);
-      return NextResponse.json({ error: "Failed to parse AI plan JSON" }, { status: 502 });
+      const msg = parseError instanceof Error ? parseError.message : "JSON parse error";
+      console.error("[TJAI] JSON parse failed:", msg, "\nRaw:", rawText.slice(0, 500));
+      return NextResponse.json({ error: "AI returned an invalid response. Please try again." }, { status: 502 });
     }
 
+    // Save to DB
     const { data: savedPlan, error: saveError } = await adminClient
       .from("saved_tjai_plans")
-      .upsert(
-        {
-          user_id: authResult.user.id,
-          answers_json: effectiveAnswers,
-          metrics_json: metrics,
-          plan_json: plan,
-          goal: String(effectiveAnswers.s2_goal ?? effectiveAnswers.goal ?? "fat_loss"),
-          daily_calories: Number(metrics.calorieTarget ?? 0),
-          protein_g: Number(metrics.protein ?? 0),
-          carbs_g: Number(metrics.carbs ?? 0),
-          fat_g: Number(metrics.fat ?? 0),
-          water_ml: Number(metrics.water ?? 0),
-          training_days_per_week: inferredTrainingDays,
-          training_location: String(effectiveAnswers.s5_type ?? effectiveAnswers.location ?? "gym"),
-          updated_at: new Date().toISOString()
-        },
-        { onConflict: "user_id" }
-      )
+      .upsert({
+        user_id: authResult.user.id,
+        answers_json: effectiveAnswers,
+        metrics_json: metrics,
+        plan_json: plan,
+        goal: String(effectiveAnswers.s2_goal ?? effectiveAnswers.goal ?? "fat_loss"),
+        daily_calories: Number(metrics.calorieTarget ?? 0),
+        protein_g: Number(metrics.protein ?? 0),
+        carbs_g: Number(metrics.carbs ?? 0),
+        fat_g: Number(metrics.fat ?? 0),
+        water_ml: Number(metrics.water ?? 0),
+        training_days_per_week: inferredTrainingDays,
+        training_location: String(effectiveAnswers.s5_type ?? effectiveAnswers.location ?? "gym"),
+        updated_at: new Date().toISOString()
+      }, { onConflict: "user_id" })
       .select("id")
       .maybeSingle();
-    if (saveError) {
-      console.error("TJAI generate save error:", saveError);
-      return NextResponse.json({ error: "Plan generated but could not be saved. Please try again." }, { status: 500 });
-    }
-    console.log("TJAI plan generated successfully for user:", authResult.user.id);
 
-    // Record anonymous analytics (non-blocking)
+    if (saveError) {
+      console.error("[TJAI] Save error:", saveError);
+      // Return plan even if save fails — user still gets their result
+      return NextResponse.json({ plan, metrics, generatedAt: new Date().toISOString(), planId: null });
+    }
+
+    console.log("[TJAI] Plan generated and saved for user:", authResult.user.id);
+
+    // Non-blocking analytics
     void recordPlanGeneration(adminClient, effectiveAnswers, Number(metrics.calorieTarget ?? 0), Number(metrics.protein ?? 0));
 
-    return NextResponse.json({
-      plan,
-      metrics,
-      generatedAt: new Date().toISOString(),
-      planId: savedPlan?.id ?? null
-    });
+    return NextResponse.json({ plan, metrics, generatedAt: new Date().toISOString(), planId: savedPlan?.id ?? null });
+
   } catch (error) {
-    console.error("TJAI generate error:", error);
-    return NextResponse.json(
-      { error: "Generation failed", details: error instanceof Error ? error.message : "Unknown error" },
-      { status: 500 }
-    );
+    const msg = error instanceof Error ? error.message : "Unknown error";
+    console.error("[TJAI] Unhandled error:", msg);
+    return NextResponse.json({ error: `Generation failed: ${msg}` }, { status: 500 });
   }
 }
-

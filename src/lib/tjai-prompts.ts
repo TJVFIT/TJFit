@@ -31,17 +31,14 @@ function fmtArray(v: unknown): string {
 
 export function buildTJAIUserPrompt(answers: QuizAnswers, metrics: TJAIMetrics): string {
   const goal = String(answers.s2_goal ?? "");
-  const injuries = String(answers.s17_injuries ?? "").trim();
+  const injuries = fmtArray(answers.s17_injuries);
   const budget = String(answers.s14_budget ?? "");
-  const religious = String(answers.s13_religious ?? "None");
+  const religious = String(answers.s13_allergies ?? "None");
   const stress = String(answers.s9_stress ?? "");
-  const sleepQuality = String(answers.s8_quality ?? "");
-  const sleepHours = Number(answers.s8_hours ?? 0);
   const biggestProblem = fmtArray(answers.s18_biggest_problem);
   const beginnerMode =
     biggestProblem.includes("Not knowing what to do") ||
-    answers.s10_dieted === "No" ||
-    answers.s5_trains === "No";
+    String(answers.s5_trains ?? "").includes("Beginner");
 
   const calorieCyclingBlock = goal.startsWith("Gain muscle")
     ? `CALORIE CYCLING:
@@ -72,27 +69,28 @@ Rules:
     : "";
 
   const budgetBlock =
-    budget === "Low — I need budget-friendly meals"
+    budget.toLowerCase().includes("budget")
       ? `BUDGET MODE ACTIVE:
-- Use budget staples only.
+- Use affordable staples only (oats, eggs, rice, canned tuna, chicken, legumes).
 - No expensive ingredients.
-- Meal cost under EUR 3.
-- Include "buy in bulk" note.
-- Weekly grocery list under EUR 40.`
+- Include "buy in bulk" notes.
+- Weekly grocery cost under $50.`
       : "";
 
+  const sleepHoursNum = Number(String(answers.s8_hours ?? "7").match(/\d+/)?.[0] ?? 7);
+  const poorSleep = sleepHoursNum < 6;
   const recoveryBlock =
-    sleepQuality === "Poor — I wake up often" || sleepHours < 6 || stress === "High" || stress === "Very high"
+    poorSleep || stress.includes("High") || stress.includes("Very High")
       ? `RECOVERY PROTOCOL REQUIRED:
 - Add dedicated section: "Your Recovery Protocol".
 - Include sleep optimization, cortisol management, and weekly recovery metrics.`
       : "";
 
   const religiousBlock =
-    religious !== "None"
-      ? `RELIGIOUS RESTRICTIONS: ${religious}
-- Every meal must be compliant.
-- Label meal plans accordingly ([HALAL]/[KOSHER]/[NO BEEF]).`
+    religious && !religious.includes("None")
+      ? `DIETARY RESTRICTIONS: ${religious}
+- Every meal must respect these restrictions strictly.
+- Label meal plans accordingly.`
       : "";
 
   const reverseDietBlock = metrics.reverseDietNeeded
@@ -118,10 +116,7 @@ Rules:
 - Each meal includes educationNote.`
     : "";
 
-  const sleepHoursNum = Number(String(answers.s8_hours ?? "7").match(/\d+/)?.[0] ?? 7);
   const highStress = stress.includes("High") || stress.includes("Very High");
-  const poorSleep = sleepHoursNum < 6;
-  const goodSleep = sleepHoursNum >= 8;
   const fastPace = String(answers.s2_pace ?? "").includes("Fast");
   const isBeginnerLevel = String(answers.s5_trains ?? "").includes("Beginner");
 
