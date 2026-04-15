@@ -187,9 +187,9 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
         <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {[
             ["Core (Free)", "Trial quiz + metrics preview\nSee BMR/TDEE/macros\nNo full plan generation", `/${locale}/ai`],
-            ["Pro (€20/mo)", "Monthly 4-week AI program by email\nProgram discounts", `/${locale}/membership?tier=pro`],
-            ["Apex (€35/mo)", "Full TJAI generation\nUnlimited AI chat\nMeal swaps + custom plans", `/${locale}/membership?tier=apex`],
-            ["One-time TJAI (€9.99)", "Generate one plan\nDownload PDF\nNo subscription", `/${locale}/membership?tjai_onetime=1`]
+            ["Pro ($10/mo)", "Monthly 4-week AI program by email\nProgram discounts", `/${locale}/membership?tier=pro`],
+            ["Apex ($20/mo)", "Full TJAI generation\nUnlimited AI chat\nMeal swaps + custom plans", `/${locale}/membership?tier=apex`],
+            ["One-time TJAI ($25)", "Generate one plan\nDownload PDF\nNo subscription", `/${locale}/membership?tjai_onetime=1`]
           ].map(([title, body, href]) => (
             <article key={title} className="rounded-2xl border border-[#1E2028] bg-[#111215] p-5">
               <p className="text-lg font-semibold text-white">{title}</p>

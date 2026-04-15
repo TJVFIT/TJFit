@@ -41,8 +41,8 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
 
   const price = useMemo(
     () => ({
-      pro: mode === "monthly" ? 20 : 180,
-      apex: mode === "monthly" ? 35 : 320
+      pro: mode === "monthly" ? 10 : 100,
+      apex: mode === "monthly" ? 20 : 200
     }),
     [mode]
   );
@@ -179,7 +179,7 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
           </div>
           <h3 className="text-xl font-bold text-white">{copy.cards.pro.name}</h3>
           <p className="mt-3 text-3xl font-extrabold text-white">
-            €<span className="tabular-nums">{proPriceDisplay}</span>{" "}
+            $<span className="tabular-nums">{proPriceDisplay}</span>{" "}
             <span className="text-sm font-medium text-[#A1A1AA]">{mode === "monthly" ? copy.perMonthSuffix : copy.perYearSuffix}</span>
           </p>
           <Button className="mt-4 w-full" disabled={working !== null} onClick={() => void checkout("pro")}>
@@ -204,7 +204,7 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
           </div>
           <h3 className="text-xl font-bold text-white">{copy.cards.apex.name}</h3>
           <p className="mt-3 text-3xl font-extrabold text-white">
-            €<span className="tabular-nums">{apexPriceDisplay}</span>{" "}
+            $<span className="tabular-nums">{apexPriceDisplay}</span>{" "}
             <span className="text-sm font-medium text-[#A1A1AA]">{mode === "monthly" ? copy.perMonthSuffix : copy.perYearSuffix}</span>
           </p>
           <Button className="mt-4 w-full bg-gradient-to-r from-violet-500 to-cyan-500 font-bold text-white hover:opacity-90" disabled={working !== null} onClick={() => void checkout("apex")}>
