@@ -3,20 +3,20 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import Image from "next/image";
-import { ChevronDown } from "lucide-react";
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
+import {
+  Dumbbell, Brain, Users, Trophy, Apple, Coins,
+  ChevronDown, ArrowRight, Zap, Shield, Globe, Star
+} from "lucide-react";
 
-import { BlurReveal } from "@/components/blur-reveal";
-import { FreeOfferSection } from "@/components/free-offer-section";
 import { ParticleField } from "@/components/particle-field";
 import { HomeProgramPreviewCard } from "@/components/program-card";
-import { SplitText } from "@/components/ui/split-text";
 import { ScrollTicker } from "@/components/ui/ScrollTicker";
-import { WordReveal } from "@/components/ui/word-reveal";
 import { HomeNewsletterBar } from "@/components/home-newsletter-bar";
 import { HomeTestimonials } from "@/components/home-testimonials";
 import { HomeCoachCta } from "@/components/home-coach-cta";
-import { TJAITypingShowcase } from "@/components/tjai-typing-showcase";
+import { ClientErrorBoundary } from "@/components/client-error-boundary";
 import { useMagneticButton } from "@/hooks/useMagneticButton";
 import { useInView } from "@/hooks/useInView";
 import type { Program } from "@/lib/content";
@@ -36,8 +36,7 @@ function useReducedMotion() {
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     const a = () => setR(mq.matches);
-    a();
-    mq.addEventListener("change", a);
+    a(); mq.addEventListener("change", a);
     return () => mq.removeEventListener("change", a);
   }, []);
   return r;
@@ -45,233 +44,128 @@ function useReducedMotion() {
 
 function formatMoney(locale: Locale, value: number) {
   const n = Number.isFinite(value) ? value : 0;
-  // Convert TRY base price to EUR (rate: 0.029)
   const eur = n * 0.029;
-  const loc =
-    locale === "tr"
-      ? "tr-TR"
-      : locale === "ar"
-        ? "ar-SA"
-        : locale === "es"
-          ? "es-ES"
-          : locale === "fr"
-            ? "fr-FR"
-            : "en-GB";
+  const loc = locale === "tr" ? "tr-TR" : locale === "ar" ? "ar-SA" : locale === "es" ? "es-ES" : locale === "fr" ? "fr-FR" : "en-GB";
   try {
     return new Intl.NumberFormat(loc, { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(eur);
-  } catch {
-    return `€${Math.round(eur)}`;
-  }
+  } catch { return `€${Math.round(eur)}`; }
 }
 
-function CountCell({
-  target,
-  suffix,
-  label,
-  subtitle,
-  reduce
-}: {
-  target: number;
-  suffix: string;
-  label: string;
-  subtitle: string;
-  reduce: boolean;
-}) {
+// Counter that animates on scroll
+function CountUp({ target, suffix = "", label }: { target: number; suffix?: string; label: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { threshold: 0.2, once: true });
-  const [val, setVal] = useState(() => (reduce ? target : 0));
+  const inView = useInView(ref as React.RefObject<HTMLElement>, { threshold: 0.3, once: true });
+  const [val, setVal] = useState(0);
 
   useEffect(() => {
-    if (reduce) {
-      setVal(target);
-      return;
-    }
     if (!inView) return;
+    const dur = 1400;
     const start = performance.now();
-    const dur = 1500;
     let raf = 0;
     const tick = (now: number) => {
       const t = Math.min(1, (now - start) / dur);
-      const eased = 1 - (1 - t) * (1 - t);
+      const eased = 1 - Math.pow(1 - t, 3);
       setVal(Math.round(eased * target));
       if (t < 1) raf = requestAnimationFrame(tick);
+      else setVal(target);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [inView, reduce, target]);
+  }, [inView, target]);
 
   return (
     <div ref={ref} className="text-center">
-      <p className="font-display text-4xl font-extrabold tabular-nums text-[#22D3EE] stat-number-glow sm:text-5xl lg:text-6xl">
-        {val}
-        {suffix}
+      <p className="font-display text-5xl font-extrabold tabular-nums text-[#22D3EE] stat-number-glow lg:text-7xl">
+        {val}{suffix}
       </p>
-      <p className="mt-3 text-base uppercase tracking-[0.2em] text-[#52525B]">{label}</p>
-      <p className="mt-1 text-[11px] text-[#52525B]">{subtitle}</p>
+      <p className="mt-3 text-sm font-medium uppercase tracking-[0.2em] text-[#52525B]">{label}</p>
     </div>
   );
 }
 
-function MagneticHeroLink({
-  href,
-  className,
-  children,
-  onClick
-}: {
-  href: string;
-  className: string;
-  children: React.ReactNode;
-  onClick?: () => void;
-}) {
-  const ref = useMagneticButton<HTMLAnchorElement>(0.3);
+// Section reveal wrapper
+function Reveal({ children, className, delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref as React.RefObject<HTMLElement>, { threshold: 0.1, once: true });
   return (
-    <Link href={href} className={className} onClick={onClick} ref={ref}>
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        opacity: inView ? 1 : 0,
+        transform: inView ? "translateY(0)" : "translateY(40px)",
+        transition: `opacity 700ms cubic-bezier(0,0,0.2,1) ${delay}ms, transform 700ms cubic-bezier(0,0,0.2,1) ${delay}ms`
+      }}
+    >
       {children}
-    </Link>
+    </div>
   );
 }
 
-function HeroSilhouette({ entered, reduce }: { entered: boolean; reduce: boolean }) {
+// Bento feature card
+function BentoCard({
+  icon: Icon,
+  title,
+  desc,
+  accent = "#22D3EE",
+  span = 1,
+  tall = false
+}: {
+  icon: React.ElementType;
+  title: string;
+  desc: string;
+  accent?: string;
+  span?: 1 | 2;
+  tall?: boolean;
+}) {
+  const [spot, setSpot] = useState({ x: 50, y: 50, visible: false });
+
   return (
     <div
       className={cn(
-        "pointer-events-none absolute inset-0 z-0 overflow-hidden",
-        "transition-[opacity,transform] duration-[1400ms] [transition-timing-function:cubic-bezier(0,0,0.2,1)]",
-        entered ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-90"
+        "group relative overflow-hidden rounded-[20px] border border-[#1E2028] bg-[#0D0E12] p-6 transition-[border-color,box-shadow,transform] duration-300",
+        "hover:-translate-y-1 hover:border-[rgba(34,211,238,0.3)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.5),0_0_40px_rgba(34,211,238,0.06)]",
+        span === 2 && "md:col-span-2",
+        tall && "md:row-span-2"
       )}
-      style={{ transitionDelay: reduce ? "0ms" : "700ms" }}
-      aria-hidden
+      onMouseMove={(e) => {
+        const r = e.currentTarget.getBoundingClientRect();
+        setSpot({ x: ((e.clientX - r.left) / r.width) * 100, y: ((e.clientY - r.top) / r.height) * 100, visible: true });
+      }}
+      onMouseLeave={() => setSpot((s) => ({ ...s, visible: false }))}
     >
-      <svg
-        viewBox="0 0 520 820"
-        className={cn(
-          "absolute bottom-0 right-[-2%] h-[96%] w-auto will-change-transform",
-          "opacity-[0.45] max-md:opacity-[0.18] max-md:right-auto max-md:left-1/2 max-md:-translate-x-1/2 max-md:scale-[0.65]",
-          "motion-reduce:opacity-[0.25]"
-        )}
+      {/* Cursor spotlight */}
+      <div
+        className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-300"
         style={{
-          filter: [
-            "drop-shadow(0 0 3px rgba(34,211,238,1))",
-            "drop-shadow(0 0 12px rgba(34,211,238,0.85))",
-            "drop-shadow(0 0 35px rgba(34,211,238,0.5))",
-            "drop-shadow(0 0 70px rgba(34,211,238,0.25))"
-          ].join(" ")
+          opacity: spot.visible ? 1 : 0,
+          background: `radial-gradient(250px circle at ${spot.x}% ${spot.y}%, rgba(34,211,238,0.07), transparent 70%)`
         }}
-      >
-        <defs>
-          <linearGradient id="silhouetteGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#67E8F9" />
-            <stop offset="60%" stopColor="#22D3EE" />
-            <stop offset="100%" stopColor="#0891B2" />
-          </linearGradient>
-        </defs>
-
-        <g className={cn("origin-bottom motion-safe:animate-[tj-hero-breathe_3.5s_ease-in-out_infinite]", reduce && "animate-none")}>
-          {/* Head */}
-          <circle cx="260" cy="86" r="32" fill="rgba(34,211,238,0.08)" stroke="url(#silhouetteGrad)" strokeWidth="2.5" />
-          {/* Neck */}
-          <path d="M260 118 L260 150" fill="none" stroke="url(#silhouetteGrad)" strokeWidth="3" strokeLinecap="round" />
-          {/* Torso — filled with subtle cyan */}
-          <path d="M195 168 Q260 134 325 168 L308 336 Q260 372 212 336 Z" fill="rgba(34,211,238,0.06)" stroke="url(#silhouetteGrad)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-          {/* Left arm (resting) */}
-          <path d="M212 185 L165 292 L173 374" fill="none" stroke="url(#silhouetteGrad)" strokeWidth="2.5" strokeLinecap="round" />
-          {/* Right upper arm (static part) */}
-          <path d="M325 185 L358 244" fill="none" stroke="url(#silhouetteGrad)" strokeWidth="2.5" strokeLinecap="round" />
-
-          {/* Right forearm + dumbbell — animated curl */}
-          <g
-            className={cn(
-              "origin-[358px_244px] [transform-box:fill-box] motion-safe:animate-[tj-curl-rep_2s_ease-in-out_infinite]",
-              reduce && "animate-none"
-            )}
-          >
-            <path d="M358 244 L396 206 L428 198" fill="none" stroke="#22D3EE" strokeWidth="2.5" strokeLinecap="round" />
-            {/* Dumbbell bar */}
-            <path d="M420 198 L455 198" fill="none" stroke="#22D3EE" strokeWidth="3" strokeLinecap="round" />
-            {/* Dumbbell plates */}
-            <circle cx="418" cy="198" r="13" fill="rgba(34,211,238,0.15)" stroke="#22D3EE" strokeWidth="2" />
-            <circle cx="457" cy="198" r="13" fill="rgba(34,211,238,0.15)" stroke="#22D3EE" strokeWidth="2" />
-            {/* Grip highlight */}
-            <circle cx="418" cy="198" r="5" fill="#22D3EE" opacity="0.6" />
-            <circle cx="457" cy="198" r="5" fill="#22D3EE" opacity="0.6" />
-          </g>
-
-          {/* Legs */}
-          <path d="M234 370 L207 526 L220 708" fill="none" stroke="url(#silhouetteGrad)" strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M288 370 L323 526 L310 708" fill="none" stroke="url(#silhouetteGrad)" strokeWidth="2.5" strokeLinecap="round" />
-          {/* Feet */}
-          <path d="M218 708 L186 750" fill="none" stroke="url(#silhouetteGrad)" strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M308 708 L340 750" fill="none" stroke="url(#silhouetteGrad)" strokeWidth="2.5" strokeLinecap="round" />
-
-          {/* Energy pulse ring — animated */}
-          <circle
-            cx="260"
-            cy="400"
-            r="200"
-            fill="none"
-            stroke="rgba(34,211,238,0.07)"
-            strokeWidth="1"
-            className={cn("motion-safe:animate-[tj-pulse-ring_3s_ease-out_infinite]", reduce && "animate-none")}
-          />
-        </g>
-      </svg>
+        aria-hidden
+      />
+      {/* Gradient corner */}
+      <div
+        className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100"
+        style={{ background: `radial-gradient(circle, ${accent}22 0%, transparent 70%)` }}
+        aria-hidden
+      />
+      <div className="relative z-10">
+        <div
+          className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl"
+          style={{ background: `${accent}18`, border: `1px solid ${accent}30` }}
+        >
+          <Icon className="h-6 w-6" style={{ color: accent, filter: `drop-shadow(0 0 6px ${accent}88)` }} strokeWidth={1.75} />
+        </div>
+        <h3 className="font-display text-lg font-semibold text-white">{title}</h3>
+        <p className="mt-2 text-sm leading-relaxed text-[#71717A]">{desc}</p>
+      </div>
     </div>
   );
 }
 
-function FloatingHeroStats({
-  entered,
-  reduce,
-  activeUsers,
-  locale,
-  direction
-}: {
-  entered: boolean;
-  reduce: boolean;
-  activeUsers: number;
-  locale: Locale;
-  direction: "ltr" | "rtl";
-}) {
-  const t = {
-    en: { programs: "Expert Programs", online: "Members Training Now", languages: "Languages", onlineSuffix: "Online" },
-    tr: { programs: "Uzman Program", online: "Su an aktif uyeler", languages: "Diller", onlineSuffix: "Aktif" },
-    ar: { programs: "برامج احترافية", online: "أعضاء يتدرّبون الآن", languages: "لغات", onlineSuffix: "متصل" },
-    es: { programs: "Programas Expertos", online: "Miembros entrenando ahora", languages: "Idiomas", onlineSuffix: "En linea" },
-    fr: { programs: "Programmes Experts", online: "Membres en entrainement", languages: "Langues", onlineSuffix: "En ligne" }
-  }[locale];
-  const onlineCount = new Intl.NumberFormat(locale === "ar" ? "ar-SA" : locale === "tr" ? "tr-TR" : locale === "es" ? "es-ES" : locale === "fr" ? "fr-FR" : "en-US").format(activeUsers || 0);
-  const showOnlineCard = (activeUsers ?? 0) > 0;
-  const cards = [
-    { a: "20+", b: t.programs, c: "", ltr: "left-[5%] top-[35%]", rtl: "right-[5%] top-[35%]", show: true },
-    { a: `${onlineCount} ${t.onlineSuffix}`, b: t.online, c: "", ltr: "right-[5%] top-[25%]", rtl: "left-[5%] top-[25%]", show: showOnlineCard },
-    { a: "5", b: t.languages, c: "", ltr: "right-[8%] top-[55%]", rtl: "left-[8%] top-[55%]", show: true }
-  ].filter((c) => c.show);
-  return (
-    <div className="pointer-events-none absolute inset-0 z-0 max-md:hidden">
-      {cards.map((card, i) => (
-        <div
-          key={`${card.a}-${card.b}`}
-          className={cn(
-            "tj-float-stat absolute w-[210px] rounded-2xl border border-[rgba(34,211,238,0.2)] bg-[rgba(17,18,21,0.85)] px-5 py-4 backdrop-blur-[12px] shadow-[0_8px_32px_rgba(0,0,0,0.4)] will-change-transform",
-            direction === "rtl" ? card.rtl : card.ltr,
-            entered ? "opacity-100" : "opacity-0"
-          )}
-          style={{
-            transition: "opacity 600ms ease",
-            transitionDelay: entered && !reduce ? `${1200 + i * 150}ms` : "0ms",
-            animation: reduce
-              ? "none"
-              : `tj-float-up ${[4, 5, 3.5][i]}s ease-in-out infinite ${[0, 1, 2][i]}s`
-          }}
-          aria-hidden
-        >
-          <p className="text-[32px] font-bold text-[#22D3EE]">{card.a}</p>
-          <p className="text-[12px] uppercase tracking-[0.12em] text-[#A1A1AA]">{card.b}</p>
-          {card.c ? <p className="text-[10px] text-[#52525B]">{card.c}</p> : null}
-        </div>
-      ))}
-    </div>
-  );
+function MagneticLink({ href, className, children, onClick }: { href: string; className: string; children: React.ReactNode; onClick?: () => void }) {
+  const ref = useMagneticButton<HTMLAnchorElement>(0.3);
+  return <Link href={href} className={className} onClick={onClick} ref={ref}>{children}</Link>;
 }
 
 export function ImmersiveHome({
@@ -280,7 +174,7 @@ export function ImmersiveHome({
   programs,
   diets,
   coaches: _coaches,
-  freePrograms,
+  freePrograms: _freePrograms,
   programCount,
   dietCount
 }: {
@@ -294,31 +188,19 @@ export function ImmersiveHome({
   dietCount: number;
 }) {
   void _coaches;
+  void _freePrograms;
   const reduce = useReducedMotion();
   const direction = getDirection(locale);
-  const isRtl = direction === "rtl";
   const programUi = getProgramUiCopy(locale);
   const navChrome = getNavChromeCopy(locale);
   const [heroEntered, setHeroEntered] = useState(reduce);
   const [hideScrollCue, setHideScrollCue] = useState(false);
-  const [liveStats, setLiveStats] = useState({ activeToday: 0, programsStartedToday: 0 });
-  const [livePulse, setLivePulse] = useState(false);
-  const heroRef = useRef<HTMLElement>(null);
-  const ambientRef = useRef<HTMLDivElement>(null);
-  const logo3DRef = useRef<HTMLDivElement>(null);
-  const particleRef = useRef<HTMLDivElement>(null);
-  const silhouetteRef = useRef<HTMLDivElement>(null);
-  const statsRef = useRef<HTMLDivElement>(null);
-  const headlineRef = useRef<HTMLHeadingElement>(null);
-  const subCtaRef = useRef<HTMLDivElement>(null);
+  const [liveStats, setLiveStats] = useState({ activeToday: 0 });
   const heroMouseRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 }) as HeroMouseRef;
 
   useEffect(() => {
-    if (reduce) {
-      setHeroEntered(true);
-      return;
-    }
-    const t = window.setTimeout(() => setHeroEntered(true), 50);
+    if (reduce) { setHeroEntered(true); return; }
+    const t = window.setTimeout(() => setHeroEntered(true), 80);
     return () => clearTimeout(t);
   }, [reduce]);
 
@@ -331,305 +213,215 @@ export function ImmersiveHome({
 
   useEffect(() => {
     let cancelled = false;
-    const loadLive = async () => {
-      try {
-        const res = await fetch("/api/stats/live", { cache: "no-store" });
-        if (!res.ok) return;
-        const data = await res.json();
-        if (cancelled) return;
-        setLiveStats((prev) => {
-          if (prev.activeToday !== data.activeToday || prev.programsStartedToday !== data.programsStartedToday) {
-            setLivePulse(true);
-            window.setTimeout(() => setLivePulse(false), 220);
-          }
-          return {
-            activeToday: Number(data.activeToday ?? 0),
-            programsStartedToday: Number(data.programsStartedToday ?? 0)
-          };
-        });
-      } catch {
-        // silent fail for hero microstat
-      }
-    };
-    void loadLive();
-    const id = window.setInterval(loadLive, 300000);
-    return () => {
-      cancelled = true;
-      window.clearInterval(id);
-    };
+    fetch("/api/stats/live", { cache: "no-store" })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (!cancelled && d) setLiveStats({ activeToday: Number(d.activeToday ?? 0) }); })
+      .catch(() => {});
+    return () => { cancelled = true; };
   }, []);
 
+  // Mouse parallax
   useEffect(() => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return;
     const noHover = window.matchMedia("(hover: none)").matches;
-    if (reduced || noHover) return;
-
-    let raf = 0;
-    const current = { x: 0, y: 0 };
-    const target = { x: 0, y: 0 };
-    const apply = () => {
-      current.x += (target.x - current.x) * 0.08;
-      current.y += (target.y - current.y) * 0.08;
-
-      if (ambientRef.current) ambientRef.current.style.transform = `translate(${current.x * 0.02}px, ${current.y * 0.02}px)`;
-      if (logo3DRef.current) logo3DRef.current.style.transform = `translate(${current.x * 0.04}px, ${current.y * 0.04}px)`;
-      if (particleRef.current) particleRef.current.style.transform = `translate(${current.x * 0.01}px, ${current.y * 0.01}px)`;
-      if (silhouetteRef.current) silhouetteRef.current.style.transform = `translate(${current.x * 0.06}px, ${current.y * 0.06}px)`;
-      if (statsRef.current) statsRef.current.style.transform = `translate(${current.x * 0.08}px, ${current.y * 0.08}px)`;
-      if (headlineRef.current) headlineRef.current.style.transform = `translate(${current.x * 0.015}px, ${current.y * 0.015}px)`;
-      if (subCtaRef.current) subCtaRef.current.style.transform = `translate(${current.x * 0.01}px, ${current.y * 0.01}px)`;
-
-      raf = window.requestAnimationFrame(apply);
+    if (noHover) return;
+    const onMove = (e: MouseEvent) => {
+      heroMouseRef.current.x = (e.clientX / window.innerWidth) * 2 - 1;
+      heroMouseRef.current.y = -((e.clientY / window.innerHeight) * 2 - 1);
     };
-
-    const onMove = (event: MouseEvent) => {
-      target.x = event.clientX - window.innerWidth / 2;
-      target.y = event.clientY - window.innerHeight / 2;
-      heroMouseRef.current.x = (event.clientX / window.innerWidth) * 2 - 1;
-      heroMouseRef.current.y = -((event.clientY / window.innerHeight) * 2 - 1);
-    };
-
     window.addEventListener("mousemove", onMove, { passive: true });
-    raf = window.requestAnimationFrame(apply);
-    return () => {
-      window.removeEventListener("mousemove", onMove);
-      window.cancelAnimationFrame(raf);
-    };
-  }, []);
+    return () => window.removeEventListener("mousemove", onMove);
+  }, [reduce]);
 
-  const h1 = copy.hero.headline.trim();
-  const line1 = h1.split(/\s+/)[0] ?? "Train";
-  const line2 = h1.slice(line1.length).trim() || "Smarter.";
-  const line3Accent = copy.hero.headlineLine2Accent ?? "";
-  const line3Rest = copy.hero.headlineLine2Rest ?? "";
+  const lineIn = (delay: number): CSSProperties => ({
+    opacity: heroEntered ? 1 : 0,
+    transform: heroEntered ? "translateY(0)" : "translateY(32px)",
+    transition: reduce ? "none" : `opacity 800ms cubic-bezier(0,0,0.2,1) ${delay}ms, transform 800ms cubic-bezier(0,0,0.2,1) ${delay}ms`
+  });
 
-  const featureItems = copy.features.items.slice(0, 3);
   const programSlice = useMemo(() => programs.slice(0, 4), [programs]);
-  const dietSlice = useMemo(() => diets.slice(0, 4), [diets]);
+  const dietSlice = useMemo(() => diets.slice(0, 3), [diets]);
 
-  const tickerPrograms = [
-    "FAT LOSS",
-    "MUSCLE GAIN",
-    "HOME",
-    "GYM",
-    "12 WEEKS",
-    "STRUCTURED",
-    "PROGRESSION",
-    "COACH-BUILT"
-  ];
-  const tickerDiets = [
-    "CUTTING",
-    "BULKING",
-    "MACROS",
-    "RECIPES",
-    "MEAL PLANS",
-    "ADJUSTMENTS",
-    "STRUCTURED"
-  ];
-
-  const lineMotion = (delayMs: number, y = 40) =>
-    ({
-      opacity: heroEntered ? 1 : 0,
-      transform: heroEntered ? "translateY(0)" : `translateY(${y}px)`,
-      transitionProperty: "opacity, transform",
-      transitionDuration: reduce ? "0ms" : "700ms",
-      transitionTimingFunction: "cubic-bezier(0,0,0.2,1)",
-      transitionDelay: reduce ? "0ms" : `${delayMs}ms`
-    }) as CSSProperties;
+  const features = [
+    { icon: Brain, title: "TJAI — Your AI Coach", desc: "25 questions. GPT-4o builds your complete 12-week transformation plan. Diet + training + supplements.", accent: "#22D3EE", span: 2 as const },
+    { icon: Dumbbell, title: "20+ Expert Programs", desc: "12-week structured plans for home or gym. Fat loss, muscle gain, recomposition — all levels.", accent: "#67E8F9" },
+    { icon: Apple, title: "Full Diet Systems", desc: "Daily meal plans with macros, recipes, grocery lists. Halal, vegan, budget — all covered.", accent: "#A78BFA" },
+    { icon: Users, title: "Coach Marketplace", desc: "Book certified coaches. 1-on-1 guidance, progress tracking, personalized feedback.", accent: "#22D3EE" },
+    { icon: Trophy, title: "Leaderboards", desc: "Earn TJCOIN, compete on weekly leaderboards, and unlock rewards for consistency.", accent: "#F59E0B" },
+    { icon: Globe, title: "5 Languages", desc: "English, Turkish, Arabic, Spanish, French. Premium fitness in your language.", accent: "#A78BFA" }
+  ] as const;
 
   return (
     <div className="bg-[#09090B] text-white">
-      {/* —— 1 HERO —— */}
-      <section
-        ref={heroRef}
-        className="hero-mesh relative flex min-h-[100svh] flex-col justify-center overflow-hidden px-6 pb-16 pt-24 lg:px-12 lg:pb-24 lg:pt-16"
-      >
-        {!reduce && (
-          <div className="pointer-events-none absolute inset-0 z-[1] hidden lg:block" aria-hidden>
-            <LuxuryHero3DExperience mouseRef={heroMouseRef} />
-          </div>
-        )}
-        <div ref={particleRef} className="pointer-events-none absolute inset-0 z-0" aria-hidden>
-          <ParticleField className="pointer-events-none absolute inset-0 z-0" />
+
+      {/* ═══════════════════════ HERO ═══════════════════════ */}
+      <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 pb-20 pt-20">
+        {/* Full-viewport 3D canvas */}
+        <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
+          <ClientErrorBoundary sentryScope="home-hero-3d" fallback={null}>
+            <Suspense fallback={null}>
+              {!reduce && <LuxuryHero3DExperience mouseRef={heroMouseRef} />}
+            </Suspense>
+          </ClientErrorBoundary>
         </div>
-        <div ref={ambientRef} className="pointer-events-none absolute inset-0 z-0" aria-hidden>
-          <div className="orb-3d orb-3d-cyan absolute -left-20 -top-20 h-[500px] w-[500px] max-md:h-[280px] max-md:w-[280px]" />
-          <div className="orb-3d orb-3d-blue absolute -bottom-24 -right-10 h-[400px] w-[400px] max-md:h-[220px] max-md:w-[220px]" />
-          <div className="orb-3d orb-3d-deep absolute right-[22%] top-[20%] h-[300px] w-[300px] max-md:hidden" />
+
+        {/* Particle field overlay */}
+        <div className="pointer-events-none absolute inset-0 z-[1]" aria-hidden>
+          <ParticleField className="absolute inset-0" />
         </div>
+
+        {/* Radial vignette so text is readable */}
         <div
-          ref={logo3DRef}
-          className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[400px] w-[400px] -translate-x-1/2 -translate-y-1/2 opacity-[0.06] max-md:h-[240px] max-md:w-[240px] max-md:opacity-[0.04]"
+          className="pointer-events-none absolute inset-0 z-[2]"
+          style={{ background: "radial-gradient(ellipse 70% 60% at 50% 50%, transparent 30%, rgba(9,9,11,0.65) 100%)" }}
           aria-hidden
-        >
-          <Image src="/logo/tj-icon.svg" alt="" fill className="tj-logo-3d object-contain" />
-        </div>
-        <div ref={silhouetteRef}>
-          <HeroSilhouette entered={heroEntered} reduce={reduce} />
-        </div>
-        <div ref={statsRef}>
-          <FloatingHeroStats entered={heroEntered} reduce={reduce} activeUsers={liveStats.activeToday} locale={locale} direction={direction} />
-        </div>
+        />
 
-        <div className="relative z-10 mx-auto w-full max-w-5xl text-center lg:text-left">
-          <p
-            className={cn(
-              "text-[11px] font-medium uppercase tracking-[0.15em] text-[#22D3EE] transition-opacity duration-500 motion-reduce:transition-none",
-              heroEntered ? "opacity-100" : "opacity-0"
-            )}
-            style={{ transitionDelay: reduce ? "0ms" : "200ms" }}
+        {/* Hero content */}
+        <div className="relative z-10 mx-auto w-full max-w-5xl text-center">
+          {/* Eyebrow */}
+          <div style={lineIn(100)}>
+            <span className="inline-flex items-center gap-2 rounded-full border border-[rgba(34,211,238,0.3)] bg-[rgba(34,211,238,0.08)] px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#22D3EE]">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#22D3EE]" />
+              {liveStats.activeToday > 0 ? `${liveStats.activeToday} training now` : "AI-Powered Fitness"}
+            </span>
+          </div>
+
+          {/* Headline */}
+          <h1
+            className="hero-headline mt-8 font-display text-[clamp(3rem,9vw,7rem)] font-extrabold leading-[0.88] tracking-[-0.04em]"
+            style={lineIn(200)}
           >
-            {copy.hero.eyebrow ?? copy.hero.badge}
-          </p>
-
-          <h1 ref={headlineRef} className="hero-headline mt-8 font-display text-[clamp(2.5rem,8vw,4.5rem)] font-extrabold leading-[0.95] tracking-[-0.04em] lg:text-[96px]">
-            {isRtl ? (
-              <span className="block" style={lineMotion(300)}>
-                {h1}
-              </span>
-            ) : (
-              <>
-                <span className="block" style={lineMotion(300)}>
-                  <SplitText text={line1} delay={300} />
-                </span>
-                <span className="block" style={lineMotion(450)}>
-                  <SplitText text={line2} delay={450} />
-                </span>
-                {line3Accent || line3Rest ? (
-                  <span className="block" style={lineMotion(600)}>
-                    <span className="bg-gradient-to-br from-[#22D3EE] to-[#A78BFA] bg-clip-text text-transparent">{line3Accent}</span>
-                    <span className="text-white">{line3Rest}</span>
-                  </span>
-                ) : null}
-              </>
-            )}
+            <span className="block text-white">Train Smarter.</span>
+            <span
+              className="block bg-gradient-to-r from-[#22D3EE] via-[#67E8F9] to-[#A78BFA] bg-clip-text text-transparent"
+              style={{ filter: "drop-shadow(0 0 40px rgba(34,211,238,0.3))" }}
+            >
+              Transform Faster.
+            </span>
           </h1>
 
-          <div ref={subCtaRef}>
-            <p
-              className={cn(
-                "mx-auto mt-8 max-w-[480px] text-base leading-relaxed text-[#A1A1AA] transition-opacity duration-500 ease-out motion-reduce:transition-none sm:text-lg lg:mx-0",
-                heroEntered ? "opacity-100" : "opacity-0"
-              )}
-              style={{ transitionDelay: reduce ? "0ms" : "800ms" }}
-            >
-              {copy.hero.sub}
-            </p>
+          {/* Subheadline */}
+          <p
+            className="mx-auto mt-8 max-w-xl text-lg leading-relaxed text-[#A1A1AA]"
+            style={lineIn(350)}
+          >
+            {copy.hero.sub}
+          </p>
 
-            <div
-              className={cn(
-                "mt-10 flex flex-col gap-4 sm:flex-row sm:items-center",
-                "transition-opacity duration-500 motion-reduce:transition-none",
-                heroEntered ? "opacity-100" : "opacity-0"
-              )}
-              style={{ transitionDelay: reduce ? "0ms" : "1000ms" }}
+          {/* CTA Buttons */}
+          <div
+            className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
+            style={lineIn(450)}
+          >
+            <MagneticLink
+              href={`/${locale}/start`}
+              onClick={() => trackMarketingEvent("hero_cta_click", { cta: "start", surface: "immersive-hero" })}
+              className="group inline-flex min-h-[54px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#22D3EE] to-[#0EA5E9] px-9 py-4 text-base font-bold text-[#09090B] shadow-[0_0_30px_rgba(34,211,238,0.4),0_0_60px_rgba(34,211,238,0.15)] transition-all duration-200 hover:scale-[1.04] hover:shadow-[0_0_50px_rgba(34,211,238,0.6),0_0_80px_rgba(34,211,238,0.2)]"
             >
-              <MagneticHeroLink
-                href={`/${locale}/start`}
-                onClick={() => trackMarketingEvent("hero_cta_click", { cta: "start", surface: "immersive-hero" })}
-                className="btn-primary-shimmer inline-flex min-h-[52px] items-center justify-center rounded-full bg-gradient-to-br from-[#22D3EE] to-[#0EA5E9] px-8 py-4 text-base font-bold text-[#09090B] shadow-[0_0_30px_rgba(34,211,238,0.3)] transition-[transform,box-shadow] duration-200 hover:scale-[1.03] hover:shadow-[0_0_40px_rgba(34,211,238,0.45)] motion-reduce:hover:scale-100"
-              >
-                {copy.hero.ctaPrimary}
-              </MagneticHeroLink>
-              <Link
-                href={`/${locale}/programs`}
-                className="inline-flex min-h-[52px] items-center justify-center rounded-full border border-[#1E2028] px-8 py-4 text-base font-semibold text-white transition-[border-color,background-color] duration-200 hover:border-[rgba(255,255,255,0.15)] hover:bg-[rgba(255,255,255,0.04)]"
-              >
-                {copy.hero.ctaSecondary} <span className="rtl:rotate-180">→</span>
-              </Link>
-            </div>
-            {(liveStats.activeToday > 0 || liveStats.programsStartedToday > 0) && (
-              <div className="mt-5 inline-flex flex-wrap gap-2 text-xs text-[#A1A1AA]">
-                {liveStats.activeToday > 0 && (
-                  <span
-                    className={cn(
-                      "inline-flex items-center gap-2 rounded-full border border-[rgba(34,211,238,0.15)] bg-[rgba(34,211,238,0.06)] px-3 py-1.5",
-                      livePulse && "scale-[1.04]"
-                    )}
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#22C55E] motion-safe:animate-pulse" />
-                    {locale === "ar" ? `${new Intl.NumberFormat("ar-SA").format(liveStats.activeToday)} يتدرّبون الآن على TJFit` : `${liveStats.activeToday} people training on TJFit right now`}
-                  </span>
-                )}
-                {liveStats.programsStartedToday > 0 && (
-                  <span
-                    className={cn(
-                      "inline-flex items-center gap-2 rounded-full border border-[rgba(34,211,238,0.15)] bg-[rgba(34,211,238,0.06)] px-3 py-1.5",
-                      livePulse && "scale-[1.04]"
-                    )}
-                  >
-                    {locale === "ar" ? `${new Intl.NumberFormat("ar-SA").format(liveStats.programsStartedToday)} بدأوا برنامجاً اليوم` : `${liveStats.programsStartedToday} programs started today`}
-                  </span>
-                )}
-              </div>
-            )}
+              {copy.hero.ctaPrimary}
+              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+            </MagneticLink>
+            <Link
+              href={`/${locale}/ai`}
+              className="inline-flex min-h-[54px] items-center justify-center gap-2 rounded-full border border-[rgba(167,139,250,0.4)] bg-[rgba(167,139,250,0.08)] px-9 py-4 text-base font-semibold text-[#A78BFA] backdrop-blur-sm transition-all duration-200 hover:border-[rgba(167,139,250,0.6)] hover:bg-[rgba(167,139,250,0.14)] hover:shadow-[0_0_30px_rgba(167,139,250,0.2)]"
+            >
+              <Zap className="h-4 w-4" />
+              Try TJAI Free
+            </Link>
+          </div>
+
+          {/* Trust row */}
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-4 text-[11px] font-medium uppercase tracking-[0.15em] text-[#52525B]" style={lineIn(550)}>
+            {["GPT-4o Powered", "25 Questions", "12-Week Plans", "5 Languages"].map((t) => (
+              <span key={t} className="flex items-center gap-1.5">
+                <Star className="h-3 w-3 text-[#22D3EE]" strokeWidth={2} />
+                {t}
+              </span>
+            ))}
           </div>
         </div>
 
+        {/* Scroll indicator */}
         <div
           className={cn(
-            "pointer-events-none absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1 transition-opacity duration-300",
-            hideScrollCue ? "opacity-0" : "opacity-40"
+            "absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5 transition-opacity duration-300",
+            hideScrollCue ? "opacity-0" : "opacity-50"
           )}
           aria-hidden
         >
-          <ChevronDown className="h-6 w-6 motion-safe:animate-bounce" strokeWidth={1.5} />
+          <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-600">Scroll</span>
+          <ChevronDown className="h-5 w-5 text-zinc-600 motion-safe:animate-bounce" strokeWidth={1.5} />
         </div>
-
-        <div
-          className="pointer-events-none absolute bottom-0 left-0 right-0 h-[120px] bg-gradient-to-b from-transparent to-[#09090B]"
-          aria-hidden
-        />
       </section>
 
-      {/* —— 2 WHAT YOU GET —— */}
-      <section className="relative min-h-[100svh] border-t border-[#1E2028] bg-[#09090B] px-6 py-16 lg:px-12 lg:py-24">
-        <div className="absolute start-8 top-32 bottom-32 hidden w-px bg-gradient-to-b from-[#22D3EE]/40 via-[#22D3EE]/20 to-transparent lg:block" aria-hidden />
-        <div className="relative mx-auto max-w-4xl space-y-24 lg:ps-12">
-          {featureItems.map((item, i) => (
-            <FeatureBlock key={item.title} index={i} title={item.title} body={item.desc} reduce={reduce} />
-          ))}
-        </div>
-        <div className="tj-gradient-divider mx-auto mt-20 max-w-6xl opacity-80" aria-hidden />
-      </section>
+      {/* ═══════════════════════ TICKER ═══════════════════════ */}
+      <div className="border-y border-[#1E2028] bg-[#09090B] py-4 overflow-hidden"
+        style={{ maskImage: "linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)" }}>
+        <ScrollTicker items={["TRANSFORM", "12 WEEKS", "FAT LOSS", "MUSCLE GAIN", "HOME GYM", "AI COACH", "DIET PLAN", "MACROS", "TJAI", "RESULTS"]} speed={35} className="text-[#1E2028] text-[11px] font-bold tracking-[0.3em]" />
+      </div>
 
-      {/* —— 3 FREE STARTERS —— */}
-      {freePrograms.length > 0 ? (
-        <section className="relative min-h-[100svh] bg-[#09090B] py-8">
-          <FreeOfferSection locale={locale} freePrograms={freePrograms} sectionClassName="min-h-[100svh] flex flex-col justify-center border-b-0 py-16 lg:py-24" />
-        </section>
-      ) : null}
-
-      {/* —— 4 TESTIMONIALS —— */}
-      <TJAITypingShowcase locale={locale} />
-      <HomeTestimonials locale={locale} />
-
-      {/* —— 5 PROGRAMS —— */}
-      <section className="relative min-h-[100svh] border-t border-[var(--color-border)] bg-[#111215] px-6 py-16 lg:px-12 lg:py-24">
-        <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center">
-          <BlurReveal>
-            <div>
-            <h2 className="font-display text-[56px] font-extrabold leading-[0.95] tracking-[-0.04em] text-white lg:text-[80px]">
-              <span className="block">{programCount}+</span>
-              <span className="block">
-                <WordReveal text="Complete" />
-              </span>
-              <span className="block bg-gradient-to-br from-[#22D3EE] to-[#A78BFA] bg-clip-text text-transparent">Programs.</span>
+      {/* ═══════════════════════ FEATURES BENTO ═══════════════════════ */}
+      <section className="px-6 py-24 lg:px-12 lg:py-32">
+        <div className="mx-auto max-w-6xl">
+          <Reveal className="mb-16 text-center">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#22D3EE]">Everything You Need</p>
+            <h2 className="mt-4 font-display text-4xl font-extrabold tracking-tight text-white lg:text-6xl">
+              One Platform.<br />
+              <span className="bg-gradient-to-r from-[#22D3EE] to-[#A78BFA] bg-clip-text text-transparent">Complete Transformation.</span>
             </h2>
-            <div className="mt-8 max-w-xl overflow-hidden">
-              <ScrollTicker items={tickerPrograms} speed={40} className="opacity-80" />
-            </div>
-            <Link
-              href={`/${locale}/programs`}
-              className="mt-8 inline-flex text-sm font-semibold text-[#22D3EE] transition-opacity hover:opacity-80"
-            >
-              {copy.programs.viewAll} <span className="rtl:rotate-180">→</span>
-            </Link>
-            </div>
-          </BlurReveal>
-          <div className="grid max-h-[min(70vh,640px)] grid-cols-1 gap-4 overflow-y-auto pr-1 sm:grid-cols-2">
+          </Reveal>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            {features.map((f, i) => (
+              <Reveal key={f.title} delay={i * 80}>
+                <BentoCard {...f} />
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════ STATS ═══════════════════════ */}
+      <section className="relative overflow-hidden border-y border-[#1E2028] bg-[#09090B] py-24">
+        {/* Background glow */}
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          <div className="absolute left-1/4 top-1/2 h-[400px] w-[400px] -translate-y-1/2 rounded-full bg-[#22D3EE] opacity-[0.04] blur-[80px]" />
+          <div className="absolute right-1/4 top-1/2 h-[400px] w-[400px] -translate-y-1/2 rounded-full bg-[#A78BFA] opacity-[0.04] blur-[80px]" />
+        </div>
+        <div className="relative mx-auto grid max-w-5xl grid-cols-2 gap-12 px-6 lg:grid-cols-4 lg:gap-16 lg:px-12">
+          <CountUp target={programCount} suffix="+" label="Expert Programs" />
+          <CountUp target={dietCount} suffix="+" label="Diet Systems" />
+          <CountUp target={12} label="Weeks Per Plan" />
+          <CountUp target={5} label="Languages" />
+        </div>
+      </section>
+
+      {/* ═══════════════════════ PROGRAMS ═══════════════════════ */}
+      <section className="px-6 py-24 lg:px-12 lg:py-32">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <Reveal>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#22D3EE]">Programs</p>
+              <h2 className="mt-3 font-display text-4xl font-extrabold tracking-tight text-white lg:text-5xl">
+                {programCount}+ Complete<br />
+                <span className="text-[#22D3EE]">Programs.</span>
+              </h2>
+            </Reveal>
+            <Reveal delay={100}>
+              <Link href={`/${locale}/programs`} className="inline-flex items-center gap-2 text-sm font-semibold text-[#22D3EE] transition-opacity hover:opacity-80">
+                View all programs <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Reveal>
+          </div>
+
+          <div className="mb-6 overflow-hidden">
+            <ScrollTicker items={["FAT LOSS", "MUSCLE GAIN", "HOME TRAINING", "GYM", "12 WEEKS", "PROGRESSIVE", "COACH-BUILT"]} speed={40} className="opacity-30" />
+          </div>
+
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {programSlice.map((p, i) => (
-              <BlurReveal key={p.slug} delay={i * 90}>
+              <Reveal key={p.slug} delay={i * 80}>
                 <HomeProgramPreviewCard
                   program={p}
                   href={`/${locale}/programs/${p.slug}`}
@@ -639,22 +431,34 @@ export function ImmersiveHome({
                   ctaLabel={p.is_free ? programUi.viewProgram : programUi.getFullAccess}
                   onNavigate={() => trackMarketingEvent("program_view", { slug: p.slug, surface: "immersive-home" })}
                 />
-              </BlurReveal>
+              </Reveal>
             ))}
           </div>
         </div>
-        <div className="tj-gradient-divider mx-auto mt-16 max-w-6xl opacity-80" aria-hidden />
       </section>
 
-      {/* —— 6 DIETS —— */}
-      {diets.length > 0 ? (
-        <section className="relative min-h-[100svh] bg-[#09090B] px-6 py-16 lg:px-12 lg:py-24">
-          <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center">
-            <div className="order-2 lg:order-1">
-              <div className="grid max-h-[min(70vh,640px)] grid-cols-1 gap-4 overflow-y-auto pr-1 sm:grid-cols-2">
-                {dietSlice.map((p) => (
+      {/* ═══════════════════════ DIETS ═══════════════════════ */}
+      {dietSlice.length > 0 && (
+        <section className="border-t border-[#1E2028] bg-[#0A0B0E] px-6 py-24 lg:px-12 lg:py-32">
+          <div className="mx-auto max-w-6xl">
+            <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <Reveal>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#A78BFA]">Nutrition</p>
+                <h2 className="mt-3 font-display text-4xl font-extrabold tracking-tight text-white lg:text-5xl">
+                  {dietCount}+ Diet<br />
+                  <span className="text-[#A78BFA]">Systems.</span>
+                </h2>
+              </Reveal>
+              <Reveal delay={100}>
+                <Link href={`/${locale}/diets`} className="inline-flex items-center gap-2 text-sm font-semibold text-[#A78BFA] transition-opacity hover:opacity-80">
+                  View all diets <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Reveal>
+            </div>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {dietSlice.map((p, i) => (
+                <Reveal key={p.slug} delay={i * 80}>
                   <HomeProgramPreviewCard
-                    key={p.slug}
                     program={p}
                     href={`/${locale}/programs/${p.slug}`}
                     priceFormatted={formatMoney(locale, p.price)}
@@ -663,110 +467,146 @@ export function ImmersiveHome({
                     ctaLabel={programUi.viewProgram}
                     onNavigate={() => trackMarketingEvent("program_view", { slug: p.slug, surface: "immersive-diets" })}
                   />
-                ))}
-              </div>
+                </Reveal>
+              ))}
             </div>
-            <BlurReveal className="order-1 lg:order-2">
-              <h2 className="font-display text-[56px] font-extrabold leading-[0.95] tracking-[-0.04em] text-white lg:text-[80px]">
-                <span className="block">{dietCount}+</span>
-                <span className="block">
-                  <WordReveal text="Diet" />
-                </span>
-                <span className="block bg-gradient-to-br from-[#A78BFA] to-[#22D3EE] bg-clip-text text-transparent">Systems.</span>
-              </h2>
-              <div className="mt-8 max-w-xl overflow-hidden">
-                <ScrollTicker items={tickerDiets} speed={45} direction="right" className="opacity-80" />
-              </div>
-              <Link
-                href={`/${locale}/diets`}
-                className="mt-8 inline-flex text-sm font-semibold text-[#A78BFA] transition-opacity hover:opacity-80"
-              >
-                {copy.dietsTeaser?.cta ?? programUi.viewProgram} <span className="rtl:rotate-180">→</span>
-              </Link>
-            </BlurReveal>
           </div>
-          <div className="tj-gradient-divider mx-auto mt-16 max-w-6xl opacity-80" aria-hidden />
         </section>
-      ) : null}
+      )}
 
-      {/* —— 7 STATS —— */}
-      <section className="relative flex min-h-[100svh] flex-col justify-center bg-[#09090B] px-6 py-16 lg:px-12 lg:py-24">
-        <div className="mx-auto grid max-w-4xl grid-cols-2 gap-12 lg:gap-16">
-          <CountCell target={programCount} suffix="+" label="Programs" subtitle="Home & gym training" reduce={reduce} />
-          <CountCell target={dietCount} suffix="+" label="Diet Systems" subtitle="Cutting & bulking" reduce={reduce} />
-          <CountCell target={12} suffix="" label="Weeks Per Program" subtitle="Structured progression" reduce={reduce} />
-          <CountCell target={5} suffix="" label="Languages" subtitle="Global platform" reduce={reduce} />
+      {/* ═══════════════════════ TJAI FEATURE ═══════════════════════ */}
+      <section className="relative overflow-hidden border-t border-[#1E2028] px-6 py-24 lg:px-12 lg:py-32">
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          <div className="absolute right-0 top-0 h-[600px] w-[600px] -translate-y-1/4 translate-x-1/4 rounded-full bg-[#22D3EE] opacity-[0.035] blur-[100px]" />
         </div>
-        <div className="tj-gradient-divider mx-auto mt-20 max-w-6xl opacity-80" aria-hidden />
+        <div className="relative mx-auto max-w-6xl">
+          <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
+            <Reveal>
+              <span className="inline-flex items-center gap-2 rounded-full border border-[rgba(34,211,238,0.3)] bg-[rgba(34,211,238,0.06)] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#22D3EE]">
+                <Brain className="h-3.5 w-3.5" /> Powered by GPT-4o
+              </span>
+              <h2 className="mt-6 font-display text-4xl font-extrabold tracking-tight text-white lg:text-6xl">
+                Meet TJAI —<br />
+                <span className="bg-gradient-to-r from-[#22D3EE] to-[#A78BFA] bg-clip-text text-transparent">Your AI Coach.</span>
+              </h2>
+              <p className="mt-6 max-w-lg text-lg leading-relaxed text-[#A1A1AA]">
+                Answer 25 smart questions. TJAI analyzes your metabolism, lifestyle, injuries, goals, and psychology — then generates a complete 12-week plan in minutes.
+              </p>
+              <ul className="mt-8 space-y-3">
+                {[
+                  "Full 12-week training program — personalized to your level",
+                  "Daily meal plan with macros, recipes, and grocery list",
+                  "Supplement stack recommendation by tier",
+                  "Injury-safe exercise substitutions",
+                  "Calorie cycling, refeed weeks, deload weeks"
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-3 text-sm text-[#A1A1AA]">
+                    <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[rgba(34,211,238,0.15)] text-[#22D3EE]">
+                      <svg className="h-2.5 w-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                    </span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href={`/${locale}/ai`}
+                className="mt-10 inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#22D3EE] to-[#0EA5E9] px-8 py-3 text-base font-bold text-[#09090B] shadow-[0_0_30px_rgba(34,211,238,0.35)] transition-all hover:scale-[1.03] hover:shadow-[0_0_50px_rgba(34,211,238,0.5)]"
+              >
+                <Zap className="h-4 w-4" /> Try TJAI — It&apos;s Free
+              </Link>
+            </Reveal>
+
+            {/* AI terminal mockup */}
+            <Reveal delay={150}>
+              <div className="relative rounded-2xl border border-[rgba(34,211,238,0.2)] bg-[#0D0F12] p-1 shadow-[0_0_80px_rgba(34,211,238,0.08)]">
+                {/* Terminal header */}
+                <div className="flex items-center gap-2 rounded-t-xl border-b border-[#1E2028] bg-[#111215] px-4 py-3">
+                  <span className="h-3 w-3 rounded-full bg-red-500/70" />
+                  <span className="h-3 w-3 rounded-full bg-yellow-500/70" />
+                  <span className="h-3 w-3 rounded-full bg-green-500/70" />
+                  <span className="ml-4 text-xs text-[#52525B]">TJAI — Plan Generator</span>
+                </div>
+                {/* Terminal body */}
+                <div className="space-y-4 p-6 font-mono text-sm">
+                  {[
+                    { role: "sys", text: "Analyzing your 25 answers..." },
+                    { role: "sys", text: "BMR: 1,842 kcal | TDEE: 2,574 kcal" },
+                    { role: "sys", text: "Goal: Fat Loss | Pace: Moderate" },
+                    { role: "ai", text: "Generating your 12-week transformation plan..." },
+                    { role: "result", text: "✓ Training program: 4-day Upper/Lower split" },
+                    { role: "result", text: "✓ Daily calories: 2,074 kcal | Protein: 188g" },
+                    { role: "result", text: "✓ 84 personalized meals created" },
+                    { role: "result", text: "✓ Supplement stack: 3 tiers" }
+                  ].map((line, i) => (
+                    <div
+                      key={i}
+                      className={cn(
+                        "flex gap-3",
+                        line.role === "sys" && "text-[#52525B]",
+                        line.role === "ai" && "text-[#22D3EE]",
+                        line.role === "result" && "text-[#22C55E]"
+                      )}
+                      style={{ animationDelay: `${i * 300}ms` }}
+                    >
+                      <span className="shrink-0 text-[#1E2028]">
+                        {line.role === "ai" ? "→" : line.role === "result" ? " " : "$"}
+                      </span>
+                      <span>{line.text}</span>
+                    </div>
+                  ))}
+                  <div className="flex items-center gap-2 text-[#22D3EE]">
+                    <span>→</span>
+                    <span className="animate-pulse">Plan ready. Opening results...</span>
+                    <span className="animate-pulse">▋</span>
+                  </div>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </div>
       </section>
 
-      {/* —— 8 COACH CTA —— */}
+      {/* ═══════════════════════ TESTIMONIALS ═══════════════════════ */}
+      <HomeTestimonials locale={locale} />
+
+      {/* ═══════════════════════ COACH CTA ═══════════════════════ */}
       <HomeCoachCta locale={locale} />
 
-      {/* —— 9 NEWSLETTER —— */}
+      {/* ═══════════════════════ NEWSLETTER ═══════════════════════ */}
       <HomeNewsletterBar locale={locale} />
 
-      {/* —— 10 FINAL CTA —— */}
-      <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-[#09090B] px-6 py-16 text-center lg:px-12 lg:py-24">
-        <div
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(34,211,238,0.06)_0%,transparent_55%)]"
-          aria-hidden
-        />
-        <h2 className="hero-headline relative font-display text-[48px] font-extrabold leading-[0.95] tracking-[-0.04em] lg:text-[88px]">
-          <span className="text-white">Ready to </span>
-          <span className="bg-gradient-to-br from-[#22D3EE] to-[#A78BFA] bg-clip-text text-transparent">
-            <WordReveal text="Transform?" />
-          </span>
-        </h2>
-        <p className="relative mt-6 max-w-md text-lg text-[#A1A1AA]">{copy.midCta.sub}</p>
-        <MagneticHeroLink
-          href={`/${locale}/signup`}
-          className="relative mt-10 inline-flex min-h-[56px] items-center justify-center rounded-full bg-gradient-to-br from-[#22D3EE] to-[#0EA5E9] px-10 py-4 text-base font-bold text-[#09090B] shadow-[0_0_28px_rgba(34,211,238,0.25)] transition-transform duration-200 hover:scale-[1.03] motion-reduce:hover:scale-100"
-        >
-          {navChrome.joinLabel}
-        </MagneticHeroLink>
-        <p className="relative mt-8 text-[13px] text-[#52525B]">{copy.hero.trustLine}</p>
+      {/* ═══════════════════════ FINAL CTA ═══════════════════════ */}
+      <section className="relative overflow-hidden border-t border-[#1E2028] px-6 py-32 text-center lg:px-12 lg:py-40">
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          <div className="absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#22D3EE] opacity-[0.04] blur-[100px]" />
+          <div className="absolute left-1/2 top-1/2 h-[400px] w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#A78BFA] opacity-[0.03] blur-[80px]" />
+        </div>
+        <div className="relative mx-auto max-w-3xl">
+          <Reveal>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#22D3EE]">Start Today</p>
+            <h2 className="mt-5 font-display text-5xl font-extrabold tracking-tight text-white lg:text-7xl">
+              Ready to<br />
+              <span className="bg-gradient-to-r from-[#22D3EE] via-[#67E8F9] to-[#A78BFA] bg-clip-text text-transparent"
+                style={{ filter: "drop-shadow(0 0 30px rgba(34,211,238,0.25))" }}>
+                Transform?
+              </span>
+            </h2>
+            <p className="mt-6 text-lg text-[#A1A1AA]">{copy.midCta?.sub ?? "Join thousands already training smarter with TJFit."}</p>
+            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+              <Link
+                href={`/${locale}/signup`}
+                className="inline-flex min-h-[56px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#22D3EE] to-[#0EA5E9] px-10 py-4 text-base font-bold text-[#09090B] shadow-[0_0_40px_rgba(34,211,238,0.4),0_0_80px_rgba(34,211,238,0.15)] transition-all hover:scale-[1.04] hover:shadow-[0_0_60px_rgba(34,211,238,0.6)]"
+              >
+                {navChrome.joinLabel} — It&apos;s Free
+              </Link>
+              <Link href={`/${locale}/programs`} className="inline-flex min-h-[56px] items-center justify-center rounded-full border border-[#1E2028] px-10 py-4 text-base font-semibold text-white transition-[border-color,background] hover:border-white/15 hover:bg-white/[0.03]">
+                Browse Programs
+              </Link>
+            </div>
+            <p className="mt-8 text-[13px] text-[#52525B]">{copy.hero.trustLine}</p>
+          </Reveal>
+        </div>
       </section>
-    </div>
-  );
-}
-
-function FeatureBlock({
-  index,
-  title,
-  body,
-  reduce
-}: {
-  index: number;
-  title: string;
-  body: string;
-  reduce: boolean;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { threshold: 0.15, once: true });
-  const fromLeft = index % 2 === 0;
-  const show = inView || reduce;
-  return (
-    <div
-      ref={ref}
-      className={cn(
-        "transition-[opacity,transform] duration-700 ease-out motion-reduce:transition-none",
-        show ? "translate-x-0 opacity-100" : fromLeft ? "-translate-x-10 opacity-0" : "translate-x-10 opacity-0"
-      )}
-      style={{ transitionDelay: reduce ? "0ms" : `${index * 150}ms` }}
-    >
-      <p
-        className={cn(
-          "font-sans text-[100px] font-extrabold leading-none sm:text-[120px]",
-          index === 0 && "text-[rgba(34,211,238,0.12)]",
-          index === 1 && "text-[rgba(167,139,250,0.12)]",
-          index === 2 && "text-[rgba(34,211,238,0.1)]"
-        )}
-      >
-        0{index + 1}
-      </p>
-      <h3 className="mt-4 text-3xl font-bold tracking-tight text-white lg:text-4xl">{title}</h3>
-      <p className="mt-4 max-w-xl text-lg leading-relaxed text-[#A1A1AA]">{body}</p>
     </div>
   );
 }
