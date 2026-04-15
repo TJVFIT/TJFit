@@ -1799,3 +1799,10 @@ textarea:focus-visible {
 .tj-scrollbar::-webkit-scrollbar-track { background: transparent; }
 .tj-scrollbar::-webkit-scrollbar-thumb { background: rgba(34,211,238,0.2); border-radius: 9999px; }
 .tj-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(34,211,238,0.4); }
+
+/* Hero silhouette pulse ring */
+@keyframes tj-pulse-ring {
+  0% { r: 160; opacity: 0.15; }
+  60% { opacity: 0.05; }
+  100% { r: 280; opacity: 0; }
+}

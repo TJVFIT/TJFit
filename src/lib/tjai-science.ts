@@ -1,8 +1,30 @@
 import type { MetabolicType, QuizAnswers, TJAIMetrics } from "@/lib/tjai-types";
 
+/**
+ * Parse a value that may be a number, a range string ("25–34 years"),
+ * or a bounded string ("Over 120 kg", "Under 50 kg").
+ * Returns the numeric midpoint of a range, or the numeric boundary ± offset.
+ */
+export function parseRangeToNumber(v: unknown, fallback = 0): number {
+  if (typeof v === "number" && Number.isFinite(v) && v > 0) return v;
+  const s = String(v ?? "").replace(/,/g, "");
+  // Extract all numbers from the string
+  const nums = (s.match(/\d+(?:\.\d+)?/g) ?? []).map(Number);
+  if (nums.length >= 2) {
+    // "25–34 years" → midpoint 29.5
+    return (nums[0] + nums[1]) / 2;
+  }
+  if (nums.length === 1) {
+    if (/over|above|more than|\+/i.test(s)) return nums[0] + 5;
+    if (/under|below|less than/i.test(s)) return nums[0] - 3;
+    return nums[0];
+  }
+  return fallback;
+}
+
 function asNum(v: unknown, fallback = 0): number {
-  const n = typeof v === "number" ? v : Number(v);
-  return Number.isFinite(n) ? n : fallback;
+  const n = parseRangeToNumber(v, NaN);
+  return Number.isFinite(n) && n > 0 ? n : fallback;
 }
 
 function asStr(v: unknown): string {

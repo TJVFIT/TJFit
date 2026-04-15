@@ -136,39 +136,83 @@ function HeroSilhouette({ entered, reduce }: { entered: boolean; reduce: boolean
     <div
       className={cn(
         "pointer-events-none absolute inset-0 z-0 overflow-hidden",
-        "transition-[opacity,transform] duration-[1200ms] [transition-timing-function:cubic-bezier(0,0,0.2,1)]",
-        entered ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-5 scale-95"
+        "transition-[opacity,transform] duration-[1400ms] [transition-timing-function:cubic-bezier(0,0,0.2,1)]",
+        entered ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-90"
       )}
-      style={{ transitionDelay: reduce ? "0ms" : "800ms" }}
+      style={{ transitionDelay: reduce ? "0ms" : "700ms" }}
       aria-hidden
     >
       <svg
         viewBox="0 0 520 820"
         className={cn(
-          "absolute bottom-0 right-[-5%] h-[95%] w-auto will-change-transform",
-          "opacity-[0.15] max-md:opacity-[0.08] max-md:right-auto max-md:left-1/2 max-md:-translate-x-1/2 max-md:scale-[0.7] max-md:opacity-[0.06]",
-          "motion-reduce:opacity-[0.1]"
+          "absolute bottom-0 right-[-2%] h-[96%] w-auto will-change-transform",
+          "opacity-[0.45] max-md:opacity-[0.18] max-md:right-auto max-md:left-1/2 max-md:-translate-x-1/2 max-md:scale-[0.65]",
+          "motion-reduce:opacity-[0.25]"
         )}
-        style={{ filter: "drop-shadow(0 0 8px rgba(34,211,238,0.6)) drop-shadow(0 0 20px rgba(34,211,238,0.3))" }}
+        style={{
+          filter: [
+            "drop-shadow(0 0 3px rgba(34,211,238,1))",
+            "drop-shadow(0 0 12px rgba(34,211,238,0.85))",
+            "drop-shadow(0 0 35px rgba(34,211,238,0.5))",
+            "drop-shadow(0 0 70px rgba(34,211,238,0.25))"
+          ].join(" ")
+        }}
       >
-        <g className={cn("origin-bottom motion-safe:animate-[tj-hero-breathe_3s_ease-in-out_infinite]", reduce && "animate-none")}>
-          <circle cx="260" cy="86" r="30" fill="none" stroke="#22D3EE" strokeWidth="2" />
-          <path d="M260 116 L260 146" fill="none" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round" />
-          <path d="M198 166 Q260 136 322 166 L306 332 Q260 366 214 332 Z" fill="none" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M214 182 L170 286 L178 366" fill="none" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round" />
-          <path d="M322 182 L352 240" fill="none" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round" />
+        <defs>
+          <linearGradient id="silhouetteGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#67E8F9" />
+            <stop offset="60%" stopColor="#22D3EE" />
+            <stop offset="100%" stopColor="#0891B2" />
+          </linearGradient>
+        </defs>
+
+        <g className={cn("origin-bottom motion-safe:animate-[tj-hero-breathe_3.5s_ease-in-out_infinite]", reduce && "animate-none")}>
+          {/* Head */}
+          <circle cx="260" cy="86" r="32" fill="rgba(34,211,238,0.08)" stroke="url(#silhouetteGrad)" strokeWidth="2.5" />
+          {/* Neck */}
+          <path d="M260 118 L260 150" fill="none" stroke="url(#silhouetteGrad)" strokeWidth="3" strokeLinecap="round" />
+          {/* Torso — filled with subtle cyan */}
+          <path d="M195 168 Q260 134 325 168 L308 336 Q260 372 212 336 Z" fill="rgba(34,211,238,0.06)" stroke="url(#silhouetteGrad)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          {/* Left arm (resting) */}
+          <path d="M212 185 L165 292 L173 374" fill="none" stroke="url(#silhouetteGrad)" strokeWidth="2.5" strokeLinecap="round" />
+          {/* Right upper arm (static part) */}
+          <path d="M325 185 L358 244" fill="none" stroke="url(#silhouetteGrad)" strokeWidth="2.5" strokeLinecap="round" />
+
+          {/* Right forearm + dumbbell — animated curl */}
           <g
-            className={cn("origin-[352px_240px] [transform-box:fill-box] motion-safe:animate-[tj-curl-rep_2.4s_ease-in-out_infinite]", reduce && "animate-none")}
+            className={cn(
+              "origin-[358px_244px] [transform-box:fill-box] motion-safe:animate-[tj-curl-rep_2s_ease-in-out_infinite]",
+              reduce && "animate-none"
+            )}
           >
-            <path d="M352 240 L390 204 L420 196" fill="none" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round" />
-            <path d="M420 196 L450 196" fill="none" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round" />
-            <circle cx="416" cy="196" r="12" fill="none" stroke="#22D3EE" strokeWidth="2" />
-            <circle cx="454" cy="196" r="12" fill="none" stroke="#22D3EE" strokeWidth="2" />
+            <path d="M358 244 L396 206 L428 198" fill="none" stroke="#22D3EE" strokeWidth="2.5" strokeLinecap="round" />
+            {/* Dumbbell bar */}
+            <path d="M420 198 L455 198" fill="none" stroke="#22D3EE" strokeWidth="3" strokeLinecap="round" />
+            {/* Dumbbell plates */}
+            <circle cx="418" cy="198" r="13" fill="rgba(34,211,238,0.15)" stroke="#22D3EE" strokeWidth="2" />
+            <circle cx="457" cy="198" r="13" fill="rgba(34,211,238,0.15)" stroke="#22D3EE" strokeWidth="2" />
+            {/* Grip highlight */}
+            <circle cx="418" cy="198" r="5" fill="#22D3EE" opacity="0.6" />
+            <circle cx="457" cy="198" r="5" fill="#22D3EE" opacity="0.6" />
           </g>
-          <path d="M236 366 L210 520 L222 702" fill="none" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round" />
-          <path d="M286 366 L320 520 L308 702" fill="none" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round" />
-          <path d="M220 702 L190 746" fill="none" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round" />
-          <path d="M306 702 L336 746" fill="none" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round" />
+
+          {/* Legs */}
+          <path d="M234 370 L207 526 L220 708" fill="none" stroke="url(#silhouetteGrad)" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M288 370 L323 526 L310 708" fill="none" stroke="url(#silhouetteGrad)" strokeWidth="2.5" strokeLinecap="round" />
+          {/* Feet */}
+          <path d="M218 708 L186 750" fill="none" stroke="url(#silhouetteGrad)" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M308 708 L340 750" fill="none" stroke="url(#silhouetteGrad)" strokeWidth="2.5" strokeLinecap="round" />
+
+          {/* Energy pulse ring — animated */}
+          <circle
+            cx="260"
+            cy="400"
+            r="200"
+            fill="none"
+            stroke="rgba(34,211,238,0.07)"
+            strokeWidth="1"
+            className={cn("motion-safe:animate-[tj-pulse-ring_3s_ease-out_infinite]", reduce && "animate-none")}
+          />
         </g>
       </svg>
     </div>

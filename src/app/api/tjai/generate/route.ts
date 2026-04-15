@@ -6,7 +6,7 @@ import { buildTJAISystemPrompt, buildTJAIUserPrompt } from "@/lib/tjai-prompts";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { getTJAIAccess } from "@/lib/tjai-access";
-import { calculateTJAIMetrics } from "@/lib/tjai-science";
+import { calculateTJAIMetrics, parseRangeToNumber } from "@/lib/tjai-science";
 import type { QuizAnswers } from "@/lib/tjai-types";
 
 export const dynamic = "force-dynamic";
@@ -49,16 +49,7 @@ export async function POST(request: NextRequest) {
       coreTrialMessagesRemaining: isTrialActive ? 10 : 0,
       isAdmin
     });
-    if (!access.canGeneratePlan) {
-      return NextResponse.json(
-        {
-          error: "TJAI full generation is available for Pro, Apex, or one-time plan purchase users.",
-          code: "TJAI_UPGRADE_REQUIRED",
-          upsell: { proMonthlyEur: 20, apexMonthlyEur: 35, oneTimeEur: 9.99 }
-        },
-        { status: 402 }
-      );
-    }
+    // Plan generation is open to all authenticated users
 
     const body = await request.json().catch(() => null);
     const rawAnswers = body?.answers ?? body;
@@ -80,9 +71,10 @@ export async function POST(request: NextRequest) {
             ? 7
             : 4;
 
-    const requiredAge = Number(effectiveAnswers.s1_age ?? effectiveAnswers.age ?? 0);
-    const requiredWeight = Number(effectiveAnswers.s1_weight ?? effectiveAnswers.weight ?? 0);
-    const requiredHeight = Number(effectiveAnswers.s1_height ?? effectiveAnswers.height ?? 0);
+    // Support both raw numbers and range strings like "25–34 years", "65–80 kg"
+    const requiredAge = parseRangeToNumber(effectiveAnswers.s1_age ?? effectiveAnswers.age, 0);
+    const requiredWeight = parseRangeToNumber(effectiveAnswers.s1_weight ?? effectiveAnswers.weight, 0);
+    const requiredHeight = parseRangeToNumber(effectiveAnswers.s1_height ?? effectiveAnswers.height, 0);
     if (!Number.isFinite(requiredAge) || requiredAge <= 0 ||
         !Number.isFinite(requiredWeight) || requiredWeight <= 0 ||
         !Number.isFinite(requiredHeight) || requiredHeight <= 0) {

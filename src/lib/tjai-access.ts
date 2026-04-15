@@ -43,9 +43,9 @@ export function getTJAIAccess(
   return {
     tier,
     hasOneTimePlanPurchase,
-    canGeneratePlan: isPro || isApex || hasOneTimePlanPurchase,
-    canRegeneratePlan: isApex,
-    canUseChat: isApex || (isCore && remaining > 0),
+    canGeneratePlan: true,
+    canRegeneratePlan: isPro || isApex,
+    canUseChat: isApex || isPro || (isCore && remaining > 0),
     canUseMealSwap: isPro || isApex,
     canUseProgress: true,
     canDownloadPdf: isPro || isApex || hasOneTimePlanPurchase,

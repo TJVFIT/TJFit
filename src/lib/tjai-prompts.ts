@@ -1,21 +1,26 @@
 import type { QuizAnswers, TJAIMetrics } from "@/lib/tjai-types";
 
 export function buildTJAISystemPrompt(): string {
-  return `
-You are TJAI — TJFit's elite AI fitness coach.
+  return `You are TJAI — the world's most advanced AI fitness and nutrition coach, built into TJFit.
 
-You create complete, personalized 12-week transformation plans
-combining a structured diet system and training program.
+You think like a team of experts: a certified strength & conditioning specialist, a registered sports dietitian, a metabolic scientist, and a behavioral psychologist — all combined into one precise intelligence.
 
-Your plans are:
-- Scientifically accurate
-- Realistic and sustainable
-- Detailed enough to follow immediately
-- Formatted clearly for display on TJFit
+Your job: analyze every data point the user provided and create a complete, hyper-personalized 12-week transformation plan that is:
+- Scientifically calibrated (every calorie, macro, rep, and set has a reason)
+- Biomechanically safe (injuries and limitations are fully respected)
+- Psychologically realistic (addresses stated obstacles and motivation style)
+- Immediately actionable (no guesswork — every day is planned)
+- Formatted clearly for display in TJFit's app
 
-You write like a world-class coach: direct, clear, expert, motivating.
-Never generic. Never vague. Every recommendation is specific to this person.
-`;
+You make decisions the way a world-class coach does:
+- You notice when data points conflict (e.g. high stress + aggressive pace = modify the plan)
+- You flag risk factors and adjust proactively
+- You connect the dots between sleep, stress, metabolism, training capacity, and nutrition
+- You never give generic advice — every sentence is specific to this person's data
+
+Tone: Direct, expert, motivating, like a coach who knows this person deeply. Never vague. Never use filler phrases.
+
+Output: A single valid JSON object. No markdown, no prose outside JSON. The JSON must conform exactly to the schema at the end of the user prompt.`;
 }
 
 function fmtArray(v: unknown): string {
@@ -113,50 +118,66 @@ Rules:
 - Each meal includes educationNote.`
     : "";
 
-  return `
-Generate a complete 12-week transformation plan for this person.
+  const sleepHoursNum = Number(String(answers.s8_hours ?? "7").match(/\d+/)?.[0] ?? 7);
+  const highStress = stress.includes("High") || stress.includes("Very High");
+  const poorSleep = sleepHoursNum < 6;
+  const goodSleep = sleepHoursNum >= 8;
+  const fastPace = String(answers.s2_pace ?? "").includes("Fast");
+  const isBeginnerLevel = String(answers.s5_trains ?? "").includes("Beginner");
 
-== CALCULATED METRICS ==
-BMR: ${metrics.bmr} kcal
-TDEE: ${metrics.tdee} kcal
+  const coachWarnings: string[] = [];
+  if (highStress && fastPace) coachWarnings.push("⚠️ High stress + aggressive pace = elevated cortisol risk. Moderate calorie deficit automatically. Prioritize recovery days.");
+  if (poorSleep) coachWarnings.push("⚠️ Sleep deprivation detected. Add sleep optimization protocol. Reduce volume on day 1 of each week.");
+  if (highStress && poorSleep) coachWarnings.push("⚠️ Compounding recovery risk. Include mandatory deload in weeks 4, 8. Cortisol management is priority.");
+  if (isBeginnerLevel) coachWarnings.push("⚠️ Beginner detected. Use 2-week adaptation phase. Teach RPE scale. Simpler exercises. More education notes.");
+
+  return `
+Generate a complete 12-week transformation plan for this person. Apply your full coaching intelligence to this data — connect every data point, notice conflicts, and make decisions that optimize their results.
+
+══ COACH INTELLIGENCE ANALYSIS ══
+${coachWarnings.length > 0 ? coachWarnings.join("\n") : "✅ No critical flags detected. Proceed with standard protocol."}
+
+Metabolic type: ${metrics.metabolicType} — adjust macro ratios accordingly.
+Confidence score: ${metrics.confidenceScore}/100
+
+══ CALCULATED METRICS ══
+BMR: ${metrics.bmr} kcal | TDEE: ${metrics.tdee} kcal
 Daily calorie target: ${metrics.calorieTarget} kcal
 Protein: ${metrics.protein}g | Fat: ${metrics.fat}g | Carbs: ${metrics.carbs}g
 Water: ${metrics.water}ml/day
+Training day calories: ${metrics.trainingDayCalories} | Rest day calories: ${metrics.restDayCalories}
 Estimated body fat: ${metrics.estimatedBodyFat}%
+Lean mass: ${metrics.leanMass}kg
 Expected progress: ${metrics.weeklyWeightChange}kg/week
+Projected final weight: ${metrics.projectedFinalWeight}kg | Final body fat: ${metrics.projectedFinalBF}%
 Estimated time to goal: ${metrics.timeToGoal}
-Metabolic type: ${metrics.metabolicType}
 Plateau week prediction: ${metrics.plateauWeek}
-Reverse diet needed: ${metrics.reverseDietNeeded}
-Training day calories: ${metrics.trainingDayCalories}
-Rest day calories: ${metrics.restDayCalories}
 Refeed weeks: ${metrics.refeedWeeks.join(", ") || "none"}
 Deload weeks: ${metrics.deloadWeeks.join(", ") || "none"}
-Lean mass: ${metrics.leanMass}kg
-Projected final weight: ${metrics.projectedFinalWeight}kg
-Projected final body fat: ${metrics.projectedFinalBF}%
-Confidence score: ${metrics.confidenceScore}/100
+Reverse diet needed: ${metrics.reverseDietNeeded}
 
-== PERSON PROFILE ==
+══ PERSON PROFILE ══
 Age: ${answers.s1_age} | Gender: ${answers.s1_gender}
-Height: ${answers.s1_height}cm | Weight: ${answers.s1_weight}kg
+Height: ${answers.s1_height} | Weight: ${answers.s1_weight}
 Goal: ${answers.s2_goal} | Pace: ${answers.s2_pace}
-Activity: ${answers.s4_daily_activity}
-Steps: ${answers.s4_steps}
-Trains: ${answers.s5_trains} | Days: ${answers.s5_days ?? "N/A"}
-Training type: ${fmtArray(answers.s5_type)}
-Cardio: ${answers.s6_cardio}
-Sleep: ${answers.s8_hours}hrs | Quality: ${answers.s8_quality}
-Stress: ${answers.s9_stress}
+Body type: ${answers.s3_body_silhouette}
+Activity level: ${answers.s4_daily_activity}
+Sleep: ${answers.s8_hours} | Stress: ${answers.s9_stress}
+Training level: ${answers.s5_trains}
+Training location: ${fmtArray(answers.s5_type)}
+Training days/week: ${answers.s5_days ?? "N/A"}
+Session duration: ${answers.s5_duration ?? "45 min"}
+Equipment: ${fmtArray(answers.s5_equipment) || "Full gym"}
 Meals per day: ${answers.s11_meals}
 Diet style: ${answers.s12_diet_style}
-Foods they like: ${answers.s12_foods_like ?? "No preference stated"}
-Foods they avoid: ${answers.s12_foods_hate ?? "None stated"}
-Allergies: ${fmtArray(answers.s13_allergies)}
-Religious restrictions: ${answers.s13_religious}
-Cooks own food: ${answers.s14_cooks}
-Budget: ${answers.s14_budget}
-Time for cooking: ${answers.s14_time}
+Foods they enjoy: ${fmtArray(answers.s12_foods_like) || "No preference stated"}
+Dietary restrictions: ${fmtArray(answers.s13_allergies)}
+Food budget: ${answers.s14_budget}
+Cooking comfort: ${answers.s14_time}
+Past experience: ${answers.s10_dieted}
+Biggest obstacles: ${fmtArray(answers.s18_biggest_problem)}
+Success vision: ${answers.s19_success_vision}
+Injuries/limitations: ${fmtArray(answers.s17_injuries) || "None"}
 Water intake: ${answers.s15_water}
 Supplements: ${fmtArray(answers.s16_which_supps)}
 Injuries: ${answers.s17_injuries ?? "None"}

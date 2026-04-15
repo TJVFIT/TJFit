@@ -47,10 +47,6 @@ export function TJAIShell({ locale }: { locale: Locale }) {
     const effective = paceOverride ? { ...submittedAnswers, s2_pace: paceOverride } : submittedAnswers;
     const localMetrics = calculateTJAIMetrics(effective);
     setMetrics(localMetrics);
-    if (tier === "core") {
-      setShowUpgrade(true);
-      return;
-    }
     setPhase("calculating");
     console.log("TJAI generate called for user:", "client");
 
