@@ -123,7 +123,7 @@ function StatCard({ value, label, delay, active }: { value: number; label: strin
         perspective: "800px"
       }}
     >
-      <p className="font-display text-[40px] font-extrabold leading-none text-[#22D3EE]">{count}</p>
+      <p className="font-display text-[40px] font-extrabold leading-none text-[#22D3EE] stat-number-glow">{count}</p>
       <p className="mt-2 text-[13px] font-medium uppercase tracking-widest text-[#52525B]">{label}</p>
     </div>
   );

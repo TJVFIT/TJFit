@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
+import { Sora, DM_Sans } from "next/font/google";
 
 import { AuthProvider } from "@/components/auth-provider";
 import { TrackingScripts } from "@/components/marketing/tracking-scripts";
@@ -9,17 +9,21 @@ import { getSiteUrl } from "@/lib/site-url";
 import "../../sentry.client.config";
 import "./globals.css";
 
-const plusJakarta = Plus_Jakarta_Sans({
+// Display font — Sora: premium geometric, modern tech-forward
+const sora = Sora({
   subsets: ["latin", "latin-ext"],
+  weight: ["300", "400", "500", "600", "700", "800"],
   display: "swap",
-  variable: "--font-sans",
+  variable: "--font-display",
   preload: true
 });
 
-const outfit = Outfit({
+// Body font — DM Sans: ultra-clean, engineered for screens
+const dmSans = DM_Sans({
   subsets: ["latin", "latin-ext"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
-  variable: "--font-display",
+  variable: "--font-sans",
   preload: true
 });
 
@@ -31,8 +35,8 @@ try {
   siteUrl = "https://tjfit.com";
 }
 
-if (!process.env.ANTHROPIC_API_KEY) {
-  console.error("FATAL: ANTHROPIC_API_KEY is not set");
+if (!process.env.OPENAI_API_KEY) {
+  console.error("FATAL: OPENAI_API_KEY is not set — TJAI plan generation will not work");
 }
 
 if (!process.env.RESEND_API_KEY) {
@@ -93,7 +97,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${plusJakarta.variable} ${outfit.variable}`}>
+    <html lang="en" className={`${dmSans.variable} ${sora.variable}`}>
       <body className="font-sans antialiased">
         <BrandOrganizationJsonLd />
         <TrackingScripts />

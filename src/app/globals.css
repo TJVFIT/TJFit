@@ -234,18 +234,207 @@ body {
   background-color: var(--color-bg);
   background-image: var(--gradient-hero);
   color: var(--color-text-primary);
-  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans, "DM Sans"), system-ui, -apple-system, sans-serif;
+  font-feature-settings: "cv11", "ss01"; /* DM Sans optical features */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   max-width: 100vw;
   overflow-x: hidden;
 }
 
+/* Premium heading rendering */
+h1, h2, h3, h4, h5, h6,
+.font-display {
+  font-family: var(--font-display, "Sora"), ui-sans-serif, sans-serif;
+  letter-spacing: -0.02em;
+  font-feature-settings: "cv01", "ss01";
+}
+
 ::selection {
-  background: rgba(34, 211, 238, 0.25);
+  background: rgba(34, 211, 238, 0.28);
   color: #ffffff;
+  text-shadow: none;
 }
 
 * {
   border-color: var(--tj-border);
+}
+
+/* ????????????????????????????????????????
+   PREMIUM CYAN GLOW SYSTEM
+   Multi-layer neon glow — the signature
+   of the TJFit premium design language.
+???????????????????????????????????????? */
+
+/* Glow token variables */
+:root {
+  --glow-cyan-text: 0 0 6px rgba(34,211,238,0.85), 0 0 18px rgba(34,211,238,0.45), 0 0 45px rgba(34,211,238,0.18);
+  --glow-cyan-text-strong: 0 0 4px rgba(34,211,238,1), 0 0 14px rgba(34,211,238,0.7), 0 0 35px rgba(34,211,238,0.35), 0 0 80px rgba(34,211,238,0.12);
+  --glow-cyan-border: 0 0 0 1px rgba(34,211,238,0.3), 0 0 12px rgba(34,211,238,0.25), 0 0 35px rgba(34,211,238,0.08);
+  --glow-cyan-box: 0 0 20px rgba(34,211,238,0.2), 0 0 60px rgba(34,211,238,0.08);
+  --glow-violet-text: 0 0 6px rgba(167,139,250,0.7), 0 0 20px rgba(167,139,250,0.3), 0 0 50px rgba(167,139,250,0.12);
+}
+
+/* ?? Text glow utilities ?????????????????? */
+.glow-cyan {
+  text-shadow: var(--glow-cyan-text);
+}
+
+.glow-cyan-strong {
+  text-shadow: var(--glow-cyan-text-strong);
+}
+
+.glow-violet {
+  text-shadow: var(--glow-violet-text);
+}
+
+/* ?? Global: all cyan-colored text gets automatic glow ?? */
+[class*="text-[#22D3EE]"],
+[class*="text-cyan"],
+[class*="text-accent"],
+.text-accent {
+  text-shadow: var(--glow-cyan-text);
+}
+
+/* Gradient text (clip-text) — can't use text-shadow, use filter instead */
+[class*="bg-gradient"][class*="bg-clip-text"][class*="text-transparent"] {
+  filter: drop-shadow(0 0 12px rgba(34,211,238,0.3));
+}
+
+/* ?? Border glow on cyan borders ?? */
+[class*="border-cyan"],
+[class*="border-[#22D3EE]"],
+[class*="border-[rgba(34,211,238"] {
+  box-shadow: var(--glow-cyan-border);
+}
+
+/* ?? Premium button glow ??????????????? */
+.lux-btn-primary,
+.btn-primary-shimmer {
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.12) inset,
+    0 0 18px rgba(34,211,238,0.55),
+    0 0 45px rgba(34,211,238,0.22),
+    0 0 80px rgba(34,211,238,0.08);
+  transition: box-shadow 200ms ease, transform 200ms ease, opacity 200ms ease;
+}
+
+.lux-btn-primary:hover,
+.btn-primary-shimmer:hover {
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.18) inset,
+    0 0 24px rgba(34,211,238,0.75),
+    0 0 60px rgba(34,211,238,0.35),
+    0 0 100px rgba(34,211,238,0.12);
+}
+
+/* ?? gradient button standard ?? */
+.gradient-button {
+  box-shadow: 0 0 14px rgba(34,211,238,0.4), 0 0 35px rgba(34,211,238,0.15);
+}
+
+.gradient-button:hover {
+  box-shadow: 0 0 20px rgba(34,211,238,0.6), 0 0 50px rgba(34,211,238,0.2);
+}
+
+/* ?? Glowing section dividers ??????????? */
+.tj-gradient-divider,
+.tj-divider-fade {
+  filter: drop-shadow(0 0 4px rgba(34,211,238,0.35));
+}
+
+/* ?? Premium input focus glow ?? */
+.input:focus {
+  outline: none;
+  border-color: rgba(34,211,238,0.55) !important;
+  box-shadow:
+    0 0 0 3px rgba(34,211,238,0.12),
+    0 0 12px rgba(34,211,238,0.2) !important;
+}
+
+/* ?? Badge premium glow ?? */
+.badge,
+.lux-badge {
+  box-shadow: 0 0 12px rgba(34,211,238,0.15), 0 0 0 1px rgba(34,211,238,0.12) inset;
+  transition: box-shadow 250ms ease;
+}
+
+.badge:hover,
+.lux-badge:hover {
+  box-shadow: 0 0 20px rgba(34,211,238,0.3), 0 0 0 1px rgba(34,211,238,0.2) inset;
+}
+
+/* ?? Pulsing glow animation ?? */
+@keyframes glow-pulse-cyan {
+  0%, 100% {
+    text-shadow: 0 0 6px rgba(34,211,238,0.7), 0 0 20px rgba(34,211,238,0.3);
+  }
+  50% {
+    text-shadow: 0 0 10px rgba(34,211,238,1), 0 0 30px rgba(34,211,238,0.6), 0 0 60px rgba(34,211,238,0.2);
+  }
+}
+
+@keyframes glow-pulse-border {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(34,211,238,0.2), 0 0 25px rgba(34,211,238,0.07);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(34,211,238,0.45), 0 0 50px rgba(34,211,238,0.15);
+  }
+}
+
+/* ?? Active sidebar item glow ?? */
+nav [class*="before:bg-[#22D3EE]"] ~ span,
+nav [class*="text-[#22D3EE]"] {
+  text-shadow: 0 0 8px rgba(34,211,238,0.5);
+}
+
+/* ?? Premium card hover glow upgrade ?? */
+.tj-card-premium-hover:hover {
+  border-color: rgba(34,211,238,0.3) !important;
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.5),
+    0 0 30px rgba(34,211,238,0.12),
+    0 0 0 1px rgba(34,211,238,0.25),
+    0 0 80px rgba(34,211,238,0.04) !important;
+}
+
+/* ?? Hero headline premium treatment ?? */
+.hero-headline {
+  text-shadow: 0 2px 40px rgba(0,0,0,0.5);
+}
+
+/* ?? Crown glow upgrade ?? */
+.crown-glow-gold {
+  filter: drop-shadow(0 0 6px rgba(245,158,11,0.9)) drop-shadow(0 0 16px rgba(245,158,11,0.5));
+  animation: crown-glow-pulse 2s ease-in-out infinite;
+}
+
+/* ?? Stat number glow ?? */
+.stat-number-glow {
+  text-shadow: 0 0 20px rgba(34,211,238,0.5), 0 0 50px rgba(34,211,238,0.2);
+}
+
+/* ?? Leaderboard podium glow ?? */
+.podium-gold {
+  box-shadow: 0 0 20px rgba(245,158,11,0.3), 0 0 50px rgba(245,158,11,0.1);
+}
+
+/* ?? Font smoothing upgrade for premium feel ?? */
+strong, b {
+  font-weight: 700;
+}
+
+/* Tighter tracking on display headings */
+.font-extrabold,
+.font-black {
+  letter-spacing: -0.03em;
+}
+
+/* Number/stat precision */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
 }
 
 /* Site header: keep primary nav on one row; scroll if needed (no visible scrollbar) */

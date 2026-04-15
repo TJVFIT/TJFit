@@ -21,8 +21,8 @@ const config: Config = {
         text: "#FFFFFF"
       },
       fontFamily: {
-        sans: ["var(--font-sans)", "Plus Jakarta Sans", "ui-sans-serif", "system-ui", "sans-serif"],
-        display: ["var(--font-display)", "Outfit", "ui-sans-serif", "system-ui", "sans-serif"]
+        sans: ["var(--font-sans)", "DM Sans", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "Sora", "ui-sans-serif", "system-ui", "sans-serif"]
       },
       boxShadow: {
         glass: "0 20px 80px rgba(0, 0, 0, 0.45)",

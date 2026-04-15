@@ -102,7 +102,7 @@ function CountCell({
 
   return (
     <div ref={ref} className="text-center">
-      <p className="font-mono text-4xl font-extrabold tabular-nums text-[#22D3EE] sm:text-5xl lg:text-6xl">
+      <p className="font-display text-4xl font-extrabold tabular-nums text-[#22D3EE] stat-number-glow sm:text-5xl lg:text-6xl">
         {val}
         {suffix}
       </p>
@@ -482,7 +482,7 @@ export function ImmersiveHome({
             {copy.hero.eyebrow ?? copy.hero.badge}
           </p>
 
-          <h1 ref={headlineRef} className="mt-8 font-sans text-[clamp(2.5rem,8vw,4.5rem)] font-extrabold leading-[0.95] tracking-[-0.04em] lg:text-[96px]">
+          <h1 ref={headlineRef} className="hero-headline mt-8 font-display text-[clamp(2.5rem,8vw,4.5rem)] font-extrabold leading-[0.95] tracking-[-0.04em] lg:text-[96px]">
             {isRtl ? (
               <span className="block" style={lineMotion(300)}>
                 {h1}
@@ -609,7 +609,7 @@ export function ImmersiveHome({
         <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center">
           <BlurReveal>
             <div>
-            <h2 className="text-[56px] font-extrabold leading-[0.95] tracking-[-0.04em] text-white lg:text-[80px]">
+            <h2 className="font-display text-[56px] font-extrabold leading-[0.95] tracking-[-0.04em] text-white lg:text-[80px]">
               <span className="block">{programCount}+</span>
               <span className="block">
                 <WordReveal text="Complete" />
@@ -667,7 +667,7 @@ export function ImmersiveHome({
               </div>
             </div>
             <BlurReveal className="order-1 lg:order-2">
-              <h2 className="text-[56px] font-extrabold leading-[0.95] tracking-[-0.04em] text-white lg:text-[80px]">
+              <h2 className="font-display text-[56px] font-extrabold leading-[0.95] tracking-[-0.04em] text-white lg:text-[80px]">
                 <span className="block">{dietCount}+</span>
                 <span className="block">
                   <WordReveal text="Diet" />
@@ -712,7 +712,7 @@ export function ImmersiveHome({
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(34,211,238,0.06)_0%,transparent_55%)]"
           aria-hidden
         />
-        <h2 className="relative text-[48px] font-extrabold leading-[0.95] tracking-[-0.04em] lg:text-[88px]">
+        <h2 className="hero-headline relative font-display text-[48px] font-extrabold leading-[0.95] tracking-[-0.04em] lg:text-[88px]">
           <span className="text-white">Ready to </span>
           <span className="bg-gradient-to-br from-[#22D3EE] to-[#A78BFA] bg-clip-text text-transparent">
             <WordReveal text="Transform?" />
