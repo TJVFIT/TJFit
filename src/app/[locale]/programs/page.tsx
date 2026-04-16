@@ -1,8 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { notFound, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Plus, Sparkles } from "lucide-react";
 import { BlurReveal } from "@/components/blur-reveal";
 import { CinematicListingHeader } from "@/components/cinematic-listing-header";
@@ -82,6 +83,18 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
   const [freeFilter, setFreeFilter] = useState<FreeFilter>("all");
 
   const canUpload = role === "admin" || role === "coach";
+
+  // Parallax scroll for background image
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [parallaxY, setParallaxY] = useState(0);
+  useEffect(() => {
+    const fn = () => {
+      if (window.innerWidth < 768) return;
+      setParallaxY(window.scrollY * 0.12);
+    };
+    window.addEventListener("scroll", fn, { passive: true });
+    return () => window.removeEventListener("scroll", fn);
+  }, []);
   const freeFilterCopy: Record<Locale, { label: string; all: string; free: string }> = {
     en: { label: "Access", all: "All", free: "Free" },
     tr: { label: "Erisim", all: "Tum", free: "Ucretsiz" },
@@ -198,8 +211,44 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
             ? { elite: "Elite", popular: "Populaire", fresh: "Nouveau", signature: "Signature" }
             : { elite: "Elite", popular: "Popular", fresh: "New", signature: "Signature" };
   return (
-    <>
+    <div ref={containerRef} className="relative min-h-screen bg-[#09090B]">
       <AmbientBackground />
+
+      {/* Animated programs background — same image as homepage parallax section */}
+      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
+        <Image
+          src="/assets/hero/hero-programs-bg.png"
+          alt=""
+          fill
+          className="object-cover object-center"
+          style={{
+            opacity: 0.18,
+            transform: `translateY(${parallaxY}px) scale(1.15)`,
+            transition: "transform 0.1s linear"
+          }}
+        />
+        {/* Top and bottom fade */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#09090B] via-transparent to-[#09090B]" />
+        {/* Side fades */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#09090B]/60 via-transparent to-[#09090B]/60" />
+      </div>
+
+      {/* Animated watermark text — "ENDLESS DATA STREAM" */}
+      <div className="pointer-events-none absolute inset-0 z-0 flex flex-col items-center justify-center gap-8 overflow-hidden" aria-hidden>
+        <p
+          className="animate-float-slow select-none whitespace-nowrap font-display text-[8vw] font-black uppercase tracking-[0.2em] text-white"
+          style={{ opacity: 0.025 }}
+        >
+          ENDLESS DATA STREAM
+        </p>
+        <p
+          className="select-none whitespace-nowrap font-display text-[5vw] font-black uppercase tracking-[0.3em] text-[#22D3EE]"
+          style={{ opacity: 0.018, animationDelay: "1s" }}
+        >
+          CURATED · OPTIMIZED · RESULTS
+        </p>
+      </div>
+
       <div className="relative z-[1]">
         <BlurReveal>
           <CinematicListingHeader
@@ -470,6 +519,6 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
           {locale === "tr" ? "TJAI ile Plan Al" : locale === "ar" ? "احصل على خطة مع TJAI" : locale === "es" ? "Obtén un plan con TJAI" : locale === "fr" ? "Obtenir un plan TJAI" : "Build My Plan with TJAI"}
         </Link>
       </div>
-    </>
+    </div>
   );
 }

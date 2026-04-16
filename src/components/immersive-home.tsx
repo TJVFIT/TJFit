@@ -222,7 +222,7 @@ export function ImmersiveHome({
       const rect = programsSectionRef.current.getBoundingClientRect();
       const sectionCenter = rect.top + rect.height / 2;
       const viewportCenter = window.innerHeight / 2;
-      setParallaxY((sectionCenter - viewportCenter) * 0.18);
+      setParallaxY((sectionCenter - viewportCenter) * 0.28);
     };
     window.addEventListener("scroll", fn, { passive: true });
     return () => window.removeEventListener("scroll", fn);
@@ -465,16 +465,30 @@ export function ImmersiveHome({
 
       {/* ══════════════ PROGRAMS — Parallax BG ══════════════ */}
       <div ref={programsSectionRef} className="relative overflow-hidden border-t border-[#1E2028]">
-        {/* Parallax background — Image 2 */}
+        {/* Parallax background — more visible + animated */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
           <Image
             src="/assets/hero/hero-programs-bg.png"
             alt=""
             fill
-            className="object-cover object-center opacity-[0.10]"
-            style={{ transform: `translateY(${parallaxY}px)`, transition: "transform 0.1s linear" }}
+            className="object-cover object-center"
+            style={{
+              opacity: 0.2,
+              transform: `translateY(${parallaxY}px) scale(1.1)`,
+              transition: "transform 0.1s linear"
+            }}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#09090B] via-transparent to-[#09090B]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#09090B]/80 via-transparent to-[#09090B]/80" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#09090B]/50 via-transparent to-[#09090B]/50" />
+        </div>
+        {/* Animated watermark text overlay */}
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-6 overflow-hidden" aria-hidden>
+          <p
+            className="animate-float-slow select-none whitespace-nowrap font-display text-[7vw] font-black uppercase tracking-[0.25em] text-white"
+            style={{ opacity: 0.03 }}
+          >
+            ENDLESS · ORGANIZED · DATA
+          </p>
         </div>
 
         <section className="relative px-6 py-24 lg:px-12 lg:py-32">
