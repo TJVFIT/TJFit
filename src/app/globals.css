@@ -6,7 +6,7 @@
   color-scheme: dark;
   /* --font-sans / --font-display set by next/font on <html> */
 
-  /* Design system — source of truth */
+  /* Design system � source of truth */
   --color-bg: #09090b;
   --color-surface: #111215;
   --color-surface-2: #18191e;
@@ -206,7 +206,7 @@
   }
 }
 
-/* Legal hub FAQ — smooth height without JS */
+/* Legal hub FAQ � smooth height without JS */
 .legal-faq-details .legal-faq-panel {
   display: grid;
   grid-template-rows: 0fr;
@@ -262,7 +262,7 @@ h1, h2, h3, h4, h5, h6,
 
 /* ????????????????????????????????????????
    PREMIUM CYAN GLOW SYSTEM
-   Multi-layer neon glow � the signature
+   Multi-layer neon glow � the signature
    of the TJFit premium design language.
 ???????????????????????????????????????? */
 
@@ -296,7 +296,7 @@ h1, h2, h3, h4, h5, h6,
   text-shadow: var(--glow-cyan-text);
 }
 
-/* Gradient text (clip-text) � can't use text-shadow, use filter instead */
+/* Gradient text (clip-text) � can't use text-shadow, use filter instead */
 [class*="bg-gradient"][class*="bg-clip-text"][class*="text-transparent"] {
   filter: drop-shadow(0 0 12px rgba(34,211,238,0.3));
 }
@@ -509,7 +509,7 @@ strong, b {
   box-shadow: 0 12px 40px -20px rgba(0, 0, 0, 0.45);
 }
 
-/* —— TJFit surface system (use these for cross-page consistency) —— */
+/* �� TJFit surface system (use these for cross-page consistency) �� */
 .tj-surface-card {
   border-radius: var(--tj-radius-xl);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -986,7 +986,7 @@ strong, b {
   animation: thinking-bounce 1.2s ease-in-out infinite;
 }
 
-/* ME18 — TJAI badge pulse */
+/* ME18 � TJAI badge pulse */
 @keyframes tjai-badge-pulse {
   0%, 100% { box-shadow: 0 0 0 rgba(34,211,238,0.4); }
   50% { box-shadow: 0 0 12px rgba(34,211,238,0.6); }
@@ -996,7 +996,7 @@ strong, b {
   animation: tjai-badge-pulse 3s ease-in-out infinite;
 }
 
-/* MI11 — Logo breathe glow */
+/* MI11 � Logo breathe glow */
 @keyframes logo-breathe {
   0%, 100% { filter: drop-shadow(0 0 4px rgba(34,211,238,0.15)); }
   50% { filter: drop-shadow(0 0 14px rgba(34,211,238,0.45)); }
@@ -1006,13 +1006,13 @@ strong, b {
   animation: logo-breathe 4s ease-in-out infinite;
 }
 
-/* MI12 — Badge hover glow */
+/* MI12 � Badge hover glow */
 .badge:hover, .lux-badge:hover {
   box-shadow: 0 0 16px rgba(34,211,238,0.2);
   transition: box-shadow 200ms ease;
 }
 
-/* M8 — PR card gold shimmer */
+/* M8 � PR card gold shimmer */
 @keyframes pr-shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
@@ -1029,13 +1029,13 @@ strong, b {
   border-radius: inherit;
 }
 
-/* ME10 — Workout entry slide-in */
+/* ME10 � Workout entry slide-in */
 @keyframes workout-slide-in {
   from { opacity: 0; transform: translateX(16px); }
   to { opacity: 1; transform: translateX(0); }
 }
 
-/* MI4 — flame flicker */
+/* MI4 � flame flicker */
 @keyframes flame-flicker {
   0%, 100% { transform: scale(1) rotate(-1deg); opacity: 0.9; }
   33% { transform: scale(1.08) rotate(1deg); opacity: 1; }
@@ -1046,7 +1046,7 @@ strong, b {
   animation: flame-flicker 1.8s ease-in-out infinite;
 }
 
-/* MI10 — Glassmorphic tooltips */
+/* MI10 � Glassmorphic tooltips */
 .tj-collapsed-sidebar-tip {
   backdrop-filter: blur(12px) !important;
   background: rgba(13,14,18,0.92) !important;
@@ -1279,7 +1279,7 @@ strong, b {
   color: var(--color-error);
 }
 
-/* Inline tags / chips — distinct from lux-badge (eyebrow marketing) */
+/* Inline tags / chips � distinct from lux-badge (eyebrow marketing) */
 .badge {
   @apply inline-flex items-center rounded-full border border-white/[0.1] bg-white/[0.05] px-3 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-zinc-400;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2) inset;
@@ -1726,7 +1726,7 @@ html {
   }
 }
 
-/* ── Quiz question transitions ─────────────────────────────────── */
+/* ?? Quiz question transitions ??????????????????????????????????? */
 @keyframes slide-in-right {
   from { opacity: 0; transform: translateX(40px); }
   to   { opacity: 1; transform: translateX(0); }
@@ -1748,14 +1748,14 @@ html {
 .question-enter-back { animation: slide-in-left 0.35s cubic-bezier(0.22,1,0.36,1) both; }
 .question-exit-back  { animation: slide-out-right 0.25s ease forwards; }
 
-/* ── Plan result entrance ──────────────────────────────────────── */
+/* ?? Plan result entrance ???????????????????????????????????????? */
 @keyframes plan-appear {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 .plan-result { animation: plan-appear 0.6s cubic-bezier(0.22,1,0.36,1) both; }
 
-/* ── Word rise (hero headline) ─────────────────────────────────── */
+/* ?? Word rise (hero headline) ??????????????????????????????????? */
 @keyframes word-rise {
   from { opacity: 0; transform: translateY(30px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -1765,7 +1765,7 @@ html {
   animation: word-rise 0.6s cubic-bezier(0.22,1,0.36,1) both;
 }
 
-/* ── Scroll-triggered reveals ──────────────────────────────────── */
+/* ?? Scroll-triggered reveals ???????????????????????????????????? */
 .reveal-section {
   opacity: 0;
   transform: translateY(40px);
@@ -1777,11 +1777,11 @@ html {
   transform: translateY(0);
 }
 
-/* ── Blinking cursor (TJAI typing) ─────────────────────────────── */
+/* ?? Blinking cursor (TJAI typing) ??????????????????????????????? */
 @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
 .cursor-blink { animation: blink 1s step-end infinite; }
 
-/* ── Dynamic island animations ─────────────────────────────────── */
+/* ?? Dynamic island animations ??????????????????????????????????? */
 @keyframes island-enter {
   from { opacity: 0; transform: translateY(-20px) scale(0.9); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
@@ -1791,7 +1791,7 @@ html {
   to   { opacity: 0; transform: translateY(-10px) scale(0.95); }
 }
 
-/* ── Apex badge rotating border ────────────────────────────────── */
+/* ?? Apex badge rotating border ?????????????????????????????????? */
 @property --apex-angle {
   syntax: '<angle>';
   initial-value: 0deg;
@@ -1813,14 +1813,14 @@ html {
   font-weight: 700;
 }
 
-/* ── Sparkle pulse (TJAI header icon) ──────────────────────────── */
+/* ?? Sparkle pulse (TJAI header icon) ???????????????????????????? */
 @keyframes sparkle-pulse {
   0%,100% { opacity: 1; transform: scale(1); }
   50%      { opacity: 0.7; transform: scale(0.95); }
 }
 .sparkle-pulse { animation: sparkle-pulse 2s ease-in-out infinite; }
 
-/* ── Testimonials carousel ─────────────────────────────────────── */
+/* ?? Testimonials carousel ??????????????????????????????????????? */
 .testimonials-carousel {
   display: flex;
   gap: 16px;
@@ -1836,7 +1836,7 @@ html {
   flex-shrink: 0;
 }
 
-/* ── Card tilt glare ────────────────────────────────────────────── */
+/* ?? Card tilt glare ?????????????????????????????????????????????? */
 .card-glare {
   position: absolute;
   inset: 0;
@@ -1846,20 +1846,20 @@ html {
   z-index: 1;
 }
 
-/* ── Active sidebar item subtle pulse ──────────────────────────── */
+/* ?? Active sidebar item subtle pulse ???????????????????????????? */
 @keyframes active-nav-pulse {
   0%,100% { opacity: 1; }
   50%      { opacity: 0.7; }
 }
 
-/* ── Gradient mesh background for section containers ───────────── */
+/* ?? Gradient mesh background for section containers ????????????? */
 .mesh-bg {
   background-image:
     radial-gradient(at 20% 30%, rgba(34,211,238,0.06) 0px, transparent 50%),
     radial-gradient(at 80% 70%, rgba(167,139,250,0.06) 0px, transparent 50%);
 }
 
-/* ── Premium glow on focus-visible inputs ───────────────────────── */
+/* ?? Premium glow on focus-visible inputs ????????????????????????? */
 .input:focus-visible,
 input[type="text"]:focus-visible,
 input[type="email"]:focus-visible,
@@ -1870,7 +1870,7 @@ textarea:focus-visible {
   box-shadow: 0 0 0 3px rgba(34,211,238,0.12) !important;
 }
 
-/* ── Program card category accent border ───────────────────────── */
+/* ?? Program card category accent border ????????????????????????? */
 .tj-card-premium-hover {
   border-left: 2px solid transparent;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
@@ -1880,7 +1880,7 @@ textarea:focus-visible {
   box-shadow: 0 0 30px -8px color-mix(in srgb, var(--card-accent, #22d3ee) 40%, transparent);
 }
 
-/* ── Floating TJAI CTA ──────────────────────────────────────────── */
+/* ?? Floating TJAI CTA ???????????????????????????????????????????? */
 .floating-tjai-cta {
   position: fixed;
   bottom: 24px;
@@ -1893,7 +1893,7 @@ textarea:focus-visible {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Reduced motion: disable all non-essential animations ──────── */
+/* ?? Reduced motion: disable all non-essential animations ???????? */
 @media (prefers-reduced-motion: reduce) {
   .word-animate,
   .question-enter,
@@ -1914,7 +1914,7 @@ textarea:focus-visible {
 
 
 /* -------------------------------------------
-   MICRO-POLISH � Batch 13
+   MICRO-POLISH � Batch 13
 ------------------------------------------- */
 
 /* MI2 - Spinning arc button loading state */
@@ -2020,7 +2020,7 @@ textarea:focus-visible {
   50%       { transform: translateY(-8px); }
 }
 
-/* Hero bicep � split halves oscillate opposite ways to suggest alternating curls */
+/* Hero bicep � split halves oscillate opposite ways to suggest alternating curls */
 @keyframes heroCurlLeft {
   0%, 100% { transform: rotate(-2.5deg); }
   50% { transform: rotate(4deg); }
@@ -2046,7 +2046,7 @@ textarea:focus-visible {
   }
 }
 
-/* TJAI section � background drift + brain decoration */
+/* TJAI section � background drift + brain decoration */
 @keyframes tjaiCoreDrift {
   0%,
   100% {
@@ -2096,6 +2096,49 @@ textarea:focus-visible {
   .animate-tjai-brain-float,
   .animate-tjai-brain-glow {
     animation: none;
+  }
+}
+
+/* Nexus CTA � background image drift + SVG network motion */
+@keyframes nexusBgDrift {
+  0%,
+  100% {
+    transform: scale(1.04) translate(0.2%, 0.4%);
+  }
+  50% {
+    transform: scale(1.1) translate(-0.6%, -0.4%);
+  }
+}
+.animate-nexus-bg-drift {
+  animation: nexusBgDrift 26s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes nexusNetworkBreath {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateY(-10px) scale(1.01);
+    opacity: 0.32;
+  }
+}
+.animate-nexus-network {
+  animation: nexusNetworkBreath 12s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-nexus-bg-drift {
+    animation: none;
+    transform: none;
+  }
+  .animate-nexus-network {
+    animation: none;
+    opacity: 0.26;
+    transform: none;
   }
 }
 

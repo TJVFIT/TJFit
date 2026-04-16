@@ -705,34 +705,46 @@ export function ImmersiveHome({
         ref={(el) => { nexusRef.current = el; }}
         className="relative overflow-hidden border-t border-[#1E2028] px-6 py-32 text-center lg:px-12 lg:py-44"
       >
-        {/* Nexus background — full bleed, vivid */}
-        <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
-          <Image
-            src="/assets/hero/hero-nexus.png"
-            alt=""
-            fill
-            className="object-cover object-center"
+        {/* Nexus background — blended into #09090B + slow drift (matches TJAI / hero language) */}
+        <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-[#09090B]" aria-hidden>
+          <div className={cn("absolute inset-0", nexusInView && !reduce && "animate-nexus-bg-drift")}>
+            <Image
+              src="/assets/hero/hero-nexus.png"
+              alt=""
+              fill
+              className="object-cover object-center mix-blend-soft-light"
+              style={{
+                opacity: nexusInView ? 0.44 : 0,
+                transition: "opacity 1.4s ease-out",
+                filter:
+                  "saturate(1.06) contrast(1.05) brightness(0.92) drop-shadow(0 0 48px rgba(34,211,238,0.18))"
+              }}
+            />
+          </div>
+          {/* Wash art into site chrome — no flat gray box */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#09090B] via-[#09090B]/78 to-[#09090B]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#09090B]/95 via-transparent to-[#09090B]/95" />
+          <div
+            className="absolute inset-0 opacity-80 mix-blend-overlay"
             style={{
-              opacity: nexusInView ? 0.5 : 0,
-              transition: "opacity 1.4s ease-out",
-              filter: "drop-shadow(0 0 40px rgba(34,211,238,0.3))"
+              background:
+                "radial-gradient(ellipse 85% 65% at 50% 42%, rgba(34,211,238,0.09) 0%, transparent 58%), radial-gradient(ellipse 55% 50% at 15% 70%, rgba(167,139,250,0.06) 0%, transparent 50%), radial-gradient(ellipse 50% 45% at 88% 65%, rgba(34,211,238,0.05) 0%, transparent 48%)"
             }}
           />
-          {/* Soft fade only at very top and bottom edges — keep center vivid */}
-          <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#09090B] to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#09090B] to-transparent" />
-          {/* Very subtle center overlay so text pops */}
-          <div className="absolute inset-0 bg-[#09090B]/40" />
+          <div className="absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-[#09090B] via-[#09090B]/40 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-[#09090B] via-[#09090B]/40 to-transparent" />
         </div>
 
-        {/* Animated SVG node network — brighter */}
+        {/* Animated SVG node network — screen-blended + breath motion */}
         {nexusInView && (
           <svg
-            className="pointer-events-none absolute inset-0 h-full w-full"
+            className={cn(
+              "pointer-events-none absolute inset-0 z-[1] h-full w-full mix-blend-screen",
+              reduce ? "opacity-[0.26]" : "animate-nexus-network"
+            )}
             aria-hidden
             preserveAspectRatio="xMidYMid slice"
             viewBox="0 0 1200 600"
-            style={{ opacity: 0.35 }}
           >
             {[
               "M 600 550 L 600 300 L 300 100",
