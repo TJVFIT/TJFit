@@ -78,7 +78,26 @@ export async function getSimilarUserInsight(
       .not("outcome_weight_change", "is", null)
       .limit(10);
 
-    if (!data || data.length < 3) return null;
+    if (!data || data.length < 3) {
+      // Task 9 — fallback: use rows even without outcome data — show calorie/protein averages
+      const { data: fallbackData } = await supabase
+        .from("tjai_plan_analytics")
+        .select("generated_calories,generated_protein")
+        .eq("goal", goal)
+        .eq("sex", sex)
+        .limit(20);
+
+      if (!fallbackData || fallbackData.length < 3) return null;
+
+      const avgCalories = Math.round(
+        fallbackData.reduce((s, r) => s + Number(r.generated_calories ?? 0), 0) / fallbackData.length
+      );
+      const avgProtein = Math.round(
+        fallbackData.reduce((s, r) => s + Number(r.generated_protein ?? 0), 0) / fallbackData.length
+      );
+
+      return `COMMUNITY BENCHMARK: Among ${fallbackData.length} similar users (${sex}, ${getAgeRange(age)}, goal: ${goal}), average targets are ${avgCalories} kcal/day and ${avgProtein}g protein. Use as a calibration reference.`;
+    }
 
     const avgCalories = Math.round(
       data.reduce((sum, r) => sum + Number(r.generated_calories ?? 0), 0) / data.length
@@ -86,8 +105,11 @@ export async function getSimilarUserInsight(
     const avgProtein = Math.round(
       data.reduce((sum, r) => sum + Number(r.generated_protein ?? 0), 0) / data.length
     );
+    const avgOutcome = (
+      data.reduce((sum, r) => sum + Number(r.outcome_weight_change ?? 0), 0) / data.length
+    ).toFixed(2);
 
-    return `LEARNING FROM PAST USERS: Similar users (${sex}, ${getAgeRange(age)}, ${fitnessLevel}, goal: ${goal}) achieved best results at approximately ${avgCalories} kcal/day and ${avgProtein}g protein/day. Use this as a data point when setting calorie and protein targets.`;
+    return `LEARNING FROM PAST USERS (${data.length} similar users — ${sex}, ${getAgeRange(age)}, ${fitnessLevel}, goal: ${goal}): average targets ${avgCalories} kcal/day, ${avgProtein}g protein/day, average weekly weight change ${avgOutcome}kg. Use as calibration reference.`;
   } catch {
     return null;
   }

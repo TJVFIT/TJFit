@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { callOpenAI } from "@/lib/tjai-openai";
 
 function weekStartIso() {
   const now = new Date();
@@ -49,16 +50,50 @@ export async function GET() {
   if (cachedInsight?.insight_text) {
     weeklyInsight = cachedInsight.insight_text;
   } else {
-    weeklyInsight =
-      "You've been consistent this week. Your training rhythm is improving. Focus on hydration and recovery to keep performance high.";
-    await admin.from("tjai_weekly_insights").upsert(
-      {
-        user_id: auth.user.id,
-        week_start: weekStart,
-        insight_text: weeklyInsight
-      },
+    // Task 3 — generate a REAL AI insight using this user's actual data
+    try {
+      const workoutsThisWeek = (workoutRows ?? []).filter(
+        (r) => r.logged_at && String(r.logged_at) >= weekStart
+      );
+      const planSummaryObj = ((planRow?.plan_json as Record<string, unknown> | null)?.summary ?? {}) as Record<string, unknown>;
+
+      const insightPrompt = `You are TJAI, an elite AI fitness coach. Generate a single, highly personalized weekly insight for this user. 2-3 sentences max. Be specific to their data. Motivating but honest. No fluff.
+
+USER DATA THIS WEEK:
+- Workouts logged: ${workoutsThisWeek.length} sessions
+- Exercises: ${[...new Set(workoutsThisWeek.map((w) => String((w as Record<string, unknown>).exercise_name ?? (w as Record<string, unknown>).exercise ?? "")).filter(Boolean))].slice(0, 5).join(", ") || "none logged"}
+- Program week: ${currentWeek} of 12 (${completionPercent}% complete)
+- Streak: ${Number(profile?.current_streak ?? 0)} days
+
+PLAN TARGETS:
+- Daily calories: ${planSummaryObj.calorieTarget ?? planRow?.plan_json ? "see plan" : "not set"}
+- Protein: ${planSummaryObj.protein ?? "not set"}g/day
+- Weekly change target: ${planSummaryObj.weeklyChange ?? "not set"}
+
+Write 1 insight. No intro phrase like "Great job" or "Here's your insight". Start directly.`;
+
+      if (process.env.OPENAI_API_KEY) {
+        weeklyInsight = await callOpenAI({
+          system: "You are TJAI, a precision AI fitness coach. Be brief, specific, actionable.",
+          user: insightPrompt,
+          maxTokens: 150,
+          jsonMode: false
+        });
+      } else {
+        weeklyInsight = "Log your workouts and body weight this week to unlock your personalized AI insight.";
+      }
+    } catch (insightErr) {
+      console.error("[TJAI progress] weekly insight generation failed:", insightErr);
+      weeklyInsight = "Keep logging your sessions — your personalized weekly insight will appear here.";
+    }
+
+    const { error: insightUpsertError } = await admin.from("tjai_weekly_insights").upsert(
+      { user_id: auth.user.id, week_start: weekStart, insight_text: weeklyInsight },
       { onConflict: "user_id,week_start" }
     );
+    if (insightUpsertError) {
+      console.error("[TJAI progress] failed to cache weekly insight:", insightUpsertError);
+    }
   }
 
   const nextWorkouts = ((planRow?.plan_json as any)?.program?.weeks?.[Math.max(0, currentWeek - 1)]?.days ?? []).slice(0, 3);

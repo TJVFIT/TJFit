@@ -102,11 +102,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "AI returned an invalid response. Please try again." }, { status: 502 });
     }
 
-    // Save to DB
+    // Task 8 — count existing plans to assign version_number; insert instead of upsert
+    const { count: existingCount } = await adminClient
+      .from("saved_tjai_plans")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", authResult.user.id);
+
+    const versionNumber = (existingCount ?? 0) + 1;
+
+    // Save to DB — insert (not upsert) to preserve version history
     const { data: savedPlan, error: saveError } = await adminClient
       .from("saved_tjai_plans")
-      .upsert({
+      .insert({
         user_id: authResult.user.id,
+        version_number: versionNumber,
         answers_json: effectiveAnswers,
         metrics_json: metrics,
         plan_json: plan,
@@ -119,7 +128,7 @@ export async function POST(request: NextRequest) {
         training_days_per_week: inferredTrainingDays,
         training_location: String(effectiveAnswers.s5_type ?? effectiveAnswers.location ?? "gym"),
         updated_at: new Date().toISOString()
-      }, { onConflict: "user_id" })
+      })
       .select("id")
       .maybeSingle();
 

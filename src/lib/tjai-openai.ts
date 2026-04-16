@@ -1,10 +1,10 @@
 /**
- * OpenAI GPT-4o wrapper for TJAI plan generation.
- * Uses response_format: json_object for guaranteed valid JSON output.
+ * OpenAI GPT-4o wrapper for TJAI plan generation and streaming chat.
  */
 
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
-const MODEL = "gpt-4o";
+const MODEL_JSON = "gpt-4o-2024-08-06"; // structured outputs / json_object
+const MODEL_CHAT = "gpt-4o";            // chat / streaming
 const MAX_RETRIES = 2;
 
 export async function callOpenAI({
@@ -26,9 +26,9 @@ export async function callOpenAI({
   for (let attempt = 1; attempt <= MAX_RETRIES + 1; attempt++) {
     try {
       const body: Record<string, unknown> = {
-        model: MODEL,
+        model: jsonMode ? MODEL_JSON : MODEL_CHAT,
         max_tokens: maxTokens,
-        temperature: 0.7,
+        temperature: jsonMode ? 0.3 : 0.7,
         messages: [
           { role: "system", content: system },
           { role: "user", content: user }
@@ -37,14 +37,13 @@ export async function callOpenAI({
 
       if (jsonMode) {
         body.response_format = { type: "json_object" };
-        body.temperature = 0.3; // Lower temp for more reliable JSON
       }
 
       const response = await fetch(OPENAI_API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`
+          Authorization: `Bearer ${apiKey}`
         },
         body: JSON.stringify(body)
       });
@@ -55,7 +54,7 @@ export async function callOpenAI({
       }
 
       const data = await response.json();
-      const text = data?.choices?.[0]?.message?.content ?? "";
+      const text = (data?.choices?.[0]?.message?.content ?? "") as string;
 
       if (!text) throw new Error("OpenAI returned an empty response.");
 
@@ -64,7 +63,6 @@ export async function callOpenAI({
       lastError = err instanceof Error ? err : new Error(String(err));
       console.error(`TJAI OpenAI attempt ${attempt} failed:`, lastError.message);
       if (attempt <= MAX_RETRIES) {
-        // Exponential backoff: 1s, 2s
         await new Promise((r) => setTimeout(r, attempt * 1000));
       }
     }
@@ -74,21 +72,66 @@ export async function callOpenAI({
 }
 
 /**
+ * Returns a raw ReadableStream of SSE data from OpenAI.
+ * Caller is responsible for piping/transforming.
+ */
+export async function streamOpenAI({
+  system,
+  user,
+  messages,
+  maxTokens = 1000
+}: {
+  system: string;
+  user?: string;
+  messages?: Array<{ role: "user" | "assistant"; content: string }>;
+  maxTokens?: number;
+}): Promise<ReadableStream<Uint8Array>> {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) throw new Error("OPENAI_API_KEY is not configured.");
+
+  const body = {
+    model: MODEL_CHAT,
+    max_tokens: maxTokens,
+    temperature: 0.7,
+    stream: true,
+    messages: [
+      { role: "system" as const, content: system },
+      ...(messages ?? []),
+      ...(user ? [{ role: "user" as const, content: user }] : [])
+    ]
+  };
+
+  const response = await fetch(OPENAI_API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(`OpenAI stream error ${response.status}: ${err.slice(0, 300)}`);
+  }
+
+  if (!response.body) throw new Error("No response body from OpenAI stream.");
+  return response.body;
+}
+
+/**
  * Parse JSON safely — works with json_object mode (already valid JSON)
  * or as a fallback extractor for free-form responses.
  */
 export function safeParseJSON<T = unknown>(text: string): T {
-  // First try direct parse (works perfectly with json_object mode)
   try {
     return JSON.parse(text) as T;
   } catch {
-    // Fallback: extract first {...} block (for non-json_object responses)
     const match = text.match(/\{[\s\S]*\}/);
     if (match) {
       try {
         return JSON.parse(match[0]) as T;
       } catch {
-        // Try to find a valid JSON substring
         let depth = 0;
         let start = -1;
         for (let i = 0; i < text.length; i++) {
