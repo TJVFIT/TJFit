@@ -4,7 +4,6 @@ import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Suspense } from "react";
 import {
   Dumbbell, Brain, Users, Trophy, Apple, Globe,
   ChevronDown, ArrowRight, Zap, Star
@@ -16,7 +15,6 @@ import { ScrollTicker } from "@/components/ui/ScrollTicker";
 import { HomeNewsletterBar } from "@/components/home-newsletter-bar";
 import { HomeTestimonials } from "@/components/home-testimonials";
 import { HomeCoachCta } from "@/components/home-coach-cta";
-import { ClientErrorBoundary } from "@/components/client-error-boundary";
 import { useMagneticButton } from "@/hooks/useMagneticButton";
 import { useInView } from "@/hooks/useInView";
 import type { Program } from "@/lib/content";
@@ -28,8 +26,6 @@ import { getDirection, type Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 import type { HomeCoachPreview, HomeProgramPreview } from "@/components/luxury/luxury-home";
-import { LuxuryHero3DExperience } from "@/components/luxury/luxury-hero-3d";
-import type { HeroMouseRef } from "@/components/luxury/luxury-hero-3d-canvas";
 
 function useReducedMotion() {
   const [r, setR] = useState(false);
@@ -190,7 +186,6 @@ export function ImmersiveHome({
   const heroRef = useRef<HTMLElement | null>(null);
   const heroSectionRef = useRef<HTMLElement | null>(null);
   const programsSectionRef = useRef<HTMLDivElement>(null);
-  const heroMouseRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 }) as HeroMouseRef;
 
   // Hero enter
   useEffect(() => {
@@ -217,16 +212,6 @@ export function ImmersiveHome({
     return () => { cancelled = true; };
   }, []);
 
-  // Mouse parallax for 3D canvas
-  useEffect(() => {
-    if (reduce || window.matchMedia("(hover: none)").matches) return;
-    const fn = (e: MouseEvent) => {
-      heroMouseRef.current.x = (e.clientX / window.innerWidth) * 2 - 1;
-      heroMouseRef.current.y = -((e.clientY / window.innerHeight) * 2 - 1);
-    };
-    window.addEventListener("mousemove", fn, { passive: true });
-    return () => window.removeEventListener("mousemove", fn);
-  }, [reduce]);
 
   // Programs section parallax
   const [parallaxY, setParallaxY] = useState(0);
@@ -280,24 +265,32 @@ export function ImmersiveHome({
         ref={(el) => { heroRef.current = el; heroSectionRef.current = el; }}
         className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden px-6 pb-16 pt-20 lg:px-12"
       >
-        {/* 3D Canvas background */}
-        <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
-          <ClientErrorBoundary sentryScope="home-hero-3d" fallback={null}>
-            <Suspense fallback={null}>
-              {!reduce && <LuxuryHero3DExperience mouseRef={heroMouseRef} />}
-            </Suspense>
-          </ClientErrorBoundary>
-        </div>
+        {/* Ambient background gradient */}
+        <div
+          className="pointer-events-none absolute inset-0 z-0"
+          style={{
+            background: [
+              "radial-gradient(ellipse 60% 80% at 75% 50%, rgba(34,211,238,0.06) 0%, transparent 60%)",
+              "radial-gradient(ellipse 50% 60% at 20% 40%, rgba(167,139,250,0.05) 0%, transparent 55%)",
+              "#09090B"
+            ].join(", ")
+          }}
+          aria-hidden
+        />
 
-        {/* Particles */}
+        {/* Particles — subtle depth layer */}
         <div className="pointer-events-none absolute inset-0 z-[1]" aria-hidden>
           <ParticleField className="absolute inset-0" />
         </div>
 
-        {/* Vignette */}
-        <div className="pointer-events-none absolute inset-0 z-[2]"
-          style={{ background: "radial-gradient(ellipse 80% 70% at 50% 50%, transparent 20%, rgba(9,9,11,0.6) 100%)" }}
-          aria-hidden />
+        {/* Right-side glow behind the figure — makes it feel like he's emitting light */}
+        <div
+          className="pointer-events-none absolute bottom-0 right-0 z-[1] h-full w-[55%] max-md:hidden"
+          style={{
+            background: "radial-gradient(ellipse 80% 90% at 80% 55%, rgba(34,211,238,0.10) 0%, rgba(34,211,238,0.03) 45%, transparent 70%)"
+          }}
+          aria-hidden
+        />
 
         {/* Scanline entrance — fires once */}
         {heroInView && !hasScanned && (
@@ -311,7 +304,7 @@ export function ImmersiveHome({
         )}
 
         {/* SPLIT: text left | bicep curl right */}
-        <div className="relative z-10 mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-12 lg:grid-cols-2">
+        <div className="relative z-10 mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_1.1fr]">
 
           {/* LEFT — Text */}
           <div className={direction === "rtl" ? "text-right" : "text-left"}>
@@ -385,15 +378,20 @@ export function ImmersiveHome({
             </div>
           </div>
 
-          {/* RIGHT — Luminous bicep curl figure */}
+          {/* RIGHT — Luminous bicep curl figure — main hero visual */}
           <div
             className="relative flex items-center justify-center"
-            style={lineIn(300)}
+            style={lineIn(200)}
           >
-            {/* Ambient glow behind figure */}
+            {/* Multi-layer glow orb behind figure */}
             <div
-              className="pointer-events-none absolute inset-0 rounded-full"
-              style={{ background: "radial-gradient(circle, rgba(34,211,238,0.12) 0%, transparent 70%)", opacity: 0.6 }}
+              className="pointer-events-none absolute left-1/2 top-1/2 h-[120%] w-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full"
+              style={{ background: "radial-gradient(circle, rgba(34,211,238,0.14) 0%, rgba(34,211,238,0.06) 40%, transparent 70%)" }}
+              aria-hidden
+            />
+            <div
+              className="pointer-events-none absolute left-1/2 top-1/2 h-[80%] w-[80%] -translate-x-1/2 -translate-y-1/2 rounded-full"
+              style={{ background: "radial-gradient(circle, rgba(34,211,238,0.08) 0%, transparent 60%)" }}
               aria-hidden
             />
             <Image
@@ -403,11 +401,15 @@ export function ImmersiveHome({
               height={558}
               priority
               className={cn(
-                "relative z-10 w-full max-w-[520px] lg:max-w-[600px]",
-                !reduce && "animate-materialise animate-float"
+                "relative z-10 w-full max-w-[560px] lg:max-w-[680px] xl:max-w-[740px]",
+                !reduce && "animate-float"
               )}
               style={{
-                filter: "drop-shadow(0 0 50px rgba(34,211,238,0.45)) drop-shadow(0 0 20px rgba(167,139,250,0.2))",
+                filter: [
+                  "drop-shadow(0 0 60px rgba(34,211,238,0.55))",
+                  "drop-shadow(0 0 25px rgba(34,211,238,0.35))",
+                  "drop-shadow(0 0 8px rgba(167,139,250,0.25))"
+                ].join(" "),
                 objectFit: "contain"
               }}
             />
