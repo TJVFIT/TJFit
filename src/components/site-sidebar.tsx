@@ -276,23 +276,25 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
     const delay = reduce ? 0 : 100 + idx * 60;
 
     const rowClass = cn(
-      "group/row relative flex h-[52px] w-full shrink-0 items-center rounded-e-lg transition-colors duration-150 ease-out",
+      "group/row relative flex h-[48px] w-full shrink-0 items-center rounded-xl transition-all duration-200 ease-out",
       active
-        ? "bg-[rgba(34,211,238,0.08)] before:absolute before:start-0 before:top-1/2 before:h-[60%] before:w-[3px] before:-translate-y-1/2 before:rounded-e-sm before:bg-[#22D3EE]"
-        : "hover:bg-[rgba(255,255,255,0.04)]",
+        ? "bg-gradient-to-r from-[rgba(34,211,238,0.14)] to-[rgba(34,211,238,0.06)]"
+        : "hover:bg-[rgba(255,255,255,0.05)]",
       it.comingSoon && "cursor-default"
     );
 
     const iconClass = cn(
-      "h-5 w-5 shrink-0 transition-colors duration-150",
-      active ? "text-[#22D3EE]" : "text-[#52525B] group-hover/row:text-[#A1A1AA]",
-      it.comingSoon && "text-[#52525B]"
+      "h-[18px] w-[18px] shrink-0 transition-all duration-200",
+      active
+        ? "text-[#22D3EE]"
+        : "text-[#3F4150] group-hover/row:text-[#A1A1AA]",
+      it.comingSoon && "text-[#2A2D3A]"
     );
 
     const labelClass = cn(
-      "ms-3 min-w-0 flex-1 truncate text-start text-sm font-medium transition-[max-width,opacity,transform] duration-200 ease-out",
+      "ms-3 min-w-0 flex-1 truncate text-start text-[13px] font-semibold tracking-[-0.01em] transition-[max-width,opacity,transform] duration-200 ease-out",
       sidebarExpanded ? "max-w-[200px] translate-x-0 opacity-100" : "max-w-0 -translate-x-2 opacity-0",
-      active ? "text-white" : "text-[#A1A1AA] group-hover/row:text-white"
+      active ? "text-white" : "text-[#6B6F7E] group-hover/row:text-[#D4D4D8]"
     );
 
     const soonBadge = (
@@ -310,12 +312,38 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
 
     const inner = (
       <>
-        <span className="relative flex w-16 shrink-0 justify-center">
-          <Icon className={iconClass} strokeWidth={1.75} aria-hidden />
+        {/* Active left-side indicator bar */}
+        {active && (
+          <span
+            className="absolute start-0 top-1/2 h-[55%] w-[3px] -translate-y-1/2 rounded-e-full"
+            style={{
+              background: "linear-gradient(180deg, #22D3EE, #0EA5E9)",
+              boxShadow: "0 0 8px rgba(34,211,238,0.8), 0 0 16px rgba(34,211,238,0.4)"
+            }}
+            aria-hidden
+          />
+        )}
+
+        {/* Icon container with hover glow */}
+        <span
+          className={cn(
+            "relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-all duration-200 ms-1",
+            active
+              ? "bg-[rgba(34,211,238,0.12)]"
+              : "group-hover/row:bg-[rgba(255,255,255,0.06)]"
+          )}
+          style={active ? { boxShadow: "0 0 12px rgba(34,211,238,0.25)" } : undefined}
+        >
+          <Icon
+            className={iconClass}
+            strokeWidth={active ? 2.2 : 1.75}
+            style={active ? { filter: "drop-shadow(0 0 4px rgba(34,211,238,0.7))" } : undefined}
+            aria-hidden
+          />
           {it.comingSoon ? (
             <span
               className={cn(
-                "absolute -end-0.5 -top-1 rounded border border-[rgba(167,139,250,0.2)] bg-[rgba(167,139,250,0.12)] px-1 py-px text-[7px] font-bold text-[#A78BFA]",
+                "absolute -end-0.5 -top-0.5 rounded border border-[rgba(167,139,250,0.2)] bg-[rgba(167,139,250,0.12)] px-1 py-px text-[6px] font-bold text-[#A78BFA]",
                 sidebarExpanded ? "hidden" : "inline-flex"
               )}
             >
@@ -324,21 +352,23 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
           ) : null}
           {showCollapsedTooltip ? (
             <span
-              className="tj-collapsed-sidebar-tip pointer-events-none absolute start-[calc(100%+12px)] top-1/2 z-[100] rounded-lg border border-[#1E2028] bg-[#111215] px-3 py-1.5 text-[13px] font-medium text-white shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
+              className="tj-collapsed-sidebar-tip pointer-events-none absolute start-[calc(100%+10px)] top-1/2 z-[100] -translate-y-1/2 rounded-xl border border-[rgba(34,211,238,0.15)] bg-[rgba(13,14,18,0.95)] px-3 py-1.5 text-[13px] font-semibold text-white shadow-[0_8px_32px_rgba(0,0,0,0.6),0_0_0_1px_rgba(0,0,0,0.3)_inset] backdrop-blur-[12px]"
               role="tooltip"
             >
               <span className="block whitespace-nowrap">{it.collapsedTooltip ?? it.label}</span>
               {it.comingSoon ? (
-                <span className="mt-0.5 block whitespace-nowrap text-[11px] font-normal italic text-[#52525B]">
+                <span className="mt-0.5 block whitespace-nowrap text-[11px] font-normal text-[#52525B]">
                   {soonMessage}
                 </span>
               ) : null}
             </span>
           ) : null}
         </span>
+
         <span className={labelClass}>{it.label}</span>
+
         {it.badgeText && sidebarExpanded ? (
-          <span className="ms-1 rounded-full border border-[rgba(34,211,238,0.35)] bg-[rgba(34,211,238,0.15)] px-1.5 py-0.5 text-[10px] font-bold text-[#22D3EE] tjai-pulse-badge">
+          <span className="me-2 ms-1 rounded-full border border-[rgba(34,211,238,0.35)] bg-[rgba(34,211,238,0.12)] px-2 py-0.5 text-[9px] font-bold tracking-wide text-[#22D3EE] tjai-pulse-badge">
             {it.badgeText}
           </span>
         ) : null}
@@ -411,40 +441,69 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
         onMouseEnter={onSidebarEnter}
         onMouseLeave={onSidebarLeave}
         className={cn(
-          "site-sidebar tj-sidebar-rail fixed top-0 z-50 hidden h-[100dvh] flex-col overflow-x-visible overflow-y-hidden border-[rgba(255,255,255,0.04)] will-change-[width] lg:flex",
-          "transition-[width,transform,background-color,backdrop-filter] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
-          direction === "rtl" ? "right-0 border-l" : "left-0 border-r",
-          sidebarExpanded ? "w-[260px]" : "w-16",
-          scrolled ? "bg-[rgba(9,9,11,0.85)] backdrop-blur-[20px]" : "bg-transparent",
+          "site-sidebar tj-sidebar-rail fixed top-0 z-50 hidden h-[100dvh] flex-col overflow-x-visible overflow-y-hidden will-change-[width] lg:flex",
+          "transition-[width,transform] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
+          direction === "rtl" ? "right-0" : "left-0",
+          sidebarExpanded ? "w-[272px]" : "w-[64px]",
           reduce ? "translate-x-0" : entered ? "translate-x-0" : "-translate-x-full",
           reduce ? "" : "duration-[600ms] ease-[cubic-bezier(0,0,0.2,1)]"
         )}
-        style={reduce ? undefined : { transitionDelay: entered ? undefined : "100ms" }}
+        style={{
+          background: "linear-gradient(180deg, rgba(9,9,11,0.97) 0%, rgba(10,10,14,0.96) 100%)",
+          backdropFilter: "blur(24px)",
+          WebkitBackdropFilter: "blur(24px)",
+          borderRight: direction === "rtl" ? "none" : "1px solid rgba(255,255,255,0.05)",
+          borderLeft: direction === "rtl" ? "1px solid rgba(255,255,255,0.05)" : "none",
+          boxShadow: sidebarExpanded ? "4px 0 40px rgba(0,0,0,0.5)" : "2px 0 20px rgba(0,0,0,0.3)",
+          transitionDelay: reduce ? "0ms" : entered ? "0ms" : "100ms"
+        }}
       >
-        <div className={cn("flex h-[72px] shrink-0 items-center border-b border-transparent ps-2 pt-[env(safe-area-inset-top,0px)]", !sidebarExpanded && "logo-breathe")}>
-          <Logo variant="full" size={sidebarExpanded ? "navFull" : "sidebar"} href={`/${locale}`} suppressMinTouchTarget />
+        {/* Top gradient accent line */}
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-[1px]"
+          style={{ background: "linear-gradient(90deg, transparent, rgba(34,211,238,0.5), rgba(167,139,250,0.3), transparent)" }}
+          aria-hidden
+        />
+
+        {/* Logo area */}
+        <div
+          className={cn(
+            "flex shrink-0 items-center border-b pt-[env(safe-area-inset-top,0px)]",
+            sidebarExpanded ? "h-[80px] ps-3" : "h-[72px] justify-center ps-0"
+          )}
+          style={{ borderBottomColor: "rgba(255,255,255,0.06)" }}
+        >
+          <div className={cn(!sidebarExpanded && "logo-breathe")}>
+            <Logo variant="full" size={sidebarExpanded ? "navFull" : "sidebar"} href={`/${locale}`} suppressMinTouchTarget />
+          </div>
         </div>
 
-        <div className="px-3 pb-2 pt-3">
+        {/* CTA Button */}
+        <div className={cn("px-3 pb-2 pt-4", !sidebarExpanded && "px-2")}>
           <Link
             href={primaryCtaHref}
-            className="inline-flex h-11 w-full items-center justify-center rounded-full bg-[#22D3EE] px-4 text-sm font-bold text-[#09090B] transition-opacity hover:opacity-90"
+            className={cn(
+              "relative inline-flex h-11 w-full items-center justify-center overflow-hidden rounded-full text-sm font-bold text-[#09090B] transition-all duration-200",
+              "bg-gradient-to-r from-[#22D3EE] to-[#0EA5E9]",
+              "shadow-[0_0_20px_rgba(34,211,238,0.4),0_0_40px_rgba(34,211,238,0.12)]",
+              "hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(34,211,238,0.6),0_0_60px_rgba(34,211,238,0.18)]"
+            )}
           >
-            {primaryCtaLabel}
+            {sidebarExpanded ? primaryCtaLabel : <span className="text-[16px]">→</span>}
           </Link>
         </div>
 
-        <nav className="tj-scrollbar flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto overflow-x-visible px-0 py-3">
+        <nav className="tj-scrollbar flex min-h-0 flex-1 flex-col gap-[2px] overflow-y-auto overflow-x-visible px-2 py-2">
           <GlobalSearch locale={locale} collapsed={!sidebarExpanded} onExpand={() => setSidebarExpanded(true)} />
           {primaryItems.map((it, i) => renderNavRow(it, i))}
-          <div className={cn("my-2 px-3", sidebarExpanded ? "opacity-100" : "opacity-0")}>
-            <div className="h-px w-full bg-[#1E2028]" />
-            <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#52525B]">{side.aiTools}</p>
+          <div className={cn("my-2 px-2", sidebarExpanded ? "opacity-100" : "opacity-0", "transition-opacity duration-200")}>
+            <div className="h-px w-full" style={{ background: "linear-gradient(90deg, transparent, rgba(34,211,238,0.2), transparent)" }} />
+            <p className="mt-2 text-[9px] font-bold uppercase tracking-[0.18em] text-[#52525B]">{side.aiTools}</p>
           </div>
           {aiToolsItems.map((it, i) => renderNavRow(it, i + primaryItems.length))}
         </nav>
 
-        <div className="mt-auto shrink-0 border-t border-[#1E2028] px-3 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4">
+        <div className="mt-auto shrink-0 border-t px-3 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4" style={{ borderTopColor: "rgba(255,255,255,0.06)" }}>
           <div ref={langRef} className="relative">
             <button
               type="button"
@@ -527,33 +586,42 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
           ) : null}
 
           {!loading && user ? (
-            <div className="mt-3 flex w-full items-start gap-1">
-              <div className="flex w-16 shrink-0 justify-center pt-1">
+            <div className="mt-2 flex w-full items-center gap-2 rounded-xl p-2 transition-colors hover:bg-[rgba(255,255,255,0.04)]">
+              {/* Avatar */}
+              <div className="shrink-0">
                 <AnimatedAvatar
                   url={(user?.user_metadata?.avatar_url as string | undefined) ?? null}
                   name={displayName || user.email}
-                  size={32}
+                  size={34}
                 />
               </div>
+              {/* User info — only when expanded */}
               <div
                 className={cn(
-                  "min-w-0 flex-1 overflow-hidden pt-0.5 transition-[max-width,opacity] duration-200",
-                  sidebarExpanded ? "max-w-[200px] opacity-100" : "max-w-0 opacity-0"
+                  "min-w-0 flex-1 overflow-hidden transition-[max-width,opacity] duration-200",
+                  sidebarExpanded ? "max-w-[180px] opacity-100" : "max-w-0 opacity-0"
                 )}
               >
-                <p className="truncate text-sm font-medium text-white">{displayName || user.email}</p>
-                <Link href={`/${locale}/coins`} className="mt-1 inline-flex items-center gap-1 text-xs text-[#22D3EE] hover:opacity-80">
+                <p className="truncate text-[13px] font-semibold text-white">{displayName || user.email}</p>
+                <Link
+                  href={`/${locale}/coins`}
+                  className="coin-flash mt-0.5 inline-flex items-center gap-1 text-[11px] font-bold text-[#22D3EE] transition-opacity hover:opacity-80"
+                  style={{ textShadow: "0 0 8px rgba(34,211,238,0.5)" }}
+                >
                   ⚡ {coinDisplayed.toLocaleString()}
                 </Link>
+              </div>
+              {/* Logout icon — only when expanded */}
+              {sidebarExpanded && (
                 <button
                   type="button"
                   onClick={() => void handleLogout()}
-                  className="mt-1 flex items-center gap-1 text-xs text-[#52525B] transition-colors hover:text-white"
+                  className="shrink-0 rounded-lg p-1.5 text-[#3F4150] transition-colors hover:bg-[rgba(255,255,255,0.08)] hover:text-[#A1A1AA]"
+                  title={dict.nav.logout}
                 >
-                  <LogOut className="h-3.5 w-3.5" aria-hidden />
-                  {dict.nav.logout}
+                  <LogOut className="h-4 w-4" strokeWidth={1.75} aria-hidden />
                 </button>
-              </div>
+              )}
             </div>
           ) : null}
         </div>
