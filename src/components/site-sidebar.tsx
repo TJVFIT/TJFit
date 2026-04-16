@@ -465,16 +465,22 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
           aria-hidden
         />
 
-        {/* Logo area */}
+        {/* Logo area — soft divider so the 3D PNG plate doesn’t fight a hard rule */}
         <div
           className={cn(
-            "flex shrink-0 items-center border-b pt-[env(safe-area-inset-top,0px)]",
+            "relative flex shrink-0 items-center pt-[env(safe-area-inset-top,0px)]",
+            "after:pointer-events-none after:absolute after:inset-x-3 after:bottom-0 after:h-px after:bg-gradient-to-r after:from-transparent after:via-white/[0.07] after:to-transparent",
             sidebarExpanded ? "h-[80px] ps-3" : "h-[72px] justify-center ps-0"
           )}
-          style={{ borderBottomColor: "rgba(255,255,255,0.06)" }}
         >
           <div className={cn(!sidebarExpanded && "logo-breathe")}>
-            <Logo variant="full" size={sidebarExpanded ? "navFull" : "sidebar"} href={`/${locale}`} suppressMinTouchTarget />
+            <Logo
+              variant="full"
+              size={sidebarExpanded ? "navFull" : "sidebar"}
+              href={`/${locale}`}
+              suppressMinTouchTarget
+              blendWithBackground
+            />
           </div>
         </div>
 
@@ -746,7 +752,7 @@ function MobileNav({
     return (
       <header className="fixed left-0 right-0 top-0 z-50 flex h-14 items-center gap-2 border-b border-[rgba(255,255,255,0.06)] bg-[rgba(9,9,11,0.92)] px-3 pt-[env(safe-area-inset-top,0px)] backdrop-blur-[20px] sm:px-4 lg:hidden">
         <div className="shrink-0">
-          <Logo variant="full" size="mobile" href={`/${locale}`} />
+          <Logo variant="full" size="mobile" href={`/${locale}`} blendWithBackground />
         </div>
         <div className="min-h-11 min-w-0 flex-1" aria-hidden />
         <div className="h-11 w-11 shrink-0" aria-hidden />
@@ -758,7 +764,7 @@ function MobileNav({
     <>
       <header className="fixed left-0 right-0 top-0 z-50 flex h-14 items-center gap-2 border-b border-[rgba(255,255,255,0.06)] bg-[rgba(9,9,11,0.92)] px-3 pt-[env(safe-area-inset-top,0px)] backdrop-blur-[20px] sm:px-4 lg:hidden">
         <div className="shrink-0">
-          <Logo variant="full" size="mobile" href={`/${locale}`} />
+          <Logo variant="full" size="mobile" href={`/${locale}`} blendWithBackground />
         </div>
         <nav
           aria-label={nav.language}
@@ -804,7 +810,7 @@ function MobileNav({
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden pt-[max(2rem,env(safe-area-inset-top))]">
             <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-y-contain px-6 pb-4">
               <div className="mx-auto flex w-full max-w-sm flex-col items-center">
-                <Logo variant="full" size="hero" href={`/${locale}`} onNavigate={() => setOpen(false)} />
+                <Logo variant="full" size="hero" href={`/${locale}`} onNavigate={() => setOpen(false)} blendWithBackground />
                 <Link
                   href={primaryCtaHref}
                   onClick={() => setOpen(false)}

@@ -48,6 +48,8 @@ export type LogoProps = {
   onNavigate?: () => void;
   suppressMinTouchTarget?: boolean;
   linked?: boolean;
+  /** Lets the 3D PNG’s dark plate blend into dark glass UI (sidebar / nav) instead of a visible rectangle */
+  blendWithBackground?: boolean;
 };
 
 export function Logo({
@@ -61,7 +63,8 @@ export function Logo({
   alt = "TJFit",
   onNavigate,
   suppressMinTouchTarget = false,
-  linked = true
+  linked = true,
+  blendWithBackground = false
 }: LogoProps) {
   const h = HEIGHT_PX[size];
 
@@ -75,6 +78,18 @@ export function Logo({
   const baseGlow = glow || true; // always glow — it's the brand
   const glowIntensity = size === "hero" || size === "auth" ? "0 0 20px rgba(34,211,238,0.55)" : "0 0 10px rgba(34,211,238,0.4)";
 
+  const filterStyle =
+    blendWithBackground
+      ? [
+          "drop-shadow(0 0 14px rgba(34,211,238,0.42))",
+          "drop-shadow(0 0 28px rgba(34,211,238,0.12))",
+          "contrast(1.08)",
+          "saturate(1.06)"
+        ].join(" ")
+      : baseGlow
+        ? `drop-shadow(${glowIntensity})`
+        : undefined;
+
   const img = (
     <Image
       src={LOGO_SRC}
@@ -87,12 +102,16 @@ export function Logo({
       style={{
         height: h,
         width: "auto",
-        filter: baseGlow ? `drop-shadow(${glowIntensity})` : undefined,
+        filter: filterStyle,
         opacity: animated && !revealed ? 0 : 1,
         transition: animated ? "opacity 400ms ease, filter 400ms ease" : undefined,
         ...(animated && revealed ? { animation: "logoReveal 1.1s cubic-bezier(0.16,1,0.3,1) forwards" } : {})
       }}
-      className={cn("bg-transparent object-contain [image-rendering:auto]", className)}
+      className={cn(
+        "bg-transparent object-contain [image-rendering:auto]",
+        blendWithBackground && "mix-blend-screen",
+        className
+      )}
     />
   );
 
