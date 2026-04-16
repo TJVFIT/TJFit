@@ -2020,6 +2020,32 @@ textarea:focus-visible {
   50%       { transform: translateY(-8px); }
 }
 
+/* Hero bicep — split halves oscillate opposite ways to suggest alternating curls */
+@keyframes heroCurlLeft {
+  0%, 100% { transform: rotate(-2.5deg); }
+  50% { transform: rotate(4deg); }
+}
+@keyframes heroCurlRight {
+  0%, 100% { transform: rotate(2.5deg); }
+  50% { transform: rotate(-4deg); }
+}
+
+.animate-hero-curl-left {
+  animation: heroCurlLeft 2.75s ease-in-out infinite;
+  will-change: transform;
+}
+.animate-hero-curl-right {
+  animation: heroCurlRight 2.75s ease-in-out infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hero-curl-left,
+  .animate-hero-curl-right {
+    animation: none;
+  }
+}
+
 @keyframes prismRotateCW {
   from { transform: rotateY(0deg) rotateZ(0deg); }
   to   { transform: rotateY(360deg) rotateZ(15deg); }

@@ -165,6 +165,53 @@ function MagneticLink({ href, className, children, onClick }: { href: string; cl
   return <Link href={href} className={className} onClick={onClick} ref={ref}>{children}</Link>;
 }
 
+const HERO_BICEP = "/assets/hero/hero-bicep-curl.png";
+
+/** Full-bleed hero visual: split image + opposite rotations reads as a curling motion */
+function HeroBicepCurlBackdrop({ reduce }: { reduce: boolean }) {
+  const curl = !reduce;
+  const imgGlow: CSSProperties = {
+    filter: [
+      "drop-shadow(0 0 50px rgba(34,211,238,0.45))",
+      "drop-shadow(0 0 22px rgba(34,211,238,0.3))",
+      "drop-shadow(0 0 8px rgba(167,139,250,0.22))"
+    ].join(" ")
+  };
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+      {/* Figure sits on the right; left stays dark for typography */}
+      <div
+        className="absolute inset-y-0 -right-[8%] w-[118%] min-w-[min(140vw,920px)] max-md:-right-[20%] max-md:min-w-[160vw] max-md:opacity-[0.35]"
+        style={imgGlow}
+      >
+        <div className="relative h-full w-full min-h-[min(100svh,820px)]">
+          <div className="absolute inset-0 flex">
+            <div className="relative h-full w-1/2 overflow-hidden">
+              <div
+                className={cn("absolute left-0 top-0 h-full w-[200%]", curl && "animate-hero-curl-left")}
+                style={{ transformOrigin: "right center" }}
+              >
+                <Image src={HERO_BICEP} alt="" fill priority sizes="70vw" className="object-cover object-left" />
+              </div>
+            </div>
+            <div className="relative h-full w-1/2 overflow-hidden">
+              <div
+                className={cn("absolute right-0 top-0 h-full w-[200%]", curl && "animate-hero-curl-right")}
+                style={{ transformOrigin: "left center" }}
+              >
+                <Image src={HERO_BICEP} alt="" fill sizes="70vw" className="object-cover object-right" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Hide typical Gemini / AI sparkle watermark baked into bottom-right of exports */}
+      <div className="absolute bottom-0 right-0 z-[2] h-[min(36vh,260px)] w-[min(62vw,440px)] bg-gradient-to-tl from-[#09090B] from-15% via-[#09090B]/90 to-transparent" />
+      <div className="absolute bottom-0 right-0 z-[2] h-24 w-40 rounded-tl-[40%] bg-[#09090B]/95 blur-2xl" />
+    </div>
+  );
+}
+
 export function ImmersiveHome({
   locale, copy, programs, diets, coaches: _coaches, freePrograms: _freePrograms, programCount, dietCount
 }: {
@@ -265,36 +312,42 @@ export function ImmersiveHome({
         ref={(el) => { heroRef.current = el; heroSectionRef.current = el; }}
         className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden px-6 pb-16 pt-20 lg:px-12"
       >
-        {/* Ambient background gradient */}
+        {/* Base + animated bicep silhouette (full-section backdrop) */}
+        <div className="pointer-events-none absolute inset-0 z-0 bg-[#09090B]" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 z-0">
+          <HeroBicepCurlBackdrop reduce={reduce} />
+        </div>
+
+        {/* Readability: heavy veil on the left so copy stays crisp over the figure */}
         <div
-          className="pointer-events-none absolute inset-0 z-0"
+          className="pointer-events-none absolute inset-0 z-[1]"
           style={{
             background: [
-              "radial-gradient(ellipse 60% 80% at 75% 50%, rgba(34,211,238,0.06) 0%, transparent 60%)",
-              "radial-gradient(ellipse 50% 60% at 20% 40%, rgba(167,139,250,0.05) 0%, transparent 55%)",
-              "#09090B"
+              "linear-gradient(90deg, #09090B 0%, rgba(9,9,11,0.97) 28%, rgba(9,9,11,0.55) 52%, rgba(9,9,11,0.2) 68%, transparent 100%)",
+              "radial-gradient(ellipse 70% 90% at 15% 45%, rgba(9,9,11,0.5) 0%, transparent 55%)",
+              "radial-gradient(ellipse 55% 70% at 88% 50%, rgba(34,211,238,0.07) 0%, transparent 55%)"
             ].join(", ")
           }}
           aria-hidden
         />
 
         {/* Particles — subtle depth layer */}
-        <div className="pointer-events-none absolute inset-0 z-[1]" aria-hidden>
+        <div className="pointer-events-none absolute inset-0 z-[2]" aria-hidden>
           <ParticleField className="absolute inset-0" />
         </div>
 
-        {/* Right-side glow behind the figure — makes it feel like he's emitting light */}
+        {/* Extra cyan rim on the right — reinforces glow without covering text */}
         <div
-          className="pointer-events-none absolute bottom-0 right-0 z-[1] h-full w-[55%] max-md:hidden"
+          className="pointer-events-none absolute bottom-0 right-0 z-[2] h-full w-[50%] max-md:hidden"
           style={{
-            background: "radial-gradient(ellipse 80% 90% at 80% 55%, rgba(34,211,238,0.10) 0%, rgba(34,211,238,0.03) 45%, transparent 70%)"
+            background: "radial-gradient(ellipse 85% 95% at 82% 52%, rgba(34,211,238,0.09) 0%, rgba(34,211,238,0.02) 42%, transparent 72%)"
           }}
           aria-hidden
         />
 
         {/* Scanline entrance — fires once */}
         {heroInView && !hasScanned && (
-          <div className="pointer-events-none absolute inset-0 z-50 overflow-hidden" aria-hidden
+          <div className="pointer-events-none absolute inset-0 z-[40] overflow-hidden" aria-hidden
             onAnimationEnd={() => setHasScanned(true)}>
             <div
               className="animate-scanline absolute left-0 h-[3px] w-full"
@@ -303,11 +356,9 @@ export function ImmersiveHome({
           </div>
         )}
 
-        {/* SPLIT: text left | bicep curl right */}
-        <div className="relative z-10 mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_1.1fr]">
-
-          {/* LEFT — Text */}
-          <div className={direction === "rtl" ? "text-right" : "text-left"}>
+        {/* Text column — figure is full-bleed behind */}
+        <div className="relative z-10 mx-auto w-full max-w-7xl">
+          <div className={cn("max-w-xl lg:max-w-2xl", direction === "rtl" ? "text-right ms-auto" : "text-left")}>
             {/* Eyebrow */}
             <div style={lineIn(100)}>
               <span className="inline-flex items-center gap-2 rounded-full border border-[rgba(34,211,238,0.3)] bg-[rgba(34,211,238,0.08)] px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#22D3EE]">
@@ -376,43 +427,6 @@ export function ImmersiveHome({
                 </span>
               ))}
             </div>
-          </div>
-
-          {/* RIGHT — Luminous bicep curl figure — main hero visual */}
-          <div
-            className="relative flex items-center justify-center"
-            style={lineIn(200)}
-          >
-            {/* Multi-layer glow orb behind figure */}
-            <div
-              className="pointer-events-none absolute left-1/2 top-1/2 h-[120%] w-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full"
-              style={{ background: "radial-gradient(circle, rgba(34,211,238,0.14) 0%, rgba(34,211,238,0.06) 40%, transparent 70%)" }}
-              aria-hidden
-            />
-            <div
-              className="pointer-events-none absolute left-1/2 top-1/2 h-[80%] w-[80%] -translate-x-1/2 -translate-y-1/2 rounded-full"
-              style={{ background: "radial-gradient(circle, rgba(34,211,238,0.08) 0%, transparent 60%)" }}
-              aria-hidden
-            />
-            <Image
-              src="/assets/hero/hero-bicep-curl.png"
-              alt="TJFit AI Performance"
-              width={1024}
-              height={558}
-              priority
-              className={cn(
-                "relative z-10 w-full max-w-[560px] lg:max-w-[680px] xl:max-w-[740px]",
-                !reduce && "animate-float"
-              )}
-              style={{
-                filter: [
-                  "drop-shadow(0 0 60px rgba(34,211,238,0.55))",
-                  "drop-shadow(0 0 25px rgba(34,211,238,0.35))",
-                  "drop-shadow(0 0 8px rgba(167,139,250,0.25))"
-                ].join(" "),
-                objectFit: "contain"
-              }}
-            />
           </div>
         </div>
 
