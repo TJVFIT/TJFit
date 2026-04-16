@@ -254,8 +254,8 @@ export function ImmersiveHome({
   const tjaiInView = useInView(tjaiRef as React.RefObject<HTMLElement>, { threshold: 0.15, once: true });
 
   // Nexus section ref for node travel
-  const nexusRef = useRef<HTMLElement>(null);
-  const nexusInView = useInView(nexusRef as React.RefObject<HTMLElement>, { threshold: 0.2, once: true });
+  const nexusRef = useRef<HTMLElement | null>(null);
+  const nexusInView = useInView(nexusRef as React.RefObject<HTMLElement>, { threshold: 0.15, once: true });
 
   return (
     <div className="bg-[#09090B] text-white" dir={direction}>
@@ -652,50 +652,67 @@ export function ImmersiveHome({
 
       {/* ══════════════ FINAL CTA — NEXUS BG ══════════════ */}
       <section
-        ref={nexusRef}
-        className="relative overflow-hidden border-t border-[#1E2028] px-6 py-32 text-center lg:px-12 lg:py-40"
+        ref={(el) => { nexusRef.current = el; }}
+        className="relative overflow-hidden border-t border-[#1E2028] px-6 py-32 text-center lg:px-12 lg:py-44"
       >
-        {/* Nexus background image (Image 4) */}
-        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+        {/* Nexus background — full bleed, vivid */}
+        <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
           <Image
             src="/assets/hero/hero-nexus.png"
             alt=""
             fill
-            className="object-cover object-center opacity-[0.10]"
+            className="object-cover object-center"
+            style={{
+              opacity: nexusInView ? 0.5 : 0,
+              transition: "opacity 1.4s ease-out",
+              filter: "drop-shadow(0 0 40px rgba(34,211,238,0.3))"
+            }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#09090B] via-[#09090B]/60 to-[#09090B]" />
+          {/* Soft fade only at very top and bottom edges — keep center vivid */}
+          <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#09090B] to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#09090B] to-transparent" />
+          {/* Very subtle center overlay so text pops */}
+          <div className="absolute inset-0 bg-[#09090B]/40" />
         </div>
 
-        {/* SVG Node network particles */}
+        {/* Animated SVG node network — brighter */}
         {nexusInView && (
-          <svg className="pointer-events-none absolute inset-0 h-full w-full opacity-20" aria-hidden preserveAspectRatio="xMidYMid slice" viewBox="0 0 1200 600">
+          <svg
+            className="pointer-events-none absolute inset-0 h-full w-full"
+            aria-hidden
+            preserveAspectRatio="xMidYMid slice"
+            viewBox="0 0 1200 600"
+            style={{ opacity: 0.35 }}
+          >
             {[
               "M 600 550 L 600 300 L 300 100",
               "M 600 300 L 900 100",
-              "M 600 300 L 200 200",
-              "M 600 300 L 1000 200",
-              "M 600 550 L 400 480",
-              "M 600 550 L 800 480",
+              "M 600 300 L 150 200",
+              "M 600 300 L 1050 200",
+              "M 600 550 L 380 490",
+              "M 600 550 L 820 490",
             ].map((d, i) => (
               <path key={i} d={d} fill="none" stroke="#22D3EE" strokeWidth="1.5" strokeLinecap="round"
                 strokeDasharray="1000" strokeDashoffset="1000"
-                style={{ animation: `nodeTravel ${3 + i * 0.7}s ease-in-out ${i * 0.5}s infinite` }} />
+                style={{ animation: `nodeTravel ${3 + i * 0.7}s ease-in-out ${i * 0.4}s infinite` }} />
             ))}
-            {[[600,550],[600,300],[300,100],[900,100],[200,200],[1000,200],[400,480],[800,480]].map(([cx,cy], i) => (
-              <circle key={i} cx={cx} cy={cy} r="4" fill="#22D3EE" opacity="0.6"
+            {[[600,550],[600,300],[300,100],[900,100],[150,200],[1050,200],[380,490],[820,490]].map(([cx, cy], i) => (
+              <circle key={i} cx={cx} cy={cy} r="5" fill="#22D3EE"
                 style={{ animation: `neuralPulse ${2 + i * 0.3}s ease-in-out ${i * 0.2}s infinite` }} />
             ))}
           </svg>
         )}
 
         {/* CTA content */}
-        <div className="relative mx-auto max-w-3xl">
+        <div className="relative z-10 mx-auto max-w-3xl">
           <Reveal>
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#22D3EE]">Join the Nexus</p>
             <h2 className="mt-5 font-display text-5xl font-extrabold tracking-tight text-white lg:text-7xl">
               Ready to<br />
-              <span className="bg-gradient-to-r from-[#22D3EE] via-[#67E8F9] to-[#A78BFA] bg-clip-text text-transparent"
-                style={{ filter: "drop-shadow(0 0 30px rgba(34,211,238,0.25))" }}>
+              <span
+                className="bg-gradient-to-r from-[#22D3EE] via-[#67E8F9] to-[#A78BFA] bg-clip-text text-transparent"
+                style={{ filter: "drop-shadow(0 0 40px rgba(34,211,238,0.4))" }}
+              >
                 Transform?
               </span>
             </h2>
@@ -703,11 +720,14 @@ export function ImmersiveHome({
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link
                 href={`/${locale}/signup`}
-                className="inline-flex min-h-[56px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#22D3EE] to-[#0EA5E9] px-10 py-4 text-base font-bold text-[#09090B] shadow-[0_0_40px_rgba(34,211,238,0.4),0_0_80px_rgba(34,211,238,0.15)] transition-all hover:scale-[1.04] hover:shadow-[0_0_60px_rgba(34,211,238,0.6)]"
+                className="inline-flex min-h-[56px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#22D3EE] to-[#0EA5E9] px-10 py-4 text-base font-bold text-[#09090B] shadow-[0_0_40px_rgba(34,211,238,0.5),0_0_80px_rgba(34,211,238,0.2)] transition-all hover:scale-[1.04] hover:shadow-[0_0_60px_rgba(34,211,238,0.7)]"
               >
                 {navChrome.joinLabel} — It&apos;s Free
               </Link>
-              <Link href={`/${locale}/programs`} className="inline-flex min-h-[56px] items-center justify-center rounded-full border border-[#1E2028] px-10 py-4 text-base font-semibold text-white transition-[border-color,background] hover:border-white/15 hover:bg-white/[0.03]">
+              <Link
+                href={`/${locale}/programs`}
+                className="inline-flex min-h-[56px] items-center justify-center rounded-full border border-white/20 bg-white/[0.05] px-10 py-4 text-base font-semibold text-white backdrop-blur-sm transition-[border-color,background] hover:border-white/30 hover:bg-white/[0.08]"
+              >
                 Browse Programs
               </Link>
             </div>
