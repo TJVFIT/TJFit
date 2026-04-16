@@ -6,7 +6,7 @@
   color-scheme: dark;
   /* --font-sans / --font-display set by next/font on <html> */
 
-  /* Design system ó source of truth */
+  /* Design system ù source of truth */
   --color-bg: #09090b;
   --color-surface: #111215;
   --color-surface-2: #18191e;
@@ -206,7 +206,7 @@
   }
 }
 
-/* Legal hub FAQ ó smooth height without JS */
+/* Legal hub FAQ ù smooth height without JS */
 .legal-faq-details .legal-faq-panel {
   display: grid;
   grid-template-rows: 0fr;
@@ -509,7 +509,7 @@ strong, b {
   box-shadow: 0 12px 40px -20px rgba(0, 0, 0, 0.45);
 }
 
-/* óó TJFit surface system (use these for cross-page consistency) óó */
+/* ùù TJFit surface system (use these for cross-page consistency) ùù */
 .tj-surface-card {
   border-radius: var(--tj-radius-xl);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -986,7 +986,7 @@ strong, b {
   animation: thinking-bounce 1.2s ease-in-out infinite;
 }
 
-/* ME18 ó TJAI badge pulse */
+/* ME18 ù TJAI badge pulse */
 @keyframes tjai-badge-pulse {
   0%, 100% { box-shadow: 0 0 0 rgba(34,211,238,0.4); }
   50% { box-shadow: 0 0 12px rgba(34,211,238,0.6); }
@@ -996,7 +996,7 @@ strong, b {
   animation: tjai-badge-pulse 3s ease-in-out infinite;
 }
 
-/* MI11 ó Logo breathe glow */
+/* MI11 ù Logo breathe glow */
 @keyframes logo-breathe {
   0%, 100% { filter: drop-shadow(0 0 4px rgba(34,211,238,0.15)); }
   50% { filter: drop-shadow(0 0 14px rgba(34,211,238,0.45)); }
@@ -1006,13 +1006,13 @@ strong, b {
   animation: logo-breathe 4s ease-in-out infinite;
 }
 
-/* MI12 ó Badge hover glow */
+/* MI12 ù Badge hover glow */
 .badge:hover, .lux-badge:hover {
   box-shadow: 0 0 16px rgba(34,211,238,0.2);
   transition: box-shadow 200ms ease;
 }
 
-/* M8 ó PR card gold shimmer */
+/* M8 ù PR card gold shimmer */
 @keyframes pr-shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
@@ -1029,13 +1029,13 @@ strong, b {
   border-radius: inherit;
 }
 
-/* ME10 ó Workout entry slide-in */
+/* ME10 ù Workout entry slide-in */
 @keyframes workout-slide-in {
   from { opacity: 0; transform: translateX(16px); }
   to { opacity: 1; transform: translateX(0); }
 }
 
-/* MI4 ó flame flicker */
+/* MI4 ù flame flicker */
 @keyframes flame-flicker {
   0%, 100% { transform: scale(1) rotate(-1deg); opacity: 0.9; }
   33% { transform: scale(1.08) rotate(1deg); opacity: 1; }
@@ -1046,7 +1046,7 @@ strong, b {
   animation: flame-flicker 1.8s ease-in-out infinite;
 }
 
-/* MI10 ó Glassmorphic tooltips */
+/* MI10 ù Glassmorphic tooltips */
 .tj-collapsed-sidebar-tip {
   backdrop-filter: blur(12px) !important;
   background: rgba(13,14,18,0.92) !important;
@@ -1279,7 +1279,7 @@ strong, b {
   color: var(--color-error);
 }
 
-/* Inline tags / chips ó distinct from lux-badge (eyebrow marketing) */
+/* Inline tags / chips ù distinct from lux-badge (eyebrow marketing) */
 .badge {
   @apply inline-flex items-center rounded-full border border-white/[0.1] bg-white/[0.05] px-3 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-zinc-400;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2) inset;
@@ -2020,33 +2020,7 @@ textarea:focus-visible {
   50%       { transform: translateY(-8px); }
 }
 
-/* Hero bicep ù split halves oscillate opposite ways to suggest alternating curls */
-@keyframes heroCurlLeft {
-  0%, 100% { transform: rotate(-2.5deg); }
-  50% { transform: rotate(4deg); }
-}
-@keyframes heroCurlRight {
-  0%, 100% { transform: rotate(2.5deg); }
-  50% { transform: rotate(-4deg); }
-}
-
-.animate-hero-curl-left {
-  animation: heroCurlLeft 2.75s ease-in-out infinite;
-  will-change: transform;
-}
-.animate-hero-curl-right {
-  animation: heroCurlRight 2.75s ease-in-out infinite;
-  will-change: transform;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-hero-curl-left,
-  .animate-hero-curl-right {
-    animation: none;
-  }
-}
-
-/* TJAI section ù background drift + brain decoration */
+/* TJAI section ù background drift + brain glow (brain motion is rAF-driven in TS) */
 @keyframes tjaiCoreDrift {
   0%,
   100% {
@@ -2058,20 +2032,6 @@ textarea:focus-visible {
 }
 .animate-tjai-core-drift {
   animation: tjaiCoreDrift 20s ease-in-out infinite;
-  will-change: transform;
-}
-
-@keyframes tjaiBrainFloat {
-  0%,
-  100% {
-    transform: translateY(0) rotate(-2deg);
-  }
-  50% {
-    transform: translateY(-18px) rotate(2.5deg);
-  }
-}
-.animate-tjai-brain-float {
-  animation: tjaiBrainFloat 7.5s ease-in-out infinite;
   will-change: transform;
 }
 
@@ -2093,7 +2053,6 @@ textarea:focus-visible {
 
 @media (prefers-reduced-motion: reduce) {
   .animate-tjai-core-drift,
-  .animate-tjai-brain-float,
   .animate-tjai-brain-glow {
     animation: none;
   }

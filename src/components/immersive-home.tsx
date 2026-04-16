@@ -26,6 +26,8 @@ import { getDirection, type Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 import type { HomeCoachPreview, HomeProgramPreview } from "@/components/luxury/luxury-home";
+import { HeroBicepCurlBackdrop } from "@/components/hero-bicep-curl-motion";
+import { HeroTjaiBrainDeco } from "@/components/hero-tjai-brain-deco";
 
 function useReducedMotion() {
   const [r, setR] = useState(false);
@@ -163,53 +165,6 @@ function BentoCard({ icon: Icon, title, desc, accent = "#22D3EE", span = 1 }: {
 function MagneticLink({ href, className, children, onClick }: { href: string; className: string; children: React.ReactNode; onClick?: () => void }) {
   const ref = useMagneticButton<HTMLAnchorElement>(0.3);
   return <Link href={href} className={className} onClick={onClick} ref={ref}>{children}</Link>;
-}
-
-const HERO_BICEP = "/assets/hero/hero-bicep-curl.png";
-
-/** Full-bleed hero visual: split image + opposite rotations reads as a curling motion */
-function HeroBicepCurlBackdrop({ reduce }: { reduce: boolean }) {
-  const curl = !reduce;
-  const imgGlow: CSSProperties = {
-    filter: [
-      "drop-shadow(0 0 50px rgba(34,211,238,0.45))",
-      "drop-shadow(0 0 22px rgba(34,211,238,0.3))",
-      "drop-shadow(0 0 8px rgba(167,139,250,0.22))"
-    ].join(" ")
-  };
-  return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-      {/* Figure sits on the right; left stays dark for typography */}
-      <div
-        className="absolute inset-y-0 -right-[8%] w-[118%] min-w-[min(140vw,920px)] max-md:-right-[20%] max-md:min-w-[160vw] max-md:opacity-[0.35]"
-        style={imgGlow}
-      >
-        <div className="relative h-full w-full min-h-[min(100svh,820px)]">
-          <div className="absolute inset-0 flex">
-            <div className="relative h-full w-1/2 overflow-hidden">
-              <div
-                className={cn("absolute left-0 top-0 h-full w-[200%]", curl && "animate-hero-curl-left")}
-                style={{ transformOrigin: "right center" }}
-              >
-                <Image src={HERO_BICEP} alt="" fill priority sizes="70vw" className="object-cover object-left" />
-              </div>
-            </div>
-            <div className="relative h-full w-1/2 overflow-hidden">
-              <div
-                className={cn("absolute right-0 top-0 h-full w-[200%]", curl && "animate-hero-curl-right")}
-                style={{ transformOrigin: "left center" }}
-              >
-                <Image src={HERO_BICEP} alt="" fill sizes="70vw" className="object-cover object-right" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* Hide typical Gemini / AI sparkle watermark baked into bottom-right of exports */}
-      <div className="absolute bottom-0 right-0 z-[2] h-[min(36vh,260px)] w-[min(62vw,440px)] bg-gradient-to-tl from-[#09090B] from-15% via-[#09090B]/90 to-transparent" />
-      <div className="absolute bottom-0 right-0 z-[2] h-24 w-40 rounded-tl-[40%] bg-[#09090B]/95 blur-2xl" />
-    </div>
-  );
 }
 
 export function ImmersiveHome({
@@ -580,43 +535,7 @@ export function ImmersiveHome({
           />
         </div>
 
-        {/* Animated brain — replaces orbital rings; blends with scene */}
-        {tjaiInView && (
-          <div
-            className="pointer-events-none absolute inset-0 z-[1] hidden items-center justify-end lg:flex lg:pe-10 xl:pe-16"
-            aria-hidden
-          >
-            <div
-              className={cn(
-                "relative h-[400px] w-[400px] xl:h-[480px] xl:w-[480px]",
-                !reduce && "animate-tjai-brain-float"
-              )}
-            >
-              <div
-                className={cn(
-                  "pointer-events-none absolute inset-[-18%] rounded-full blur-3xl",
-                  !reduce && "animate-tjai-brain-glow"
-                )}
-                style={{
-                  background:
-                    "radial-gradient(circle at 42% 38%, rgba(34,211,238,0.35) 0%, rgba(167,139,250,0.12) 42%, transparent 68%)"
-                }}
-              />
-              <div className="relative h-full w-full mix-blend-screen opacity-[0.88]">
-                <Image
-                  src="/assets/hero/hero-tjai-brain.svg"
-                  alt=""
-                  fill
-                  className="object-contain object-center p-4"
-                  style={{
-                    filter:
-                      "drop-shadow(0 0 20px rgba(34,211,238,0.5)) drop-shadow(0 0 48px rgba(167,139,250,0.18))"
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-        )}
+        <HeroTjaiBrainDeco reduce={reduce} active={tjaiInView} />
 
         {/* Content — left-aligned over the image */}
         <div className="relative z-10 mx-auto flex max-w-6xl items-center px-6 py-24 lg:px-12 lg:py-32" style={{ minHeight: "inherit" }}>
