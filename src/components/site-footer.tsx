@@ -1,7 +1,7 @@
 ﻿"use client";
 
-import Image from "next/image";
 import Link from "next/link";
+import { Logo } from "@/components/ui/Logo";
 import { Locale } from "@/lib/i18n";
 import { getFooterCopy } from "@/lib/launch-copy";
 
@@ -36,19 +36,9 @@ export function SiteFooter({ locale }: { locale: Locale }) {
     <footer className="border-t border-[#1E2028] bg-[#09090B]">
       <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-10 px-6 py-16 text-sm lg:grid-cols-4 lg:gap-12 lg:px-8">
         <div className="text-center lg:text-start">
-          <Link href={`/${locale}`} className="inline-flex justify-center py-1 lg:justify-start transition-opacity hover:opacity-80">
-            <Image
-              src="/assets/hero/logo-tjfit-3d.png"
-              alt="TJFit"
-              width={400}
-              height={320}
-              style={{
-                height: 72,
-                width: "auto",
-                filter: "drop-shadow(0 0 10px rgba(34,211,238,0.4))"
-              }}
-            />
-          </Link>
+          <div className="inline-flex justify-center py-1 lg:justify-start">
+            <Logo variant="full" size="footer" href={`/${locale}`} />
+          </div>
           <p className="mt-3 text-sm font-medium uppercase tracking-widest text-[#A1A1AA]">{copy.tagline}</p>
           <p className="mt-4 max-w-sm leading-relaxed text-zinc-500 lg:max-w-none">{copy.description}</p>
         </div>

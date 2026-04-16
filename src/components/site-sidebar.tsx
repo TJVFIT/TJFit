@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
@@ -422,22 +421,8 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
         )}
         style={reduce ? undefined : { transitionDelay: entered ? undefined : "100ms" }}
       >
-        <div className="flex h-[72px] shrink-0 items-center border-b border-transparent ps-2 pt-[env(safe-area-inset-top,0px)]">
-          <Link href={`/${locale}`} className={cn("inline-flex items-center transition-opacity hover:opacity-80", !sidebarExpanded && "logo-breathe")}>
-            <Image
-              src="/assets/hero/logo-tjfit-3d.png"
-              alt="TJFit"
-              width={400}
-              height={320}
-              priority
-              style={{
-                height: sidebarExpanded ? 44 : 36,
-                width: "auto",
-                transition: "height 200ms ease",
-                filter: "drop-shadow(0 0 8px rgba(34,211,238,0.4))"
-              }}
-            />
-          </Link>
+        <div className={cn("flex h-[72px] shrink-0 items-center border-b border-transparent ps-2 pt-[env(safe-area-inset-top,0px)]", !sidebarExpanded && "logo-breathe")}>
+          <Logo variant="full" size={sidebarExpanded ? "navFull" : "sidebar"} href={`/${locale}`} suppressMinTouchTarget />
         </div>
 
         <div className="px-3 pb-2 pt-3">
@@ -693,10 +678,7 @@ function MobileNav({
     return (
       <header className="fixed left-0 right-0 top-0 z-50 flex h-14 items-center gap-2 border-b border-[rgba(255,255,255,0.06)] bg-[rgba(9,9,11,0.92)] px-3 pt-[env(safe-area-inset-top,0px)] backdrop-blur-[20px] sm:px-4 lg:hidden">
         <div className="shrink-0">
-          <Link href={`/${locale}`} className="inline-flex items-center transition-opacity hover:opacity-80">
-            <Image src="/assets/hero/logo-tjfit-3d.png" alt="TJFit" width={400} height={320}
-              style={{ height: 32, width: "auto", filter: "drop-shadow(0 0 6px rgba(34,211,238,0.4))" }} />
-          </Link>
+          <Logo variant="full" size="mobile" href={`/${locale}`} />
         </div>
         <div className="min-h-11 min-w-0 flex-1" aria-hidden />
         <div className="h-11 w-11 shrink-0" aria-hidden />
@@ -708,10 +690,7 @@ function MobileNav({
     <>
       <header className="fixed left-0 right-0 top-0 z-50 flex h-14 items-center gap-2 border-b border-[rgba(255,255,255,0.06)] bg-[rgba(9,9,11,0.92)] px-3 pt-[env(safe-area-inset-top,0px)] backdrop-blur-[20px] sm:px-4 lg:hidden">
         <div className="shrink-0">
-          <Link href={`/${locale}`} className="inline-flex items-center transition-opacity hover:opacity-80">
-            <Image src="/assets/hero/logo-tjfit-3d.png" alt="TJFit" width={400} height={320}
-              style={{ height: 32, width: "auto", filter: "drop-shadow(0 0 6px rgba(34,211,238,0.4))" }} />
-          </Link>
+          <Logo variant="full" size="mobile" href={`/${locale}`} />
         </div>
         <nav
           aria-label={nav.language}
@@ -757,10 +736,7 @@ function MobileNav({
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden pt-[max(2rem,env(safe-area-inset-top))]">
             <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-y-contain px-6 pb-4">
               <div className="mx-auto flex w-full max-w-sm flex-col items-center">
-                <Link href={`/${locale}`} onClick={() => setOpen(false)} className="inline-flex items-center transition-opacity hover:opacity-80">
-                  <Image src="/assets/hero/logo-tjfit-3d.png" alt="TJFit" width={400} height={320}
-                    style={{ height: 56, width: "auto", filter: "drop-shadow(0 0 10px rgba(34,211,238,0.4))" }} />
-                </Link>
+                <Logo variant="full" size="hero" href={`/${locale}`} onNavigate={() => setOpen(false)} />
                 <Link
                   href={primaryCtaHref}
                   onClick={() => setOpen(false)}
