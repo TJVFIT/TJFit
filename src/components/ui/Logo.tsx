@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
@@ -90,29 +91,41 @@ export function Logo({
         ? `drop-shadow(${glowIntensity})`
         : undefined;
 
+  const blendMask: CSSProperties | undefined = blendWithBackground
+    ? {
+        maskImage:
+          "radial-gradient(ellipse 88% 82% at 50% 50%, black 18%, black 82%, transparent 100%)",
+        WebkitMaskImage:
+          "radial-gradient(ellipse 88% 82% at 50% 50%, black 18%, black 82%, transparent 100%)"
+      }
+    : undefined;
+
   const img = (
-    <Image
-      src={LOGO_SRC}
-      alt={linked ? alt : ""}
-      width={LOGO_WIDTH}
-      height={LOGO_HEIGHT}
-      priority={priority}
-      draggable={false}
-      role="img"
-      style={{
-        height: h,
-        width: "auto",
-        filter: filterStyle,
-        opacity: animated && !revealed ? 0 : 1,
-        transition: animated ? "opacity 400ms ease, filter 400ms ease" : undefined,
-        ...(animated && revealed ? { animation: "logoReveal 1.1s cubic-bezier(0.16,1,0.3,1) forwards" } : {})
-      }}
-      className={cn(
-        "bg-transparent object-contain [image-rendering:auto]",
-        blendWithBackground && "mix-blend-screen",
-        className
-      )}
-    />
+    <span className="inline-flex items-center justify-center" style={blendMask}>
+      <Image
+        src={LOGO_SRC}
+        alt={linked ? alt : ""}
+        width={LOGO_WIDTH}
+        height={LOGO_HEIGHT}
+        priority={priority}
+        draggable={false}
+        role="img"
+        quality={95}
+        style={{
+          height: h,
+          width: "auto",
+          filter: filterStyle,
+          opacity: animated && !revealed ? 0 : 1,
+          transition: animated ? "opacity 400ms ease, filter 400ms ease" : undefined,
+          ...(animated && revealed ? { animation: "logoReveal 1.1s cubic-bezier(0.16,1,0.3,1) forwards" } : {})
+        }}
+        className={cn(
+          "bg-transparent object-contain [image-rendering:auto]",
+          blendWithBackground && "mix-blend-screen",
+          className
+        )}
+      />
+    </span>
   );
 
   if (!linked) {

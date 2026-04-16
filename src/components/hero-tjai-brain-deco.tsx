@@ -19,9 +19,10 @@ export function HeroTjaiBrainDeco({ reduce, active }: { reduce: boolean; active:
     }
 
     const tick = (now: number) => {
-      const ry = Math.sin(now * 0.0011) * 14;
-      const rx = Math.cos(now * 0.00085) * 7;
-      const rz = Math.sin(now * 0.00055) * 5;
+      // Slower, smoother hologram drift (readable “3D”, not twitchy)
+      const ry = Math.sin(now * 0.00055) * 11;
+      const rx = Math.cos(now * 0.00042) * 5.5;
+      const rz = Math.sin(now * 0.00032) * 3.5;
       el.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) rotateZ(${rz}deg) translateZ(0)`;
       rafRef.current = requestAnimationFrame(tick);
     };

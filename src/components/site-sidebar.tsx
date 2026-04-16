@@ -473,7 +473,8 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
             sidebarExpanded ? "h-[80px] ps-3" : "h-[72px] justify-center ps-0"
           )}
         >
-          <div className={cn(!sidebarExpanded && "logo-breathe")}>
+          {/* No logo-breathe here — filter pulse reads as “bouncing” on the 3D PNG */}
+          <div className="flex items-center justify-center">
             <Logo
               variant="full"
               size={sidebarExpanded ? "navFull" : "sidebar"}

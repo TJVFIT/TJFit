@@ -6,12 +6,47 @@ import { useEffect, useRef } from "react";
 
 const HERO_BICEP = "/assets/hero/hero-bicep-curl.png";
 
+/** Smoothstep 0→1 */
+function smoothstep(t: number): number {
+  const x = Math.min(1, Math.max(0, t));
+  return x * x * (3 - 2 * x);
+}
+
 /**
- * Silhouette “curl” via rAF — updates every display frame (~60–165 Hz).
- * True 400fps isn’t possible in browsers; this is the smoothest web-native approach.
+ * Asymmetric rep: slow eccentric (arms lengthen) → quicker concentric (curl) → brief hold → return.
+ * Reads as a lifting rep, not a symmetric sine “wobble”.
+ */
+function curlRepDrive(ms: number): number {
+  const T = 5600;
+  const u = (((ms % T) + T) % T) / T;
+
+  const kf: { t: number; v: number }[] = [
+    { t: 0, v: 0.32 },
+    { t: 0.26, v: -0.92 },
+    { t: 0.5, v: -0.78 },
+    { t: 0.62, v: 0.15 },
+    { t: 0.78, v: 0.98 },
+    { t: 0.88, v: 0.88 },
+    { t: 1, v: 0.32 }
+  ];
+
+  for (let i = 0; i < kf.length - 1; i++) {
+    const a = kf[i]!;
+    const b = kf[i + 1]!;
+    if (u >= a.t && u <= b.t) {
+      const span = b.t - a.t || 1;
+      const local = (u - a.t) / span;
+      const e = smoothstep(local);
+      return a.v + (b.v - a.v) * e;
+    }
+  }
+  return kf[kf.length - 1]!.v;
+}
+
+/**
+ * Silhouette curl — rAF at display refresh. Split halves, opposite torque from same drive.
  */
 export function HeroBicepCurlBackdrop({ reduce }: { reduce: boolean }) {
-  const shellRef = useRef<HTMLDivElement>(null);
   const leftRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number>(0);
@@ -27,30 +62,22 @@ export function HeroBicepCurlBackdrop({ reduce }: { reduce: boolean }) {
   useEffect(() => {
     const left = leftRef.current;
     const right = rightRef.current;
-    const shell = shellRef.current;
-    if (!left || !right || !shell) return;
+    if (!left || !right) return;
 
     if (reduce) {
       left.style.transform = "translateZ(0)";
       right.style.transform = "translateZ(0)";
-      shell.style.transform = "translateZ(0)";
       return;
     }
 
-    const CURL_DEG = 10.5;
-    const TILT_X_DEG = 4.2;
-    // ~3.1s per full curl cycle (readable, smooth)
-    const CURL_SPEED = 0.00205;
-    const TILT_SPEED = 0.00165;
+    const CURL_DEG = 12.5;
 
     const tick = (now: number) => {
-      const curl = Math.sin(now * CURL_SPEED);
-      const degL = curl * CURL_DEG;
-      const degR = -curl * CURL_DEG;
-      const tiltX = Math.cos(now * TILT_SPEED) * TILT_X_DEG;
+      const drive = curlRepDrive(now);
+      const degL = drive * CURL_DEG;
+      const degR = -drive * CURL_DEG;
       left.style.transform = `rotate(${degL}deg) translateZ(0)`;
       right.style.transform = `rotate(${degR}deg) translateZ(0)`;
-      shell.style.transform = `perspective(1600px) rotateX(${tiltX}deg) translateZ(0)`;
       rafRef.current = requestAnimationFrame(tick);
     };
 
@@ -65,18 +92,16 @@ export function HeroBicepCurlBackdrop({ reduce }: { reduce: boolean }) {
         style={{
           ...imgGlow,
           maskImage:
-            "linear-gradient(90deg, black 0%, black 72%, rgba(0,0,0,0.65) 88%, transparent 100%)",
+            "linear-gradient(90deg, black 0%, black 74%, rgba(0,0,0,0.55) 88%, transparent 100%)",
           WebkitMaskImage:
-            "linear-gradient(90deg, black 0%, black 72%, rgba(0,0,0,0.65) 88%, transparent 100%)"
+            "linear-gradient(90deg, black 0%, black 74%, rgba(0,0,0,0.55) 88%, transparent 100%)"
         }}
       >
-        {/* Kill hard seam on the far right */}
         <div
-          className="pointer-events-none absolute inset-y-0 right-0 z-[3] w-[min(28%,200px)] bg-gradient-to-l from-[#09090B] via-[#09090B]/70 to-transparent"
+          className="pointer-events-none absolute inset-y-0 right-0 z-[3] w-[min(32%,220px)] bg-gradient-to-l from-[#09090B] via-[#09090B]/75 to-transparent"
           aria-hidden
         />
         <div
-          ref={shellRef}
           className="relative h-full w-full min-h-[min(100svh,820px)] will-change-transform"
           style={{ transformStyle: "preserve-3d", contain: "layout paint" }}
         >
@@ -84,8 +109,8 @@ export function HeroBicepCurlBackdrop({ reduce }: { reduce: boolean }) {
             <div className="relative h-full w-1/2 overflow-hidden">
               <div
                 ref={leftRef}
-                className="absolute left-0 top-0 h-full w-[200%] will-change-transform backface-hidden"
-                style={{ transformOrigin: "right center", transform: "translateZ(0)" }}
+                className="absolute left-0 top-0 h-full w-[200%] will-change-transform [backface-visibility:hidden]"
+                style={{ transformOrigin: "56% 42%", transform: "translateZ(0)" }}
               >
                 <Image src={HERO_BICEP} alt="" fill priority sizes="70vw" className="object-cover object-left" />
               </div>
@@ -93,8 +118,8 @@ export function HeroBicepCurlBackdrop({ reduce }: { reduce: boolean }) {
             <div className="relative h-full w-1/2 overflow-hidden">
               <div
                 ref={rightRef}
-                className="absolute right-0 top-0 h-full w-[200%] will-change-transform backface-hidden"
-                style={{ transformOrigin: "left center", transform: "translateZ(0)" }}
+                className="absolute right-0 top-0 h-full w-[200%] will-change-transform [backface-visibility:hidden]"
+                style={{ transformOrigin: "44% 42%", transform: "translateZ(0)" }}
               >
                 <Image src={HERO_BICEP} alt="" fill sizes="70vw" className="object-cover object-right" />
               </div>
