@@ -2046,6 +2046,59 @@ textarea:focus-visible {
   }
 }
 
+/* TJAI section — background drift + brain decoration */
+@keyframes tjaiCoreDrift {
+  0%,
+  100% {
+    transform: scale(1) translate(0, 0);
+  }
+  50% {
+    transform: scale(1.045) translate(-0.5%, 0.8%);
+  }
+}
+.animate-tjai-core-drift {
+  animation: tjaiCoreDrift 20s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes tjaiBrainFloat {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-18px) rotate(2.5deg);
+  }
+}
+.animate-tjai-brain-float {
+  animation: tjaiBrainFloat 7.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes tjaiBrainGlowPulse {
+  0%,
+  100% {
+    opacity: 0.38;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 0.72;
+    transform: scale(1.06);
+  }
+}
+.animate-tjai-brain-glow {
+  animation: tjaiBrainGlowPulse 4.2s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-tjai-core-drift,
+  .animate-tjai-brain-float,
+  .animate-tjai-brain-glow {
+    animation: none;
+  }
+}
+
 @keyframes prismRotateCW {
   from { transform: rotateY(0deg) rotateZ(0deg); }
   to   { transform: rotateY(360deg) rotateZ(15deg); }

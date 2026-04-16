@@ -547,37 +547,73 @@ export function ImmersiveHome({
       {/* ══════════════ TJAI — KINETIC HEART CORE ══════════════ */}
       <section ref={(el) => { tjaiRef.current = el; }} className="relative overflow-hidden border-t border-[#1E2028]" style={{ minHeight: "min(90vh, 700px)" }}>
 
-        {/* Full-section background — the heart/prism image */}
+        {/* Full-section background — heart / core art (slow drift + blend into page) */}
         <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
-          <Image
-            src="/assets/hero/hero-tjai-core.png"
-            alt=""
-            fill
-            className="object-cover object-center"
+          <div
+            className={cn(
+              "absolute inset-0",
+              tjaiInView && !reduce && "animate-tjai-core-drift"
+            )}
+          >
+            <Image
+              src="/assets/hero/hero-tjai-core.png"
+              alt=""
+              fill
+              className="object-cover object-center mix-blend-soft-light"
+              style={{
+                opacity: tjaiInView ? 0.52 : 0,
+                transition: "opacity 1.2s ease-out",
+                filter: "saturate(1.08) contrast(1.05) drop-shadow(0 0 50px rgba(34,211,238,0.35))",
+                transitionProperty: "opacity"
+              }}
+            />
+          </div>
+          {/* Dark overlay so text stays readable — feathered so art blends, not boxed */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#09090B] via-[#09090B]/88 to-[#09090B]/25" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#09090B]/45 via-transparent to-[#09090B]/55" />
+          <div
+            className="absolute inset-0 opacity-70 mix-blend-overlay"
             style={{
-              opacity: tjaiInView ? 0.55 : 0,
-              transition: "opacity 1.2s ease-out",
-              filter: "drop-shadow(0 0 60px rgba(34,211,238,0.4))",
-              transform: !reduce && tjaiInView ? "scale(1.05)" : "scale(1)",
-              transitionProperty: "opacity, transform",
-              transitionDuration: "1.2s"
+              background:
+                "radial-gradient(ellipse 80% 70% at 70% 45%, rgba(34,211,238,0.07) 0%, transparent 55%), radial-gradient(ellipse 50% 50% at 20% 30%, rgba(167,139,250,0.05) 0%, transparent 50%)"
             }}
           />
-          {/* Dark overlay so text stays readable */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#09090B]/95 via-[#09090B]/60 to-[#09090B]/30" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#09090B]/40 via-transparent to-[#09090B]/60" />
         </div>
 
-        {/* Rotating orbital rings — decorative */}
-        {tjaiInView && !reduce && (
-          <div className="pointer-events-none absolute inset-0 z-[1] flex items-center justify-end pe-12 max-lg:hidden" aria-hidden>
-            <div className="relative h-[500px] w-[500px]">
-              <div className="absolute inset-0 rounded-full border border-cyan-400/15"
-                style={{ animation: "prismRotateCW 22s linear infinite" }} />
-              <div className="absolute inset-[60px] rounded-full border border-violet-400/10"
-                style={{ animation: "prismRotateCCW 16s linear infinite" }} />
-              <div className="absolute inset-[120px] rounded-full border border-cyan-400/08"
-                style={{ animation: "prismRotateCW 12s linear infinite" }} />
+        {/* Animated brain — replaces orbital rings; blends with scene */}
+        {tjaiInView && (
+          <div
+            className="pointer-events-none absolute inset-0 z-[1] hidden items-center justify-end lg:flex lg:pe-10 xl:pe-16"
+            aria-hidden
+          >
+            <div
+              className={cn(
+                "relative h-[400px] w-[400px] xl:h-[480px] xl:w-[480px]",
+                !reduce && "animate-tjai-brain-float"
+              )}
+            >
+              <div
+                className={cn(
+                  "pointer-events-none absolute inset-[-18%] rounded-full blur-3xl",
+                  !reduce && "animate-tjai-brain-glow"
+                )}
+                style={{
+                  background:
+                    "radial-gradient(circle at 42% 38%, rgba(34,211,238,0.35) 0%, rgba(167,139,250,0.12) 42%, transparent 68%)"
+                }}
+              />
+              <div className="relative h-full w-full mix-blend-screen opacity-[0.88]">
+                <Image
+                  src="/assets/hero/hero-tjai-brain.svg"
+                  alt=""
+                  fill
+                  className="object-contain object-center p-4"
+                  style={{
+                    filter:
+                      "drop-shadow(0 0 20px rgba(34,211,238,0.5)) drop-shadow(0 0 48px rgba(167,139,250,0.18))"
+                  }}
+                />
+              </div>
             </div>
           </div>
         )}

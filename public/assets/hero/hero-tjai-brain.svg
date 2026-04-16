@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="tjaiBrainStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="55%" stop-color="#67e8f9"/>
+      <stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+    <filter id="tjaiBrainGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="8" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Stylized brain  wireframe / neural silhouette -->
+  <g stroke="url(#tjaiBrainStroke)" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" filter="url(#tjaiBrainGlow)" opacity="0.95">
+    <path d="M256 48c-48 0-88 32-100 76-18-8-40-6-56 6-28 22-36 62-18 92 6 10 14 18 24 24-8 44 10 90 46 116 20 14 44 22 68 22h72c24 0 48-8 68-22 36-26 54-72 46-116 10-6 18-14 24-24 18-30 10-70-18-92-16-12-38-14-56-6-12-44-52-76-100-76z"/>
+    <path d="M256 48v196M168 120c24 36 44 76 88 124M344 120c-24 36-44 76-88 124M196 200c36 20 80 20 120 0M220 280c24 48 40 100 36 156M292 280c-24 48-40 100-36 156"/>
+    <path d="M128 200c20-8 40-12 60-12M324 188c20 0 40 4 60 12M140 320c28 12 56 20 84 24M288 344c28-4 56-12 84-24"/>
+    <ellipse cx="200" cy="160" rx="36" ry="52" transform="rotate(-12 200 160)"/>
+    <ellipse cx="312" cy="160" rx="36" ry="52" transform="rotate(12 312 160)"/>
+  </g>
+  <circle cx="256" cy="256" r="220" stroke="url(#tjaiBrainStroke)" stroke-width="0.75" opacity="0.15"/>
+</svg>
