@@ -1,23 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 90" fill="none" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 92" fill="none" aria-hidden="true">
   <defs>
-    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%" color-interpolation-filters="sRGB">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="2.5" result="blur"/>
-      <feFlood flood-color="#22d3ee" flood-opacity="0.9" result="color"/>
-      <feComposite in="color" in2="blur" operator="in" result="glow"/>
-      <feGaussianBlur in="glow" stdDeviation="1.5" result="glow2"/>
+    <filter id="tj-cyan-glow" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2.2" result="b"/>
+      <feFlood flood-color="#22d3ee" flood-opacity="0.95" result="f"/>
+      <feComposite in="f" in2="b" operator="in" result="g"/>
+      <feGaussianBlur in="g" stdDeviation="1.2" result="g2"/>
       <feMerge>
-        <feMergeNode in="glow2"/>
+        <feMergeNode in="g2"/>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
   </defs>
-  <!-- TJ monogram: crossbar + two stems converging to V chevron -->
-  <path
-    fill-rule="evenodd"
-    clip-rule="evenodd"
-    fill="#ffffff"
-    filter="url(#glow)"
-    d="M 5,0 L 95,0 L 95,58 L 50,86 L 5,58 Z
-       M 38,14 L 62,14 L 62,52 L 50,70 L 38,52 Z"
-  />
+  <g transform="translate(24,12)" filter="url(#tj-cyan-glow)" fill="#22D3EE">
+    <!-- T letterform -->
+    <path d="M0 0h26v8H17.75V68H8.25V8H0V0z"/>
+    <!-- J letterform -->
+    <path d="M30 0H52V8H43V58H28V68H52v-60H30V0z"/>
+  </g>
 </svg>

@@ -399,14 +399,17 @@ export function ImmersiveHome({
             <Image
               src="/assets/hero/hero-bicep-curl.png"
               alt="TJFit AI Performance"
-              width={600}
-              height={600}
+              width={1024}
+              height={558}
               priority
               className={cn(
-                "relative z-10 w-full max-w-[420px] lg:max-w-[500px]",
+                "relative z-10 w-full max-w-[520px] lg:max-w-[600px]",
                 !reduce && "animate-materialise animate-float"
               )}
-              style={{ filter: "drop-shadow(0 0 40px rgba(34,211,238,0.35))" }}
+              style={{
+                filter: "drop-shadow(0 0 50px rgba(34,211,238,0.45)) drop-shadow(0 0 20px rgba(167,139,250,0.2))",
+                objectFit: "contain"
+              }}
             />
           </div>
         </div>

@@ -68,16 +68,16 @@ function Podium({ items, tab }: { items: LeaderboardItem[]; tab: TabKey }) {
 
   const order = [items[1], items[0], items[2]]; // 2nd left, 1st center, 3rd right
   const heights = [110, 160, 80];
-  const colors = ["#9CA3AF", "#F59E0B", "#CD7F32"];
+  const colors = ["rgba(34,211,238,0.6)", "#22D3EE", "rgba(34,211,238,0.35)"];
   const glows = [
-    "shadow-[0_0_20px_rgba(156,163,175,0.3)]",
-    "shadow-[0_0_40px_rgba(245,158,11,0.4)]",
-    "shadow-[0_0_20px_rgba(205,127,50,0.3)]"
+    "shadow-[0_0_20px_rgba(34,211,238,0.2)]",
+    "shadow-[0_0_40px_rgba(34,211,238,0.4)]",
+    "shadow-[0_0_12px_rgba(34,211,238,0.12)]"
   ];
   const crowns = [
-    <Crown key="s" className="h-4 w-4" style={{ color: "#9CA3AF" }} />,
-    <Crown key="g" className="h-5 w-5 crown-glow-gold" style={{ color: "#F59E0B", filter: "drop-shadow(0 0 8px rgba(245,158,11,0.7))" }} />,
-    <Crown key="b" className="h-4 w-4" style={{ color: "#CD7F32" }} />
+    <Crown key="s" className="h-4 w-4" style={{ color: "rgba(34,211,238,0.6)" }} />,
+    <Crown key="g" className="h-5 w-5" style={{ color: "#22D3EE", filter: "drop-shadow(0 0 8px rgba(34,211,238,0.8))" }} />,
+    <Crown key="b" className="h-4 w-4" style={{ color: "rgba(34,211,238,0.35)" }} />
   ];
 
   return (
@@ -144,7 +144,6 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
         <h1 className="mt-2 text-3xl font-extrabold text-white">TJFit Leaderboards</h1>
         <p className="mt-2 text-sm text-[#A1A1AA]">The most active members of the TJFit community.</p>
 
-        {/* ME2 — Sliding pill tab switcher */}
         <div className="relative mt-5 flex flex-wrap gap-2">
           {TABS.map((entry, idx) => (
             <button
@@ -194,9 +193,7 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
           </div>
         ) : (
           <>
-            {/* M5 — Podium */}
             <Podium items={items} tab={tab} />
-
             <div className="space-y-2">
               {items.map((item) => {
                 const isMe = item.userId === me?.userId;
@@ -204,11 +201,11 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
                 const isTop2 = item.rank === 2;
                 const isTop3 = item.rank === 3;
                 const rankClass = isTop1
-                  ? "border-yellow-400/40"
+                  ? "border-cyan-400/50"
                   : isTop2
-                    ? "border-zinc-300/30"
+                    ? "border-cyan-400/25"
                     : isTop3
-                      ? "border-amber-700/40"
+                      ? "border-cyan-400/15"
                       : "border-[#1E2028]";
                 return (
                   <div
@@ -218,13 +215,13 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
                     <div className="flex items-center gap-3">
                       <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#14161D] text-sm font-bold text-white">
                         {item.rank === 1 ? (
-                          <Crown className="h-4 w-4 crown-glow-gold" style={{ color: "#F59E0B", filter: "drop-shadow(0 0 6px rgba(245,158,11,0.6))" }} />
+                          <Crown className="h-4 w-4" style={{ color: "#22D3EE", filter: "drop-shadow(0 0 8px rgba(34,211,238,0.8))" }} />
                         ) : item.rank === 2 ? (
-                          <Crown className="h-4 w-4" style={{ color: "#9CA3AF" }} />
+                          <Crown className="h-4 w-4" style={{ color: "rgba(34,211,238,0.6)" }} />
                         ) : item.rank === 3 ? (
-                          <Crown className="h-4 w-4" style={{ color: "#CD7F32" }} />
+                          <Crown className="h-4 w-4" style={{ color: "rgba(34,211,238,0.35)" }} />
                         ) : (
-                          item.rank
+                          <span className="text-zinc-400">{item.rank}</span>
                         )}
                       </div>
                       <div>
@@ -235,7 +232,9 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
                         <p className="text-xs text-[#52525B]">🔥 {item.streak} streak</p>
                       </div>
                     </div>
-                    <p className="text-sm font-semibold text-[#22D3EE]">{getMetricValue(item, tab)}</p>
+                    <p className={`text-sm font-semibold ${isTop1 ? "text-[#22D3EE]" : isTop2 ? "text-cyan-400/70" : isTop3 ? "text-cyan-400/45" : "text-[#52525B]"}`}>
+                      {getMetricValue(item, tab)}
+                    </p>
                   </div>
                 );
               })}

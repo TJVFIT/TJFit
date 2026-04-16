@@ -264,118 +264,45 @@ TJFIT PROGRAMS YOU CAN RECOMMEND:
 COACHING RULES:
 - Reference the user's ACTUAL logged workouts and weight when giving advice. Be specific — name the exercises they logged, the weights they used.
 - If their weight trend doesn't match their plan's projections, acknowledge it and diagnose why.
-- For injury or medical topics: include a short safety disclaimer.
-- Responses: 150–300 words unless user asks for depth. Use bullet points for action items.
-- Never be generic. Every answer must reference something specific from their data.`;
+- For injury or medical topics: include a short safety d- For injury or medical topics: include a short safety disclaimer and recommend a professional.
+- Never fabricate workout data. If no data exists, say so and encourage logging.
+- Keep responses concise (under 280 words) unless a detailed breakdown is needed.
+- End with one specific actionable next step tailored to their data.`
 
-    // Save user message before streaming
-    const { error: userInsertError } = await auth.supabase.from("tjai_chat_messages").insert({
-      user_id: auth.user.id,
-      conversation_id: conversationId,
-      role: "user",
-      content: message,
-      created_at: new Date().toISOString()
-    });
-    if (userInsertError) {
-      console.error("[TJAI chat] failed to save user message:", userInsertError);
-    }
+    const messages = [
+      ...history.slice(-12).map((h) => ({ role: h.role, content: h.content })),
+      { role: "user" as const, content: message }
+    ];
 
-    // Task 2D — streaming SSE response
-    let openAIStream: ReadableStream<Uint8Array>;
+    let reply: string;
     try {
-      openAIStream = await streamOpenAI({
-        system: systemPrompt,
-        messages: [...history, { role: "user", content: message }],
-        maxTokens: 1000
-      });
-    } catch (streamErr) {
-      console.error("[TJAI chat] stream error:", streamErr);
-      const fallback = fallbackCoachReply(message, locale);
-      await auth.supabase.from("tjai_chat_messages").insert({
-        user_id: auth.user.id,
-        conversation_id: conversationId,
-        role: "assistant",
-        content: fallback,
-        created_at: new Date(Date.now() + 1).toISOString()
-      });
-      return new Response(JSON.stringify({ message: fallback, conversationId }), {
-        headers: { "Content-Type": "application/json" }
-      });
+      reply = await callOpenAI({ system: systemPrompt, user: message, maxTokens: 600 });
+    } catch {
+      reply = fallbackCoachReply(message, locale);
     }
 
-    const encoder = new TextEncoder();
-    const decoder = new TextDecoder();
-    let fullText = "";
-    const uid = auth.user.id;
-    const supabase = auth.supabase;
+    // Save conversation turn
+    void auth.supabase.from("tjai_chat_messages").insert([
+      { user_id: auth.user.id, conversation_id: conversationId, role: "user", content: message },
+      { user_id: auth.user.id, conversation_id: conversationId, role: "assistant", content: reply }
+    ]);
 
-    const transformStream = new TransformStream<Uint8Array, Uint8Array>({
-      transform(chunk, controller) {
-        const text = decoder.decode(chunk);
-        const lines = text.split("\n").filter((line) => line.startsWith("data: "));
-        for (const line of lines) {
-          const data = line.slice(6);
-          if (data === "[DONE]") return;
-          try {
-            const parsed = JSON.parse(data) as { choices?: Array<{ delta?: { content?: string } }> };
-            const delta = parsed?.choices?.[0]?.delta?.content ?? "";
-            if (delta) {
-              fullText += delta;
-              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ delta, conversationId })}\n\n`));
-            }
-          } catch {
-            // skip malformed SSE chunks
-          }
-        }
-      },
-      async flush() {
-        // Save complete assistant message after stream ends
-        if (fullText) {
-          const { error: assistantInsertError } = await supabase.from("tjai_chat_messages").insert({
-            user_id: uid,
-            conversation_id: conversationId,
-            role: "assistant",
-            content: fullText,
-            created_at: new Date(Date.now() + 1).toISOString()
-          });
-          if (assistantInsertError) {
-            console.error("[TJAI chat] failed to save streamed assistant message:", assistantInsertError);
-          }
-        }
-        // Fire-and-forget: extract and save user preferences
-        void (async () => {
-          try {
-            const preference = await extractPreference(message);
-            if (preference.key && preference.value) {
-              const { error: prefError } = await supabase.from("user_chat_preferences").upsert({
-                user_id: uid,
-                preference_key: preference.key,
-                preference_value: preference.value,
-                source: "chat",
-                updated_at: new Date().toISOString()
-              });
-              if (prefError) console.error("[TJAI chat] preference save error:", prefError);
-            }
-          } catch (prefExtractError) {
-            console.error("[TJAI chat] preference extract error:", prefExtractError);
-          }
-        })();
+    // Extract and store preferences in background
+    void extractPreference(message).then(async (pref) => {
+      if (pref.key && pref.value) {
+        await auth.supabase.from("user_chat_preferences").upsert(
+          { user_id: auth.user.id, preference_key: pref.key, preference_value: pref.value },
+          { onConflict: "user_id,preference_key" }
+        );
       }
     });
 
-    return new Response(openAIStream.pipeThrough(transformStream), {
-      headers: {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        Connection: "keep-alive"
-      }
+    return new Response(JSON.stringify({ message: reply, conversationId }), {
+      headers: { "Content-Type": "application/json" }
     });
-
-  } catch (error) {
-    console.error("[TJAI chat] unhandled error:", error);
-    return new Response(
-      JSON.stringify({ message: "TJAI had a temporary issue. Keep your plan simple today: train, hydrate, and hit protein.", conversationId: crypto.randomUUID() }),
-      { headers: { "Content-Type": "application/json" } }
-    );
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[TJAI] Unhandled error:", msg);
+    return new Response(JSON.stringify({ error: "Chat failed" }), { status: 500 });
   }
 }

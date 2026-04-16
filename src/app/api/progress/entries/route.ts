@@ -59,12 +59,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
-  // Task 4 — fire-and-forget: populate outcome_weight_change in tjai_plan_analytics
+  // Fire-and-forget: populate outcome_weight_change in tjai_plan_analytics
   void (async () => {
     try {
       const admin = getSupabaseServerClient();
       if (!admin) return;
-
       const { data: plan } = await admin
         .from("saved_tjai_plans")
         .select("daily_calories,protein_g,created_at,answers_json")
@@ -72,9 +71,7 @@ export async function POST(request: NextRequest) {
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
-
       if (!plan) return;
-
       const { data: entries } = await admin
         .from("progress_entries")
         .select("entry_date,weight_kg")
@@ -82,28 +79,23 @@ export async function POST(request: NextRequest) {
         .not("weight_kg", "is", null)
         .gte("entry_date", plan.created_at.slice(0, 10))
         .order("entry_date", { ascending: true });
-
       if (!entries || entries.length < 2) return;
-
       const firstWeight = Number(entries[0].weight_kg);
       const lastWeight = Number(entries[entries.length - 1].weight_kg);
       const firstDate = new Date(entries[0].entry_date as string);
       const lastDate = new Date(entries[entries.length - 1].entry_date as string);
       const weeksDiff = Math.max(1, (lastDate.getTime() - firstDate.getTime()) / (7 * 24 * 60 * 60 * 1000));
       const weeklyChange = (lastWeight - firstWeight) / weeksDiff;
-
       const answers = plan.answers_json as Record<string, unknown> | null;
       const goal = String(answers?.s2_goal ?? "");
       const sex = String(answers?.s1_gender ?? "");
       if (!goal || !sex) return;
-
       await admin
         .from("tjai_plan_analytics")
         .update({ outcome_weight_change: parseFloat(weeklyChange.toFixed(3)) })
         .eq("goal", goal)
         .eq("sex", sex)
         .is("outcome_weight_change", null);
-
     } catch (outcomeErr) {
       console.error("[TJAI outcome tracking] (non-fatal):", outcomeErr);
     }
