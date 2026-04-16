@@ -249,9 +249,9 @@ export function ImmersiveHome({
     { icon: Globe, title: "5 Languages", desc: "English, Turkish, Arabic, Spanish, French. Premium fitness in your language.", accent: "#A78BFA" }
   ] as const;
 
-  // TJAI section ref for neural pulse
-  const tjaiRef = useRef<HTMLDivElement>(null);
-  const tjaiInView = useInView(tjaiRef as React.RefObject<HTMLElement>, { threshold: 0.2, once: true });
+  // TJAI section ref for reveal trigger
+  const tjaiRef = useRef<HTMLElement | null>(null);
+  const tjaiInView = useInView(tjaiRef as React.RefObject<HTMLElement>, { threshold: 0.15, once: true });
 
   // Nexus section ref for node travel
   const nexusRef = useRef<HTMLElement>(null);
@@ -531,70 +531,77 @@ export function ImmersiveHome({
       </div>
 
       {/* ══════════════ TJAI — KINETIC HEART CORE ══════════════ */}
-      <section className="relative overflow-hidden border-t border-[#1E2028] bg-[#0A0B0E] px-6 py-24 lg:px-12 lg:py-32">
-        <div className="pointer-events-none absolute inset-0" aria-hidden>
-          <div className="absolute right-0 top-0 h-[600px] w-[600px] -translate-y-1/4 translate-x-1/4 rounded-full bg-[#22D3EE] opacity-[0.03] blur-[100px]" />
+      <section ref={(el) => { tjaiRef.current = el; }} className="relative overflow-hidden border-t border-[#1E2028]" style={{ minHeight: "min(90vh, 700px)" }}>
+
+        {/* Full-section background — the heart/prism image */}
+        <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
+          <Image
+            src="/assets/hero/hero-tjai-core.png"
+            alt=""
+            fill
+            className="object-cover object-center"
+            style={{
+              opacity: tjaiInView ? 0.55 : 0,
+              transition: "opacity 1.2s ease-out",
+              filter: "drop-shadow(0 0 60px rgba(34,211,238,0.4))",
+              transform: !reduce && tjaiInView ? "scale(1.05)" : "scale(1)",
+              transitionProperty: "opacity, transform",
+              transitionDuration: "1.2s"
+            }}
+          />
+          {/* Dark overlay so text stays readable */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#09090B]/95 via-[#09090B]/60 to-[#09090B]/30" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#09090B]/40 via-transparent to-[#09090B]/60" />
         </div>
-        <div ref={tjaiRef} className="relative mx-auto max-w-6xl">
-          <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
 
-            {/* LEFT — Kinetic heart image (Image 3) */}
-            <Reveal delay={100}>
-              <div className="relative flex items-center justify-center">
-                {/* Rotating outer rings */}
-                <div className="pointer-events-none absolute h-[420px] w-[420px] rounded-full border border-cyan-400/10 opacity-60"
-                  style={{ animation: tjaiInView && !reduce ? "prismRotateCW 20s linear infinite" : "none" }} aria-hidden />
-                <div className="pointer-events-none absolute h-[320px] w-[320px] rounded-full border border-violet-400/10 opacity-40"
-                  style={{ animation: tjaiInView && !reduce ? "prismRotateCCW 14s linear infinite" : "none" }} aria-hidden />
-                {/* Core heart image */}
-                <Image
-                  src="/assets/hero/hero-tjai-core.png"
-                  alt="TJAI Intelligence Core"
-                  width={500}
-                  height={500}
-                  className={cn(
-                    "relative z-10 w-full max-w-[380px] lg:max-w-[420px]",
-                    !reduce && "animate-heartbeat"
-                  )}
-                  style={{ filter: "drop-shadow(0 0 30px rgba(34,211,238,0.4))" }}
-                />
-              </div>
-            </Reveal>
-
-            {/* RIGHT — Copy */}
-            <Reveal>
-              <span className="inline-flex items-center gap-2 rounded-full border border-[rgba(34,211,238,0.3)] bg-[rgba(34,211,238,0.06)] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#22D3EE]">
-                <Brain className="h-3.5 w-3.5" /> TJAI · AI Coaching Engine
-              </span>
-              <h2 className="mt-6 font-display text-4xl font-extrabold tracking-tight text-white lg:text-6xl">
-                Intelligence.<br />Kinetic.<br />
-                <span className="bg-gradient-to-r from-[#22D3EE] to-[#A78BFA] bg-clip-text text-transparent">Core.</span>
-              </h2>
-              <p className="mt-6 max-w-lg text-lg leading-relaxed text-[#A1A1AA]">
-                Answer 25 smart questions. TJAI analyzes your metabolism, lifestyle, injuries, goals — then generates a complete 12-week plan powered by GPT-4o.
-              </p>
-              <ul className="mt-8 space-y-3">
-                {[
-                  "Full 12-week training program — personalized to your level",
-                  "Daily meal plan with macros, recipes, and grocery list",
-                  "Supplement stack, calorie cycling, refeed & deload weeks"
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-sm text-[#A1A1AA]">
-                    <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[rgba(34,211,238,0.15)] text-[#22D3EE]">
-                      <svg className="h-2.5 w-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
-                    </span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href={`/${locale}/ai`}
-                className="mt-10 inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#22D3EE] to-[#0EA5E9] px-8 py-3 text-base font-bold text-[#09090B] shadow-[0_0_30px_rgba(34,211,238,0.35)] transition-all hover:scale-[1.03] hover:shadow-[0_0_50px_rgba(34,211,238,0.5)]"
-              >
-                <Zap className="h-4 w-4" /> Try TJAI — It&apos;s Free
-              </Link>
-            </Reveal>
+        {/* Rotating orbital rings — decorative */}
+        {tjaiInView && !reduce && (
+          <div className="pointer-events-none absolute inset-0 z-[1] flex items-center justify-end pe-12 max-lg:hidden" aria-hidden>
+            <div className="relative h-[500px] w-[500px]">
+              <div className="absolute inset-0 rounded-full border border-cyan-400/15"
+                style={{ animation: "prismRotateCW 22s linear infinite" }} />
+              <div className="absolute inset-[60px] rounded-full border border-violet-400/10"
+                style={{ animation: "prismRotateCCW 16s linear infinite" }} />
+              <div className="absolute inset-[120px] rounded-full border border-cyan-400/08"
+                style={{ animation: "prismRotateCW 12s linear infinite" }} />
+            </div>
           </div>
+        )}
+
+        {/* Content — left-aligned over the image */}
+        <div className="relative z-10 mx-auto flex max-w-6xl items-center px-6 py-24 lg:px-12 lg:py-32" style={{ minHeight: "inherit" }}>
+          <Reveal>
+            <span className="inline-flex items-center gap-2 rounded-full border border-[rgba(34,211,238,0.3)] bg-[rgba(34,211,238,0.08)] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#22D3EE]">
+              <Brain className="h-3.5 w-3.5" /> TJAI · AI Coaching Engine
+            </span>
+            <h2 className="mt-6 font-display text-5xl font-extrabold tracking-tight text-white lg:text-7xl">
+              Intelligence.<br />Kinetic.<br />
+              <span className="bg-gradient-to-r from-[#22D3EE] to-[#A78BFA] bg-clip-text text-transparent">Core.</span>
+            </h2>
+            <p className="mt-6 max-w-md text-lg leading-relaxed text-[#A1A1AA]">
+              Answer 25 smart questions. TJAI analyzes your metabolism, lifestyle, injuries, and goals — then generates a complete 12-week plan powered by GPT-4o.
+            </p>
+            <ul className="mt-8 space-y-3">
+              {[
+                "Full 12-week training program — personalized to your level",
+                "Daily meal plan with macros, recipes, and grocery list",
+                "Supplement stack, calorie cycling, refeed & deload weeks"
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-3 text-sm text-[#A1A1AA]">
+                  <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[rgba(34,211,238,0.15)] text-[#22D3EE]">
+                    <svg className="h-2.5 w-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                  </span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <Link
+              href={`/${locale}/ai`}
+              className="mt-10 inline-flex min-h-[54px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#22D3EE] to-[#0EA5E9] px-9 py-3 text-base font-bold text-[#09090B] shadow-[0_0_30px_rgba(34,211,238,0.4),0_0_60px_rgba(34,211,238,0.15)] transition-all hover:scale-[1.04] hover:shadow-[0_0_50px_rgba(34,211,238,0.6)]"
+            >
+              <Zap className="h-4 w-4" /> Try TJAI — It&apos;s Free
+            </Link>
+          </Reveal>
         </div>
       </section>
 
