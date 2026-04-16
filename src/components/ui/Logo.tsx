@@ -1,16 +1,14 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { useEffect, useState } from "react";
 
+import { BRAND_LOGO_SRC } from "@/lib/brand-assets";
 import { cn } from "@/lib/utils";
 
-// The one and only logo — the 3D TJFIT logo
-const LOGO_SRC = "/assets/hero/logo-tjfit-3d.png";
-const LOGO_WIDTH = 1024;
-const LOGO_HEIGHT = 836;
+/** Intrinsic ratio of logo-tjfit-3d.png (width / height) */
+const LOGO_ASPECT = 1024 / 836;
 
 export type LogoVariant = "icon" | "full" | "3d";
 export type LogoSize =
@@ -24,7 +22,6 @@ export type LogoSize =
   | "card"
   | "mini";
 
-/** Pixel heights — width always auto, aspect preserved */
 const HEIGHT_PX: Record<LogoSize, number> = {
   navbar: 36,
   navFull: 46,
@@ -49,12 +46,11 @@ export type LogoProps = {
   onNavigate?: () => void;
   suppressMinTouchTarget?: boolean;
   linked?: boolean;
-  /** Lets the 3D PNG’s dark plate blend into dark glass UI (sidebar / nav) instead of a visible rectangle */
   blendWithBackground?: boolean;
 };
 
 export function Logo({
-  variant: _variant,       // accepted but ignored — always uses 3D logo
+  variant: _variant,
   size = "navbar",
   href = "/",
   glow = false,
@@ -68,15 +64,16 @@ export function Logo({
   blendWithBackground = false
 }: LogoProps) {
   const h = HEIGHT_PX[size];
+  const w = Math.round(h * LOGO_ASPECT);
 
   const [revealed, setRevealed] = useState(!animated);
   useEffect(() => {
     if (!animated) return;
     const t = window.setTimeout(() => setRevealed(true), 100);
-    return () => window.clearTimeout(t);
+    return () => clearTimeout(t);
   }, [animated]);
 
-  const baseGlow = glow || true; // always glow — it's the brand
+  const baseGlow = glow || true;
   const glowIntensity = size === "hero" || size === "auth" ? "0 0 20px rgba(34,211,238,0.55)" : "0 0 10px rgba(34,211,238,0.4)";
 
   const filterStyle =
@@ -91,41 +88,36 @@ export function Logo({
         ? `drop-shadow(${glowIntensity})`
         : undefined;
 
-  const blendMask: CSSProperties | undefined = blendWithBackground
-    ? {
-        maskImage:
-          "radial-gradient(ellipse 88% 82% at 50% 50%, black 18%, black 82%, transparent 100%)",
-        WebkitMaskImage:
-          "radial-gradient(ellipse 88% 82% at 50% 50%, black 18%, black 82%, transparent 100%)"
-      }
-    : undefined;
+  /* Native <img>: avoids Next/Image edge cases with blended PNGs + guarantees ?v= cache bust applies */
+  const imgStyle: CSSProperties = {
+    height: h,
+    width: w,
+    maxWidth: "100%",
+    objectFit: "contain",
+    filter: filterStyle,
+    opacity: animated && !revealed ? 0 : 1,
+    transition: animated ? "opacity 400ms ease, filter 400ms ease" : undefined,
+    ...(animated && revealed ? { animation: "logoReveal 1.1s cubic-bezier(0.16,1,0.3,1) forwards" } : {})
+  };
 
   const img = (
-    <span className="inline-flex items-center justify-center" style={blendMask}>
-      <Image
-        src={LOGO_SRC}
-        alt={linked ? alt : ""}
-        width={LOGO_WIDTH}
-        height={LOGO_HEIGHT}
-        priority={priority}
-        draggable={false}
-        role="img"
-        quality={95}
-        style={{
-          height: h,
-          width: "auto",
-          filter: filterStyle,
-          opacity: animated && !revealed ? 0 : 1,
-          transition: animated ? "opacity 400ms ease, filter 400ms ease" : undefined,
-          ...(animated && revealed ? { animation: "logoReveal 1.1s cubic-bezier(0.16,1,0.3,1) forwards" } : {})
-        }}
-        className={cn(
-          "bg-transparent object-contain [image-rendering:auto]",
-          blendWithBackground && "mix-blend-screen",
-          className
-        )}
-      />
-    </span>
+    // eslint-disable-next-line @next/next/no-img-element -- brand PNG + blend must bypass optimizer
+    <img
+      src={BRAND_LOGO_SRC}
+      alt={linked ? alt : ""}
+      width={w}
+      height={h}
+      decoding={priority ? "sync" : "async"}
+      fetchPriority={priority ? "high" : "auto"}
+      draggable={false}
+      role="img"
+      style={imgStyle}
+      className={cn(
+        "select-none bg-transparent",
+        blendWithBackground && "mix-blend-screen",
+        className
+      )}
+    />
   );
 
   if (!linked) {

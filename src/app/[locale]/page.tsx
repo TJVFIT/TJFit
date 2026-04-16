@@ -9,7 +9,7 @@ import { isLocale, type Locale } from "@/lib/i18n";
 
 /** Client-only immersive home — scroll observers, sidebar offset. */
 const ImmersiveHome = dynamic(() => import("@/components/immersive-home").then((m) => m.ImmersiveHome), {
-  ssr: false,
+  ssr: true,
   loading: () => <HomeLuxurySkeleton />
 });
 

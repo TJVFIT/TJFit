@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
+import { BRAND_LOGO_SRC } from "@/lib/brand-assets";
+
 type Phase = "hidden" | "materialize" | "glow" | "hold" | "exit";
 
 export function LogoIntro({ onComplete }: { onComplete: () => void }) {
@@ -158,7 +160,7 @@ export function LogoIntro({ onComplete }: { onComplete: () => void }) {
         }}
       >
         <Image
-          src="/assets/hero/logo-tjfit-3d.png"
+          src={BRAND_LOGO_SRC}
           alt="TJFit"
           width={1024}
           height={836}
