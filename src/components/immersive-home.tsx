@@ -1,13 +1,13 @@
 "use client";
 
 import type { CSSProperties } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import {
-  Dumbbell, Brain, Users, Trophy, Apple, Coins,
-  ChevronDown, ArrowRight, Zap, Shield, Globe, Star
+  Dumbbell, Brain, Users, Trophy, Apple, Globe,
+  ChevronDown, ArrowRight, Zap, Star
 } from "lucide-react";
 
 import { ParticleField } from "@/components/particle-field";
@@ -36,27 +36,34 @@ function useReducedMotion() {
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     const a = () => setR(mq.matches);
-    a(); mq.addEventListener("change", a);
+    a();
+    mq.addEventListener("change", a);
     return () => mq.removeEventListener("change", a);
   }, []);
   return r;
+}
+
+function useIsTouchDevice() {
+  const [touch, setTouch] = useState(false);
+  useEffect(() => {
+    setTouch(window.matchMedia("(hover: none)").matches);
+  }, []);
+  return touch;
 }
 
 function formatMoney(locale: Locale, value: number) {
   const n = Number.isFinite(value) ? value : 0;
   const eur = n * 0.029;
   const loc = locale === "tr" ? "tr-TR" : locale === "ar" ? "ar-SA" : locale === "es" ? "es-ES" : locale === "fr" ? "fr-FR" : "en-GB";
-  try {
-    return new Intl.NumberFormat(loc, { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(eur);
-  } catch { return `€${Math.round(eur)}`; }
+  try { return new Intl.NumberFormat(loc, { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(eur); }
+  catch { return `€${Math.round(eur)}`; }
 }
 
-// Counter that animates on scroll
+// Count-up on scroll
 function CountUp({ target, suffix = "", label }: { target: number; suffix?: string; label: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref as React.RefObject<HTMLElement>, { threshold: 0.3, once: true });
   const [val, setVal] = useState(0);
-
   useEffect(() => {
     if (!inView) return;
     const dur = 1400;
@@ -64,26 +71,22 @@ function CountUp({ target, suffix = "", label }: { target: number; suffix?: stri
     let raf = 0;
     const tick = (now: number) => {
       const t = Math.min(1, (now - start) / dur);
-      const eased = 1 - Math.pow(1 - t, 3);
-      setVal(Math.round(eased * target));
+      setVal(Math.round((1 - Math.pow(1 - t, 3)) * target));
       if (t < 1) raf = requestAnimationFrame(tick);
       else setVal(target);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [inView, target]);
-
   return (
     <div ref={ref} className="text-center">
-      <p className="font-display text-5xl font-extrabold tabular-nums text-[#22D3EE] stat-number-glow lg:text-7xl">
-        {val}{suffix}
-      </p>
+      <p className="font-display text-5xl font-extrabold tabular-nums text-[#22D3EE] stat-number-glow lg:text-7xl">{val}{suffix}</p>
       <p className="mt-3 text-sm font-medium uppercase tracking-[0.2em] text-[#52525B]">{label}</p>
     </div>
   );
 }
 
-// Section reveal wrapper
+// Scroll reveal
 function Reveal({ children, className, delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref as React.RefObject<HTMLElement>, { threshold: 0.1, once: true });
@@ -96,6 +99,30 @@ function Reveal({ children, className, delay = 0 }: { children: React.ReactNode;
         transform: inView ? "translateY(0)" : "translateY(40px)",
         transition: `opacity 700ms cubic-bezier(0,0,0.2,1) ${delay}ms, transform 700ms cubic-bezier(0,0,0.2,1) ${delay}ms`
       }}
+    >{children}</div>
+  );
+}
+
+// Program card tilt wrapper component — avoids hook-in-callback violation
+function TiltCard({ children, disabled }: { children: React.ReactNode; disabled: boolean }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (disabled || !ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    ref.current.style.transform = `perspective(800px) rotateX(${-y * 8}deg) rotateY(${x * 8}deg) scale(1.02)`;
+  };
+  const handleMouseLeave = () => {
+    if (ref.current) ref.current.style.transform = "perspective(800px) rotateX(0deg) rotateY(0deg) scale(1)";
+  };
+  return (
+    <div
+      ref={ref}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ transition: "transform 0.2s ease-out" }}
+      className="hover:border-cyan-400/40 hover:shadow-[0_0_30px_rgba(34,211,238,0.15)] transition-[border-color,box-shadow] duration-300 h-full"
     >
       {children}
     </div>
@@ -103,57 +130,31 @@ function Reveal({ children, className, delay = 0 }: { children: React.ReactNode;
 }
 
 // Bento feature card
-function BentoCard({
-  icon: Icon,
-  title,
-  desc,
-  accent = "#22D3EE",
-  span = 1,
-  tall = false
-}: {
-  icon: React.ElementType;
-  title: string;
-  desc: string;
-  accent?: string;
-  span?: 1 | 2;
-  tall?: boolean;
+function BentoCard({ icon: Icon, title, desc, accent = "#22D3EE", span = 1 }: {
+  icon: React.ElementType; title: string; desc: string; accent?: string; span?: 1 | 2;
 }) {
   const [spot, setSpot] = useState({ x: 50, y: 50, visible: false });
-
   return (
     <div
       className={cn(
         "group relative overflow-hidden rounded-[20px] border border-[#1E2028] bg-[#0D0E12] p-6 transition-[border-color,box-shadow,transform] duration-300",
         "hover:-translate-y-1 hover:border-[rgba(34,211,238,0.3)] hover:shadow-[0_24px_60px_rgba(0,0,0,0.5),0_0_40px_rgba(34,211,238,0.06)]",
-        span === 2 && "md:col-span-2",
-        tall && "md:row-span-2"
+        span === 2 && "md:col-span-2"
       )}
       onMouseMove={(e) => {
         const r = e.currentTarget.getBoundingClientRect();
         setSpot({ x: ((e.clientX - r.left) / r.width) * 100, y: ((e.clientY - r.top) / r.height) * 100, visible: true });
       }}
-      onMouseLeave={() => setSpot((s) => ({ ...s, visible: false }))}
+      onMouseLeave={() => setSpot(s => ({ ...s, visible: false }))}
     >
-      {/* Cursor spotlight */}
-      <div
-        className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-300"
-        style={{
-          opacity: spot.visible ? 1 : 0,
-          background: `radial-gradient(250px circle at ${spot.x}% ${spot.y}%, rgba(34,211,238,0.07), transparent 70%)`
-        }}
-        aria-hidden
-      />
-      {/* Gradient corner */}
-      <div
-        className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100"
-        style={{ background: `radial-gradient(circle, ${accent}22 0%, transparent 70%)` }}
-        aria-hidden
-      />
+      <div className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-300"
+        style={{ opacity: spot.visible ? 1 : 0, background: `radial-gradient(250px circle at ${spot.x}% ${spot.y}%, rgba(34,211,238,0.07), transparent 70%)` }}
+        aria-hidden />
+      <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100"
+        style={{ background: `radial-gradient(circle, ${accent}22 0%, transparent 70%)` }} aria-hidden />
       <div className="relative z-10">
-        <div
-          className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl"
-          style={{ background: `${accent}18`, border: `1px solid ${accent}30` }}
-        >
+        <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl"
+          style={{ background: `${accent}18`, border: `1px solid ${accent}30` }}>
           <Icon className="h-6 w-6" style={{ color: accent, filter: `drop-shadow(0 0 6px ${accent}88)` }} strokeWidth={1.75} />
         </div>
         <h3 className="font-display text-lg font-semibold text-white">{title}</h3>
@@ -169,48 +170,44 @@ function MagneticLink({ href, className, children, onClick }: { href: string; cl
 }
 
 export function ImmersiveHome({
-  locale,
-  copy,
-  programs,
-  diets,
-  coaches: _coaches,
-  freePrograms: _freePrograms,
-  programCount,
-  dietCount
+  locale, copy, programs, diets, coaches: _coaches, freePrograms: _freePrograms, programCount, dietCount
 }: {
-  locale: Locale;
-  copy: HomeLuxuryCopy;
-  programs: HomeProgramPreview[];
-  diets: HomeProgramPreview[];
-  coaches: HomeCoachPreview[];
-  freePrograms: Program[];
-  programCount: number;
-  dietCount: number;
+  locale: Locale; copy: HomeLuxuryCopy; programs: HomeProgramPreview[]; diets: HomeProgramPreview[];
+  coaches: HomeCoachPreview[]; freePrograms: Program[]; programCount: number; dietCount: number;
 }) {
-  void _coaches;
-  void _freePrograms;
+  void _coaches; void _freePrograms;
   const reduce = useReducedMotion();
+  const isTouch = useIsTouchDevice();
   const direction = getDirection(locale);
   const programUi = getProgramUiCopy(locale);
   const navChrome = getNavChromeCopy(locale);
+
   const [heroEntered, setHeroEntered] = useState(reduce);
   const [hideScrollCue, setHideScrollCue] = useState(false);
+  const [hasScanned, setHasScanned] = useState(false);
   const [liveStats, setLiveStats] = useState({ activeToday: 0 });
+
+  const heroRef = useRef<HTMLElement | null>(null);
+  const heroSectionRef = useRef<HTMLElement | null>(null);
+  const programsSectionRef = useRef<HTMLDivElement>(null);
   const heroMouseRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 }) as HeroMouseRef;
 
+  // Hero enter
   useEffect(() => {
     if (reduce) { setHeroEntered(true); return; }
     const t = window.setTimeout(() => setHeroEntered(true), 80);
     return () => clearTimeout(t);
   }, [reduce]);
 
+  // Scroll cue
   useEffect(() => {
-    const onScroll = () => setHideScrollCue(window.scrollY > 100);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const fn = () => setHideScrollCue(window.scrollY > 100);
+    fn();
+    window.addEventListener("scroll", fn, { passive: true });
+    return () => window.removeEventListener("scroll", fn);
   }, []);
 
+  // Live stats
   useEffect(() => {
     let cancelled = false;
     fetch("/api/stats/live", { cache: "no-store" })
@@ -220,18 +217,34 @@ export function ImmersiveHome({
     return () => { cancelled = true; };
   }, []);
 
-  // Mouse parallax
+  // Mouse parallax for 3D canvas
   useEffect(() => {
-    if (reduce) return;
-    const noHover = window.matchMedia("(hover: none)").matches;
-    if (noHover) return;
-    const onMove = (e: MouseEvent) => {
+    if (reduce || window.matchMedia("(hover: none)").matches) return;
+    const fn = (e: MouseEvent) => {
       heroMouseRef.current.x = (e.clientX / window.innerWidth) * 2 - 1;
       heroMouseRef.current.y = -((e.clientY / window.innerHeight) * 2 - 1);
     };
-    window.addEventListener("mousemove", onMove, { passive: true });
-    return () => window.removeEventListener("mousemove", onMove);
+    window.addEventListener("mousemove", fn, { passive: true });
+    return () => window.removeEventListener("mousemove", fn);
   }, [reduce]);
+
+  // Programs section parallax
+  const [parallaxY, setParallaxY] = useState(0);
+  useEffect(() => {
+    if (reduce || window.innerWidth < 768) return;
+    const fn = () => {
+      if (!programsSectionRef.current) return;
+      const rect = programsSectionRef.current.getBoundingClientRect();
+      const sectionCenter = rect.top + rect.height / 2;
+      const viewportCenter = window.innerHeight / 2;
+      setParallaxY((sectionCenter - viewportCenter) * 0.18);
+    };
+    window.addEventListener("scroll", fn, { passive: true });
+    return () => window.removeEventListener("scroll", fn);
+  }, [reduce]);
+
+  // Hero in-view (for scanline)
+  const heroInView = useInView(heroSectionRef as React.RefObject<HTMLElement>, { threshold: 0.1, once: true });
 
   const lineIn = (delay: number): CSSProperties => ({
     opacity: heroEntered ? 1 : 0,
@@ -244,19 +257,30 @@ export function ImmersiveHome({
 
   const features = [
     { icon: Brain, title: "TJAI — Your AI Coach", desc: "25 questions. GPT-4o builds your complete 12-week transformation plan. Diet + training + supplements.", accent: "#22D3EE", span: 2 as const },
-    { icon: Dumbbell, title: "20+ Expert Programs", desc: "12-week structured plans for home or gym. Fat loss, muscle gain, recomposition — all levels.", accent: "#67E8F9" },
-    { icon: Apple, title: "Full Diet Systems", desc: "Daily meal plans with macros, recipes, grocery lists. Halal, vegan, budget — all covered.", accent: "#A78BFA" },
-    { icon: Users, title: "Coach Marketplace", desc: "Book certified coaches. 1-on-1 guidance, progress tracking, personalized feedback.", accent: "#22D3EE" },
-    { icon: Trophy, title: "Leaderboards", desc: "Earn TJCOIN, compete on weekly leaderboards, and unlock rewards for consistency.", accent: "#F59E0B" },
+    { icon: Dumbbell, title: "20+ Expert Programs", desc: "12-week structured plans for home or gym. Fat loss, muscle gain — all levels.", accent: "#67E8F9" },
+    { icon: Apple, title: "Full Diet Systems", desc: "Daily meal plans with macros, recipes, grocery lists. Halal, vegan, budget — covered.", accent: "#A78BFA" },
+    { icon: Users, title: "Coach Marketplace", desc: "Book certified coaches. 1-on-1 guidance and personalized feedback.", accent: "#22D3EE" },
+    { icon: Trophy, title: "Leaderboards", desc: "Earn TJCOIN, compete on weekly boards, unlock rewards for consistency.", accent: "#F59E0B" },
     { icon: Globe, title: "5 Languages", desc: "English, Turkish, Arabic, Spanish, French. Premium fitness in your language.", accent: "#A78BFA" }
   ] as const;
 
-  return (
-    <div className="bg-[#09090B] text-white">
+  // TJAI section ref for neural pulse
+  const tjaiRef = useRef<HTMLDivElement>(null);
+  const tjaiInView = useInView(tjaiRef as React.RefObject<HTMLElement>, { threshold: 0.2, once: true });
 
-      {/* ═══════════════════════ HERO ═══════════════════════ */}
-      <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 pb-20 pt-20">
-        {/* Full-viewport 3D canvas */}
+  // Nexus section ref for node travel
+  const nexusRef = useRef<HTMLElement>(null);
+  const nexusInView = useInView(nexusRef as React.RefObject<HTMLElement>, { threshold: 0.2, once: true });
+
+  return (
+    <div className="bg-[#09090B] text-white" dir={direction}>
+
+      {/* ══════════════ HERO — SPLIT LAYOUT ══════════════ */}
+      <section
+        ref={(el) => { heroRef.current = el; heroSectionRef.current = el; }}
+        className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden px-6 pb-16 pt-20 lg:px-12"
+      >
+        {/* 3D Canvas background */}
         <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
           <ClientErrorBoundary sentryScope="home-hero-3d" fallback={null}>
             <Suspense fallback={null}>
@@ -265,103 +289,142 @@ export function ImmersiveHome({
           </ClientErrorBoundary>
         </div>
 
-        {/* Particle field overlay */}
+        {/* Particles */}
         <div className="pointer-events-none absolute inset-0 z-[1]" aria-hidden>
           <ParticleField className="absolute inset-0" />
         </div>
 
-        {/* Radial vignette so text is readable */}
-        <div
-          className="pointer-events-none absolute inset-0 z-[2]"
-          style={{ background: "radial-gradient(ellipse 70% 60% at 50% 50%, transparent 30%, rgba(9,9,11,0.65) 100%)" }}
-          aria-hidden
-        />
+        {/* Vignette */}
+        <div className="pointer-events-none absolute inset-0 z-[2]"
+          style={{ background: "radial-gradient(ellipse 80% 70% at 50% 50%, transparent 20%, rgba(9,9,11,0.6) 100%)" }}
+          aria-hidden />
 
-        {/* Hero content */}
-        <div className="relative z-10 mx-auto w-full max-w-5xl text-center">
-          {/* Eyebrow */}
-          <div style={lineIn(100)}>
-            <span className="inline-flex items-center gap-2 rounded-full border border-[rgba(34,211,238,0.3)] bg-[rgba(34,211,238,0.08)] px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#22D3EE]">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#22D3EE]" />
-              {liveStats.activeToday > 0 ? `${liveStats.activeToday} training now` : "AI-Powered Fitness"}
-            </span>
+        {/* Scanline entrance — fires once */}
+        {heroInView && !hasScanned && (
+          <div className="pointer-events-none absolute inset-0 z-50 overflow-hidden" aria-hidden
+            onAnimationEnd={() => setHasScanned(true)}>
+            <div
+              className="animate-scanline absolute left-0 h-[3px] w-full"
+              style={{ background: "linear-gradient(90deg, transparent 0%, rgba(34,211,238,0.8) 50%, transparent 100%)" }}
+            />
           </div>
+        )}
 
-          {/* Headline */}
-          <h1
-            className="hero-headline mt-8 font-display text-[clamp(3rem,9vw,7rem)] font-extrabold leading-[0.88] tracking-[-0.04em]"
-            style={lineIn(200)}
-          >
-            <span className="block text-white">Train Smarter.</span>
-            <span
-              className="block bg-gradient-to-r from-[#22D3EE] via-[#67E8F9] to-[#A78BFA] bg-clip-text text-transparent"
-              style={{ filter: "drop-shadow(0 0 40px rgba(34,211,238,0.3))" }}
-            >
-              Transform Faster.
-            </span>
-          </h1>
+        {/* SPLIT: text left | bicep curl right */}
+        <div className="relative z-10 mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-12 lg:grid-cols-2">
 
-          {/* Subheadline */}
-          <p
-            className="mx-auto mt-8 max-w-xl text-lg leading-relaxed text-[#A1A1AA]"
-            style={lineIn(350)}
-          >
-            {copy.hero.sub}
-          </p>
-
-          {/* CTA Buttons */}
-          <div
-            className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
-            style={lineIn(450)}
-          >
-            <MagneticLink
-              href={`/${locale}/start`}
-              onClick={() => trackMarketingEvent("hero_cta_click", { cta: "start", surface: "immersive-hero" })}
-              className="group inline-flex min-h-[54px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#22D3EE] to-[#0EA5E9] px-9 py-4 text-base font-bold text-[#09090B] shadow-[0_0_30px_rgba(34,211,238,0.4),0_0_60px_rgba(34,211,238,0.15)] transition-all duration-200 hover:scale-[1.04] hover:shadow-[0_0_50px_rgba(34,211,238,0.6),0_0_80px_rgba(34,211,238,0.2)]"
-            >
-              {copy.hero.ctaPrimary}
-              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-            </MagneticLink>
-            <Link
-              href={`/${locale}/ai`}
-              className="inline-flex min-h-[54px] items-center justify-center gap-2 rounded-full border border-[rgba(167,139,250,0.4)] bg-[rgba(167,139,250,0.08)] px-9 py-4 text-base font-semibold text-[#A78BFA] backdrop-blur-sm transition-all duration-200 hover:border-[rgba(167,139,250,0.6)] hover:bg-[rgba(167,139,250,0.14)] hover:shadow-[0_0_30px_rgba(167,139,250,0.2)]"
-            >
-              <Zap className="h-4 w-4" />
-              Try TJAI Free
-            </Link>
-          </div>
-
-          {/* Trust row */}
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-4 text-[11px] font-medium uppercase tracking-[0.15em] text-[#52525B]" style={lineIn(550)}>
-            {["GPT-4o Powered", "25 Questions", "12-Week Plans", "5 Languages"].map((t) => (
-              <span key={t} className="flex items-center gap-1.5">
-                <Star className="h-3 w-3 text-[#22D3EE]" strokeWidth={2} />
-                {t}
+          {/* LEFT — Text */}
+          <div className={direction === "rtl" ? "text-right" : "text-left"}>
+            {/* Eyebrow */}
+            <div style={lineIn(100)}>
+              <span className="inline-flex items-center gap-2 rounded-full border border-[rgba(34,211,238,0.3)] bg-[rgba(34,211,238,0.08)] px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#22D3EE]">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#22D3EE]" />
+                {liveStats.activeToday > 0 ? `${liveStats.activeToday} training now` : "AI-Powered Fitness"}
               </span>
-            ))}
+            </div>
+
+            {/* Headline with glitch-in */}
+            <h1
+              className="hero-headline mt-8 font-display text-[clamp(2.8rem,7vw,5.5rem)] font-extrabold leading-[0.88] tracking-[-0.04em]"
+              style={reduce ? lineIn(200) : {
+                ...lineIn(200),
+                animation: heroEntered ? "glitchIn 0.7s ease-out forwards" : "none"
+              }}
+            >
+              <span className="block text-white">Elevate Your</span>
+              <span
+                className="block bg-gradient-to-r from-[#22D3EE] via-[#67E8F9] to-[#A78BFA] bg-clip-text text-transparent"
+                style={{ filter: "drop-shadow(0 0 30px rgba(34,211,238,0.25))" }}
+              >
+                Performance.
+              </span>
+            </h1>
+
+            {/* Cyber line separator */}
+            <div
+              className="my-6 h-px bg-gradient-to-r from-[#22D3EE]/60 via-[#A78BFA]/40 to-transparent"
+              style={{
+                width: heroEntered ? "100%" : "0%",
+                opacity: heroEntered ? 1 : 0,
+                transition: reduce ? "none" : "width 600ms ease-out 800ms, opacity 600ms ease-out 800ms",
+                maxWidth: "320px"
+              }}
+              aria-hidden
+            />
+
+            {/* Subtitle */}
+            <p className="max-w-md text-lg leading-relaxed text-[#A1A1AA]" style={lineIn(350)}>
+              {copy.hero.sub}
+            </p>
+
+            {/* CTAs */}
+            <div className="mt-10 flex flex-wrap items-center gap-4" style={lineIn(450)}>
+              <MagneticLink
+                href={`/${locale}/start`}
+                onClick={() => trackMarketingEvent("hero_cta_click", { cta: "start", surface: "immersive-hero" })}
+                className="group inline-flex min-h-[54px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#22D3EE] to-[#0EA5E9] px-9 py-4 text-base font-bold text-[#09090B] shadow-[0_0_30px_rgba(34,211,238,0.4),0_0_60px_rgba(34,211,238,0.15)] transition-all duration-200 hover:scale-[1.04] hover:shadow-[0_0_50px_rgba(34,211,238,0.6)]"
+              >
+                {copy.hero.ctaPrimary}
+                <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+              </MagneticLink>
+              <Link
+                href={`/${locale}/ai`}
+                className="inline-flex min-h-[54px] items-center justify-center gap-2 rounded-full border border-[rgba(167,139,250,0.4)] bg-[rgba(167,139,250,0.08)] px-9 py-4 text-base font-semibold text-[#A78BFA] transition-all duration-200 hover:border-[rgba(167,139,250,0.6)] hover:bg-[rgba(167,139,250,0.14)] hover:shadow-[0_0_30px_rgba(167,139,250,0.2)]"
+              >
+                <Zap className="h-4 w-4" /> Try TJAI Free
+              </Link>
+            </div>
+
+            {/* Trust row */}
+            <div className="mt-10 flex flex-wrap items-center gap-4 text-[11px] font-medium uppercase tracking-[0.15em] text-[#52525B]" style={lineIn(550)}>
+              {["GPT-4o Powered", "25 Questions", "12-Week Plans", "5 Languages"].map((t) => (
+                <span key={t} className="flex items-center gap-1.5">
+                  <Star className="h-3 w-3 text-[#22D3EE]" strokeWidth={2} />{t}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* RIGHT — Luminous bicep curl figure */}
+          <div
+            className="relative flex items-center justify-center"
+            style={lineIn(300)}
+          >
+            {/* Ambient glow behind figure */}
+            <div
+              className="pointer-events-none absolute inset-0 rounded-full"
+              style={{ background: "radial-gradient(circle, rgba(34,211,238,0.12) 0%, transparent 70%)", opacity: 0.6 }}
+              aria-hidden
+            />
+            <Image
+              src="/assets/hero/hero-bicep-curl.png"
+              alt="TJFit AI Performance"
+              width={600}
+              height={600}
+              priority
+              className={cn(
+                "relative z-10 w-full max-w-[420px] lg:max-w-[500px]",
+                !reduce && "animate-materialise animate-float"
+              )}
+              style={{ filter: "drop-shadow(0 0 40px rgba(34,211,238,0.35))" }}
+            />
           </div>
         </div>
 
-        {/* Scroll indicator */}
-        <div
-          className={cn(
-            "absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5 transition-opacity duration-300",
-            hideScrollCue ? "opacity-0" : "opacity-50"
-          )}
-          aria-hidden
-        >
+        {/* Scroll cue */}
+        <div className={cn("absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5 transition-opacity duration-300", hideScrollCue ? "opacity-0" : "opacity-50")} aria-hidden>
           <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-600">Scroll</span>
           <ChevronDown className="h-5 w-5 text-zinc-600 motion-safe:animate-bounce" strokeWidth={1.5} />
         </div>
       </section>
 
-      {/* ═══════════════════════ TICKER ═══════════════════════ */}
+      {/* ══════════════ TICKER ══════════════ */}
       <div className="border-y border-[#1E2028] bg-[#09090B] py-4 overflow-hidden"
-        style={{ maskImage: "linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)" }}>
+        style={{ maskImage: "linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)", WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)" }}>
         <ScrollTicker items={["TRANSFORM", "12 WEEKS", "FAT LOSS", "MUSCLE GAIN", "HOME GYM", "AI COACH", "DIET PLAN", "MACROS", "TJAI", "RESULTS"]} speed={35} className="text-[#1E2028] text-[11px] font-bold tracking-[0.3em]" />
       </div>
 
-      {/* ═══════════════════════ FEATURES BENTO ═══════════════════════ */}
+      {/* ══════════════ FEATURES BENTO ══════════════ */}
       <section className="px-6 py-24 lg:px-12 lg:py-32">
         <div className="mx-auto max-w-6xl">
           <Reveal className="mb-16 text-center">
@@ -371,7 +434,6 @@ export function ImmersiveHome({
               <span className="bg-gradient-to-r from-[#22D3EE] to-[#A78BFA] bg-clip-text text-transparent">Complete Transformation.</span>
             </h2>
           </Reveal>
-
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {features.map((f, i) => (
               <Reveal key={f.title} delay={i * 80}>
@@ -382,9 +444,8 @@ export function ImmersiveHome({
         </div>
       </section>
 
-      {/* ═══════════════════════ STATS ═══════════════════════ */}
+      {/* ══════════════ STATS ══════════════ */}
       <section className="relative overflow-hidden border-y border-[#1E2028] bg-[#09090B] py-24">
-        {/* Background glow */}
         <div className="pointer-events-none absolute inset-0" aria-hidden>
           <div className="absolute left-1/4 top-1/2 h-[400px] w-[400px] -translate-y-1/2 rounded-full bg-[#22D3EE] opacity-[0.04] blur-[80px]" />
           <div className="absolute right-1/4 top-1/2 h-[400px] w-[400px] -translate-y-1/2 rounded-full bg-[#A78BFA] opacity-[0.04] blur-[80px]" />
@@ -397,56 +458,136 @@ export function ImmersiveHome({
         </div>
       </section>
 
-      {/* ═══════════════════════ PROGRAMS ═══════════════════════ */}
-      <section className="px-6 py-24 lg:px-12 lg:py-32">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <Reveal>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#22D3EE]">Programs</p>
-              <h2 className="mt-3 font-display text-4xl font-extrabold tracking-tight text-white lg:text-5xl">
-                {programCount}+ Complete<br />
-                <span className="text-[#22D3EE]">Programs.</span>
-              </h2>
-            </Reveal>
+      {/* ══════════════ PROGRAMS — Parallax BG ══════════════ */}
+      <div ref={programsSectionRef} className="relative overflow-hidden border-t border-[#1E2028]">
+        {/* Parallax background — Image 2 */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+          <Image
+            src="/assets/hero/hero-programs-bg.png"
+            alt=""
+            fill
+            className="object-cover object-center opacity-[0.10]"
+            style={{ transform: `translateY(${parallaxY}px)`, transition: "transform 0.1s linear" }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#09090B] via-transparent to-[#09090B]" />
+        </div>
+
+        <section className="relative px-6 py-24 lg:px-12 lg:py-32">
+          <div className="mx-auto max-w-6xl">
+            <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <Reveal>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#22D3EE]">Programs</p>
+                <h2 className="mt-3 font-display text-4xl font-extrabold tracking-tight text-white lg:text-5xl">
+                  {programCount}+ Complete<br /><span className="text-[#22D3EE]">Programs.</span>
+                </h2>
+              </Reveal>
+              <Reveal delay={100}>
+                <Link href={`/${locale}/programs`} className="inline-flex items-center gap-2 text-sm font-semibold text-[#22D3EE] transition-opacity hover:opacity-80">
+                  View all programs <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Reveal>
+            </div>
+            <div className="mb-6 overflow-hidden">
+              <ScrollTicker items={["FAT LOSS", "MUSCLE GAIN", "HOME TRAINING", "GYM", "12 WEEKS", "PROGRESSIVE", "COACH-BUILT"]} speed={40} className="opacity-30" />
+            </div>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {programSlice.map((p, i) => (
+                <Reveal key={p.slug} delay={i * 80}>
+                  <TiltCard disabled={isTouch || reduce}>
+                    <HomeProgramPreviewCard
+                      program={p}
+                      href={`/${locale}/programs/${p.slug}`}
+                      priceFormatted={formatMoney(locale, p.price)}
+                      fromLabel={copy.programs.from}
+                      reducedMotion={reduce}
+                      ctaLabel={p.is_free ? programUi.viewProgram : programUi.getFullAccess}
+                      onNavigate={() => trackMarketingEvent("program_view", { slug: p.slug, surface: "immersive-home" })}
+                    />
+                  </TiltCard>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* ══════════════ TJAI — KINETIC HEART CORE ══════════════ */}
+      <section className="relative overflow-hidden border-t border-[#1E2028] bg-[#0A0B0E] px-6 py-24 lg:px-12 lg:py-32">
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          <div className="absolute right-0 top-0 h-[600px] w-[600px] -translate-y-1/4 translate-x-1/4 rounded-full bg-[#22D3EE] opacity-[0.03] blur-[100px]" />
+        </div>
+        <div ref={tjaiRef} className="relative mx-auto max-w-6xl">
+          <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
+
+            {/* LEFT — Kinetic heart image (Image 3) */}
             <Reveal delay={100}>
-              <Link href={`/${locale}/programs`} className="inline-flex items-center gap-2 text-sm font-semibold text-[#22D3EE] transition-opacity hover:opacity-80">
-                View all programs <ArrowRight className="h-4 w-4" />
+              <div className="relative flex items-center justify-center">
+                {/* Rotating outer rings */}
+                <div className="pointer-events-none absolute h-[420px] w-[420px] rounded-full border border-cyan-400/10 opacity-60"
+                  style={{ animation: tjaiInView && !reduce ? "prismRotateCW 20s linear infinite" : "none" }} aria-hidden />
+                <div className="pointer-events-none absolute h-[320px] w-[320px] rounded-full border border-violet-400/10 opacity-40"
+                  style={{ animation: tjaiInView && !reduce ? "prismRotateCCW 14s linear infinite" : "none" }} aria-hidden />
+                {/* Core heart image */}
+                <Image
+                  src="/assets/hero/hero-tjai-core.png"
+                  alt="TJAI Intelligence Core"
+                  width={500}
+                  height={500}
+                  className={cn(
+                    "relative z-10 w-full max-w-[380px] lg:max-w-[420px]",
+                    !reduce && "animate-heartbeat"
+                  )}
+                  style={{ filter: "drop-shadow(0 0 30px rgba(34,211,238,0.4))" }}
+                />
+              </div>
+            </Reveal>
+
+            {/* RIGHT — Copy */}
+            <Reveal>
+              <span className="inline-flex items-center gap-2 rounded-full border border-[rgba(34,211,238,0.3)] bg-[rgba(34,211,238,0.06)] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#22D3EE]">
+                <Brain className="h-3.5 w-3.5" /> TJAI · AI Coaching Engine
+              </span>
+              <h2 className="mt-6 font-display text-4xl font-extrabold tracking-tight text-white lg:text-6xl">
+                Intelligence.<br />Kinetic.<br />
+                <span className="bg-gradient-to-r from-[#22D3EE] to-[#A78BFA] bg-clip-text text-transparent">Core.</span>
+              </h2>
+              <p className="mt-6 max-w-lg text-lg leading-relaxed text-[#A1A1AA]">
+                Answer 25 smart questions. TJAI analyzes your metabolism, lifestyle, injuries, goals — then generates a complete 12-week plan powered by GPT-4o.
+              </p>
+              <ul className="mt-8 space-y-3">
+                {[
+                  "Full 12-week training program — personalized to your level",
+                  "Daily meal plan with macros, recipes, and grocery list",
+                  "Supplement stack, calorie cycling, refeed & deload weeks"
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-3 text-sm text-[#A1A1AA]">
+                    <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[rgba(34,211,238,0.15)] text-[#22D3EE]">
+                      <svg className="h-2.5 w-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                    </span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href={`/${locale}/ai`}
+                className="mt-10 inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#22D3EE] to-[#0EA5E9] px-8 py-3 text-base font-bold text-[#09090B] shadow-[0_0_30px_rgba(34,211,238,0.35)] transition-all hover:scale-[1.03] hover:shadow-[0_0_50px_rgba(34,211,238,0.5)]"
+              >
+                <Zap className="h-4 w-4" /> Try TJAI — It&apos;s Free
               </Link>
             </Reveal>
-          </div>
-
-          <div className="mb-6 overflow-hidden">
-            <ScrollTicker items={["FAT LOSS", "MUSCLE GAIN", "HOME TRAINING", "GYM", "12 WEEKS", "PROGRESSIVE", "COACH-BUILT"]} speed={40} className="opacity-30" />
-          </div>
-
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {programSlice.map((p, i) => (
-              <Reveal key={p.slug} delay={i * 80}>
-                <HomeProgramPreviewCard
-                  program={p}
-                  href={`/${locale}/programs/${p.slug}`}
-                  priceFormatted={formatMoney(locale, p.price)}
-                  fromLabel={copy.programs.from}
-                  reducedMotion={reduce}
-                  ctaLabel={p.is_free ? programUi.viewProgram : programUi.getFullAccess}
-                  onNavigate={() => trackMarketingEvent("program_view", { slug: p.slug, surface: "immersive-home" })}
-                />
-              </Reveal>
-            ))}
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════════ DIETS ═══════════════════════ */}
+      {/* ══════════════ DIETS ══════════════ */}
       {dietSlice.length > 0 && (
-        <section className="border-t border-[#1E2028] bg-[#0A0B0E] px-6 py-24 lg:px-12 lg:py-32">
+        <section className="border-t border-[#1E2028] bg-[#09090B] px-6 py-24 lg:px-12 lg:py-32">
           <div className="mx-auto max-w-6xl">
             <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <Reveal>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#A78BFA]">Nutrition</p>
                 <h2 className="mt-3 font-display text-4xl font-extrabold tracking-tight text-white lg:text-5xl">
-                  {dietCount}+ Diet<br />
-                  <span className="text-[#A78BFA]">Systems.</span>
+                  {dietCount}+ Diet<br /><span className="text-[#A78BFA]">Systems.</span>
                 </h2>
               </Reveal>
               <Reveal delay={100}>
@@ -474,116 +615,57 @@ export function ImmersiveHome({
         </section>
       )}
 
-      {/* ═══════════════════════ TJAI FEATURE ═══════════════════════ */}
-      <section className="relative overflow-hidden border-t border-[#1E2028] px-6 py-24 lg:px-12 lg:py-32">
-        <div className="pointer-events-none absolute inset-0" aria-hidden>
-          <div className="absolute right-0 top-0 h-[600px] w-[600px] -translate-y-1/4 translate-x-1/4 rounded-full bg-[#22D3EE] opacity-[0.035] blur-[100px]" />
-        </div>
-        <div className="relative mx-auto max-w-6xl">
-          <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
-            <Reveal>
-              <span className="inline-flex items-center gap-2 rounded-full border border-[rgba(34,211,238,0.3)] bg-[rgba(34,211,238,0.06)] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#22D3EE]">
-                <Brain className="h-3.5 w-3.5" /> Powered by GPT-4o
-              </span>
-              <h2 className="mt-6 font-display text-4xl font-extrabold tracking-tight text-white lg:text-6xl">
-                Meet TJAI —<br />
-                <span className="bg-gradient-to-r from-[#22D3EE] to-[#A78BFA] bg-clip-text text-transparent">Your AI Coach.</span>
-              </h2>
-              <p className="mt-6 max-w-lg text-lg leading-relaxed text-[#A1A1AA]">
-                Answer 25 smart questions. TJAI analyzes your metabolism, lifestyle, injuries, goals, and psychology — then generates a complete 12-week plan in minutes.
-              </p>
-              <ul className="mt-8 space-y-3">
-                {[
-                  "Full 12-week training program — personalized to your level",
-                  "Daily meal plan with macros, recipes, and grocery list",
-                  "Supplement stack recommendation by tier",
-                  "Injury-safe exercise substitutions",
-                  "Calorie cycling, refeed weeks, deload weeks"
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-sm text-[#A1A1AA]">
-                    <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[rgba(34,211,238,0.15)] text-[#22D3EE]">
-                      <svg className="h-2.5 w-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
-                    </span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href={`/${locale}/ai`}
-                className="mt-10 inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#22D3EE] to-[#0EA5E9] px-8 py-3 text-base font-bold text-[#09090B] shadow-[0_0_30px_rgba(34,211,238,0.35)] transition-all hover:scale-[1.03] hover:shadow-[0_0_50px_rgba(34,211,238,0.5)]"
-              >
-                <Zap className="h-4 w-4" /> Try TJAI — It&apos;s Free
-              </Link>
-            </Reveal>
-
-            {/* AI terminal mockup */}
-            <Reveal delay={150}>
-              <div className="relative rounded-2xl border border-[rgba(34,211,238,0.2)] bg-[#0D0F12] p-1 shadow-[0_0_80px_rgba(34,211,238,0.08)]">
-                {/* Terminal header */}
-                <div className="flex items-center gap-2 rounded-t-xl border-b border-[#1E2028] bg-[#111215] px-4 py-3">
-                  <span className="h-3 w-3 rounded-full bg-red-500/70" />
-                  <span className="h-3 w-3 rounded-full bg-yellow-500/70" />
-                  <span className="h-3 w-3 rounded-full bg-green-500/70" />
-                  <span className="ml-4 text-xs text-[#52525B]">TJAI — Plan Generator</span>
-                </div>
-                {/* Terminal body */}
-                <div className="space-y-4 p-6 font-mono text-sm">
-                  {[
-                    { role: "sys", text: "Analyzing your 25 answers..." },
-                    { role: "sys", text: "BMR: 1,842 kcal | TDEE: 2,574 kcal" },
-                    { role: "sys", text: "Goal: Fat Loss | Pace: Moderate" },
-                    { role: "ai", text: "Generating your 12-week transformation plan..." },
-                    { role: "result", text: "✓ Training program: 4-day Upper/Lower split" },
-                    { role: "result", text: "✓ Daily calories: 2,074 kcal | Protein: 188g" },
-                    { role: "result", text: "✓ 84 personalized meals created" },
-                    { role: "result", text: "✓ Supplement stack: 3 tiers" }
-                  ].map((line, i) => (
-                    <div
-                      key={i}
-                      className={cn(
-                        "flex gap-3",
-                        line.role === "sys" && "text-[#52525B]",
-                        line.role === "ai" && "text-[#22D3EE]",
-                        line.role === "result" && "text-[#22C55E]"
-                      )}
-                      style={{ animationDelay: `${i * 300}ms` }}
-                    >
-                      <span className="shrink-0 text-[#1E2028]">
-                        {line.role === "ai" ? "→" : line.role === "result" ? " " : "$"}
-                      </span>
-                      <span>{line.text}</span>
-                    </div>
-                  ))}
-                  <div className="flex items-center gap-2 text-[#22D3EE]">
-                    <span>→</span>
-                    <span className="animate-pulse">Plan ready. Opening results...</span>
-                    <span className="animate-pulse">▋</span>
-                  </div>
-                </div>
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════ TESTIMONIALS ═══════════════════════ */}
+      {/* ══════════════ TESTIMONIALS ══════════════ */}
       <HomeTestimonials locale={locale} />
 
-      {/* ═══════════════════════ COACH CTA ═══════════════════════ */}
+      {/* ══════════════ COACH CTA ══════════════ */}
       <HomeCoachCta locale={locale} />
 
-      {/* ═══════════════════════ NEWSLETTER ═══════════════════════ */}
+      {/* ══════════════ NEWSLETTER ══════════════ */}
       <HomeNewsletterBar locale={locale} />
 
-      {/* ═══════════════════════ FINAL CTA ═══════════════════════ */}
-      <section className="relative overflow-hidden border-t border-[#1E2028] px-6 py-32 text-center lg:px-12 lg:py-40">
-        <div className="pointer-events-none absolute inset-0" aria-hidden>
-          <div className="absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#22D3EE] opacity-[0.04] blur-[100px]" />
-          <div className="absolute left-1/2 top-1/2 h-[400px] w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#A78BFA] opacity-[0.03] blur-[80px]" />
+      {/* ══════════════ FINAL CTA — NEXUS BG ══════════════ */}
+      <section
+        ref={nexusRef}
+        className="relative overflow-hidden border-t border-[#1E2028] px-6 py-32 text-center lg:px-12 lg:py-40"
+      >
+        {/* Nexus background image (Image 4) */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+          <Image
+            src="/assets/hero/hero-nexus.png"
+            alt=""
+            fill
+            className="object-cover object-center opacity-[0.10]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#09090B] via-[#09090B]/60 to-[#09090B]" />
         </div>
+
+        {/* SVG Node network particles */}
+        {nexusInView && (
+          <svg className="pointer-events-none absolute inset-0 h-full w-full opacity-20" aria-hidden preserveAspectRatio="xMidYMid slice" viewBox="0 0 1200 600">
+            {[
+              "M 600 550 L 600 300 L 300 100",
+              "M 600 300 L 900 100",
+              "M 600 300 L 200 200",
+              "M 600 300 L 1000 200",
+              "M 600 550 L 400 480",
+              "M 600 550 L 800 480",
+            ].map((d, i) => (
+              <path key={i} d={d} fill="none" stroke="#22D3EE" strokeWidth="1.5" strokeLinecap="round"
+                strokeDasharray="1000" strokeDashoffset="1000"
+                style={{ animation: `nodeTravel ${3 + i * 0.7}s ease-in-out ${i * 0.5}s infinite` }} />
+            ))}
+            {[[600,550],[600,300],[300,100],[900,100],[200,200],[1000,200],[400,480],[800,480]].map(([cx,cy], i) => (
+              <circle key={i} cx={cx} cy={cy} r="4" fill="#22D3EE" opacity="0.6"
+                style={{ animation: `neuralPulse ${2 + i * 0.3}s ease-in-out ${i * 0.2}s infinite` }} />
+            ))}
+          </svg>
+        )}
+
+        {/* CTA content */}
         <div className="relative mx-auto max-w-3xl">
           <Reveal>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#22D3EE]">Start Today</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#22D3EE]">Join the Nexus</p>
             <h2 className="mt-5 font-display text-5xl font-extrabold tracking-tight text-white lg:text-7xl">
               Ready to<br />
               <span className="bg-gradient-to-r from-[#22D3EE] via-[#67E8F9] to-[#A78BFA] bg-clip-text text-transparent"

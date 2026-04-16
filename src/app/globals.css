@@ -1995,3 +1995,99 @@ textarea:focus-visible {
   60% { opacity: 0.05; }
   100% { r: 280; opacity: 0; }
 }
+
+/* -- Redesign animations ------------------------------- */
+
+@keyframes scanline {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+@keyframes neuralPulse {
+  0%, 100% { opacity: 0.4; filter: brightness(1); }
+  50%       { opacity: 1;   filter: brightness(1.6) drop-shadow(0 0 12px rgba(34,211,238,0.8)); }
+}
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-14px); }
+}
+
+@keyframes floatYSlow {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+@keyframes prismRotateCW {
+  from { transform: rotateY(0deg) rotateZ(0deg); }
+  to   { transform: rotateY(360deg) rotateZ(15deg); }
+}
+
+@keyframes prismRotateCCW {
+  from { transform: rotateY(360deg) rotateZ(-15deg); }
+  to   { transform: rotateY(0deg) rotateZ(0deg); }
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(34,211,238,0.5)); }
+  15%       { transform: scale(1.08); filter: drop-shadow(0 0 40px rgba(34,211,238,0.9)); }
+  30%       { transform: scale(0.97); }
+  45%       { transform: scale(1.04); filter: drop-shadow(0 0 30px rgba(34,211,238,0.7)); }
+}
+
+@keyframes heartbeatFast {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(34,211,238,0.5)); }
+  10%       { transform: scale(1.12); filter: drop-shadow(0 0 50px rgba(34,211,238,1)); }
+  20%       { transform: scale(0.95); }
+  30%       { transform: scale(1.06); filter: drop-shadow(0 0 38px rgba(34,211,238,0.85)); }
+}
+
+@keyframes nodeTravel {
+  0%   { stroke-dashoffset: 1000; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+
+@keyframes materialise {
+  0%   { opacity: 0; clip-path: inset(100% 0 0 0); filter: brightness(2); }
+  60%  { filter: brightness(1.3); }
+  100% { opacity: 1; clip-path: inset(0% 0 0 0); filter: brightness(1); }
+}
+
+@keyframes glitchIn {
+  0%   { opacity: 0; transform: translateX(-4px) skewX(-2deg); }
+  20%  { opacity: 1; transform: translateX(3px) skewX(1deg); }
+  40%  { transform: translateX(-2px); }
+  60%  { transform: translateX(1px); }
+  80%  { transform: translateX(-1px); }
+  100% { opacity: 1; transform: translateX(0) skewX(0); }
+}
+
+@keyframes cyberLineExpand {
+  from { width: 0; opacity: 0; }
+  to   { width: 100%; opacity: 1; }
+}
+
+@keyframes logoReveal {
+  0%   { opacity: 0; transform: scale(0.85) translateY(8px); filter: blur(8px) brightness(2); }
+  60%  { filter: blur(0px) brightness(1.5); }
+  100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0px) brightness(1); }
+}
+
+.animate-scanline       { animation: scanline 1.8s ease-in-out forwards; }
+.animate-neural-pulse   { animation: neuralPulse 3s ease-in-out infinite; }
+.animate-float          { animation: floatY 6s ease-in-out infinite; }
+.animate-float-slow     { animation: floatYSlow 9s ease-in-out infinite; }
+.animate-heartbeat      { animation: heartbeat 2.4s ease-in-out infinite; }
+.animate-heartbeat-fast { animation: heartbeatFast 1.2s ease-in-out infinite; }
+.animate-materialise    { animation: materialise 1.4s cubic-bezier(0.16,1,0.3,1) forwards; }
+.animate-glitch-in      { animation: glitchIn 0.7s ease-out forwards; }
+.animate-logo-reveal    { animation: logoReveal 1.1s cubic-bezier(0.16,1,0.3,1) forwards; }
+
+@keyframes logoGlowFade {
+  0%   { opacity: 0.6; transform: scale(1.1); }
+  100% { opacity: 0; transform: scale(1.25); }
+}
