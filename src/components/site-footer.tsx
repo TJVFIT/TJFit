@@ -33,7 +33,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
   ];
 
   return (
-    <footer className="border-t border-[#1E2028] bg-[#09090B]">
+    <footer className="border-t border-[#1E2028] bg-[#0A0A0B]">
       <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-10 px-6 py-16 text-sm lg:grid-cols-4 lg:gap-12 lg:px-8">
         <div className="text-center lg:text-start">
           <div className="inline-flex justify-center py-1 lg:justify-start">

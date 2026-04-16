@@ -556,7 +556,7 @@ export function SiteNav({ locale }: { locale: Locale }) {
   return (
     <>
       <div className="mx-auto flex min-h-[3.75rem] max-w-[1280px] min-w-0 flex-nowrap items-center gap-2 px-4 py-2 sm:min-h-16 sm:gap-3 sm:px-6 lg:gap-4 lg:px-8">
-        <div className="flex shrink-0 items-center">
+        <div className="flex shrink-0 items-center pe-1">
           <Logo variant="full" size="navFull" href={`/${locale}`} priority glow blendWithBackground />
         </div>
 

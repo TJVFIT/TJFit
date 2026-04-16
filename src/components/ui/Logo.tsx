@@ -22,15 +22,16 @@ export type LogoSize =
   | "card"
   | "mini";
 
+/** One scale: lockups stay sharp; touch targets stay on the Link, not by stretching art */
 const HEIGHT_PX: Record<LogoSize, number> = {
-  navbar: 36,
-  navFull: 46,
-  sidebar: 36,
-  mobile: 28,
-  hero: 64,
-  footer: 56,
-  auth: 48,
-  card: 24,
+  navbar: 34,
+  navFull: 42,
+  sidebar: 32,
+  mobile: 26,
+  hero: 58,
+  footer: 48,
+  auth: 46,
+  card: 22,
   mini: 18
 };
 
@@ -73,20 +74,23 @@ export function Logo({
     return () => clearTimeout(t);
   }, [animated]);
 
-  const baseGlow = glow || true;
-  const glowIntensity = size === "hero" || size === "auth" ? "0 0 20px rgba(34,211,238,0.55)" : "0 0 10px rgba(34,211,238,0.4)";
+  const glowIntensity =
+    size === "hero" || size === "auth"
+      ? "0 0 20px rgba(34,211,238,0.5)"
+      : size === "navFull" || size === "footer"
+        ? "0 0 14px rgba(34,211,238,0.32)"
+        : "0 0 10px rgba(34,211,238,0.28)";
 
-  const filterStyle =
-    blendWithBackground
-      ? [
-          "drop-shadow(0 0 14px rgba(34,211,238,0.42))",
-          "drop-shadow(0 0 28px rgba(34,211,238,0.12))",
-          "contrast(1.08)",
-          "saturate(1.06)"
-        ].join(" ")
-      : baseGlow
-        ? `drop-shadow(${glowIntensity})`
-        : undefined;
+  const filterStyle = blendWithBackground
+    ? [
+        "drop-shadow(0 0 14px rgba(34,211,238,0.42))",
+        "drop-shadow(0 0 28px rgba(34,211,238,0.12))",
+        "contrast(1.08)",
+        "saturate(1.06)",
+      ].join(" ")
+    : glow
+      ? `drop-shadow(${glowIntensity})`
+      : undefined;
 
   /* Native <img>: avoids Next/Image edge cases with blended PNGs + guarantees ?v= cache bust applies */
   const imgStyle: CSSProperties = {
@@ -134,8 +138,8 @@ export function Logo({
       onClick={onNavigate}
       aria-label={alt}
       className={cn(
-        "inline-flex cursor-pointer items-center justify-center",
-        "transition-opacity duration-150 ease-out hover:opacity-80",
+        "inline-flex cursor-pointer items-center justify-center rounded-lg px-1.5 py-1",
+        "transition-opacity duration-200 ease-out hover:opacity-90",
         !suppressMinTouchTarget && "min-h-[44px] min-w-[44px]"
       )}
     >

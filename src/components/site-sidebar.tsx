@@ -811,11 +811,11 @@ function MobileNav({
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden pt-[max(2rem,env(safe-area-inset-top))]">
             <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-y-contain px-6 pb-4">
               <div className="mx-auto flex w-full max-w-sm flex-col items-center">
-                <Logo variant="full" size="hero" href={`/${locale}`} onNavigate={() => setOpen(false)} blendWithBackground />
+                <Logo variant="full" size="navFull" href={`/${locale}`} onNavigate={() => setOpen(false)} glow blendWithBackground />
                 <Link
                   href={primaryCtaHref}
                   onClick={() => setOpen(false)}
-                  className="mt-6 inline-flex min-h-[48px] w-full items-center justify-center rounded-full bg-[#22D3EE] px-5 py-2 text-sm font-bold text-[#09090B]"
+                  className="mt-6 inline-flex min-h-[48px] w-full items-center justify-center rounded-full bg-[#22D3EE] px-5 py-2 text-sm font-bold text-[#0A0A0B]"
                 >
                   {primaryCtaLabel}
                 </Link>
