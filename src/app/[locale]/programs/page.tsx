@@ -481,17 +481,41 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
                   {locale === "tr" ? "ÖZEL TEKLİF" : locale === "ar" ? "عرض خاص" : locale === "es" ? "OFERTA ESPECIAL" : locale === "fr" ? "OFFRE SPÉCIALE" : "BUNDLE DEAL"}
                 </p>
                 <h3 className="mt-2 text-xl font-bold text-white">
-                  {locale === "tr" ? "Tüm planını TJAI ile ücretsiz al" : locale === "ar" ? "احصل على خطتك الكاملة مجاناً مع TJAI" : locale === "es" ? "Obtén tu plan completo gratis con TJAI" : locale === "fr" ? "Obtenez votre plan complet gratuitement avec TJAI" : "Get a full 12-week plan built around YOU — free with TJAI"}
+                  {locale === "tr"
+                    ? "TJAI ile sana özel 12 haftalık plan — önizleme ücretsiz, tam plan ücretli"
+                    : locale === "ar"
+                      ? "خطة 12 أسبوعاً مبنية لك مع TJAI — معاينة مجانية، الخطة الكاملة مدفوعة"
+                      : locale === "es"
+                        ? "Plan 12 semanas hecho para ti con TJAI — vista previa gratis, plan completo de pago"
+                        : locale === "fr"
+                          ? "Plan 12 semaines sur mesure avec TJAI — aperçu gratuit, plan complet payant"
+                          : "A 12-week plan built around you with TJAI — free preview, full plan paid"}
                 </h3>
                 <p className="mt-1 text-sm text-zinc-400">
-                  {locale === "tr" ? "25 soruyu cevapla, TJAI senin için özel plan oluştursun." : locale === "ar" ? "أجب عن 25 سؤالاً وسيبني TJAI خطة مخصصة لك." : locale === "es" ? "Responde 25 preguntas y TJAI crea tu plan personalizado." : locale === "fr" ? "Répondez à 25 questions et TJAI crée votre plan personnalisé." : "Answer 25 questions. TJAI builds a personalized training + nutrition plan in minutes."}
+                  {locale === "tr"
+                    ? "25 soruyu cevapla, önizleme ve metrikleri gör. Tam kişisel antrenman + beslenme planını ücret karşılığı aç."
+                    : locale === "ar"
+                      ? "أجب عن 25 سؤالاً لمعاينة ملخصك. الدفع يفتح خطتك الكاملة للتدريب والتغذية."
+                      : locale === "es"
+                        ? "Responde 25 preguntas para tu vista previa. Paga para generar tu plan completo de entreno + nutrición."
+                        : locale === "fr"
+                          ? "Répondez aux 25 questions pour l’aperçu. Payez pour générer votre plan complet entraînement + nutrition."
+                          : "Answer 25 questions for your preview. Pay to unlock your full personalized training + nutrition plan."}
                 </p>
               </div>
               <Link
                 href={`/${locale}/ai`}
                 className="shrink-0 rounded-full bg-[#22D3EE] px-6 py-3 text-sm font-bold text-[#09090B] transition hover:scale-105 hover:bg-white"
               >
-                {locale === "tr" ? "TJAI'yı Dene →" : locale === "ar" ? "جرّب TJAI ←" : locale === "es" ? "Probar TJAI →" : locale === "fr" ? "Essayer TJAI →" : "Try TJAI Free →"}
+                {locale === "tr"
+                  ? "TJAI Önizlemesi →"
+                  : locale === "ar"
+                    ? "معاينة TJAI ←"
+                    : locale === "es"
+                      ? "Vista previa TJAI →"
+                      : locale === "fr"
+                        ? "Aperçu TJAI →"
+                        : "Start TJAI Preview →"}
               </Link>
             </div>
           </div>

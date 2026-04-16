@@ -45,11 +45,11 @@ const SEQUENCES: Record<Locale, Message[]> = {
 };
 
 const COPY: Record<Locale, { badge: string; title: string; sub: string; cta: string }> = {
-  en: { badge: "TJAI — YOUR AI COACH", title: "Real answers. In seconds.", sub: "Ask anything about your plan, nutrition, or training. TJAI knows your data.", cta: "Try TJAI Free →" },
-  tr: { badge: "TJAI — YAPAY ZEKA KOÇUN", title: "Gerçek cevaplar. Saniyeler içinde.", sub: "Plan, beslenme veya antrenman hakkında her şeyi sor.", cta: "TJAI'yı Dene →" },
-  ar: { badge: "TJAI — مدربك الذكي", title: "إجابات حقيقية. في ثوانٍ.", sub: "اسأل عن أي شيء في خطتك وتغذيتك وتدريبك.", cta: "جرّب TJAI مجاناً →" },
-  es: { badge: "TJAI — TU COACH IA", title: "Respuestas reales. En segundos.", sub: "Pregunta cualquier cosa sobre tu plan, nutrición o entrenamiento.", cta: "Prueba TJAI Gratis →" },
-  fr: { badge: "TJAI — VOTRE COACH IA", title: "Des réponses réelles. En secondes.", sub: "Demandez n'importe quoi sur votre plan, nutrition ou entraînement.", cta: "Essayez TJAI →" },
+  en: { badge: "TJAI — YOUR AI COACH", title: "Real answers. In seconds.", sub: "Ask anything about your plan, nutrition, or training. TJAI knows your data.", cta: "Preview TJAI →" },
+  tr: { badge: "TJAI — YAPAY ZEKA KOÇUN", title: "Gerçek cevaplar. Saniyeler içinde.", sub: "Plan, beslenme veya antrenman hakkında her şeyi sor.", cta: "TJAI Önizleme →" },
+  ar: { badge: "TJAI — مدربك الذكي", title: "إجابات حقيقية. في ثوانٍ.", sub: "اسأل عن أي شيء في خطتك وتغذيتك وتدريبك.", cta: "معاينة TJAI →" },
+  es: { badge: "TJAI — TU COACH IA", title: "Respuestas reales. En segundos.", sub: "Pregunta cualquier cosa sobre tu plan, nutrición o entrenamiento.", cta: "Vista previa TJAI →" },
+  fr: { badge: "TJAI — VOTRE COACH IA", title: "Des réponses réelles. En secondes.", sub: "Demandez n'importe quoi sur votre plan, nutrition ou entraînement.", cta: "Aperçu TJAI →" },
 };
 
 function useTypewriter(text: string, speed = 28) {

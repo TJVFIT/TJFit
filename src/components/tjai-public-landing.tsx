@@ -23,9 +23,9 @@ const COPY: Record<
 > = {
   en: {
     heroTitle: "Meet TJAI.",
-    heroSub: "The AI that builds your complete fitness transformation plan in minutes.",
-    heroCta: "Try TJAI Free",
-    noCard: "No credit card for the free trial.",
+    heroSub: "Answer the quiz for a free preview. Pay to generate your full 12-week transformation plan.",
+    heroCta: "Start TJAI Preview",
+    noCard: "Quiz preview is free. Full plan generation is paid at checkout.",
     doesTitle: "What TJAI does",
     previewTitle: "See what a TJAI plan looks like",
     pricingTitle: "Choose your level",
@@ -35,9 +35,9 @@ const COPY: Record<
   },
   tr: {
     heroTitle: "TJAI ile tanis.",
-    heroSub: "Dakikalar icinde tam donusum plani olusturan yapay zeka.",
-    heroCta: "TJAI'yi Ucretsiz Dene",
-    noCard: "Ucretsiz deneme icin kart gerekmez.",
+    heroSub: "Ucretsiz on izleme icin quizi cevapla. Tam 12 haftalik plan icin odeme yap.",
+    heroCta: "TJAI On Izlemesi",
+    noCard: "On izleme ucretsiz. Tam plan uretimi odemeli.",
     doesTitle: "TJAI ne yapar",
     previewTitle: "TJAI plani nasil gorunuyor",
     pricingTitle: "Seviyeni sec",
@@ -47,9 +47,9 @@ const COPY: Record<
   },
   ar: {
     heroTitle: "تعرّف على TJAI.",
-    heroSub: "الذكاء الاصطناعي الذي يبني خطة التحول الكاملة خلال دقائق.",
-    heroCta: "جرّب TJAI مجاناً",
-    noCard: "بدون بطاقة بنكية للتجربة المجانية.",
+    heroSub: "أجب عن الأسئلة لمعاينة مجانية. ادفع لفتح خطتك الكاملة لمدة 12 أسبوعاً.",
+    heroCta: "معاينة TJAI",
+    noCard: "المعاينة مجانية. الخطة الكاملة مدفوعة عند الدفع.",
     doesTitle: "ماذا يفعل TJAI",
     previewTitle: "شاهد شكل خطة TJAI",
     pricingTitle: "اختر مستواك",
@@ -59,9 +59,9 @@ const COPY: Record<
   },
   es: {
     heroTitle: "Conoce TJAI.",
-    heroSub: "La IA que construye tu plan completo de transformacion en minutos.",
-    heroCta: "Probar TJAI Gratis",
-    noCard: "Sin tarjeta para la prueba gratis.",
+    heroSub: "Responde el cuestionario para una vista previa gratis. Paga para generar tu plan completo de 12 semanas.",
+    heroCta: "Vista previa TJAI",
+    noCard: "La vista previa del quiz es gratis. El plan completo se paga al finalizar la compra.",
     doesTitle: "Que hace TJAI",
     previewTitle: "Asi se ve un plan de TJAI",
     pricingTitle: "Elige tu nivel",
@@ -71,9 +71,9 @@ const COPY: Record<
   },
   fr: {
     heroTitle: "Decouvrez TJAI.",
-    heroSub: "L'IA qui construit votre plan complet de transformation en quelques minutes.",
-    heroCta: "Essayer TJAI Gratuitement",
-    noCard: "Aucune carte pour l'essai gratuit.",
+    heroSub: "Repondez au questionnaire pour un aperçu gratuit. Payez pour generer votre plan complet sur 12 semaines.",
+    heroCta: "Apercu TJAI",
+    noCard: "L'apercu du quiz est gratuit. Le plan complet est payant au paiement.",
     doesTitle: "Ce que fait TJAI",
     previewTitle: "A quoi ressemble un plan TJAI",
     pricingTitle: "Choisissez votre niveau",
@@ -178,7 +178,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
           </div>
         ) : null}
         <Link href={`/${locale}/ai`} className="mt-4 inline-flex text-sm font-semibold text-cyan-300">
-          Get your complete plan →
+          Unlock full plan at checkout →
         </Link>
       </section>
 

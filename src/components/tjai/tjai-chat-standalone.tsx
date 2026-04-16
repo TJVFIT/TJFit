@@ -43,7 +43,7 @@ const COPY = {
     coreRemaining: "messages remaining",
     proLocked: "Chat is Apex-only",
     apexUnlimited: "Unlimited chat",
-    trialUsed: "You&apos;ve used your free TJAI trial",
+    trialUsed: "You&apos;ve reached your TJAI chat preview limit",
     trialSub: "Upgrade to Apex for unlimited coaching conversations.",
     upgrade: "Upgrade to Apex",
     close: "Close"
@@ -69,7 +69,7 @@ const COPY = {
     coreRemaining: "رسائل متبقية",
     proLocked: "الدردشة متاحة فقط في Apex",
     apexUnlimited: "دردشة غير محدودة",
-    trialUsed: "لقد استخدمت التجربة المجانية لـ TJAI",
+    trialUsed: "لقد وصلت إلى حد معاينة دردشة TJAI",
     trialSub: "قم بالترقية إلى Apex لمحادثات تدريب غير محدودة.",
     upgrade: "الترقية إلى Apex",
     close: "إغلاق"

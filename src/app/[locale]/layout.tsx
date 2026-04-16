@@ -28,11 +28,11 @@ export function generateMetadata({
     fr: "TJFit — Programmes Fitness IA et Coaching | Transformez Votre Corps"
   };
   const descriptions: Record<Locale, string> = {
-    en: "Build your dream body with AI-powered 12-week fitness programs, certified coaches, and TJAI — your personal AI coach. Free programs available. Works in 5 languages.",
-    tr: "Yapay zeka destekli 12 haftalık fitness programları, sertifikalı koçlar ve TJAI ile hayalinizdeki vücuda kavuşun. Ücretsiz başlayın.",
-    ar: "ابنِ جسمك المثالي مع برامج لياقة مدعومة بالذكاء الاصطناعي، ومدربين معتمدين، وـTJAI — مدربك الشخصي. ابدأ مجاناً.",
-    es: "Transforma tu cuerpo con programas fitness con IA, coaches certificados y TJAI. Empieza gratis.",
-    fr: "Transformez votre corps avec des programmes fitness IA, des coachs certifies et TJAI. Commencez gratuitement."
+    en: "12-week fitness programs, certified coaches, and TJAI — quiz preview is free; pay to unlock your full AI plan. Free starter programs. 5 languages.",
+    tr: "12 haftalık programlar, sertifikalı koçlar ve TJAI — quiz ön izlemesi ücretsiz; tam plan ücretli. Ücretsiz başlangıç programları. 5 dil.",
+    ar: "برامج لياقة لمدة 12 أسبوعاً، ومدربون معتمدون، وـTJAI — معاينة الاختبار مجانية؛ ادفع لخطتك الكاملة. برامج بداية مجانية. 5 لغات.",
+    es: "Programas de 12 semanas, coaches certificados y TJAI — vista previa del cuestionario gratis; paga por el plan completo. Programas iniciales gratis. 5 idiomas.",
+    fr: "Programmes 12 semaines, coachs certifies et TJAI — aperçu du questionnaire gratuit ; plan complet payant. Programmes de demarrage gratuits. 5 langues."
   };
   const ogImage = locale === "ar" ? "/og-image-ar.jpg" : "/og-image.jpg";
   const ogLocale =

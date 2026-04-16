@@ -415,7 +415,7 @@ export function ImmersiveHome({
                 href={`/${locale}/ai`}
                 className="inline-flex min-h-[54px] items-center justify-center gap-2 rounded-full border border-[rgba(167,139,250,0.4)] bg-[rgba(167,139,250,0.08)] px-9 py-4 text-base font-semibold text-[#A78BFA] transition-all duration-200 hover:border-[rgba(167,139,250,0.6)] hover:bg-[rgba(167,139,250,0.14)] hover:shadow-[0_0_30px_rgba(167,139,250,0.2)]"
               >
-                <Zap className="h-4 w-4" /> Try TJAI Free
+                <Zap className="h-4 w-4" /> Preview TJAI
               </Link>
             </div>
 
@@ -649,7 +649,7 @@ export function ImmersiveHome({
               href={`/${locale}/ai`}
               className="mt-10 inline-flex min-h-[54px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#22D3EE] to-[#0EA5E9] px-9 py-3 text-base font-bold text-[#09090B] shadow-[0_0_30px_rgba(34,211,238,0.4),0_0_60px_rgba(34,211,238,0.15)] transition-all hover:scale-[1.04] hover:shadow-[0_0_50px_rgba(34,211,238,0.6)]"
             >
-              <Zap className="h-4 w-4" /> Try TJAI — It&apos;s Free
+              <Zap className="h-4 w-4" /> TJAI — Free quiz, paid plan
             </Link>
           </Reveal>
         </div>
