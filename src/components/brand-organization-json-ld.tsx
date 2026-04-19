@@ -14,14 +14,14 @@ function safeOrigin(): string {
 /** Organization + logo for Google rich results (best-effort; requires indexing). */
 export function BrandOrganizationJsonLd() {
   const origin = safeOrigin();
-  const logoSvg = `${origin}${BRAND.logoFull}`;
+  const logoUrl = `${origin}${BRAND.logoFull}`;
   const ogImage = `${origin}${BRAND.ogDefault}`;
   const payload = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "TJFit",
     url: origin,
-    logo: logoSvg,
+    logo: logoUrl,
     image: ogImage,
     sameAs: [] as string[],
     description: "Premium fitness transformation platform."

@@ -19,9 +19,9 @@ export default function PressPage({ params }: { params: { locale: string } }) {
         <h2 className="text-xl font-bold text-white">Official TJFit Assets</h2>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           {[
-            ["TJFit Logo (PNG, dark)", "/logo/tjfit-brand.png"],
-            ["TJFit Logo (SVG)", "/logo/tjfit-logo.svg"],
-            ["TJFit Icon", "/logo/tj-icon.svg"],
+            ["TJFit Logo (PNG)", "/brand/logo-main.png"],
+            ["TJFit Logo Source", "/brand/logo-source.png"],
+            ["TJFit Mark (PNG)", "/brand/logo-mark.png"],
             ["OG Image", "/og-image.jpg"]
           ].map(([label, href]) => (
             <a

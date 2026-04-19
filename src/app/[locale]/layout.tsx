@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { LocaleDocument } from "@/components/locale-document";
 import { SiteShell } from "@/components/site-shell";
+import { BRAND } from "@/lib/brand-assets";
 import { Locale, getDirection, isLocale, locales } from "@/lib/i18n";
 
 export function generateStaticParams() {
@@ -34,7 +35,6 @@ export function generateMetadata({
     es: "Programas de 12 semanas, coaches certificados y TJAI — vista previa del cuestionario gratis; paga por el plan completo. Programas iniciales gratis. 5 idiomas.",
     fr: "Programmes 12 semaines, coachs certifies et TJAI — aperçu du questionnaire gratuit ; plan complet payant. Programmes de demarrage gratuits. 5 langues."
   };
-  const ogImage = locale === "ar" ? "/og-image-ar.jpg" : "/og-image.jpg";
   const ogLocale =
     locale === "tr" ? "tr_TR" : locale === "ar" ? "ar_SA" : locale === "es" ? "es_ES" : locale === "fr" ? "fr_FR" : "en_US";
 
@@ -49,7 +49,7 @@ export function generateMetadata({
       locale: ogLocale,
       images: [
         {
-          url: ogImage,
+          url: BRAND.ogDefault,
           width: 1200,
           height: 630,
           alt: "TJFit — Premium Fitness Transformation Platform"
@@ -62,7 +62,7 @@ export function generateMetadata({
       description: descriptions[locale],
       images: [
         {
-          url: ogImage,
+          url: BRAND.ogDefault,
           width: 1200,
           height: 630,
           alt: "TJFit — Premium Fitness Transformation Platform"

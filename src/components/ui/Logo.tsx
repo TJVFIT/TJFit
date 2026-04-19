@@ -7,8 +7,8 @@ import { useEffect, useState } from "react";
 import { BRAND_LOGO_SRC } from "@/lib/brand-assets";
 import { cn } from "@/lib/utils";
 
-/** Intrinsic ratio of logo-tjfit-3d.png (width / height) */
-const LOGO_ASPECT = 1024 / 836;
+/** Intrinsic ratio of the canonical brand PNG (width / height) */
+const LOGO_ASPECT = 1024 / 584;
 
 export type LogoVariant = "icon" | "full" | "3d";
 export type LogoSize =

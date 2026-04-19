@@ -68,11 +68,11 @@ export const metadata: Metadata = {
   themeColor: "#09090B",
   manifest: "/manifest.json",
   icons: {
-    icon: [{ url: "/favicon.ico", type: "image/x-icon" }],
-    apple: [{ url: "/apple-touch-icon.png", type: "image/png" }],
+    icon: [{ url: BRAND.faviconIco, type: "image/x-icon" }],
+    apple: [{ url: BRAND.appleTouchIcon, type: "image/png" }],
     other: [
-      { rel: "icon", url: "/icons/icon-192.png", type: "image/png", sizes: "192x192" },
-      { rel: "icon", url: "/icons/icon-512.png", type: "image/png", sizes: "512x512" }
+      { rel: "icon", url: BRAND.logoIcon192, type: "image/png", sizes: "192x192" },
+      { rel: "icon", url: BRAND.logoIcon512, type: "image/png", sizes: "512x512" }
     ]
   },
   appleWebApp: { capable: true, title: "TJFit", statusBarStyle: "black-translucent" },

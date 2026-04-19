@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 
 import { ClientErrorBoundary } from "@/components/client-error-boundary";
+import { HomepageIntroGate } from "@/components/home/homepage-intro-gate";
 import { coaches, programs } from "@/lib/content";
 import { getDietPhase, isCatalogDiet } from "@/lib/diet-catalog";
 import { getHomeLuxuryCopy } from "@/lib/home-luxury-copy";
@@ -86,16 +87,18 @@ export default function HomePage({ params }: { params: { locale: string } }) {
         </div>
       }
     >
-      <ImmersiveHome
-        locale={locale}
-        copy={copy}
-        programs={programPreviews}
-        diets={dietPreviews}
-        coaches={coachPreviews}
-        freePrograms={freePrograms}
-        programCount={programCount}
-        dietCount={dietCount}
-      />
+      <HomepageIntroGate>
+        <ImmersiveHome
+          locale={locale}
+          copy={copy}
+          programs={programPreviews}
+          diets={dietPreviews}
+          coaches={coachPreviews}
+          freePrograms={freePrograms}
+          programCount={programCount}
+          dietCount={dietCount}
+        />
+      </HomepageIntroGate>
     </ClientErrorBoundary>
   );
 }

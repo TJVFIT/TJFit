@@ -5,7 +5,7 @@ You are working on **TJFit** (tjfit.org), a premium AI fitness platform built wi
 - **Three.js** + `@react-three/fiber` + `@react-three/drei` (already installed — use these for all 3D)
 - Design tokens in `src/app/globals.css`: bg `#09090B`, surface `#111215`, border `#1E2028`, cyan `#22D3EE`, violet `#A78BFA`
 - Locales: `en`, `tr`, `ar`, `es`, `fr` — Arabic uses RTL layout (`dir="rtl"`)
-- Logo component: `src/components/ui/Logo.tsx` which renders SVGs from `/public/logo/`
+- Logo component: `src/components/ui/Logo.tsx` which renders PNG brand assets from `/public/brand/`
 - Homepage entry: `src/app/[locale]/page.tsx` → renders `ImmersiveHome` → which renders `LuxuryHome` from `src/components/luxury/luxury-home.tsx`
 - Existing 3D hero canvas: `src/components/luxury/luxury-hero-3d-canvas.tsx`
 
@@ -30,7 +30,7 @@ You have been given **6 attached images**. Here is their exact mapping:
    - `hero-tjai-core.webp` (Image 3)
    - `hero-nexus.webp` (Image 4)
    - `hero-bicep-curl.webp` (Image 5)
-   - `logo-tjfit-3d.webp` (Image 6)
+   - `brand/logo-main.png` (Image 6)
 
    If saving as `.webp` is not possible, use `.png` with the same base names.
 
@@ -137,14 +137,13 @@ You have been given **6 attached images**. Here is their exact mapping:
 
 ### 1A — Update Logo component
 
-Replace the existing Logo component to support the new 3D PNG logo alongside the existing SVGs. Add a new `variant = "3d"` option:
+Replace the existing Logo component to use the canonical PNG logo from `/public/brand/`:
 
 ```tsx
-// In Logo.tsx — add to SRC map:
+// In Logo.tsx — use the canonical brand asset:
 const SRC = {
-  icon: "/logo/tj-icon.svg",
-  full: "/logo/tj-full.svg",
-  "3d": "/assets/hero/logo-tjfit-3d.webp"   // new 3D logo
+  icon: "/brand/logo-mark.png",
+  full: "/brand/logo-main.png"
 } as const;
 ```
 
@@ -437,7 +436,7 @@ The navbar already uses the `<Logo>` component. After updating Logo.tsx in Task 
 2. On all other pages, show the logo without animation (instant, no flash).
 3. The animated version adds a brief cyan glow ring that fades: wrap the logo in a `<span className="relative">` and add a sibling `<span>` that starts with `opacity-60 ring-2 ring-cyan-400/40 rounded-full scale-110` and transitions to `opacity-0 scale-125` over 1.5s using CSS `transition`.
 
-Also: remove any hardcoded references to `tj-full.svg` or `tj-icon.svg` from the navbar — the new 3D logo PNG should be the only logo shown at `size="navbar"`.
+Also: remove any hardcoded references to legacy logo files from the navbar — the canonical brand PNG should be the only logo shown at `size="navbar"`.
 
 ---
 

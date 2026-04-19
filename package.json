@@ -10,8 +10,7 @@
     "i18n:check": "tsx scripts/i18n/check-locale-parity.ts",
     "i18n:scan": "tsx scripts/i18n/check-hardcoded-ui.ts",
     "i18n:verify": "npm run i18n:check && npm run i18n:scan",
-    "brand:assets": "node scripts/generate-brand-assets.mjs",
-    "logo:rasters": "node scripts/generate-logo-rasters.mjs"
+    "brand:assets": "node scripts/generate-brand-assets.mjs"
   },
   "dependencies": {
     "@paddle/paddle-js": "^1.6.2",
