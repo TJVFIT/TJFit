@@ -349,25 +349,33 @@ export function HomeProgramPreviewCard({
   priceFormatted,
   fromLabel,
   tierLabel,
+  metaLine,
   reducedMotion,
   ctaLabel,
-  onNavigate
+  onNavigate,
+  trainingGoalBadge,
+  trainingLocationBadge,
+  freeBadgeLabel
 }: {
-  program: { slug: string; title: string; category: string; duration: string };
+  program: { slug: string; title: string; category: string; duration: string; description?: string; difficulty?: string };
   href: string;
   priceFormatted: string;
   fromLabel: string;
   tierLabel?: string;
+  metaLine?: string;
   reducedMotion?: boolean;
   /** Short CTA, e.g. "Open" / "İncele" */
   ctaLabel: string;
   onNavigate?: () => void;
+  trainingGoalBadge?: string;
+  trainingLocationBadge?: string;
+  freeBadgeLabel?: string;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
   useCardInCenter(cardRef);
   const visual = getProgramVisual(program);
   const tier = tierLabel ?? getProgramTier(program);
-  const priceLine = `${fromLabel} ${priceFormatted}`;
+  const priceLine = fromLabel ? `${fromLabel} ${priceFormatted}` : priceFormatted;
 
   return (
     <div ref={cardRef} className={cn("h-full min-h-[320px] sm:min-h-[340px]", visual.glow)}>
@@ -385,12 +393,16 @@ export function HomeProgramPreviewCard({
           tier={tier}
           title={program.title}
           duration={program.duration}
-          description={undefined}
-          difficulty={undefined}
+          metaLine={metaLine}
+          description={program.description}
+          difficulty={program.difficulty}
           priceLine={priceLine}
           ctaLabel={ctaLabel}
-          showDescription={false}
+          showDescription={Boolean(program.description)}
           footerCta="link"
+          freeBadgeLabel={freeBadgeLabel}
+          trainingGoalBadge={trainingGoalBadge}
+          trainingLocationBadge={trainingLocationBadge}
         />
       </Link>
     </div>

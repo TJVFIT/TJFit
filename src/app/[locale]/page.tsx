@@ -7,6 +7,8 @@ import { coaches, programs } from "@/lib/content";
 import { getDietPhase, isCatalogDiet } from "@/lib/diet-catalog";
 import { getHomeLuxuryCopy } from "@/lib/home-luxury-copy";
 import { isLocale, type Locale } from "@/lib/i18n";
+import { getFeaturedCatalogPrograms, normalizeCatalogProgram } from "@/lib/program-catalog";
+import { localizeProgram } from "@/lib/program-localization";
 
 /** Client-only immersive home — scroll observers, sidebar offset. */
 const ImmersiveHome = dynamic(() => import("@/components/immersive-home").then((m) => m.ImmersiveHome), {
@@ -43,15 +45,22 @@ export default function HomePage({ params }: { params: { locale: string } }) {
   const programCount = programs.filter((p) => !isCatalogDiet(p)).length;
   const dietCount = programs.filter(isCatalogDiet).length;
   const programPreviews = programs
-    .filter((p) => !p.is_free)
-    .map((p) => ({
-      slug: p.slug,
-      title: p.title,
-      category: p.category,
-      duration: p.duration,
-      price: p.price,
-      is_free: Boolean(p.is_free)
-    }));
+    .filter((p) => !isCatalogDiet(p))
+    .map((p) => normalizeCatalogProgram(localizeProgram(p, locale), locale));
+  const featuredProgramPreviews = getFeaturedCatalogPrograms(programPreviews, 4).map((p) => ({
+    slug: p.slug,
+    title: p.title,
+    category: p.category,
+    duration: p.duration,
+    price: p.price,
+    description: p.display.previewReason,
+    difficulty: p.difficulty,
+    metaLine: p.display.metaLine,
+    goalBadge: p.display.goalBadge,
+    locationBadge: p.display.locationBadge,
+    tierLabel: p.display.tierLabel,
+    is_free: Boolean(p.is_free)
+  }));
   const dietPreviews = programs.filter(isCatalogDiet).map((p) => ({
     slug: p.slug,
     title: p.title,
@@ -91,7 +100,7 @@ export default function HomePage({ params }: { params: { locale: string } }) {
         <ImmersiveHome
           locale={locale}
           copy={copy}
-          programs={programPreviews}
+          programs={featuredProgramPreviews}
           diets={dietPreviews}
           coaches={coachPreviews}
           freePrograms={freePrograms}

@@ -410,10 +410,15 @@ export function ImmersiveHome({
                     <HomeProgramPreviewCard
                       program={p}
                       href={`/${locale}/programs/${p.slug}`}
-                      priceFormatted={formatMoney(locale, p.price)}
-                      fromLabel={copy.programs.from}
+                      priceFormatted={p.is_free ? programUi.freePriceLabel : formatMoney(locale, p.price)}
+                      fromLabel={p.is_free ? "" : copy.programs.from}
+                      metaLine={p.metaLine}
+                      tierLabel={p.tierLabel}
                       reducedMotion={reduce}
                       ctaLabel={p.is_free ? programUi.viewProgram : programUi.getFullAccess}
+                      trainingGoalBadge={p.goalBadge}
+                      trainingLocationBadge={p.locationBadge}
+                      freeBadgeLabel={p.is_free ? programUi.freeBadge : undefined}
                       onNavigate={() => trackMarketingEvent("program_view", { slug: p.slug, surface: "immersive-home" })}
                     />
                   </TiltCard>

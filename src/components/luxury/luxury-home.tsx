@@ -67,6 +67,12 @@ export type HomeProgramPreview = {
   category: string;
   duration: string;
   price: number;
+  description?: string;
+  difficulty?: string;
+  metaLine?: string;
+  goalBadge?: string;
+  locationBadge?: string;
+  tierLabel?: string;
   phase?: "cutting" | "bulking";
   is_free?: boolean;
 };

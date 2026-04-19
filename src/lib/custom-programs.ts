@@ -22,6 +22,21 @@ export type CustomProgramRow = {
   created_at: string;
 };
 
+export type PublicCustomProgramRow = {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  kind: "diet" | "program";
+  category: string;
+  price_try: number;
+  difficulty: string;
+  duration: string;
+  uploader_role: "coach" | "admin";
+  translation_status: "pending" | "completed" | "failed";
+  created_at: string;
+};
+
 const targetLocales: Locale[] = ["en", "tr", "ar", "es", "fr"];
 
 export function slugifyProgramTitle(title: string) {
@@ -198,5 +213,5 @@ export function toPublicCustomProgramRow(row: CustomProgramRow, locale: Locale) 
     uploader_role: localized.uploader_role,
     translation_status: localized.translation_status,
     created_at: localized.created_at
-  };
+  } satisfies PublicCustomProgramRow;
 }
