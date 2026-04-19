@@ -1,5 +1,7 @@
 import { NextRequest } from "next/server";
 
+import { buildTjaiUserProfile } from "@/lib/tjai-intake";
+import { buildTjaiMemorySnapshot, getLatestTjaiPlan } from "@/lib/tjai-plan-store";
 import { requireAuth } from "@/lib/require-auth";
 import { callOpenAI, streamOpenAI } from "@/lib/tjai-openai";
 
@@ -146,15 +148,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Task 2B — 4 parallel queries: plan, history, preferences, real user data
-    const [{ data: planRow }, { data: historyRows }, { data: prefRows }, recentData] =
+    const [planRow, memorySnapshot, { data: historyRows }, { data: prefRows }, recentData] =
       await Promise.all([
-        auth.supabase
-          .from("saved_tjai_plans")
-          .select("goal,daily_calories,protein_g,training_days_per_week,training_location,plan_json,version_number")
-          .eq("user_id", auth.user.id)
-          .order("updated_at", { ascending: false })
-          .limit(1)
-          .maybeSingle(),
+        getLatestTjaiPlan(auth.supabase, auth.user.id),
+        buildTjaiMemorySnapshot(auth.supabase, auth.user.id),
         auth.supabase
           .from("tjai_chat_messages")
           .select("role,content,created_at")
@@ -198,6 +195,9 @@ export async function POST(request: NextRequest) {
     const preferencesLine = preferences.length > 0
       ? preferences.map((p) => `${p.preference_key}: ${p.preference_value}`).join("; ")
       : "No stored preferences yet.";
+    const profileContext = planRow?.answers_json
+      ? buildTjaiUserProfile(planRow.answers_json).dailyRoutine
+      : "No normalized TJAI profile stored yet.";
 
     const planContext = planRow
       ? `USER'S TJAI PLAN:
@@ -252,6 +252,16 @@ ${realDataContext}
 
 USER PREFERENCES:
 ${preferencesLine}
+
+TJAI MEMORY SNAPSHOT:
+- Latest plan summary: ${memorySnapshot.latestPlanSummary ?? "none"}
+- Prior plan goal: ${memorySnapshot.priorPlanGoal ?? "none"}
+- Adaptive checkpoint: ${
+        memorySnapshot.adaptiveCheckpoint
+          ? `${memorySnapshot.adaptiveCheckpoint.urgency} urgency; trigger regen ${memorySnapshot.adaptiveCheckpoint.triggerRegen}`
+          : "none"
+      }
+- Stored profile routine: ${profileContext}
 
 TJFIT PROGRAMS YOU CAN RECOMMEND:
 - Gym Fat Loss Protocol (12 weeks, gym, fat loss)

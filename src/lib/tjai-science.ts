@@ -1,4 +1,5 @@
-import type { MetabolicType, QuizAnswers, TJAIMetrics } from "@/lib/tjai-types";
+import { buildTjaiUserProfile } from "@/lib/tjai-intake";
+import type { MetabolicType, QuizAnswers, TJAIMetrics, TjaiUserProfile } from "@/lib/tjai-types";
 
 /**
  * Parse a value that may be a number, a range string ("25–34 years"),
@@ -22,66 +23,49 @@ export function parseRangeToNumber(v: unknown, fallback = 0): number {
   return fallback;
 }
 
-function asNum(v: unknown, fallback = 0): number {
-  const n = parseRangeToNumber(v, NaN);
-  return Number.isFinite(n) && n > 0 ? n : fallback;
+function activityMultiplier(activity: TjaiUserProfile["activityLevel"]): number {
+  if (activity === "very_low") return 1.2;
+  if (activity === "low") return 1.375;
+  if (activity === "moderate") return 1.55;
+  return 1.725;
 }
 
-function asStr(v: unknown): string {
-  return typeof v === "string" ? v : "";
-}
-
-function asArr(v: unknown): string[] {
-  return Array.isArray(v) ? v.map(String) : typeof v === "string" ? [v] : [];
-}
-
-function estimateBodyFatFromType(bodyType: string): number {
-  if (bodyType.startsWith("Very lean") || bodyType.startsWith("Very Lean")) return 10;
-  if (bodyType.startsWith("Lean")) return 16;
-  if (bodyType.startsWith("Average")) return 22;
-  if (bodyType.startsWith("Overweight")) return 30;
-  if (bodyType.startsWith("Obese")) return 38;
-  return 22;
-}
-
-function activityMultiplier(activity: string): number {
-  if (activity.startsWith("Very low")) return 1.2;
-  if (activity.startsWith("Low")) return 1.375;
-  if (activity.startsWith("Moderate")) return 1.55;
-  if (activity.startsWith("Active")) return 1.725;
-  if (activity.startsWith("Very active")) return 1.9;
-  return 1.375;
-}
-
-function trainingDaysAdjustment(days: string, bmr: number): number {
-  if (days.startsWith("1–2")) return bmr * 0.05;
-  if (days.startsWith("3–4")) return bmr * 0.1;
-  if (days.startsWith("5–6")) return bmr * 0.15;
-  if (days.startsWith("7")) return bmr * 0.2;
+function trainingDaysAdjustment(days: number, bmr: number): number {
+  if (days <= 2) return bmr * 0.05;
+  if (days <= 4) return bmr * 0.1;
+  if (days <= 6) return bmr * 0.15;
+  if (days >= 7) return bmr * 0.2;
   return 0;
 }
 
-function stepsAdjustment(steps: string): number {
-  if (steps.startsWith("Under")) return 0;
-  if (steps.startsWith("3,000")) return 100;
-  if (steps.startsWith("7,000")) return 200;
-  if (steps.startsWith("Over")) return 300;
-  return 100;
+function scheduleAdjustment(profile: TjaiUserProfile): number {
+  if (profile.scheduleConstraint === "short_sessions") return -80;
+  if (profile.scheduleConstraint === "shift_work") return -60;
+  if (profile.scheduleConstraint === "travel") return -40;
+  if (profile.scheduleConstraint === "family_load") return -50;
+  return 0;
 }
 
-function applyGoalCalories(tdee: number, goal: string, pace: string, gender: string): number {
+function applyGoalCalories(
+  tdee: number,
+  goal: TjaiUserProfile["goal"],
+  pace: TjaiUserProfile["pace"],
+  sex: TjaiUserProfile["sex"]
+): number {
   let cals = tdee;
-  if (goal.startsWith("Lose fat")) {
-    if (pace.startsWith("Slow")) cals = tdee - 250;
-    if (pace.startsWith("Moderate")) cals = tdee - 500;
-    if (pace.startsWith("Aggressive")) cals = tdee - 750;
-    const floor = gender.startsWith("Female") ? 1200 : 1500;
+  if (goal === "fat_loss") {
+    if (pace === "slow") cals = tdee - 250;
+    if (pace === "moderate") cals = tdee - 450;
+    if (pace === "aggressive") cals = tdee - 650;
+    const floor = sex === "female" ? 1200 : 1500;
     cals = Math.max(cals, floor);
-  } else if (goal.startsWith("Gain muscle")) {
-    if (pace.startsWith("Slow")) cals = tdee + 150;
-    if (pace.startsWith("Moderate")) cals = tdee + 300;
-    if (pace.startsWith("Aggressive")) cals = tdee + 500;
-  } else if (goal.startsWith("Recomposition")) {
+  } else if (goal === "muscle_gain") {
+    if (pace === "slow") cals = tdee + 150;
+    if (pace === "moderate") cals = tdee + 275;
+    if (pace === "aggressive") cals = tdee + 425;
+  } else if (goal === "recomposition") {
+    cals = tdee - (pace === "aggressive" ? 150 : 50);
+  } else if (goal === "fitness") {
     cals = tdee;
   } else {
     cals = tdee;
@@ -89,44 +73,44 @@ function applyGoalCalories(tdee: number, goal: string, pace: string, gender: str
   return cals;
 }
 
-function applyStressSleepAdjustment(calories: number, stress: string, sleepQuality: string): number {
-  const highStress = stress.startsWith("High") || stress.startsWith("Very high");
-  const poorSleep = sleepQuality.startsWith("Poor");
-  const goodSleep = sleepQuality.startsWith("Good");
+function applyStressSleepAdjustment(
+  calories: number,
+  stress: TjaiUserProfile["stressLevel"],
+  sleepHours: number
+): number {
+  const highStress = stress === "high" || stress === "very_high";
+  const poorSleep = sleepHours < 6;
+  const goodSleep = sleepHours >= 8;
   if (highStress && poorSleep) return calories * 0.95;
   if (!highStress && goodSleep) return calories * 1.02;
   return calories;
 }
 
-export function classifyMetabolicType(answers: QuizAnswers): MetabolicType {
+export function classifyMetabolicType(profile: TjaiUserProfile): MetabolicType {
   let fastScore = 0;
   let slowScore = 0;
   let stressScore = 0;
   let hormonalScore = 0;
 
-  if (answers.s7_lose_easy === "Yes — I drop weight fast") fastScore += 2;
-  if (answers.s7_gain_easy === "No — I struggle to gain") fastScore += 2;
-  if (answers.s7_appetite === "Low — I forget to eat") fastScore += 1;
-  if (asNum(answers.s8_hours, 7) >= 7) fastScore += 1;
-  if (answers.s9_stress === "Low") fastScore += 1;
+  if (profile.goal === "muscle_gain" && profile.bodyType === "very_lean") fastScore += 2;
+  if (profile.goal === "fitness" && profile.activityLevel === "active") fastScore += 1;
+  if (profile.sleepHours >= 7) fastScore += 1;
+  if (profile.stressLevel === "low" || profile.stressLevel === "very_low") fastScore += 1;
 
-  if (answers.s7_gain_easy === "Yes — I gain weight fast") slowScore += 2;
-  if (answers.s7_lose_easy === "No — I struggle to lose") slowScore += 2;
-  if (answers.s7_appetite === "High — I'm always hungry") slowScore += 1;
-  if (answers.s10_diet_result === "Gained weight consistently") slowScore += 2;
-  if (answers.s10_diet_result === "Lost weight but gained it back") slowScore += 1;
+  if (profile.goal === "fat_loss" && (profile.bodyType === "overweight" || profile.bodyType === "obese")) slowScore += 2;
+  if (profile.goal === "recomposition") slowScore += 1;
+  if (profile.scheduleConstraint === "short_sessions" || profile.scheduleConstraint === "family_load") slowScore += 1;
 
-  if (answers.s9_stress === "High" || answers.s9_stress === "Very high") stressScore += 3;
-  if (answers.s8_quality === "Poor — I wake up often") stressScore += 2;
-  if (asNum(answers.s8_hours, 7) < 6) stressScore += 2;
-  if (answers.s3_fat_storage === "Belly / midsection") stressScore += 2;
-  if (asArr(answers.s18_biggest_problem).some((item) => item.toLowerCase().includes("motivation"))) stressScore += 1;
+  if (profile.stressLevel === "high" || profile.stressLevel === "very_high") stressScore += 3;
+  if (profile.sleepHours < 6) stressScore += 2;
+  if (profile.biggestObstacles.includes("stress") || profile.biggestObstacles.includes("recovery")) stressScore += 2;
+  if (profile.scheduleConstraint === "shift_work") stressScore += 1;
 
-  if (answers.s1_gender === "Female") {
-    if (answers.s7_gain_easy === "Yes — I gain weight fast") hormonalScore += 2;
-    if (answers.s3_fat_storage === "Lower body (hips, thighs)") hormonalScore += 3;
-    if (answers.s9_stress === "High" || answers.s9_stress === "Very high") hormonalScore += 1;
-    if (answers.s8_quality === "Poor — I wake up often") hormonalScore += 1;
+  if (profile.sex === "female") {
+    if (profile.bodyType === "overweight") hormonalScore += 2;
+    if (profile.goal === "fat_loss" || profile.goal === "recomposition") hormonalScore += 1;
+    if (profile.stressLevel === "high" || profile.stressLevel === "very_high") hormonalScore += 1;
+    if (profile.sleepHours < 6) hormonalScore += 1;
   }
 
   const sorted = Object.entries({
@@ -138,15 +122,14 @@ export function classifyMetabolicType(answers: QuizAnswers): MetabolicType {
   return (sorted[0]?.[0] as MetabolicType | undefined) ?? "slow";
 }
 
-export function detectReverseDietNeeded(answers: QuizAnswers): boolean {
-  const didDiet = answers.s10_dieted === "Yes";
-  const regainedWeight = answers.s10_diet_result === "Lost weight but gained it back";
-  const slowMeta = answers.s7_lose_easy === "No — I struggle to lose";
-  const gainEasy = answers.s7_gain_easy === "Yes — I gain weight fast";
-  const aggressivePace = answers.s2_pace === "Aggressive";
-  if (didDiet && regainedWeight && slowMeta) return true;
-  if (didDiet && regainedWeight && gainEasy && aggressivePace) return true;
-  return false;
+export function detectReverseDietNeeded(profile: TjaiUserProfile): boolean {
+  return (
+    profile.goal === "fat_loss" &&
+    profile.pace === "aggressive" &&
+    profile.stressLevel !== "low" &&
+    profile.sleepHours < 7 &&
+    (profile.bodyType === "overweight" || profile.bodyType === "obese")
+  );
 }
 
 export function predictPlateauWeek(
@@ -156,7 +139,7 @@ export function predictPlateauWeek(
   goal: string,
   metabolicType: MetabolicType
 ): number {
-  if (goal === "Maintain weight") return 0;
+  if (goal === "fitness" || goal === "stay_active") return 0;
   const adaptationRate = {
     fast: 0.08,
     slow: 0.18,
@@ -185,67 +168,46 @@ export function projectWeightCurve(
 }
 
 export function calculateTJAIMetrics(answers: QuizAnswers): TJAIMetrics {
-  const age = asNum(answers.s1_age, 25);
-  const height = asNum(answers.s1_height, 170);
-  const weight = asNum(answers.s1_weight, 70);
-  const gender = asStr(answers.s1_gender);
-  const goal = asStr(answers.s2_goal);
-  const pace = asStr(answers.s2_pace);
-  const activity = asStr(answers.s4_daily_activity);
-  const steps = asStr(answers.s4_steps);
-  const trains = asStr(answers.s5_trains);
-  const trainDays = asStr(answers.s5_days);
-  const stress = asStr(answers.s9_stress);
-  const sleepQuality = asStr(answers.s8_quality);
-  const dietStyle = asStr(answers.s12_diet_style);
+  const profile = buildTjaiUserProfile(answers);
 
-  const maleBmr = 10 * weight + 6.25 * height - 5 * age + 5;
-  const femaleBmr = 10 * weight + 6.25 * height - 5 * age - 161;
+  const maleBmr = 10 * profile.weightKg + 6.25 * profile.heightCm - 5 * profile.age + 5;
+  const femaleBmr = 10 * profile.weightKg + 6.25 * profile.heightCm - 5 * profile.age - 161;
   const bmr =
-    gender.startsWith("Male")
+    profile.sex === "male"
       ? maleBmr
-      : gender.startsWith("Female")
+      : profile.sex === "female"
         ? femaleBmr
         : (maleBmr + femaleBmr) / 2;
 
-  let tdee = bmr * activityMultiplier(activity);
-  if (trains.startsWith("Yes")) {
-    tdee += trainingDaysAdjustment(trainDays, bmr);
-  }
-  tdee += stepsAdjustment(steps);
+  let tdee = bmr * activityMultiplier(profile.activityLevel);
+  tdee += trainingDaysAdjustment(profile.trainingDays, bmr);
+  tdee += scheduleAdjustment(profile);
 
-  let calorieTarget = applyGoalCalories(tdee, goal, pace, gender);
-  calorieTarget = applyStressSleepAdjustment(calorieTarget, stress, sleepQuality);
+  let calorieTarget = applyGoalCalories(tdee, profile.goal, profile.pace, profile.sex);
+  calorieTarget = applyStressSleepAdjustment(calorieTarget, profile.stressLevel, profile.sleepHours);
 
-  const silhouetteBF = asNum(answers.s3_estimated_bf, NaN);
-  const providedBodyFat = asNum(answers.s3_bf_percent, NaN);
-  const bodyType = asStr(answers.s3_body_silhouette || answers.s3_body_type);
-  const estimatedBodyFat = Number.isFinite(providedBodyFat)
-    ? providedBodyFat
-    : Number.isFinite(silhouetteBF)
-      ? silhouetteBF
-      : estimateBodyFatFromType(bodyType);
-
-  const leanMass = weight * (1 - estimatedBodyFat / 100);
-  const metabolicType = classifyMetabolicType(answers);
+  const estimatedBodyFat = profile.estimatedBodyFat;
+  const leanMass = profile.weightKg * (1 - estimatedBodyFat / 100);
+  const metabolicType = classifyMetabolicType(profile);
 
   let proteinPerKg = 1.8;
-  if (goal.startsWith("Lose fat")) proteinPerKg = 2.2;
-  if (goal.startsWith("Gain muscle")) proteinPerKg = 2.0;
-  if (goal.startsWith("Recomposition")) proteinPerKg = 2.4;
+  if (profile.goal === "fat_loss") proteinPerKg = 2.2;
+  if (profile.goal === "muscle_gain") proteinPerKg = 2.0;
+  if (profile.goal === "recomposition") proteinPerKg = 2.3;
 
-  let protein = proteinPerKg * weight;
-  if (bodyType.startsWith("Obese")) {
+  let protein = proteinPerKg * profile.weightKg;
+  if (profile.bodyType === "obese") {
     protein = 2.0 * Math.max(leanMass, 45);
   }
 
   let fatPerKg = 1.0;
-  if (dietStyle.toLowerCase().includes("keto") || dietStyle.toLowerCase().includes("low carb")) fatPerKg = 1.5;
-  if (metabolicType === "hormonal" && gender.startsWith("Female")) {
+  if (profile.dietStyle === "low_carb") fatPerKg = 1.25;
+  if (profile.dietStyle === "vegan" || profile.dietStyle === "vegetarian") fatPerKg = 0.9;
+  if (metabolicType === "hormonal" && profile.sex === "female") {
     fatPerKg = Math.max(fatPerKg, 1.2);
   }
   fatPerKg = Math.max(0.8, fatPerKg);
-  let fat = fatPerKg * weight;
+  let fat = fatPerKg * profile.weightKg;
 
   if (metabolicType === "fast") calorieTarget *= 1.05;
   if (metabolicType === "slow") calorieTarget *= 0.92;
@@ -253,66 +215,61 @@ export function calculateTJAIMetrics(answers: QuizAnswers): TJAIMetrics {
     calorieTarget *= 0.95;
     protein += 10;
   }
-  if (metabolicType === "hormonal" && (goal.startsWith("Lose fat") || goal.startsWith("Recomposition"))) calorieTarget *= 0.95;
+  if (metabolicType === "hormonal" && (profile.goal === "fat_loss" || profile.goal === "recomposition")) calorieTarget *= 0.95;
 
   const carbCalories = calorieTarget - protein * 4 - fat * 9;
   let carbs = carbCalories / 4;
-  const carbFloor = dietStyle.toLowerCase().includes("low carb") || dietStyle.toLowerCase().includes("keto") ? 50 : 100;
+  const carbFloor = profile.dietStyle === "low_carb" ? 50 : 100;
   carbs = Math.max(carbFloor, carbs);
 
-  let water = weight * 35;
-  water += trains.startsWith("Yes") ? 500 : 0;
-  if (activity.startsWith("Active") || activity.startsWith("Very active")) water += 300;
+  let water = profile.weightKg * 35;
+  water += profile.trainingDays > 0 ? 500 : 0;
+  if (profile.activityLevel === "active") water += 300;
   water = Math.round(water / 100) * 100;
 
   const dailyDelta = calorieTarget - tdee;
   const weeklyWeightChange = Number(((dailyDelta * 7) / 7700).toFixed(2));
-  const reverseDietNeeded = detectReverseDietNeeded(answers);
-  const plateauWeek = predictPlateauWeek(weight, calorieTarget, tdee, goal, metabolicType);
-  const refeedWeeks = goal.startsWith("Lose fat") ? [4, 8] : [];
+  const reverseDietNeeded = detectReverseDietNeeded(profile);
+  const plateauWeek = predictPlateauWeek(profile.weightKg, calorieTarget, tdee, profile.goal, metabolicType);
+  const refeedWeeks = profile.goal === "fat_loss" ? [4, 8] : [];
   const deloadWeeks = [4, 8];
   const totalWeeks = reverseDietNeeded ? 14 : 12;
-  const weightCurve = projectWeightCurve(weight, weeklyWeightChange, plateauWeek, refeedWeeks, totalWeeks);
-  const projectedFinalWeight = weightCurve[weightCurve.length - 1] ?? weight;
+  const weightCurve = projectWeightCurve(profile.weightKg, weeklyWeightChange, plateauWeek, refeedWeeks, totalWeeks);
+  const projectedFinalWeight = weightCurve[weightCurve.length - 1] ?? profile.weightKg;
   const projectedFinalBF = Math.max(5, Number((estimatedBodyFat + weeklyWeightChange * 0.65 * 12).toFixed(1)));
 
   const trainingDayCalories =
-    goal.startsWith("Gain muscle") ? Math.round(calorieTarget + 200) : goal.startsWith("Maintain") ? Math.round(calorieTarget) : Math.round(calorieTarget + 150);
+    profile.goal === "muscle_gain"
+      ? Math.round(calorieTarget + 200)
+      : profile.goal === "fitness" || profile.goal === "stay_active"
+        ? Math.round(calorieTarget)
+        : Math.round(calorieTarget + 150);
   const restDayCalories =
-    goal.startsWith("Gain muscle") ? Math.round(calorieTarget - 100) : goal.startsWith("Maintain") ? Math.round(calorieTarget) : Math.round(calorieTarget - 150);
+    profile.goal === "muscle_gain"
+      ? Math.round(calorieTarget - 100)
+      : profile.goal === "fitness" || profile.goal === "stay_active"
+        ? Math.round(calorieTarget)
+        : Math.round(calorieTarget - 150);
 
-  const targetWeight = asNum(answers.s19_target_weight, weight);
-  const diff = targetWeight - weight;
+  const targetWeight = profile.targetWeightKg ?? profile.weightKg;
+  const diff = targetWeight - profile.weightKg;
   let timeToGoal = "approximately 12 weeks";
   if (Math.abs(weeklyWeightChange) > 0.01) {
     const weeks = Math.max(1, Math.round(Math.abs(diff / weeklyWeightChange)));
     timeToGoal = `approximately ${weeks} weeks`;
-  } else if (goal.startsWith("Recomposition")) {
+  } else if (profile.goal === "recomposition") {
     timeToGoal = "approximately 12-16 weeks";
   }
 
-  const keyFields = [
-    "s1_age",
-    "s1_gender",
-    "s1_height",
-    "s1_weight",
-    "s2_goal",
-    "s2_pace",
-    "s4_daily_activity",
-    "s4_steps",
-    "s8_hours",
-    "s8_quality",
-    "s9_stress",
-    "s19_daily_routine"
-  ];
-  const completed = keyFields.filter((k) => {
-    const v = answers[k];
-    if (typeof v === "number") return true;
-    if (typeof v === "string") return v.trim().length > 0;
-    if (Array.isArray(v)) return v.length > 0;
-    return false;
-  }).length;
-  const confidenceScore = Math.round((completed / keyFields.length) * 100);
+  const confidenceSignals = [
+    profile.injuries.length > 0,
+    profile.biggestObstacles.length > 0,
+    profile.likedFoods.length > 0,
+    profile.avoidedFoods.length > 0,
+    profile.dailyRoutine.length > 15,
+    Boolean(profile.targetWeightKg)
+  ].filter(Boolean).length;
+  const confidenceScore = Math.min(100, 70 + confidenceSignals * 5);
 
   return {
     bmr: Math.round(bmr),

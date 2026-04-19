@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readRequestJson } from "@/lib/read-request-json";
 import { requireAuth } from "@/lib/require-auth";
+import { getLatestTjaiPlan } from "@/lib/tjai-plan-store";
 import { rateLimit } from "@/lib/rate-limit";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
@@ -64,14 +65,8 @@ export async function POST(request: NextRequest) {
     try {
       const admin = getSupabaseServerClient();
       if (!admin) return;
-      const { data: plan } = await admin
-        .from("saved_tjai_plans")
-        .select("daily_calories,protein_g,created_at,answers_json")
-        .eq("user_id", auth.user.id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (!plan) return;
+      const plan = await getLatestTjaiPlan(admin, auth.user.id);
+      if (!plan?.created_at) return;
       const { data: entries } = await admin
         .from("progress_entries")
         .select("entry_date,weight_kg")

@@ -1,4 +1,4 @@
-import type { QuizAnswers, TJAIMetrics } from "@/lib/tjai-types";
+import type { TJAIMetrics, TjaiMemorySnapshot, TjaiUserProfile } from "@/lib/tjai-types";
 
 export function buildTJAISystemPrompt(): string {
   return `You are TJAI — the world's most advanced AI fitness and nutrition coach, built into TJFit.
@@ -23,29 +23,60 @@ Tone: Direct, expert, motivating, like a coach who knows this person deeply. Nev
 Output: A single valid JSON object. No markdown, no prose outside JSON. The JSON must conform exactly to the schema at the end of the user prompt.`;
 }
 
-function fmtArray(v: unknown): string {
-  if (Array.isArray(v)) return v.join(", ");
-  if (typeof v === "string") return v;
-  return "N/A";
+function fmtArray(values: string[]): string {
+  return values.length > 0 ? values.join(", ") : "none";
 }
 
-export function buildTJAIUserPrompt(answers: QuizAnswers, metrics: TJAIMetrics): string {
-  const goal = String(answers.s2_goal ?? "");
-  const injuries = fmtArray(answers.s17_injuries);
-  const budget = String(answers.s14_budget ?? "");
-  const religious = String(answers.s13_allergies ?? "None");
-  const stress = String(answers.s9_stress ?? "");
-  const biggestProblem = fmtArray(answers.s18_biggest_problem);
-  const beginnerMode =
-    biggestProblem.includes("Not knowing what to do") ||
-    String(answers.s5_trains ?? "").includes("Beginner");
+function titleCase(value: string) {
+  return value
+    .split(/[_\s-]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
 
-  const calorieCyclingBlock = goal.startsWith("Gain muscle")
+function humanizeProfile(profile: TjaiUserProfile) {
+  return {
+    goal: titleCase(profile.goal),
+    goalDetail: titleCase(profile.goalDetail),
+    pace: titleCase(profile.pace),
+    bodyType: titleCase(profile.bodyType),
+    sex: titleCase(profile.sex),
+    activityLevel: titleCase(profile.activityLevel),
+    stressLevel: titleCase(profile.stressLevel),
+    experienceLevel: titleCase(profile.experienceLevel),
+    trainingLocation: titleCase(profile.trainingLocation),
+    trainingPreference: titleCase(profile.trainingPreference),
+    dietStyle: titleCase(profile.dietStyle),
+    budget: titleCase(profile.monthlyFoodBudget),
+    cookingStyle: titleCase(profile.cookingStyle),
+    successVision: titleCase(profile.successVision)
+  };
+}
+
+export function buildTJAIUserPrompt(
+  profile: TjaiUserProfile,
+  metrics: TJAIMetrics,
+  memory?: TjaiMemorySnapshot | null
+): string {
+  const pretty = humanizeProfile(profile);
+  const injuries = fmtArray(profile.injuries.map(titleCase));
+  const restrictions = fmtArray(profile.dietaryRestrictions.map(titleCase));
+  const biggestProblem = fmtArray(profile.biggestObstacles.map(titleCase));
+  const likedFoods = fmtArray(profile.likedFoods.map(titleCase));
+  const avoidedFoods = fmtArray(profile.avoidedFoods.map(titleCase));
+  const equipment = fmtArray(profile.equipment.map(titleCase));
+  const supplements = fmtArray(profile.supplements.map(titleCase));
+  const beginnerMode =
+    profile.experienceLevel === "beginner" ||
+    profile.biggestObstacles.includes("training_knowledge");
+
+  const calorieCyclingBlock = profile.goal === "muscle_gain"
     ? `CALORIE CYCLING:
 - Training days: calorieTarget + 200
 - Rest days: calorieTarget - 100
 - Weekly average must still equal calorieTarget * 7.`
-    : goal.startsWith("Maintain")
+    : profile.goal === "fitness" || profile.goal === "stay_active"
       ? "CALORIE CYCLING: Skip cycling. Use same calories every day."
       : `CALORIE CYCLING:
 - Training days: calorieTarget + 150, carbs +40-50g, fat -5g
@@ -53,14 +84,14 @@ export function buildTJAIUserPrompt(answers: QuizAnswers, metrics: TJAIMetrics):
 - Weekly average must still equal calorieTarget * 7.
 - Label meal blocks as Training Day Meal Plan / Rest Day Meal Plan.`;
 
-  const refeedBlock = goal.startsWith("Lose fat")
+  const refeedBlock = profile.goal === "fat_loss"
     ? `REFEED WEEKS:
 - Week 4 and Week 8: raise to TDEE for 5 days.
 - Increase carbs, keep protein same, fat same/slightly lower.
 - Label each refeed week clearly and explain this is strategic, not a cheat week.`
     : "REFEED WEEKS: Not needed for this goal.";
 
-  const injuryBlock = injuries
+  const injuryBlock = profile.injuries.length > 0
     ? `INJURY MODIFICATIONS (required): User reported "${injuries}".
 Rules:
 1) Remove exercises that stress injured area.
@@ -69,7 +100,7 @@ Rules:
     : "";
 
   const budgetBlock =
-    budget.toLowerCase().includes("budget")
+    profile.monthlyFoodBudget === "budget"
       ? `BUDGET MODE ACTIVE:
 - Use affordable staples only (oats, eggs, rice, canned tuna, chicken, legumes).
 - No expensive ingredients.
@@ -77,18 +108,17 @@ Rules:
 - Weekly grocery cost under $50.`
       : "";
 
-  const sleepHoursNum = Number(String(answers.s8_hours ?? "7").match(/\d+/)?.[0] ?? 7);
-  const poorSleep = sleepHoursNum < 6;
+  const poorSleep = profile.sleepHours < 6;
   const recoveryBlock =
-    poorSleep || stress.includes("High") || stress.includes("Very High")
+    poorSleep || profile.stressLevel === "high" || profile.stressLevel === "very_high"
       ? `RECOVERY PROTOCOL REQUIRED:
 - Add dedicated section: "Your Recovery Protocol".
 - Include sleep optimization, cortisol management, and weekly recovery metrics.`
       : "";
 
   const religiousBlock =
-    religious && !religious.includes("None")
-      ? `DIETARY RESTRICTIONS: ${religious}
+    profile.dietaryRestrictions.some((item) => item !== "none")
+      ? `DIETARY RESTRICTIONS: ${restrictions}
 - Every meal must respect these restrictions strictly.
 - Label meal plans accordingly.`
       : "";
@@ -102,7 +132,7 @@ Rules:
     : "";
 
   const cheatMealBlock =
-    goal.startsWith("Lose fat") || goal.startsWith("Recomposition")
+    profile.goal === "fat_loss" || profile.goal === "recomposition"
       ? `CHEAT MEAL STRATEGY REQUIRED:
 - Include strategic cheat meal section with exact day/time.
 - Include pre-cheat, during-cheat, post-cheat protocol.
@@ -116,15 +146,39 @@ Rules:
 - Each meal includes educationNote.`
     : "";
 
-  const highStress = stress.includes("High") || stress.includes("Very High");
-  const fastPace = String(answers.s2_pace ?? "").includes("Fast");
-  const isBeginnerLevel = String(answers.s5_trains ?? "").includes("Beginner");
+  const highStress = profile.stressLevel === "high" || profile.stressLevel === "very_high";
+  const fastPace = profile.pace === "aggressive";
+  const isBeginnerLevel = profile.experienceLevel === "beginner";
 
   const coachWarnings: string[] = [];
   if (highStress && fastPace) coachWarnings.push("⚠️ High stress + aggressive pace = elevated cortisol risk. Moderate calorie deficit automatically. Prioritize recovery days.");
   if (poorSleep) coachWarnings.push("⚠️ Sleep deprivation detected. Add sleep optimization protocol. Reduce volume on day 1 of each week.");
   if (highStress && poorSleep) coachWarnings.push("⚠️ Compounding recovery risk. Include mandatory deload in weeks 4, 8. Cortisol management is priority.");
   if (isBeginnerLevel) coachWarnings.push("⚠️ Beginner detected. Use 2-week adaptation phase. Teach RPE scale. Simpler exercises. More education notes.");
+
+  const memoryBlock = memory
+    ? `== TJAI MEMORY ==
+Latest plan summary: ${memory.latestPlanSummary ?? "none"}
+Prior plan goal: ${memory.priorPlanGoal ?? "none"}
+Plan version: ${memory.planVersion ?? "none"}
+Stored preferences: ${
+        memory.preferences.length > 0
+          ? memory.preferences.map((item) => `${item.key}: ${item.value}`).join("; ")
+          : "none"
+      }
+Recent workouts:
+${memory.workoutSummary.length > 0 ? memory.workoutSummary.join("\n") : "No workouts logged yet."}
+Progress snapshot:
+- Latest weight: ${memory.progressSummary.latestWeightKg ?? "not logged"}kg
+- Weight change: ${memory.progressSummary.changeKg ?? "not logged"}kg
+- Latest body fat: ${memory.progressSummary.latestBodyFatPercent ?? "not logged"}%
+- Latest waist: ${memory.progressSummary.latestWaistCm ?? "not logged"}cm
+Adaptive checkpoint: ${
+        memory.adaptiveCheckpoint
+          ? `${memory.adaptiveCheckpoint.urgency} urgency; trigger regen ${memory.adaptiveCheckpoint.triggerRegen}; ${memory.adaptiveCheckpoint.regenReason ?? "no regen reason"}`
+          : "none"
+      }`
+    : "== TJAI MEMORY ==\nNo prior TJAI memory available.";
 
   return `
 Generate a complete 12-week transformation plan for this person. Apply your full coaching intelligence to this data — connect every data point, notice conflicts, and make decisions that optimize their results.
@@ -152,42 +206,43 @@ Deload weeks: ${metrics.deloadWeeks.join(", ") || "none"}
 Reverse diet needed: ${metrics.reverseDietNeeded}
 
 ══ PERSON PROFILE ══
-Age: ${answers.s1_age} | Gender: ${answers.s1_gender}
-Height: ${answers.s1_height} | Weight: ${answers.s1_weight}
-Goal: ${answers.s2_goal} | Pace: ${answers.s2_pace}
-Body type: ${answers.s3_body_silhouette}
-Activity level: ${answers.s4_daily_activity}
-Sleep: ${answers.s8_hours} | Stress: ${answers.s9_stress}
-Training level: ${answers.s5_trains}
-Training location: ${fmtArray(answers.s5_type)}
-Training days/week: ${answers.s5_days ?? "N/A"}
-Session duration: ${answers.s5_duration ?? "45 min"}
-Equipment: ${fmtArray(answers.s5_equipment) || "Full gym"}
-Meals per day: ${answers.s11_meals}
-Diet style: ${answers.s12_diet_style}
-Foods they enjoy: ${fmtArray(answers.s12_foods_like) || "No preference stated"}
-Dietary restrictions: ${fmtArray(answers.s13_allergies)}
-Food budget: ${answers.s14_budget}
-Cooking comfort: ${answers.s14_time}
-Past experience: ${answers.s10_dieted}
-Biggest obstacles: ${fmtArray(answers.s18_biggest_problem)}
-Success vision: ${answers.s19_success_vision}
-Injuries/limitations: ${fmtArray(answers.s17_injuries) || "None"}
-Water intake: ${answers.s15_water}
-Supplements: ${fmtArray(answers.s16_which_supps)}
-Injuries: ${answers.s17_injuries ?? "None"}
-Medical conditions: ${answers.s17_conditions ?? "None"}
-Discipline level: ${answers.s18_discipline}
-Biggest challenge: ${fmtArray(answers.s18_biggest_problem)}
-Target weight: ${answers.s19_target_weight}kg
-Timeframe: ${answers.s19_timeframe}
+Age: ${profile.age} | Gender: ${pretty.sex}
+Height: ${profile.heightCm} cm | Weight: ${profile.weightKg} kg
+Goal: ${pretty.goal} | Goal detail: ${pretty.goalDetail} | Pace: ${pretty.pace}
+Target weight: ${profile.targetWeightKg ?? "not specified"}kg
+Body type: ${pretty.bodyType} | Estimated body fat: ${profile.estimatedBodyFat}%
+Activity level: ${pretty.activityLevel}
+Sleep: ${profile.sleepHours} hours | Stress: ${pretty.stressLevel}
+Training level: ${pretty.experienceLevel}
+Training location: ${pretty.trainingLocation}
+Training days/week: ${profile.trainingDays}
+Session duration: ${profile.sessionMinutes} min
+Equipment: ${equipment}
+Training preference: ${pretty.trainingPreference}
+Meals per day: ${profile.mealsPerDay}
+Diet style: ${pretty.dietStyle}
+Foods they enjoy: ${likedFoods}
+Foods they avoid: ${avoidedFoods}
+Dietary restrictions: ${restrictions}
+Food budget: ${pretty.budget}
+Cooking style: ${pretty.cookingStyle}
+Schedule constraint: ${titleCase(profile.scheduleConstraint)}
+Schedule notes: ${profile.scheduleNotes ?? "None"}
+Biggest obstacles: ${biggestProblem}
+Success vision: ${pretty.successVision}
+Injuries/limitations: ${injuries}
+Medical notes: ${profile.injuryNotes ?? "None"}
+Supplements already using: ${supplements}
+Restriction notes: ${profile.restrictionNotes ?? "None"}
 
 == DAILY ROUTINE (analyze for NEAT and meal timing) ==
-${answers.s19_daily_routine}
+${profile.dailyRoutine || "No free-text routine provided."}
 
 == METABOLIC TYPE CLASSIFICATION ==
 Metabolic Classification: ${metrics.metabolicType}
 Apply ${metrics.metabolicType}-specific coaching language and adjustments.
+
+${memoryBlock}
 
 == PLATEAU PREDICTION ==
 Plateau Prediction: likely around Week ${metrics.plateauWeek}.

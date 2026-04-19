@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { TJAICalculating } from "@/components/tjai/tjai-calculating";
 import { TJAIQuiz } from "@/components/tjai/tjai-quiz";
 import { TJAIResult } from "@/components/tjai/tjai-result";
+import { buildTjaiUserProfile, normalizeQuizAnswers } from "@/lib/tjai-intake";
 import { getDirection, type Locale } from "@/lib/i18n";
 import { getTjaiAccessCopy } from "@/lib/tjai-access-copy";
 import { getTjaiCopy, getTjaiSteps } from "@/lib/tjai-copy";
@@ -28,7 +29,7 @@ export function TJAIShell({ locale }: { locale: Locale }) {
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [generateError, setGenerateError] = useState<string | null>(null);
   const [pendingAnswers, setPendingAnswers] = useState<QuizAnswers | null>(null);
-  const [pendingPace, setPendingPace] = useState<"Moderate" | "Aggressive" | undefined>(undefined);
+  const [pendingPace, setPendingPace] = useState<"moderate" | "aggressive" | undefined>(undefined);
 
   const copy = useMemo(() => getTjaiCopy(locale), [locale]);
   const steps = useMemo(() => getTjaiSteps(locale), [locale]);
@@ -45,12 +46,13 @@ export function TJAIShell({ locale }: { locale: Locale }) {
       .catch(() => undefined);
   }, []);
 
-  const handleGenerate = async (submittedAnswers: QuizAnswers, paceOverride?: "Moderate" | "Aggressive") => {
-    setAnswers(submittedAnswers);
-    setPendingAnswers(submittedAnswers);
+  const handleGenerate = async (submittedAnswers: QuizAnswers, paceOverride?: "moderate" | "aggressive") => {
+    const normalizedAnswers = normalizeQuizAnswers(submittedAnswers);
+    setAnswers(normalizedAnswers);
+    setPendingAnswers(normalizedAnswers);
     setPendingPace(paceOverride);
     setGenerateError(null);
-    const effective = paceOverride ? { ...submittedAnswers, s2_pace: paceOverride } : submittedAnswers;
+    const effective = paceOverride ? normalizeQuizAnswers({ ...normalizedAnswers, s2_pace: paceOverride }) : normalizedAnswers;
     const localMetrics = calculateTJAIMetrics(effective);
     setMetrics(localMetrics);
     setPhase("calculating");
@@ -63,7 +65,7 @@ export function TJAIShell({ locale }: { locale: Locale }) {
         response = await fetch("/api/tjai/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ answers: submittedAnswers, paceOverride }),
+          body: JSON.stringify({ answers: normalizedAnswers, paceOverride }),
           signal: controller.signal
         });
       } finally {
@@ -89,18 +91,19 @@ export function TJAIShell({ locale }: { locale: Locale }) {
   };
 
   const handleCompareBoth = async (submittedAnswers: QuizAnswers) => {
+    const normalizedAnswers = normalizeQuizAnswers(submittedAnswers);
     setPhase("calculating");
     try {
       const [moderateRes, aggressiveRes] = await Promise.all([
         fetch("/api/tjai/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ answers: submittedAnswers, paceOverride: "Moderate" })
+          body: JSON.stringify({ answers: normalizedAnswers, paceOverride: "moderate" })
         }),
         fetch("/api/tjai/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ answers: submittedAnswers, paceOverride: "Aggressive" })
+          body: JSON.stringify({ answers: normalizedAnswers, paceOverride: "aggressive" })
         })
       ]);
       const moderateData = await moderateRes.json();
@@ -108,7 +111,7 @@ export function TJAIShell({ locale }: { locale: Locale }) {
       if (!moderateRes.ok || !aggressiveRes.ok) throw new Error("Compare generation failed");
       setComparePlans({ moderate: moderateData.plan as TJAIPlan, aggressive: aggressiveData.plan as TJAIPlan });
       setCompareMetrics({ moderate: moderateData.metrics as TJAIMetrics, aggressive: aggressiveData.metrics as TJAIMetrics });
-      setAnswers(submittedAnswers);
+      setAnswers(normalizedAnswers);
       setGeneratedAt(new Date().toISOString());
       setPhase("compare");
     } catch {
@@ -151,7 +154,7 @@ export function TJAIShell({ locale }: { locale: Locale }) {
         direction={direction}
         onAnswersChange={setDraftAnswers}
         onSubmit={(submitted) => {
-          setDraftAnswers(submitted);
+          setDraftAnswers(normalizeQuizAnswers(submitted));
           setPhase("approach");
         }}
       />
@@ -159,10 +162,11 @@ export function TJAIShell({ locale }: { locale: Locale }) {
   }
 
   if (phase === "approach") {
-    const moderate = calculateTJAIMetrics({ ...draftAnswers, s2_pace: "Moderate" });
-    const aggressive = calculateTJAIMetrics({ ...draftAnswers, s2_pace: "Aggressive" });
-    const paceFromQuiz = String(draftAnswers.s2_pace ?? "");
-    const recommendAggressive = paceFromQuiz.includes("Fast");
+    const normalizedDraft = normalizeQuizAnswers(draftAnswers);
+    const moderate = calculateTJAIMetrics({ ...normalizedDraft, s2_pace: "moderate" });
+    const aggressive = calculateTJAIMetrics({ ...normalizedDraft, s2_pace: "aggressive" });
+    const profile = buildTjaiUserProfile(normalizedDraft);
+    const recommendAggressive = profile.pace === "aggressive" && profile.experienceLevel !== "beginner" && profile.stressLevel !== "very_high";
     return (
       <section className="min-h-[100svh] bg-[#09090B] px-4 py-12 text-white">
         <div className="mx-auto max-w-3xl">
@@ -192,7 +196,7 @@ export function TJAIShell({ locale }: { locale: Locale }) {
               </div>
               <p className="mt-2 text-sm text-[#A1A1AA]">{accessCopy.moderateBody}</p>
               <p className="mt-2 text-xs text-zinc-500">{moderate.weeklyWeightChange} kg/week expected</p>
-              <button type="button" className="mt-4 w-full rounded-full bg-[#22D3EE] px-4 py-2.5 text-sm font-bold text-[#09090B]" onClick={() => void handleGenerate(draftAnswers, "Moderate")}>
+              <button type="button" className="mt-4 w-full rounded-full bg-[#22D3EE] px-4 py-2.5 text-sm font-bold text-[#09090B]" onClick={() => void handleGenerate(normalizedDraft, "moderate")}>
                 {accessCopy.moderateCta}
               </button>
             </article>
@@ -203,13 +207,13 @@ export function TJAIShell({ locale }: { locale: Locale }) {
               </div>
               <p className="mt-2 text-sm text-[#A1A1AA]">{accessCopy.aggressiveBody}</p>
               <p className="mt-2 text-xs text-zinc-500">{aggressive.weeklyWeightChange} kg/week expected</p>
-              <button type="button" className="mt-4 w-full rounded-full border border-[#A78BFA] px-4 py-2.5 text-sm font-semibold text-[#D4D4D8]" onClick={() => void handleGenerate(draftAnswers, "Aggressive")}>
+              <button type="button" className="mt-4 w-full rounded-full border border-[#A78BFA] px-4 py-2.5 text-sm font-semibold text-[#D4D4D8]" onClick={() => void handleGenerate(normalizedDraft, "aggressive")}>
                 {accessCopy.aggressiveCta}
               </button>
             </article>
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
-            <button type="button" onClick={() => void handleCompareBoth(draftAnswers)} className="rounded-full border border-[#1E2028] px-5 py-2 text-sm text-[#A1A1AA] hover:border-[#22D3EE] hover:text-white">
+            <button type="button" onClick={() => void handleCompareBoth(normalizedDraft)} className="rounded-full border border-[#1E2028] px-5 py-2 text-sm text-[#A1A1AA] hover:border-[#22D3EE] hover:text-white">
               {accessCopy.compareCta}
             </button>
             <button type="button" onClick={() => handleStartOver()} className="rounded-full border border-[#1E2028] px-5 py-2 text-sm text-[#A1A1AA] hover:text-white">
@@ -278,8 +282,11 @@ export function TJAIShell({ locale }: { locale: Locale }) {
   }
 
   if (phase === "compare" && comparePlans && compareMetrics) {
+    const profile = buildTjaiUserProfile(answers);
     const recommendation =
-      String(answers.s18_discipline ?? "").startsWith("High") && compareMetrics.aggressive.metabolicType === "fast" ? "Aggressive" : "Moderate";
+      profile.pace === "aggressive" && profile.experienceLevel !== "beginner" && compareMetrics.aggressive.metabolicType === "fast"
+        ? "Aggressive"
+        : "Moderate";
     return (
       <section className="min-h-[100svh] bg-[#09090B] px-4 py-10 text-white">
         <div className="mx-auto max-w-6xl">

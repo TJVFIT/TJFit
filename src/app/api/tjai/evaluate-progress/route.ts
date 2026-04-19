@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { callOpenAI } from "@/lib/tjai-openai";
+import { getLatestTjaiPlan, saveAdaptiveCheckpoint } from "@/lib/tjai-plan-store";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -30,15 +31,9 @@ export async function GET() {
 
   const uid = auth.user.id;
 
-  const [{ data: plan }, { data: entries }, { data: workouts }, { data: progress }] =
+  const [plan, { data: entries }, { data: workouts }, { data: progress }] =
     await Promise.all([
-      admin
-        .from("saved_tjai_plans")
-        .select("goal,daily_calories,protein_g,metrics_json,answers_json,created_at,updated_at")
-        .eq("user_id", uid)
-        .order("updated_at", { ascending: false })
-        .limit(1)
-        .maybeSingle(),
+      getLatestTjaiPlan(admin, uid),
       admin
         .from("progress_entries")
         .select("entry_date,weight_kg,body_fat_percent")
@@ -145,6 +140,21 @@ Rules:
       hasEnoughData: true,
       evaluation: null,
       error: "AI evaluation temporarily unavailable."
+    });
+  }
+
+  if (evaluation) {
+    void saveAdaptiveCheckpoint(admin, uid, {
+      shouldAdapt: evaluation.shouldAdapt,
+      urgency: evaluation.urgency,
+      triggerRegen: evaluation.triggerRegen,
+      regenReason: evaluation.regenReason,
+      snapshot: {
+        projectedWeeklyChange,
+        actualWeeklyChange,
+        workoutsPerWeek,
+        completedWeeks
+      }
     });
   }
 

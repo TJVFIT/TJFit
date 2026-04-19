@@ -2,11 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { isAdminEmail } from "@/lib/auth-utils";
 import { recordPlanGeneration, getSimilarUserInsight } from "@/lib/tjai-analytics";
+import { buildTjaiUserProfile, normalizeQuizAnswers } from "@/lib/tjai-intake";
 import { buildTJAISystemPrompt, buildTJAIUserPrompt } from "@/lib/tjai-prompts";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { getTJAIAccess } from "@/lib/tjai-access";
-import { calculateTJAIMetrics, parseRangeToNumber } from "@/lib/tjai-science";
+import { buildTjaiMemorySnapshot, saveTjaiStructuredMemory } from "@/lib/tjai-plan-store";
+import { calculateTJAIMetrics } from "@/lib/tjai-science";
 import { callOpenAI, safeParseJSON } from "@/lib/tjai-openai";
 import type { QuizAnswers } from "@/lib/tjai-types";
 
@@ -50,26 +52,26 @@ export async function POST(request: NextRequest) {
     }
 
     const answers = rawAnswers as Record<string, unknown>;
-    const effectiveAnswers: Record<string, unknown> = paceOverride ? { ...answers, s2_pace: paceOverride } : answers;
+    const effectiveAnswers = normalizeQuizAnswers(
+      paceOverride ? { ...answers, s2_pace: paceOverride } : answers
+    );
+    const profile = buildTjaiUserProfile(effectiveAnswers);
 
-    const trainingDaysRaw = String(effectiveAnswers.s5_days ?? effectiveAnswers.training_days ?? "3-4");
-    const inferredTrainingDays = trainingDaysRaw.startsWith("1") ? 2 : trainingDaysRaw.startsWith("3") ? 4 : trainingDaysRaw.startsWith("5") ? 6 : trainingDaysRaw.startsWith("7") ? 7 : 4;
-
-    // Support range strings ("25–34 years", "65–80 kg") or plain numbers
-    const requiredAge = parseRangeToNumber(effectiveAnswers.s1_age ?? effectiveAnswers.age, 0);
-    const requiredWeight = parseRangeToNumber(effectiveAnswers.s1_weight ?? effectiveAnswers.weight, 0);
-    const requiredHeight = parseRangeToNumber(effectiveAnswers.s1_height ?? effectiveAnswers.height, 0);
-
-    if (!Number.isFinite(requiredAge) || requiredAge <= 0 || !Number.isFinite(requiredWeight) || requiredWeight <= 0 || !Number.isFinite(requiredHeight) || requiredHeight <= 0) {
+    if (!Number.isFinite(profile.age) || profile.age <= 0 || !Number.isFinite(profile.weightKg) || profile.weightKg <= 0 || !Number.isFinite(profile.heightCm) || profile.heightCm <= 0) {
       return NextResponse.json({ error: "Missing required fields: age, weight, height. Please complete all questions." }, { status: 400 });
     }
 
     const quizAnswers = effectiveAnswers as QuizAnswers;
     const metrics = calculateTJAIMetrics(quizAnswers);
-    const learningInsight = await getSimilarUserInsight(adminClient, effectiveAnswers);
+    const [learningInsight, memory] = await Promise.all([
+      getSimilarUserInsight(adminClient, effectiveAnswers),
+      buildTjaiMemorySnapshot(adminClient, authResult.user.id)
+    ]);
 
     const systemPrompt = buildTJAISystemPrompt();
-    const userPrompt = buildTJAIUserPrompt(quizAnswers, metrics) + (learningInsight ? `\n\n== LEARNING FROM SIMILAR USERS ==\n${learningInsight}` : "");
+    const userPrompt =
+      buildTJAIUserPrompt(profile, metrics, memory) +
+      (learningInsight ? `\n\n== LEARNING FROM SIMILAR USERS ==\n${learningInsight}` : "");
 
     console.log("[TJAI] Generating plan for user:", authResult.user.id, "| tier:", tier);
 
@@ -119,14 +121,14 @@ export async function POST(request: NextRequest) {
         answers_json: effectiveAnswers,
         metrics_json: metrics,
         plan_json: plan,
-        goal: String(effectiveAnswers.s2_goal ?? effectiveAnswers.goal ?? "fat_loss"),
+        goal: profile.goal,
         daily_calories: Number(metrics.calorieTarget ?? 0),
         protein_g: Number(metrics.protein ?? 0),
         carbs_g: Number(metrics.carbs ?? 0),
         fat_g: Number(metrics.fat ?? 0),
         water_ml: Number(metrics.water ?? 0),
-        training_days_per_week: inferredTrainingDays,
-        training_location: String(effectiveAnswers.s5_type ?? effectiveAnswers.location ?? "gym"),
+        training_days_per_week: profile.trainingDays,
+        training_location: profile.trainingLocation,
         updated_at: new Date().toISOString()
       })
       .select("id")
@@ -142,6 +144,7 @@ export async function POST(request: NextRequest) {
 
     // Non-blocking analytics
     void recordPlanGeneration(adminClient, effectiveAnswers, Number(metrics.calorieTarget ?? 0), Number(metrics.protein ?? 0));
+    void saveTjaiStructuredMemory(adminClient, authResult.user.id, effectiveAnswers);
 
     return NextResponse.json({ plan, metrics, generatedAt: new Date().toISOString(), planId: savedPlan?.id ?? null });
 

@@ -3,6 +3,20 @@ import type { Locale } from "@/lib/i18n";
 export type StepType = "single" | "multi" | "number" | "text" | "scale" | "slider";
 export type MetabolicType = "fast" | "slow" | "stress_dominant" | "hormonal";
 
+export type QuizOptionValue = string | number | boolean;
+
+export type QuizOption = {
+  label: string;
+  value: QuizOptionValue;
+  hint?: string;
+};
+
+export type QuizCondition = {
+  stepId: string;
+  value: QuizOptionValue | QuizOptionValue[];
+  operator?: "equals" | "includes" | "not_equals";
+};
+
 export type QuizStep = {
   id: string;
   section: string;
@@ -11,7 +25,7 @@ export type QuizStep = {
   question: string;
   sub?: string;
   type: StepType;
-  options?: string[];
+  options?: QuizOption[];
   placeholder?: string;
   unit?: string;
   min?: number;
@@ -19,11 +33,91 @@ export type QuizStep = {
   step?: number;
   defaultValue?: number;
   required: boolean;
-  skipIf?: { stepId: string; value: string | string[] };
+  showIf?: {
+    mode?: "all" | "any";
+    conditions: QuizCondition[];
+  };
 };
 
 export type QuizAnswerValue = string | string[] | number | boolean | null | { [key: string]: unknown };
 export type QuizAnswers = Record<string, QuizAnswerValue>;
+
+export type TjaiUserProfile = {
+  sex: "male" | "female";
+  age: number;
+  heightCm: number;
+  weightKg: number;
+  targetWeightKg: number | null;
+  goal:
+    | "fat_loss"
+    | "muscle_gain"
+    | "recomposition"
+    | "fitness"
+    | "stay_active";
+  goalDetail:
+    | "general"
+    | "aggressive_cut"
+    | "sustainable_cut"
+    | "size"
+    | "strength"
+    | "aesthetic"
+    | "athletic"
+    | "energy"
+    | "consistency";
+  pace: "slow" | "moderate" | "aggressive";
+  bodyType: "very_lean" | "lean" | "average" | "overweight" | "obese" | "unknown";
+  estimatedBodyFat: number;
+  injuries: Array<"knee" | "lower_back" | "shoulder" | "hip" | "wrist_elbow" | "recent_surgery" | "chronic_condition">;
+  injuryNotes: string | null;
+  activityLevel: "very_low" | "low" | "moderate" | "active";
+  sleepHours: number;
+  stressLevel: "very_low" | "low" | "moderate" | "high" | "very_high";
+  scheduleConstraint: "none" | "short_sessions" | "shift_work" | "family_load" | "travel";
+  scheduleNotes: string | null;
+  experienceLevel: "beginner" | "intermediate" | "advanced";
+  trainingLocation: "home" | "gym" | "hybrid";
+  equipment: Array<"bodyweight" | "bands" | "dumbbells" | "bench" | "barbell_rack" | "machines">;
+  trainingDays: number;
+  sessionMinutes: number;
+  trainingPreference: "strength" | "hypertrophy" | "conditioning" | "mixed";
+  dietStyle: "balanced" | "high_protein" | "low_carb" | "halal" | "vegetarian" | "vegan";
+  dietaryRestrictions: Array<"none" | "halal" | "vegetarian" | "vegan" | "dairy_free" | "gluten_free" | "nut_free">;
+  restrictionNotes: string | null;
+  likedFoods: Array<"chicken" | "beef" | "fish" | "eggs" | "rice" | "oats" | "fruit" | "greek_yogurt" | "potatoes" | "legumes">;
+  avoidedFoods: Array<"seafood" | "red_meat" | "dairy" | "eggs" | "spicy_food" | "nothing_specific">;
+  monthlyFoodBudget: "budget" | "moderate" | "premium";
+  cookingStyle: "minimal" | "simple" | "batch";
+  mealsPerDay: number;
+  supplements: Array<"none" | "protein" | "creatine" | "omega3" | "vitamin_d" | "magnesium" | "preworkout">;
+  biggestObstacles: Array<"motivation" | "consistency" | "time" | "food_cravings" | "training_knowledge" | "stress" | "recovery">;
+  successVision:
+    | "look_different"
+    | "feel_energetic"
+    | "fit_clothes_better"
+    | "lift_heavier"
+    | "build_routine";
+  dailyRoutine: string;
+};
+
+export type TjaiMemorySnapshot = {
+  latestPlanSummary: string | null;
+  priorPlanGoal: string | null;
+  planVersion: number | null;
+  preferences: Array<{ key: string; value: string }>;
+  workoutSummary: string[];
+  progressSummary: {
+    latestWeightKg: number | null;
+    changeKg: number | null;
+    latestBodyFatPercent: number | null;
+    latestWaistCm: number | null;
+  };
+  adaptiveCheckpoint: {
+    shouldAdapt: boolean;
+    urgency: "low" | "medium" | "high";
+    triggerRegen: boolean;
+    regenReason: string | null;
+  } | null;
+};
 
 export type TJAIMetrics = {
   bmr: number;

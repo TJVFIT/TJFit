@@ -257,7 +257,7 @@ export function ImmersiveHome({
   const dietSlice = useMemo(() => diets.slice(0, 3), [diets]);
 
   const features = [
-    { icon: Brain, title: "TJAI — Your AI Coach", desc: "25 questions. GPT-4o builds your complete 12-week transformation plan. Diet + training + supplements.", accent: "#22D3EE", span: 2 as const },
+    { icon: Brain, title: "TJAI — Your AI Coach", desc: "Adaptive intake, progress-aware memory, and AI-built 12-week transformation plans. Diet + training + supplements.", accent: "#22D3EE", span: 2 as const },
     { icon: Dumbbell, title: "20+ Expert Programs", desc: "12-week structured plans for home or gym. Fat loss, muscle gain — all levels.", accent: "#67E8F9", span: 1 as const },
     { icon: Apple, title: "Full Diet Systems", desc: "Daily meal plans with macros, recipes, grocery lists. Halal, vegan, budget — covered.", accent: "#A78BFA", span: 1 as const },
     { icon: Users, title: "Coach Marketplace", desc: "Book certified coaches. 1-on-1 guidance and personalized feedback.", accent: "#22D3EE", span: 1 as const },
@@ -471,7 +471,7 @@ export function ImmersiveHome({
               Meet TJAI.
             </h2>
             <p className="mt-4 max-w-xl text-base leading-relaxed text-[#A1A1AA]">
-              Answer 25 questions. Get a complete 12-week plan in minutes — training blocks, meals, macros, and progression tuned to your metabolism and schedule.
+              Complete an adaptive intake and get a complete 12-week plan in minutes — training blocks, meals, macros, and progression tuned to your metabolism, schedule, and feedback.
             </p>
 
             <ul className="mt-10 space-y-4">

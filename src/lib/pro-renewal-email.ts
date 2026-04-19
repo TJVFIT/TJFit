@@ -18,9 +18,9 @@ No diet plan.
 Tone: expert coach.
 
 User profile:
-- Goal: ${String(answers.s2_goal ?? "Lose fat")}
-- Training location: ${String(answers.s5_type ?? "Home")}
-- Experience: ${String(answers.s10_dieted ?? "Beginner")}
+- Goal: ${String(answers.s2_goal ?? "fat_loss")}
+- Training location: ${String(answers.s5_type ?? "home")}
+- Experience: ${String(answers.s5_trains ?? "beginner")}
 - Weekly availability: ${String(answers.s5_days ?? "4")}
 - Constraints: ${String(answers.s17_injuries ?? "None")}
 
@@ -47,11 +47,11 @@ Output format (strict JSON):
 
 function defaultAnswers() {
   return {
-    s2_goal: "Lose fat",
-    s5_type: "Home",
-    s10_dieted: "Beginner",
+    s2_goal: "fat_loss",
+    s5_type: "home",
+    s5_trains: "beginner",
     s5_days: 4,
-    s17_injuries: "None"
+    s17_injuries: []
   };
 }
 

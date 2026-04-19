@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { requireAuth } from "@/lib/require-auth";
+import { getLatestTjaiPlan } from "@/lib/tjai-plan-store";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { callOpenAI } from "@/lib/tjai-openai";
 
@@ -18,16 +19,10 @@ export async function GET() {
   const admin = getSupabaseServerClient();
   if (!admin) return NextResponse.json({ error: "Server not configured" }, { status: 500 });
 
-  const [{ data: progressRows }, { data: workoutRows }, { data: planRow }, { data: profile }] = await Promise.all([
+  const [{ data: progressRows }, { data: workoutRows }, planRow, { data: profile }] = await Promise.all([
     admin.from("program_progress").select("week_number,day_label,is_complete,completed_at,program_slug").eq("user_id", auth.user.id).order("week_number", { ascending: true }),
     admin.from("workout_logs").select("id,week_number,day_label,exercise_name,logged_at").eq("user_id", auth.user.id).order("logged_at", { ascending: false }).limit(100),
-    admin
-      .from("saved_tjai_plans")
-      .select("plan_json")
-      .eq("user_id", auth.user.id)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle(),
+    getLatestTjaiPlan(admin, auth.user.id),
     admin.from("profiles").select("current_streak").eq("id", auth.user.id).maybeSingle()
   ]);
 

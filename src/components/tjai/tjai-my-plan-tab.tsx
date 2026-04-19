@@ -12,7 +12,7 @@ const COPY = {
   en: {
     loading: "Loading your plan...",
     buildTitle: "Build Your 12-Week Plan",
-    buildSub: "Answer 25 questions for your preview; pay to generate your full plan.",
+    buildSub: "Complete a smarter adaptive assessment for your preview; pay to generate your full plan.",
     start: "Start Building",
     oneTime: "Or get just your plan — one time ($25)",
     note: "~5 minutes · Completely personalized · Science-based",
@@ -31,7 +31,7 @@ const COPY = {
   tr: {
     loading: "Planim yukleniyor...",
     buildTitle: "12 Haftalik Planini Olustur",
-    buildSub: "Onizleme icin 25 soruyu cevapla; tam plan icin odeme yap.",
+    buildSub: "Daha akilli uyarlanabilir degerlendirmeyi tamamla; tam plan icin odeme yap.",
     start: "Olusturmaya Basla",
     oneTime: "Veya sadece planini al — tek seferlik ($25)",
     note: "~5 dakika · Tamamen kisisel · Bilim temelli",
@@ -50,7 +50,7 @@ const COPY = {
   ar: {
     loading: "جارٍ تحميل خطتك...",
     buildTitle: "ابنِ خطتك لمدة 12 أسبوعاً",
-    buildSub: "أجب عن 25 سؤالاً للمعاينة؛ ادفع لتوليد خطتك الكاملة.",
+    buildSub: "أكمل تقييماً ذكياً ومتكيّفاً للمعاينة؛ وادفع لتوليد خطتك الكاملة.",
     start: "ابدأ البناء",
     oneTime: "أو احصل على خطتك فقط — مرة واحدة ($25)",
     note: "~5 دقائق · مخصص بالكامل · مبني على العلم",
@@ -69,7 +69,7 @@ const COPY = {
   es: {
     loading: "Cargando tu plan...",
     buildTitle: "Crea tu Plan de 12 Semanas",
-    buildSub: "Responde 25 preguntas para la vista previa; paga para generar tu plan completo.",
+    buildSub: "Completa una evaluacion adaptativa e inteligente para la vista previa; paga para generar tu plan completo.",
     start: "Comenzar",
     oneTime: "O consigue solo tu plan — pago unico ($25)",
     note: "~5 minutos · Totalmente personalizado · Basado en ciencia",
@@ -88,7 +88,7 @@ const COPY = {
   fr: {
     loading: "Chargement de votre plan...",
     buildTitle: "Construisez votre plan sur 12 semaines",
-    buildSub: "25 questions pour l'apercu ; payez pour generer votre plan complet.",
+    buildSub: "Completez une evaluation adaptative intelligente pour l'apercu ; payez pour generer votre plan complet.",
     start: "Commencer",
     oneTime: "Ou obtenez uniquement votre plan — en une fois ($25)",
     note: "~5 minutes · Entierement personnalise · Base sur la science",

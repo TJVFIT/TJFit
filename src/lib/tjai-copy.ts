@@ -298,261 +298,464 @@ export const tjaiCopy: Record<Locale, TJAICopy> = {
 };
 
 type BaseStep = Omit<QuizStep, "section" | "sectionNumber" | "totalSections"> & { sectionIdx: number };
+const opt = (label: string, value: string | number | boolean) => ({ label, value });
 
-// 25 questions across 6 sections — ALL multiple choice. Field IDs preserved for science/API compatibility.
 const BASE_STEPS: BaseStep[] = [
-  // ── SECTION 0: The Basics ─────────────────────────────────────────────────
   {
     id: "s2_goal", sectionIdx: 0,
     question: "What's your primary goal?",
-    sub: "This shapes your entire 12-week plan.",
+    sub: "This shapes the entire TJAI plan.",
     type: "single",
     options: [
-      "🔥 Lose Fat — Burn fat, get lean",
-      "💪 Build Muscle — Get bigger and stronger",
-      "⚖️ Body Recomposition — Lose fat AND gain muscle",
-      "🏃 Improve Fitness — Endurance, health, energy",
-      "🏠 Stay Active — Move more, feel better"
+      opt("🔥 Lose Fat — Burn fat, get lean", "fat_loss"),
+      opt("💪 Build Muscle — Get bigger and stronger", "muscle_gain"),
+      opt("⚖️ Body Recomposition — Lose fat AND gain muscle", "recomposition"),
+      opt("🏃 Improve Fitness — Endurance, health, energy", "fitness"),
+      opt("🏠 Stay Active — Move more, feel better", "stay_active")
+    ],
+    required: true
+  },
+  {
+    id: "s2_goal_detail", sectionIdx: 0,
+    question: "What kind of result matters most to you first?",
+    sub: "TJAI will bias the plan toward the outcome you care about most.",
+    type: "single",
+    options: [
+      opt("Sustainable fat loss I can keep", "sustainable_cut"),
+      opt("Aggressive cut and visible drop", "aggressive_cut"),
+      opt("More size and fullness", "size"),
+      opt("More strength and athleticism", "strength"),
+      opt("More aesthetic and balanced physique", "aesthetic"),
+      opt("More energy and better health", "energy"),
+      opt("Build a routine I can actually stick to", "consistency")
     ],
     required: true
   },
   {
     id: "s1_gender", sectionIdx: 0,
     question: "What's your biological sex?",
-    sub: "Used for accurate BMR, hormone-based adjustments, and macro ratios.",
+    sub: "Used for more accurate energy and recovery estimates.",
     type: "single",
-    options: ["Male", "Female"],
+    options: [opt("Male", "male"), opt("Female", "female")],
     required: true
   },
   {
     id: "s1_age", sectionIdx: 0,
     question: "What is your age range?",
-    sub: "Age directly affects your metabolic rate and recovery capacity.",
+    sub: "Age directly affects recovery, training tolerance, and metabolic rate.",
     type: "single",
-    options: ["16–24 years", "25–34 years", "35–44 years", "45–54 years", "55+ years"],
+    options: [
+      opt("16–24 years", 20),
+      opt("25–34 years", 30),
+      opt("35–44 years", 40),
+      opt("45–54 years", 50),
+      opt("55+ years", 58)
+    ],
     required: true
   },
   {
     id: "s1_weight", sectionIdx: 0,
     question: "What is your current weight?",
-    sub: "Used to calculate your BMR, TDEE, and daily protein targets.",
+    sub: "Used for calories, protein targets, and projected progress.",
     type: "single",
-    options: ["Under 50 kg", "50–65 kg", "65–80 kg", "80–100 kg", "100–120 kg", "Over 120 kg"],
+    options: [
+      opt("Under 50 kg", 48),
+      opt("50–65 kg", 58),
+      opt("65–80 kg", 72),
+      opt("80–100 kg", 90),
+      opt("100–120 kg", 110),
+      opt("Over 120 kg", 125)
+    ],
+    required: true
+  },
+  {
+    id: "s1_height", sectionIdx: 0,
+    question: "What is your height?",
+    sub: "Used with weight to estimate energy needs and exercise scaling.",
+    type: "single",
+    options: [
+      opt("Under 155 cm", 152),
+      opt("155–165 cm", 160),
+      opt("165–175 cm", 170),
+      opt("175–185 cm", 180),
+      opt("185–195 cm", 190),
+      opt("Over 195 cm", 198)
+    ],
     required: true
   },
 
-  // ── SECTION 1: Your Body ──────────────────────────────────────────────────
-  {
-    id: "s1_height", sectionIdx: 1,
-    question: "What is your height?",
-    sub: "Used with weight to calculate your BMI and energy needs.",
-    type: "single",
-    options: ["Under 155 cm", "155–165 cm", "165–175 cm", "175–185 cm", "185–195 cm", "Over 195 cm"],
-    required: true
-  },
   {
     id: "s2_pace", sectionIdx: 1,
     question: "How fast do you want results?",
-    sub: "Be honest — this directly affects your calorie deficit and training intensity.",
+    sub: "Be honest — this directly affects training demand, recovery, and calories.",
     type: "single",
     options: [
-      "🐢 Slow & Sustainable — I want lasting results, no rush",
-      "⚡ Moderate Pace — Steady progress, good balance",
-      "🚀 Fast Results — I'm fully committed to pushing hard"
+      opt("🐢 Slow & Sustainable — I want lasting results, no rush", "slow"),
+      opt("⚡ Moderate Pace — Steady progress, good balance", "moderate"),
+      opt("🚀 Fast Results — I'm fully committed to pushing hard", "aggressive")
     ],
     required: true
   },
   {
     id: "s3_body_silhouette", sectionIdx: 1,
     question: "Which body type best describes you?",
-    sub: "This helps TJAI estimate body fat percentage for macro precision.",
+    sub: "This helps TJAI estimate body fat and how aggressively to push the plan.",
     type: "single",
     options: [
-      "Ectomorph — Naturally Slim (hard to gain weight, fast metabolism)",
-      "Mesomorph — Athletic Build (gain and lose weight relatively easily)",
-      "Endomorph — Naturally Bigger (gain weight easily, slower metabolism)"
+      opt("Very Lean", "very_lean"),
+      opt("Lean", "lean"),
+      opt("Average", "average"),
+      opt("Overweight", "overweight"),
+      opt("Obese", "obese")
     ],
     required: true
   },
   {
     id: "s17_injuries", sectionIdx: 1,
     question: "Do you have any injuries or physical limitations?",
-    sub: "Select all that apply. TJAI will modify exercises accordingly.",
+    sub: "Select all that apply. TJAI will adjust exercises and recovery rules around this.",
     type: "multi",
-    options: ["None", "Knee pain", "Lower back pain", "Shoulder pain", "Hip pain", "Wrist / elbow pain", "Recent surgery", "Chronic condition"],
+    options: [
+      opt("None", "none"),
+      opt("Knee pain", "knee"),
+      opt("Lower back pain", "lower_back"),
+      opt("Shoulder pain", "shoulder"),
+      opt("Hip pain", "hip"),
+      opt("Wrist / elbow pain", "wrist_elbow"),
+      opt("Recent surgery", "recent_surgery"),
+      opt("Chronic condition", "chronic_condition")
+    ],
     required: true
   },
+  {
+    id: "s17_conditions", sectionIdx: 1,
+    question: "Anything TJAI should know about those limitations?",
+    sub: "Optional note: movement restrictions, medical guidance, or exercises you know you should avoid.",
+    type: "text",
+    placeholder: "Example: No overhead pressing for now. Walking and lower body are cleared.",
+    required: false,
+    showIf: {
+      mode: "any",
+      conditions: [
+        { stepId: "s17_injuries", operator: "includes", value: "recent_surgery" },
+        { stepId: "s17_injuries", operator: "includes", value: "chronic_condition" }
+      ]
+    }
+  },
+  {
+    id: "s19_target_weight", sectionIdx: 1,
+    question: "If you know it, what target body weight are you aiming for?",
+    sub: "Optional, but useful if you already have a realistic target in mind.",
+    type: "number",
+    placeholder: "e.g. 78",
+    unit: "kg",
+    min: 35,
+    max: 220,
+    required: false
+  },
 
-  // ── SECTION 2: Your Lifestyle ─────────────────────────────────────────────
   {
     id: "s4_daily_activity", sectionIdx: 2,
     question: "How active are you outside of your workouts?",
-    sub: "This is your daily movement level — NOT including gym sessions.",
+    sub: "This is your daily movement level, not including planned training.",
     type: "single",
     options: [
-      "Very low — Desk job, mostly sitting all day",
-      "Low — Some walking, mostly sedentary",
-      "Moderate — Regular movement, active lifestyle",
-      "Active — Physical job or very active daily routine"
+      opt("Very low — Desk job, mostly sitting all day", "very_low"),
+      opt("Low — Some walking, mostly sedentary", "low"),
+      opt("Moderate — Regular movement, active lifestyle", "moderate"),
+      opt("Active — Physical job or very active daily routine", "active")
     ],
     required: true
   },
   {
     id: "s8_hours", sectionIdx: 2,
     question: "How many hours do you sleep per night on average?",
-    sub: "Sleep directly affects cortisol, testosterone, and fat loss.",
+    sub: "Sleep affects cortisol, recovery, fat loss, and performance.",
     type: "single",
-    options: ["4–5 hours — Chronically sleep-deprived", "6 hours — Below average", "7 hours — Average", "8 hours — Good", "9+ hours — Very well-rested"],
+    options: [
+      opt("4–5 hours — Chronically sleep-deprived", 5),
+      opt("6 hours — Below average", 6),
+      opt("7 hours — Average", 7),
+      opt("8 hours — Good", 8),
+      opt("9+ hours — Very well-rested", 9)
+    ],
     required: true
   },
   {
     id: "s9_stress", sectionIdx: 2,
     question: "What is your current overall stress level?",
-    sub: "High cortisol from stress directly impacts fat loss and muscle gain.",
-    type: "single",
-    options: ["😌 Very Low — Life is calm and manageable", "😐 Low — Occasional minor stress", "😤 Moderate — Regular work or life pressure", "😰 High — Frequently stressed", "🤯 Very High — Overwhelmed regularly"],
-    required: true
-  },
-  {
-    id: "s14_budget", sectionIdx: 2,
-    question: "What is your monthly food budget for this plan?",
-    sub: "TJAI will select foods and supplements within your budget.",
+    sub: "High stress changes recovery, appetite, and how aggressive TJAI should be.",
     type: "single",
     options: [
-      "💰 Budget-Conscious — Keep meals affordable, simple foods",
-      "💵 Moderate — Normal grocery spending",
-      "💎 No Limit — Best performance foods, no restrictions"
+      opt("😌 Very Low — Life is calm and manageable", "very_low"),
+      opt("😐 Low — Occasional minor stress", "low"),
+      opt("😤 Moderate — Regular work or life pressure", "moderate"),
+      opt("😰 High — Frequently stressed", "high"),
+      opt("🤯 Very High — Overwhelmed regularly", "very_high")
     ],
     required: true
   },
   {
-    id: "s13_allergies", sectionIdx: 2,
-    question: "Do you have any dietary restrictions or food preferences?",
-    sub: "Select all that apply. TJAI will fully respect these.",
-    type: "multi",
-    options: ["None", "Vegetarian", "Vegan", "Halal", "Kosher", "No dairy", "No gluten", "No pork", "No nuts", "No seafood", "Other"],
+    id: "s18_schedule_constraint", sectionIdx: 2,
+    question: "What is most likely to limit your consistency?",
+    sub: "TJAI will build around the constraint instead of pretending it doesn't exist.",
+    type: "single",
+    options: [
+      opt("None — my schedule is stable", "none"),
+      opt("I need short sessions most days", "short_sessions"),
+      opt("My work schedule changes often", "shift_work"),
+      opt("Family or caregiving demands", "family_load"),
+      opt("Travel or unpredictable weeks", "travel")
+    ],
+    required: true
+  },
+  {
+    id: "s18_schedule_notes", sectionIdx: 2,
+    question: "What does that scheduling issue actually look like week to week?",
+    sub: "Optional detail — this helps TJAI place training days and recovery more realistically.",
+    type: "text",
+    placeholder: "Example: Two late shifts each week. Sundays are easiest. Travel every other Friday.",
+    required: false,
+    showIf: {
+      mode: "all",
+      conditions: [{ stepId: "s18_schedule_constraint", operator: "not_equals", value: "none" }]
+    }
+  },
+  {
+    id: "s14_budget", sectionIdx: 2,
+    question: "What is your monthly food budget for this plan?",
+    sub: "TJAI will choose foods and supplement tiers that match this budget.",
+    type: "single",
+    options: [
+      opt("💰 Budget-Conscious — Keep meals affordable", "budget"),
+      opt("💵 Moderate — Balanced quality and cost", "moderate"),
+      opt("💎 Flexible — Performance quality matters most", "premium")
+    ],
+    required: true
+  },
+  {
+    id: "s19_daily_routine", sectionIdx: 2,
+    question: "What does a normal weekday look like for you?",
+    sub: "Mention wake time, work/school, commute, meal timing, and when you can realistically train.",
+    type: "text",
+    placeholder: "Example: Wake at 6:30, desk job 9-6, lunch at 1, home by 7, best time to train is 7:30 pm.",
     required: true
   },
 
-  // ── SECTION 3: Your Training ──────────────────────────────────────────────
   {
     id: "s5_trains", sectionIdx: 3,
-    question: "What is your current fitness and training level?",
-    sub: "Be honest — this shapes exercise selection, sets, reps, and progression.",
+    question: "What is your current training level?",
+    sub: "Be honest — TJAI should match your real level, not your ambition.",
     type: "single",
     options: [
-      "🌱 Complete Beginner — Never trained consistently",
-      "📈 Some Experience — Trained on and off (under 1 year)",
-      "💪 Intermediate — Training consistently (1–3 years)",
-      "🏆 Advanced — Serious structured training (3+ years)"
+      opt("🌱 Beginner — Less than 6 months of consistent training", "beginner"),
+      opt("📈 Intermediate — 6 to 24 months of real training", "intermediate"),
+      opt("🏆 Advanced — 2+ years of serious structured training", "advanced")
     ],
     required: true
   },
   {
     id: "s5_type", sectionIdx: 3,
-    question: "Where will you be training?",
-    sub: "This determines exercise selection and program structure.",
+    question: "Where will you train most of the time?",
+    sub: "This determines exercise selection and plan structure.",
     type: "single",
     options: [
-      "🏠 Home — Minimal or no equipment",
-      "🏋️ Gym — Full gym access with all equipment",
-      "🔀 Both — Mix of home and gym sessions"
+      opt("🏠 Home — Mostly training at home", "home"),
+      opt("🏋️ Gym — Full gym access", "gym"),
+      opt("🔀 Hybrid — Mix of home and gym", "hybrid")
     ],
     required: true
   },
   {
+    id: "s5_equipment", sectionIdx: 3,
+    question: "What equipment do you actually have access to?",
+    sub: "Only choose what you genuinely have available outside a full gym.",
+    type: "multi",
+    options: [
+      opt("Bodyweight only", "bodyweight"),
+      opt("Resistance bands", "bands"),
+      opt("Dumbbells", "dumbbells"),
+      opt("Bench", "bench"),
+      opt("Barbell / rack", "barbell_rack"),
+      opt("Machines / cables", "machines")
+    ],
+    required: false,
+    showIf: {
+      mode: "any",
+      conditions: [
+        { stepId: "s5_type", value: "home" },
+        { stepId: "s5_type", value: "hybrid" }
+      ]
+    }
+  },
+  {
     id: "s5_days", sectionIdx: 3,
-    question: "How many days per week can you commit to training?",
-    sub: "TJAI will build your split around this number.",
+    question: "How many days per week can you realistically train?",
+    sub: "Choose what you can sustain consistently.",
     type: "single",
-    options: ["1–2 days per week", "3–4 days per week", "4–5 days per week", "5–6 days per week"],
+    options: [
+      opt("3 days", 3),
+      opt("4 days", 4),
+      opt("5 days", 5),
+      opt("6 days", 6)
+    ],
     required: true
   },
   {
     id: "s5_duration", sectionIdx: 3,
     question: "How long can each training session be?",
-    sub: "TJAI will structure workouts to fit within this time.",
+    sub: "TJAI will fit volume and exercise density to this.",
     type: "single",
-    options: ["20–30 minutes — Very short sessions", "30–45 minutes — Efficient sessions", "45–60 minutes — Standard sessions", "60–75 minutes — Extended sessions", "75–90 minutes — Long sessions"],
+    options: [
+      opt("20–30 minutes — Very efficient sessions", 30),
+      opt("35–45 minutes — Standard efficient sessions", 45),
+      opt("50–60 minutes — Plenty of time", 60),
+      opt("75+ minutes — Long sessions are fine", 75)
+    ],
     required: true
   },
   {
-    id: "s5_equipment", sectionIdx: 3,
-    question: "What equipment do you have access to at home?",
-    sub: "Select all that apply.",
-    type: "multi",
-    options: ["No equipment (bodyweight only)", "Dumbbells", "Resistance bands", "Pull-up bar", "Barbell + weights", "Kettlebells", "Cables / machines", "Full home gym"],
-    skipIf: { stepId: "s5_type", value: "🏋️ Gym — Full gym access with all equipment" },
-    required: false
-  },
-
-  // ── SECTION 4: Your Nutrition ─────────────────────────────────────────────
-  {
-    id: "s12_diet_style", sectionIdx: 4,
-    question: "How would you describe your current eating habits?",
-    sub: "TJAI uses this to set your dietary transition pace.",
+    id: "s5_training_preference", sectionIdx: 3,
+    question: "What kind of training keeps you most engaged?",
+    sub: "TJAI can bias the plan toward what motivates you while still serving your goal.",
     type: "single",
     options: [
-      "🍕 Mostly Unhealthy — Fast food, irregular meals, no tracking",
-      "🥗 Mixed — Sometimes healthy, sometimes not",
-      "🥩 Mostly Healthy — I try to eat well most of the time",
-      "🥦 Very Disciplined — I track macros and plan my meals"
+      opt("Strength-focused lifting", "strength"),
+      opt("Muscle-building / pump work", "hypertrophy"),
+      opt("Conditioning / calorie-burn work", "conditioning"),
+      opt("Balanced mix of everything", "mixed")
+    ],
+    required: true
+  },
+
+  {
+    id: "s12_diet_style", sectionIdx: 4,
+    question: "Which nutrition style fits you best right now?",
+    sub: "TJAI will use this to choose a structure you can actually stick to.",
+    type: "single",
+    options: [
+      opt("Balanced and flexible", "balanced"),
+      opt("High-protein focus", "high_protein"),
+      opt("Lower-carb preference", "low_carb"),
+      opt("Halal-friendly structure", "halal"),
+      opt("Vegetarian", "vegetarian"),
+      opt("Vegan", "vegan")
+    ],
+    required: true
+  },
+  {
+    id: "s13_allergies", sectionIdx: 4,
+    question: "Any dietary restrictions TJAI must respect?",
+    sub: "Select all that apply.",
+    type: "multi",
+    options: [
+      opt("None", "none"),
+      opt("Halal", "halal"),
+      opt("Vegetarian", "vegetarian"),
+      opt("Vegan", "vegan"),
+      opt("Dairy-free", "dairy_free"),
+      opt("Gluten-free", "gluten_free"),
+      opt("Nut-free", "nut_free")
+    ],
+    required: true
+  },
+  {
+    id: "s13_restriction_notes", sectionIdx: 4,
+    question: "Anything specific TJAI should know about those food restrictions?",
+    sub: "Optional note — for example hard exclusions, cultural preferences, or foods that must always stay in.",
+    type: "text",
+    placeholder: "Example: Halal only, but eggs and dairy are fine. Avoid whey and shellfish completely.",
+    required: false,
+    showIf: {
+      mode: "all",
+      conditions: [{ stepId: "s13_allergies", operator: "not_equals", value: "none" }]
+    }
+  },
+  {
+    id: "s12_foods_like", sectionIdx: 4,
+    question: "Which foods would you be happy eating often?",
+    sub: "Select all that apply.",
+    type: "multi",
+    options: [
+      opt("Chicken", "chicken"),
+      opt("Beef", "beef"),
+      opt("Fish", "fish"),
+      opt("Eggs", "eggs"),
+      opt("Rice", "rice"),
+      opt("Oats", "oats"),
+      opt("Fruit", "fruit"),
+      opt("Greek yogurt", "greek_yogurt"),
+      opt("Potatoes", "potatoes"),
+      opt("Legumes", "legumes")
+    ],
+    required: true
+  },
+  {
+    id: "s12_foods_avoid", sectionIdx: 4,
+    question: "What foods do you prefer to avoid?",
+    sub: "Select all that apply.",
+    type: "multi",
+    options: [
+      opt("Seafood", "seafood"),
+      opt("Red meat", "red_meat"),
+      opt("Dairy", "dairy"),
+      opt("Eggs", "eggs"),
+      opt("Spicy food", "spicy_food"),
+      opt("Nothing specific", "nothing_specific")
+    ],
+    required: true
+  },
+  {
+    id: "s14_time", sectionIdx: 4,
+    question: "How should TJAI handle meal prep?",
+    sub: "Choose the cooking style you can realistically follow.",
+    type: "single",
+    options: [
+      opt("Minimal effort — very quick meals", "minimal"),
+      opt("Simple cooking most days", "simple"),
+      opt("Batch cook and meal prep", "batch")
     ],
     required: true
   },
   {
     id: "s11_meals", sectionIdx: 4,
     question: "How many meals per day do you prefer?",
-    sub: "TJAI structures your daily calories and macros around this.",
+    sub: "TJAI will use this to structure your calories and macros.",
     type: "single",
-    options: ["2 meals per day", "3 meals per day", "4 meals per day", "5+ meals per day", "Intermittent fasting (16:8 or similar)"],
+    options: [opt("3 meals", 3), opt("4 meals", 4), opt("5 meals", 5)],
     required: true
   },
   {
-    id: "s14_time", sectionIdx: 4,
-    question: "How comfortable are you with cooking?",
-    sub: "This determines the complexity of your meal plan.",
-    type: "single",
-    options: [
-      "🍳 Beginner — I need simple, quick meals (under 15 min)",
-      "👨‍🍳 Moderate — I can follow a recipe without problems",
-      "🎯 Advanced — I enjoy cooking complex meals"
-    ],
-    required: true
-  },
-  {
-    id: "s12_foods_like", sectionIdx: 4,
-    question: "Which foods do you enjoy eating? (select all you like)",
-    sub: "TJAI will include these in your meal plan wherever possible.",
+    id: "s16_which_supps", sectionIdx: 4,
+    question: "What supplements are you already taking, if any?",
+    sub: "Select all that apply. TJAI will avoid duplicating what you already use.",
     type: "multi",
     options: [
-      "Chicken breast", "Beef / lamb", "Fish / seafood", "Eggs", "Tofu / tempeh",
-      "Rice / potatoes", "Oats / grains", "Pasta / bread", "Vegetables",
-      "Legumes / beans", "Greek yogurt / cottage cheese", "Protein shakes", "Nuts / seeds"
+      opt("None", "none"),
+      opt("Protein powder", "protein"),
+      opt("Creatine", "creatine"),
+      opt("Omega-3", "omega3"),
+      opt("Vitamin D", "vitamin_d"),
+      opt("Magnesium", "magnesium"),
+      opt("Pre-workout", "preworkout")
     ],
-    required: false
+    required: true
   },
 
-  // ── SECTION 5: Finishing Up ───────────────────────────────────────────────
-  {
-    id: "s10_dieted", sectionIdx: 5,
-    question: "Have you followed structured fitness programs before?",
-    sub: "This helps TJAI calibrate your starting point and adherence strategy.",
-    type: "single",
-    options: [
-      "🚫 Never — This is my first structured program",
-      "😕 Tried but quit — I struggled to stay consistent",
-      "📉 Some success — Worked partially, but not fully",
-      "💪 Yes, successfully — I've done programs before and stuck to them"
-    ],
-    required: true
-  },
   {
     id: "s18_biggest_problem", sectionIdx: 5,
-    question: "What is your biggest obstacle to getting results?",
-    sub: "Select all that apply. TJAI will address these in your plan.",
+    question: "What usually knocks you off track?",
+    sub: "Select all that apply so TJAI can build around your real obstacles.",
     type: "multi",
-    options: ["Lack of time", "Lack of motivation", "Not knowing what to do", "Diet is the hard part", "Injuries holding me back", "Past failed attempts", "Busy schedule", "Budget constraints"],
+    options: [
+      opt("Motivation dips", "motivation"),
+      opt("Consistency / discipline", "consistency"),
+      opt("Not enough time", "time"),
+      opt("Food cravings or appetite", "food_cravings"),
+      opt("Not knowing what to do", "training_knowledge"),
+      opt("Stress and overwhelm", "stress"),
+      opt("Poor recovery", "recovery")
+    ],
     required: true
   },
   {
@@ -561,11 +764,11 @@ const BASE_STEPS: BaseStep[] = [
     sub: "Pick the one that resonates most.",
     type: "single",
     options: [
-      "🪞 I look noticeably different in the mirror",
-      "⚡ I feel energetic and strong every day",
-      "👗 I fit into clothes I couldn't wear before",
-      "🏋️ I'm lifting heavier than I ever have",
-      "🧘 I've built a sustainable healthy routine"
+      opt("I look noticeably different in the mirror", "look_different"),
+      opt("I feel energetic and strong every day", "feel_energetic"),
+      opt("I fit into clothes I couldn't wear before", "fit_clothes_better"),
+      opt("I'm lifting heavier than I ever have", "lift_heavier"),
+      opt("I've built a sustainable healthy routine", "build_routine")
     ],
     required: true
   }

@@ -5,6 +5,8 @@ import { useEffect, useMemo, useState } from "react";
 import { BodySilhouetteSelector } from "@/components/tjai/body-silhouette-selector";
 import { useMagneticButton } from "@/hooks/useMagneticButton";
 import type { Locale } from "@/lib/i18n";
+import { normalizeQuizAnswers } from "@/lib/tjai-intake";
+import { calculateTJAIMetrics } from "@/lib/tjai-science";
 import { cn } from "@/lib/utils";
 import type { QuizAnswers, QuizStep, TJAICopy } from "@/lib/tjai-types";
 
@@ -112,19 +114,30 @@ type Props = {
   onAnswersChange?: (answers: QuizAnswers) => void;
 };
 
-function isSkipped(step: QuizStep, answers: QuizAnswers): boolean {
-  if (!step.skipIf) return false;
-  const parent = answers[step.skipIf.stepId];
-  if (Array.isArray(step.skipIf.value)) {
-    return step.skipIf.value.includes(String(parent ?? ""));
-  }
-  return String(parent ?? "") === String(step.skipIf.value);
+function matchesShowIf(step: QuizStep, answers: QuizAnswers): boolean {
+  if (!step.showIf || step.showIf.conditions.length === 0) return true;
+  const mode = step.showIf.mode ?? "all";
+  const checks = step.showIf.conditions.map((condition) => {
+    const parent = answers[condition.stepId];
+    const expected = Array.isArray(condition.value) ? condition.value : [condition.value];
+    const list = Array.isArray(parent) ? parent : parent == null ? [] : [parent];
+    if (list.length === 0) return false;
+    if (condition.operator === "includes") {
+      return expected.some((value) => list.includes(value));
+    }
+    if (condition.operator === "not_equals") {
+      return expected.every((value) => !list.includes(value));
+    }
+    return expected.some((value) => list.includes(value));
+  });
+  return mode === "any" ? checks.some(Boolean) : checks.every(Boolean);
 }
 
 function hasAnswer(step: QuizStep, answer: QuizAnswers[string] | undefined): boolean {
   if (step.type === "multi") return Array.isArray(answer) && answer.length > 0;
   if (step.type === "text") return typeof answer === "string" ? answer.trim().length > 0 : !step.required;
   if (step.type === "number" || step.type === "slider" || step.type === "scale") return typeof answer === "number";
+  if (typeof answer === "number" || typeof answer === "boolean") return true;
   return typeof answer === "string" && answer.trim().length > 0;
 }
 
@@ -139,7 +152,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
 
   const localeKey = locale as keyof typeof QUIZ_UI_COPY;
   const uiCopy = QUIZ_UI_COPY[localeKey] ?? QUIZ_UI_COPY.en;
-  const filteredSteps = useMemo(() => steps.filter((step) => !isSkipped(step, answers)), [steps, answers]);
+  const filteredSteps = useMemo(() => steps.filter((step) => matchesShowIf(step, answers)), [steps, answers]);
   const total = filteredSteps.length;
   const safeIdx = total > 0 ? Math.min(Math.max(idx, 0), total - 1) : 0;
   const step = filteredSteps[safeIdx];
@@ -161,7 +174,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
         return;
       }
       const savedStep = Number(parsed?.currentStep ?? 0);
-      const savedAnswers = parsed?.answers ?? {};
+      const savedAnswers = normalizeQuizAnswers((parsed?.answers ?? {}) as Record<string, unknown>);
       if (savedStep > 0 && savedAnswers && typeof savedAnswers === "object") {
         setResumePrompt({ currentStep: savedStep, answers: savedAnswers });
       }
@@ -196,7 +209,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
     const min = step.min ?? 0;
     const max = step.max ?? 100;
     const defaultValue = step.defaultValue ?? Math.round((min + max) / 2);
-    setAnswers((prev) => ({ ...prev, [step.id]: defaultValue }));
+    setAnswers((prev) => normalizeQuizAnswers({ ...prev, [step.id]: defaultValue }));
   }, [answers, step]);
 
   if (!step) {
@@ -213,57 +226,25 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
   const canContinue = !step.required || hasAnswer(step, currentAnswer);
 
   const questionNumber = safeIdx + 1;
-  const categoryLabel =
-    questionNumber <= 2
-      ? uiCopy.categoryPersonal
-      : questionNumber <= 5
-        ? uiCopy.categoryBody
-        : questionNumber <= 8
-          ? uiCopy.categoryGoal
-          : questionNumber <= 11
-            ? uiCopy.categoryHistory
-            : questionNumber <= 14
-              ? uiCopy.categoryLifestyle
-              : questionNumber <= 17
-                ? uiCopy.categoryPrefs
-                : uiCopy.categoryFinal;
-
-  const weight = Number(answers.s1_weight ?? 0);
-  const height = Number(answers.s1_height ?? 0);
-  const age = Number(answers.s1_age ?? 0);
-  const sex = String(answers.s1_gender ?? "Male").toLowerCase();
-  const goal = String(answers.s2_goal ?? "Lose fat").toLowerCase();
-  const activity = String(answers.s4_daily_activity ?? "Moderate");
-  const multipliers: Record<string, number> = {
-    very_low: 1.2,
-    low: 1.375,
-    moderate: 1.55,
-    active: 1.725,
-    very_active: 1.9
-  };
-  const activityKey = activity.startsWith("Very low")
-    ? "very_low"
-    : activity.startsWith("Low")
-      ? "low"
-      : activity.startsWith("Active")
-        ? "active"
-        : activity.startsWith("Very active")
-          ? "very_active"
-          : "moderate";
-  const bmr =
-    weight > 0 && height > 0 && age > 0
-      ? sex.includes("male")
-        ? (10 * weight) + (6.25 * height) - (5 * age) + 5
-        : (10 * weight) + (6.25 * height) - (5 * age) - 161
-      : null;
-  const tdee = bmr ? bmr * (multipliers[activityKey] ?? 1.55) : null;
-  const targetCalories = tdee
-    ? goal.includes("gain")
-      ? Math.round(tdee + 300)
-      : goal.includes("maintain")
-        ? Math.round(tdee)
-        : Math.round(tdee - 500)
-    : null;
+  const categoryLabel = step.section || uiCopy.categoryGoal;
+  const liveMetrics = (() => {
+    try {
+      const normalized = normalizeQuizAnswers(answers);
+      if (
+        typeof normalized.s1_weight !== "number" ||
+        typeof normalized.s1_height !== "number" ||
+        typeof normalized.s1_age !== "number"
+      ) {
+        return null;
+      }
+      return calculateTJAIMetrics(normalized);
+    } catch {
+      return null;
+    }
+  })();
+  const bmr = liveMetrics?.bmr ?? null;
+  const tdee = liveMetrics?.tdee ?? null;
+  const targetCalories = liveMetrics?.calorieTarget ?? null;
 
   const goNext = () => {
     if (!canContinue) {
@@ -277,7 +258,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
       if (typeof window !== "undefined") {
         window.localStorage.removeItem(QUIZ_PROGRESS_KEY);
       }
-      onSubmit(answers);
+      onSubmit(normalizeQuizAnswers(answers));
       return;
     }
     setIdx((v) => Math.min(total - 1, v + 1));
@@ -285,7 +266,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
 
   const updateAnswer = (value: QuizAnswers[string], autoAdvance = false) => {
     setAnswers((prev) => {
-      const next = { ...prev, [step.id]: value };
+      const next = normalizeQuizAnswers({ ...prev, [step.id]: value });
       onAnswersChange?.(next);
       return next;
     });
@@ -299,7 +280,18 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
 
   const renderInput = () => {
     if (step.id === "s3_body_silhouette") {
-      const currentBody = typeof currentAnswer === "string" ? currentAnswer : undefined;
+      const currentBody =
+        currentAnswer === "very_lean"
+          ? "Very Lean"
+          : currentAnswer === "lean"
+            ? "Lean"
+            : currentAnswer === "average"
+              ? "Average"
+              : currentAnswer === "overweight"
+                ? "Overweight"
+                : currentAnswer === "obese"
+                  ? "Obese"
+                  : undefined;
       return (
         <BodySilhouetteSelector
           gender={typeof answers.s1_gender === "string" ? answers.s1_gender : undefined}
@@ -308,8 +300,26 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
             setAnswers((prev) => {
               const next = {
                 ...prev,
-                s3_body_silhouette: selection.bodyType,
-                s3_body_type: selection.bodyType,
+                s3_body_silhouette:
+                  selection.bodyType === "Very Lean"
+                    ? "very_lean"
+                    : selection.bodyType === "Lean"
+                      ? "lean"
+                      : selection.bodyType === "Average"
+                        ? "average"
+                        : selection.bodyType === "Overweight"
+                          ? "overweight"
+                          : "obese",
+                s3_body_type:
+                  selection.bodyType === "Very Lean"
+                    ? "very_lean"
+                    : selection.bodyType === "Lean"
+                      ? "lean"
+                      : selection.bodyType === "Average"
+                        ? "average"
+                        : selection.bodyType === "Overweight"
+                          ? "overweight"
+                          : "obese",
                 s3_estimated_bf: selection.estimatedBF
               };
               onAnswersChange?.(next);
@@ -323,11 +333,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
     }
 
     if (step.type === "single") {
-      const fallbackSingleOptions: Record<string, string[]> = {
-        s1_gender: ["Male", "Female", "Prefer not to say"]
-      };
-      const singleOptions =
-        Array.isArray(step.options) && step.options.length > 0 ? step.options : (fallbackSingleOptions[step.id] ?? []);
+      const singleOptions = Array.isArray(step.options) ? step.options : [];
       if (singleOptions.length === 0) {
         return (
           <div className="rounded-[10px] border border-[#1E2028] bg-[#111215] p-4 text-sm text-[#A1A1AA]">
@@ -338,12 +344,12 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
       return (
         <div className="grid gap-3">
           {singleOptions.map((option) => {
-            const selected = currentAnswer === option;
+            const selected = currentAnswer === option.value;
             return (
               <button
-                key={option}
+                key={`${step.id}-${String(option.value)}`}
                 type="button"
-                onClick={() => updateAnswer(option, idx < total - 1)}
+                onClick={() => updateAnswer(option.value, idx < total - 1)}
                 className={cn(
                   "flex w-full items-center gap-3 rounded-[10px] border px-4 py-3.5 text-left text-sm font-medium transition-all duration-200 ease-out",
                   selected
@@ -359,7 +365,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
                 >
                   {selected ? <span className="absolute left-1/2 top-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white" /> : null}
                 </span>
-                <span>{option}</span>
+                <span>{option.label}</span>
               </button>
             );
           })}
@@ -377,22 +383,23 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
           </div>
         );
       }
-      const toggle = (option: string) => {
-        if (selected.includes(option)) {
-          updateAnswer(selected.filter((v) => v !== option));
+      const toggle = (optionValue: string) => {
+        if (selected.includes(optionValue)) {
+          updateAnswer(selected.filter((v) => v !== optionValue));
         } else {
-          updateAnswer([...selected, option]);
+          updateAnswer([...selected, optionValue]);
         }
       };
       return (
         <div className="grid gap-3">
           {multiOptions.map((option) => {
-            const active = selected.includes(option);
+            const optionValue = String(option.value);
+            const active = selected.includes(optionValue);
             return (
               <button
-                key={option}
+                key={`${step.id}-${optionValue}`}
                 type="button"
-                onClick={() => toggle(option)}
+                onClick={() => toggle(optionValue)}
                 className={cn(
                   "flex w-full items-center gap-3 rounded-[10px] border px-4 py-3.5 text-left text-sm font-medium transition-all duration-200 ease-out",
                   active
@@ -408,7 +415,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
                 >
                   {active ? "✓" : ""}
                 </span>
-                <span>{option}</span>
+                <span>{option.label}</span>
               </button>
             );
           })}

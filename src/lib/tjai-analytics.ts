@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { buildTjaiUserProfile } from "@/lib/tjai-intake";
 
 function getAgeRange(age: number): string {
   if (age < 20) return "16-19";
@@ -28,28 +29,17 @@ export async function recordPlanGeneration(
   generatedProtein: number
 ) {
   try {
-    const age = Number(answers.s1_age ?? 0);
-    const weight = Number(answers.s1_weight ?? 0);
-    const restrictions = Array.isArray(answers.s13_allergies)
-      ? (answers.s13_allergies as string[])
-      : [];
+    const profile = buildTjaiUserProfile(answers);
 
     await supabase.from("tjai_plan_analytics").insert({
-      goal: String(answers.s2_goal ?? ""),
-      sex: String(answers.s1_gender ?? ""),
-      age_range: age > 0 ? getAgeRange(age) : null,
-      weight_range: weight > 0 ? getWeightRange(weight) : null,
-      fitness_level: String(answers.s5_trains ?? ""),
-      training_location: String(answers.s5_type ?? ""),
-      training_days: (() => {
-        const d = String(answers.s5_days ?? "");
-        if (d.startsWith("1")) return 2;
-        if (d.startsWith("3")) return 4;
-        if (d.startsWith("4")) return 5;
-        if (d.startsWith("5")) return 6;
-        return 3;
-      })(),
-      dietary_restrictions: restrictions.length > 0 ? restrictions : null,
+      goal: profile.goal,
+      sex: profile.sex,
+      age_range: profile.age > 0 ? getAgeRange(profile.age) : null,
+      weight_range: profile.weightKg > 0 ? getWeightRange(profile.weightKg) : null,
+      fitness_level: profile.experienceLevel,
+      training_location: profile.trainingLocation,
+      training_days: profile.trainingDays,
+      dietary_restrictions: profile.dietaryRestrictions.filter((item) => item !== "none"),
       generated_calories: generatedCalories,
       generated_protein: generatedProtein
     });
@@ -64,17 +54,14 @@ export async function getSimilarUserInsight(
   answers: Record<string, unknown>
 ): Promise<string | null> {
   try {
-    const age = Number(answers.s1_age ?? 0);
-    const goal = String(answers.s2_goal ?? "");
-    const sex = String(answers.s1_gender ?? "");
-    const fitnessLevel = String(answers.s5_trains ?? "");
+    const profile = buildTjaiUserProfile(answers);
 
     const { data } = await supabase
       .from("tjai_plan_analytics")
       .select("generated_calories, generated_protein, outcome_weight_change")
-      .eq("goal", goal)
-      .eq("sex", sex)
-      .eq("age_range", age > 0 ? getAgeRange(age) : "")
+      .eq("goal", profile.goal)
+      .eq("sex", profile.sex)
+      .eq("age_range", profile.age > 0 ? getAgeRange(profile.age) : "")
       .not("outcome_weight_change", "is", null)
       .limit(10);
 
@@ -83,8 +70,8 @@ export async function getSimilarUserInsight(
       const { data: fallbackData } = await supabase
         .from("tjai_plan_analytics")
         .select("generated_calories,generated_protein")
-        .eq("goal", goal)
-        .eq("sex", sex)
+        .eq("goal", profile.goal)
+        .eq("sex", profile.sex)
         .limit(20);
 
       if (!fallbackData || fallbackData.length < 3) return null;
@@ -96,7 +83,7 @@ export async function getSimilarUserInsight(
         fallbackData.reduce((s, r) => s + Number(r.generated_protein ?? 0), 0) / fallbackData.length
       );
 
-      return `COMMUNITY BENCHMARK: Among ${fallbackData.length} similar users (${sex}, ${getAgeRange(age)}, goal: ${goal}), average targets are ${avgCalories} kcal/day and ${avgProtein}g protein. Use as a calibration reference.`;
+      return `COMMUNITY BENCHMARK: Among ${fallbackData.length} similar users (${profile.sex}, ${getAgeRange(profile.age)}, goal: ${profile.goal}), average targets are ${avgCalories} kcal/day and ${avgProtein}g protein. Use as a calibration reference.`;
     }
 
     const avgCalories = Math.round(
@@ -109,7 +96,7 @@ export async function getSimilarUserInsight(
       data.reduce((sum, r) => sum + Number(r.outcome_weight_change ?? 0), 0) / data.length
     ).toFixed(2);
 
-    return `LEARNING FROM PAST USERS (${data.length} similar users — ${sex}, ${getAgeRange(age)}, ${fitnessLevel}, goal: ${goal}): average targets ${avgCalories} kcal/day, ${avgProtein}g protein/day, average weekly weight change ${avgOutcome}kg. Use as calibration reference.`;
+    return `LEARNING FROM PAST USERS (${data.length} similar users — ${profile.sex}, ${getAgeRange(profile.age)}, ${profile.experienceLevel}, goal: ${profile.goal}): average targets ${avgCalories} kcal/day, ${avgProtein}g protein/day, average weekly weight change ${avgOutcome}kg. Use as calibration reference.`;
   } catch {
     return null;
   }

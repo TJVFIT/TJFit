@@ -9,7 +9,7 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 export const metadata: Metadata = {
   title: "TJAI — AI Fitness & Nutrition Coach | TJFit",
   description:
-    "TJAI: answer 25 questions for a free preview. Unlock your full personalized 12-week fitness and nutrition plan at checkout.",
+    "TJAI: complete an adaptive assessment for a personalized preview, then unlock your full 12-week fitness and nutrition plan.",
   keywords: ["AI fitness coach", "AI personal trainer", "AI nutrition plan", "AI workout plan"]
 };
 
