@@ -161,12 +161,32 @@ async function main() {
 
   fs.writeFileSync(markPng, markSquare);
 
-  const fav16 = await sharp(markSquare).resize(16, 16).png().toBuffer();
-  const fav32 = await sharp(markSquare).resize(32, 32).png().toBuffer();
-  const fav48 = await sharp(markSquare).resize(48, 48).png().toBuffer();
-  const icon192 = await sharp(markSquare).resize(192, 192).png().toBuffer();
-  const icon512 = await sharp(markSquare).resize(512, 512).png().toBuffer();
-  const apple180 = await sharp(markSquare).resize(180, 180).png().toBuffer();
+  const iconSource = await sharp({
+    create: {
+      width: 1024,
+      height: 1024,
+      channels: 4,
+      background: TRANSPARENT
+    }
+  })
+    .composite([
+      {
+        input: await sharp(mainBuffer)
+          .resize({ width: 900, height: 900, fit: "inside" })
+          .png()
+          .toBuffer(),
+        gravity: "center"
+      }
+    ])
+    .png()
+    .toBuffer();
+
+  const fav16 = await sharp(iconSource).resize(16, 16).png().toBuffer();
+  const fav32 = await sharp(iconSource).resize(32, 32).png().toBuffer();
+  const fav48 = await sharp(iconSource).resize(48, 48).png().toBuffer();
+  const icon192 = await sharp(iconSource).resize(192, 192).png().toBuffer();
+  const icon512 = await sharp(iconSource).resize(512, 512).png().toBuffer();
+  const apple180 = await sharp(iconSource).resize(180, 180).png().toBuffer();
 
   const ico = await toIco([fav16, fav32, fav48]);
   fs.writeFileSync(faviconIco, ico);
