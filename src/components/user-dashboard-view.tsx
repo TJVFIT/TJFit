@@ -40,9 +40,9 @@ function useTextScramble(target: string, active: boolean) {
   useEffect(() => {
     if (!active || !target) return;
     let frame = 0;
-    const totalFrames = 20;
-    let raf = 0;
-    const tick = () => {
+    const totalFrames = 30;
+    const stepMs = 20; /* ~600ms total */
+    const id = window.setInterval(() => {
       frame++;
       const progress = frame / totalFrames;
       const revealed = Math.floor(progress * target.length);
@@ -51,11 +51,12 @@ function useTextScramble(target: string, active: boolean) {
         result += target[i] === " " ? " " : chars[Math.floor(Math.random() * chars.length)];
       }
       setDisplay(result);
-      if (frame < totalFrames) raf = requestAnimationFrame(tick);
-      else setDisplay(target);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+      if (frame >= totalFrames) {
+        window.clearInterval(id);
+        setDisplay(target);
+      }
+    }, stepMs);
+    return () => window.clearInterval(id);
   }, [target, active]);
   return display || target;
 }

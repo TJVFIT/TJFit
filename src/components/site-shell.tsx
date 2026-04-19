@@ -10,6 +10,7 @@ import { LogoIntro } from "@/components/logo-intro";
 import { MainErrorBoundary } from "@/components/main-error-boundary";
 import { PageTransition } from "@/components/page-transition";
 import { ScrollProgressBar } from "@/components/scroll-progress-bar";
+import { ScrollRevealInit } from "@/components/scroll-reveal-init";
 import { ShellFooterGate } from "@/components/shell-footer-gate";
 import { ShellNoticeGate } from "@/components/shell-notice-gate";
 import { SiteSidebar } from "@/components/site-sidebar";
@@ -59,6 +60,7 @@ export function SiteShell({
         <SpotlightCursor />
         <ScrollToTop />
         <ScrollProgressBar />
+        <ScrollRevealInit />
         <SiteSidebar locale={locale} />
         <ShellNoticeGate locale={locale} />
         <GuestOnboardingPopup locale={locale} />

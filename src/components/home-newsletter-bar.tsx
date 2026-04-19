@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Check } from "lucide-react";
 import type { Locale } from "@/lib/i18n";
 
 const COPY: Record<
@@ -19,9 +20,9 @@ const COPY: Record<
   en: {
     title: "Get a Free 3-Day Workout Plan",
     sub: "Plus weekly fitness tips and nutrition guides. No spam. Unsubscribe anytime.",
-    placeholder: "you@example.com",
+    placeholder: "your@email.com",
     cta: "Send Me The Plan",
-    success: "Check your inbox — your free plan is on its way.",
+    success: "Check your inbox! Your free plan is on its way.",
     duplicate: "This email is already subscribed.",
     invalid: "Please enter a valid email address.",
     generic: "Could not subscribe right now. Please try again.",
@@ -106,36 +107,43 @@ export function HomeNewsletterBar({ locale }: { locale: Locale }) {
   };
 
   return (
-    <section className="border-y border-[#1E2028] bg-[#111215] px-6 py-16 lg:px-12 lg:py-20">
-      <div className="mx-auto max-w-4xl border border-[#1E2028] bg-[#0A0A0B] p-8 lg:p-10">
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between lg:gap-12">
-          <div className="min-w-0 flex-1">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-[#52525B]">Email</p>
-            <h3 className="mt-3 font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">{copy.title}</h3>
-            <p className="mt-3 max-w-md text-sm leading-relaxed text-[#A1A1AA]">{copy.sub}</p>
-          </div>
-          <form onSubmit={onSubmit} className="w-full shrink-0 lg:max-w-sm">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={copy.placeholder}
-                className="min-h-[48px] w-full border border-[#2A2D36] bg-[#111215] px-4 text-sm text-white outline-none transition-[border-color,box-shadow] placeholder:text-[#52525B] focus:border-[#22D3EE]/40 focus:ring-1 focus:ring-[#22D3EE]/25"
-                disabled={busy || done}
-              />
-              <button
-                type="submit"
-                disabled={busy || done}
-                className="min-h-[48px] shrink-0 border border-[#22D3EE]/40 bg-[#22D3EE]/10 px-6 text-sm font-semibold text-[#22D3EE] transition-[background-color,border-color] hover:bg-[#22D3EE]/15 disabled:opacity-60 sm:px-8"
-              >
-                {busy ? "…" : copy.cta}
-              </button>
-            </div>
-            {done ? <p className="mt-3 text-sm text-[#A1A1AA]">{copy.success}</p> : null}
-            {error ? <p className="mt-3 text-sm text-rose-400/90">{error}</p> : null}
-          </form>
+    <section className="reveal-section relative border-y border-[rgba(34,211,238,0.08)] bg-[rgba(34,211,238,0.03)] px-6 py-[clamp(3rem,6vw,4.5rem)] lg:px-12">
+      <span className="ghost-text pointer-events-none start-1/2 top-6 -translate-x-1/2 opacity-[0.02]" aria-hidden>
+        NEWSLETTER
+      </span>
+      <div className="relative z-[1] mx-auto flex max-w-6xl flex-col gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-16">
+        <div className="min-w-0 flex-1 text-center lg:text-start">
+          <h3 className="font-display text-2xl font-extrabold tracking-tight text-white sm:text-3xl">{copy.title}</h3>
+          <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-[#A1A1AA] lg:mx-0">{copy.sub}</p>
         </div>
+        <form onSubmit={onSubmit} className="w-full shrink-0 lg:max-w-md">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={copy.placeholder}
+              className="min-h-[48px] w-full rounded-[10px] border border-[rgba(255,255,255,0.08)] bg-[rgba(13,15,18,0.75)] px-4 text-sm text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] outline-none backdrop-blur-md transition-[border-color,box-shadow] placeholder:text-[#52525B] focus:border-[rgba(34,211,238,0.35)] focus:ring-1 focus:ring-[rgba(34,211,238,0.2)]"
+              disabled={busy || done}
+            />
+            <button
+              type="submit"
+              disabled={busy || done}
+              className="min-h-[48px] shrink-0 rounded-[10px] bg-[#22D3EE] px-6 text-sm font-extrabold text-[#09090B] shadow-[0_12px_40px_rgba(34,211,238,0.22)] transition-[filter,transform] duration-200 hover:brightness-110 hover:-translate-y-0.5 disabled:opacity-60 sm:px-8"
+            >
+              {busy ? "…" : copy.cta}
+            </button>
+          </div>
+          {done ? (
+            <p className="mt-4 flex items-center justify-center gap-2 text-sm font-medium text-[#22D3EE] sm:justify-start">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[rgba(34,211,238,0.15)]">
+                <Check className="h-3.5 w-3.5" strokeWidth={2.5} aria-hidden />
+              </span>
+              {copy.success}
+            </p>
+          ) : null}
+          {error && !done ? <p className="mt-3 text-sm text-rose-400/90">{error}</p> : null}
+        </form>
       </div>
     </section>
   );

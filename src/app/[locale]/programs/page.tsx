@@ -276,7 +276,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
           </CinematicListingHeader>
         </BlurReveal>
 
-        <PremiumPageShell className="relative z-[1] max-w-[1200px] px-6">
+        <PremiumPageShell className="relative z-[1] max-w-[1200px] px-6" ghostWord="PROGRAMS">
           <ScrollTicker
             speed={50}
             items={[
@@ -287,6 +287,19 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
               "12 WEEKS",
               "PROGRESSIVE OVERLOAD",
               "STRUCTURED SYSTEMS"
+            ]}
+            className="mb-3 text-[#1E2028]"
+          />
+          <ScrollTicker
+            speed={56}
+            direction="right"
+            items={[
+              "HALAL MEALS",
+              "VEGAN OPTIONS",
+              "MACRO TRACKING",
+              "RECOVERY WEEKS",
+              "COACH REVIEW",
+              "TJAI PLANS"
             ]}
             className="mb-10 text-[#1E2028]"
           />

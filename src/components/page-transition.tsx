@@ -25,7 +25,7 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
     <div
       style={{
         opacity: phase === "in" ? 1 : 0,
-        transform: phase === "in" ? "translateY(0)" : "translateY(10px)",
+        transform: phase === "in" ? "translateY(0)" : "translateY(8px)",
         transition: phase === "in"
           ? "opacity 300ms cubic-bezier(0,0,0.2,1), transform 300ms cubic-bezier(0,0,0.2,1)"
           : "opacity 150ms ease-out, transform 150ms ease-out"

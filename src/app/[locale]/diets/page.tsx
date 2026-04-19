@@ -115,7 +115,7 @@ export default function DietsPage({ params }: { params: { locale: string } }) {
           </CinematicListingHeader>
         </BlurReveal>
 
-        <PremiumPageShell className="max-w-[1200px] px-6">
+        <PremiumPageShell className="max-w-[1200px] px-6" ghostWord="NUTRITION">
           <ScrollTicker
             speed={50}
             direction="right"
@@ -129,6 +129,19 @@ export default function DietsPage({ params }: { params: { locale: string } }) {
               "KETO",
               "ATHLETE FUEL",
               "WEEKLY PROGRESSION"
+            ]}
+            className="mb-3 text-[#1E2028]"
+          />
+          <ScrollTicker
+            speed={54}
+            direction="left"
+            items={[
+              "RECIPES",
+              "GROCERY LISTS",
+              "REFEEDS",
+              "INTERMITTENT",
+              "PLANT PROTEIN",
+              "MEAL PREP"
             ]}
             className="mb-10 text-[#1E2028]"
           />

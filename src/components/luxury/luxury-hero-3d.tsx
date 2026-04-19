@@ -38,7 +38,7 @@ export function LuxuryHero3DExperience({ mouseRef }: { mouseRef: HeroMouseRef })
   return (
     <ClientErrorBoundary sentryScope="home-hero-3d" fallback={<Hero3DBackdropFallback />}>
       <Suspense fallback={<Hero3DBackdropSkeleton />}>
-        <div className="pointer-events-none absolute inset-0 z-[1] overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
           <LuxuryHero3DCanvas mouseRef={mouseRef} />
         </div>
       </Suspense>

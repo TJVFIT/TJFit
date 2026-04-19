@@ -6,7 +6,7 @@
   color-scheme: dark;
   /* --font-sans / --font-display set by next/font on <html> */
 
-  /* Design system ù source of truth */
+  /* Design system ? source of truth */
   --color-bg: #0a0a0b;
   --color-surface: #111215;
   --color-surface-2: #18191e;
@@ -218,7 +218,7 @@
   }
 }
 
-/* Legal hub FAQ ù smooth height without JS */
+/* Legal hub FAQ ? smooth height without JS */
 .legal-faq-details .legal-faq-panel {
   display: grid;
   grid-template-rows: 0fr;
@@ -274,7 +274,7 @@ h1, h2, h3, h4, h5, h6,
 
 /* ????????????????????????????????????????
    PREMIUM CYAN GLOW SYSTEM
-   Multi-layer neon glow ù the signature
+   Multi-layer neon glow ? the signature
    of the TJFit premium design language.
 ???????????????????????????????????????? */
 
@@ -308,7 +308,7 @@ h1, h2, h3, h4, h5, h6,
   text-shadow: var(--glow-cyan-text);
 }
 
-/* Gradient text (clip-text) ù can't use text-shadow, use filter instead */
+/* Gradient text (clip-text) ? can't use text-shadow, use filter instead */
 [class*="bg-gradient"][class*="bg-clip-text"][class*="text-transparent"] {
   filter: drop-shadow(0 0 12px rgba(34,211,238,0.3));
 }
@@ -521,7 +521,7 @@ strong, b {
   box-shadow: 0 12px 40px -20px rgba(0, 0, 0, 0.45);
 }
 
-/* ùù TJFit surface system (use these for cross-page consistency) ùù */
+/* ?? TJFit surface system (use these for cross-page consistency) ?? */
 .tj-surface-card {
   border-radius: var(--tj-radius-xl);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -989,6 +989,36 @@ strong, b {
   animation: chat-bubble-in 280ms cubic-bezier(0.34,1.56,0.64,1) forwards;
 }
 
+@keyframes chat-from-user {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes chat-from-ai {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.chat-bubble-user {
+  animation: chat-from-user 200ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.chat-bubble-ai {
+  animation: chat-from-ai 200ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
 @keyframes thinking-bounce {
   0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
   40% { transform: translateY(-6px); opacity: 1; }
@@ -998,7 +1028,7 @@ strong, b {
   animation: thinking-bounce 1.2s ease-in-out infinite;
 }
 
-/* ME18 ù TJAI badge pulse */
+/* ME18 ? TJAI badge pulse */
 @keyframes tjai-badge-pulse {
   0%, 100% { box-shadow: 0 0 0 rgba(34,211,238,0.4); }
   50% { box-shadow: 0 0 12px rgba(34,211,238,0.6); }
@@ -1008,7 +1038,7 @@ strong, b {
   animation: tjai-badge-pulse 3s ease-in-out infinite;
 }
 
-/* MI11 ù Logo breathe glow */
+/* MI11 ? Logo breathe glow */
 @keyframes logo-breathe {
   0%, 100% { filter: drop-shadow(0 0 4px rgba(34,211,238,0.15)); }
   50% { filter: drop-shadow(0 0 14px rgba(34,211,238,0.45)); }
@@ -1018,13 +1048,13 @@ strong, b {
   animation: logo-breathe 4s ease-in-out infinite;
 }
 
-/* MI12 ù Badge hover glow */
+/* MI12 ? Badge hover glow */
 .badge:hover, .lux-badge:hover {
   box-shadow: 0 0 16px rgba(34,211,238,0.2);
   transition: box-shadow 200ms ease;
 }
 
-/* M8 ù PR card gold shimmer */
+/* M8 ? PR card gold shimmer */
 @keyframes pr-shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
@@ -1041,13 +1071,13 @@ strong, b {
   border-radius: inherit;
 }
 
-/* ME10 ù Workout entry slide-in */
+/* ME10 ? Workout entry slide-in */
 @keyframes workout-slide-in {
   from { opacity: 0; transform: translateX(16px); }
   to { opacity: 1; transform: translateX(0); }
 }
 
-/* MI4 ù flame flicker */
+/* MI4 ? flame flicker */
 @keyframes flame-flicker {
   0%, 100% { transform: scale(1) rotate(-1deg); opacity: 0.9; }
   33% { transform: scale(1.08) rotate(1deg); opacity: 1; }
@@ -1058,7 +1088,7 @@ strong, b {
   animation: flame-flicker 1.8s ease-in-out infinite;
 }
 
-/* MI10 ù Glassmorphic tooltips */
+/* MI10 ? Glassmorphic tooltips */
 .tj-collapsed-sidebar-tip {
   backdrop-filter: blur(12px) !important;
   background: rgba(13,14,18,0.92) !important;
@@ -1291,7 +1321,7 @@ strong, b {
   color: var(--color-error);
 }
 
-/* Inline tags / chips ù distinct from lux-badge (eyebrow marketing) */
+/* Inline tags / chips ? distinct from lux-badge (eyebrow marketing) */
 .badge {
   @apply inline-flex items-center rounded-full border border-white/[0.1] bg-white/[0.05] px-3 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-zinc-400;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2) inset;
@@ -1566,9 +1596,11 @@ html {
 }
 
 .spotlight {
-  background: radial-gradient(900px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(34, 211, 238, 0.065) 0%, rgba(167, 139, 250, 0.02) 40%, transparent 70%);
+  /* M10 ? site-wide cursor wash (800px @ 6% peak) */
+  background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(34, 211, 238, 0.06) 0%, rgba(167, 139, 250, 0.02) 40%, transparent 70%);
   position: fixed;
   inset: 0;
+  min-height: 100vh;
   pointer-events: none;
   z-index: 1;
 }
@@ -1926,7 +1958,7 @@ textarea:focus-visible {
 
 
 /* -------------------------------------------
-   MICRO-POLISH ù Batch 13
+   MICRO-POLISH ? Batch 13
 ------------------------------------------- */
 
 /* MI2 - Spinning arc button loading state */
@@ -1950,7 +1982,33 @@ textarea:focus-visible {
 }
 
 /* MI6 - Difficulty dot sequential fill on hover */
-.difficulty-dots span { transition: background-color 200ms ease; }
+.difficulty-dots span {
+  transition: background-color 200ms ease;
+}
+
+/* M8 ? gold shimmer on PR weight row */
+.tj-pr-weight-shimmer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    rgba(245, 158, 11, 0.14) 50%,
+    transparent 62%
+  );
+  animation: tj-pr-shimmer 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes tj-pr-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
 .difficulty-dots:hover span:nth-child(1) { transition-delay: 0ms; background-color: #22D3EE; }
 .difficulty-dots:hover span:nth-child(2) { transition-delay: 60ms; background-color: #22D3EE; }
 .difficulty-dots:hover span:nth-child(3) { transition-delay: 120ms; background-color: #22D3EE; }
@@ -2032,7 +2090,7 @@ textarea:focus-visible {
   50%       { transform: translateY(-4px); }
 }
 
-/* Hero ù single-frame cinematic drift (pairs with subtle mouse parallax in HeroVisual) */
+/* Hero ? single-frame cinematic drift (pairs with subtle mouse parallax in HeroVisual) */
 @keyframes tjHeroCinematicDrift {
   0%,
   100% {
@@ -2090,7 +2148,7 @@ textarea:focus-visible {
   animation: tjScrollCue 2.6s var(--tj-ease-premium) infinite;
 }
 
-/* Programs strip ù slow editorial drift behind cards */
+/* Programs strip ? slow editorial drift behind cards */
 @keyframes premiumProgramsDrift {
   0%,
   100% {
@@ -2105,7 +2163,7 @@ textarea:focus-visible {
   will-change: transform;
 }
 
-/* Section imagery ù restrained light pass */
+/* Section imagery ? restrained light pass */
 @keyframes tjPremiumLightSweep {
   0% {
     transform: translateX(-40%) skewX(-8deg);
@@ -2165,7 +2223,7 @@ textarea:focus-visible {
   }
 }
 
-/* TJAI section ù background drift + brain glow (brain motion is rAF-driven in TS) */
+/* TJAI section ? background drift + brain glow (brain motion is rAF-driven in TS) */
 @keyframes tjaiCoreDrift {
   0%,
   100% {
@@ -2203,7 +2261,7 @@ textarea:focus-visible {
   }
 }
 
-/* Nexus CTA ù background image drift + SVG network motion */
+/* Nexus CTA ? background image drift + SVG network motion */
 @keyframes nexusBgDrift {
   0%,
   100% {
@@ -2665,4 +2723,290 @@ textarea:focus-visible {
   .tj-logo-sweep {
     animation: none;
   }
+}
+
+/* =============================================================================
+   TJFit ? cinematic ?Luxury AI Performance Lab? system (transform + opacity)
+   ============================================================================= */
+
+.reveal-section {
+  opacity: 0;
+  transform: translate3d(0, 48px, 0);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-section.revealed {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.ghost-text {
+  position: absolute;
+  z-index: 0;
+  font-size: clamp(80px, 15vw, 180px);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  color: #ffffff;
+  opacity: 0.035;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+@media (max-width: 767px) {
+  .ghost-text {
+    font-size: clamp(40px, 22vw, 90px);
+    opacity: 0.02;
+  }
+}
+
+.glass-panel {
+  background: rgba(13, 15, 18, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+}
+
+@media (max-width: 767px) {
+  .glass-panel {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+}
+
+.glass-panel-glow {
+  border-color: rgba(34, 211, 238, 0.15);
+  box-shadow:
+    0 0 40px rgba(34, 211, 238, 0.05),
+    inset 0 0 40px rgba(34, 211, 238, 0.02);
+}
+
+.tj-card-cinematic-hover:hover {
+  transform: translate3d(0, -4px, 0);
+  box-shadow:
+    0 0 0 1px rgba(34, 211, 238, 0.28),
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(34, 211, 238, 0.08);
+}
+
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .tj-card-cinematic-hover:hover {
+    transform: none;
+  }
+}
+
+@property --tj-glow-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes tj-border-spin {
+  to {
+    --tj-glow-angle: 360deg;
+  }
+}
+
+.glow-border-animated {
+  background: conic-gradient(
+    from var(--tj-glow-angle),
+    transparent 70%,
+    rgba(34, 211, 238, 0.45) 85%,
+    rgba(34, 211, 238, 0.75) 90%,
+    rgba(34, 211, 238, 0.45) 95%,
+    transparent
+  );
+  animation: tj-border-spin 4s linear infinite;
+  border-radius: inherit;
+  padding: 1px;
+}
+
+.tj-scroll-progress-inner {
+  box-shadow: 0 0 8px rgba(34, 211, 238, 0.55);
+}
+
+.ambient-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(80px);
+  will-change: transform;
+  animation: tj-orb-drift var(--tj-orb-dur, 18s) ease-in-out infinite;
+}
+
+@keyframes tj-orb-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(40px, -30px, 0) scale(1.08);
+  }
+  66% {
+    transform: translate3d(-30px, 20px, 0) scale(0.95);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes tj-word-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 32px, 0);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    filter: blur(0);
+  }
+}
+
+.tj-hero-word {
+  display: inline-block;
+  opacity: 0;
+  animation: tj-word-rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes tj-hero-core-pulse-kf {
+  0%,
+  100% {
+    box-shadow:
+      0 0 20px rgba(34, 211, 238, 0.22),
+      0 0 60px rgba(34, 211, 238, 0.1);
+  }
+  50% {
+    box-shadow:
+      0 0 40px rgba(34, 211, 238, 0.38),
+      0 0 100px rgba(34, 211, 238, 0.18);
+  }
+}
+
+.tj-hero-core-pulse {
+  animation: tj-hero-core-pulse-kf 3s ease-in-out infinite;
+}
+
+@keyframes tj-hero-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.tj-hero-spin-slow {
+  animation: tj-hero-spin 25s linear infinite;
+}
+
+.tj-hero-spin-mid {
+  animation: tj-hero-spin 15s linear infinite reverse;
+}
+
+.tj-hero-spin-fast {
+  animation: tj-hero-spin 8s linear infinite;
+}
+
+.tj-hero-spin-embed-slow {
+  animation: tj-hero-spin 30s linear infinite;
+}
+
+.tj-hero-spin-embed-mid {
+  animation: tj-hero-spin 18s linear infinite reverse;
+}
+
+.tj-hero-spin-embed-fast {
+  animation: tj-hero-spin 10s linear infinite;
+}
+
+@keyframes tj-hero-float-card {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -6px, 0);
+  }
+}
+
+.tj-hero-float-card {
+  animation: tj-hero-float-card 5s ease-in-out infinite;
+}
+
+@keyframes tj-hero-proc {
+  0% {
+    transform: translate3d(-100%, 0, 0);
+  }
+  100% {
+    transform: translate3d(220%, 0, 0);
+  }
+}
+
+.tj-hero-proc-bar {
+  animation: tj-hero-proc 2.4s ease-in-out infinite;
+}
+
+@keyframes tj-hero-net-dash-move {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+.tj-hero-net-dash {
+  animation: tj-hero-net-dash-move 1.2s linear infinite;
+}
+
+@keyframes tj-flow-line-move {
+  from {
+    stroke-dashoffset: 20;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.tj-flow-line {
+  animation: tj-flow-line-move 0.8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-section {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .ambient-orb,
+  .tj-hero-spin-slow,
+  .tj-hero-spin-mid,
+  .tj-hero-spin-fast,
+  .tj-hero-spin-embed-slow,
+  .tj-hero-spin-embed-mid,
+  .tj-hero-spin-embed-fast,
+  .tj-hero-core-pulse,
+  .tj-hero-float-card,
+  .tj-hero-proc-bar,
+  .tj-hero-net-dash,
+  .tj-flow-line,
+  .glow-border-animated {
+    animation: none !important;
+  }
+  .tj-hero-word {
+    opacity: 1;
+    animation: none;
+    filter: none;
+  }
+}
+
+/* Sidebar polish ? cinematic rail */
+.site-sidebar {
+  background: rgba(9, 9, 11, 0.88) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-inline-end-color: rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 4px 0 32px rgba(0, 0, 0, 0.4) !important;
+}
+
+[dir="rtl"] .site-sidebar {
+  box-shadow: -4px 0 32px rgba(0, 0, 0, 0.4) !important;
 }

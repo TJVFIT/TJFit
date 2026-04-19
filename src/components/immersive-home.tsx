@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Dumbbell, Brain, Users, Trophy, Apple, Globe,
-  ArrowRight, Zap
+  ArrowRight, Zap, Sparkles, Calendar, RefreshCw, Utensils
 } from "lucide-react";
 
 import { HomeProgramPreviewCard } from "@/components/program-card";
@@ -33,6 +33,9 @@ import { ProgramsDepthFx } from "@/components/home/programs-depth-fx";
 import { SectionTransition } from "@/components/home/section-transition";
 import { TjaiEngineChrome } from "@/components/home/tjai-engine-chrome";
 import { HeroTjaiBrainDeco } from "@/components/hero-tjai-brain-deco";
+import { CinematicHowItWorks, CinematicTransformation } from "@/components/home/cinematic-sections";
+import { HeroAiCore } from "@/components/home/hero-ai-core";
+import { useMagneticButton } from "@/hooks/useMagneticButton";
 
 function useReducedMotion() {
   const [r, setR] = useState(false);
@@ -119,6 +122,23 @@ function TiltCard({ children, disabled }: { children: React.ReactNode; disabled:
   );
 }
 
+function TjaiMagneticPrimary({
+  href,
+  className,
+  children,
+}: {
+  href: string;
+  className: string;
+  children: React.ReactNode;
+}) {
+  const ref = useMagneticButton<HTMLAnchorElement>(0.25);
+  return (
+    <Link href={href} ref={ref} className={className}>
+      {children}
+    </Link>
+  );
+}
+
 /** Spec-sheet style: no cursor spotlight, no lift — reads like a serious product system */
 function PlatformFeatureCard({
   icon: Icon,
@@ -136,8 +156,8 @@ function PlatformFeatureCard({
   return (
     <article
       className={cn(
-        "group relative flex h-full flex-col overflow-hidden border border-[#1E2028] bg-[#111215] p-8 transition-[border-color,background-color] duration-300 lg:p-10",
-        "hover:border-white/[0.1] hover:bg-[#12141A]",
+        "glass-panel group relative flex h-full flex-col overflow-hidden p-8 transition-[transform,border-color,box-shadow,background-color] duration-[250ms] lg:p-10",
+        "tj-card-cinematic-hover hover:bg-[rgba(17,18,21,0.95)]",
         span === 2 && "md:col-span-2 md:min-h-[unset] md:flex-row md:items-start md:gap-14"
       )}
     >
@@ -270,7 +290,11 @@ export function ImmersiveHome({
   }, [reduce]);
 
   return (
-    <div className="relative min-h-screen bg-[#0A0A0B] text-white" dir={direction}>
+    <div
+      className="relative min-h-screen bg-[#0A0A0B] text-white"
+      dir={direction}
+      style={{ "--tj-reveal-distance": "40px" } as CSSProperties}
+    >
       <HomeAmbientBackdrop reduce={reduce} />
 
       <div className="relative z-[1]">
@@ -301,8 +325,8 @@ export function ImmersiveHome({
         </p>
       </div>
 
-      {/* Platform spec — replaces generic “bento” SaaS grid */}
-      <section className="border-t border-[#1E2028] px-6 py-24 lg:px-12 lg:py-32">
+      {/* Platform spec */}
+      <section className="reveal-section border-t border-[#1E2028] px-6 py-24 lg:px-12 lg:py-32">
         <div className="mx-auto max-w-6xl">
           <MotionReveal reducedMotion={reduce} className="max-w-2xl">
             <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#52525B]">The stack</p>
@@ -325,20 +349,25 @@ export function ImmersiveHome({
         </div>
       </section>
 
+      <CinematicHowItWorks />
+      <CinematicTransformation reduce={reduce} />
+
       {/* Stats — restrained, no neon scoreboard */}
-      <section className="border-y border-[#1E2028] bg-[#0A0A0B] py-16 lg:py-20">
-        <div className="mx-auto flex max-w-5xl flex-col divide-y divide-[#1E2028] px-6 lg:flex-row lg:divide-x lg:divide-y-0 lg:px-12">
-          <CountUp target={programCount} suffix="+" label="Expert Programs" />
-          <CountUp target={dietCount} suffix="+" label="Diet Systems" />
-          <CountUp target={12} label="Weeks Per Plan" />
-          <CountUp target={5} label="Languages" />
-        </div>
+      <section className="reveal-section border-y border-[#1E2028] bg-[#0A0A0B] py-16 lg:py-20">
+        <MotionReveal reducedMotion={reduce} className="mx-auto max-w-5xl px-6 lg:px-12">
+          <div className="flex flex-col divide-y divide-[#1E2028] lg:flex-row lg:divide-x lg:divide-y-0">
+            <CountUp target={programCount} suffix="+" label="Expert Programs" />
+            <CountUp target={dietCount} suffix="+" label="Diet Systems" />
+            <CountUp target={12} label="Weeks Per Plan" />
+            <CountUp target={5} label="Languages" />
+          </div>
+        </MotionReveal>
       </section>
 
       <SectionTransition variant="soft" />
 
       {/* ══════════════ PROGRAMS — Parallax BG ══════════════ */}
-      <div ref={programsSectionRef} className="relative overflow-hidden border-t border-[#1E2028]">
+      <div ref={programsSectionRef} className="reveal-section relative overflow-hidden border-t border-[#1E2028]">
         <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
           <ParallaxLayer reduce={reduce} strength={9} className="absolute inset-0 h-full w-full">
             <div className="absolute inset-0">
@@ -356,10 +385,13 @@ export function ImmersiveHome({
         </div>
 
         <section className="relative z-10 px-6 py-24 lg:px-12 lg:py-32">
-          <div className="mx-auto max-w-6xl">
+          <span className="ghost-text pointer-events-none start-1/2 top-20 z-0 -translate-x-1/2" aria-hidden>
+            PROGRAMS
+          </span>
+          <div className="relative z-[1] mx-auto max-w-6xl">
             <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <MotionReveal reducedMotion={reduce}>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#22D3EE]">Programs</p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#22D3EE]">Transformation systems</p>
                 <h2 className="mt-3 font-display text-4xl font-semibold tracking-tight text-white lg:text-5xl">
                   {programCount}+ complete<br /><span className="text-[#22D3EE]">programs</span>
                 </h2>
@@ -395,59 +427,121 @@ export function ImmersiveHome({
       <SectionTransition variant="soft" />
 
       {/* ══════════════ TJAI — KINETIC HEART CORE ══════════════ */}
-      <section ref={(el) => { tjaiRef.current = el; }} className="relative overflow-hidden border-t border-[#1E2028]" style={{ minHeight: "min(90vh, 700px)" }}>
+      <section
+        ref={(el) => { tjaiRef.current = el; }}
+        className="reveal-section relative overflow-hidden border-t border-[#1E2028] bg-[#09090B]"
+        style={{ minHeight: "min(90vh, 700px)" }}
+      >
+        <span
+          className="ghost-text pointer-events-none start-1/2 top-8 z-0 max-lg:opacity-[0.02] -translate-x-1/2 text-[clamp(4rem,18vw,12rem)]"
+          aria-hidden
+        >
+          INTELLIGENCE
+        </span>
 
         <PremiumFullBleedImage
           src="/assets/hero/hero-tjai-core.png"
           preset="tjai"
           active={tjaiInView || reduce}
           reduce={reduce}
-          peakOpacity={0.52}
+          peakOpacity={0.28}
         />
         <TjaiEngineChrome active={tjaiInView || reduce} reduce={reduce} />
 
-        <HeroTjaiBrainDeco reduce={reduce} active={tjaiInView} />
+        <div className="pointer-events-none absolute inset-0 z-[1] opacity-40 max-lg:hidden" aria-hidden>
+          <HeroTjaiBrainDeco reduce={reduce} active={tjaiInView} />
+        </div>
 
-        {/* Content — left-aligned over the image */}
-        <div className="relative z-10 mx-auto flex max-w-6xl items-center px-6 py-24 lg:px-12 lg:py-32" style={{ minHeight: "inherit" }}>
+        <div
+          className="relative z-10 mx-auto grid max-w-6xl gap-12 px-6 py-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-center lg:gap-16 lg:px-12 lg:py-28"
+          style={{ minHeight: "inherit" }}
+        >
+          <div className="relative flex min-h-[220px] justify-center lg:min-h-[380px]">
+            <HeroAiCore reduce={reduce} layout="embedded" />
+          </div>
+
           <MotionReveal reducedMotion={reduce}>
-            <span className="inline-flex items-center gap-2 border border-white/[0.1] bg-white/[0.03] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#A1A1AA]">
-              <Brain className="h-3.5 w-3.5 text-[#71717A]" strokeWidth={1.5} /> TJAI
-            </span>
-            <h2 className="mt-8 font-display text-4xl font-semibold leading-[1.08] tracking-tight text-white sm:text-5xl lg:max-w-[18ch] lg:text-[3.25rem]">
-              A plan engine that respects your life — not a chatbot cosplaying a coach.
+            <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-[#22D3EE]">AI transformation engine</p>
+            <h2 className="mt-4 font-display text-[clamp(2rem,5vw,3.25rem)] font-extrabold leading-[1.05] tracking-[-0.02em] text-white">
+              Meet TJAI.
             </h2>
-            <p className="mt-6 max-w-md text-lg leading-relaxed text-[#A1A1AA]">
-              Answer 25 smart questions. TJAI analyzes your metabolism, lifestyle, injuries, and goals — then generates a complete 12-week plan powered by GPT-4o.
+            <p className="mt-4 max-w-xl text-base leading-relaxed text-[#A1A1AA]">
+              Answer 25 questions. Get a complete 12-week plan in minutes — training blocks, meals, macros, and progression tuned to your metabolism and schedule.
             </p>
-            <ul className="mt-8 space-y-3">
+
+            <ul className="mt-10 space-y-4">
               {[
-                "Full 12-week training program — personalized to your level",
-                "Daily meal plan with macros, recipes, and grocery list",
-                "Supplement stack, calorie cycling, refeed & deload weeks"
-              ].map((item) => (
-                <li key={item} className="flex items-start gap-3 text-sm text-[#A1A1AA]">
-                  <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[rgba(34,211,238,0.15)] text-[#22D3EE]">
-                    <svg className="h-2.5 w-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                {
+                  Icon: Sparkles,
+                  title: "Science-based calculations",
+                  desc: "Metabolism, load, and recovery modeled like a performance lab — not generic templates.",
+                },
+                {
+                  Icon: Calendar,
+                  title: "Complete 12-week structure",
+                  desc: "Periodized weeks, deloads, and checkpoints you can execute without guesswork.",
+                },
+                {
+                  Icon: Utensils,
+                  title: "Daily meal plans + macros",
+                  desc: "Meals, grocery logic, and macro targets aligned to your training phase.",
+                },
+                {
+                  Icon: RefreshCw,
+                  title: "Adjustable + regeneratable",
+                  desc: "Life changes — regenerate blocks while preserving your history and intent.",
+                },
+              ].map((row) => (
+                <li
+                  key={row.title}
+                  className="group flex gap-4 rounded-xl border border-transparent bg-transparent p-1 transition-[border-color,background-color] duration-200 hover:border-[rgba(34,211,238,0.12)] hover:bg-[rgba(34,211,238,0.03)]"
+                  style={{ transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)" }}
+                >
+                  <span
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(34,211,238,0.06)] transition-[border-color,box-shadow] duration-200 group-hover:border-[rgba(34,211,238,0.35)]"
+                  >
+                    <row.Icon className="h-5 w-5 text-[#22D3EE]" strokeWidth={1.5} />
                   </span>
-                  {item}
+                  <div className="min-w-0">
+                    <p className="text-[15px] font-semibold text-white">{row.title}</p>
+                    <p className="mt-1 text-[13px] leading-relaxed text-[#52525B] group-hover:text-[#A1A1AA]">{row.desc}</p>
+                  </div>
                 </li>
               ))}
             </ul>
-            <Link
-              href={`/${locale}/ai`}
-              className="mt-10 inline-flex min-h-[54px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#22D3EE] to-[#0EA5E9] px-9 py-3 text-base font-bold text-[#0A0A0B] shadow-[0_0_30px_rgba(34,211,238,0.4),0_0_60px_rgba(34,211,238,0.15)] transition-all hover:scale-[1.04] hover:shadow-[0_0_50px_rgba(34,211,238,0.6)]"
-            >
-              <Zap className="h-4 w-4" /> TJAI — Free quiz, paid plan
-            </Link>
+
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+              <TjaiMagneticPrimary
+                href={`/${locale}/ai`}
+                className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-[10px] bg-[#22D3EE] px-8 py-3.5 text-[15px] font-extrabold text-[#09090B] shadow-[0_12px_40px_rgba(34,211,238,0.28)] transition-[filter,transform,box-shadow] duration-200 hover:brightness-110 hover:-translate-y-0.5"
+              >
+                <Zap className="h-4 w-4 shrink-0" aria-hidden />
+                Build my plan — free preview
+              </TjaiMagneticPrimary>
+              <Link
+                href={`/${locale}/ai`}
+                className="inline-flex min-h-[52px] items-center justify-center rounded-[10px] border border-[rgba(255,255,255,0.14)] px-8 py-3.5 text-[15px] font-semibold text-white transition-[border-color,background-color,color] duration-200 hover:border-[rgba(34,211,238,0.35)] hover:bg-[rgba(34,211,238,0.04)] hover:text-[#22D3EE]"
+              >
+                See a sample plan
+                <ArrowRight className="ms-1 h-4 w-4" aria-hidden />
+              </Link>
+            </div>
+            <p className="mt-6 text-xs text-[#52525B]">
+              <Link href={`/${locale}/membership`} className="text-[#A1A1AA] underline-offset-4 transition-colors hover:text-[#22D3EE]">
+                Core (Free) · Pro €20/mo · Apex €35/mo
+              </Link>
+            </p>
           </MotionReveal>
         </div>
       </section>
 
       {/* ══════════════ DIETS ══════════════ */}
       {dietSlice.length > 0 && (
-        <section className="border-t border-[#1E2028] bg-[#0A0A0B] px-6 py-24 lg:px-12 lg:py-32">
-          <div className="mx-auto max-w-6xl">
+        <section className="reveal-section relative border-t border-[#1E2028] bg-[#0A0A0B] px-6 py-24 lg:px-12 lg:py-32">
+          <span className="ghost-text pointer-events-none start-1/2 top-16 z-0 -translate-x-1/2 text-[#A78BFA] opacity-[0.04]" aria-hidden>
+            NUTRITION
+          </span>
+          <div className="relative z-[1] mx-auto max-w-6xl">
             <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <MotionReveal reducedMotion={reduce}>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#A78BFA]">Nutrition</p>

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Crown, Trophy } from "lucide-react";
+import confetti from "canvas-confetti";
 
 import { PremiumPageShell } from "@/components/premium";
 import { useInView } from "@/hooks/useInView";
@@ -64,19 +65,35 @@ function getMetricValue(item: LeaderboardItem, tab: TabKey) {
 function Podium({ items, tab }: { items: LeaderboardItem[]; tab: TabKey }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { threshold: 0.2, once: true });
+  const confettiFired = useRef(false);
+
+  useEffect(() => {
+    if (!inView || confettiFired.current) return;
+    const t = window.setTimeout(() => {
+      confettiFired.current = true;
+      confetti({
+        particleCount: 80,
+        spread: 72,
+        origin: { y: 0.52, x: 0.5 },
+        colors: ["#22D3EE", "#A78BFA", "#F59E0B"]
+      });
+    }, 720);
+    return () => window.clearTimeout(t);
+  }, [inView]);
+
   if (items.length < 3) return null;
 
   const order = [items[1], items[0], items[2]]; // 2nd left, 1st center, 3rd right
-  const heights = [110, 160, 80];
+  const heights = [140, 180, 110];
   const colors = ["rgba(34,211,238,0.6)", "#22D3EE", "rgba(34,211,238,0.35)"];
   const glows = [
     "shadow-[0_0_20px_rgba(34,211,238,0.2)]",
-    "shadow-[0_0_40px_rgba(34,211,238,0.4)]",
+    "shadow-[0_0_40px_rgba(245,158,11,0.35)]",
     "shadow-[0_0_12px_rgba(34,211,238,0.12)]"
   ];
   const crowns = [
     <Crown key="s" className="h-4 w-4" style={{ color: "rgba(34,211,238,0.6)" }} />,
-    <Crown key="g" className="h-5 w-5" style={{ color: "#22D3EE", filter: "drop-shadow(0 0 8px rgba(34,211,238,0.8))" }} />,
+    <Crown key="g" className="crown-glow-gold h-5 w-5" style={{ color: "#F59E0B", filter: "drop-shadow(0 0 8px rgba(245,158,11,0.5))" }} />,
     <Crown key="b" className="h-4 w-4" style={{ color: "rgba(34,211,238,0.35)" }} />
   ];
 
@@ -210,12 +227,12 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
                 return (
                   <div
                     key={item.userId}
-                    className={`flex items-center justify-between rounded-xl border bg-[#0D0E12] px-4 py-3 transition-all duration-200 ${rankClass} ${isMe ? "ring-1 ring-[#22D3EE]/40" : ""}`}
+                    className={`flex items-center justify-between rounded-xl border bg-[#0D0E12] px-4 py-3 transition-all duration-200 ${rankClass} ${isMe ? "animate-pulse ring-1 ring-[#22D3EE]/40" : ""}`}
                   >
                     <div className="flex items-center gap-3">
                       <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#14161D] text-sm font-bold text-white">
                         {item.rank === 1 ? (
-                          <Crown className="h-4 w-4" style={{ color: "#22D3EE", filter: "drop-shadow(0 0 8px rgba(34,211,238,0.8))" }} />
+                          <Crown className="crown-glow-gold h-4 w-4" style={{ color: "#F59E0B", filter: "drop-shadow(0 0 8px rgba(245,158,11,0.5))" }} />
                         ) : item.rank === 2 ? (
                           <Crown className="h-4 w-4" style={{ color: "rgba(34,211,238,0.6)" }} />
                         ) : item.rank === 3 ? (

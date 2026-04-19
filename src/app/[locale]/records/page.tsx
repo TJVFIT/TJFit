@@ -1,10 +1,15 @@
-
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { Trophy, Dumbbell, Timer, Repeat } from "lucide-react";
 import { requireLocaleParam } from "@/lib/require-locale";
 import { useInView } from "@/hooks/useInView";
+
+const RecordsTrophyCanvas = dynamic(() => import("@/components/records/records-trophy-canvas"), {
+  ssr: false,
+  loading: () => <div className="h-32 w-full animate-pulse rounded-2xl bg-[#111215]/80" aria-hidden />
+});
 
 type PR = {
   exercise: string;
@@ -62,6 +67,11 @@ export default function RecordsPage({ params }: { params: { locale: string } }) 
   const filtered = search.trim() ? prs.filter((p) => p.exercise.toLowerCase().includes(search.toLowerCase())) : prs;
   return (
     <div className="mx-auto max-w-5xl space-y-8 px-4 py-16 sm:px-6 lg:px-8">
+      <div className="overflow-hidden rounded-2xl border border-[#1E2028]/80 bg-gradient-to-b from-[#111215] to-[#0A0A0B] p-4 sm:p-6">
+        <div className="h-36 w-full max-w-md mx-auto sm:h-40">
+          <RecordsTrophyCanvas />
+        </div>
+      </div>
       <div>
         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#52525B]">Records</p>
         <h1 className="mt-3 font-display text-3xl font-semibold text-white sm:text-4xl">Personal Records</h1>
@@ -96,7 +106,12 @@ export default function RecordsPage({ params }: { params: { locale: string } }) 
               </div>
               <div className="mt-1 h-px w-full bg-[#1E2028]" />
               <div className="mt-3 flex flex-wrap gap-3">
-                {pr.max_weight_kg != null ? <div className="flex items-center gap-1.5"><Trophy className="h-3.5 w-3.5 text-[#F59E0B]" /><PRValue value={pr.max_weight_kg} suffix=" kg" color="#F59E0B" /></div> : null}
+                {pr.max_weight_kg != null ? (
+                  <div className="tj-pr-weight-shimmer relative flex items-center gap-1.5 overflow-hidden rounded-md px-1 py-0.5">
+                    <Trophy className="h-3.5 w-3.5 text-[#F59E0B]" />
+                    <PRValue value={pr.max_weight_kg} suffix=" kg" color="#F59E0B" />
+                  </div>
+                ) : null}
                 {pr.max_reps != null ? <div className="flex items-center gap-1.5"><Repeat className="h-3.5 w-3.5 text-[#22D3EE]" /><PRValue value={pr.max_reps} suffix=" reps" color="#22D3EE" /></div> : null}
                 {pr.max_duration_minutes != null ? <div className="flex items-center gap-1.5"><Timer className="h-3.5 w-3.5 text-[#A78BFA]" /><PRValue value={pr.max_duration_minutes} suffix=" min" color="#A78BFA" /></div> : null}
               </div>

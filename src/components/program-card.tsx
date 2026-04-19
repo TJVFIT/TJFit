@@ -11,7 +11,7 @@ import { getProgramTier, getProgramVisual } from "@/lib/program-card-visual";
 import { cn } from "@/lib/utils";
 
 const shellClass =
-  "group tj-card-premium-hover tj-card-aura relative flex h-full min-h-0 flex-col overflow-hidden rounded-[14px] border border-[#1E2028] bg-[#111215] shadow-[0_1px_3px_rgba(0,0,0,0.4),0_0_0_1px_#1E2028] motion-reduce:transition-none transition-[border-color,box-shadow,transform] duration-200";
+  "glass-panel group tj-card-premium-hover tj-card-aura tj-card-cinematic-hover relative flex h-full min-h-0 flex-col overflow-hidden rounded-[14px] border border-[rgba(255,255,255,0.06)] bg-[rgba(17,18,21,0.85)] shadow-[0_1px_3px_rgba(0,0,0,0.4)] motion-reduce:transition-none transition-[border-color,box-shadow,transform,filter] duration-[250ms]";
 
 function useCardSpotlight() {
   const [pos, setPos] = useState({ x: 50, y: 50, visible: false });
@@ -53,7 +53,7 @@ function difficultyDots(difficulty?: string) {
   if (value.includes("advanced")) filled = 4;
   if (value.includes("expert")) filled = 5;
   return (
-    <div className="flex items-center gap-1" aria-label={difficulty ?? "Difficulty"}>
+    <div className="difficulty-dots flex items-center gap-1" aria-label={difficulty ?? "Difficulty"}>
       {Array.from({ length: 5 }).map((_, idx) => (
         <span key={idx} className={cn("h-1.5 w-1.5 rounded-full", idx < filled ? "bg-[#22D3EE]" : "bg-[#1E2028]")} />
       ))}
@@ -313,13 +313,14 @@ export function ProgramCard({
                   </div>
                 </div>
                 <p className="mt-4 text-sm font-semibold text-[#22D3EE]">{program.category}</p>
-                <div className="mt-auto space-y-2 pt-5">
-                  <Link href={href} className="btn-primary-shimmer inline-flex w-full items-center justify-center rounded-full bg-gradient-to-br from-[#22D3EE] to-[#0EA5E9] px-4 py-2.5 text-sm font-bold text-[#09090B]">
-                    View Program →
+                <div className="mt-auto pt-5">
+                  <Link
+                    href={href}
+                    className="btn-primary-shimmer inline-flex w-full min-h-[48px] items-center justify-center rounded-full bg-[#22D3EE] px-4 py-3 text-sm font-extrabold text-[#09090B] shadow-[0_12px_40px_rgba(34,211,238,0.2)] transition-[filter,transform] duration-200 hover:brightness-110 hover:-translate-y-0.5"
+                  >
+                    {viewLabel}
+                    <ArrowRight className="ms-1 h-4 w-4" aria-hidden />
                   </Link>
-                  <button type="button" className="w-full rounded-full border border-[#1E2028] px-4 py-2 text-xs text-[#A1A1AA]">
-                    Add to Wishlist
-                  </button>
                 </div>
               </div>
             </div>

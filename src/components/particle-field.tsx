@@ -23,7 +23,7 @@ export function ParticleField({ className }: { className?: string }) {
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const mobile = window.matchMedia("(hover: none)").matches;
-    const particleCount = mobile ? 30 : 80;
+    const particleCount = mobile ? 20 : 80;
     const lineDistance = 120;
     const enableLines = !mobile && !reducedMotion;
     const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));

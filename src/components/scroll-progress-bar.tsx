@@ -40,7 +40,7 @@ export function ScrollProgressBar() {
     >
       <div
         ref={barRef}
-        className="h-full w-full origin-left scale-x-0 bg-gradient-to-r from-[#22D3EE] to-[#A78BFA]"
+        className="tj-scroll-progress-inner h-full w-full origin-left scale-x-0 bg-[#22D3EE]"
         style={{ willChange: "transform" }}
       />
     </div>

@@ -162,17 +162,18 @@ export function TJAIChat({
           <div
             key={`${m.role}-${i}`}
             className={cn(
-              "max-w-[88%] rounded-2xl px-4 py-3 text-sm leading-6 chat-bubble-enter",
+              "max-w-[88%] rounded-2xl px-4 py-3 text-sm leading-6",
+              m.role === "user" ? "chat-bubble-user" : "chat-bubble-ai",
               m.role === "user"
                 ? "ms-auto rounded-br-md border border-[rgba(34,211,238,0.2)] bg-[rgba(34,211,238,0.1)] text-white"
                 : "me-auto rounded-bl-md border border-[#1E2028] bg-[#111215] text-[#D4D4D8]"
             )}
           >
             {m.content || (loading && i === history.length - 1
-              ? <span className="flex gap-1">
-                  <span className="thinking-dot inline-block h-1.5 w-1.5 rounded-full bg-[#22D3EE]" style={{ animationDelay: "0ms" }} />
-                  <span className="thinking-dot inline-block h-1.5 w-1.5 rounded-full bg-[#22D3EE]" style={{ animationDelay: "160ms" }} />
-                  <span className="thinking-dot inline-block h-1.5 w-1.5 rounded-full bg-[#22D3EE]" style={{ animationDelay: "320ms" }} />
+              ? <span className="flex gap-1.5">
+                  <span className="inline-block h-1.5 w-1.5 animate-bounce rounded-full bg-[#22D3EE] motion-reduce:animate-none" style={{ animationDelay: "0ms" }} />
+                  <span className="inline-block h-1.5 w-1.5 animate-bounce rounded-full bg-[#22D3EE] motion-reduce:animate-none" style={{ animationDelay: "60ms" }} />
+                  <span className="inline-block h-1.5 w-1.5 animate-bounce rounded-full bg-[#22D3EE] motion-reduce:animate-none" style={{ animationDelay: "120ms" }} />
                 </span>
               : null
             )}

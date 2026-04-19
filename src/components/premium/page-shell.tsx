@@ -3,15 +3,25 @@ import { cn } from "@/lib/utils";
 export function PremiumPageShell({
   children,
   className,
-  as = "div"
+  as = "div",
+  ghostWord
 }: {
   children: React.ReactNode;
   className?: string;
   as?: "div" | "section";
+  /** Large faint backdrop label (e.g. PROGRAMS) */
+  ghostWord?: string;
 }) {
   const Tag = as;
   return (
-    <Tag className={cn("mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24", className)}>{children}</Tag>
+    <Tag className={cn("relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24", className)}>
+      {ghostWord ? (
+        <span className="ghost-text pointer-events-none start-1/2 top-6 z-0 -translate-x-1/2 select-none" aria-hidden>
+          {ghostWord}
+        </span>
+      ) : null}
+      <div className="relative z-[1]">{children}</div>
+    </Tag>
   );
 }
 

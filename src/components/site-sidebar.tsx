@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
   ChevronDown,
@@ -216,6 +216,42 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
   const aiToolsItems = useMemo(() => visibleItems.filter((it) => it.key === "tjai" || it.key === "calculator"), [visibleItems]);
   const primaryItems = useMemo(() => visibleItems.filter((it) => !aiToolsItems.some((x) => x.key === it.key)), [aiToolsItems, visibleItems]);
 
+  const navRailRef = useRef<HTMLElement | null>(null);
+  const rowRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [navIndicator, setNavIndicator] = useState({ y: 0, h: 0 });
+
+  const activeNavKey = useMemo(() => {
+    for (const it of [...primaryItems, ...aiToolsItems]) {
+      if (it.comingSoon) continue;
+      if (isActivePath(pathname, locale, it.href)) return it.key;
+    }
+    return null;
+  }, [primaryItems, aiToolsItems, pathname, locale]);
+
+  useLayoutEffect(() => {
+    if (reduce) return;
+    const nav = navRailRef.current;
+    if (!nav || !activeNavKey) {
+      setNavIndicator({ y: 0, h: 0 });
+      return;
+    }
+    const update = () => {
+      const n = navRailRef.current;
+      const row = activeNavKey ? rowRefs.current[activeNavKey] : null;
+      if (!n || !row) return;
+      const nr = n.getBoundingClientRect();
+      const er = row.getBoundingClientRect();
+      setNavIndicator({ y: er.top - nr.top, h: Math.max(22, er.height * 0.58) });
+    };
+    update();
+    nav.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      nav.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, [activeNavKey, pathname, sidebarExpanded, reduce, primaryItems, aiToolsItems]);
+
   const handleLogout = async () => {
     if (!window.confirm("Sign out of TJFit?")) return;
     const supabase = getSupabaseBrowserClient();
@@ -312,18 +348,6 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
 
     const inner = (
       <>
-        {/* Active left-side indicator bar */}
-        {active && (
-          <span
-            className="absolute start-0 top-1/2 h-[55%] w-[3px] -translate-y-1/2 rounded-e-full"
-            style={{
-              background: "linear-gradient(180deg, #22D3EE, #0EA5E9)",
-              boxShadow: "0 0 8px rgba(34,211,238,0.8), 0 0 16px rgba(34,211,238,0.4)"
-            }}
-            aria-hidden
-          />
-        )}
-
         {/* Icon container with hover glow */}
         <span
           className={cn(
@@ -387,7 +411,14 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
 
     if (it.comingSoon) {
       return (
-        <div key={it.key} className="px-0" style={style}>
+        <div
+          key={it.key}
+          ref={(el) => {
+            rowRefs.current[it.key] = el;
+          }}
+          className="px-0"
+          style={style}
+        >
           <button
             type="button"
             className={cn(rowClass, "relative w-full px-0 text-start")}
@@ -411,7 +442,14 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
     }
 
     return (
-      <div key={it.key} className="px-0" style={style}>
+      <div
+        key={it.key}
+        ref={(el) => {
+          rowRefs.current[it.key] = el;
+        }}
+        className="px-0"
+        style={style}
+      >
         <Link
           href={href}
           className={cn(rowClass, "relative px-0")}
@@ -481,6 +519,7 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
               href={`/${locale}`}
               suppressMinTouchTarget
               blendWithBackground
+              className={cn(!sidebarExpanded && !reduce && "logo-breathe")}
             />
           </div>
         </div>
@@ -500,7 +539,17 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
           </Link>
         </div>
 
-        <nav className="tj-scrollbar flex min-h-0 flex-1 flex-col gap-[2px] overflow-y-auto overflow-x-visible px-2 py-2">
+        <nav
+          ref={navRailRef}
+          className="tj-scrollbar relative flex min-h-0 flex-1 flex-col gap-[2px] overflow-y-auto overflow-x-visible px-2 py-2"
+        >
+          {!reduce && activeNavKey && navIndicator.h > 0 ? (
+            <div
+              className="pointer-events-none absolute start-2 z-[5] w-[3px] rounded-e-full bg-gradient-to-b from-[#22D3EE] to-[#0EA5E9] shadow-[0_0_10px_rgba(34,211,238,0.5)] transition-[top,height] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+              style={{ top: navIndicator.y, height: navIndicator.h }}
+              aria-hidden
+            />
+          ) : null}
           <GlobalSearch locale={locale} collapsed={!sidebarExpanded} onExpand={() => setSidebarExpanded(true)} />
           {primaryItems.map((it, i) => renderNavRow(it, i))}
           <div className={cn("my-2 px-2", sidebarExpanded ? "opacity-100" : "opacity-0", "transition-opacity duration-200")}>

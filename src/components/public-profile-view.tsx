@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+import { AnimatedAvatar } from "@/components/animated-avatar";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth-provider";
 import { AmbientBackground } from "@/components/ui/AmbientBackground";
@@ -164,13 +164,12 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
             <div className="-mt-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div className="flex items-start gap-4">
                 <div className="relative h-20 w-20 overflow-hidden rounded-full border border-cyan-300/45 bg-[#18191E] ring-2 ring-[#09090B]">
-                  {profile.avatar_url ? (
-                    <Image src={profile.avatar_url} alt="" fill sizes="80px" className="object-cover" />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center text-xl font-semibold text-[#22D3EE]">
-                      {(profile.display_name || profile.username || "?").slice(0, 1).toUpperCase()}
-                    </div>
-                  )}
+                  <AnimatedAvatar
+                    url={profile.avatar_url}
+                    name={profile.display_name || profile.username || "?"}
+                    size={80}
+                    className="h-full w-full rounded-full"
+                  />
                 </div>
                 <div>
                   <h1 className="text-xl font-bold text-white">{profile.display_name || profile.username}</h1>

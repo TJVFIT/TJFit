@@ -54,7 +54,7 @@ export default function CoachesPage({ params }: { params: { locale: string } }) 
   }, [coaches]);
 
   return (
-    <PremiumPageShell>
+    <PremiumPageShell ghostWord="COACHES">
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-white">Coaches</h1>
