@@ -121,7 +121,6 @@ export default async function ProgramDetailPage({
   const programDescription = localizedProgram?.description ?? customProgram?.description ?? "";
   const programDuration = localizedProgram?.duration ?? customProgram?.duration ?? "";
   const programDifficulty = localizedProgram?.difficulty ?? customProgram?.difficulty ?? "Beginner to Advanced";
-  const previewItems = program?.previewImages ?? [programManagementCopy.uploadedProgramPreview];
   const programAssets =
     program?.assets ??
     [
@@ -249,17 +248,6 @@ export default async function ProgramDetailPage({
             <h2 className="mt-6 text-3xl font-semibold text-white">{programTitle}</h2>
             <p className="mt-3 text-sm text-zinc-100/90">{programDuration}</p>
             <p className="mt-3 text-sm font-medium text-white/95">{localizedPrice}</p>
-          </div>
-
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {previewItems.map((_, index) => (
-              <div
-                key={`${slug}-preview-${index}`}
-                className={`rounded-[24px] border border-white/10 bg-gradient-to-br p-8 text-center text-xs uppercase tracking-[0.24em] text-zinc-100/85 ${programTheme}`}
-              >
-                {copy.previewLabel} {index + 1}
-              </div>
-            ))}
           </div>
 
           <div className="mt-10">
