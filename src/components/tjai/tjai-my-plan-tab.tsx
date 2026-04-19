@@ -4,8 +4,9 @@ import { Sparkles } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { TJAIShell } from "@/components/tjai/tjai-shell";
+import { buildTjaiDecisionReasons } from "@/lib/tjai-explanations";
 import type { Locale } from "@/lib/i18n";
-import type { TJAIPlan } from "@/lib/tjai-types";
+import type { QuizAnswers, TJAIMetrics, TJAIPlan } from "@/lib/tjai-types";
 import { cn } from "@/lib/utils";
 
 const COPY = {
@@ -111,10 +112,13 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
   const [loading, setLoading] = useState(true);
   const [showBuilder, setShowBuilder] = useState(false);
   const [plan, setPlan] = useState<TJAIPlan | null>(null);
+  const [answers, setAnswers] = useState<QuizAnswers | null>(null);
+  const [metrics, setMetrics] = useState<TJAIMetrics | null>(null);
   const [phaseIdx, setPhaseIdx] = useState(0);
   const [dayIdx, setDayIdx] = useState(0);
   const [canRegenerate, setCanRegenerate] = useState(false);
   const [canDownloadPdf, setCanDownloadPdf] = useState(false);
+  const [regenRequested, setRegenRequested] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -129,8 +133,11 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
         window.clearTimeout(timeout);
         const plansData = await plansRes.json().catch(() => ({}));
         const accessData = await accessRes.json().catch(() => ({}));
-        const latest = (plansData?.plans?.[0]?.plan_json ?? null) as TJAIPlan | null;
+        const latestRow = plansData?.plans?.[0] ?? null;
+        const latest = (latestRow?.plan_json ?? null) as TJAIPlan | null;
         setPlan(latest);
+        setAnswers((latestRow?.answers_json ?? null) as QuizAnswers | null);
+        setMetrics((latestRow?.metrics_json ?? null) as TJAIMetrics | null);
         setCanRegenerate(Boolean(accessData?.canRegeneratePlan));
         setCanDownloadPdf(Boolean(accessData?.canDownloadPdf));
       } catch {
@@ -142,6 +149,15 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
       }
     };
     void load();
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("regen") === "1") {
+      setRegenRequested(true);
+      setShowBuilder(true);
+    }
   }, []);
 
   const activePhase = plan?.diet?.weeks?.[phaseIdx];
@@ -160,8 +176,13 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
     [plan, t.dailyCalories, t.goal, t.proteinTarget, t.trainingDays, t.days, t.transformation]
   );
 
+  const whyPlan = useMemo(() => {
+    if (!answers || !metrics) return [];
+    return buildTjaiDecisionReasons(answers, metrics);
+  }, [answers, metrics]);
+
   if (showBuilder) {
-    return <TJAIShell locale={locale} />;
+    return <TJAIShell locale={locale} initialAnswers={regenRequested ? (answers ?? undefined) : undefined} initialPhase={regenRequested && answers ? "approach" : "quiz"} />;
   }
 
   if (loading) {
@@ -199,6 +220,20 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
           </article>
         ))}
       </section>
+
+      {whyPlan.length > 0 ? (
+        <section className="rounded-2xl border border-[#1E2028] bg-[#111215] p-5">
+          <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-zinc-500">Why TJAI built this plan</h3>
+          <ul className="mt-3 space-y-2 text-sm text-zinc-300">
+            {whyPlan.map((reason) => (
+              <li key={reason} className="flex gap-2">
+                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[#22D3EE]" />
+                <span>{reason}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <section className="rounded-2xl border border-[#1E2028] bg-[#111215] p-4">
         <div className="flex flex-wrap gap-2">

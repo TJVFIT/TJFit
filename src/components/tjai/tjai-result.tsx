@@ -19,6 +19,7 @@ import { CoachReviewRequest } from "@/components/tjai/coach-review-request";
 import { ShareCardGenerator } from "@/components/tjai/share-card-generator";
 import { TJAIChat } from "@/components/tjai/tjai-chat";
 import { useInView } from "@/hooks/useInView";
+import { buildTjaiDecisionReasons } from "@/lib/tjai-explanations";
 import { cn } from "@/lib/utils";
 import type { QuizAnswers, TJAICopy, TJAIGroceryList, TJAIMeal, TJAIMealPrepTask, TJAIMetrics, TJAIPlan } from "@/lib/tjai-types";
 
@@ -230,6 +231,7 @@ export function TJAIResult({
     labels: ["Protein", "Carbs", "Fat"],
     datasets: [{ data: [metrics.protein * 4, metrics.carbs * 4, metrics.fat * 9], backgroundColor: ["#22D3EE", "#A78BFA", "rgba(255,255,255,0.35)"], borderWidth: 0 }]
   };
+  const decisionReasons = useMemo(() => buildTjaiDecisionReasons(answers, metrics), [answers, metrics]);
 
   return (
     <section className="bg-[#09090B] px-4 py-10 text-white">
@@ -282,6 +284,18 @@ export function TJAIResult({
             </span>
           </div>
         </div>
+
+        <article className="rounded-xl border border-[#1E2028] bg-[#111215] p-5">
+          <h3 className="text-lg font-semibold text-white">Why TJAI chose this</h3>
+          <ul className="mt-4 space-y-2">
+            {decisionReasons.map((reason) => (
+              <li key={reason} className="flex gap-2 text-sm text-[#D4D4D8]">
+                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[#22D3EE]" />
+                <span>{reason}</span>
+              </li>
+            ))}
+          </ul>
+        </article>
 
         <div className="grid gap-4 lg:grid-cols-2">
           <article className="rounded-xl border border-[#1E2028] bg-[#111215] p-5">

@@ -274,7 +274,7 @@ TJFIT PROGRAMS YOU CAN RECOMMEND:
 COACHING RULES:
 - Reference the user's ACTUAL logged workouts and weight when giving advice. Be specific — name the exercises they logged, the weights they used.
 - If their weight trend doesn't match their plan's projections, acknowledge it and diagnose why.
-- For injury or medical topics: include a short safety d- For injury or medical topics: include a short safety disclaimer and recommend a professional.
+- For injury or medical topics: include a short safety disclaimer and recommend a qualified professional when needed.
 - Never fabricate workout data. If no data exists, say so and encourage logging.
 - Keep responses concise (under 280 words) unless a detailed breakdown is needed.
 - End with one specific actionable next step tailored to their data.`
@@ -284,32 +284,96 @@ COACHING RULES:
       { role: "user" as const, content: message }
     ];
 
-    let reply: string;
     try {
-      reply = await callOpenAI({ system: systemPrompt, user: message, maxTokens: 600 });
+      const upstream = await streamOpenAI({ system: systemPrompt, messages, maxTokens: 700 });
+      const encoder = new TextEncoder();
+      const decoder = new TextDecoder();
+      const reader = upstream.getReader();
+      let assistantReply = "";
+      let buffer = "";
+
+      const stream = new ReadableStream<Uint8Array>({
+        async start(controller) {
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ conversationId })}\n\n`));
+          try {
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+
+              buffer += decoder.decode(value, { stream: true });
+              const lines = buffer.split("\n");
+              buffer = lines.pop() ?? "";
+
+              for (const line of lines) {
+                const trimmed = line.trim();
+                if (!trimmed.startsWith("data:")) continue;
+                const payload = trimmed.slice(5).trim();
+                if (!payload || payload === "[DONE]") continue;
+                try {
+                  const parsed = JSON.parse(payload) as {
+                    choices?: Array<{ delta?: { content?: string } }>;
+                  };
+                  const delta = parsed.choices?.[0]?.delta?.content ?? "";
+                  if (!delta) continue;
+                  assistantReply += delta;
+                  controller.enqueue(encoder.encode(`data: ${JSON.stringify({ delta, conversationId })}\n\n`));
+                } catch {
+                  /* ignore malformed upstream chunk */
+                }
+              }
+            }
+
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true, conversationId })}\n\n`));
+            controller.close();
+          } catch (streamError) {
+            controller.error(streamError);
+          } finally {
+            reader.releaseLock();
+            const finalReply = assistantReply.trim() || fallbackCoachReply(message, locale);
+            void auth.supabase.from("tjai_chat_messages").insert([
+              { user_id: auth.user.id, conversation_id: conversationId, role: "user", content: message },
+              { user_id: auth.user.id, conversation_id: conversationId, role: "assistant", content: finalReply }
+            ]);
+            void extractPreference(message).then(async (pref) => {
+              if (pref.key && pref.value) {
+                await auth.supabase.from("user_chat_preferences").upsert(
+                  { user_id: auth.user.id, preference_key: pref.key, preference_value: pref.value },
+                  { onConflict: "user_id,preference_key" }
+                );
+              }
+            });
+          }
+        }
+      });
+
+      return new Response(stream, {
+        headers: {
+          "Content-Type": "text/event-stream; charset=utf-8",
+          "Cache-Control": "no-cache, no-transform",
+          Connection: "keep-alive"
+        }
+      });
     } catch {
-      reply = fallbackCoachReply(message, locale);
+      const reply = fallbackCoachReply(message, locale);
+
+      void auth.supabase.from("tjai_chat_messages").insert([
+        { user_id: auth.user.id, conversation_id: conversationId, role: "user", content: message },
+        { user_id: auth.user.id, conversation_id: conversationId, role: "assistant", content: reply }
+      ]);
+
+      void extractPreference(message).then(async (pref) => {
+        if (pref.key && pref.value) {
+          await auth.supabase.from("user_chat_preferences").upsert(
+            { user_id: auth.user.id, preference_key: pref.key, preference_value: pref.value },
+            { onConflict: "user_id,preference_key" }
+          );
+        }
+      });
+
+      return new Response(JSON.stringify({ message: reply, conversationId }), {
+        headers: { "Content-Type": "application/json" }
+      });
     }
-
-    // Save conversation turn
-    void auth.supabase.from("tjai_chat_messages").insert([
-      { user_id: auth.user.id, conversation_id: conversationId, role: "user", content: message },
-      { user_id: auth.user.id, conversation_id: conversationId, role: "assistant", content: reply }
-    ]);
-
-    // Extract and store preferences in background
-    void extractPreference(message).then(async (pref) => {
-      if (pref.key && pref.value) {
-        await auth.supabase.from("user_chat_preferences").upsert(
-          { user_id: auth.user.id, preference_key: pref.key, preference_value: pref.value },
-          { onConflict: "user_id,preference_key" }
-        );
-      }
-    });
-
-    return new Response(JSON.stringify({ message: reply, conversationId }), {
-      headers: { "Content-Type": "application/json" }
-    });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("[TJAI] Unhandled error:", msg);

@@ -32,8 +32,8 @@ const copy: Record<Locale, TjaiAccessCopy> = {
     upgrade: {
       title: "Your plan is ready to generate",
       body: "Upgrade to Apex to unlock your complete 12-week system.",
-      pro: "Get Pro - EUR20/mo",
-      apex: "Get Apex - EUR35/mo",
+      pro: "Get Pro - EUR10/mo",
+      apex: "Get Apex - EUR20/mo",
       close: "Maybe later"
     },
     chatLimitBody: "You reached 10 messages. Upgrade to continue with TJAI chat."
@@ -53,8 +53,8 @@ const copy: Record<Locale, TjaiAccessCopy> = {
     upgrade: {
       title: "Planin olusturulmaya hazir",
       body: "Tam 12 haftalik sistemi acmak icin Apex'e gec.",
-      pro: "Pro Al - EUR20/ay",
-      apex: "Apex Al - EUR35/ay",
+      pro: "Pro Al - EUR10/ay",
+      apex: "Apex Al - EUR20/ay",
       close: "Daha sonra"
     },
     chatLimitBody: "10 mesaj limitine ulastin. TJAI chat icin yukselt."
@@ -74,8 +74,8 @@ const copy: Record<Locale, TjaiAccessCopy> = {
     upgrade: {
       title: "خطتك جاهزة للتوليد",
       body: "قم بالترقية إلى Apex لفتح نظام 12 أسبوع الكامل.",
-      pro: "احصل على Pro - 20 يورو/شهر",
-      apex: "احصل على Apex - 35 يورو/شهر",
+      pro: "احصل على Pro - 10 يورو/شهر",
+      apex: "احصل على Apex - 20 يورو/شهر",
       close: "لاحقاً"
     },
     chatLimitBody: "وصلت إلى 10 رسائل. قم بالترقية لمتابعة دردشة TJAI."
@@ -95,8 +95,8 @@ const copy: Record<Locale, TjaiAccessCopy> = {
     upgrade: {
       title: "Tu plan esta listo para generarse",
       body: "Mejora a Apex para desbloquear tu sistema completo de 12 semanas.",
-      pro: "Obtener Pro - EUR20/mes",
-      apex: "Obtener Apex - EUR35/mes",
+      pro: "Obtener Pro - EUR10/mes",
+      apex: "Obtener Apex - EUR20/mes",
       close: "Luego"
     },
     chatLimitBody: "Llegaste a 10 mensajes. Mejora para seguir en chat TJAI."
@@ -116,8 +116,8 @@ const copy: Record<Locale, TjaiAccessCopy> = {
     upgrade: {
       title: "Votre plan est pret a etre genere",
       body: "Passez a Apex pour debloquer votre systeme complet 12 semaines.",
-      pro: "Prendre Pro - EUR20/mois",
-      apex: "Prendre Apex - EUR35/mois",
+      pro: "Prendre Pro - EUR10/mois",
+      apex: "Prendre Apex - EUR20/mois",
       close: "Plus tard"
     },
     chatLimitBody: "Vous avez atteint 10 messages. Passez a un niveau superieur pour continuer."

@@ -107,7 +107,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
           <p className="typing-line delay-2">Building your 12-week training split...</p>
         </div>
         <Link
-          href={`/${locale}/ai`}
+          href={`/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`}
           className="mt-7 inline-flex min-h-[50px] items-center justify-center rounded-full bg-[#22D3EE] px-8 text-sm font-bold text-[#09090B]"
         >
           {copy.heroCta}
@@ -177,7 +177,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
             <p className="mt-1 text-[#A1A1AA]">Daily total: 2,150 kcal</p>
           </div>
         ) : null}
-        <Link href={`/${locale}/ai`} className="mt-4 inline-flex text-sm font-semibold text-cyan-300">
+        <Link href={`/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`} className="mt-4 inline-flex text-sm font-semibold text-cyan-300">
           Unlock full plan at checkout →
         </Link>
       </section>
@@ -186,7 +186,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
         <h2 className="text-2xl font-bold text-white">{copy.pricingTitle}</h2>
         <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {[
-            ["Core (Free)", "Trial quiz + metrics preview\nSee BMR/TDEE/macros\nNo full plan generation", `/${locale}/ai`],
+            ["Core (Free)", "Adaptive preview + metrics snapshot\nSee BMR/TDEE/macros\nNo full plan generation", `/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`],
             ["Pro ($10/mo)", "Monthly 4-week AI program by email\nProgram discounts", `/${locale}/membership?tier=pro`],
             ["Apex ($20/mo)", "Full TJAI generation\nUnlimited AI chat\nMeal swaps + custom plans", `/${locale}/membership?tier=apex`],
             ["One-time TJAI ($25)", "Generate one plan\nDownload PDF\nNo subscription", `/${locale}/membership?tjai_onetime=1`]
@@ -216,7 +216,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
       <section className="mt-10 rounded-3xl border border-[#1E2028] bg-[linear-gradient(180deg,#111215_0%,#0D1015_100%)] p-8 text-center">
         <h2 className="text-3xl font-extrabold text-white">{copy.finalTitle}</h2>
         <Link
-          href={`/${locale}/ai`}
+          href={`/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`}
           className="mt-5 inline-flex min-h-[52px] items-center justify-center rounded-full bg-[#22D3EE] px-10 text-base font-bold text-[#09090B]"
         >
           {copy.finalCta}

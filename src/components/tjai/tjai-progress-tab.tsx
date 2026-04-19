@@ -40,6 +40,12 @@ type ProgressData = {
     protein_hit_percent: number;
     calorie_hit_percent: number;
   };
+  body_metrics: {
+    starting_weight: number | null;
+    current_weight: number | null;
+    change_kg: number | null;
+    sparkline: number[];
+  };
   weekly_insight: string;
   next_workouts: Array<{
     day: string;
@@ -57,10 +63,12 @@ export function TJAIProgressTab({ locale = "en" }: { locale?: string }) {
         loading: "جارٍ تحميل التقدم...",
         empty: "لا توجد بيانات تقدم بعد.",
         completion: "إكمال الخطة",
+        bodyMetrics: "قياسات الجسم",
         week: "الأسبوع",
         of: "من",
         complete: "مكتمل",
         macro: "الالتزام بالمغذيات",
+        macroPending: "سيظهر التزام التغذية بعد ربط تسجيل الطعام.",
         protein: "البروتين",
         calories: "السعرات",
         daysHit: "من الأيام حققت الهدف",
@@ -74,10 +82,12 @@ export function TJAIProgressTab({ locale = "en" }: { locale?: string }) {
         loading: "Loading progress...",
         empty: "No progress data yet.",
         completion: "Plan completion",
+        bodyMetrics: "Body metrics",
         week: "Week",
         of: "of",
         complete: "complete",
         macro: "Macro adherence",
+        macroPending: "Nutrition adherence will appear after food logging is connected.",
         protein: "Protein",
         calories: "Calories",
         daysHit: "of days hit target",
@@ -132,15 +142,45 @@ export function TJAIProgressTab({ locale = "en" }: { locale?: string }) {
         </article>
 
         <article className="rounded-2xl border border-[#1E2028] bg-[#111215] p-5">
+          <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-zinc-500">{t.bodyMetrics}</h3>
+          <p className="mt-3 text-sm text-zinc-300">
+            {data.body_metrics.current_weight != null ? `${data.body_metrics.current_weight} kg` : t.empty}
+          </p>
+          <p className="mt-1 text-xs text-zinc-500">
+            {data.body_metrics.change_kg != null
+              ? `${data.body_metrics.change_kg > 0 ? "+" : ""}${data.body_metrics.change_kg} kg from start`
+              : "Need more weight logs"}
+          </p>
+          {data.body_metrics.sparkline.length > 1 ? (
+            <div className="mt-3 flex items-end gap-1 rounded-xl border border-[#1E2028] bg-[#0E0F12] p-3">
+              {data.body_metrics.sparkline.map((value, idx, arr) => {
+                const min = Math.min(...arr);
+                const max = Math.max(...arr);
+                const height = max === min ? 28 : 14 + ((value - min) / (max - min)) * 42;
+                return <span key={idx} className="w-2 rounded-full bg-[#22D3EE]" style={{ height }} />;
+              })}
+            </div>
+          ) : null}
+        </article>
+      </section>
+
+      <section className="grid gap-4 lg:grid-cols-2">
+        <article className="rounded-2xl border border-[#1E2028] bg-[#111215] p-5">
           <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-zinc-500">{t.macro}</h3>
-          <p className="mt-3 text-sm text-zinc-300">{t.protein}: {data.macro_adherence.protein_hit_percent}% {t.daysHit}</p>
-          <div className="mt-1 h-2 overflow-hidden rounded-full bg-[#1E2028]">
-            <div className="h-full bg-[#22D3EE]" style={{ width: `${data.macro_adherence.protein_hit_percent}%` }} />
-          </div>
-          <p className="mt-3 text-sm text-zinc-300">{t.calories}: {data.macro_adherence.calorie_hit_percent}% {t.inRange}</p>
-          <div className="mt-1 h-2 overflow-hidden rounded-full bg-[#1E2028]">
-            <div className="h-full bg-[#A78BFA]" style={{ width: `${data.macro_adherence.calorie_hit_percent}%` }} />
-          </div>
+          {data.macro_adherence.protein_hit_percent === 0 && data.macro_adherence.calorie_hit_percent === 0 ? (
+            <p className="mt-3 text-sm text-zinc-400">{t.macroPending}</p>
+          ) : (
+            <>
+              <p className="mt-3 text-sm text-zinc-300">{t.protein}: {data.macro_adherence.protein_hit_percent}% {t.daysHit}</p>
+              <div className="mt-1 h-2 overflow-hidden rounded-full bg-[#1E2028]">
+                <div className="h-full bg-[#22D3EE]" style={{ width: `${data.macro_adherence.protein_hit_percent}%` }} />
+              </div>
+              <p className="mt-3 text-sm text-zinc-300">{t.calories}: {data.macro_adherence.calorie_hit_percent}% {t.inRange}</p>
+              <div className="mt-1 h-2 overflow-hidden rounded-full bg-[#1E2028]">
+                <div className="h-full bg-[#A78BFA]" style={{ width: `${data.macro_adherence.calorie_hit_percent}%` }} />
+              </div>
+            </>
+          )}
         </article>
       </section>
 

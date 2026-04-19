@@ -30,11 +30,11 @@ const TAB_LABELS: Record<Locale, Record<TabKey, string>> = {
 };
 
 const HUB_SUBTITLE: Record<Locale, string> = {
-  en: "Your AI-powered transformation coach",
-  tr: "Yapay zeka destekli donusum kocunuz",
-  ar: "مدرب التحول المدعوم بالذكاء الاصطناعي",
-  es: "Tu coach de transformacion con IA",
-  fr: "Votre coach de transformation propulse par IA"
+  en: "Your adaptive fitness coach with plan memory",
+  tr: "Plan hafizasina sahip uyarlanabilir fitness kocunuz",
+  ar: "مدرب لياقة متكيّف مع ذاكرة للخطة",
+  es: "Tu coach fitness adaptativo con memoria de plan",
+  fr: "Votre coach fitness adaptatif avec memoire de plan"
 };
 
 function normalizeTab(raw: string | null): TabKey {
@@ -90,43 +90,9 @@ export function TJAIHub({ locale }: { locale: Locale }) {
     router.replace(`${pathname}?${qs.toString()}`, { scroll: false });
   };
 
-  const chatComingSoon = (
-    <div className="flex min-h-[60svh] items-center justify-center">
-      <div className="w-full max-w-lg rounded-2xl border border-[#1E2028] bg-[#111215] p-10 text-center">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-[rgba(34,211,238,0.25)] bg-[rgba(34,211,238,0.08)]">
-          <MessageCircle className="h-8 w-8 text-[#22D3EE]" style={{ filter: "drop-shadow(0 0 12px rgba(34,211,238,0.5))" }} />
-        </div>
-        <span className="inline-flex animate-pulse rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-300">
-          Coming Soon
-        </span>
-        <h2 className="mt-4 text-2xl font-bold text-white">TJAI Chat</h2>
-        <p className="mt-2 text-sm text-[#A1A1AA]">Real-time AI coaching conversations are coming soon.</p>
-        <ul className="mt-6 space-y-3 text-left">
-          {[
-            { icon: "💬", text: "Ask anything about fitness, nutrition, or your plan" },
-            { icon: "🎤", text: "Voice input in Turkish, Arabic, and English" },
-            { icon: "🧠", text: "TJAI remembers your preferences across sessions" }
-          ].map((item) => (
-            <li key={item.text} className="flex items-start gap-3 rounded-xl border border-[#1E2028] bg-[#0D0F12] px-4 py-3 text-sm text-[#D4D4D8]">
-              <span className="text-base">{item.icon}</span>
-              <span>{item.text}</span>
-            </li>
-          ))}
-        </ul>
-        <button
-          type="button"
-          onClick={() => setTabInUrl("my-plan")}
-          className="mt-6 text-sm font-semibold text-[#22D3EE] hover:text-white"
-        >
-          While you wait — try the TJAI Quiz →
-        </button>
-      </div>
-    </div>
-  );
-
   const content = useMemo(() => {
     if (tab === "my-plan") return <TJAIMyPlanTab locale={locale} />;
-    if (tab === "chat") return null; // rendered below to access setTabInUrl
+    if (tab === "chat") return <TJAIChatStandalone locale={locale} />;
     if (tab === "meal-swap") return <TJAIMealSwapTab locale={locale} />;
     return <TJAIProgressTab locale={locale} />;
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -175,7 +141,13 @@ export function TJAIHub({ locale }: { locale: Locale }) {
                 <button
                   key={item.key}
                   type="button"
-                  onClick={() => setTabInUrl(item.key)}
+                  onClick={() => {
+                    if (item.key === "meal-swap" && tier === "core") {
+                      router.push(`/${locale}/membership?tier=pro`);
+                      return;
+                    }
+                    setTabInUrl(item.key);
+                  }}
                   className={cn(
                     "inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm transition-colors duration-150",
                     tab === item.key
@@ -194,7 +166,7 @@ export function TJAIHub({ locale }: { locale: Locale }) {
           </div>
         </header>
         <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6">
-          {tab === "chat" ? chatComingSoon : content}
+          {content}
         </main>
       </div>
     </div>

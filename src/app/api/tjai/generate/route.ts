@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { isAdminEmail } from "@/lib/auth-utils";
 import { recordPlanGeneration, getSimilarUserInsight } from "@/lib/tjai-analytics";
 import { buildTjaiUserProfile, normalizeQuizAnswers } from "@/lib/tjai-intake";
+import { validateTjaiPlan } from "@/lib/tjai-plan-validation";
 import { buildTJAISystemPrompt, buildTJAIUserPrompt } from "@/lib/tjai-prompts";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
@@ -102,6 +103,11 @@ export async function POST(request: NextRequest) {
       const msg = parseError instanceof Error ? parseError.message : "JSON parse error";
       console.error("[TJAI] JSON parse failed:", msg, "\nRaw:", rawText.slice(0, 500));
       return NextResponse.json({ error: "AI returned an invalid response. Please try again." }, { status: 502 });
+    }
+
+    if (!validateTjaiPlan(plan)) {
+      console.error("[TJAI] Plan validation failed");
+      return NextResponse.json({ error: "AI returned an incomplete plan. Please try again." }, { status: 502 });
     }
 
     // Task 8 — count existing plans to assign version_number; insert instead of upsert

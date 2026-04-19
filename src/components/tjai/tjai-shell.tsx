@@ -14,14 +14,22 @@ import type { QuizAnswers, TJAIMetrics, TJAIPlan } from "@/lib/tjai-types";
 
 type Phase = "quiz" | "approach" | "calculating" | "compare" | "result";
 
-export function TJAIShell({ locale }: { locale: Locale }) {
-  const [phase, setPhase] = useState<Phase>("quiz");
-  const [answers, setAnswers] = useState<QuizAnswers>({});
+export function TJAIShell({
+  locale,
+  initialAnswers,
+  initialPhase = "quiz"
+}: {
+  locale: Locale;
+  initialAnswers?: QuizAnswers;
+  initialPhase?: Phase;
+}) {
+  const [phase, setPhase] = useState<Phase>(initialPhase);
+  const [answers, setAnswers] = useState<QuizAnswers>(initialAnswers ?? {});
   const [metrics, setMetrics] = useState<TJAIMetrics | null>(null);
   const [plan, setPlan] = useState<TJAIPlan | null>(null);
   const [generatedAt, setGeneratedAt] = useState("");
   const [saving, setSaving] = useState(false);
-  const [draftAnswers, setDraftAnswers] = useState<QuizAnswers>({});
+  const [draftAnswers, setDraftAnswers] = useState<QuizAnswers>(initialAnswers ?? {});
   const [comparePlans, setComparePlans] = useState<{ moderate: TJAIPlan; aggressive: TJAIPlan } | null>(null);
   const [compareMetrics, setCompareMetrics] = useState<{ moderate: TJAIMetrics; aggressive: TJAIMetrics } | null>(null);
   const [selectedPlanMode, setSelectedPlanMode] = useState<"moderate" | "aggressive">("moderate");
@@ -35,6 +43,13 @@ export function TJAIShell({ locale }: { locale: Locale }) {
   const steps = useMemo(() => getTjaiSteps(locale), [locale]);
   const accessCopy = useMemo(() => getTjaiAccessCopy(locale), [locale]);
   const direction = getDirection(locale);
+
+  useEffect(() => {
+    if (!initialAnswers) return;
+    setAnswers(initialAnswers);
+    setDraftAnswers(initialAnswers);
+    setPhase(initialPhase);
+  }, [initialAnswers, initialPhase]);
 
   useEffect(() => {
     void fetch("/api/tjai/trial-status")

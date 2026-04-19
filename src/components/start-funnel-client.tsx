@@ -238,7 +238,7 @@ export function StartFunnelClient({ locale }: { locale: Locale }) {
               <p className="typing-line delay">Building your 12-week plan...</p>
             </div>
             <Link
-              href={`/${locale}/ai`}
+              href={`/${locale}/tjai`}
               className="mt-5 inline-flex min-h-[46px] w-full items-center justify-center rounded-full bg-[#22D3EE] px-4 text-sm font-bold text-[#09090B]"
             >
               {copy.startTjai}

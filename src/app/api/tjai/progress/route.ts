@@ -19,9 +19,10 @@ export async function GET() {
   const admin = getSupabaseServerClient();
   if (!admin) return NextResponse.json({ error: "Server not configured" }, { status: 500 });
 
-  const [{ data: progressRows }, { data: workoutRows }, planRow, { data: profile }] = await Promise.all([
+  const [{ data: progressRows }, { data: workoutRows }, { data: progressEntries }, planRow, { data: profile }] = await Promise.all([
     admin.from("program_progress").select("week_number,day_label,is_complete,completed_at,program_slug").eq("user_id", auth.user.id).order("week_number", { ascending: true }),
     admin.from("workout_logs").select("id,week_number,day_label,exercise_name,logged_at").eq("user_id", auth.user.id).order("logged_at", { ascending: false }).limit(100),
+    admin.from("progress_entries").select("entry_date,weight_kg,body_fat_percent,waist_cm").eq("user_id", auth.user.id).order("entry_date", { ascending: true }).limit(24),
     getLatestTjaiPlan(admin, auth.user.id),
     admin.from("profiles").select("current_streak").eq("id", auth.user.id).maybeSingle()
   ]);
@@ -31,7 +32,9 @@ export async function GET() {
   const completionPercent = Math.round((completed / total) * 100);
   const currentWeek = Math.max(1, ...((progressRows ?? []).map((row) => Number(row.week_number ?? 1))));
 
-  const weightSeries: number[] = [];
+  const weightSeries = (progressEntries ?? [])
+    .map((row) => Number(row.weight_kg ?? 0))
+    .filter((value) => Number.isFinite(value) && value > 0);
   const nutritionHit = { proteinDaysHit: 0, calorieDaysHit: 0, totalDays: 0 };
 
   const weekStart = weekStartIso();
@@ -92,6 +95,10 @@ Write 1 insight. No intro phrase like "Great job" or "Here's your insight". Star
   }
 
   const nextWorkouts = ((planRow?.plan_json as any)?.program?.weeks?.[Math.max(0, currentWeek - 1)]?.days ?? []).slice(0, 3);
+  const latestProgress = (progressEntries ?? []).at(-1) ?? null;
+  const firstProgress = (progressEntries ?? [])[0] ?? null;
+  const currentWeight = latestProgress?.weight_kg ? Number(latestProgress.weight_kg) : null;
+  const startingWeight = firstProgress?.weight_kg ? Number(firstProgress.weight_kg) : null;
 
   return NextResponse.json({
     completion: {
@@ -101,9 +108,12 @@ Write 1 insight. No intro phrase like "Great job" or "Here's your insight". Star
       logged_days_this_week: (progressRows ?? []).filter((row) => Number(row.week_number) === currentWeek && row.is_complete).length
     },
     body_metrics: {
-      starting_weight: null,
-      current_weight: null,
-      change_kg: null,
+      starting_weight: startingWeight,
+      current_weight: currentWeight,
+      change_kg:
+        typeof startingWeight === "number" && typeof currentWeight === "number"
+          ? Number((currentWeight - startingWeight).toFixed(1))
+          : null,
       sparkline: weightSeries
     },
     macro_adherence: {

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-import { ComingSoonLaunchPage } from "@/components/coming-soon-launch-page";
-import { resolveEffectiveServerRole } from "@/lib/coach-area-server";
+import { TjaiPublicLanding } from "@/components/tjai-public-landing";
+import { isAdminEmail } from "@/lib/auth-utils";
 import { requireLocaleParam } from "@/lib/require-locale";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
@@ -27,14 +27,17 @@ async function TjaiLandingPageContent({ params }: { params: { locale: string } }
     } = await supabase.auth.getUser();
 
     if (!error && user?.id) {
-      const role = await resolveEffectiveServerRole(supabase, user.id, user.email ?? undefined);
-      if (role === "admin") {
+      const isAdminByEmail = Boolean(user.email && isAdminEmail(user.email));
+      const role = isAdminByEmail
+        ? "admin"
+        : (await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle()).data?.role;
+      if (role === "admin" || role === "coach" || role === "user") {
         redirect(`/${locale}/ai`);
       }
     }
   } catch {
-    /* fall back to coming soon for non-admin and anonymous users */
+    /* fall through to public landing */
   }
 
-  return <ComingSoonLaunchPage locale={locale} page="ai" source="tjai-coming-soon-landing" />;
+  return <TjaiPublicLanding locale={locale} />;
 }
