@@ -26,6 +26,7 @@ const appDir = path.join(root, "src/app");
 
 /** Only for OG canvas behind the lockup — not part of the logo asset */
 const OG_CANVAS = { r: 10, g: 10, b: 11, alpha: 1 };
+const TRANSPARENT = { r: 0, g: 0, b: 0, alpha: 0 };
 function resolveBrandInput() {
   if (fs.existsSync(sourcePng)) return sourcePng;
   if (fs.existsSync(sourceJpg)) return sourceJpg;
@@ -36,6 +37,90 @@ async function writeJpeg(pathname, input) {
   await sharp(input)
     .jpeg({ quality: 92, mozjpeg: true })
     .toFile(pathname);
+}
+
+/**
+ * Remove background-colored pixels that are connected to the image edge.
+ * This strips the black plate around the uploaded logo without eating the
+ * interior dark artwork inside the letters.
+ */
+async function stripEdgeConnectedBackdrop(inputBuffer) {
+  const { data, info } = await sharp(inputBuffer)
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+
+  const w = info.width;
+  const h = info.height;
+  const n = w * h;
+  const corners = [
+    0,
+    (w - 1) * 4,
+    ((h - 1) * w) * 4,
+    ((h - 1) * w + (w - 1)) * 4
+  ];
+
+  let sr = 0;
+  let sg = 0;
+  let sb = 0;
+  for (const o of corners) {
+    sr += data[o];
+    sg += data[o + 1];
+    sb += data[o + 2];
+  }
+
+  const bgR = sr / 4;
+  const bgG = sg / 4;
+  const bgB = sb / 4;
+  const tolerance = 42;
+
+  const isBackdrop = (pi) => {
+    const o = pi * 4;
+    const alpha = data[o + 3];
+    if (alpha === 0) return true;
+    const r = data[o];
+    const g = data[o + 1];
+    const b = data[o + 2];
+    return Math.abs(r - bgR) + Math.abs(g - bgG) + Math.abs(b - bgB) <= tolerance;
+  };
+
+  const visited = new Uint8Array(n);
+  const queue = [];
+
+  const tryEnqueue = (x, y) => {
+    if (x < 0 || x >= w || y < 0 || y >= h) return;
+    const pi = y * w + x;
+    if (visited[pi] || !isBackdrop(pi)) return;
+    visited[pi] = 1;
+    queue.push(pi);
+  };
+
+  for (let x = 0; x < w; x++) {
+    tryEnqueue(x, 0);
+    tryEnqueue(x, h - 1);
+  }
+  for (let y = 1; y < h - 1; y++) {
+    tryEnqueue(0, y);
+    tryEnqueue(w - 1, y);
+  }
+
+  while (queue.length > 0) {
+    const pi = queue.pop();
+    const o = pi * 4;
+    data[o + 3] = 0;
+    const x = pi % w;
+    const y = (pi / w) | 0;
+    if (x > 0) tryEnqueue(x - 1, y);
+    if (x + 1 < w) tryEnqueue(x + 1, y);
+    if (y > 0) tryEnqueue(x, y - 1);
+    if (y + 1 < h) tryEnqueue(x, y + 1);
+  }
+
+  return sharp(data, {
+    raw: { width: w, height: h, channels: 4 }
+  })
+    .png()
+    .toBuffer();
 }
 
 async function main() {
@@ -49,7 +134,7 @@ async function main() {
   }
 
   const srcBuffer = fs.readFileSync(inputPath);
-  const mainBuffer = await sharp(srcBuffer).png().toBuffer();
+  const mainBuffer = await stripEdgeConnectedBackdrop(srcBuffer);
   fs.writeFileSync(mainPng, mainBuffer);
 
   const meta = await sharp(mainBuffer).metadata();
@@ -67,7 +152,7 @@ async function main() {
       width: 1024,
       height: 1024,
       channels: 4,
-      background: OG_CANVAS
+      background: TRANSPARENT
     }
   })
     .composite([{ input: markCrop, gravity: "center" }])

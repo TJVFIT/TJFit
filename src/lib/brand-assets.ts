@@ -4,7 +4,7 @@
  * - `BRAND_LOGO_SRC` is for UI (`<img>`) with a cache-busting query.
  * - `BRAND.*` uses stable paths (no query) for JSON-LD / metadata.
  */
-export const LOGO_CACHE = "2026041901";
+export const LOGO_CACHE = "2026041902";
 
 const LOGO_MAIN_STABLE = "/brand/logo-main.png";
 const LOGO_MARK_STABLE = "/brand/logo-mark.png";
