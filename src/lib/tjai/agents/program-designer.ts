@@ -1,6 +1,5 @@
-import type { TjaiUserProfile } from "@/lib/tjai-intake";
 import { buildTJAISystemPrompt, buildTJAIUserPrompt } from "@/lib/tjai/prompts";
-import type { TjaiMemorySnapshot, TJAIMetrics } from "@/lib/tjai-types";
+import type { TjaiMemorySnapshot, TJAIMetrics, TjaiUserProfile } from "@/lib/tjai-types";
 
 /**
  * Program Designer Agent — composes plan-generation prompts from profile, metrics, and memory.

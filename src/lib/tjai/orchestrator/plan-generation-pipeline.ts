@@ -7,11 +7,10 @@ import { TJAI_PROMPT_VERSION } from "@/lib/tjai/prompts";
 import { TJAI_SKILL_IDS } from "@/lib/tjai/registry/skills";
 import type { TjaiRunTrace } from "@/lib/tjai/types/execution";
 import { runEnhancedPlanCoherenceChecks } from "@/lib/tjai/validation/enhanced-plan-checks";
-import type { TjaiUserProfile } from "@/lib/tjai-intake";
 import { validateTjaiPlan } from "@/lib/tjai-plan-validation";
 import { buildTjaiMemorySnapshot, saveTjaiStructuredMemory } from "@/lib/tjai-plan-store";
 import { callOpenAI, safeParseJSON } from "@/lib/tjai-openai";
-import type { QuizAnswers, TJAIPlan, TJAIMetrics } from "@/lib/tjai-types";
+import type { QuizAnswers, TJAIPlan, TJAIMetrics, TjaiUserProfile } from "@/lib/tjai-types";
 
 export type PlanGenerationPipelineInput = {
   userId: string;
