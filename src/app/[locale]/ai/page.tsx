@@ -38,7 +38,7 @@ export default async function AiPage({ params }: { params: { locale: string } })
       isAdmin
     });
 
-    if (!access.canGeneratePlan) {
+    if (!access.canAccessHub) {
       redirect(`/${locale}/tjai`);
     }
 

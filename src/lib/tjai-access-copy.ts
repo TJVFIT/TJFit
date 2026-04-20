@@ -1,4 +1,5 @@
 import type { Locale } from "@/lib/i18n";
+import { TJAI_ONE_TIME_PRICE_USD, TJAI_SUBSCRIPTION_PRICES_USD } from "@/lib/tjai-pricing";
 
 type TjaiAccessCopy = {
   approachTitle: string;
@@ -12,7 +13,7 @@ type TjaiAccessCopy = {
   compareCta: string;
   metricsTitle: string;
   metrics: { bmr: string; tdee: string; protein: string; carbs: string; fat: string };
-  upgrade: { title: string; body: string; pro: string; apex: string; close: string };
+  upgrade: { title: string; body: string; oneTime: string; pro: string; apex: string; close: string };
   chatLimitBody: string;
 };
 
@@ -30,13 +31,14 @@ const copy: Record<Locale, TjaiAccessCopy> = {
     metricsTitle: "Your calculated metrics",
     metrics: { bmr: "BMR", tdee: "TDEE", protein: "Protein", carbs: "Carbs", fat: "Fat" },
     upgrade: {
-      title: "Your plan is ready to generate",
-      body: "Upgrade to Apex to unlock your complete 12-week system.",
-      pro: "Get Pro - EUR10/mo",
-      apex: "Get Apex - EUR20/mo",
+      title: "Your adaptive plan is ready",
+      body: "Unlock one full TJAI plan for a one-time payment, then add Pro or Apex if you want ongoing coaching perks.",
+      oneTime: `Unlock TJAI Plan - $${TJAI_ONE_TIME_PRICE_USD}`,
+      pro: `Get Pro - $${TJAI_SUBSCRIPTION_PRICES_USD.pro.monthly}/mo`,
+      apex: `Get Apex - $${TJAI_SUBSCRIPTION_PRICES_USD.apex.monthly}/mo`,
       close: "Maybe later"
     },
-    chatLimitBody: "You reached 10 messages. Upgrade to continue with TJAI chat."
+    chatLimitBody: "You reached your preview chat limit. Upgrade to Pro or Apex for unlimited TJAI chat."
   },
   tr: {
     approachTitle: "Bunu nasil ilerletmek istersin?",
@@ -51,13 +53,14 @@ const copy: Record<Locale, TjaiAccessCopy> = {
     metricsTitle: "Hesaplanan metriklerin",
     metrics: { bmr: "BMR", tdee: "TDEE", protein: "Protein", carbs: "Karbonhidrat", fat: "Yag" },
     upgrade: {
-      title: "Planin olusturulmaya hazir",
-      body: "Tam 12 haftalik sistemi acmak icin Apex'e gec.",
-      pro: "Pro Al - EUR10/ay",
-      apex: "Apex Al - EUR20/ay",
+      title: "Uyarlanabilir planin hazir",
+      body: "Tek seferlik TJAI plan kilidini ac, sonra istersen surekli koçluk icin Pro veya Apex ekle.",
+      oneTime: `TJAI Plani Ac - $${TJAI_ONE_TIME_PRICE_USD}`,
+      pro: `Pro Al - $${TJAI_SUBSCRIPTION_PRICES_USD.pro.monthly}/ay`,
+      apex: `Apex Al - $${TJAI_SUBSCRIPTION_PRICES_USD.apex.monthly}/ay`,
       close: "Daha sonra"
     },
-    chatLimitBody: "10 mesaj limitine ulastin. TJAI chat icin yukselt."
+    chatLimitBody: "On izleme sohbet limitine ulastin. Sinirsiz TJAI sohbeti icin Pro veya Apex'e gec."
   },
   ar: {
     approachTitle: "كيف تريد تنفيذ الخطة؟",
@@ -72,13 +75,14 @@ const copy: Record<Locale, TjaiAccessCopy> = {
     metricsTitle: "مقاييسك المحسوبة",
     metrics: { bmr: "BMR", tdee: "TDEE", protein: "بروتين", carbs: "كربوهيدرات", fat: "دهون" },
     upgrade: {
-      title: "خطتك جاهزة للتوليد",
-      body: "قم بالترقية إلى Apex لفتح نظام 12 أسبوع الكامل.",
-      pro: "احصل على Pro - 10 يورو/شهر",
-      apex: "احصل على Apex - 20 يورو/شهر",
+      title: "خطتك التكيفية جاهزة",
+      body: "افتح خطة TJAI الكاملة بدفعة واحدة، ثم أضف Pro أو Apex إذا أردت مزايا التدريب المستمر.",
+      oneTime: `افتح خطة TJAI - $${TJAI_ONE_TIME_PRICE_USD}`,
+      pro: `احصل على Pro - $${TJAI_SUBSCRIPTION_PRICES_USD.pro.monthly}/شهرياً`,
+      apex: `احصل على Apex - $${TJAI_SUBSCRIPTION_PRICES_USD.apex.monthly}/شهرياً`,
       close: "لاحقاً"
     },
-    chatLimitBody: "وصلت إلى 10 رسائل. قم بالترقية لمتابعة دردشة TJAI."
+    chatLimitBody: "وصلت إلى حد المعاينة في الدردشة. قم بالترقية إلى Pro أو Apex لمحادثات TJAI غير المحدودة."
   },
   es: {
     approachTitle: "Como quieres hacerlo?",
@@ -93,13 +97,14 @@ const copy: Record<Locale, TjaiAccessCopy> = {
     metricsTitle: "Tus metricas calculadas",
     metrics: { bmr: "BMR", tdee: "TDEE", protein: "Proteina", carbs: "Carbos", fat: "Grasas" },
     upgrade: {
-      title: "Tu plan esta listo para generarse",
-      body: "Mejora a Apex para desbloquear tu sistema completo de 12 semanas.",
-      pro: "Obtener Pro - EUR10/mes",
-      apex: "Obtener Apex - EUR20/mes",
+      title: "Tu plan adaptativo esta listo",
+      body: "Desbloquea un plan TJAI completo con un pago unico y luego añade Pro o Apex si quieres continuidad de coaching.",
+      oneTime: `Desbloquear plan TJAI - $${TJAI_ONE_TIME_PRICE_USD}`,
+      pro: `Obtener Pro - $${TJAI_SUBSCRIPTION_PRICES_USD.pro.monthly}/mes`,
+      apex: `Obtener Apex - $${TJAI_SUBSCRIPTION_PRICES_USD.apex.monthly}/mes`,
       close: "Luego"
     },
-    chatLimitBody: "Llegaste a 10 mensajes. Mejora para seguir en chat TJAI."
+    chatLimitBody: "Llegaste al limite de chat preview. Mejora a Pro o Apex para chat TJAI ilimitado."
   },
   fr: {
     approachTitle: "Comment souhaitez-vous avancer ?",
@@ -114,13 +119,14 @@ const copy: Record<Locale, TjaiAccessCopy> = {
     metricsTitle: "Vos metriques calculees",
     metrics: { bmr: "BMR", tdee: "TDEE", protein: "Proteines", carbs: "Glucides", fat: "Lipides" },
     upgrade: {
-      title: "Votre plan est pret a etre genere",
-      body: "Passez a Apex pour debloquer votre systeme complet 12 semaines.",
-      pro: "Prendre Pro - EUR10/mois",
-      apex: "Prendre Apex - EUR20/mois",
+      title: "Votre plan adaptatif est pret",
+      body: "Debloquez un plan TJAI complet avec un paiement unique, puis ajoutez Pro ou Apex pour le coaching continu.",
+      oneTime: `Debloquer le plan TJAI - $${TJAI_ONE_TIME_PRICE_USD}`,
+      pro: `Prendre Pro - $${TJAI_SUBSCRIPTION_PRICES_USD.pro.monthly}/mois`,
+      apex: `Prendre Apex - $${TJAI_SUBSCRIPTION_PRICES_USD.apex.monthly}/mois`,
       close: "Plus tard"
     },
-    chatLimitBody: "Vous avez atteint 10 messages. Passez a un niveau superieur pour continuer."
+    chatLimitBody: "Vous avez atteint la limite du chat preview. Passez a Pro ou Apex pour le chat TJAI illimite."
   }
 };
 

@@ -1,8 +1,11 @@
 import { NextRequest } from "next/server";
 
+import { isAdminEmail } from "@/lib/auth-utils";
+import { getTJAIAccess } from "@/lib/tjai-access";
 import { buildTjaiUserProfile } from "@/lib/tjai-intake";
 import { buildTjaiMemorySnapshot, getLatestTjaiPlan } from "@/lib/tjai-plan-store";
 import { requireAuth } from "@/lib/require-auth";
+import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { callOpenAI, streamOpenAI } from "@/lib/tjai-openai";
 
 export const dynamic = "force-dynamic";
@@ -113,6 +116,8 @@ export async function POST(request: NextRequest) {
   try {
     const auth = await requireAuth();
     if (!auth.ok) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+    const admin = getSupabaseServerClient();
+    if (!admin) return new Response(JSON.stringify({ error: "Server not configured" }), { status: 500 });
 
     const body = await request.json().catch(() => null);
     const message = String(body?.message ?? "").trim();
@@ -121,6 +126,26 @@ export async function POST(request: NextRequest) {
 
     if (!message) {
       return new Response(JSON.stringify({ error: "Invalid message" }), { status: 400 });
+    }
+
+    const isAdminByEmail = Boolean(auth.user.email && isAdminEmail(auth.user.email));
+    const [{ data: sub }, { data: usage }, { data: purchase }, { data: profile }] = await Promise.all([
+      admin.from("user_subscriptions").select("tier,status").eq("user_id", auth.user.id).maybeSingle(),
+      admin.from("tjai_trial_usage").select("messages_used,trial_started_at,trial_ends_at").eq("user_id", auth.user.id).maybeSingle(),
+      admin.from("tjai_plan_purchases").select("id").eq("user_id", auth.user.id).order("purchased_at", { ascending: false }).limit(1).maybeSingle(),
+      isAdminByEmail ? Promise.resolve({ data: { role: "admin" } }) : admin.from("profiles").select("role").eq("id", auth.user.id).maybeSingle()
+    ]);
+    const isAdmin = isAdminByEmail || profile?.role === "admin";
+    const tier = (sub?.tier ?? "core") as "core" | "pro" | "apex";
+    const trialEndsAt = usage?.trial_ends_at ? new Date(usage.trial_ends_at).getTime() : 0;
+    const remaining = isAdmin ? 999 : Math.max(0, trialEndsAt > Date.now() ? 10 - Number(usage?.messages_used ?? 0) : 0);
+    const access = getTJAIAccess(tier, {
+      hasOneTimePlanPurchase: Boolean(purchase?.id),
+      coreTrialMessagesRemaining: remaining,
+      isAdmin
+    });
+    if (!access.canUseChat) {
+      return new Response(JSON.stringify({ error: "Upgrade required for TJAI chat." }), { status: 402, headers: { "Content-Type": "application/json" } });
     }
 
     // Domain guard — non-fitness questions answered instantly without streaming

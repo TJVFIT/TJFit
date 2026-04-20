@@ -130,7 +130,7 @@ export function TJAIHub({ locale }: { locale: Locale }) {
                   </span>
                 )}
                 {tier === "core" ? (
-                  <a href={`/${locale}/membership?tier=apex`} className="text-xs font-semibold text-[#22D3EE] hover:text-white">
+                  <a href={`/${locale}/membership`} className="text-xs font-semibold text-[#22D3EE] hover:text-white">
                     Upgrade →
                   </a>
                 ) : null}

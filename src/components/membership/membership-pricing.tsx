@@ -6,6 +6,7 @@ import { initializePaddle, type Paddle } from "@paddle/paddle-js";
 import { Button } from "@/components/ui/Button";
 import { type Locale } from "@/lib/i18n";
 import { getMembershipTierCopy } from "@/lib/membership-tier-copy";
+import { TJAI_ONE_TIME_PRICE_USD, TJAI_SUBSCRIPTION_PRICES_USD, getAnnualSavingsPercent } from "@/lib/tjai-pricing";
 
 type BillingMode = "monthly" | "annual";
 
@@ -39,10 +40,11 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
   const [saveBadgeVisible, setSaveBadgeVisible] = useState(false);
   const paddlePromiseRef = useRef<Promise<Paddle | undefined> | null>(null);
 
+  const annualSavings = getAnnualSavingsPercent(TJAI_SUBSCRIPTION_PRICES_USD.pro.monthly, TJAI_SUBSCRIPTION_PRICES_USD.pro.annual);
   const price = useMemo(
     () => ({
-      pro: mode === "monthly" ? 10 : 100,
-      apex: mode === "monthly" ? 20 : 200
+      pro: mode === "monthly" ? TJAI_SUBSCRIPTION_PRICES_USD.pro.monthly : TJAI_SUBSCRIPTION_PRICES_USD.pro.annual,
+      apex: mode === "monthly" ? TJAI_SUBSCRIPTION_PRICES_USD.apex.monthly : TJAI_SUBSCRIPTION_PRICES_USD.apex.annual
     }),
     [mode]
   );
@@ -145,8 +147,26 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
               pointerEvents: "none"
             }}
           >
-            Save 25%
+            {copy.saveBadge || `Save ${annualSavings}%`}
           </span>
+        </div>
+      </div>
+
+      <div id="tjai-one-time" className="mt-6 rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.14em] text-[#22D3EE]">Standalone TJAI</p>
+            <h2 className="mt-2 text-2xl font-extrabold text-white">${TJAI_ONE_TIME_PRICE_USD} one time</h2>
+            <p className="mt-2 text-sm text-[#A1A1AA]">
+              One adaptive TJAI assessment, one personalized plan, and PDF export. Subscriptions are optional add-ons for ongoing coaching.
+            </p>
+          </div>
+          <a
+            href={`/${locale}/tjai`}
+            className="inline-flex min-h-[46px] items-center justify-center rounded-full border border-[#22D3EE] px-5 text-sm font-semibold text-[#22D3EE] hover:bg-[rgba(34,211,238,0.06)]"
+          >
+            Unlock TJAI
+          </a>
         </div>
       </div>
 

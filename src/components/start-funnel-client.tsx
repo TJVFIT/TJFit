@@ -8,6 +8,7 @@ import { PremiumPageShell } from "@/components/premium";
 import type { Locale } from "@/lib/i18n";
 import { programs } from "@/lib/content";
 import { localizeProgram } from "@/lib/program-localization";
+import { TJAI_SUBSCRIPTION_PRICES_USD } from "@/lib/tjai-pricing";
 
 const COPY: Record<
   Locale,
@@ -40,7 +41,7 @@ const COPY: Record<
 > = {
   en: {
     heroTitle: "Where do you want to start?",
-    heroSub: "Programs & TDEE tools below are free to start. TJAI quiz preview is free — pay to unlock your full generated plan.",
+    heroSub: "Programs and TDEE tools below are free to start. TJAI preview is free, and one full personalized plan unlocks separately for $10.",
     freePrograms: "Free Training Programs",
     freeProgramsSub: "Two complete programs. Zero cost. Start today.",
     tjai: "Start TJAI Preview",
@@ -53,9 +54,9 @@ const COPY: Record<
     trial: "1-Day Free Trial",
     or: "or",
     allIn: "Ready to go all-in?",
-    allInSub: "Full TJAI access, AI programs, expert coaching.",
-    getPro: "Get Pro — $10/mo",
-    getApex: "Get Apex — $20/mo",
+    allInSub: "Unlimited TJAI chat, member perks, and deeper coaching after your plan unlock.",
+    getPro: `Get Pro — $${TJAI_SUBSCRIPTION_PRICES_USD.pro.monthly}/mo`,
+    getApex: `Get Apex — $${TJAI_SUBSCRIPTION_PRICES_USD.apex.monthly}/mo`,
     trustSecure: "Secure Payments",
     trustNoCard: "No Credit Card",
     trustLanguages: "5 Languages",
@@ -66,7 +67,7 @@ const COPY: Record<
   },
   tr: {
     heroTitle: "Nereden baslamak istersin?",
-    heroSub: "Programlar ve TDEE asagida ucretsiz baslar. TJAI on izlemesi ucretsiz — tam plan icin odeme.",
+    heroSub: "Programlar ve TDEE asagida ucretsiz baslar. TJAI on izlemesi ucretsizdir; bir tam kisisel planin kilidi ayri olarak $10 ile acilir.",
     freePrograms: "Ucretsiz Antrenman Programlari",
     freeProgramsSub: "Iki tam program. Sifir maliyet. Bugun basla.",
     tjai: "TJAI On Izlemesi",
@@ -79,9 +80,9 @@ const COPY: Record<
     trial: "1 Gun Ucretsiz Deneme",
     or: "veya",
     allIn: "Tam odaklanmaya hazir misin?",
-    allInSub: "Tam TJAI erisimi, AI programlari, uzman kocluk.",
-    getPro: "Pro Al — $10/ay",
-    getApex: "Apex Al — $20/ay",
+    allInSub: "Plan kilidinden sonra sinirsiz TJAI sohbeti, uyelik avantajlari ve daha derin kocluk.",
+    getPro: `Pro Al — $${TJAI_SUBSCRIPTION_PRICES_USD.pro.monthly}/ay`,
+    getApex: `Apex Al — $${TJAI_SUBSCRIPTION_PRICES_USD.apex.monthly}/ay`,
     trustSecure: "Guvenli Odeme",
     trustNoCard: "Kredi Karti Yok",
     trustLanguages: "5 Dil",
@@ -92,7 +93,7 @@ const COPY: Record<
   },
   ar: {
     heroTitle: "من أين تريد أن تبدأ؟",
-    heroSub: "البرامج وحاسبة TDEE تبدأ مجاناً. معاينة TJAI مجانية — ادفع لفتح خطتك الكاملة.",
+    heroSub: "البرامج وحاسبة TDEE تبدأ مجاناً. معاينة TJAI مجانية، وفتح خطة كاملة مخصصة يتم بشكل منفصل مقابل 10$.",
     freePrograms: "برامج تدريب مجانية",
     freeProgramsSub: "برنامجان كاملان. بدون تكلفة. ابدأ اليوم.",
     tjai: "معاينة TJAI",
@@ -105,9 +106,9 @@ const COPY: Record<
     trial: "تجربة مجانية ليوم واحد",
     or: "أو",
     allIn: "جاهز للالتزام الكامل؟",
-    allInSub: "وصول TJAI كامل، برامج AI، وتدريب احترافي.",
-    getPro: "احصل على Pro — $10/شهرياً",
-    getApex: "احصل على Apex — $20/شهرياً",
+    allInSub: "بعد فتح خطتك: دردشة TJAI غير محدودة، مزايا عضوية، وتدريب أعمق.",
+    getPro: `احصل على Pro — $${TJAI_SUBSCRIPTION_PRICES_USD.pro.monthly}/شهرياً`,
+    getApex: `احصل على Apex — $${TJAI_SUBSCRIPTION_PRICES_USD.apex.monthly}/شهرياً`,
     trustSecure: "مدفوعات آمنة",
     trustNoCard: "بدون بطاقة",
     trustLanguages: "5 لغات",
@@ -118,7 +119,7 @@ const COPY: Record<
   },
   es: {
     heroTitle: "¿Donde quieres empezar?",
-    heroSub: "Programas y TDEE abajo empiezan gratis. Vista previa TJAI gratis — paga para el plan completo generado.",
+    heroSub: "Programas y TDEE abajo empiezan gratis. La vista previa TJAI es gratis y un plan completo personalizado se desbloquea aparte por $10.",
     freePrograms: "Programas de Entrenamiento Gratis",
     freeProgramsSub: "Dos programas completos. Costo cero. Empieza hoy.",
     tjai: "Vista previa TJAI",
@@ -131,9 +132,9 @@ const COPY: Record<
     trial: "Prueba Gratis de 1 Dia",
     or: "o",
     allIn: "¿Listo para ir al maximo?",
-    allInSub: "Acceso total a TJAI, programas AI y coaching experto.",
-    getPro: "Get Pro — $10/mes",
-    getApex: "Get Apex — $20/mes",
+    allInSub: "Despues del desbloqueo del plan: chat TJAI ilimitado, perks de membresia y coaching mas profundo.",
+    getPro: `Get Pro — $${TJAI_SUBSCRIPTION_PRICES_USD.pro.monthly}/mes`,
+    getApex: `Get Apex — $${TJAI_SUBSCRIPTION_PRICES_USD.apex.monthly}/mes`,
     trustSecure: "Pagos Seguros",
     trustNoCard: "Sin Tarjeta",
     trustLanguages: "5 Idiomas",
@@ -144,7 +145,7 @@ const COPY: Record<
   },
   fr: {
     heroTitle: "Ou voulez-vous commencer ?",
-    heroSub: "Programmes et TDEE ci-dessous : demarrage gratuit. Aperçu TJAI gratuit — payez pour le plan complet genere.",
+    heroSub: "Programmes et TDEE ci-dessous : demarrage gratuit. L'apercu TJAI est gratuit et un plan complet personnalise se debloque separement pour $10.",
     freePrograms: "Programmes d'Entrainement Gratuits",
     freeProgramsSub: "Deux programmes complets. Zero cout. Commencez aujourd'hui.",
     tjai: "Apercu TJAI",
@@ -157,9 +158,9 @@ const COPY: Record<
     trial: "Essai Gratuit 1 Jour",
     or: "ou",
     allIn: "Pret a passer au niveau superieur ?",
-    allInSub: "Acces TJAI complet, programmes IA, coaching expert.",
-    getPro: "Get Pro — $10/mois",
-    getApex: "Get Apex — $20/mois",
+    allInSub: "Apres le deblocage du plan : chat TJAI illimite, avantages membre et coaching plus approfondi.",
+    getPro: `Get Pro — $${TJAI_SUBSCRIPTION_PRICES_USD.pro.monthly}/mois`,
+    getApex: `Get Apex — $${TJAI_SUBSCRIPTION_PRICES_USD.apex.monthly}/mois`,
     trustSecure: "Paiements Securises",
     trustNoCard: "Sans Carte",
     trustLanguages: "5 Langues",

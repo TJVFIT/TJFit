@@ -42,8 +42,14 @@ export async function POST(request: NextRequest) {
       isAdminByRole = profile?.role === "admin";
     }
     const isAdmin = isAdminByEmail || isAdminByRole;
-    getTJAIAccess(tier, { hasOneTimePlanPurchase: Boolean(purchase?.id), coreTrialMessagesRemaining: isTrialActive ? 10 : 0, isAdmin });
-    // Plan generation is open to all authenticated users
+    const access = getTJAIAccess(tier, {
+      hasOneTimePlanPurchase: Boolean(purchase?.id),
+      coreTrialMessagesRemaining: isTrialActive ? 10 : 0,
+      isAdmin
+    });
+    if (!access.canGeneratePlan) {
+      return NextResponse.json({ error: "A one-time TJAI unlock is required before generating a full plan." }, { status: 402 });
+    }
 
     const body = await request.json().catch(() => null);
     const rawAnswers = body?.answers ?? body;

@@ -41,11 +41,11 @@ const COPY = {
     listening: "Listening...",
     voice: "Voice",
     coreRemaining: "messages remaining",
-    proLocked: "Chat is Apex-only",
+    proUnlocked: "Unlimited TJAI chat",
     apexUnlimited: "Unlimited chat",
     trialUsed: "You&apos;ve reached your TJAI chat preview limit",
-    trialSub: "Upgrade to Apex for unlimited coaching conversations.",
-    upgrade: "Upgrade to Apex",
+    trialSub: "Upgrade to Pro or Apex for unlimited coaching conversations.",
+    upgrade: "Upgrade membership",
     close: "Close"
   },
   ar: {
@@ -67,11 +67,11 @@ const COPY = {
     listening: "جاري الاستماع...",
     voice: "صوت",
     coreRemaining: "رسائل متبقية",
-    proLocked: "الدردشة متاحة فقط في Apex",
+    proUnlocked: "دردشة TJAI غير محدودة",
     apexUnlimited: "دردشة غير محدودة",
     trialUsed: "لقد وصلت إلى حد معاينة دردشة TJAI",
-    trialSub: "قم بالترقية إلى Apex لمحادثات تدريب غير محدودة.",
-    upgrade: "الترقية إلى Apex",
+    trialSub: "قم بالترقية إلى Pro أو Apex لمحادثات TJAI غير المحدودة.",
+    upgrade: "ترقية العضوية",
     close: "إغلاق"
   }
 } as const;
@@ -200,18 +200,60 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
         body: JSON.stringify({ message, conversationId, locale }),
         signal: controller.signal
       });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        setApiError("TJAI is having trouble. Please try again.");
-        throw new Error(String(data?.error ?? "Chat request failed"));
+      const contentType = response.headers.get("Content-Type") ?? "";
+      if (contentType.includes("application/json")) {
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          setApiError("TJAI is having trouble. Please try again.");
+          throw new Error(String(data?.error ?? "Chat request failed"));
+        }
+        if (typeof data?.conversationId === "string" && data.conversationId) {
+          setConversationId(data.conversationId);
+        }
+        const assistantText = String(data?.message ?? "").trim();
+        setMessages((prev) =>
+          prev.map((m) => (m.id === assistantId ? { ...m, content: assistantText || t.chatFailed } : m))
+        );
+      } else {
+        if (!response.ok || !response.body) {
+          throw new Error("Stream failed");
+        }
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        let finalMessage = "";
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const chunks = buffer.split("\n\n");
+          buffer = chunks.pop() ?? "";
+          for (const chunk of chunks) {
+            const line = chunk
+              .split("\n")
+              .map((entry) => entry.trim())
+              .find((entry) => entry.startsWith("data:"));
+            if (!line) continue;
+            try {
+              const data = JSON.parse(line.slice(5).trim()) as { delta?: string; conversationId?: string; done?: boolean };
+              if (typeof data.conversationId === "string" && data.conversationId) {
+                setConversationId(data.conversationId);
+              }
+              if (data.delta) {
+                finalMessage += data.delta;
+                setMessages((prev) =>
+                  prev.map((m) => (m.id === assistantId ? { ...m, content: finalMessage } : m))
+                );
+              }
+            } catch {
+              /* ignore malformed SSE payload */
+            }
+          }
+        }
+        setMessages((prev) =>
+          prev.map((m) => (m.id === assistantId ? { ...m, content: finalMessage || t.chatFailed } : m))
+        );
       }
-      if (typeof data?.conversationId === "string" && data.conversationId) {
-        setConversationId(data.conversationId);
-      }
-      const assistantText = String(data?.message ?? "").trim();
-      setMessages((prev) =>
-        prev.map((m) => (m.id === assistantId ? { ...m, content: assistantText || t.chatFailed } : m))
-      );
     } catch (error) {
       if (error instanceof Error && error.name === "AbortError") {
         setApiError("TJAI request timed out. Please try again.");
@@ -362,7 +404,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
           ) : (
             <p className="text-xs text-zinc-500">Or type any fitness question below after choosing a starter.</p>
           )}
-          <p className="mt-2 text-xs text-zinc-500">{tier === "core" ? `${remaining} ${t.coreRemaining}` : tier === "pro" ? t.proLocked : t.apexUnlimited}</p>
+          <p className="mt-2 text-xs text-zinc-500">{tier === "core" ? `${remaining} ${t.coreRemaining}` : tier === "pro" ? t.proUnlocked : t.apexUnlimited}</p>
         </div>
       </section>
 
@@ -371,7 +413,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
           <div className="w-full max-w-md rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
             <h3 className="text-lg font-semibold text-white">{t.trialUsed}</h3>
             <p className="mt-2 text-sm text-zinc-400">{t.trialSub}</p>
-            <a href={`/${locale}/membership?tier=apex`} className="mt-4 inline-flex rounded-full bg-[#22D3EE] px-4 py-2 text-sm font-semibold text-[#09090B]">
+            <a href={`/${locale}/membership`} className="mt-4 inline-flex rounded-full bg-[#22D3EE] px-4 py-2 text-sm font-semibold text-[#09090B]">
               {t.upgrade}
             </a>
             <button type="button" className="mt-3 block text-xs text-zinc-500" onClick={() => setShowLimitOverlay(false)}>

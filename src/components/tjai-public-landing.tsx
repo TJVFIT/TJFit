@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import type { Locale } from "@/lib/i18n";
+import { TJAI_ONE_TIME_PRICE_USD, TJAI_SUBSCRIPTION_PRICES_USD } from "@/lib/tjai-pricing";
 
 type TabKey = "training" | "nutrition" | "macros";
 
@@ -23,7 +24,7 @@ const COPY: Record<
 > = {
   en: {
     heroTitle: "Meet TJAI.",
-    heroSub: "Answer the quiz for a free preview. Pay to generate your full 12-week transformation plan.",
+    heroSub: "Take the adaptive assessment for a free preview. Unlock one full personalized TJAI plan for $10.",
     heroCta: "Start TJAI Preview",
     noCard: "Quiz preview is free. Full plan generation is paid at checkout.",
     doesTitle: "What TJAI does",
@@ -35,7 +36,7 @@ const COPY: Record<
   },
   tr: {
     heroTitle: "TJAI ile tanis.",
-    heroSub: "Ucretsiz on izleme icin quizi cevapla. Tam 12 haftalik plan icin odeme yap.",
+    heroSub: "Ucretsiz on izleme icin uyarlanabilir degerlendirmeyi tamamla. Bir tam TJAI planinin kilidini $10 ile ac.",
     heroCta: "TJAI On Izlemesi",
     noCard: "On izleme ucretsiz. Tam plan uretimi odemeli.",
     doesTitle: "TJAI ne yapar",
@@ -47,7 +48,7 @@ const COPY: Record<
   },
   ar: {
     heroTitle: "تعرّف على TJAI.",
-    heroSub: "أجب عن الأسئلة لمعاينة مجانية. ادفع لفتح خطتك الكاملة لمدة 12 أسبوعاً.",
+    heroSub: "أكمل التقييم التكيفي لمعاينة مجانية. افتح خطة TJAI الكاملة مقابل 10$.",
     heroCta: "معاينة TJAI",
     noCard: "المعاينة مجانية. الخطة الكاملة مدفوعة عند الدفع.",
     doesTitle: "ماذا يفعل TJAI",
@@ -59,7 +60,7 @@ const COPY: Record<
   },
   es: {
     heroTitle: "Conoce TJAI.",
-    heroSub: "Responde el cuestionario para una vista previa gratis. Paga para generar tu plan completo de 12 semanas.",
+    heroSub: "Completa la evaluacion adaptativa para una vista previa gratis. Desbloquea un plan TJAI completo por $10.",
     heroCta: "Vista previa TJAI",
     noCard: "La vista previa del quiz es gratis. El plan completo se paga al finalizar la compra.",
     doesTitle: "Que hace TJAI",
@@ -71,7 +72,7 @@ const COPY: Record<
   },
   fr: {
     heroTitle: "Decouvrez TJAI.",
-    heroSub: "Repondez au questionnaire pour un aperçu gratuit. Payez pour generer votre plan complet sur 12 semaines.",
+    heroSub: "Completez l'evaluation adaptative pour un apercu gratuit. Debloquez un plan TJAI complet pour $10.",
     heroCta: "Apercu TJAI",
     noCard: "L'apercu du quiz est gratuit. Le plan complet est payant au paiement.",
     doesTitle: "Ce que fait TJAI",
@@ -186,10 +187,10 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
         <h2 className="text-2xl font-bold text-white">{copy.pricingTitle}</h2>
         <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {[
-            ["Core (Free)", "Adaptive preview + metrics snapshot\nSee BMR/TDEE/macros\nNo full plan generation", `/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`],
-            ["Pro ($10/mo)", "Monthly 4-week AI program by email\nProgram discounts", `/${locale}/membership?tier=pro`],
-            ["Apex ($20/mo)", "Full TJAI generation\nUnlimited AI chat\nMeal swaps + custom plans", `/${locale}/membership?tier=apex`],
-            ["One-time TJAI ($25)", "Generate one plan\nDownload PDF\nNo subscription", `/${locale}/membership?tjai_onetime=1`]
+            ["Core (Free)", "Adaptive preview + metrics snapshot\nPreview the system before buying", `/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`],
+            [`Pro ($${TJAI_SUBSCRIPTION_PRICES_USD.pro.monthly}/mo)`, "Unlimited TJAI chat\nDiscount code + early access\nDaily meal email (early access)", `/${locale}/membership?tier=pro`],
+            [`Apex ($${TJAI_SUBSCRIPTION_PRICES_USD.apex.monthly}/mo)`, "Everything in Pro\nFull regeneration\nAdvanced meal swaps + deeper adaptation", `/${locale}/membership?tier=apex`],
+            [`One-time TJAI ($${TJAI_ONE_TIME_PRICE_USD})`, "Generate one adaptive plan\nDownload PDF\nNo subscription required", `/${locale}/membership?tjai_onetime=1`]
           ].map(([title, body, href]) => (
             <article key={title} className="rounded-2xl border border-[#1E2028] bg-[#111215] p-5">
               <p className="text-lg font-semibold text-white">{title}</p>

@@ -3,12 +3,16 @@ import type { SubscriptionTier } from "@/lib/subscription-tiers";
 export type TJAIAccess = {
   tier: SubscriptionTier;
   hasOneTimePlanPurchase: boolean;
+  canAccessHub: boolean;
   canGeneratePlan: boolean;
   canRegeneratePlan: boolean;
   canUseChat: boolean;
   canUseMealSwap: boolean;
   canUseProgress: boolean;
   canDownloadPdf: boolean;
+  canUseDailyMealEmail: boolean;
+  canUseEarlyAccessPerks: boolean;
+  mealSwapDailyLimit: number;
   coreChatLimit: number;
 };
 
@@ -25,12 +29,16 @@ export function getTJAIAccess(
     return {
       tier: "apex",
       hasOneTimePlanPurchase: true,
+      canAccessHub: true,
       canGeneratePlan: true,
       canRegeneratePlan: true,
       canUseChat: true,
       canUseMealSwap: true,
       canUseProgress: true,
       canDownloadPdf: true,
+      canUseDailyMealEmail: true,
+      canUseEarlyAccessPerks: true,
+      mealSwapDailyLimit: 999,
       coreChatLimit: 10
     };
   }
@@ -43,12 +51,16 @@ export function getTJAIAccess(
   return {
     tier,
     hasOneTimePlanPurchase,
-    canGeneratePlan: true,
-    canRegeneratePlan: isPro || isApex,
+    canAccessHub: hasOneTimePlanPurchase || isPro || isApex || (isCore && remaining > 0),
+    canGeneratePlan: hasOneTimePlanPurchase,
+    canRegeneratePlan: hasOneTimePlanPurchase && isApex,
     canUseChat: isApex || isPro || (isCore && remaining > 0),
-    canUseMealSwap: isPro || isApex,
-    canUseProgress: true,
-    canDownloadPdf: isPro || isApex || hasOneTimePlanPurchase,
+    canUseMealSwap: hasOneTimePlanPurchase && (isPro || isApex),
+    canUseProgress: hasOneTimePlanPurchase || isPro || isApex,
+    canDownloadPdf: hasOneTimePlanPurchase,
+    canUseDailyMealEmail: isPro || isApex,
+    canUseEarlyAccessPerks: isPro || isApex,
+    mealSwapDailyLimit: isApex ? 10 : isPro ? 3 : 0,
     coreChatLimit: 10
   };
 }

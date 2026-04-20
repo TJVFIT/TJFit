@@ -1,12 +1,14 @@
+import { TJAI_SUBSCRIPTION_PRICES_USD } from "@/lib/tjai-pricing";
+
 export type SubscriptionTier = "core" | "pro" | "apex";
 
 export const SUBSCRIPTION_TIERS: Record<
   SubscriptionTier,
-  { name: string; monthlyEur: number; yearlyEur: number; badge?: "pro" | "apex" }
+  { name: string; monthlyUsd: number; yearlyUsd: number; badge?: "pro" | "apex" }
 > = {
-  core: { name: "Core", monthlyEur: 0, yearlyEur: 0 },
-  pro: { name: "Pro", monthlyEur: 10, yearlyEur: 100, badge: "pro" },
-  apex: { name: "Apex", monthlyEur: 20, yearlyEur: 200, badge: "apex" }
+  core: { name: "Core", monthlyUsd: TJAI_SUBSCRIPTION_PRICES_USD.core.monthly, yearlyUsd: TJAI_SUBSCRIPTION_PRICES_USD.core.annual },
+  pro: { name: "Pro", monthlyUsd: TJAI_SUBSCRIPTION_PRICES_USD.pro.monthly, yearlyUsd: TJAI_SUBSCRIPTION_PRICES_USD.pro.annual, badge: "pro" },
+  apex: { name: "Apex", monthlyUsd: TJAI_SUBSCRIPTION_PRICES_USD.apex.monthly, yearlyUsd: TJAI_SUBSCRIPTION_PRICES_USD.apex.annual, badge: "apex" }
 };
 
 export function hasTJAIFullAccess(tier: SubscriptionTier) {

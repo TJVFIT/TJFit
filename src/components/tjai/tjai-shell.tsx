@@ -5,8 +5,10 @@ import { useEffect, useMemo, useState } from "react";
 import { TJAICalculating } from "@/components/tjai/tjai-calculating";
 import { TJAIQuiz } from "@/components/tjai/tjai-quiz";
 import { TJAIResult } from "@/components/tjai/tjai-result";
+import { getTJAIAccess } from "@/lib/tjai-access";
 import { buildTjaiUserProfile, normalizeQuizAnswers } from "@/lib/tjai-intake";
 import { getDirection, type Locale } from "@/lib/i18n";
+import { TJAI_ONE_TIME_PRICE_USD } from "@/lib/tjai-pricing";
 import { getTjaiAccessCopy } from "@/lib/tjai-access-copy";
 import { getTjaiCopy, getTjaiSteps } from "@/lib/tjai-copy";
 import { calculateTJAIMetrics } from "@/lib/tjai-science";
@@ -34,6 +36,8 @@ export function TJAIShell({
   const [compareMetrics, setCompareMetrics] = useState<{ moderate: TJAIMetrics; aggressive: TJAIMetrics } | null>(null);
   const [selectedPlanMode, setSelectedPlanMode] = useState<"moderate" | "aggressive">("moderate");
   const [tier, setTier] = useState<"core" | "pro" | "apex">("core");
+  const [hasOneTimePlanPurchase, setHasOneTimePlanPurchase] = useState(false);
+  const [remainingMessages, setRemainingMessages] = useState(0);
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [generateError, setGenerateError] = useState<string | null>(null);
   const [pendingAnswers, setPendingAnswers] = useState<QuizAnswers | null>(null);
@@ -52,17 +56,34 @@ export function TJAIShell({
   }, [initialAnswers, initialPhase]);
 
   useEffect(() => {
-    void fetch("/api/tjai/trial-status")
+    void fetch("/api/tjai/access", { credentials: "include", cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (!data) return;
         setTier((data.tier ?? "core") as "core" | "pro" | "apex");
+        setHasOneTimePlanPurchase(Boolean(data.hasOneTimePlanPurchase));
+        setRemainingMessages(Number(data.coreTrialMessagesRemaining ?? 0));
       })
       .catch(() => undefined);
   }, []);
 
+  const access = useMemo(
+    () =>
+      getTJAIAccess(tier, {
+        hasOneTimePlanPurchase,
+        coreTrialMessagesRemaining: remainingMessages
+      }),
+    [hasOneTimePlanPurchase, remainingMessages, tier]
+  );
+
   const handleGenerate = async (submittedAnswers: QuizAnswers, paceOverride?: "moderate" | "aggressive") => {
     const normalizedAnswers = normalizeQuizAnswers(submittedAnswers);
+    if (!access.canGeneratePlan) {
+      setPendingAnswers(normalizedAnswers);
+      setPendingPace(paceOverride);
+      setShowUpgrade(true);
+      return;
+    }
     setAnswers(normalizedAnswers);
     setPendingAnswers(normalizedAnswers);
     setPendingPace(paceOverride);
@@ -107,6 +128,11 @@ export function TJAIShell({
 
   const handleCompareBoth = async (submittedAnswers: QuizAnswers) => {
     const normalizedAnswers = normalizeQuizAnswers(submittedAnswers);
+    if (!access.canGeneratePlan) {
+      setPendingAnswers(normalizedAnswers);
+      setShowUpgrade(true);
+      return;
+    }
     setPhase("calculating");
     try {
       const [moderateRes, aggressiveRes] = await Promise.all([
@@ -242,7 +268,10 @@ export function TJAIShell({
               <h3 className="text-xl font-semibold text-white">{accessCopy.upgrade.title}</h3>
               <p className="mt-2 text-sm text-[#A1A1AA]">{accessCopy.upgrade.body}</p>
               <div className="mt-5 grid gap-2">
-                <a href={`/${locale}/membership?tier=pro`} className="btn-primary-shimmer inline-flex min-h-[44px] items-center justify-center rounded-full bg-gradient-to-br from-[#22D3EE] to-[#0EA5E9] px-4 py-2 text-sm font-bold text-[#09090B]">
+                <a href={`/${locale}/membership?tjai_onetime=1`} className="btn-primary-shimmer inline-flex min-h-[44px] items-center justify-center rounded-full bg-gradient-to-br from-[#22D3EE] to-[#0EA5E9] px-4 py-2 text-sm font-bold text-[#09090B]">
+                  {accessCopy.upgrade.oneTime.replace("{price}", String(TJAI_ONE_TIME_PRICE_USD))}
+                </a>
+                <a href={`/${locale}/membership?tier=pro`} className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-[#22D3EE] px-4 py-2 text-sm font-semibold text-[#D4D4D8]">
                   {accessCopy.upgrade.pro}
                 </a>
                 <a href={`/${locale}/membership?tier=apex`} className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-[#A78BFA] px-4 py-2 text-sm font-semibold text-[#D4D4D8]">

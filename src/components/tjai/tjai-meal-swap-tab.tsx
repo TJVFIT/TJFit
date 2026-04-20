@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { getTJAIAccess } from "@/lib/tjai-access";
 import type { TJAIPlan, TJAIMeal } from "@/lib/tjai-types";
 
 type MealOption = {
@@ -60,12 +59,19 @@ export function TJAIMealSwapTab({ locale }: { locale: string }) {
   const [reason, setReason] = useState("");
   const [notes, setNotes] = useState<string[]>([]);
   const [swapsRemaining, setSwapsRemaining] = useState(3);
+  const [canUseMealSwap, setCanUseMealSwap] = useState(false);
 
   useEffect(() => {
     void fetch("/api/tjai/access", { credentials: "include" })
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (data?.tier === "core" || data?.tier === "pro" || data?.tier === "apex") setTier(data.tier);
+        setCanUseMealSwap(Boolean(data?.canUseMealSwap));
+        if (typeof data?.mealSwapDailyLimit === "number") {
+          const key = `tjai-swaps-${new Date().toISOString().slice(0, 10)}`;
+          const used = Number(localStorage.getItem(key) ?? 0);
+          setSwapsRemaining(Math.max(0, data.mealSwapDailyLimit - used));
+        }
       });
 
     void fetch("/api/tjai/save", { credentials: "include", cache: "no-store" })
@@ -77,12 +83,7 @@ export function TJAIMealSwapTab({ locale }: { locale: string }) {
         setPlan((latest.plan_json ?? null) as TJAIPlan | null);
       });
 
-    const key = `tjai-swaps-${new Date().toISOString().slice(0, 10)}`;
-    const used = Number(localStorage.getItem(key) ?? 0);
-    setSwapsRemaining(Math.max(0, 3 - used));
   }, []);
-
-  const access = getTJAIAccess(tier);
   const options = useMemo(() => {
     const list: MealOption[] = [];
     if (!plan) return list;
@@ -121,7 +122,7 @@ export function TJAIMealSwapTab({ locale }: { locale: string }) {
       const key = `tjai-swaps-${new Date().toISOString().slice(0, 10)}`;
       const used = Number(localStorage.getItem(key) ?? 0) + 1;
       localStorage.setItem(key, String(used));
-      setSwapsRemaining(Math.max(0, 3 - used));
+      setSwapsRemaining((current) => Math.max(0, current - 1));
     } finally {
       setLoading(false);
     }
@@ -143,7 +144,7 @@ export function TJAIMealSwapTab({ locale }: { locale: string }) {
     });
   };
 
-  if (!access.canUseMealSwap) {
+  if (!canUseMealSwap) {
     return (
       <div className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
         <h3 className="text-lg font-semibold text-white">{t.locked}</h3>

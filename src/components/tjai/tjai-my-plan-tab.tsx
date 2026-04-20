@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { TJAIShell } from "@/components/tjai/tjai-shell";
 import { buildTjaiDecisionReasons } from "@/lib/tjai-explanations";
 import type { Locale } from "@/lib/i18n";
+import { TJAI_ONE_TIME_PRICE_USD } from "@/lib/tjai-pricing";
 import type { QuizAnswers, TJAIMetrics, TJAIPlan } from "@/lib/tjai-types";
 import { cn } from "@/lib/utils";
 
@@ -15,7 +16,7 @@ const COPY = {
     buildTitle: "Build Your 12-Week Plan",
     buildSub: "Complete a smarter adaptive assessment for your preview; pay to generate your full plan.",
     start: "Start Building",
-    oneTime: "Or get just your plan — one time ($25)",
+    oneTime: `Or get just your plan — one time ($${TJAI_ONE_TIME_PRICE_USD})`,
     note: "~5 minutes · Completely personalized · Science-based",
     dailyCalories: "Daily calories",
     proteinTarget: "Protein target",
@@ -34,7 +35,7 @@ const COPY = {
     buildTitle: "12 Haftalik Planini Olustur",
     buildSub: "Daha akilli uyarlanabilir degerlendirmeyi tamamla; tam plan icin odeme yap.",
     start: "Olusturmaya Basla",
-    oneTime: "Veya sadece planini al — tek seferlik ($25)",
+    oneTime: `Veya sadece planini al — tek seferlik ($${TJAI_ONE_TIME_PRICE_USD})`,
     note: "~5 dakika · Tamamen kisisel · Bilim temelli",
     dailyCalories: "Gunluk kalori",
     proteinTarget: "Protein hedefi",
@@ -53,7 +54,7 @@ const COPY = {
     buildTitle: "ابنِ خطتك لمدة 12 أسبوعاً",
     buildSub: "أكمل تقييماً ذكياً ومتكيّفاً للمعاينة؛ وادفع لتوليد خطتك الكاملة.",
     start: "ابدأ البناء",
-    oneTime: "أو احصل على خطتك فقط — مرة واحدة ($25)",
+    oneTime: `أو احصل على خطتك فقط — مرة واحدة ($${TJAI_ONE_TIME_PRICE_USD})`,
     note: "~5 دقائق · مخصص بالكامل · مبني على العلم",
     dailyCalories: "سعرات يومية",
     proteinTarget: "هدف البروتين",
@@ -72,7 +73,7 @@ const COPY = {
     buildTitle: "Crea tu Plan de 12 Semanas",
     buildSub: "Completa una evaluacion adaptativa e inteligente para la vista previa; paga para generar tu plan completo.",
     start: "Comenzar",
-    oneTime: "O consigue solo tu plan — pago unico ($25)",
+    oneTime: `O consigue solo tu plan — pago unico ($${TJAI_ONE_TIME_PRICE_USD})`,
     note: "~5 minutos · Totalmente personalizado · Basado en ciencia",
     dailyCalories: "Calorias diarias",
     proteinTarget: "Objetivo de proteina",
@@ -91,7 +92,7 @@ const COPY = {
     buildTitle: "Construisez votre plan sur 12 semaines",
     buildSub: "Completez une evaluation adaptative intelligente pour l'apercu ; payez pour generer votre plan complet.",
     start: "Commencer",
-    oneTime: "Ou obtenez uniquement votre plan — en une fois ($25)",
+    oneTime: `Ou obtenez uniquement votre plan — en une fois ($${TJAI_ONE_TIME_PRICE_USD})`,
     note: "~5 minutes · Entierement personnalise · Base sur la science",
     dailyCalories: "Calories quotidiennes",
     proteinTarget: "Objectif proteines",

@@ -533,7 +533,7 @@ export function ImmersiveHome({
             </div>
             <p className="mt-6 text-xs text-[#52525B]">
               <Link href={`/${locale}/membership`} className="text-[#A1A1AA] underline-offset-4 transition-colors hover:text-[#22D3EE]">
-                Core (Free) · Pro €20/mo · Apex €35/mo
+                Core (Free) · TJAI unlock $10 · Pro $6/mo · Apex $10/mo
               </Link>
             </p>
           </MotionReveal>

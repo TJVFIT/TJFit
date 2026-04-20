@@ -1,10 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { isAdminEmail } from "@/lib/auth-utils";
+import { getTJAIAccess } from "@/lib/tjai-access";
 import { requireAuth } from "@/lib/require-auth";
+import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 export async function POST(request: NextRequest) {
   const auth = await requireAuth();
   if (!auth.ok) return auth.response;
+  const admin = getSupabaseServerClient();
+  if (!admin) return NextResponse.json({ error: "Server not configured" }, { status: 500 });
+
+  const isAdminByEmail = Boolean(auth.user.email && isAdminEmail(auth.user.email));
+  const [{ data: sub }, { data: purchase }, { data: profile }] = await Promise.all([
+    admin.from("user_subscriptions").select("tier").eq("user_id", auth.user.id).maybeSingle(),
+    admin.from("tjai_plan_purchases").select("id").eq("user_id", auth.user.id).order("purchased_at", { ascending: false }).limit(1).maybeSingle(),
+    isAdminByEmail ? Promise.resolve({ data: { role: "admin" } }) : admin.from("profiles").select("role").eq("id", auth.user.id).maybeSingle()
+  ]);
+  const access = getTJAIAccess((sub?.tier ?? "core") as "core" | "pro" | "apex", {
+    hasOneTimePlanPurchase: Boolean(purchase?.id),
+    isAdmin: isAdminByEmail || profile?.role === "admin"
+  });
+  if (!access.canUseMealSwap) {
+    return NextResponse.json({ error: "Upgrade required for meal swaps." }, { status: 402 });
+  }
 
   const body = (await request.json().catch(() => null)) as {
     planId?: string;
