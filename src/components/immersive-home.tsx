@@ -307,6 +307,9 @@ export function ImmersiveHome({
         heroEntered={heroEntered}
         hideScrollCue={hideScrollCue}
         lineIn={lineIn}
+        heroHeadline={copy.hero.headline}
+        heroHeadlineLine2={copy.hero.headlineLine2}
+        heroGradientTagline={copy.hero.heroGradientTagline}
         heroSub={copy.hero.sub}
         ctaPrimary={copy.hero.ctaPrimary}
       />

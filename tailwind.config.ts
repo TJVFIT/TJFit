@@ -9,7 +9,7 @@ const config: Config = {
         shell: "1.75rem"
       },
       colors: {
-        background: "#09090B",
+        background: "#0A0A0B",
         surface: {
           DEFAULT: "#111215",
           elevated: "#15171A"

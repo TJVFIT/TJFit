@@ -24,6 +24,8 @@ export type HomeLuxuryCopy = {
     ctaNote: string;
     /** Single trust line (replaces chip row when set) */
     trustLine?: string;
+    /** Short gradient line under the main headline (brand punch) */
+    heroGradientTagline: string;
   };
   /** Free value / lead magnet section */
   leadMagnet: {
@@ -114,17 +116,18 @@ const en: HomeLuxuryCopy = {
   hero: {
     badge: "TJFit",
     eyebrow: "PREMIUM FITNESS TRANSFORMATION",
-    headline: "World-class Global Coaching.",
-    headlineLine2: "Transform.",
+    headline: "World-class coaching.",
+    headlineLine2: "Built for a body you keep.",
     headlineLine2Accent: "Transform",
     headlineLine2Rest: ".",
-    sub: "Elite training programs, personalized diet systems, and AI coaching — built for real transformation.",
-    ctaPrimary: "Start Free Today",
+    sub: "Elite 12-week programs, realistic nutrition systems, and TJAI that anchors to your real data — a transformation you can sustain.",
+    ctaPrimary: "Start your transformation",
     ctaSecondary: "View Programs",
     ctaBrowsePrograms: "Browse programs",
     trust: ["Clear plans", "Vetted coaches", "5 languages"],
-    trustLine: "Free to start · No credit card · 20+ programs",
-    ctaNote: ""
+    trustLine: "Free to start · No card · 20+ flagship programs",
+    ctaNote: "",
+    heroGradientTagline: "AI precision · Human intent · Measurable weeks"
   },
   leadMagnet: {
     badge: "Free guide",
@@ -133,10 +136,11 @@ const en: HomeLuxuryCopy = {
     bullets: [
       "Week-one structure you can follow immediately",
       "When to add coaching — and what to expect",
-      "How TJAI will fit when it launches — without overwhelming your week"
+      "How TJAI fits your week once you unlock a full plan"
     ],
-    tjaiBadge: "Coming soon",
-    tjaiSub: "TJAI personalized planning is not live yet. Use the roadmap above to stay in the loop — no separate AI page to visit."
+    tjaiBadge: "TJAI",
+    tjaiSub:
+      "TJAI drafts your personalized 12-week training and nutrition plan from a focused quiz. Unlock it from your dashboard when you are ready to go all in."
   },
   pricingPreview: {
     badge: "Membership",
@@ -248,13 +252,15 @@ const en: HomeLuxuryCopy = {
 const tr: HomeLuxuryCopy = {
   hero: {
     badge: "TJFit",
-    headline: "Dünya standartında global koçluk, spor ve sağlık platformu.",
-    sub: "Elit antrenman programları, kişiselleştirilmiş beslenme sistemleri ve yapay zekâ koçluğu — gerçek dönüşüm için tasarlandı.",
-    ctaPrimary: "Ücretsiz yol haritanı al",
+    headline: "Dünya standartında koçluk.",
+    headlineLine2: "Sürdürülebilir dönüşüm için.",
+    sub: "Elit 12 haftalık programlar, gerçekçi beslenme sistemleri ve verine oturan TJAI — uzun vadeli sonuç.",
+    ctaPrimary: "Dönüşüme başla",
     ctaSecondary: "Hesap oluştur",
     ctaBrowsePrograms: "Programları keşfet",
     trust: ["Net planlar", "Seçilmiş koçlar", "5 dil"],
-    ctaNote: "Yol haritası e-postada · Hesap isteğe bağlı · Karmaşa yok"
+    ctaNote: "Yol haritası e-postada · Hesap isteğe bağlı · Karmaşa yok",
+    heroGradientTagline: "Yapay zekâ keskinliği · İnsan seviyesinde koçluk · Ölçülebilir haftalar"
   },
   leadMagnet: {
     badge: "Ücretsiz rehber",
@@ -265,8 +271,9 @@ const tr: HomeLuxuryCopy = {
       "Koçluk ne zaman mantıklı — beklenti nedir",
       "TJAI yayına girince haftana nasıl oturur — seni boğmadan"
     ],
-    tjaiBadge: "Çok yakında",
-    tjaiSub: "TJAI kişisel planlama henüz yayında değil. Üstteki yol haritasıyla haberdar ol — ayrı bir yapay zekâ sayfası yok."
+    tjaiBadge: "TJAI",
+    tjaiSub:
+      "TJAI, odaklı bir quizden kişiselleştirilmiş 12 haftalık antrenman ve beslenme planını hazırlar. Hazır olduğunda kontrol panelinden aç."
   },
   pricingPreview: {
     badge: "Üyelik",
@@ -360,13 +367,15 @@ const tr: HomeLuxuryCopy = {
 const ar: HomeLuxuryCopy = {
   hero: {
     badge: "TJFit",
-    headline: "منصة عالمية للتدريب والرياضة والصحة.",
-    sub: "برامج تدريب نخبوية وأنظمة غذائية مخصصة وتدريب بالذكاء الاصطناعي — مصممة لتحول حقيقي.",
-    ctaPrimary: "خارطتك المجانية",
+    headline: "تدريب بمستوى عالمي.",
+    headlineLine2: "لجسم تحافظ عليه.",
+    sub: "برامج ١٢ أسبوعاً نخبوية، أنظمة تغذية واقعية، وTJAI يرتبط ببياناتك — تحول يمكن الإبقاء عليه.",
+    ctaPrimary: "ابدأ تحولك",
     ctaSecondary: "ابدأ مجاناً",
     ctaBrowsePrograms: "البرامج",
     trust: ["خطط واضحة", "مدربون مختارون", "٥ لغات"],
-    ctaNote: "خارطة بالبريد · الحساب اختياري · بلا فوضى"
+    ctaNote: "خارطة بالبريد · الحساب اختياري · بلا فوضى",
+    heroGradientTagline: "دقة الذكاء الاصطناعي · نية بشرية · أسابيع قابلة للقياس"
   },
   leadMagnet: {
     badge: "دليل مجاني",
@@ -377,8 +386,9 @@ const ar: HomeLuxuryCopy = {
       "متى يصبح التدريب مع مدرب منطقياً — وماذا تتوقع",
       "كيف يندمج TJAI بعد الإطلاق — دون أن يثقل أسبوعك"
     ],
-    tjaiBadge: "قريباً",
-    tjaiSub: "التخطيط الشخصي بـTJAI ليس متاحاً بعد. الخارطة أعلاه تكفي لتبقى على اطلاع — بلا صفحة ذكاء اصطناعي منفصلة."
+    tjaiBadge: "TJAI",
+    tjaiSub:
+      "يُنشئ TJAI خطة تدريب وتغذية لمدة ١٢ أسبوعاً من استبيان مركّز. فعّلها من لوحة التحكم عندما تكون جاهزاً للالتزام الكامل."
   },
   pricingPreview: {
     badge: "العضوية",
@@ -472,13 +482,15 @@ const ar: HomeLuxuryCopy = {
 const es: HomeLuxuryCopy = {
   hero: {
     badge: "TJFit",
-    headline: "Plataforma global de entrenamiento, deporte y salud de clase mundial.",
-    sub: "Programas de entrenamiento de élite, sistemas de nutrición personalizados y coaching con IA — diseñados para una transformación real.",
-    ctaPrimary: "Consigue tu guía gratis",
+    headline: "Coaching de clase mundial.",
+    headlineLine2: "Hecho para un cuerpo que mantienes.",
+    sub: "Programas flagship de 12 semanas, nutrición realista y TJAI anclada a tus datos — un cambio sostenible.",
+    ctaPrimary: "Empieza tu transformación",
     ctaSecondary: "Crear cuenta gratis",
     ctaBrowsePrograms: "Explorar programas",
     trust: ["Planes claros", "Coaches seleccionados", "5 idiomas"],
-    ctaNote: "Guía por email · Cuenta opcional · Sin ruido"
+    ctaNote: "Guía por email · Cuenta opcional · Sin ruido",
+    heroGradientTagline: "Precisión de IA · Intención humana · Semanas medibles"
   },
   leadMagnet: {
     badge: "Guía gratis",
@@ -489,8 +501,9 @@ const es: HomeLuxuryCopy = {
       "Cuándo tiene sentido el coaching — y qué esperar",
       "Cómo encajará TJAI al salir — sin saturarte"
     ],
-    tjaiBadge: "Muy pronto",
-    tjaiSub: "El planning con TJAI aún no está activo. La guía de arriba basta para enterarte — sin página de IA aparte."
+    tjaiBadge: "TJAI",
+    tjaiSub:
+      "TJAI genera tu plan de entrenamiento y nutrición de 12 semanas a partir de un cuestionario enfocado. Desbloquéalo desde tu panel cuando estés listo."
   },
   pricingPreview: {
     badge: "Membresía",
@@ -584,13 +597,15 @@ const es: HomeLuxuryCopy = {
 const fr: HomeLuxuryCopy = {
   hero: {
     badge: "TJFit",
-    headline: "Plateforme mondiale de coaching, sport et santé de classe mondiale.",
-    sub: "Programmes d'entraînement élite, systèmes nutritionnels personnalisés et coaching IA — conçus pour une transformation réelle.",
-    ctaPrimary: "Recevoir la feuille de route",
+    headline: "Coaching niveau monde.",
+    headlineLine2: "Pensé pour un corps durable.",
+    sub: "Programmes phares 12 semaines, nutrition réaliste et TJAI calée sur vos données — une transformation tenable.",
+    ctaPrimary: "Lancer ma transformation",
     ctaSecondary: "Créer un compte gratuit",
     ctaBrowsePrograms: "Parcourir les programmes",
     trust: ["Plans clairs", "Coachs sélectionnés", "5 langues"],
-    ctaNote: "Feuille de route par e-mail · Compte optionnel · Sans surcharge"
+    ctaNote: "Feuille de route par e-mail · Compte optionnel · Sans surcharge",
+    heroGradientTagline: "Précision IA · Intention humaine · Semaines mesurables"
   },
   leadMagnet: {
     badge: "Guide gratuit",
@@ -601,8 +616,9 @@ const fr: HomeLuxuryCopy = {
       "Quand le coaching a du sens — et à quoi vous attendre",
       "Comment TJAI s’intègre au lancement — sans vous saturer"
     ],
-    tjaiBadge: "Bientôt",
-    tjaiSub: "Le planning personnalisé TJAI n’est pas encore en ligne. La feuille de route ci-dessus suffit pour suivre l’actu — pas de page « IA » à part."
+    tjaiBadge: "TJAI",
+    tjaiSub:
+      "TJAI génère votre plan d’entraînement et de nutrition sur 12 semaines à partir d’un questionnaire ciblé. Débloquez-le depuis votre tableau de bord quand vous êtes prêt à vous engager."
   },
   pricingPreview: {
     badge: "Abonnement",

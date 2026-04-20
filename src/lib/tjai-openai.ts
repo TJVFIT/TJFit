@@ -7,16 +7,25 @@ const MODEL_JSON = "gpt-4o-2024-08-06"; // structured outputs / json_object
 const MODEL_CHAT = "gpt-4o";            // chat / streaming
 const MAX_RETRIES = 2;
 
+export type OpenAIUsageSnapshot = {
+  promptTokens: number;
+  completionTokens: number;
+  totalTokens: number;
+};
+
 export async function callOpenAI({
   system,
   user,
   maxTokens = 16000,
-  jsonMode = false
+  jsonMode = false,
+  onUsage
 }: {
   system: string;
   user: string;
   maxTokens?: number;
   jsonMode?: boolean;
+  /** Optional hook for observability (plan generation, small JSON extractions, etc.). */
+  onUsage?: (usage: OpenAIUsageSnapshot) => void;
 }): Promise<string> {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) throw new Error("OPENAI_API_KEY is not configured. Add it to your environment variables.");
@@ -53,10 +62,22 @@ export async function callOpenAI({
         throw new Error(`OpenAI API error ${response.status}: ${errorText.slice(0, 500)}`);
       }
 
-      const data = await response.json();
+      const data = (await response.json()) as {
+        choices?: Array<{ message?: { content?: string } }>;
+        usage?: { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number };
+      };
       const text = (data?.choices?.[0]?.message?.content ?? "") as string;
 
       if (!text) throw new Error("OpenAI returned an empty response.");
+
+      const u = data?.usage;
+      if (onUsage && u && typeof u.prompt_tokens === "number" && typeof u.completion_tokens === "number") {
+        onUsage({
+          promptTokens: u.prompt_tokens,
+          completionTokens: u.completion_tokens,
+          totalTokens: typeof u.total_tokens === "number" ? u.total_tokens : u.prompt_tokens + u.completion_tokens
+        });
+      }
 
       return text;
     } catch (err) {

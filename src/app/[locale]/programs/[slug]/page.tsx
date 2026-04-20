@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { FreeProductBodyBlocks, FreeProductUpgradeFooter } from "@/components/free-product-detail-view";
+import { ProgramEliteSystemCard } from "@/components/program-elite-system-card";
 import { ProgramBlueprintNavigator } from "@/components/program-blueprint-navigator";
 import { ProgramDetailHero } from "@/components/program-detail-hero";
 import { ScrollReveal } from "@/components/scroll-reveal";
@@ -26,6 +27,7 @@ import { getOptionalServerUser, resolveStaticProgramAccess, userHasPaidProgram }
 import { requireLocaleParam } from "@/lib/require-locale";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { getProgramManagementCopy } from "@/lib/program-management-copy";
+import { getProgramEliteLabels, getProgramEliteMeta } from "@/lib/program-elite-meta";
 
 function getProgramTheme(category: string) {
   const base = category.toLowerCase();
@@ -206,6 +208,15 @@ export default async function ProgramDetailPage({
           <p className="mt-3 text-sm italic text-[var(--color-text-muted)]">
             {isDiet ? copy.dietPageTrust : copy.programPageTrust}
           </p>
+
+          {program ? (
+            <div className="mt-10">
+              <ProgramEliteSystemCard
+                meta={getProgramEliteMeta(slug, programCategory, isDiet)}
+                labels={getProgramEliteLabels(locale, isDiet)}
+              />
+            </div>
+          ) : null}
 
           <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4">
             <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{copy.languageOptionsLabel}</p>

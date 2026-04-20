@@ -3,15 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 
 function toBlur(velocity: number) {
-  if (velocity >= 10) return 3;
-  if (velocity >= 5) return 2;
+  if (velocity >= 10) return 2;
   if (velocity >= 2) return 1;
   return 0;
 }
 
 function toScale(velocity: number) {
-  if (velocity >= 10) return 1.01;
-  if (velocity >= 5) return 1.005;
+  if (velocity >= 10) return 1.006;
+  if (velocity >= 5) return 1.003;
   return 1;
 }
 

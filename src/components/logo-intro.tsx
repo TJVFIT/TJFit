@@ -27,7 +27,7 @@ export function LogoIntro({ onComplete }: { onComplete: () => void }) {
     canvas.height = H;
 
     // Spawn nodes like the polygon mesh in the logo
-    const nodeCount = 28;
+    const nodeCount = W < 768 ? 16 : 28;
     type Node = { x: number; y: number; vx: number; vy: number; alpha: number };
     const nodes: Node[] = Array.from({ length: nodeCount }, () => ({
       x: W * 0.2 + Math.random() * W * 0.6,
@@ -119,7 +119,7 @@ export function LogoIntro({ onComplete }: { onComplete: () => void }) {
 
   return (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-[#09090B]"
+      className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-[#0A0A0B]"
       style={{
         opacity: isExiting ? 0 : 1,
         transition: isExiting ? "opacity 550ms cubic-bezier(0.4,0,1,1)" : "none"
@@ -179,6 +179,12 @@ export function LogoIntro({ onComplete }: { onComplete: () => void }) {
             transition: "filter 700ms ease"
           }}
         />
+        <p
+          className="mt-8 text-center text-[10px] font-semibold uppercase tracking-[0.28em] text-zinc-500 transition-opacity duration-700 motion-reduce:opacity-100"
+          style={{ opacity: isGlowing ? 1 : 0.25 }}
+        >
+          Precision · Performance · Progress
+        </p>
       </div>
 
       {/* Scan line — sweeps once */}

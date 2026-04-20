@@ -43,6 +43,12 @@ export type HeroSectionProps = {
   heroEntered: boolean;
   hideScrollCue: boolean;
   lineIn: (delay: number) => CSSProperties;
+  /** Primary headline (localized). */
+  heroHeadline: string;
+  /** Optional second line (white) for rhythm. */
+  heroHeadlineLine2?: string;
+  /** Gradient tagline under the white lines. */
+  heroGradientTagline: string;
   heroSub: string;
   ctaPrimary: string;
   sectionRef: Ref<HTMLElement>;
@@ -56,6 +62,9 @@ export function HeroSection({
   heroEntered,
   hideScrollCue,
   lineIn,
+  heroHeadline,
+  heroHeadlineLine2,
+  heroGradientTagline,
   heroSub,
   ctaPrimary,
   sectionRef,
@@ -78,7 +87,7 @@ export function HeroSection({
   return (
     <section
       ref={sectionRef}
-      className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden bg-[#09090B] px-5 pb-16 pt-20 lg:px-10 lg:px-12"
+      className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden bg-[#0A0A0B] px-5 pb-16 pt-20 lg:px-10 lg:px-12"
       style={{ minHeight: "max(700px, 100svh)" }}
     >
       {/* LAYER 1 — deep wash */}
@@ -86,7 +95,7 @@ export function HeroSection({
         className="pointer-events-none absolute inset-0 z-0"
         style={{
           background:
-            "radial-gradient(ellipse 120% 80% at 60% 40%, rgba(14,165,233,0.07) 0%, rgba(34,211,238,0.04) 30%, transparent 70%), #09090B",
+            "radial-gradient(ellipse 120% 80% at 60% 40%, rgba(14,165,233,0.07) 0%, rgba(34,211,238,0.04) 30%, transparent 70%), #0A0A0B",
         }}
         aria-hidden
       />
@@ -168,8 +177,8 @@ export function HeroSection({
         className="pointer-events-none absolute inset-0 z-[3]"
         style={{
           background: [
-            "linear-gradient(90deg, #09090B 0%, rgba(9,9,11,0.98) 34%, rgba(9,9,11,0.55) 56%, rgba(9,9,11,0.14) 74%, transparent 100%)",
-            "radial-gradient(ellipse 72% 88% at 14% 48%, rgba(9,9,11,0.58) 0%, transparent 54%)",
+            "linear-gradient(90deg, #0A0A0B 0%, rgba(10,10,11,0.98) 34%, rgba(10,10,11,0.55) 56%, rgba(10,10,11,0.14) 74%, transparent 100%)",
+            "radial-gradient(ellipse 72% 88% at 14% 48%, rgba(10,10,11,0.58) 0%, transparent 54%)",
           ].join(", "),
         }}
         aria-hidden
@@ -196,19 +205,21 @@ export function HeroSection({
 
           <h1
             className="hero-headline mt-8 font-display font-black tracking-[-0.03em] text-[#FFFFFF]"
-            style={{ fontSize: "clamp(48px, 7vw, 88px)", lineHeight: 0.95 }}
+            style={{ fontSize: "clamp(40px, 6.2vw, 80px)", lineHeight: 0.98 }}
           >
             <span className="block text-white" style={lineIn(140)}>
-              Elevate Your
+              {heroHeadline}
             </span>
-            <span className="mt-1 block text-white" style={lineIn(220)}>
-              Global coaching.
-            </span>
+            {heroHeadlineLine2 ? (
+              <span className="mt-1 block text-white/95" style={lineIn(220)}>
+                {heroHeadlineLine2}
+              </span>
+            ) : null}
             <span
               className="mt-2 block bg-gradient-to-r from-[#22D3EE] via-[#67E8F9] to-[#A78BFA] bg-clip-text text-transparent"
               style={{ ...lineIn(300), filter: "drop-shadow(0 0 20px rgba(34,211,238,0.2))" }}
             >
-              AI fitness. Sports. Health.
+              {heroGradientTagline}
             </span>
           </h1>
 
@@ -233,7 +244,7 @@ export function HeroSection({
             <MagneticLink
               href={`/${locale}/start`}
               onClick={() => trackMarketingEvent("hero_cta_click", { cta: "start", surface: "immersive-hero" })}
-              className="tj-cta-glow-hover inline-flex min-h-[52px] min-w-[44px] flex-1 items-center justify-center gap-2 rounded-[10px] bg-[#22D3EE] px-7 py-3.5 text-[15px] font-extrabold text-[#09090B] shadow-[0_12px_40px_rgba(34,211,238,0.22)] transition-[transform,filter,box-shadow] duration-200 hover:brightness-110 sm:flex-none"
+              className="tj-cta-glow-hover inline-flex min-h-[52px] min-w-[44px] flex-1 items-center justify-center gap-2 rounded-[10px] bg-[#22D3EE] px-7 py-3.5 text-[15px] font-extrabold text-[#0A0A0B] shadow-[0_12px_40px_rgba(34,211,238,0.22)] transition-[transform,filter,box-shadow] duration-200 hover:brightness-110 sm:flex-none"
             >
               {ctaPrimary}
               <ArrowRight className="h-4 w-4 shrink-0" />

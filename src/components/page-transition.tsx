@@ -23,6 +23,7 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
 
   return (
     <div
+      className="will-change-[opacity,transform] [contain:layout]"
       style={{
         opacity: phase === "in" ? 1 : 0,
         transform: phase === "in" ? "translateY(0)" : "translateY(8px)",

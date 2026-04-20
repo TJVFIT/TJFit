@@ -62,6 +62,17 @@
   --surface-elevated: #111215;
   --surface-overlay: #151820;
   --border-default: #1a1d24;
+
+  /* Spacing rhythm — use with margin/padding utilities where helpful */
+  --tj-space-1: 0.25rem;
+  --tj-space-2: 0.5rem;
+  --tj-space-3: 0.75rem;
+  --tj-space-4: 1rem;
+  --tj-space-5: 1.25rem;
+  --tj-space-6: 1.5rem;
+  --tj-space-8: 2rem;
+  --tj-space-10: 2.5rem;
+  --tj-space-12: 3rem;
 }
 
 /* Start funnel + subtle scroll reveals (no Framer Motion) */
