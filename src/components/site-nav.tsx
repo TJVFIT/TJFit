@@ -145,25 +145,28 @@ function MoreNavDropdown({
         aria-haspopup="menu"
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          "relative inline-flex items-center gap-1 whitespace-nowrap py-2 text-[14px] font-medium transition-colors duration-150 ease-out",
-          anyActive ? "text-white" : "text-[#A1A1AA] hover:text-white",
-          anyActive &&
-            "after:absolute after:-bottom-[2px] after:left-0 after:right-0 after:h-0.5 after:rounded-sm after:bg-[#22D3EE]"
+          "tj-nav-link relative inline-flex items-center gap-1 whitespace-nowrap py-2 text-[14px] font-medium transition-colors duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
+          anyActive ? "text-white" : "text-[#A1A1AA] hover:text-white"
         )}
+        data-active={anyActive ? "true" : undefined}
       >
         {moreLabel}
         <ChevronDown
-          className={cn("h-3.5 w-3.5 shrink-0 opacity-60 transition-transform duration-150", open && "rotate-180")}
+          className={cn(
+            "h-3.5 w-3.5 shrink-0 opacity-60 transition-transform duration-[260ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]",
+            open && "rotate-180 opacity-100"
+          )}
           aria-hidden
         />
       </button>
       <div
         className={cn(
-          "absolute end-0 top-[calc(100%+6px)] z-[120] min-w-[200px] rounded-[10px] border border-[#1E2028] bg-[#111215] p-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-[opacity,transform] duration-150 ease-out",
+          "tj-dropdown-panel absolute end-0 top-[calc(100%+8px)] z-[120] min-w-[220px] p-1.5 transition-[opacity,transform,filter] duration-[260ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
           open
-            ? "pointer-events-auto translate-y-0 opacity-100"
-            : "pointer-events-none -translate-y-1 opacity-0"
+            ? "pointer-events-auto translate-y-0 scale-100 opacity-100 blur-0"
+            : "pointer-events-none -translate-y-1.5 scale-[0.97] opacity-0 blur-[2px]"
         )}
+        style={{ transformOrigin: "top right" }}
       >
         {items.map((item) => {
           const active = isActive(item.href);
@@ -173,9 +176,9 @@ function MoreNavDropdown({
               href={`/${locale}${item.href}`}
               onClick={() => setOpen(false)}
               className={cn(
-                "block rounded-md px-3 py-2 text-[13px] text-[#A1A1AA] transition-[background-color,color] duration-150",
-                "hover:bg-[rgba(255,255,255,0.05)] hover:text-white",
-                active && "font-semibold text-white"
+                "tj-row-hover relative block rounded-md px-3 py-2 text-[13px] text-[#A1A1AA] transition-[background-color,color,transform] duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
+                "hover:bg-[rgba(34,211,238,0.06)] hover:text-white",
+                active && "bg-[rgba(34,211,238,0.08)] font-semibold text-white"
               )}
             >
               {item.label}
@@ -189,9 +192,8 @@ function MoreNavDropdown({
 
 const navLinkClass = (active: boolean) =>
   cn(
-    "relative whitespace-nowrap py-2 text-[14px] font-medium text-[#A1A1AA] transition-colors duration-150 ease-out hover:text-white",
-    active &&
-      "text-white after:absolute after:-bottom-[2px] after:left-0 after:right-0 after:h-0.5 after:rounded-sm after:bg-[#22D3EE]"
+    "tj-nav-link relative whitespace-nowrap py-2 text-[14px] font-medium text-[#A1A1AA] transition-colors duration-[240ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:text-white",
+    active && "text-white is-active"
   );
 
 export function SiteNav({ locale }: { locale: Locale }) {
@@ -422,7 +424,7 @@ export function SiteNav({ locale }: { locale: Locale }) {
           aria-label={navCopy.navigation}
           dir={direction}
           className={cn(
-            "nav-drawer-panel fixed inset-y-0 z-[201] flex h-[100dvh] w-full max-w-md flex-col overflow-hidden border-[var(--color-border)] bg-[var(--color-surface)] shadow-[16px_0_64px_-20px_rgba(0,0,0,0.85)] backdrop-blur-xl backdrop-saturate-150",
+            "nav-drawer-panel fixed inset-y-0 z-[201] flex h-[100dvh] w-full max-w-md flex-col overflow-hidden border-[var(--color-border)] bg-[var(--color-surface)] shadow-[16px_0_64px_-20px_rgba(0,0,0,0.85)] backdrop-blur-xl backdrop-saturate-150 transition-transform duration-[520ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform",
             isRtl
               ? "start-0 border-e ps-[max(0.75rem,env(safe-area-inset-left,0px))] pe-[env(safe-area-inset-right,0px)]"
               : "end-0 border-s ps-[env(safe-area-inset-left,0px)] pe-[max(0.75rem,env(safe-area-inset-right,0px))]",
@@ -466,7 +468,7 @@ export function SiteNav({ locale }: { locale: Locale }) {
                     <h2 className="mb-3 px-1 font-display text-[10px] font-semibold uppercase tracking-[0.26em] text-zinc-600">
                       {section.title}
                     </h2>
-                    <ul className="space-y-1.5" role="list">
+                    <ul className="tj-drawer-stagger space-y-1.5" role="list" data-open={drawerEntered ? "true" : "false"}>
                       {section.items.map((item) => {
                         const active = isActive(item.href);
                         const Icon = item.Icon;
@@ -476,8 +478,8 @@ export function SiteNav({ locale }: { locale: Locale }) {
                               href={`/${locale}${item.href}`}
                               onClick={() => setSidebarOpen(false)}
                               className={cn(
-                                "group relative flex min-h-[52px] w-full items-center gap-3.5 rounded-[14px] px-3 py-3 text-start transition duration-200",
-                                "hover:bg-white/[0.05]",
+                                "group relative flex min-h-[52px] w-full items-center gap-3.5 rounded-[14px] px-3 py-3 text-start transition-[background-color,transform,box-shadow] duration-[320ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
+                                "hover:bg-white/[0.05] hover:translate-x-[3px] rtl:hover:-translate-x-[3px]",
                                 active &&
                                   "bg-gradient-to-r from-cyan-500/[0.14] via-cyan-500/[0.06] to-transparent shadow-[inset_0_0_0_1px_rgba(34,211,238,0.18)]"
                               )}

@@ -216,7 +216,7 @@ export function HeroSection({
               </span>
             ) : null}
             <span
-              className="mt-2 block bg-gradient-to-r from-[#22D3EE] via-[#67E8F9] to-[#A78BFA] bg-clip-text text-transparent"
+              className="tj-gradient-shift mt-2 block bg-gradient-to-r from-[#22D3EE] via-[#67E8F9] to-[#A78BFA] bg-clip-text text-transparent"
               style={{ ...lineIn(300), filter: "drop-shadow(0 0 20px rgba(34,211,238,0.2))" }}
             >
               {heroGradientTagline}
@@ -244,16 +244,16 @@ export function HeroSection({
             <MagneticLink
               href={`/${locale}/start`}
               onClick={() => trackMarketingEvent("hero_cta_click", { cta: "start", surface: "immersive-hero" })}
-              className="tj-cta-glow-hover inline-flex min-h-[52px] min-w-[44px] flex-1 items-center justify-center gap-2 rounded-[10px] bg-[#22D3EE] px-7 py-3.5 text-[15px] font-extrabold text-[#0A0A0B] shadow-[0_12px_40px_rgba(34,211,238,0.22)] transition-[transform,filter,box-shadow] duration-200 hover:brightness-110 sm:flex-none"
+              className="tj-btn-primary tj-cta-ring tj-breathe-glow tj-shine-idle tj-cta-glow-hover group inline-flex min-h-[52px] min-w-[44px] flex-1 items-center justify-center gap-2 rounded-[12px] bg-gradient-to-r from-[#22D3EE] to-[#0EA5E9] px-7 py-3.5 text-[15px] font-extrabold text-[#0A0A0B] shadow-[0_12px_40px_rgba(34,211,238,0.25)] sm:flex-none"
             >
-              {ctaPrimary}
-              <ArrowRight className="h-4 w-4 shrink-0" />
+              <span className="relative z-[3]">{ctaPrimary}</span>
+              <ArrowRight className="relative z-[3] h-4 w-4 shrink-0 transition-transform duration-[320ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-1" />
             </MagneticLink>
             <Link
               href={`/${locale}/ai`}
-              className="inline-flex min-h-[52px] min-w-[44px] flex-1 items-center justify-center gap-2 rounded-[10px] border border-[rgba(255,255,255,0.14)] px-7 py-3.5 text-[15px] font-semibold text-white transition-[border-color,background-color,color] duration-200 hover:border-[rgba(34,211,238,0.4)] hover:bg-[rgba(34,211,238,0.05)] hover:text-[#22D3EE] sm:flex-none"
+              className="group relative inline-flex min-h-[52px] min-w-[44px] flex-1 items-center justify-center gap-2 overflow-hidden rounded-[12px] border border-[rgba(255,255,255,0.14)] bg-[rgba(255,255,255,0.02)] px-7 py-3.5 text-[15px] font-semibold text-white transition-[border-color,background-color,color,transform,box-shadow] duration-[320ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:border-[rgba(34,211,238,0.4)] hover:bg-[rgba(34,211,238,0.06)] hover:text-[#22D3EE] hover:shadow-[0_12px_30px_-12px_rgba(34,211,238,0.35)] sm:flex-none"
             >
-              <Zap className="h-4 w-4 shrink-0" /> Meet TJAI
+              <Zap className="h-4 w-4 shrink-0 transition-transform duration-[320ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-110" /> Meet TJAI
             </Link>
           </div>
 
@@ -276,13 +276,15 @@ export function HeroSection({
 
       <div
         className={cn(
-          "absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1.5 transition-opacity duration-300",
-          hideScrollCue ? "opacity-0" : "opacity-45"
+          "absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1.5 transition-opacity duration-[480ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
+          hideScrollCue ? "opacity-0" : "opacity-60"
         )}
         aria-hidden
       >
-        <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-600">Scroll</span>
-        <ChevronDown className="tj-scroll-cue h-5 w-5 text-zinc-600 motion-reduce:animate-none" strokeWidth={1.5} />
+        <span className="text-[10px] uppercase tracking-[0.24em] text-zinc-500">Scroll</span>
+        <div className="relative flex h-9 w-5 items-start justify-center overflow-hidden rounded-full border border-white/[0.12] bg-white/[0.02]">
+          <ChevronDown className="tj-scroll-cue mt-1 h-4 w-4 text-[#22D3EE]/70 motion-reduce:animate-none" strokeWidth={1.75} />
+        </div>
       </div>
     </section>
   );

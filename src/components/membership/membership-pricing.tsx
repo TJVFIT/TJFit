@@ -106,11 +106,15 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
   const bool = (value: boolean) => (value ? "✓" : "—");
 
   return (
-    <section className="mt-8">
+    <section className="tj-page-in mt-8">
       {/* Header + billing toggle */}
-      <div className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6 sm:p-8" style={{ backdropFilter: "blur(24px)" }}>
-        <h1 className="text-3xl font-extrabold text-white">{copy.title}</h1>
-        <p className="mt-2 text-sm text-[#A1A1AA]">{copy.sub}</p>
+      <div className="relative overflow-hidden rounded-2xl border border-[#1E2028] bg-[#111215] p-6 sm:p-8" style={{ backdropFilter: "blur(24px)" }}>
+        <div
+          className="pointer-events-none absolute inset-x-0 -top-20 h-40 bg-[radial-gradient(ellipse_60%_80%_at_50%_100%,rgba(34,211,238,0.18),transparent_70%)]"
+          aria-hidden
+        />
+        <h1 className="relative font-display text-3xl font-extrabold tracking-tight text-white">{copy.title}</h1>
+        <p className="relative mt-2 text-sm text-[#A1A1AA]">{copy.sub}</p>
 
         {/* Sliding pill toggle — ME2 */}
         <div className="mt-6 flex items-center gap-3">
@@ -171,68 +175,97 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
       </div>
 
       {/* Glassmorphic pricing cards — M4 */}
-      <div className="mt-6 grid gap-4 md:grid-cols-3">
+      <div className="tj-stagger mt-6 grid gap-4 md:grid-cols-3">
         {/* Core */}
         <article
-          className="group relative overflow-hidden rounded-2xl border border-[#1E2028] p-6 transition-[border-color,box-shadow] duration-300 hover:border-white/10 hover:shadow-[0_20px_60px_rgba(0,0,0,0.4)]"
-          style={{ background: "rgba(17,18,21,0.7)", backdropFilter: "blur(24px)" }}
+          className="tj-card-lift tj-card-shine group relative overflow-hidden rounded-2xl border border-[#1E2028] p-6 transition-[border-color,box-shadow,transform] duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:border-white/20 hover:shadow-[0_24px_64px_-24px_rgba(0,0,0,0.6)]"
+          style={{ background: "rgba(17,18,21,0.72)", backdropFilter: "blur(24px)" }}
         >
-          <h3 className="text-xl font-bold text-white">{copy.cards.core.name}</h3>
+          <h3 className="font-display text-xl font-bold text-white">{copy.cards.core.name}</h3>
           <p className="mt-3 text-3xl font-extrabold text-white">{copy.cards.core.priceFree}</p>
           <Button variant="secondary" className="mt-4 w-full" disabled>
             {copy.cards.core.cta}
           </Button>
-          <ul className="mt-4 space-y-2 text-sm text-[#A1A1AA]">
+          <ul className="mt-5 space-y-2.5 text-sm text-[#A1A1AA]">
             {copy.cards.core.features.map((feature) => (
-              <li key={feature} className="flex items-start gap-2"><span className="text-[#52525B]">•</span>{feature}</li>
+              <li key={feature} className="flex items-start gap-2">
+                <span className="mt-[7px] inline-block h-1 w-1 rounded-full bg-[#52525B]" aria-hidden />
+                <span>{feature}</span>
+              </li>
             ))}
           </ul>
         </article>
 
         {/* Pro */}
         <article
-          className="group relative overflow-hidden rounded-2xl border border-cyan-400/35 p-6 shadow-[0_0_40px_rgba(34,211,238,0.14)] transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-1 hover:border-cyan-400/55 hover:shadow-[0_30px_80px_rgba(34,211,238,0.18)]"
-          style={{ background: "linear-gradient(165deg, rgba(34,211,238,0.05) 0%, rgba(17,18,21,0.85) 60%)", backdropFilter: "blur(24px)" }}
+          className="tj-card-lift tj-card-shine group relative overflow-hidden rounded-2xl border border-cyan-400/40 p-6 shadow-[0_0_48px_rgba(34,211,238,0.18),0_0_0_1px_rgba(34,211,238,0.15)_inset] transition-[border-color,box-shadow,transform] duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:border-cyan-400/60 hover:shadow-[0_34px_90px_rgba(34,211,238,0.26),0_0_0_1px_rgba(34,211,238,0.3)_inset]"
+          style={{ background: "linear-gradient(165deg, rgba(34,211,238,0.06) 0%, rgba(17,18,21,0.85) 60%)", backdropFilter: "blur(24px)" }}
         >
-          <div className="mb-3 inline-flex rounded-full border border-cyan-400/30 bg-cyan-400/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-cyan-300">
+          <div className="tj-tier-badge mb-3 inline-flex rounded-full border border-cyan-400/30 bg-cyan-400/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-cyan-300">
             {copy.cards.pro.badge}
           </div>
-          <h3 className="text-xl font-bold text-white">{copy.cards.pro.name}</h3>
+          <h3 className="font-display text-xl font-bold text-white">{copy.cards.pro.name}</h3>
           <p className="mt-3 text-3xl font-extrabold text-white">
-            $<span className="tabular-nums">{proPriceDisplay}</span>{" "}
+            <span className="text-[#A1A1AA]">$</span>
+            <span className="tabular-nums [text-shadow:0_0_24px_rgba(34,211,238,0.35)]">{proPriceDisplay}</span>{" "}
             <span className="text-sm font-medium text-[#A1A1AA]">{mode === "monthly" ? copy.perMonthSuffix : copy.perYearSuffix}</span>
           </p>
           <Button className="mt-4 w-full" disabled={working !== null} onClick={() => void checkout("pro")}>
-            {working === "pro" ? "..." : copy.cards.pro.cta}
+            {working === "pro" ? (
+              <span className="inline-flex items-center gap-2">
+                <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-[#0A0A0B]" />
+                {copy.cards.pro.cta}
+              </span>
+            ) : copy.cards.pro.cta}
           </Button>
-          <ul className="mt-4 space-y-2 text-sm text-[#A1A1AA]">
+          <ul className="mt-5 space-y-2.5 text-sm text-[#E4E4E7]/90">
             {copy.cards.pro.features.map((feature) => (
-              <li key={feature} className="flex items-start gap-2"><span className="text-[#22D3EE]">✓</span>{feature}</li>
+              <li key={feature} className="flex items-start gap-2">
+                <span className="mt-[1px] inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[rgba(34,211,238,0.15)] text-[#22D3EE]">
+                  <svg viewBox="0 0 12 12" className="h-2.5 w-2.5" aria-hidden>
+                    <path d="M2 6.5L4.5 9L10 3.5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+                <span>{feature}</span>
+              </li>
             ))}
           </ul>
         </article>
 
-        {/* Apex — ME15 rotating border */}
+        {/* Apex — rotating border */}
         <article
-          className="apex-card group relative overflow-hidden rounded-2xl p-6 transition-[transform,box-shadow] duration-300 hover:-translate-y-2 hover:shadow-[0_40px_100px_rgba(167,139,250,0.22)]"
-          style={{ background: "linear-gradient(165deg, rgba(167,139,250,0.07) 0%, rgba(17,18,21,0.9) 60%)", backdropFilter: "blur(24px)" }}
+          className="apex-card tj-card-lift tj-card-shine group relative overflow-hidden rounded-2xl p-6 transition-[transform,box-shadow] duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-2 hover:shadow-[0_44px_110px_rgba(167,139,250,0.28)]"
+          style={{ background: "linear-gradient(165deg, rgba(167,139,250,0.08) 0%, rgba(17,18,21,0.9) 60%)", backdropFilter: "blur(24px)" }}
         >
           {/* Animated conic border */}
           <div className="pointer-events-none absolute inset-0 rounded-2xl" style={{ padding: "1px", background: "conic-gradient(from var(--apex-angle, 0deg), #A78BFA, #22D3EE, #A78BFA)", WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", maskComposite: "exclude" }} aria-hidden />
-          <div className="mb-3 inline-flex rounded-full border border-violet-400/30 bg-violet-400/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-violet-300">
+          <div className="tj-tier-badge mb-3 inline-flex rounded-full border border-violet-400/30 bg-violet-400/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-violet-300">
             {copy.cards.apex.badge}
           </div>
-          <h3 className="text-xl font-bold text-white">{copy.cards.apex.name}</h3>
+          <h3 className="font-display text-xl font-bold text-white">{copy.cards.apex.name}</h3>
           <p className="mt-3 text-3xl font-extrabold text-white">
-            $<span className="tabular-nums">{apexPriceDisplay}</span>{" "}
+            <span className="text-[#A1A1AA]">$</span>
+            <span className="tabular-nums [text-shadow:0_0_24px_rgba(167,139,250,0.4)]">{apexPriceDisplay}</span>{" "}
             <span className="text-sm font-medium text-[#A1A1AA]">{mode === "monthly" ? copy.perMonthSuffix : copy.perYearSuffix}</span>
           </p>
-          <Button className="mt-4 w-full bg-gradient-to-r from-violet-500 to-cyan-500 font-bold text-white hover:opacity-90" disabled={working !== null} onClick={() => void checkout("apex")}>
-            {working === "apex" ? "..." : copy.cards.apex.cta}
+          <Button className="tj-shine mt-4 w-full overflow-hidden bg-gradient-to-r from-violet-500 to-cyan-500 font-bold text-white hover:opacity-95" disabled={working !== null} onClick={() => void checkout("apex")}>
+            {working === "apex" ? (
+              <span className="inline-flex items-center gap-2">
+                <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-white" />
+                {copy.cards.apex.cta}
+              </span>
+            ) : copy.cards.apex.cta}
           </Button>
-          <ul className="mt-4 space-y-2 text-sm text-[#A1A1AA]">
+          <ul className="mt-5 space-y-2.5 text-sm text-[#E4E4E7]/90">
             {copy.cards.apex.features.map((feature) => (
-              <li key={feature} className="flex items-start gap-2"><span className="text-[#A78BFA]">✓</span>{feature}</li>
+              <li key={feature} className="flex items-start gap-2">
+                <span className="mt-[1px] inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[rgba(167,139,250,0.18)] text-[#A78BFA]">
+                  <svg viewBox="0 0 12 12" className="h-2.5 w-2.5" aria-hidden>
+                    <path d="M2 6.5L4.5 9L10 3.5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+                <span>{feature}</span>
+              </li>
             ))}
           </ul>
         </article>

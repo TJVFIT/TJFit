@@ -11,7 +11,7 @@ import { getProgramTier, getProgramVisual } from "@/lib/program-card-visual";
 import { cn } from "@/lib/utils";
 
 const shellClass =
-  "glass-panel group tj-card-premium-hover tj-card-aura tj-card-cinematic-hover relative flex h-full min-h-0 flex-col overflow-hidden rounded-[14px] border border-[rgba(255,255,255,0.06)] bg-[rgba(17,18,21,0.85)] shadow-[0_1px_3px_rgba(0,0,0,0.4)] motion-reduce:transition-none transition-[border-color,box-shadow,transform,filter] duration-[250ms]";
+  "glass-panel group tj-card-premium-hover tj-card-aura tj-card-cinematic-hover tj-card-lift tj-card-shine relative flex h-full min-h-0 flex-col overflow-hidden rounded-[16px] border border-[rgba(255,255,255,0.07)] bg-[rgba(17,18,21,0.85)] shadow-[0_1px_3px_rgba(0,0,0,0.4)] motion-reduce:transition-none transition-[border-color,box-shadow,transform,filter] duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-[rgba(34,211,238,0.28)] hover:shadow-[0_24px_64px_-24px_rgba(0,0,0,0.6),0_0_30px_-6px_rgba(34,211,238,0.22)]";
 
 function useCardSpotlight() {
   const [pos, setPos] = useState({ x: 50, y: 50, visible: false });
@@ -28,9 +28,9 @@ function useCardSpotlight() {
 }
 
 const ctaPillClass = cn(
-  "inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-[rgba(34,211,238,0.2)] bg-transparent px-4 py-3 text-xs font-semibold text-[#22D3EE] sm:w-auto sm:justify-start sm:py-2.5",
-  "transition-[gap,box-shadow,background-color,border-color] duration-200 ease-out",
-  "group-hover:gap-2 group-hover:border-[rgba(34,211,238,0.35)] group-hover:bg-[rgba(34,211,238,0.10)] group-hover:shadow-[0_0_20px_rgba(34,211,238,0.12)]"
+  "inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-[rgba(34,211,238,0.22)] bg-transparent px-4 py-3 text-xs font-semibold text-[#22D3EE] sm:w-auto sm:justify-start sm:py-2.5",
+  "transition-[gap,box-shadow,background-color,border-color,color,transform] duration-[320ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
+  "group-hover:gap-2.5 group-hover:border-[rgba(34,211,238,0.5)] group-hover:bg-[rgba(34,211,238,0.12)] group-hover:shadow-[0_0_24px_rgba(34,211,238,0.2)] group-hover:text-white"
 );
 
 function CtaPill({ label }: { label: string }) {
@@ -38,7 +38,7 @@ function CtaPill({ label }: { label: string }) {
     <span className={ctaPillClass}>
       {label}
       <ArrowRight
-        className="h-4 w-4 shrink-0 transition-transform duration-200 ease-out group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
+        className="h-4 w-4 shrink-0 transition-transform duration-[320ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-1.5 motion-reduce:group-hover:translate-x-0"
         aria-hidden
       />
     </span>
@@ -111,7 +111,7 @@ function PremiumProgramCardInner({
   return (
     <>
       <div className="relative aspect-[4/3] w-full min-h-[11.5rem] shrink-0 overflow-hidden sm:aspect-[16/10] sm:min-h-0 sm:max-h-[200px]">
-        <div className="absolute inset-0 origin-center transition-transform duration-[400ms] ease-out motion-reduce:transition-none [@media(hover:hover)]:group-hover:scale-[1.04]">
+        <div className="absolute inset-0 origin-center transition-transform duration-[640ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none [@media(hover:hover)]:group-hover:scale-[1.06]">
           <div className={cn("absolute inset-0 bg-gradient-to-br opacity-95", visual.gradient)} aria-hidden />
           <div
             className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(255,255,255,0.12),transparent)]"
