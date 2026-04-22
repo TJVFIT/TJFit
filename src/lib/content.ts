@@ -141,7 +141,8 @@ export const programs: Program[] = [
     category: "Fat Loss",
     difficulty: "Beginner to Advanced",
     duration: "12 weeks",
-    price: 400,
+    price: 0,
+    is_free: true,
     description:
       "A progressive 12-week bodyweight fat loss system with cardio progression, HIIT phases, and clear weekly structure.",
     coachSlug: "tjfit-team",
@@ -161,7 +162,8 @@ export const programs: Program[] = [
     category: "Fat Loss",
     difficulty: "Beginner to Advanced",
     duration: "12 weeks",
-    price: 400,
+    price: 0,
+    is_free: true,
     description:
       "A 12-week bodyweight strength and cardio system built to reduce fat while improving muscle tone and conditioning.",
     coachSlug: "tjfit-team",
@@ -181,7 +183,8 @@ export const programs: Program[] = [
     category: "Fat Loss",
     difficulty: "Beginner to Advanced",
     duration: "12 weeks",
-    price: 400,
+    price: 0,
+    is_free: true,
     description:
       "A cardio-dominant 12-week plan focused on maximum calorie burn, endurance progression, and low-strength home conditioning.",
     coachSlug: "tjfit-team",
@@ -201,7 +204,8 @@ export const programs: Program[] = [
     category: "Fat Loss",
     difficulty: "Beginner to Advanced",
     duration: "12 weeks",
-    price: 400,
+    price: 0,
+    is_free: true,
     description:
       "A 12-week cardio and bodyweight sculpting system to reduce fat and build a lean, toned physique at home.",
     coachSlug: "tjfit-team",
@@ -221,7 +225,8 @@ export const programs: Program[] = [
     category: "Fat Loss",
     difficulty: "Beginner to Advanced",
     duration: "12 weeks",
-    price: 400,
+    price: 0,
+    is_free: true,
     description:
       "A short-session 12-week system designed to build a daily fat-burn habit and drive steady weight loss through consistent home training.",
     coachSlug: "tjfit-team",
@@ -241,7 +246,8 @@ export const programs: Program[] = [
     category: "Strength",
     difficulty: "Beginner to Advanced",
     duration: "12 weeks",
-    price: 400,
+    price: 0,
+    is_free: true,
     description:
       "A 12-week bodyweight muscle-building plan focused on slow reps, controlled tempo, and progressive volume.",
     coachSlug: "tjfit-team",
@@ -261,7 +267,8 @@ export const programs: Program[] = [
     category: "Strength",
     difficulty: "Beginner to Advanced",
     duration: "12 weeks",
-    price: 400,
+    price: 0,
+    is_free: true,
     description:
       "A 12-week high-volume bodyweight plan focused on near-failure sets and progressive overload to maximize muscle gain.",
     coachSlug: "tjfit-team",
@@ -281,7 +288,8 @@ export const programs: Program[] = [
     category: "Strength",
     difficulty: "Beginner to Advanced",
     duration: "12 weeks",
-    price: 400,
+    price: 0,
+    is_free: true,
     description:
       "A 12-week bodyweight strength program built around slow tempo reps, pause holds, and high-control progression.",
     coachSlug: "tjfit-team",
@@ -301,7 +309,8 @@ export const programs: Program[] = [
     category: "Strength",
     difficulty: "Beginner to Advanced",
     duration: "12 weeks",
-    price: 400,
+    price: 0,
+    is_free: true,
     description:
       "A 12-week strength and skill progression plan to build muscle and improve calisthenics control using bodyweight only.",
     coachSlug: "tjfit-team",
@@ -321,7 +330,8 @@ export const programs: Program[] = [
     category: "Strength",
     difficulty: "Beginner to Advanced",
     duration: "12 weeks",
-    price: 400,
+    price: 0,
+    is_free: true,
     description:
       "A 12-week lean muscle bodyweight system focused on symmetry, moderate-rep volume, and high-quality execution.",
     coachSlug: "tjfit-team",
@@ -341,7 +351,8 @@ export const programs: Program[] = [
     category: "Fat Loss",
     difficulty: "Beginner to Advanced",
     duration: "12 weeks",
-    price: 400,
+    price: 0,
+    is_free: true,
     description:
       "A 12-week gym fat-loss system combining resistance training and cardio progression to reduce fat while preserving muscle.",
     coachSlug: "tjfit-team",
@@ -361,7 +372,8 @@ export const programs: Program[] = [
     category: "Fat Loss",
     difficulty: "Beginner to Advanced",
     duration: "12 weeks",
-    price: 400,
+    price: 0,
+    is_free: true,
     description:
       "A 12-week high-density gym shredding plan using supersets, circuits, and cardio progression for rapid fat loss and conditioning.",
     coachSlug: "tjfit-team",
@@ -381,7 +393,8 @@ export const programs: Program[] = [
     category: "Fat Loss",
     difficulty: "Beginner to Advanced",
     duration: "12 weeks",
-    price: 400,
+    price: 0,
+    is_free: true,
     description:
       "A structured 12-week gym cutting protocol focused on fat loss, muscle retention, and progressive conditioning.",
     coachSlug: "tjfit-team",
@@ -401,7 +414,8 @@ export const programs: Program[] = [
     category: "Fat Loss",
     difficulty: "Beginner to Advanced",
     duration: "12 weeks",
-    price: 400,
+    price: 0,
+    is_free: true,
     description:
       "A 12-week gym shaping system built to reduce fat and develop a lean, aesthetic physique with structured volume.",
     coachSlug: "tjfit-team",
@@ -421,7 +435,8 @@ export const programs: Program[] = [
     category: "Fat Loss",
     difficulty: "Advanced",
     duration: "12 weeks",
-    price: 400,
+    price: 0,
+    is_free: true,
     description:
       "A 12-week extreme gym conditioning protocol using HIIT, dense circuits, and minimal rest for maximum fat loss.",
     coachSlug: "tjfit-team",
@@ -441,7 +456,8 @@ export const programs: Program[] = [
     category: "Strength",
     difficulty: "Beginner to Advanced",
     duration: "12 weeks",
-    price: 400,
+    price: 0,
+    is_free: true,
     description:
       "A 12-week gym mass-building system focused on heavy compounds, hypertrophy progression, and controlled high-volume growth.",
     coachSlug: "tjfit-team",
@@ -461,7 +477,8 @@ export const programs: Program[] = [
     category: "Strength",
     difficulty: "Advanced",
     duration: "12 weeks",
-    price: 400,
+    price: 0,
+    is_free: true,
     description:
       "A high-volume 12-week hypertrophy program designed for maximum muscle fullness, pump, and growth.",
     coachSlug: "tjfit-team",
@@ -481,7 +498,8 @@ export const programs: Program[] = [
     category: "Strength",
     difficulty: "Advanced",
     duration: "12 weeks",
-    price: 400,
+    price: 0,
+    is_free: true,
     description:
       "A 12-week gym blueprint combining heavy compound strength work with hypertrophy volume for size gains.",
     coachSlug: "tjfit-team",
@@ -501,7 +519,8 @@ export const programs: Program[] = [
     category: "Strength",
     difficulty: "Advanced",
     duration: "12 weeks",
-    price: 400,
+    price: 0,
+    is_free: true,
     description:
       "A 12-week gym aesthetics program focused on balanced symmetry, detail work, and high-quality hypertrophy volume.",
     coachSlug: "tjfit-team",
@@ -521,7 +540,8 @@ export const programs: Program[] = [
     category: "Nutrition",
     difficulty: "Beginner to Advanced",
     duration: "12 weeks",
-    price: 350,
+    price: 0,
+    is_free: true,
     description:
       "A structured 12-week keto shredding nutrition plan focused on fat loss, muscle retention, and sustainable meal discipline.",
     coachSlug: "tjfit-team",
@@ -541,7 +561,8 @@ export const programs: Program[] = [
     category: "Nutrition",
     difficulty: "Beginner to Advanced",
     duration: "12 weeks",
-    price: 350,
+    price: 0,
+    is_free: true,
     description:
       "A 12-week gut-focused fat-loss nutrition plan built to improve digestion, reduce bloating, and drive steady body-fat reduction.",
     coachSlug: "tjfit-team",
@@ -561,7 +582,8 @@ export const programs: Program[] = [
     category: "Nutrition",
     difficulty: "Beginner to Advanced",
     duration: "12 weeks",
-    price: 350,
+    price: 0,
+    is_free: true,
     description:
       "A budget-focused 12-week fat-loss plan using low-cost staples while keeping protein high enough for sustainable results.",
     coachSlug: "tjfit-team",
@@ -581,7 +603,8 @@ export const programs: Program[] = [
     category: "Nutrition",
     difficulty: "Beginner to Advanced",
     duration: "12 weeks",
-    price: 350,
+    price: 0,
+    is_free: true,
     description:
       "A 12-week lean bulk nutrition system for muscle gain with controlled fat gain, high protein intake, and performance-focused carbs.",
     coachSlug: "tjfit-team",
@@ -601,7 +624,8 @@ export const programs: Program[] = [
     category: "Nutrition",
     difficulty: "Beginner to Advanced",
     duration: "12 weeks",
-    price: 350,
+    price: 0,
+    is_free: true,
     description:
       "A 12-week clean cutting nutrition plan designed to reduce fat, preserve muscle, and build a lean defined physique.",
     coachSlug: "tjfit-team",
@@ -621,7 +645,8 @@ export const programs: Program[] = [
     category: "Nutrition",
     difficulty: "Advanced",
     duration: "12 weeks",
-    price: 350,
+    price: 0,
+    is_free: true,
     description:
       "An aggressive 12-week athlete cutting nutrition system for low body-fat outcomes while preserving muscle with high protein.",
     coachSlug: "tjfit-team",
@@ -641,7 +666,8 @@ export const programs: Program[] = [
     category: "Nutrition",
     difficulty: "Advanced",
     duration: "12 weeks",
-    price: 350,
+    price: 0,
+    is_free: true,
     description:
       "A high-calorie 12-week mass-gain nutrition system built for fast weight gain, maximum muscle growth, and strength progression.",
     coachSlug: "tjfit-team",
@@ -661,7 +687,8 @@ export const programs: Program[] = [
     category: "Nutrition",
     difficulty: "Advanced",
     duration: "12 weeks",
-    price: 350,
+    price: 0,
+    is_free: true,
     description:
       "A performance-focused 12-week athlete nutrition plan built to grow lean muscle, improve output, and support recovery.",
     coachSlug: "tjfit-team",
@@ -681,7 +708,8 @@ export const programs: Program[] = [
     category: "Nutrition",
     difficulty: "Beginner to Advanced",
     duration: "12 weeks",
-    price: 350,
+    price: 0,
+    is_free: true,
     description:
       "A budget-friendly 12-week bulk nutrition plan designed to gain muscle and size using simple low-cost foods.",
     coachSlug: "tjfit-team",
@@ -701,7 +729,8 @@ export const programs: Program[] = [
     category: "Nutrition",
     difficulty: "Advanced",
     duration: "12 weeks",
-    price: 350,
+    price: 0,
+    is_free: true,
     description:
       "A clean 12-week weight-gain nutrition system to build muscle with minimal fat gain and strong performance support.",
     coachSlug: "tjfit-team",

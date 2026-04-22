@@ -481,9 +481,13 @@ function getGoalLabel(program: Program, locale: Locale) {
 }
 
 export function getProgramBasePriceTry(program: Program) {
+  // Prices are zeroed platform-wide until the owner sets them.
   if (program.is_free) return 0;
+  if (PRICES_ZEROED) return 0;
   return nutritionSlugs.has(program.slug) ? 350 : 400;
 }
+
+const PRICES_ZEROED = true;
 
 export function formatProgramPrice(tryAmount: number, locale: Locale) {
   const config = currencyConfig[locale];
