@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ChevronDown, ArrowRight, Sparkles } from "lucide-react";
 
 import { TJ_PALETTE } from "@/components/3d/palette";
-import { AthleteSilhouetteBg } from "@/components/home/athlete-silhouette-bg";
+import { TJHeroStage } from "@/components/3d/hero-stage";
 import { useMagneticButton } from "@/hooks/useMagneticButton";
 import { trackMarketingEvent } from "@/lib/analytics-events";
 import type { Locale } from "@/lib/i18n";
@@ -93,22 +93,26 @@ export function HeroSection({
         LEGACY
       </span>
 
-      {/* Cyan athlete silhouette — breath-slow bicep curl, the living background */}
+      {/* 3D alternating-curl athlete — the living hero visual */}
       <div
         data-tj-silhouette
         className="pointer-events-none absolute inset-y-0 z-[1] end-0 w-full lg:w-[62%]"
         style={{
           maskImage:
-            "linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.6) 22%, #000 42%, #000 82%, transparent 100%)",
+            "linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.55) 18%, #000 38%, #000 84%, transparent 100%)",
           WebkitMaskImage:
-            "linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.6) 22%, #000 42%, #000 82%, transparent 100%)"
+            "linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.55) 18%, #000 38%, #000 84%, transparent 100%)",
+          opacity: reduce ? 0.42 : 0.88
         }}
         aria-hidden
       >
-        <AthleteSilhouetteBg intensity={reduce ? 0.28 : 0.42} reduceMotion={reduce} />
+        <TJHeroStage
+          variant="curl-athlete"
+          pointerReactive={!reduce}
+          speed={reduce ? 0 : 0.75}
+          intensity={0.95}
+        />
       </div>
-
-      {/* 3D scarab wireframe stage removed — the SVG curl-man silhouette above is the hero visual. */}
 
       {/* Readability veil on the left for copy */}
       <div
