@@ -3031,3 +3031,77 @@ textarea:focus-visible {
 [dir="rtl"] .site-sidebar {
   box-shadow: -4px 0 32px rgba(0, 0, 0, 0.4) !important;
 }
+
+/* ============================================================
+ * Premium polish — grain overlay, cursor glow, focus rings
+ * ============================================================ */
+
+.tj-grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.9'/></svg>");
+  background-size: 180px 180px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tj-grain::before { opacity: 0.02; }
+}
+
+*:focus-visible {
+  outline: 2px solid rgba(212, 165, 116, 0.85);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid rgba(212, 165, 116, 0.95);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(212, 165, 116, 0.18);
+}
+
+.tj-cursor-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(212, 165, 116, 0.09) 0%, rgba(212, 165, 116, 0.04) 28%, transparent 62%);
+  mix-blend-mode: screen;
+  transition: opacity 0.3s ease;
+  will-change: transform;
+}
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .tj-cursor-glow { display: none !important; }
+}
+
+.tj-reveal-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(14px);
+  filter: blur(4px);
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+              filter 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.tj-reveal-in .tj-reveal-word {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .tj-reveal-word {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+}

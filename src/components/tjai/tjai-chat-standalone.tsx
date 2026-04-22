@@ -452,6 +452,26 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
               ))}
             </div>
           ) : null}
+          {messages.length > 0 && !showFollowUps ? (
+            <div className="mb-3 flex flex-wrap gap-2">
+              <span className="w-full text-[10px] font-semibold uppercase tracking-[0.14em] text-[#52525B]">Try</span>
+              {[
+                "Swap chicken for fish",
+                "Deload this week",
+                "Cut 200 kcal",
+                "Add a 20-min finisher"
+              ].map((q) => (
+                <button
+                  key={q}
+                  type="button"
+                  onClick={() => void sendMessage(q)}
+                  className="rounded-full border border-white/[0.08] bg-[#15171c] px-3 py-1.5 text-xs font-medium text-zinc-300 transition-all hover:border-[#d4a574]/45 hover:text-white active:scale-[0.98]"
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
+          ) : null}
           {messages.length > 0 ? (
           <form
             className="flex items-end gap-2"

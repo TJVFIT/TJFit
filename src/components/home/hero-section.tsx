@@ -6,6 +6,7 @@ import { ChevronDown, ArrowRight, Sparkles } from "lucide-react";
 
 import { TJHeroStage } from "@/components/3d/hero-stage";
 import { TJ_PALETTE } from "@/components/3d/palette";
+import { AthleteSilhouetteBg } from "@/components/home/athlete-silhouette-bg";
 import { useMagneticButton } from "@/hooks/useMagneticButton";
 import { trackMarketingEvent } from "@/lib/analytics-events";
 import type { Locale } from "@/lib/i18n";
@@ -93,10 +94,25 @@ export function HeroSection({
         LEGACY
       </span>
 
-      {/* 3D stage — desktop only, lazy-loaded, pointer-reactive */}
+      {/* Cyan athlete silhouette — breath-slow bicep curl, the living background */}
+      <div
+        data-tj-silhouette
+        className="pointer-events-none absolute inset-y-0 z-[1] end-0 w-full lg:w-[62%]"
+        style={{
+          maskImage:
+            "linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.6) 22%, #000 42%, #000 82%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.6) 22%, #000 42%, #000 82%, transparent 100%)"
+        }}
+        aria-hidden
+      >
+        <AthleteSilhouetteBg intensity={reduce ? 0.28 : 0.42} reduceMotion={reduce} />
+      </div>
+
+      {/* 3D stage — desktop only, lazy-loaded, sits in front of the silhouette */}
       {!reduce ? (
         <div
-          className="pointer-events-none absolute inset-0 z-0 hidden opacity-[0.9] lg:block"
+          className="pointer-events-none absolute inset-0 z-[1] hidden opacity-[0.75] lg:block"
           style={{ maskImage: "radial-gradient(ellipse 80% 70% at 65% 50%, black 40%, transparent 95%)" }}
           aria-hidden
         >

@@ -4,6 +4,7 @@ import { Sora, DM_Sans } from "next/font/google";
 import { AuthProvider } from "@/components/auth-provider";
 import { TrackingScripts } from "@/components/marketing/tracking-scripts";
 import { BrandOrganizationJsonLd } from "@/components/brand-organization-json-ld";
+import { CursorGlow } from "@/components/motion/cursor-glow";
 import { BRAND } from "@/lib/brand-assets";
 import { getSiteUrl } from "@/lib/site-url";
 import "../../sentry.client.config";
@@ -98,9 +99,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${dmSans.variable} ${sora.variable}`}>
-      <body className="font-sans antialiased">
+      <body className="tj-grain font-sans antialiased">
         <BrandOrganizationJsonLd />
         <TrackingScripts />
+        <CursorGlow />
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
