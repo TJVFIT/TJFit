@@ -179,6 +179,41 @@ export function TJAIResult({
   const exportPdf = async () => {
     setLoadingPdf(true);
     try {
+      // Detect routing locale from URL (client) so server renders the correct locale label.
+      let routingLocale = "en";
+      if (typeof window !== "undefined") {
+        const seg = window.location.pathname.split("/").filter(Boolean)[0] ?? "";
+        if (/^(en|tr|ar|es|fr|de|pt|ru|hi|id)$/.test(seg)) routingLocale = seg;
+      }
+
+      const response = await fetch("/api/tjai/export-pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          plan: mutablePlan,
+          metrics,
+          answers,
+          locale: routingLocale,
+          generatedAt
+        })
+      });
+
+      if (response.ok && response.headers.get("content-type")?.includes("application/pdf")) {
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        const cd = response.headers.get("content-disposition") ?? "";
+        const match = /filename="?([^";]+)"?/i.exec(cd);
+        a.download = match?.[1] ?? `tjai-plan-${routingLocale}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        return;
+      }
+
+      // Server said no — fall back to a client-side minimal PDF so the user still gets something.
       const pdf = new jsPDF();
       pdf.setFontSize(22);
       pdf.text("Your TJAI Transformation Plan", 14, 24);
@@ -214,7 +249,9 @@ export function TJAIResult({
           y += 3;
         });
       });
-      pdf.save("tjai-plan.pdf");
+      pdf.save(`tjai-plan-${routingLocale}.pdf`);
+    } catch (err) {
+      console.error("[TJAI] PDF export failed:", err);
     } finally {
       setLoadingPdf(false);
     }

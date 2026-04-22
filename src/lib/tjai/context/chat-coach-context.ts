@@ -1,5 +1,6 @@
 import { getCoachStructuredOutputContract } from "@/lib/tjai/coaching-output-contract";
 import { coachChatIntentSystemAddendum, type CoachChatIntent } from "@/lib/tjai/orchestrator/chat-intent";
+import { LANGUAGE_NAME_EN, type SupportedLocale } from "@/lib/i18n";
 import { buildTjaiUserProfile } from "@/lib/tjai-intake";
 import type { TjaiMemorySnapshot } from "@/lib/tjai-types";
 
@@ -75,6 +76,8 @@ export function buildChatCoachSystemPrompt(input: {
   entries: ChatCoachProgressEntry[];
   /** Routed from the latest user message — adds a short coaching focus block. */
   coachIntent?: CoachChatIntent;
+  /** Selected website locale — forces TJAI to respond in this language. */
+  locale?: SupportedLocale;
 }): string {
   const planSummary = (input.planRow?.plan_json?.summary ?? {}) as Record<string, unknown>;
   const preferencesLine =
@@ -138,9 +141,14 @@ Body metrics trend:
 - Current weight: ${weightTrend}
 - Latest body fat: ${latestBodyFat}${entries[0]?.waist_cm ? `\n- Waist: ${entries[0].waist_cm}cm` : ""}${overloadContext}`;
 
+  const languageName = input.locale ? LANGUAGE_NAME_EN[input.locale] : null;
+  const languageDirective = languageName
+    ? `CRITICAL LANGUAGE RULE: The user has selected ${languageName} as their site language. You MUST respond ONLY in ${languageName}, regardless of what language the user writes in. Translate exercise names, units, and coaching terminology naturally. Never mix languages in a single response.`
+    : "You respond in the same language the user writes in.";
+
   const core = `You are TJAI — TJFit's elite AI fitness and nutrition coach. You are warm, precise, and data-driven.
 You ALWAYS answer fitness, nutrition, training, and health questions.
-You respond in the same language the user writes in.
+${languageDirective}
 
 ${planContext}
 

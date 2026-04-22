@@ -1,0 +1,48 @@
+{
+  "$schema": "Phase-2 i18n namespace. Owned by Claude; keys are source-of-truth in English.",
+  "common": {
+    "cta": {
+      "getStarted": "Get Started",
+      "learnMore": "Learn more",
+      "download": "Download",
+      "upgrade": "Upgrade",
+      "continue": "Continue",
+      "back": "Back",
+      "close": "Close",
+      "save": "Save",
+      "cancel": "Cancel",
+      "dismiss": "Dismiss"
+    },
+    "status": {
+      "loading": "Loading…",
+      "saving": "Saving…",
+      "saved": "Saved",
+      "error": "Something went wrong.",
+      "retry": "Retry",
+      "offline": "You’re offline."
+    },
+    "nav": {
+      "home": "Home",
+      "programs": "Programs",
+      "diets": "Diets",
+      "coaches": "Coaches",
+      "tjai": "TJAI",
+      "membership": "Membership",
+      "dashboard": "Dashboard"
+    }
+  },
+  "languageSwitcher": {
+    "label": "Language",
+    "search": "Search language…",
+    "noMatch": "No match."
+  },
+  "seo": {
+    "defaultTitle": "TJFit — AI Fitness Programs, Coaching & Nutrition",
+    "defaultDescription": "12-week fitness programs, certified coaches, and TJAI. Premium training intelligence in 10 languages."
+  },
+  "payment": {
+    "successBanner": "Payment successful. Your premium PDF is downloading now.",
+    "downloadLink": "Download your PDF →",
+    "dismiss": "Dismiss"
+  }
+}

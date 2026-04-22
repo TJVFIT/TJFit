@@ -13,6 +13,7 @@ import {
   type ChatCoachProgressEntry,
   type ChatCoachWorkoutLog
 } from "@/lib/tjai";
+import { isSupportedLocale } from "@/lib/i18n";
 import { getTJAIAccess } from "@/lib/tjai-access";
 import { buildTjaiMemorySnapshot, getLatestTjaiPlan } from "@/lib/tjai-plan-store";
 import { requireAuth } from "@/lib/require-auth";
@@ -92,15 +93,17 @@ export async function POST(request: NextRequest) {
     }
 
     if (!process.env.OPENAI_API_KEY) {
-      console.error("[TJAI chat] OPENAI_API_KEY is not set");
-      const fallback = fallbackCoachReply(message, locale);
-      await auth.supabase.from("tjai_chat_messages").insert([
-        { user_id: auth.user.id, conversation_id: conversationId, role: "user", content: message },
-        { user_id: auth.user.id, conversation_id: conversationId, role: "assistant", content: fallback }
-      ]);
-      return new Response(JSON.stringify({ message: fallback, conversationId }), {
-        headers: { "Content-Type": "application/json" }
-      });
+      console.error("[TJAI chat] OPENAI_API_KEY is not set — aborting with 503.");
+      return new Response(
+        JSON.stringify({
+          error: "TJAI is temporarily offline. Please try again shortly.",
+          code: "TJAI_UNAVAILABLE"
+        }),
+        {
+          status: 503,
+          headers: { "Content-Type": "application/json", "Retry-After": "30" }
+        }
+      );
     }
 
     const [planRow, memorySnapshot, { data: historyRows }, { data: prefRows }, recentData] = await Promise.all([
@@ -159,7 +162,8 @@ export async function POST(request: NextRequest) {
       preferences,
       workouts: recentData.workouts,
       entries: recentData.entries,
-      coachIntent
+      coachIntent,
+      locale: isSupportedLocale(locale) ? locale : "en"
     });
 
     const messages = [

@@ -1,14 +1,26 @@
 "use client";
 
 import { Mic, Plus, Send, Sparkles } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { CoachMessageBody, CoachThinkingPulse } from "@/components/tjai/coach-message-body";
 import { useDynamicIsland } from "@/components/ui/dynamic-island";
 import { COACH_FOLLOW_UP_PROMPTS, getCoachThinkingDelayMs } from "@/lib/tjai/chat-client-utils";
 import { getTJAIAccess } from "@/lib/tjai-access";
-import type { Locale } from "@/lib/i18n";
+import { isSupportedLocale, type Locale, type SupportedLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+
+/**
+ * Detect the routing locale from the URL (can be any of the 10 supported locales),
+ * while the `locale` prop remains the 5-key copy locale used for UI strings.
+ * This lets TJAI respond in de/pt/ru/hi/id even though our copy dicts fall back to EN.
+ */
+function useRoutingLocale(fallback: Locale): SupportedLocale {
+  const pathname = usePathname() ?? "";
+  const seg = pathname.split("/").filter(Boolean)[0] ?? "";
+  return isSupportedLocale(seg) ? seg : fallback;
+}
 
 type ChatMessage = {
   id: string;
@@ -96,6 +108,7 @@ function voiceLang(locale: Locale) {
 }
 
 export function TJAIChatStandalone({ locale }: { locale: Locale }) {
+  const routingLocale = useRoutingLocale(locale);
   const t = locale === "ar" ? COPY.ar : COPY.en;
   const island = useDynamicIsland();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -213,7 +226,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, conversationId, locale }),
+        body: JSON.stringify({ message, conversationId, locale: routingLocale }),
         signal: controller.signal
       });
       const contentType = response.headers.get("Content-Type") ?? "";

@@ -1,0 +1,48 @@
+{
+  "$schema": "Phase-2 i18n namespace. Owned by Claude; keys are source-of-truth in English.",
+  "common": {
+    "cta": {
+      "getStarted": "Mulai",
+      "learnMore": "Pelajari lebih lanjut",
+      "download": "Unduh",
+      "upgrade": "Tingkatkan",
+      "continue": "Lanjutkan",
+      "back": "Kembali",
+      "close": "Tutup",
+      "save": "Simpan",
+      "cancel": "Batal",
+      "dismiss": "Abaikan"
+    },
+    "status": {
+      "loading": "Memuat…",
+      "saving": "Menyimpan…",
+      "saved": "Tersimpan",
+      "error": "Terjadi kesalahan.",
+      "retry": "Coba lagi",
+      "offline": "Anda sedang offline."
+    },
+    "nav": {
+      "home": "Beranda",
+      "programs": "Program",
+      "diets": "Diet",
+      "coaches": "Pelatih",
+      "tjai": "TJAI",
+      "membership": "Keanggotaan",
+      "dashboard": "Dasbor"
+    }
+  },
+  "languageSwitcher": {
+    "label": "Bahasa",
+    "search": "Cari bahasa…",
+    "noMatch": "Tidak ada yang cocok."
+  },
+  "seo": {
+    "defaultTitle": "TJFit — Program Fitness AI, Pelatihan & Nutrisi",
+    "defaultDescription": "Program fitness 12 minggu, pelatih bersertifikat, dan TJAI. Kecerdasan latihan premium dalam 10 bahasa."
+  },
+  "payment": {
+    "successBanner": "Pembayaran berhasil. PDF premium Anda sedang diunduh.",
+    "downloadLink": "Unduh PDF Anda →",
+    "dismiss": "Abaikan"
+  }
+}

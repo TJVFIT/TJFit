@@ -1,0 +1,48 @@
+{
+  "$schema": "Phase-2 i18n namespace. Owned by Claude; keys are source-of-truth in English.",
+  "common": {
+    "cta": {
+      "getStarted": "Начать",
+      "learnMore": "Узнать больше",
+      "download": "Скачать",
+      "upgrade": "Улучшить",
+      "continue": "Продолжить",
+      "back": "Назад",
+      "close": "Закрыть",
+      "save": "Сохранить",
+      "cancel": "Отмена",
+      "dismiss": "Скрыть"
+    },
+    "status": {
+      "loading": "Загрузка…",
+      "saving": "Сохранение…",
+      "saved": "Сохранено",
+      "error": "Что-то пошло не так.",
+      "retry": "Повторить",
+      "offline": "Вы не в сети."
+    },
+    "nav": {
+      "home": "Главная",
+      "programs": "Программы",
+      "diets": "Питание",
+      "coaches": "Тренеры",
+      "tjai": "TJAI",
+      "membership": "Подписка",
+      "dashboard": "Панель"
+    }
+  },
+  "languageSwitcher": {
+    "label": "Язык",
+    "search": "Поиск языка…",
+    "noMatch": "Нет совпадений."
+  },
+  "seo": {
+    "defaultTitle": "TJFit — ИИ-программы фитнеса, коучинг и питание",
+    "defaultDescription": "12-недельные фитнес-программы, сертифицированные тренеры и TJAI. Премиум-интеллект для тренировок на 10 языках."
+  },
+  "payment": {
+    "successBanner": "Оплата прошла успешно. Ваш премиум-PDF сейчас загружается.",
+    "downloadLink": "Скачать PDF →",
+    "dismiss": "Скрыть"
+  }
+}

@@ -257,7 +257,11 @@ body {
   background-color: var(--color-bg);
   background-image: var(--gradient-hero);
   color: var(--color-text-primary);
-  font-family: var(--font-sans, "DM Sans"), system-ui, -apple-system, sans-serif;
+  /* Latin: Sora/DM Sans. Cyrillic/Arabic/Devanagari: fall back to high-quality system fonts
+     available on the user's OS (Segoe UI / SF / Noto / system-ui). Browsers will pick
+     per-glyph fallback automatically. */
+  font-family: var(--font-sans, "DM Sans"), "Segoe UI", "Noto Sans", "Noto Sans Arabic",
+    "Noto Sans Devanagari", "SF Pro Text", system-ui, -apple-system, sans-serif;
   font-feature-settings: "cv11", "ss01"; /* DM Sans optical features */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -268,10 +272,16 @@ body {
 /* Premium heading rendering */
 h1, h2, h3, h4, h5, h6,
 .font-display {
-  font-family: var(--font-display, "Sora"), ui-sans-serif, sans-serif;
+  font-family: var(--font-display, "Sora"), "Segoe UI", "Noto Sans", "Noto Sans Arabic",
+    "Noto Sans Devanagari", ui-sans-serif, sans-serif;
   letter-spacing: -0.02em;
   font-feature-settings: "cv01", "ss01";
 }
+
+/* Per-language tuning: Arabic prefers slightly looser tracking, Devanagari needs line-height */
+:root[lang="ar"] body { letter-spacing: 0; }
+:root[lang="hi"] { line-height: 1.65; }
+:root[lang="ru"] body { font-feature-settings: normal; }
 
 ::selection {
   background: rgba(34, 211, 238, 0.28);

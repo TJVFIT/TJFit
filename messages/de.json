@@ -1,0 +1,48 @@
+{
+  "$schema": "Phase-2 i18n namespace. Owned by Claude; keys are source-of-truth in English.",
+  "common": {
+    "cta": {
+      "getStarted": "Loslegen",
+      "learnMore": "Mehr erfahren",
+      "download": "Herunterladen",
+      "upgrade": "Upgrade",
+      "continue": "Weiter",
+      "back": "Zurück",
+      "close": "Schließen",
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "dismiss": "Verwerfen"
+    },
+    "status": {
+      "loading": "Lädt…",
+      "saving": "Wird gespeichert…",
+      "saved": "Gespeichert",
+      "error": "Etwas ist schiefgelaufen.",
+      "retry": "Erneut versuchen",
+      "offline": "Sie sind offline."
+    },
+    "nav": {
+      "home": "Startseite",
+      "programs": "Programme",
+      "diets": "Ernährung",
+      "coaches": "Coaches",
+      "tjai": "TJAI",
+      "membership": "Mitgliedschaft",
+      "dashboard": "Dashboard"
+    }
+  },
+  "languageSwitcher": {
+    "label": "Sprache",
+    "search": "Sprache suchen…",
+    "noMatch": "Keine Übereinstimmung."
+  },
+  "seo": {
+    "defaultTitle": "TJFit — KI-Fitnessprogramme, Coaching & Ernährung",
+    "defaultDescription": "12-wöchige Fitnessprogramme, zertifizierte Coaches und TJAI. Premium-Trainingsintelligenz in 10 Sprachen."
+  },
+  "payment": {
+    "successBanner": "Zahlung erfolgreich. Ihr Premium-PDF wird jetzt heruntergeladen.",
+    "downloadLink": "PDF herunterladen →",
+    "dismiss": "Verwerfen"
+  }
+}

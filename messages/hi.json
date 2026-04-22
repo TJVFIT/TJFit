@@ -1,0 +1,48 @@
+{
+  "$schema": "Phase-2 i18n namespace. Owned by Claude; keys are source-of-truth in English.",
+  "common": {
+    "cta": {
+      "getStarted": "शुरू करें",
+      "learnMore": "और जानें",
+      "download": "डाउनलोड",
+      "upgrade": "अपग्रेड",
+      "continue": "जारी रखें",
+      "back": "वापस",
+      "close": "बंद करें",
+      "save": "सहेजें",
+      "cancel": "रद्द करें",
+      "dismiss": "खारिज करें"
+    },
+    "status": {
+      "loading": "लोड हो रहा है…",
+      "saving": "सहेजा जा रहा है…",
+      "saved": "सहेज लिया",
+      "error": "कुछ गलत हो गया।",
+      "retry": "पुनः प्रयास करें",
+      "offline": "आप ऑफ़लाइन हैं।"
+    },
+    "nav": {
+      "home": "होम",
+      "programs": "कार्यक्रम",
+      "diets": "आहार",
+      "coaches": "कोच",
+      "tjai": "TJAI",
+      "membership": "सदस्यता",
+      "dashboard": "डैशबोर्ड"
+    }
+  },
+  "languageSwitcher": {
+    "label": "भाषा",
+    "search": "भाषा खोजें…",
+    "noMatch": "कोई मिलान नहीं।"
+  },
+  "seo": {
+    "defaultTitle": "TJFit — AI फ़िटनेस प्रोग्राम, कोचिंग और पोषण",
+    "defaultDescription": "12-सप्ताह के फ़िटनेस प्रोग्राम, प्रमाणित कोच और TJAI। 10 भाषाओं में प्रीमियम ट्रेनिंग इंटेलिजेंस।"
+  },
+  "payment": {
+    "successBanner": "भुगतान सफल। आपका प्रीमियम PDF अभी डाउनलोड हो रहा है।",
+    "downloadLink": "अपना PDF डाउनलोड करें →",
+    "dismiss": "खारिज करें"
+  }
+}
