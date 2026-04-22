@@ -34,7 +34,7 @@ import { SectionTransition } from "@/components/home/section-transition";
 import { TjaiEngineChrome } from "@/components/home/tjai-engine-chrome";
 import { HeroTjaiBrainDeco } from "@/components/hero-tjai-brain-deco";
 import { CinematicHowItWorks, CinematicTransformation } from "@/components/home/cinematic-sections";
-import { HeroAiCore } from "@/components/home/hero-ai-core";
+import { TJHeroStage } from "@/components/3d/hero-stage";
 import { useMagneticButton } from "@/hooks/useMagneticButton";
 
 function useReducedMotion() {
@@ -465,7 +465,11 @@ export function ImmersiveHome({
           style={{ minHeight: "inherit" }}
         >
           <div className="relative flex min-h-[220px] justify-center lg:min-h-[380px]">
-            <HeroAiCore reduce={reduce} layout="embedded" />
+            {!reduce ? (
+              <div className="absolute inset-0" aria-hidden>
+                <TJHeroStage variant="neural" speed={0.85} intensity={0.95} />
+              </div>
+            ) : null}
           </div>
 
           <MotionReveal reducedMotion={reduce}>

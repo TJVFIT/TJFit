@@ -6,6 +6,8 @@ import { notFound, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Plus, Sparkles } from "lucide-react";
 import { BlurReveal } from "@/components/blur-reveal";
+import { TJHeroStage } from "@/components/3d/hero-stage";
+import { TJ_PALETTE } from "@/components/3d/palette";
 import { CinematicListingHeader } from "@/components/cinematic-listing-header";
 import { FilterPill, ListingFilterBar } from "@/components/listing-filter-bar";
 import { PremiumPageShell } from "@/components/premium";
@@ -180,41 +182,39 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
   if (!localeValid) notFound();
 
   return (
-    <div ref={containerRef} className="relative min-h-screen bg-[#09090B]">
-      <AmbientBackground />
-
-      {/* Animated programs background — same image as homepage parallax section */}
-      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
-        <Image
-          src="/assets/hero/hero-programs-bg.png"
-          alt=""
-          fill
-          className="object-cover object-center"
+    <div ref={containerRef} className="relative min-h-screen" style={{ background: TJ_PALETTE.obsidian }}>
+      {/* 3D stage band — stylized dumbbell centerpiece for the programs surface */}
+      <div className="pointer-events-none absolute left-0 right-0 top-0 z-0 h-[72vh] overflow-hidden" aria-hidden>
+        <div
+          className="absolute inset-0 hidden lg:block"
           style={{
-            opacity: 0.18,
-            transform: `translateY(${parallaxY}px) scale(1.15)`,
-            transition: "transform 0.1s linear"
+            transform: `translateY(${parallaxY * 0.6}px)`,
+            maskImage: "linear-gradient(180deg, black 0%, black 55%, transparent 95%)"
+          }}
+        >
+          <TJHeroStage variant="dumbbell" speed={0.8} intensity={0.9} />
+        </div>
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `radial-gradient(ellipse 90% 70% at 70% 25%, rgba(212,165,116,0.14), transparent 60%), linear-gradient(180deg, transparent 0%, ${TJ_PALETTE.obsidian} 85%)`
           }}
         />
-        {/* Top and bottom fade */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#09090B] via-transparent to-[#09090B]" />
-        {/* Side fades */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#09090B]/60 via-transparent to-[#09090B]/60" />
       </div>
 
-      {/* Animated watermark text — "ENDLESS DATA STREAM" */}
+      {/* Editorial watermark */}
       <div className="pointer-events-none absolute inset-0 z-0 flex flex-col items-center justify-center gap-8 overflow-hidden" aria-hidden>
         <p
-          className="animate-float-slow select-none whitespace-nowrap font-display text-[8vw] font-black uppercase tracking-[0.2em] text-white"
-          style={{ opacity: 0.025 }}
+          className="animate-float-slow select-none whitespace-nowrap font-display text-[8vw] font-black uppercase tracking-[0.28em]"
+          style={{ opacity: 0.03, color: TJ_PALETTE.textPrimary }}
         >
-          ENDLESS DATA STREAM
+          TRAIN LIKE YOU MEAN IT
         </p>
         <p
-          className="select-none whitespace-nowrap font-display text-[5vw] font-black uppercase tracking-[0.3em] text-[#22D3EE]"
-          style={{ opacity: 0.018, animationDelay: "1s" }}
+          className="select-none whitespace-nowrap font-display text-[5vw] font-black uppercase tracking-[0.3em]"
+          style={{ opacity: 0.025, color: TJ_PALETTE.champagne, animationDelay: "1s" }}
         >
-          CURATED · OPTIMIZED · RESULTS
+          STRUCTURE · DISCIPLINE · RESULTS
         </p>
       </div>
 

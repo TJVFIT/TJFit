@@ -4,7 +4,8 @@ import { FileText, MessageCircle, RefreshCw, Sparkles, TrendingUp } from "lucide
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
-import { ParticleField } from "@/components/particle-field";
+import { TJHeroStage } from "@/components/3d/hero-stage";
+import { TJ_PALETTE } from "@/components/3d/palette";
 import { TJAIChatStandalone } from "@/components/tjai/tjai-chat-standalone";
 import { TJAIMealSwapTab } from "@/components/tjai/tjai-meal-swap-tab";
 import { TJAIMyPlanTab } from "@/components/tjai/tjai-my-plan-tab";
@@ -99,14 +100,31 @@ export function TJAIHub({ locale }: { locale: Locale }) {
   }, [locale, tab]);
 
   return (
-    <div dir={direction} className="relative min-h-[100svh] overflow-hidden bg-[#09090B]">
-      <ParticleField className="pointer-events-none absolute inset-0 opacity-70" />
+    <div
+      dir={direction}
+      className="relative min-h-[100svh] overflow-hidden"
+      style={{ background: TJ_PALETTE.obsidian }}
+    >
+      <div
+        className="pointer-events-none absolute inset-0 z-0 opacity-[0.55]"
+        style={{
+          background: `radial-gradient(ellipse 80% 50% at 70% 0%, rgba(212,165,116,0.12), transparent 60%), radial-gradient(ellipse 60% 40% at 10% 100%, rgba(143,164,196,0.05), transparent 55%)`
+        }}
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute inset-0 z-0 hidden opacity-40 lg:block"
+        style={{ maskImage: "radial-gradient(ellipse 50% 40% at 85% 20%, black 30%, transparent 85%)" }}
+        aria-hidden
+      >
+        <TJHeroStage variant="neural" speed={0.6} intensity={0.7} />
+      </div>
       <div className="relative z-[1] flex min-h-[100svh] flex-col">
         <header className="sticky top-0 z-20 border-b border-[#1E2028] bg-[rgba(9,9,11,0.88)] backdrop-blur-xl">
           <div className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="inline-flex items-center gap-2 text-[28px] font-extrabold text-[#22D3EE]">
+                <p className="inline-flex items-center gap-2 text-[28px] font-extrabold text-[#D4A574]">
                   <Sparkles className="sparkle-pulse h-7 w-7" />
                   TJAI
                 </p>
@@ -124,13 +142,13 @@ export function TJAIHub({ locale }: { locale: Locale }) {
                     "rounded-full border px-3 py-1 text-xs font-semibold",
                     tier === "pro"
                       ? "border-blue-400/35 bg-blue-400/10 text-blue-300"
-                      : "border-[rgba(34,211,238,0.35)] bg-[rgba(34,211,238,0.15)] text-[#22D3EE]"
+                      : "border-[rgba(212,165,116,0.35)] bg-[rgba(212,165,116,0.12)] text-[#D4A574]"
                   )}>
                     [{tierLabel(locale, tier).toUpperCase()}]
                   </span>
                 )}
                 {tier === "core" ? (
-                  <a href={`/${locale}/membership`} className="text-xs font-semibold text-[#22D3EE] hover:text-white">
+                  <a href={`/${locale}/membership`} className="text-xs font-semibold text-[#D4A574] hover:text-white">
                     Upgrade →
                   </a>
                 ) : null}

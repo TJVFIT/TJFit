@@ -4,6 +4,8 @@ import Link from "next/link";
 import { notFound, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { BlurReveal } from "@/components/blur-reveal";
+import { TJHeroStage } from "@/components/3d/hero-stage";
+import { TJ_PALETTE } from "@/components/3d/palette";
 import { CinematicListingHeader } from "@/components/cinematic-listing-header";
 import { FilterPill, ListingFilterBar } from "@/components/listing-filter-bar";
 import { PremiumPageShell } from "@/components/premium";
@@ -97,8 +99,18 @@ export default function DietsPage({ params }: { params: { locale: string } }) {
 
   return (
     <>
-      <AmbientBackground />
-      <div className="relative z-[1]">
+      <div className="pointer-events-none fixed inset-x-0 top-0 z-0 h-[70vh] overflow-hidden" aria-hidden style={{ background: TJ_PALETTE.obsidian }}>
+        <div className="absolute inset-0 hidden lg:block" style={{ maskImage: "linear-gradient(180deg, black 0%, black 55%, transparent 95%)" }}>
+          <TJHeroStage variant="nutrient" speed={0.7} intensity={0.85} />
+        </div>
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `radial-gradient(ellipse 90% 70% at 30% 30%, rgba(240,184,154,0.14), transparent 60%), linear-gradient(180deg, transparent 0%, ${TJ_PALETTE.obsidian} 85%)`
+          }}
+        />
+      </div>
+      <div className="relative z-[1]" style={{ background: `linear-gradient(180deg, transparent 0%, ${TJ_PALETTE.obsidian} 40%)` }}>
         <BlurReveal>
           <CinematicListingHeader
             eyebrow={pageCopy.cinematicEyebrow}

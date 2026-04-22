@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 import type { Locale } from "@/lib/i18n";
 import { TJAI_ONE_TIME_PRICE_USD, TJAI_SUBSCRIPTION_PRICES_USD } from "@/lib/tjai-pricing";
+import { TJHeroStage } from "@/components/3d/hero-stage";
+import { TJ_PALETTE } from "@/components/3d/palette";
 
 type TabKey = "training" | "nutrition" | "macros";
 
@@ -98,22 +100,61 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-      <section className="rounded-3xl border border-[#1E2028] bg-[#111215] p-8 text-center sm:p-12">
-        <p className="text-xs uppercase tracking-[0.18em] text-[#22D3EE]">AI FITNESS COACH</p>
-        <h1 className="mt-4 text-4xl font-extrabold text-white sm:text-6xl">{copy.heroTitle}</h1>
-        <p className="mx-auto mt-3 max-w-2xl text-sm text-[#A1A1AA] sm:text-base">{copy.heroSub}</p>
-        <div className="mx-auto mt-6 max-w-xl rounded-2xl border border-white/10 bg-[#0D1015] p-4 text-start text-sm text-zinc-300">
-          <p className="typing-line">Analyzing your profile...</p>
-          <p className="typing-line delay">Calculating BMR, TDEE, and macros...</p>
-          <p className="typing-line delay-2">Building your 12-week training split...</p>
-        </div>
-        <Link
-          href={`/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`}
-          className="mt-7 inline-flex min-h-[50px] items-center justify-center rounded-full bg-[#22D3EE] px-8 text-sm font-bold text-[#09090B]"
+      <section
+        className="relative overflow-hidden rounded-3xl border p-8 text-center sm:p-12"
+        style={{
+          borderColor: TJ_PALETTE.hairline,
+          background: `radial-gradient(ellipse 90% 80% at 50% 0%, rgba(212,165,116,0.12), transparent 60%), ${TJ_PALETTE.obsidian}`
+        }}
+      >
+        <div
+          className="pointer-events-none absolute inset-0 z-0 hidden lg:block"
+          style={{ maskImage: "radial-gradient(ellipse 70% 60% at 50% 55%, black 30%, transparent 85%)" }}
+          aria-hidden
         >
-          {copy.heroCta}
-        </Link>
-        <p className="mt-2 text-xs text-[#52525B]">{copy.noCard}</p>
+          <TJHeroStage variant="neural" speed={0.85} intensity={0.95} />
+        </div>
+        <div className="relative z-10">
+          <p className="text-[11px] uppercase tracking-[0.28em]" style={{ color: TJ_PALETTE.champagne }}>
+            AI FITNESS COACH
+          </p>
+          <h1
+            className="mt-4 font-display text-4xl font-extrabold sm:text-6xl"
+            style={{ color: TJ_PALETTE.textPrimary, letterSpacing: "-0.02em" }}
+          >
+            {copy.heroTitle}
+          </h1>
+          <p className="mx-auto mt-3 max-w-2xl text-sm sm:text-base" style={{ color: TJ_PALETTE.textMuted }}>
+            {copy.heroSub}
+          </p>
+          <div
+            className="mx-auto mt-6 max-w-xl rounded-2xl border p-4 text-start text-sm"
+            style={{
+              borderColor: TJ_PALETTE.hairline,
+              background: "rgba(8,8,10,0.6)",
+              color: TJ_PALETTE.textMuted,
+              backdropFilter: "blur(8px)"
+            }}
+          >
+            <p className="typing-line">Analyzing your profile...</p>
+            <p className="typing-line delay">Calculating BMR, TDEE, and macros...</p>
+            <p className="typing-line delay-2">Building your 12-week training split...</p>
+          </div>
+          <Link
+            href={`/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`}
+            className="mt-7 inline-flex min-h-[50px] items-center justify-center rounded-full px-8 text-sm font-bold transition-[filter,transform] duration-200 hover:brightness-110"
+            style={{
+              background: `linear-gradient(180deg, ${TJ_PALETTE.champagneHi}, ${TJ_PALETTE.champagne})`,
+              color: TJ_PALETTE.obsidian,
+              boxShadow: "0 12px 40px rgba(212,165,116,0.28)"
+            }}
+          >
+            {copy.heroCta}
+          </Link>
+          <p className="mt-2 text-xs" style={{ color: TJ_PALETTE.textSubtle }}>
+            {copy.noCard}
+          </p>
+        </div>
       </section>
 
       <section className="mt-10">

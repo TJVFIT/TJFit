@@ -178,6 +178,7 @@ export default async function ProgramDetailPage({
           <ProgramPaymentSuccessNotice
             message={copy.paymentSuccessBanner}
             dismissLabel={copy.dismissNotice}
+            programSlug={slug}
           />
         </Suspense>
       </div>

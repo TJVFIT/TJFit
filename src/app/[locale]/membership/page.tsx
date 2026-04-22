@@ -1,5 +1,7 @@
 import { MembershipPricing } from "@/components/membership/membership-pricing";
 import { PremiumPageShell } from "@/components/premium";
+import { TJHeroStage } from "@/components/3d/hero-stage";
+import { TJ_PALETTE } from "@/components/3d/palette";
 import { Locale } from "@/lib/i18n";
 import { requireLocaleParam } from "@/lib/require-locale";
 
@@ -17,16 +19,40 @@ export default function MembershipPage({ params }: { params: { locale: string } 
 
   return (
     <PremiumPageShell>
-      <section className="relative overflow-hidden rounded-3xl border border-[#1E2028] bg-[#09090B] px-6 py-10 sm:px-10">
+      <section
+        className="relative overflow-hidden rounded-3xl border px-6 py-14 sm:px-10 sm:py-16"
+        style={{
+          borderColor: TJ_PALETTE.hairline,
+          background: `radial-gradient(ellipse 80% 70% at 50% 0%, rgba(212,165,116,0.12), transparent 62%), ${TJ_PALETTE.obsidian}`
+        }}
+      >
         <div
-          className="pointer-events-none absolute left-1/2 top-0 h-[18rem] w-[24rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.08)_0%,transparent_72%)]"
+          className="pointer-events-none absolute inset-0 z-0 hidden lg:block"
+          style={{ maskImage: "radial-gradient(ellipse 70% 55% at 50% 55%, black 30%, transparent 85%)" }}
           aria-hidden
-        />
-        <div className="relative mx-auto flex max-w-3xl flex-col items-center text-center">
-          <h1 className="text-balance font-display text-3xl font-extrabold leading-tight tracking-[-0.02em] text-white sm:text-4xl">
+        >
+          <TJHeroStage variant="scarab" speed={0.75} intensity={0.85} />
+        </div>
+        <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center text-center">
+          <span
+            className="mb-5 inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.24em]"
+            style={{
+              color: TJ_PALETTE.champagne,
+              borderColor: "rgba(212,165,116,0.3)",
+              background: "rgba(212,165,116,0.06)"
+            }}
+          >
+            Membership
+          </span>
+          <h1
+            className="text-balance font-display font-extrabold leading-tight tracking-[-0.03em]"
+            style={{ fontSize: "clamp(32px, 5vw, 56px)", color: TJ_PALETTE.textPrimary }}
+          >
             {hero.title}
           </h1>
-          <p className="mt-3 max-w-xl text-sm leading-relaxed text-zinc-400 sm:text-base">{hero.sub}</p>
+          <p className="mt-4 max-w-xl text-sm leading-relaxed sm:text-base" style={{ color: TJ_PALETTE.textMuted }}>
+            {hero.sub}
+          </p>
         </div>
       </section>
 
