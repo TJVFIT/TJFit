@@ -10,7 +10,11 @@
       "Bash(find /c/Users/yousi/TJFit/.claude/worktrees/frosty-mirzakhani-54d458/messages -name \"*.json\" -exec basename {} \\\\;)",
       "Bash(npm run *)",
       "Bash(grep -r \"motion\\\\\\\\.div\\\\|motion\\\\\\\\.section\\\\|<motion\\\\|from \\\\\"framer-motion\\\\\"\\\\|import.*motion\" \"C:/Users/yousi/TJFit/.claude/worktrees/frosty-mirzakhani-54d458/src\" --include=\"*.tsx\")",
-      "Bash(git reset *)"
+      "Bash(git reset *)",
+      "Bash(gh pr create --title 'Premium UI overhaul + 10-locale i18n + perf pass' --body ' *)",
+      "Bash(grep -cn \"^\\\\s*{\\\\s*$\\\\|^\\\\s*slug:\" src/lib/content.ts)",
+      "Bash(sed -n '137,140p' src/lib/content.ts)",
+      "Bash(awk '/^export const programs: Program\\\\[\\\\] = \\\\[/,/^];/' src/lib/content.ts)"
     ]
   }
 }

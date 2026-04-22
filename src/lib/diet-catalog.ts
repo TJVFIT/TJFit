@@ -8,7 +8,21 @@ const CUTTING_SLUGS = new Set<string>([
   "student-fat-loss-diet-12w",
   "clean-cutting-diet-12w",
   "hard-cut-athlete-diet-12w",
-  "clean-cut-starter"
+  "clean-cut-starter",
+  "mediterranean-lean-protocol-12w",
+  "high-protein-fat-loss-12w",
+  "intermittent-fasting-cut-12w",
+  "carb-cycling-system-12w",
+  "flexible-dieting-framework-12w",
+  "anti-inflammatory-reset-12w",
+  "hormone-balance-nutrition-12w",
+  "low-fodmap-fat-loss-12w",
+  "halal-high-protein-cut-12w",
+  "mediterranean-maintenance-12w",
+  "high-volume-low-calorie-cut-12w",
+  "budget-cutting-meal-plan-12w",
+  "travel-and-restaurant-diet-12w",
+  "endomorph-fat-loss-diet-12w"
 ]);
 
 const BULKING_SLUGS = new Set<string>([
@@ -17,7 +31,13 @@ const BULKING_SLUGS = new Set<string>([
   "muscle-gain-athlete-diet-12w",
   "student-bulk-diet-12w",
   "clean-weight-gain-diet-12w",
-  "lean-bulk-starter"
+  "lean-bulk-starter",
+  "plant-based-muscle-gain-12w",
+  "vegetarian-lean-bulk-12w",
+  "gluten-free-performance-12w",
+  "dairy-free-muscle-plan-12w",
+  "kosher-clean-bulk-12w",
+  "post-workout-recovery-nutrition-12w"
 ]);
 
 /** Catalog nutrition plans (excludes training programs that only include a nutrition asset). */
