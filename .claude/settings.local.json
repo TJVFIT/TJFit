@@ -18,7 +18,19 @@
       "Bash(git fetch *)",
       "Bash(git checkout *)",
       "Bash(git merge *)",
-      "Bash(xargs -0 sed -i -e 's/rgba\\(212, *165, *116/rgba\\(34,211,238/g' -e 's/rgba\\(212,165,116/rgba\\(34,211,238/g' -e 's/#[dD]4[aA]574/#22D3EE/g' -e 's/#[eE]8[cC]79[cC]/#A5F3FC/g' -e 's/#[fF]0[bB]89[aA]/#67E8F9/g' -e 's/#9[cC]7849/#0E7490/g' -e 's/#[aA]07246/#0E7490/g' -e 's/#7[aA]5432/#155E75/g')"
+      "Bash(xargs -0 sed -i -e 's/rgba\\(212, *165, *116/rgba\\(34,211,238/g' -e 's/rgba\\(212,165,116/rgba\\(34,211,238/g' -e 's/#[dD]4[aA]574/#22D3EE/g' -e 's/#[eE]8[cC]79[cC]/#A5F3FC/g' -e 's/#[fF]0[bB]89[aA]/#67E8F9/g' -e 's/#9[cC]7849/#0E7490/g' -e 's/#[aA]07246/#0E7490/g' -e 's/#7[aA]5432/#155E75/g')",
+      "Bash(python -c \"import fitz; print\\(fitz.__version__\\)\")",
+      "Bash(python -c \"import pdf2image; print\\('ok'\\)\")",
+      "Bash(pip install *)",
+      "Bash(mkdir -p /tmp)",
+      "Bash(node scripts/sample-program-pdf.mjs)",
+      "Bash(npx tsx *)",
+      "Bash(mkdir -p /tmp/pdfgen)",
+      "Bash(cp src/lib/premium-pdf-theme.ts src/lib/program-blueprints.ts src/lib/program-pdf-builder.ts /tmp/pdfgen/)",
+      "Bash(cp src/lib/content.ts /tmp/pdfgen/)",
+      "Bash(sed -i 's|@/lib/|./|g; s|@/lib$|.|g' /tmp/pdfgen/*.ts)",
+      "Read(//tmp/**)",
+      "Bash(python -c ' *)"
     ]
   }
 }

@@ -9,3 +9,5 @@ coverage
 *.tsbuildinfo
 
 .vercel
+scripts/_pdfgen/
+scripts/sample-program-pdf.*

@@ -7,14 +7,14 @@ import type { jsPDF } from "jspdf";
 export const PDF_THEME = {
   obsidian: { r: 8, g: 8, b: 10 },
   ink: { r: 24, g: 24, b: 28 },
-  champagne: { r: 212, g: 165, b: 116 },
-  champagneHi: { r: 245, g: 212, b: 160 },
-  roseGold: { r: 200, g: 140, b: 110 },
+  champagne: { r: 34, g: 211, b: 238 },
+  champagneHi: { r: 165, g: 243, b: 252 },
+  roseGold: { r: 103, g: 232, b: 249 },
   paper: { r: 248, g: 245, b: 239 },
   paperMuted: { r: 232, g: 226, b: 215 },
   textPrimary: { r: 246, g: 243, b: 237 },
   textMuted: { r: 168, g: 162, b: 148 },
-  hairline: { r: 70, g: 60, b: 48 }
+  hairline: { r: 21, g: 94, b: 117 }
 } as const;
 
 export const PAGE = { width: 595, height: 842, margin: 48 } as const;
@@ -73,7 +73,7 @@ export function drawFooter(pdf: jsPDF, pageNum: number, totalHint?: string) {
   setText(pdf, PDF_THEME.textMuted);
   pdf.setFont("helvetica", "normal");
   pdf.setFontSize(7);
-  pdf.text(`tjfit.com · ${totalHint ?? "Premium program"}`, PAGE.margin, PAGE.height - 28);
+  pdf.text(`tjfit.org · ${totalHint ?? "Premium program"}`, PAGE.margin, PAGE.height - 28);
   pdf.text(`${pageNum}`, PAGE.width - PAGE.margin, PAGE.height - 28, { align: "right" });
 }
 
