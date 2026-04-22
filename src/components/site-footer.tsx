@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Logo } from "@/components/ui/Logo";
-import { Locale, locales } from "@/lib/i18n";
+import { Locale, supportedLocales, LOCALE_META } from "@/lib/i18n";
 import { getFooterCopy } from "@/lib/launch-copy";
 
 const LANG_BADGE: Record<Locale, string> = {
@@ -129,14 +129,15 @@ export function SiteFooter({ locale }: { locale: Locale }) {
         <div className="mx-auto flex max-w-[1200px] flex-col items-center justify-between gap-4 text-xs text-[#52525B] sm:flex-row">
           <p>© {new Date().getFullYear()} TJFit. All rights reserved.</p>
           <div className="flex flex-wrap justify-center gap-2 sm:justify-end">
-            {locales.map((loc) => (
+            {supportedLocales.map((loc) => (
               <Link
                 key={loc}
                 href={`/${loc}`}
                 className={cnPill(loc === locale)}
                 aria-current={loc === locale ? "true" : undefined}
+                title={LOCALE_META[loc].native}
               >
-                {LANG_BADGE[loc]}
+                {loc.toUpperCase()}
               </Link>
             ))}
           </div>

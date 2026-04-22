@@ -31,7 +31,7 @@ import { GlobalSearch } from "@/components/global-search";
 import { Logo } from "@/components/ui/Logo";
 import { AnimatedAvatar } from "@/components/animated-avatar";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
-import { Locale, getDictionary, getDirection, locales } from "@/lib/i18n";
+import { Locale, getDictionary, getDirection, supportedLocales, LOCALE_META } from "@/lib/i18n";
 import { getNavChromeCopy } from "@/lib/launch-copy";
 import { cn } from "@/lib/utils";
 
@@ -41,14 +41,6 @@ const SOON_MSG_BY_LOCALE: Record<Locale, string> = {
   ar: "قريباً — ترقبوا الإطلاق.",
   es: "Muy pronto — mantente atento.",
   fr: "Bientot disponible — restez a l'ecoute."
-};
-
-const LOCALE_LABELS: Record<Locale, string> = {
-  en: "English",
-  tr: "Türkçe",
-  ar: "العربية",
-  es: "Español",
-  fr: "Français"
 };
 
 const SIDEBAR_COPY: Record<
@@ -595,7 +587,7 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
                 langOpen ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none translate-y-1 opacity-0"
               )}
             >
-              {locales.map((code) => (
+              {supportedLocales.map((code) => (
                 <Link
                   key={code}
                   href={`/${code}${normalizedPath}${search}`}
@@ -605,7 +597,7 @@ export function SiteSidebar({ locale }: { locale: Locale }) {
                     code === locale && "font-semibold text-white"
                   )}
                 >
-                  <span>{LOCALE_LABELS[code]}</span>
+                  <span>{LOCALE_META[code].native}</span>
                   {code === locale ? <span className="text-[#22D3EE]">✓</span> : null}
                 </Link>
               ))}
@@ -790,7 +782,7 @@ function MobileNav({
     setOpen(false);
   };
 
-  const localeChipClass = (code: Locale) =>
+  const localeChipClass = (code: string) =>
     cn(
       "flex h-11 min-w-[44px] shrink-0 items-center justify-center rounded-lg border px-2 text-[11px] font-bold uppercase tracking-wider transition-colors",
       code === locale
@@ -825,7 +817,7 @@ function MobileNav({
               EN
             </Link>
           ) : null}
-          {locales.map((code) => (
+          {supportedLocales.map((code) => (
             <Link key={code} href={`/${code}${normalizedPath}${search}`} className={localeChipClass(code)}>
               {code.toUpperCase()}
             </Link>
@@ -994,7 +986,7 @@ function MobileNav({
                 {nav.language}
               </p>
               <div className="tj-nav-scroll flex justify-center gap-2 overflow-x-auto pb-1">
-                {locales.map((code) => (
+                {supportedLocales.map((code) => (
                   <Link
                     key={code}
                     href={`/${code}${normalizedPath}${search}`}
@@ -1006,7 +998,7 @@ function MobileNav({
                         : "border-[#1E2028] text-[#A1A1AA] active:bg-white/5"
                     )}
                   >
-                    <span className="truncate">{LOCALE_LABELS[code]}</span>
+                    <span className="truncate">{LOCALE_META[code].native}</span>
                     {code === locale ? <span className="text-[#22D3EE]">✓</span> : null}
                   </Link>
                 ))}

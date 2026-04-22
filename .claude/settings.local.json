@@ -14,7 +14,10 @@
       "Bash(gh pr create --title 'Premium UI overhaul + 10-locale i18n + perf pass' --body ' *)",
       "Bash(grep -cn \"^\\\\s*{\\\\s*$\\\\|^\\\\s*slug:\" src/lib/content.ts)",
       "Bash(sed -n '137,140p' src/lib/content.ts)",
-      "Bash(awk '/^export const programs: Program\\\\[\\\\] = \\\\[/,/^];/' src/lib/content.ts)"
+      "Bash(awk '/^export const programs: Program\\\\[\\\\] = \\\\[/,/^];/' src/lib/content.ts)",
+      "Bash(git fetch *)",
+      "Bash(git checkout *)",
+      "Bash(git merge *)"
     ]
   }
 }
