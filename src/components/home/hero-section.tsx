@@ -4,7 +4,6 @@ import type { CSSProperties, Ref } from "react";
 import Link from "next/link";
 import { ChevronDown, ArrowRight, Sparkles } from "lucide-react";
 
-import { TJHeroStage } from "@/components/3d/hero-stage";
 import { TJ_PALETTE } from "@/components/3d/palette";
 import { AthleteSilhouetteBg } from "@/components/home/athlete-silhouette-bg";
 import { useMagneticButton } from "@/hooks/useMagneticButton";
@@ -70,11 +69,11 @@ export function HeroSection({
       className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden px-5 pb-16 pt-20 lg:px-10 lg:px-12"
       style={{ minHeight: "max(720px, 100svh)", background: TJ_PALETTE.obsidian }}
     >
-      {/* Deep obsidian wash with warm champagne pool */}
+      {/* Deep obsidian wash with cyan brand pool */}
       <div
         className="pointer-events-none absolute inset-0 z-0"
         style={{
-          background: `radial-gradient(ellipse 110% 70% at 72% 40%, rgba(212,165,116,0.14), transparent 58%), radial-gradient(ellipse 80% 60% at 10% 90%, rgba(143,164,196,0.05), transparent 55%), ${TJ_PALETTE.obsidian}`
+          background: `radial-gradient(ellipse 110% 70% at 72% 40%, rgba(34,211,238,0.14), transparent 58%), radial-gradient(ellipse 80% 60% at 10% 90%, rgba(34,211,238,0.05), transparent 55%), ${TJ_PALETTE.obsidian}`
         }}
         aria-hidden
       />
@@ -86,7 +85,7 @@ export function HeroSection({
       <span
         className="ghost-text end-[-5%] top-[36%] max-md:end-0 max-md:top-[34%] max-md:text-[clamp(36px,18vw,80px)]"
         aria-hidden
-        style={{ color: "rgba(212,165,116,0.06)" }}
+        style={{ color: "rgba(34,211,238,0.06)" }}
       >
         RITUAL
       </span>
@@ -109,16 +108,7 @@ export function HeroSection({
         <AthleteSilhouetteBg intensity={reduce ? 0.28 : 0.42} reduceMotion={reduce} />
       </div>
 
-      {/* 3D stage — desktop only, lazy-loaded, sits in front of the silhouette */}
-      {!reduce ? (
-        <div
-          className="pointer-events-none absolute inset-0 z-[1] hidden opacity-[0.75] lg:block"
-          style={{ maskImage: "radial-gradient(ellipse 80% 70% at 65% 50%, black 40%, transparent 95%)" }}
-          aria-hidden
-        >
-          <TJHeroStage variant="scarab" speed={0.9} intensity={1} />
-        </div>
-      ) : null}
+      {/* 3D scarab wireframe stage removed — the SVG curl-man silhouette above is the hero visual. */}
 
       {/* Readability veil on the left for copy */}
       <div
@@ -138,17 +128,17 @@ export function HeroSection({
             <span
               className="inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-[11px] font-semibold uppercase tracking-[0.22em]"
               style={{
-                color: TJ_PALETTE.champagne,
-                borderColor: "rgba(212,165,116,0.3)",
-                background: "rgba(212,165,116,0.06)"
+                color: "#22D3EE",
+                borderColor: "rgba(34,211,238,0.32)",
+                background: "rgba(34,211,238,0.06)"
               }}
             >
               <span className="relative flex h-1.5 w-1.5">
                 <span
                   className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-50 motion-reduce:hidden"
-                  style={{ background: TJ_PALETTE.champagne }}
+                  style={{ background: "#22D3EE" }}
                 />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full" style={{ background: TJ_PALETTE.champagne }} />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full" style={{ background: "#22D3EE" }} />
               </span>
               {liveStats.activeToday > 0 ? `${liveStats.activeToday} training now` : "Premium training intelligence"}
             </span>
@@ -170,8 +160,8 @@ export function HeroSection({
               className="mt-2 block bg-clip-text text-transparent"
               style={{
                 ...lineIn(300),
-                backgroundImage: `linear-gradient(90deg, ${TJ_PALETTE.champagneHi} 0%, ${TJ_PALETTE.champagne} 45%, ${TJ_PALETTE.roseGold} 100%)`,
-                filter: "drop-shadow(0 0 24px rgba(212,165,116,0.18))"
+                backgroundImage: `linear-gradient(90deg, #A5F3FC 0%, #22D3EE 45%, #0EA5E9 100%)`,
+                filter: "drop-shadow(0 0 24px rgba(34,211,238,0.22))"
               }}
             >
               {heroGradientTagline}
@@ -181,7 +171,7 @@ export function HeroSection({
           <div
             className="my-6 h-px"
             style={{
-              background: `linear-gradient(90deg, ${TJ_PALETTE.champagne}66, transparent)`,
+              background: `linear-gradient(90deg, rgba(34,211,238,0.48), transparent)`,
               width: heroEntered ? "100%" : "0%",
               opacity: heroEntered ? 1 : 0,
               transition: reduce
@@ -202,9 +192,9 @@ export function HeroSection({
               onClick={() => trackMarketingEvent("hero_cta_click", { cta: "start", surface: "immersive-hero" })}
               className="tj-cta-glow-hover inline-flex min-h-[52px] min-w-[44px] flex-1 items-center justify-center gap-2 rounded-[10px] px-7 py-3.5 text-[15px] font-extrabold transition-[transform,filter,box-shadow] duration-200 hover:brightness-110 sm:flex-none"
               style={{
-                background: `linear-gradient(180deg, ${TJ_PALETTE.champagneHi}, ${TJ_PALETTE.champagne})`,
+                background: `linear-gradient(180deg, #67E8F9, #22D3EE)`,
                 color: TJ_PALETTE.obsidian,
-                boxShadow: "0 12px 40px rgba(212,165,116,0.28)"
+                boxShadow: "0 12px 40px rgba(34,211,238,0.32)"
               }}
             >
               {ctaPrimary}
@@ -219,7 +209,7 @@ export function HeroSection({
                 background: "rgba(246,243,237,0.02)"
               }}
             >
-              <Sparkles className="h-4 w-4 shrink-0" style={{ color: TJ_PALETTE.champagne }} /> Meet TJAI
+              <Sparkles className="h-4 w-4 shrink-0" style={{ color: "#22D3EE" }} /> Meet TJAI
             </Link>
           </div>
 

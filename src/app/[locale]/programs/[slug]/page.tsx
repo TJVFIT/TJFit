@@ -13,7 +13,7 @@ import { ProgramContentLock } from "@/components/program-content-lock";
 import { coaches, products, programs } from "@/lib/content";
 import { localizeCustomProgramRow, type CustomProgramRow } from "@/lib/custom-programs";
 import { getFreeProductPageModel, isFreeProductSlug } from "@/lib/free-product-pages";
-import { programBlueprints } from "@/lib/program-blueprints";
+import { getOrBuildBlueprint } from "@/lib/program-blueprints";
 import { Locale, locales } from "@/lib/i18n";
 import {
   formatCoachCommissionLine,
@@ -117,7 +117,7 @@ export default async function ProgramDetailPage({
           : "SIGNATURE";
   const coach = program ? coaches.find((entry) => entry.slug === program.coachSlug) : null;
   const recommendedProducts = products.filter((product) => program?.requiredEquipment.includes(product.slug));
-  const blueprint = program ? programBlueprints[program.slug] : undefined;
+  const blueprint = program ? getOrBuildBlueprint(program) : undefined;
   const programTitle = localizedProgram?.title ?? customProgram?.title ?? "";
   const programCategory = localizedProgram?.category ?? customProgram?.category ?? "";
   const programDescription = localizedProgram?.description ?? customProgram?.description ?? "";
@@ -262,81 +262,6 @@ export default async function ProgramDetailPage({
             <p className="mt-3 text-sm font-medium text-white/95">{localizedPrice}</p>
           </div>
 
-          <div className="mt-10">
-            <p className="text-lg font-semibold text-white">{copy.whatYouGetTitle}</p>
-            <ul className="mt-4 space-y-2.5 text-sm text-zinc-300">
-              {programAssets.map((asset, idx) => (
-                <li key={`${asset.type}-${idx}`} className="flex gap-2.5 leading-relaxed">
-                  <span className="mt-0.5 shrink-0 text-cyan-400/90" aria-hidden>
-                    -
-                  </span>
-                  <span>
-                    <span className="font-medium text-white">{localizeAssetType(asset.type, locale)}</span>
-                    <span className="text-zinc-500"> — </span>
-                    {asset.label}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="mt-10">
-            <p className="text-lg font-semibold text-white">{copy.assetsLabel}</p>
-            <p className="mt-1 text-xs text-zinc-500">{paidContentLocked ? copy.previewSectionNotice : null}</p>
-            <div className="mt-6 grid gap-4 md:grid-cols-2">
-              {programAssets.length > 0 && (
-                <div className="rounded-[24px] border border-white/10 bg-white/5 p-5">
-                  <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">
-                    {localizeAssetType(programAssets[0].type, locale)}
-                  </p>
-                  <p className="mt-3 text-white">
-                    {copy.previewLabel} 1
-                  </p>
-                  <p className="mt-2 text-sm text-zinc-400">
-                    {program ? copy.brandedModule : "Uploaded and auto-translated module"}
-                  </p>
-                </div>
-              )}
-              {paidContentLocked && programAssets.length > 1 ? (
-                <ProgramContentLock
-                  locked
-                  title={copy.paidPreviewTitle}
-                  subtitle={copy.paidPreviewSubtitle}
-                  ctaHref={checkoutHref}
-                  ctaLabel={copy.getFullAccess}
-                  className="md:col-span-1"
-                >
-                  <div className="grid gap-4">
-                    {programAssets.slice(1).map((asset, index) => (
-                      <div key={`${asset.type}-${index + 1}`} className="rounded-[24px] border border-white/10 bg-white/5 p-5">
-                        <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">
-                          {localizeAssetType(asset.type, locale)}
-                        </p>
-                        <p className="mt-3 text-white">
-                          {copy.previewLabel} {index + 2}
-                        </p>
-                        <p className="mt-2 text-sm text-zinc-400">{copy.brandedModule}</p>
-                      </div>
-                    ))}
-                  </div>
-                </ProgramContentLock>
-              ) : (
-                programAssets.slice(1).map((asset, index) => (
-                  <div key={`${asset.type}-${index + 1}`} className="rounded-[24px] border border-white/10 bg-white/5 p-5">
-                    <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">
-                      {localizeAssetType(asset.type, locale)}
-                    </p>
-                    <p className="mt-3 text-white">
-                      {copy.previewLabel} {index + 2}
-                    </p>
-                    <p className="mt-2 text-sm text-zinc-400">
-                      {program ? copy.brandedModule : "Uploaded and auto-translated module"}
-                    </p>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
 
           {!program && (
             <div className="mt-8 rounded-[24px] border border-white/10 bg-white/5 p-6">

@@ -34,7 +34,6 @@ import { SectionTransition } from "@/components/home/section-transition";
 import { TjaiEngineChrome } from "@/components/home/tjai-engine-chrome";
 import { HeroTjaiBrainDeco } from "@/components/hero-tjai-brain-deco";
 import { CinematicHowItWorks, CinematicTransformation } from "@/components/home/cinematic-sections";
-import { TJHeroStage } from "@/components/3d/hero-stage";
 import { useMagneticButton } from "@/hooks/useMagneticButton";
 
 function useReducedMotion() {
@@ -464,12 +463,21 @@ export function ImmersiveHome({
           className="relative z-10 mx-auto grid max-w-6xl gap-12 px-6 py-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-center lg:gap-16 lg:px-12 lg:py-28"
           style={{ minHeight: "inherit" }}
         >
-          <div className="relative flex min-h-[220px] justify-center lg:min-h-[380px]">
-            {!reduce ? (
-              <div className="absolute inset-0" aria-hidden>
-                <TJHeroStage variant="neural" speed={0.85} intensity={0.95} />
+          <div className="relative hidden min-h-[380px] lg:flex lg:items-center lg:justify-center" aria-hidden>
+            {/* TJAI brand mark — cyan glow ring, no wireframe mannequin */}
+            <div
+              className="relative h-[320px] w-[320px] rounded-full"
+              style={{
+                background: "radial-gradient(circle at 50% 45%, rgba(34,211,238,0.18) 0%, rgba(34,211,238,0.06) 42%, transparent 70%)",
+                boxShadow: "0 0 120px rgba(34,211,238,0.18) inset"
+              }}
+            >
+              <div className="absolute inset-10 rounded-full border border-[rgba(34,211,238,0.18)]" />
+              <div className="absolute inset-20 rounded-full border border-[rgba(34,211,238,0.12)]" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="font-display text-5xl font-bold tracking-tight text-[#22D3EE]">TJAI</span>
               </div>
-            ) : null}
+            </div>
           </div>
 
           <MotionReveal reducedMotion={reduce}>

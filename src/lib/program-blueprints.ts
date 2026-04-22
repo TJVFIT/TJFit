@@ -2316,3 +2316,174 @@ export const programBlueprints: Record<string, ProgramBlueprint> = {
     ]
   }
 };
+
+/**
+ * Default 12-week blueprint for any program that doesn't have a dedicated entry above.
+ * Keeps the PDF from shipping empty when a new program is added without a bespoke plan.
+ * Category hints ("strength", "cardio", "nutrition", ...) select a sensible split.
+ */
+export function buildDefaultBlueprint(args: {
+  title: string;
+  description: string;
+  category: string;
+  difficulty: string;
+  requiredEquipment: string[];
+}): ProgramBlueprint {
+  const cat = args.category.toLowerCase();
+  const isNutrition = cat === "nutrition";
+  const hasGym = args.requiredEquipment.some((e) => /barbell|dumbbell|rack|bench|machine/i.test(e));
+  const equipment = isNutrition
+    ? "Kitchen basics, a food scale, and a tracking app."
+    : hasGym
+      ? "Full gym access (barbell, dumbbells, rack, bench)."
+      : "Bodyweight or minimal home equipment.";
+
+  if (isNutrition) {
+    return {
+      goal: `Nutrition execution for ${args.title}`,
+      level: args.difficulty,
+      equipment,
+      weeklyPhases: [
+        {
+          title: "Weeks 1-2 Baseline",
+          focus: "Lock in meal timing, portion control, and a consistent protein anchor at every feeding.",
+          trainingDays: [
+            "Day 1-7: 3 main meals + 1-2 snacks; hit protein target every feeding (0.8-1.0 g/lb).",
+            "Track calories and protein daily — accuracy over perfection.",
+            "Water target: 2.5-3.5 L/day. No liquid calories except plain coffee/tea.",
+            "Weigh-in Day 1 and Day 7 (same conditions, morning, post-bathroom)."
+          ],
+          conditioning: [
+            "Step target: 7-10k/day to establish movement baseline",
+            "Sleep 7-9 h — prioritize consistent bed/wake time",
+            "One mobility/walk block on the rest day"
+          ]
+        },
+        {
+          title: "Weeks 3-6 Progressive Phase",
+          focus: "Adjust calories in 100-200 kcal increments based on weekly trend, not single-day weigh-ins.",
+          trainingDays: [
+            "Rebalance macros if weight trend misses target for 2 consecutive weeks.",
+            "Keep protein fixed; adjust carbs and fats to move weight in desired direction.",
+            "Introduce meal-prep day (Sunday) — batch protein, carb sources, and vegetables.",
+            "Log hunger/energy 1-10 daily — adjust meal timing if energy dips."
+          ],
+          conditioning: ["Steps: 8-12k/day", "Strength or cardio 3-4x/week (pair with any training plan)", "One full rest day"]
+        },
+        {
+          title: "Weeks 7-10 Execution Under Pressure",
+          focus: "Navigate travel, social events, and training stress without derailing the trend.",
+          trainingDays: [
+            "Build a 'default order' at the 3 restaurants you visit most.",
+            "Use the 80/20 rule: 80% whole foods from a fixed grocery list, 20% flexible.",
+            "Carry a protein source (jerky/shake/greek yogurt) for skipped-meal scenarios.",
+            "Re-weigh conditions weekly — adjust calories only against 14-day average."
+          ],
+          conditioning: ["Steps: 10-12k/day", "Maintain training frequency through travel", "Mobility 2x/week"]
+        },
+        {
+          title: "Weeks 11-12 Lock-in and Transition",
+          focus: "Cement the habits and plan the next block (maintenance, recomp, or next cut/bulk).",
+          trainingDays: [
+            "Identify the 3 meals you will keep permanently post-program.",
+            "Reverse-diet or maintenance window: add 100-150 kcal/week for 2 weeks if cutting ended.",
+            "Photo and measurements Day 84 for a clean before/after record.",
+            "Write the next 12-week goal before closing this one."
+          ],
+          conditioning: ["Steps: 10k/day baseline", "Training stays in place", "Debrief what worked — adjust next block"]
+        }
+      ],
+      safety: [
+        "Do not drop below 10-11 kcal/lb without coach oversight.",
+        "Stop and reassess if energy, sleep, or mood crash for more than a week.",
+        "Medical conditions (diabetes, thyroid, GI) require clinician sign-off on macro splits.",
+        "Pregnancy/breastfeeding: follow a clinician-approved plan, not this template."
+      ]
+    };
+  }
+
+  // Training default (strength / cardio / hybrid)
+  const isStrength = /strength|hypertrophy|muscle|power|lift|barbell/i.test(`${cat} ${args.title}`);
+  const split = hasGym ? "Upper / Lower / Push / Pull / Legs rotation" : "Full-body circuits with push, pull, hinge, squat, core";
+  return {
+    goal: isStrength ? `Build strength and muscle: ${args.title}` : `Improve capacity and body composition: ${args.title}`,
+    level: args.difficulty,
+    equipment,
+    weeklyPhases: [
+      {
+        title: "Weeks 1-2 Foundation",
+        focus: "Own the movement patterns with moderate load. Technique before intensity.",
+        trainingDays: [
+          `4 training days/week following ${split}.`,
+          isStrength
+            ? "Main lifts: 3 sets x 8-10 reps at RPE 6-7, 2-3 min rest. Leave 3-4 reps in reserve."
+            : "Compound work: 3 sets x 10-12 reps at a controlled tempo (2-1-1), 60-90 s rest.",
+          "Accessory work: 3 sets x 10-12 reps, 60-90 s rest. Target weak links.",
+          "Core: 3 sets of plank 30-45 s + dead bug 8/side every session."
+        ],
+        conditioning: ["2x/week zone-2 cardio 20-30 min", "Daily 7-10k steps", "One full rest day"]
+      },
+      {
+        title: "Weeks 3-5 Volume Block",
+        focus: "Add sets and load week over week. Progressive overload is the driver.",
+        trainingDays: [
+          isStrength
+            ? "Main lifts: 4 sets x 6-8 reps at RPE 7-8, 2-3 min rest. Add 2-5% when all reps clear."
+            : "Compound work: 4 sets x 8-10 reps, tempo (3-0-1), 75-90 s rest.",
+          "Accessory work: 3-4 sets x 8-12 reps with 1-2 reps in reserve.",
+          "Add one unilateral movement per session (split squat, single-arm row).",
+          "Week 5 deload: drop top sets to 60% load, keep movement pattern."
+        ],
+        conditioning: ["2-3x/week zone-2 20-30 min", "1x/week threshold work (4x4 min hard)", "Mobility 10 min post-session"]
+      },
+      {
+        title: "Weeks 6-9 Intensification",
+        focus: "Higher load, lower reps on main lifts. Accessory volume maintains muscle.",
+        trainingDays: [
+          isStrength
+            ? "Main lifts: 5 sets x 4-6 reps at RPE 8, 3 min rest. Track top set weekly."
+            : "Compound work: 4 sets x 6-8 reps heavier, 90-120 s rest. AMRAP set once per session.",
+          "Accessory work: 3 sets x 10-12 reps — keep the pump work.",
+          "One explosive movement per session (jump, throw, sprint effort 10-20 m).",
+          "Week 9: deload week — 50-60% volume, same movements."
+        ],
+        conditioning: ["2x/week zone-2 30 min", "1x/week intervals (30/30 x 10)", "Sleep discipline — 8 h target"]
+      },
+      {
+        title: "Weeks 10-12 Peak and Test",
+        focus: "Express the work. Hit the numbers, then lock in the habits.",
+        trainingDays: [
+          isStrength
+            ? "Main lifts: 3 sets x 3-5 reps at RPE 8-9 with full rest. Week 12 test top single or 3RM."
+            : "Compound work: 3-4 hard sets at target weight; Week 12 timed circuit or AMRAP test.",
+          "Accessory work: 2-3 sets x 8-10 reps — maintain, don't chase.",
+          "Week 12 Day 1: retest baseline from Week 1 (same movements, load, or time).",
+          "Log outcomes: numbers, photos, measurements. Plan the next block."
+        ],
+        conditioning: ["2x/week light zone-2", "1x/week sprint or hill effort", "Week 12: light taper, peak rested"]
+      }
+    ],
+    safety: [
+      "Warm up 8-10 min before working sets — raise core temp and rehearse patterns.",
+      "Stop a set the moment technique breaks. Leaving a rep is cheaper than leaving a month.",
+      "Sharp pain, numbness, or chest symptoms: stop and see a clinician.",
+      "Scale loads if sleep is under 6 h two nights running.",
+      "Deload weeks are non-negotiable — they cash in the gains you just made."
+    ]
+  };
+}
+
+/**
+ * Always returns a usable blueprint — bespoke if one exists, otherwise a category-aware default.
+ * Prefer this over `programBlueprints[slug]` in renderers.
+ */
+export function getOrBuildBlueprint(program: {
+  slug: string;
+  title: string;
+  description: string;
+  category: string;
+  difficulty: string;
+  requiredEquipment: string[];
+}): ProgramBlueprint {
+  return programBlueprints[program.slug] ?? buildDefaultBlueprint(program);
+}

@@ -4,7 +4,7 @@ import { programs } from "@/lib/content";
 import { isCatalogDiet } from "@/lib/diet-catalog";
 import { buildDietPdf } from "@/lib/diet-pdf-builder";
 import { buildProgramPdf } from "@/lib/program-pdf-builder";
-import { programBlueprints } from "@/lib/program-blueprints";
+import { getOrBuildBlueprint } from "@/lib/program-blueprints";
 import { hasPurchasedProgram } from "@/lib/purchases";
 import { requireAuth } from "@/lib/require-auth";
 
@@ -45,7 +45,7 @@ export async function GET(_req: Request, { params }: { params: { slug: string } 
     ? buildDietPdf({ program, buyerName, issuedAt: new Date().toISOString() })
     : buildProgramPdf({
         program,
-        blueprint: programBlueprints[program.slug],
+        blueprint: getOrBuildBlueprint(program),
         buyerName,
         issuedAt: new Date().toISOString()
       });

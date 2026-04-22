@@ -19,10 +19,11 @@ type Props = {
   reduceMotion?: boolean;
 };
 
-const CHAMPAGNE = "#d4a574";
-const CHAMPAGNE_HI = "#e8c79c";
-const CHAMPAGNE_LO = "#9c7849";
-const ROSE_GOLD = "#f0b89a";
+// Brand cyan palette — matches TJFit's cyan/blue/black system.
+const CHAMPAGNE = "#22D3EE";
+const CHAMPAGNE_HI = "#A5F3FC";
+const CHAMPAGNE_LO = "#0E7490";
+const ROSE_GOLD = "#67E8F9";
 
 export function AthleteSilhouetteBg({ className, intensity = 0.55, reduceMotion = false }: Props) {
   return (
@@ -47,7 +48,7 @@ export function AthleteSilhouetteBg({ className, intensity = 0.55, reduceMotion 
         style={{
           maxWidth: 560,
           maxHeight: "94%",
-          filter: `drop-shadow(0 0 32px rgba(212,165,116,0.45)) drop-shadow(0 0 80px rgba(212,165,116,0.18))`
+          filter: `drop-shadow(0 0 32px rgba(34,211,238,0.45)) drop-shadow(0 0 80px rgba(34,211,238,0.18))`
         }}
       >
         <defs>
