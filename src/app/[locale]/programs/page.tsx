@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { notFound, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -13,7 +12,6 @@ import { FilterPill, ListingFilterBar } from "@/components/listing-filter-bar";
 import { PremiumPageShell } from "@/components/premium";
 import { StaggerRevealGrid } from "@/components/stagger-reveal-grid";
 import { ScrollTicker } from "@/components/ui/ScrollTicker";
-import { AmbientBackground } from "@/components/ui/AmbientBackground";
 import { ProgramCard } from "@/components/ui";
 import { programs } from "@/lib/content";
 import type { PublicCustomProgramRow } from "@/lib/custom-programs";
@@ -59,6 +57,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
   const searchParams = useSearchParams();
   const [uploadedPrograms, setUploadedPrograms] = useState<CatalogProgram[]>([]);
   const [customCatalogReady, setCustomCatalogReady] = useState(true);
+  const [customCatalogError, setCustomCatalogError] = useState(false);
   const [goalFilter, setGoalFilter] = useState<CatalogGoalFilter>("all");
   const [locFilter, setLocFilter] = useState<CatalogLocationFilter>("all");
   const [levelFilter, setLevelFilter] = useState<CatalogLevelFilter>("all");
@@ -67,16 +66,24 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
 
   const canUpload = role === "admin" || role === "coach";
 
-  // Parallax scroll for background image
+  // Parallax scroll for background image (RAF-throttled; disabled on reduced motion / small screens)
   const containerRef = useRef<HTMLDivElement>(null);
   const [parallaxY, setParallaxY] = useState(0);
   useEffect(() => {
-    const fn = () => {
-      if (window.innerWidth < 768) return;
-      setParallaxY(window.scrollY * 0.12);
+    if (typeof window === "undefined") return;
+    const prefersReduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced || window.innerWidth < 768) return;
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(() => {
+        setParallaxY(window.scrollY * 0.12);
+        ticking = false;
+      });
     };
-    window.addEventListener("scroll", fn, { passive: true });
-    return () => window.removeEventListener("scroll", fn);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
   const freeFilterCopy: Record<Locale, { label: string; all: string; free: string }> = {
     en: { label: "Access", all: "All", free: "Free" },
@@ -92,18 +99,19 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
     const timeout = window.setTimeout(() => controller.abort(), 6000);
     const loadCustomPrograms = async () => {
       setCustomCatalogReady(false);
+      setCustomCatalogError(false);
       try {
         const res = await fetch(`/api/programs/custom?locale=${locale}`, { credentials: "include", signal: controller.signal });
         if (!res.ok) {
-          console.error("Programs fetch error:", { status: res.status, statusText: res.statusText });
+          if (!cancelled) setCustomCatalogError(true);
           return;
         }
         const data = (await res.json()) as CustomProgramsResponse;
         const mapped = (data.programs ?? []).map((item) => normalizePublicCustomProgramRow(item, locale));
         if (!cancelled) setUploadedPrograms(mapped);
       } catch (error) {
-        if (!cancelled) {
-          console.error("Programs fetch error:", error);
+        if (!cancelled && (error as { name?: string })?.name !== "AbortError") {
+          setCustomCatalogError(true);
         }
       } finally {
         window.clearTimeout(timeout);
@@ -117,6 +125,20 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
       controller.abort();
     };
   }, [locale]);
+
+  const retryCustomCatalog = () => {
+    setCustomCatalogError(false);
+    setCustomCatalogReady(false);
+    fetch(`/api/programs/custom?locale=${locale}`, { credentials: "include" })
+      .then(async (res) => {
+        if (!res.ok) throw new Error(String(res.status));
+        const data = (await res.json()) as CustomProgramsResponse;
+        const mapped = (data.programs ?? []).map((item) => normalizePublicCustomProgramRow(item, locale));
+        setUploadedPrograms(mapped);
+      })
+      .catch(() => setCustomCatalogError(true))
+      .finally(() => setCustomCatalogReady(true));
+  };
 
   useEffect(() => {
     const goal = searchParams.get("goal");
@@ -162,7 +184,14 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
     const training = programs
       .filter((item) => item.category.toLowerCase() !== "nutrition")
       .map((item) => normalizeCatalogProgram(localizeProgram(item, locale), locale));
-    return [...uploadedPrograms, ...training];
+    const seen = new Set<string>();
+    const merged: CatalogProgram[] = [];
+    for (const entry of [...uploadedPrograms, ...training]) {
+      if (seen.has(entry.slug)) continue;
+      seen.add(entry.slug);
+      merged.push(entry);
+    }
+    return merged;
   }, [uploadedPrograms, locale]);
 
   const filteredPrograms = useMemo(() => {
@@ -228,14 +257,14 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
           >
           <Link
             href={`/${params.locale}/diets`}
-            className="text-sm font-medium text-[#22D3EE] transition-colors duration-150 hover:text-white"
+            className="text-sm font-medium text-accent transition-colors duration-150 hover:text-white"
           >
             {filterCopy.browseDietsLink}
           </Link>
           {canUpload ? (
             <Link
               href={`/${params.locale}/programs/upload`}
-              className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-[#1E2028] px-4 py-2 text-sm text-white transition-[border-color,background-color] duration-150 hover:border-[rgba(255,255,255,0.12)] hover:bg-[rgba(255,255,255,0.04)]"
+              className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-[var(--color-border)] px-4 py-2 text-sm text-white transition-[border-color,background-color] duration-150 hover:border-[rgba(255,255,255,0.12)] hover:bg-[rgba(255,255,255,0.04)]"
               title={programManagementCopy.uploadCtaTitle}
             >
               <Plus className="h-4 w-4" />
@@ -249,19 +278,19 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
           <ScrollTicker
             speed={50}
             items={filterCopy.tickerPrimary}
-            className="mb-3 text-[#1E2028]"
+            className="mb-3 text-[var(--color-border)]"
           />
           <ScrollTicker
             speed={56}
             direction="right"
             items={filterCopy.tickerSecondary}
-            className="mb-10 text-[#1E2028]"
+            className="mb-10 text-[var(--color-border)]"
           />
 
           <BlurReveal delay={100}>
             <ListingFilterBar label={filterCopy.filterLabel}>
             <div className="flex flex-wrap items-center gap-1 px-1">
-              <span className="me-1 text-xs text-[#52525B]">{filterCopy.filterGoal}:</span>
+              <span className="me-1 text-xs text-[var(--color-text-muted)]">{filterCopy.filterGoal}:</span>
               {(
                 [
                   ["all", filterCopy.all],
@@ -284,7 +313,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
               ))}
             </div>
             <div className="flex flex-wrap items-center gap-1 px-1">
-              <span className="me-1 text-xs text-[#52525B]">{filterCopy.filterLocation}:</span>
+              <span className="me-1 text-xs text-[var(--color-text-muted)]">{filterCopy.filterLocation}:</span>
               {(
                 [
                   ["all", filterCopy.all],
@@ -306,7 +335,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
               ))}
             </div>
             <div className="flex flex-wrap items-center gap-1 px-1">
-              <span className="me-1 text-xs text-[#52525B]">{filterCopy.filterLevel}:</span>
+              <span className="me-1 text-xs text-[var(--color-text-muted)]">{filterCopy.filterLevel}:</span>
               {(
                 [
                   ["all", filterCopy.all],
@@ -328,7 +357,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
               ))}
             </div>
             <div className="flex flex-wrap items-center gap-1 px-1">
-              <span className="me-1 text-xs text-[#52525B]">{freeFilterCopy[locale].label}:</span>
+              <span className="me-1 text-xs text-[var(--color-text-muted)]">{freeFilterCopy[locale].label}:</span>
               {(
                 [
                   ["all", freeFilterCopy[locale].all],
@@ -349,7 +378,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
               ))}
             </div>
             <div className="flex flex-wrap items-center gap-2 px-1">
-              <span className="me-1 text-xs text-[#52525B]">{filterCopy.sortLabel}:</span>
+              <span className="me-1 text-xs text-[var(--color-text-muted)]">{filterCopy.sortLabel}:</span>
               <select
                 value={sortKey}
                 onChange={(event) => {
@@ -357,7 +386,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
                   setSortKey(next);
                   syncFiltersToUrl(goalFilter, locFilter, levelFilter, freeFilter, next);
                 }}
-                className="min-h-[44px] rounded-lg border border-[#1E2028] bg-[#0D1015] px-3 py-2 text-sm text-white outline-none transition-colors duration-150 hover:border-[rgba(255,255,255,0.12)] sm:min-h-0"
+                className="min-h-[44px] rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm text-white outline-none transition-colors duration-150 hover:border-[rgba(255,255,255,0.12)] sm:min-h-0"
               >
                 <option value="featured">{filterCopy.sortFeatured}</option>
                 <option value="price_low">{filterCopy.sortPriceLow}</option>
@@ -375,13 +404,39 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
                     setFreeFilter("all");
                     syncFiltersToUrl("all", "all", "all", "all", sortKey);
                   }}
-                  className="ms-1 min-h-[44px] px-2 text-[13px] font-medium text-[#22D3EE] transition-colors duration-150 hover:text-white sm:min-h-0"
+                  className="ms-1 min-h-[44px] px-2 text-[13px] font-medium text-accent transition-colors duration-150 hover:text-white sm:min-h-0"
                 >
                   {filterCopy.clearFilters}
                 </button>
               ) : null}
             </ListingFilterBar>
           </BlurReveal>
+
+      {customCatalogError ? (
+        <div
+          role="alert"
+          className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-[12px] border border-[rgba(239,68,68,0.25)] bg-[rgba(239,68,68,0.06)] px-4 py-3 text-sm text-[var(--color-text-secondary)]"
+        >
+          <span>
+            {locale === "tr"
+              ? "Programlar yüklenemedi. Bağlantınızı kontrol edin."
+              : locale === "ar"
+                ? "تعذر تحميل البرامج. تحقق من اتصالك."
+                : locale === "es"
+                  ? "No se pudieron cargar los programas. Revisa tu conexión."
+                  : locale === "fr"
+                    ? "Impossible de charger les programmes. Vérifiez votre connexion."
+                    : "Couldn't load custom programs. Check your connection."}
+          </span>
+          <button
+            type="button"
+            onClick={retryCustomCatalog}
+            className="rounded-full border border-[var(--color-border)] px-3 py-1.5 text-xs font-medium text-white transition-colors duration-150 hover:border-[rgba(255,255,255,0.15)] hover:bg-[rgba(255,255,255,0.04)]"
+          >
+            {locale === "tr" ? "Tekrar dene" : locale === "ar" ? "إعادة المحاولة" : locale === "es" ? "Reintentar" : locale === "fr" ? "Réessayer" : "Retry"}
+          </button>
+        </div>
+      ) : null}
 
       {!customCatalogReady && allPrograms.length === 0 ? (
         <div
@@ -468,7 +523,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
           <div className="mt-10 overflow-hidden rounded-2xl border border-cyan-400/20 bg-[linear-gradient(135deg,rgba(34,211,238,0.06)_0%,rgba(167,139,250,0.06)_100%)] p-6 sm:p-8">
             <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#22D3EE]">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
                   {locale === "tr" ? "ÖZEL TEKLİF" : locale === "ar" ? "عرض خاص" : locale === "es" ? "OFERTA ESPECIAL" : locale === "fr" ? "OFFRE SPÉCIALE" : "BUNDLE DEAL"}
                 </p>
                 <h3 className="mt-2 text-xl font-bold text-white">
@@ -496,7 +551,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
               </div>
               <Link
                 href={`/${locale}/ai`}
-                className="shrink-0 rounded-full bg-[#22D3EE] px-6 py-3 text-sm font-bold text-[#09090B] transition hover:scale-105 hover:bg-white"
+                className="shrink-0 rounded-full bg-accent px-6 py-3 text-sm font-bold text-background transition hover:scale-105 hover:bg-white"
               >
                 {locale === "tr"
                   ? "TJAI Önizlemesi →"
@@ -514,7 +569,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
           <div className="mt-12 border-t border-[var(--color-border)] pt-12 text-center">
             <Link
               href={`/${params.locale}/programs/${programs.find((p) => p.is_free && p.category.toLowerCase() !== "nutrition")?.slug ?? "home-fat-loss-starter"}`}
-              className="inline-flex min-h-[48px] items-center justify-center text-sm font-semibold text-[#22D3EE] transition-colors duration-150 hover:text-white"
+              className="inline-flex min-h-[48px] items-center justify-center text-sm font-semibold text-accent transition-colors duration-150 hover:text-white"
             >
               {filterCopy.footerCta}
             </Link>
@@ -528,7 +583,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
       <div className="floating-tjai-cta">
         <Link
           href={`/${locale}/ai`}
-          className="group flex items-center gap-2.5 rounded-full bg-[#22D3EE] px-5 py-3 text-sm font-bold text-[#09090B] shadow-[0_4px_24px_rgba(34,211,238,0.35)] transition-all duration-200 hover:scale-105 hover:shadow-[0_6px_32px_rgba(34,211,238,0.5)]"
+          className="group flex items-center gap-2.5 rounded-full bg-accent px-5 py-3 text-sm font-bold text-background shadow-[0_4px_24px_rgba(34,211,238,0.35)] transition-all duration-200 hover:scale-105 hover:shadow-[0_6px_32px_rgba(34,211,238,0.5)]"
         >
           <Sparkles className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" />
           {locale === "tr" ? "TJAI ile Plan Al" : locale === "ar" ? "احصل على خطة مع TJAI" : locale === "es" ? "Obtén un plan con TJAI" : locale === "fr" ? "Obtenir un plan TJAI" : "Build My Plan with TJAI"}
