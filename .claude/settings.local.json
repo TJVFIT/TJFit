@@ -2,7 +2,15 @@
   "permissions": {
     "allow": [
       "WebFetch(domain:dribbble.com)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(npx eslint *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(find /c/Users/yousi/TJFit/.claude/worktrees/frosty-mirzakhani-54d458/messages -name \"*.json\" -exec basename {} \\\\;)",
+      "Bash(npm run *)",
+      "Bash(grep -r \"motion\\\\\\\\.div\\\\|motion\\\\\\\\.section\\\\|<motion\\\\|from \\\\\"framer-motion\\\\\"\\\\|import.*motion\" \"C:/Users/yousi/TJFit/.claude/worktrees/frosty-mirzakhani-54d458/src\" --include=\"*.tsx\")",
+      "Bash(git reset *)"
     ]
   }
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useRef, type MutableRefObject } from "react";
+import { useEffect, useRef, useState, type MutableRefObject } from "react";
 
 export type HeroStageVariant = "scarab" | "dumbbell" | "nutrient" | "neural";
 
@@ -29,6 +29,8 @@ const HeroStageImpl = dynamic(() => import("./hero-stage-impl").then((m) => m.He
  */
 export function TJHeroStage({ variant = "scarab", pointerReactive = true, intensity = 1, speed = 1, className }: Props) {
   const pointerRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+  const [inView, setInView] = useState(true);
 
   useEffect(() => {
     if (!pointerReactive) return;
@@ -42,9 +44,20 @@ export function TJHeroStage({ variant = "scarab", pointerReactive = true, intens
     return () => window.removeEventListener("pointermove", onMove);
   }, [pointerReactive]);
 
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => setInView(e.isIntersecting)),
+      { rootMargin: "120px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <div className={className ?? "absolute inset-0"} aria-hidden>
-      <HeroStageImpl variant={variant} intensity={intensity} speed={speed} pointerRef={pointerRef} />
+    <div ref={wrapRef} className={className ?? "absolute inset-0"} aria-hidden>
+      {inView ? <HeroStageImpl variant={variant} intensity={intensity} speed={speed} pointerRef={pointerRef} /> : null}
     </div>
   );
 }

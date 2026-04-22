@@ -29,7 +29,7 @@ export function TJScene({ children, intensity = 1, cameraZ = 6.4, fov = 42, clas
         depth: true
       }}
       camera={{ position: [0, 0, cameraZ], fov, near: 0.1, far: 60 }}
-      dpr={[1, 1.6]}
+      dpr={[1, 1.25]}
       performance={{ min: 0.5 }}
       frameloop="always"
     >

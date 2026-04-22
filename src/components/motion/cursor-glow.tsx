@@ -4,9 +4,6 @@ import { useEffect, useRef } from "react";
 
 export function CursorGlow() {
   const ref = useRef<HTMLDivElement | null>(null);
-  const target = useRef({ x: 0, y: 0 });
-  const current = useRef({ x: 0, y: 0 });
-  const raf = useRef<number | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -16,24 +13,41 @@ export function CursorGlow() {
 
     const el = ref.current;
     if (!el) return;
-    target.current = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-    current.current = { ...target.current };
 
-    const move = (e: PointerEvent) => {
-      target.current.x = e.clientX;
-      target.current.y = e.clientY;
-    };
+    const target = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+    const current = { ...target };
+    let raf: number | null = null;
+    let running = false;
+
     const tick = () => {
-      current.current.x += (target.current.x - current.current.x) * 0.15;
-      current.current.y += (target.current.y - current.current.y) * 0.15;
-      el.style.transform = `translate(${current.current.x}px, ${current.current.y}px) translate(-50%, -50%)`;
-      raf.current = requestAnimationFrame(tick);
+      const dx = target.x - current.x;
+      const dy = target.y - current.y;
+      current.x += dx * 0.18;
+      current.y += dy * 0.18;
+      el.style.transform = `translate(${current.x}px, ${current.y}px) translate(-50%, -50%)`;
+      if (Math.abs(dx) < 0.4 && Math.abs(dy) < 0.4) {
+        running = false;
+        raf = null;
+        return;
+      }
+      raf = requestAnimationFrame(tick);
     };
+    const start = () => {
+      if (!running) {
+        running = true;
+        raf = requestAnimationFrame(tick);
+      }
+    };
+    const move = (e: PointerEvent) => {
+      target.x = e.clientX;
+      target.y = e.clientY;
+      start();
+    };
+
     window.addEventListener("pointermove", move, { passive: true });
-    raf.current = requestAnimationFrame(tick);
     return () => {
       window.removeEventListener("pointermove", move);
-      if (raf.current) cancelAnimationFrame(raf.current);
+      if (raf) cancelAnimationFrame(raf);
     };
   }, []);
 
