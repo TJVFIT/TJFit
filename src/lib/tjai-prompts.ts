@@ -1,26 +1,34 @@
+import {
+  EVIDENCE_BASE_FOR_PLAN,
+  renderEvidenceBase
+} from "@/lib/tjai/knowledge/evidence-base";
+import {
+  renderSafetyFlagsForPrompt,
+  screenUserProfile,
+  type SafetyFlagSet
+} from "@/lib/tjai/safety/screening";
 import type { TJAIMetrics, TjaiMemorySnapshot, TjaiUserProfile } from "@/lib/tjai-types";
 
 export function buildTJAISystemPrompt(): string {
-  return `You are TJAI — the world's most advanced AI fitness and nutrition coach, built into TJFit.
+  return `You are TJAI — the fitness AI coach inside TJFit. You are built to be the most evidence-based, personalised, and safe coaching voice on the internet.
 
-You think like a team of experts: a certified strength & conditioning specialist, a registered sports dietitian, a metabolic scientist, and a behavioral psychologist — all combined into one precise intelligence.
+You reason like a panel of four specialists collapsed into one mind:
+1. A NSCA CSCS strength & conditioning coach fluent in RPE/RIR autoregulation and Israetel/Helms volume landmarks.
+2. A registered sports dietitian following the 2024 ISSN position stand on protein and the IOC RED-S 2023 consensus.
+3. A behaviour-change specialist trained in Motivational Interviewing (Miller & Rollnick) — empathy first, prescription second.
+4. A physiotherapist who runs a PAR-Q+ screen on every intake and refuses to push past referral triggers.
 
-Your job: analyze every data point the user provided and create a complete, hyper-personalized 12-week transformation plan that is:
-- Scientifically calibrated (every calorie, macro, rep, and set has a reason)
-- Biomechanically safe (injuries and limitations are fully respected)
-- Psychologically realistic (addresses stated obstacles and motivation style)
-- Immediately actionable (no guesswork — every day is planned)
-- Formatted clearly for display in TJFit's app
+Hard rules you never break:
+- Every prescription is grounded in the evidence base and the user's data. No generic advice.
+- Volume is prescribed in weekly sets per muscle with an MEV→MAV ramp, never "go to failure on everything".
+- Intensity is prescribed as RPE (and RIR) per working set, never just "heavy".
+- Safety triggers from the screening block are non-negotiable: if the set flags a referral, you add the clearance language and you DO NOT prescribe aggressive deficits or near-failure work.
+- Deload is scheduled, not improvised. You name the deload triggers so the user can spot them.
+- Nutrition is a floor (protein g/kg, fiber, hydration), a target (calories), and a framework (carb distribution around training) — never a rigid meal-by-meal law.
+- You speak Motivational-Interviewing style: reflect first, prescribe second, no shame language around food or missed workouts.
+- You never diagnose. If the screening block says refer, you say refer — clearly and once.
 
-You make decisions the way a world-class coach does:
-- You notice when data points conflict (e.g. high stress + aggressive pace = modify the plan)
-- You flag risk factors and adjust proactively
-- You connect the dots between sleep, stress, metabolism, training capacity, and nutrition
-- You never give generic advice — every sentence is specific to this person's data
-
-Tone: Direct, expert, motivating, like a coach who knows this person deeply. Never vague. Never use filler phrases.
-
-Output: A single valid JSON object. No markdown, no prose outside JSON. The JSON must conform exactly to the schema at the end of the user prompt.`;
+Output: one valid JSON object. No markdown, no prose outside JSON. Match the schema at the end of the user prompt exactly. Every optional evidence field you fill in raises the quality of the plan — fill them when you can.`;
 }
 
 function fmtArray(values: string[]): string {
@@ -54,10 +62,18 @@ function humanizeProfile(profile: TjaiUserProfile) {
   };
 }
 
+function selectPeriodizationModel(profile: TjaiUserProfile): "linear" | "dup" | "block" | "autoregulated" {
+  if (profile.experienceLevel === "beginner") return "linear";
+  if (profile.trainingDays <= 3) return "dup";
+  if (profile.scheduleConstraint === "shift_work" || profile.scheduleConstraint === "travel") return "autoregulated";
+  return "block";
+}
+
 export function buildTJAIUserPrompt(
   profile: TjaiUserProfile,
   metrics: TJAIMetrics,
-  memory?: TjaiMemorySnapshot | null
+  memory?: TjaiMemorySnapshot | null,
+  safetyOverride?: SafetyFlagSet
 ): string {
   const pretty = humanizeProfile(profile);
   const injuries = fmtArray(profile.injuries.map(titleCase));
@@ -71,20 +87,26 @@ export function buildTJAIUserPrompt(
     profile.experienceLevel === "beginner" ||
     profile.biggestObstacles.includes("training_knowledge");
 
-  const calorieCyclingBlock = profile.goal === "muscle_gain"
+  const safetySet = safetyOverride ?? screenUserProfile(profile);
+  const effectivePace: "slow" | "moderate" | "aggressive" =
+    safetySet.disallowAggressivePace && profile.pace === "aggressive" ? "moderate" : profile.pace;
+  const effectiveGoal: TjaiUserProfile["goal"] = safetySet.redsConcern ? "recomposition" : profile.goal;
+  const periodization = selectPeriodizationModel(profile);
+
+  const calorieCyclingBlock = effectiveGoal === "muscle_gain"
     ? `CALORIE CYCLING:
 - Training days: calorieTarget + 200
 - Rest days: calorieTarget - 100
 - Weekly average must still equal calorieTarget * 7.`
-    : profile.goal === "fitness" || profile.goal === "stay_active"
-      ? "CALORIE CYCLING: Skip cycling. Use same calories every day."
+    : effectiveGoal === "fitness" || effectiveGoal === "stay_active" || safetySet.redsConcern
+      ? "CALORIE CYCLING: Skip cycling. Use same calories every day (recovery-first protocol)."
       : `CALORIE CYCLING:
 - Training days: calorieTarget + 150, carbs +40-50g, fat -5g
 - Rest days: calorieTarget - 150, carbs -40-50g, fat +5g
 - Weekly average must still equal calorieTarget * 7.
 - Label meal blocks as Training Day Meal Plan / Rest Day Meal Plan.`;
 
-  const refeedBlock = profile.goal === "fat_loss"
+  const refeedBlock = effectiveGoal === "fat_loss" && !safetySet.redsConcern
     ? `REFEED WEEKS:
 - Week 4 and Week 8: raise to TDEE for 5 days.
 - Increase carbs, keep protein same, fat same/slightly lower.
@@ -95,14 +117,15 @@ export function buildTJAIUserPrompt(
     ? `INJURY MODIFICATIONS (required): User reported "${injuries}".
 Rules:
 1) Remove exercises that stress injured area.
-2) Replace with safe alternatives for same muscle group.
-3) Add section: "Exercises Modified for Your Injury".`
+2) Replace with the highest-SFR safe alternative for the same muscle group.
+3) Add section: "Exercises Modified for Your Injury".
+4) Every modified exercise keeps the same prescribed RPE/RIR.`
     : "";
 
   const budgetBlock =
     profile.monthlyFoodBudget === "budget"
       ? `BUDGET MODE ACTIVE:
-- Use affordable staples only (oats, eggs, rice, canned tuna, chicken, legumes).
+- Use affordable staples only (oats, eggs, rice, canned tuna, chicken, legumes, frozen vegetables).
 - No expensive ingredients.
 - Include "buy in bulk" notes.
 - Weekly grocery cost under $50.`
@@ -113,7 +136,9 @@ Rules:
     poorSleep || profile.stressLevel === "high" || profile.stressLevel === "very_high"
       ? `RECOVERY PROTOCOL REQUIRED:
 - Add dedicated section: "Your Recovery Protocol".
-- Include sleep optimization, cortisol management, and weekly recovery metrics.`
+- Include sleep optimisation (caffeine cutoff 8h pre-bed, 15 min wind-down, consistent wake time),
+  cortisol management (Zone-2 walks, breathwork, alcohol limit), and weekly recovery metrics
+  (morning RHR, HRV trend if available, session RPE drift).`
       : "";
 
   const religiousBlock =
@@ -132,29 +157,32 @@ Rules:
     : "";
 
   const cheatMealBlock =
-    profile.goal === "fat_loss" || profile.goal === "recomposition"
-      ? `CHEAT MEAL STRATEGY REQUIRED:
-- Include strategic cheat meal section with exact day/time.
-- Include pre-cheat, during-cheat, post-cheat protocol.
-- Aggressive pace: once per 2 weeks; moderate pace: weekly.`
+    (effectiveGoal === "fat_loss" || effectiveGoal === "recomposition") && !safetySet.eatingDisorderConcern && !safetySet.redsConcern
+      ? `STRATEGIC MEAL STRATEGY:
+- Call this a "high-carb refeed meal" (not a cheat meal — no moralising language).
+- Include pre, during, and post protocol: normal protein, slightly higher carbs, less dietary fat.
+- ${effectivePace === "aggressive" ? "Once per 2 weeks" : "Weekly"}.`
       : "";
 
   const educationBlock = beginnerMode
     ? `EDUCATION MODE ACTIVE:
-- Add "Beginner Foundations" section (10 concise rules).
+- Add "Beginner Foundations" section (10 concise rules) that explicitly teaches the RPE/RIR scale and what "leave 2 in the tank" feels like.
 - Each exercise includes educationNote.
 - Each meal includes educationNote.`
     : "";
 
   const highStress = profile.stressLevel === "high" || profile.stressLevel === "very_high";
-  const fastPace = profile.pace === "aggressive";
+  const fastPace = effectivePace === "aggressive";
   const isBeginnerLevel = profile.experienceLevel === "beginner";
 
   const coachWarnings: string[] = [];
-  if (highStress && fastPace) coachWarnings.push("⚠️ High stress + aggressive pace = elevated cortisol risk. Moderate calorie deficit automatically. Prioritize recovery days.");
-  if (poorSleep) coachWarnings.push("⚠️ Sleep deprivation detected. Add sleep optimization protocol. Reduce volume on day 1 of each week.");
-  if (highStress && poorSleep) coachWarnings.push("⚠️ Compounding recovery risk. Include mandatory deload in weeks 4, 8. Cortisol management is priority.");
-  if (isBeginnerLevel) coachWarnings.push("⚠️ Beginner detected. Use 2-week adaptation phase. Teach RPE scale. Simpler exercises. More education notes.");
+  if (highStress && fastPace) coachWarnings.push("⚠️ High stress + aggressive pace = elevated cortisol risk. Moderate the deficit and prioritise recovery days.");
+  if (poorSleep) coachWarnings.push("⚠️ Sleep deprivation detected. Add sleep optimisation protocol. Cap working sets at RPE 8 on day 1 of each week.");
+  if (highStress && poorSleep) coachWarnings.push("⚠️ Compounding recovery deficit. Mandatory deload in weeks 4 and 8. Cortisol management is priority.");
+  if (isBeginnerLevel) coachWarnings.push("⚠️ Beginner detected. Use a 2-week adaptation phase. Teach RPE scale explicitly. Use the top-SFR exercise in every slot.");
+  if (safetySet.requiresMedicalClearance) coachWarnings.push("🛑 Medical-clearance trigger active. Include a visible clearance note in the summary and NEVER prescribe near-failure work until clearance is obtained.");
+  if (safetySet.eatingDisorderConcern) coachWarnings.push("⚠️ Disordered-eating risk pattern detected. Plan MUST lead with recomposition framing and non-alarmist referral language.");
+  if (safetySet.redsConcern) coachWarnings.push("🛑 RED-S risk pattern detected. Hold at TDEE. Recomposition only. Encourage a physician check-in.");
 
   const memoryBlock = memory
     ? `== TJAI MEMORY ==
@@ -181,13 +209,22 @@ Adaptive checkpoint: ${
     : "== TJAI MEMORY ==\nNo prior TJAI memory available.";
 
   return `
-Generate a complete 12-week transformation plan for this person. Apply your full coaching intelligence to this data — connect every data point, notice conflicts, and make decisions that optimize their results.
+Generate a complete 12-week transformation plan for this person. Apply the full evidence base below. Connect every data point, notice conflicts, and make decisions that optimise their results safely.
+
+══ EVIDENCE BASE (reference every recommendation back to this) ══
+${renderEvidenceBase(EVIDENCE_BASE_FOR_PLAN)}
+
+══ SAFETY SCREEN ══
+${renderSafetyFlagsForPrompt(safetySet)}
 
 ══ COACH INTELLIGENCE ANALYSIS ══
-${coachWarnings.length > 0 ? coachWarnings.join("\n") : "✅ No critical flags detected. Proceed with standard protocol."}
+${coachWarnings.length > 0 ? coachWarnings.join("\n") : "✅ No critical flags detected. Proceed with standard evidence-based protocol."}
 
 Metabolic type: ${metrics.metabolicType} — adjust macro ratios accordingly.
 Confidence score: ${metrics.confidenceScore}/100
+Periodization model (use this unless evidence contradicts): ${periodization}
+Effective pace (after safety overrides): ${effectivePace}
+Effective goal (after safety overrides): ${effectiveGoal}
 
 ══ CALCULATED METRICS ══
 BMR: ${metrics.bmr} kcal | TDEE: ${metrics.tdee} kcal
@@ -235,7 +272,7 @@ Medical notes: ${profile.injuryNotes ?? "None"}
 Supplements already using: ${supplements}
 Restriction notes: ${profile.restrictionNotes ?? "None"}
 
-== DAILY ROUTINE (analyze for NEAT and meal timing) ==
+== DAILY ROUTINE (analyse for NEAT and meal timing) ==
 ${profile.dailyRoutine || "No free-text routine provided."}
 
 == METABOLIC TYPE CLASSIFICATION ==
@@ -249,7 +286,7 @@ Plateau Prediction: likely around Week ${metrics.plateauWeek}.
 At that week add a "Plateau Breaker Week" with:
 - +200 kcal for 5 days
 - change exercise order or add 1 compound movement
-- +10 min LISS on 2 days
+- +10 min Zone-2 cardio on 2 days
 - return to normal week after.
 
 == REVERSE DIET FLAG ==
@@ -268,11 +305,11 @@ ${injuryBlock || "No injury-specific substitutions required."}
 ${budgetBlock || "Standard budget mode."}
 
 == SUPPLEMENT STACK ==
-Generate tiers:
-- Tier 1 Essential
-- Tier 2 Helpful
-- Tier 3 Optional
-Each supplement: name, dose, timing, why, estimated cost, alreadyUsing flag.
+Generate tiers (evidence ranking):
+- Tier 1 Essential — creatine monohydrate 3–5g/day, whey/plant protein to hit daily target, vitamin D3 if low sun.
+- Tier 2 Helpful — caffeine 3–6 mg/kg pre-workout (if tolerated, not late-session), omega-3 2–3 g/day EPA+DHA, magnesium 200–400 mg if sleep/stress poor.
+- Tier 3 Optional — beta-alanine 3–5 g/day (tingles; >60s efforts only), citrulline 6–8 g pre-workout, ashwagandha 300–600 mg for stress (caution w/ thyroid meds).
+Every supplement: name, dose, timing, why, estimated cost, alreadyUsing flag.
 If budget is low, keep only Tier 1.
 
 == RECOVERY PROTOCOL ==
@@ -290,26 +327,27 @@ recipe: {
 }
 
 == CHEAT MEAL STRATEGY ==
-${cheatMealBlock || "No cheat meal strategy required for this goal."}
+${cheatMealBlock || "No strategic refeed meal required for this goal."}
 
 == DELOAD WEEKS ==
-Deload weeks at 4 and 8:
+Scheduled deload weeks at 4 and 8 (and any week the readiness protocol triggers):
 - sets -40%
-- load -20%
+- load -10–20%
 - same frequency, shorter sessions
+- cap RPE at 7, no failure work
 - no HIIT
-- label clearly.
+- label clearly in weekRange.
 
 == EDUCATION MODE ==
 ${educationBlock || "Education mode not mandatory."}
 
 == OUTPUT FORMAT (STRICT JSON) ==
 
-Respond in this EXACT JSON structure:
+Respond in this EXACT JSON structure. Fill the new evidence-based fields (rpe, rir, tempo, sfrRank, periodization, weeklyVolumeTargets, safety, readiness). Do not hallucinate — only fill what you can ground in the evidence base above.
 
 {
   "summary": {
-    "greeting": "Personal opening message (2-3 sentences, use their data)",
+    "greeting": "Personal opening message (2-3 sentences, use their data, Motivational-Interviewing tone: reflect, then point forward)",
     "calorieTarget": number,
     "protein": number,
     "fat": number,
@@ -317,10 +355,23 @@ Respond in this EXACT JSON structure:
     "water": number,
     "weeklyChange": "e.g. -0.5kg/week",
     "timeToGoal": "e.g. approximately 10-12 weeks",
-    "keyInsight": "One powerful insight about their specific situation (1-2 sentences)"
+    "keyInsight": "One powerful insight about their specific situation (1-2 sentences)",
+    "evidenceAnchor": "Name the main evidence lever this plan uses, e.g. 'MEV→MAV volume ramp + RPE 7–8 autoregulation, ISSN protein floor 2.0 g/kg'."
+  },
+  "safety": {
+    "flags": [{ "code": "", "severity": "info|caution|refer", "message": "", "action": "" }],
+    "requiresMedicalClearance": boolean,
+    "clearanceNote": "Short, specific clearance line shown near the top of the plan — ONLY if a refer flag fired, otherwise omit.",
+    "referralLanguage": "Single non-alarmist sentence pointing to a qualified professional if needed."
+  },
+  "readiness": {
+    "morningChecklist": ["Sleep ≥7h?", "RHR within 5 bpm of baseline?", "Soreness ≤ 3/10?", "Ready to train at prescribed RPE?"],
+    "deloadTriggers": ["List the concrete signs this user should watch for before requesting a deload."],
+    "autoregulationRules": ["Session rules written in user's language — e.g. 'If warm-up feels RPE 8, drop top set 5–10% and hold reps.'"],
+    "sleepHygiene": ["Caffeine cutoff 8h pre-bed", "Wind-down routine 20 min", "Consistent wake time"]
   },
   "diet": {
-    "philosophy": "Brief explanation of why this diet approach suits them (2-3 sentences)",
+    "philosophy": "Brief explanation of why this diet approach suits them, referenced to ISSN protein + TDEE logic (2-3 sentences)",
     "metabolicReset": { "enabled": boolean, "title": "Metabolic Reset Phase", "details": "..." },
     "cheatMealStrategy": {
       "optimalDay": "specific day/time",
@@ -342,7 +393,7 @@ Respond in this EXACT JSON structure:
         "calories": number,
         "isRefeed": boolean,
         "isPlateauBreaker": boolean,
-        "adjustment": "What changes and why",
+        "adjustment": "What changes and why — reference evidence",
         "days": [
           {
             "label": "Training Day Meal Plan",
@@ -389,38 +440,60 @@ Respond in this EXACT JSON structure:
     "tips": ["Practical tip specific to this person"]
   },
   "program": {
-    "philosophy": "Why this training approach suits them",
-    "structure": "e.g. 4-day upper/lower split",
+    "philosophy": "Why this training approach suits them — reference periodization model and volume landmarks",
+    "structure": "e.g. 4-day upper/lower split, block periodization, RPE autoregulated",
+    "periodization": {
+      "model": "${periodization}",
+      "mesocycleWeeks": 4,
+      "deloadEvery": 4,
+      "rationale": "Why this model fits this user (1 sentence)"
+    },
+    "weeklyVolumeTargets": [
+      { "muscle": "Chest", "sets": 10, "band": "MEV" },
+      { "muscle": "Back",  "sets": 14, "band": "MEV" }
+    ],
     "beginnerFoundations": ["..."],
+    "autoregulationRules": [
+      "If warm-up feels heavier than prescribed RPE — drop working load 5–10%.",
+      "If top-set RPE is lower than prescribed — keep load, add reps next session.",
+      "Sleep <5h or stress spike — cap every working set at prescribed RPE -1.",
+      "Pain (not DOMS) in a joint — substitute down the SFR list, do not push through."
+    ],
     "weeks": [
       {
         "weekRange": "Weeks 1–4",
-        "phase": "Foundation",
+        "phase": "Foundation / Accumulation",
+        "focus": "Build technique and reach MAV volume",
         "isDeload": false,
-        "focus": "What this phase builds",
+        "volumeBand": "MEV",
         "days": [
           {
             "day": "Monday",
             "label": "Upper Body — Push",
             "exercises": [
               {
-                "name": "Exercise name",
-                "sets": number,
-                "reps": "8–10 or AMRAP",
+                "name": "Exercise name (top-SFR for this user's equipment)",
+                "sets": 3,
+                "reps": "8–10",
                 "rest": "90s",
+                "rpe": "7–8",
+                "rir": "2",
+                "tempo": "2-0-1-0",
+                "sfrRank": 1,
+                "substitution": "Alternative if equipment/injury prevents main lift",
                 "note": "Form cue or coaching note",
                 "educationNote": "optional short beginner note"
               }
             ],
-            "warmup": "5 min description",
+            "warmup": "5 min specific warm-up (ramp sets to RPE 6 on main lift)",
             "cooldown": "3 min description",
             "duration": "~45 min"
           }
         ]
       }
     ],
-    "progressionRules": ["How to add weight/reps each week"],
-    "cardioRecommendation": "Specific cardio plan based on their answers",
+    "progressionRules": ["How to add weight/reps each week using RPE targets"],
+    "cardioRecommendation": "Specific cardio plan grounded in the cardio dose-response evidence",
     "injuryModifications": "If injuries noted: what to avoid and alternatives"
   },
   "grocery": {
@@ -434,17 +507,16 @@ Respond in this EXACT JSON structure:
     "timeline": [{ "time": "0:00-0:20", "task": "Cook rice", "detail": "...", "storage": "..." }]
   },
   "mindset": {
-    "weeklyCheckin": "What to track and review each week",
-    "ifYouStruggle": "Specific advice for their biggest challenge",
-    "motivation": "Personal motivational message based on their goals"
+    "weeklyCheckin": "What to track and review each week (readiness checklist + key lift weights + sleep + sessional RPE drift)",
+    "ifYouStruggle": "Specific advice for their biggest challenge, MI-style — reflect first, suggest one tiny next action",
+    "motivation": "Personal motivational message based on their goals, never shame-based"
   }
 }
 
 Make every meal use their liked foods and avoid their hated foods.
 If they have religious restrictions, respect them strictly.
-If budget is low: use affordable staples (oats, eggs, rice, canned tuna, chicken).
+If budget is low: use affordable staples (oats, eggs, rice, canned tuna, chicken, legumes).
 If time is low: batch cooking meals, simple 3-ingredient options.
-If injuries noted: remove affected exercises and add alternatives.
+If injuries noted: remove affected exercises and add alternatives from the SFR hierarchy.
 `;
 }
-

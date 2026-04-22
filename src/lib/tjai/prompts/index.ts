@@ -4,4 +4,4 @@
  */
 export { buildTJAISystemPrompt, buildTJAIUserPrompt } from "@/lib/tjai-prompts";
 
-export const TJAI_PROMPT_VERSION = "2026.04.1";
+export const TJAI_PROMPT_VERSION = "2026.04.2-evidence";

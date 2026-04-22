@@ -168,6 +168,34 @@ export type TJAIMeal = {
   educationNote?: string;
 };
 
+export type TJAISafetyFlag = {
+  code: string;
+  severity: "info" | "caution" | "refer";
+  message: string;
+  action: string;
+};
+
+export type TJAISafetyBlock = {
+  flags?: TJAISafetyFlag[];
+  requiresMedicalClearance?: boolean;
+  clearanceNote?: string;
+  referralLanguage?: string;
+};
+
+export type TJAIReadinessProtocol = {
+  morningChecklist?: string[];
+  deloadTriggers?: string[];
+  autoregulationRules?: string[];
+  sleepHygiene?: string[];
+};
+
+export type TJAIPlanPeriodization = {
+  model?: "linear" | "dup" | "block" | "autoregulated";
+  mesocycleWeeks?: number;
+  deloadEvery?: number;
+  rationale?: string;
+};
+
 export type TJAIPlan = {
   summary: {
     greeting: string;
@@ -179,7 +207,10 @@ export type TJAIPlan = {
     weeklyChange: string;
     timeToGoal: string;
     keyInsight: string;
+    evidenceAnchor?: string;
   };
+  safety?: TJAISafetyBlock;
+  readiness?: TJAIReadinessProtocol;
   diet: {
     philosophy: string;
     metabolicReset?: {
@@ -225,11 +256,14 @@ export type TJAIPlan = {
   program: {
     philosophy: string;
     structure: string;
+    periodization?: TJAIPlanPeriodization;
+    weeklyVolumeTargets?: Array<{ muscle: string; sets: number; band: "MV" | "MEV" | "MAV" | "MRV" }>;
     weeks: Array<{
       weekRange: string;
       phase: string;
       focus: string;
       isDeload?: boolean;
+      volumeBand?: "MEV" | "MAV" | "MRV" | "deload";
       days: Array<{
         day: string;
         label: string;
@@ -240,6 +274,11 @@ export type TJAIPlan = {
           rest: string;
           note?: string;
           educationNote?: string;
+          rpe?: string;
+          rir?: string;
+          tempo?: string;
+          sfrRank?: number;
+          substitution?: string;
         }>;
         warmup?: string;
         cooldown?: string;
@@ -248,6 +287,7 @@ export type TJAIPlan = {
     }>;
     beginnerFoundations?: string[];
     progressionRules?: string[];
+    autoregulationRules?: string[];
     cardioRecommendation?: string;
     injuryModifications?: string;
   };
