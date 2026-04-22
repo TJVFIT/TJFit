@@ -49,12 +49,12 @@ export function ProgramPaymentSuccessNotice({ message, dismissLabel, programSlug
       role="status"
       className="mb-6 flex items-start justify-between gap-4 rounded-xl border px-4 py-3 sm:px-5 sm:py-4"
       style={{
-        borderColor: "rgba(212,165,116,0.35)",
-        background: "rgba(212,165,116,0.08)"
+        borderColor: "rgba(34,211,238,0.35)",
+        background: "rgba(34,211,238,0.08)"
       }}
     >
       <div className="flex-1">
-        <p className="text-sm font-medium leading-relaxed" style={{ color: "#D4A574" }}>
+        <p className="text-sm font-medium leading-relaxed" style={{ color: "#22D3EE" }}>
           {message}
         </p>
         {programSlug ? (

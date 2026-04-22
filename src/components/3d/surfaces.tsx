@@ -17,7 +17,7 @@ export function ObsidianPanel({
 }) {
   const glowStyle: CSSProperties = {};
   if (glow === "champagne") {
-    glowStyle.background = `radial-gradient(circle at 85% 0%, rgba(212, 165, 116, 0.14), transparent 55%), ${TJ_PALETTE.obsidianGlass}`;
+    glowStyle.background = `radial-gradient(circle at 85% 0%, rgba(34,211,238, 0.14), transparent 55%), ${TJ_PALETTE.obsidianGlass}`;
   } else if (glow === "moonlight") {
     glowStyle.background = `radial-gradient(circle at 15% 100%, rgba(143, 164, 196, 0.12), transparent 55%), ${TJ_PALETTE.obsidianGlass}`;
   } else {

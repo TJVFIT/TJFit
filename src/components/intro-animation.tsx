@@ -18,9 +18,9 @@ import { subscribeToMediaQueryChange } from "@/lib/media-query-list";
  *  3300ms  onComplete — hero takes over
  */
 
-const CHAMPAGNE = "#d4a574";
-const CHAMPAGNE_HI = "#e8c79c";
-const ROSE_GOLD = "#f0b89a";
+const CHAMPAGNE = "#22D3EE";
+const CHAMPAGNE_HI = "#A5F3FC";
+const ROSE_GOLD = "#67E8F9";
 const OBSIDIAN = "#08080a";
 
 type Phase = "enter" | "draw" | "fill" | "settled" | "shimmer" | "exit";
@@ -87,7 +87,7 @@ export default function IntroAnimation({ onComplete }: { onComplete: () => void 
           position: "absolute",
           inset: 0,
           background:
-            "radial-gradient(ellipse 60% 50% at 50% 46%, rgba(212,165,116,0.14) 0%, transparent 62%)"
+            "radial-gradient(ellipse 60% 50% at 50% 46%, rgba(34,211,238,0.14) 0%, transparent 62%)"
         }}
       />
       {/* Editorial hairlines */}
@@ -98,7 +98,7 @@ export default function IntroAnimation({ onComplete }: { onComplete: () => void 
           top: "16%",
           width: 1,
           height: 96,
-          background: "linear-gradient(180deg, transparent, rgba(212,165,116,0.36))",
+          background: "linear-gradient(180deg, transparent, rgba(34,211,238,0.36))",
           transform: "translateX(-50%)",
           opacity: phase === "enter" ? 0 : 1,
           transition: "opacity 0.6s ease 0.1s"
@@ -111,7 +111,7 @@ export default function IntroAnimation({ onComplete }: { onComplete: () => void 
           bottom: "18%",
           width: 1,
           height: 96,
-          background: "linear-gradient(0deg, transparent, rgba(212,165,116,0.36))",
+          background: "linear-gradient(0deg, transparent, rgba(34,211,238,0.36))",
           transform: "translateX(-50%)",
           opacity: phase === "enter" ? 0 : 1,
           transition: "opacity 0.6s ease 0.1s"

@@ -3056,16 +3056,16 @@ textarea:focus-visible {
 }
 
 *:focus-visible {
-  outline: 2px solid rgba(212, 165, 116, 0.85);
+  outline: 2px solid rgba(34,211,238, 0.85);
   outline-offset: 2px;
   border-radius: 4px;
 }
 button:focus-visible,
 a:focus-visible,
 [role="button"]:focus-visible {
-  outline: 2px solid rgba(212, 165, 116, 0.95);
+  outline: 2px solid rgba(34,211,238, 0.95);
   outline-offset: 3px;
-  box-shadow: 0 0 0 4px rgba(212, 165, 116, 0.18);
+  box-shadow: 0 0 0 4px rgba(34,211,238, 0.18);
 }
 
 .tj-cursor-glow {
@@ -3078,7 +3078,7 @@ a:focus-visible,
   pointer-events: none;
   z-index: 1;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(212, 165, 116, 0.08) 0%, rgba(212, 165, 116, 0.03) 30%, transparent 62%);
+  background: radial-gradient(circle, rgba(34,211,238, 0.08) 0%, rgba(34,211,238, 0.03) 30%, transparent 62%);
   transition: opacity 0.3s ease;
   will-change: transform;
 }

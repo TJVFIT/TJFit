@@ -465,7 +465,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
                   key={q}
                   type="button"
                   onClick={() => void sendMessage(q)}
-                  className="rounded-full border border-white/[0.08] bg-[#15171c] px-3 py-1.5 text-xs font-medium text-zinc-300 transition-all hover:border-[#d4a574]/45 hover:text-white active:scale-[0.98]"
+                  className="rounded-full border border-white/[0.08] bg-[#15171c] px-3 py-1.5 text-xs font-medium text-zinc-300 transition-all hover:border-[#22D3EE]/45 hover:text-white active:scale-[0.98]"
                 >
                   {q}
                 </button>

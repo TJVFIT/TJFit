@@ -104,7 +104,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
         className="relative overflow-hidden rounded-3xl border p-8 text-center sm:p-12"
         style={{
           borderColor: TJ_PALETTE.hairline,
-          background: `radial-gradient(ellipse 90% 80% at 50% 0%, rgba(212,165,116,0.12), transparent 60%), ${TJ_PALETTE.obsidian}`
+          background: `radial-gradient(ellipse 90% 80% at 50% 0%, rgba(34,211,238,0.12), transparent 60%), ${TJ_PALETTE.obsidian}`
         }}
       >
         <div
@@ -146,7 +146,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
             style={{
               background: `linear-gradient(180deg, ${TJ_PALETTE.champagneHi}, ${TJ_PALETTE.champagne})`,
               color: TJ_PALETTE.obsidian,
-              boxShadow: "0 12px 40px rgba(212,165,116,0.28)"
+              boxShadow: "0 12px 40px rgba(34,211,238,0.28)"
             }}
           >
             {copy.heroCta}

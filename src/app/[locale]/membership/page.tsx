@@ -23,7 +23,7 @@ export default function MembershipPage({ params }: { params: { locale: string } 
         className="relative overflow-hidden rounded-3xl border px-6 py-14 sm:px-10 sm:py-16"
         style={{
           borderColor: TJ_PALETTE.hairline,
-          background: `radial-gradient(ellipse 80% 70% at 50% 0%, rgba(212,165,116,0.12), transparent 62%), ${TJ_PALETTE.obsidian}`
+          background: `radial-gradient(ellipse 80% 70% at 50% 0%, rgba(34,211,238,0.12), transparent 62%), ${TJ_PALETTE.obsidian}`
         }}
       >
         <div
@@ -38,8 +38,8 @@ export default function MembershipPage({ params }: { params: { locale: string } 
             className="mb-5 inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.24em]"
             style={{
               color: TJ_PALETTE.champagne,
-              borderColor: "rgba(212,165,116,0.3)",
-              background: "rgba(212,165,116,0.06)"
+              borderColor: "rgba(34,211,238,0.3)",
+              background: "rgba(34,211,238,0.06)"
             }}
           >
             Membership

@@ -197,7 +197,7 @@ export default function ProgramsPage({ params }: { params: { locale: string } })
         <div
           className="absolute inset-0"
           style={{
-            background: `radial-gradient(ellipse 90% 70% at 70% 25%, rgba(212,165,116,0.14), transparent 60%), linear-gradient(180deg, transparent 0%, ${TJ_PALETTE.obsidian} 85%)`
+            background: `radial-gradient(ellipse 90% 70% at 70% 25%, rgba(34,211,238,0.14), transparent 60%), linear-gradient(180deg, transparent 0%, ${TJ_PALETTE.obsidian} 85%)`
           }}
         />
       </div>

@@ -40,8 +40,8 @@ export function ProgramDetailHero({
       style={
         tone === "champagne"
           ? {
-              borderColor: "rgba(212,165,116,0.32)",
-              background: "rgba(212,165,116,0.08)",
+              borderColor: "rgba(34,211,238,0.32)",
+              background: "rgba(34,211,238,0.08)",
               color: TJ_PALETTE.champagne
             }
           : {
@@ -63,7 +63,7 @@ export function ProgramDetailHero({
       <div
         className="pointer-events-none absolute inset-0 z-0"
         style={{
-          background: `radial-gradient(ellipse 90% 70% at 72% 40%, rgba(212,165,116,0.14), transparent 60%), radial-gradient(ellipse 70% 60% at 15% 90%, rgba(143,164,196,0.05), transparent 55%)`
+          background: `radial-gradient(ellipse 90% 70% at 72% 40%, rgba(34,211,238,0.14), transparent 60%), radial-gradient(ellipse 70% 60% at 15% 90%, rgba(143,164,196,0.05), transparent 55%)`
         }}
         aria-hidden
       />

@@ -82,8 +82,8 @@ export function LanguageSwitcher({
         onClick={() => setOpen((v) => !v)}
         className={cn(
           "inline-flex touch-manipulation items-center gap-2 rounded-lg border px-3 py-1.5 text-[13px] transition-[border-color,color,background-color] duration-150 ease-out",
-          "border-[rgba(212,165,116,0.18)] text-[#A8A294] hover:border-[rgba(212,165,116,0.42)] hover:text-[#F6F3ED]",
-          open && "border-[rgba(212,165,116,0.42)] text-[#F6F3ED] bg-[rgba(212,165,116,0.06)]",
+          "border-[rgba(34,211,238,0.18)] text-[#A8A294] hover:border-[rgba(34,211,238,0.42)] hover:text-[#F6F3ED]",
+          open && "border-[rgba(34,211,238,0.42)] text-[#F6F3ED] bg-[rgba(34,211,238,0.06)]",
           drawer && "w-full justify-between"
         )}
       >
@@ -100,7 +100,7 @@ export function LanguageSwitcher({
         aria-label="Language"
         className={cn(
           "absolute z-[120] rounded-[12px] border p-2 shadow-[0_24px_64px_rgba(0,0,0,0.75)] backdrop-blur-xl transition-[opacity,transform] duration-150 ease-out",
-          "border-[rgba(212,165,116,0.18)] bg-[rgba(12,12,14,0.96)]",
+          "border-[rgba(34,211,238,0.18)] bg-[rgba(12,12,14,0.96)]",
           drawer ? "start-0 end-0 top-[calc(100%+6px)] w-full" : "end-0 top-[calc(100%+8px)] min-w-[260px]",
           open ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none -translate-y-1 opacity-0"
         )}
@@ -112,7 +112,7 @@ export function LanguageSwitcher({
             placeholder="Search language…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full rounded-md border border-[rgba(212,165,116,0.14)] bg-[rgba(0,0,0,0.4)] px-2.5 py-1.5 text-[12px] text-[#F6F3ED] placeholder:text-[#6a6458] focus:border-[rgba(212,165,116,0.4)] focus:outline-none"
+            className="w-full rounded-md border border-[rgba(34,211,238,0.14)] bg-[rgba(0,0,0,0.4)] px-2.5 py-1.5 text-[12px] text-[#F6F3ED] placeholder:text-[#6a6458] focus:border-[rgba(34,211,238,0.4)] focus:outline-none"
           />
         </div>
         <div className="max-h-[320px] overflow-y-auto pr-0.5">
@@ -131,8 +131,8 @@ export function LanguageSwitcher({
                   onClick={() => setOpen(false)}
                   className={cn(
                     "flex items-center justify-between gap-2 rounded-md px-2.5 py-2 text-[13px] transition-[background-color,color] duration-150",
-                    "text-[#A8A294] hover:bg-[rgba(212,165,116,0.08)] hover:text-[#F6F3ED]",
-                    active && "bg-[rgba(212,165,116,0.1)] text-[#F6F3ED]"
+                    "text-[#A8A294] hover:bg-[rgba(34,211,238,0.08)] hover:text-[#F6F3ED]",
+                    active && "bg-[rgba(34,211,238,0.1)] text-[#F6F3ED]"
                   )}
                 >
                   <span className="flex items-center gap-2.5 min-w-0">
@@ -142,7 +142,7 @@ export function LanguageSwitcher({
                       <span className="truncate text-[11px] opacity-60">{meta.label} · {code.toUpperCase()}</span>
                     </span>
                   </span>
-                  {active ? <Check className="h-3.5 w-3.5 text-[#D4A574]" aria-hidden /> : null}
+                  {active ? <Check className="h-3.5 w-3.5 text-[#22D3EE]" aria-hidden /> : null}
                 </Link>
               );
             })

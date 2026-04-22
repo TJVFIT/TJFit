@@ -108,7 +108,7 @@ export function TJAIHub({ locale }: { locale: Locale }) {
       <div
         className="pointer-events-none absolute inset-0 z-0 opacity-[0.55]"
         style={{
-          background: `radial-gradient(ellipse 80% 50% at 70% 0%, rgba(212,165,116,0.12), transparent 60%), radial-gradient(ellipse 60% 40% at 10% 100%, rgba(143,164,196,0.05), transparent 55%)`
+          background: `radial-gradient(ellipse 80% 50% at 70% 0%, rgba(34,211,238,0.12), transparent 60%), radial-gradient(ellipse 60% 40% at 10% 100%, rgba(143,164,196,0.05), transparent 55%)`
         }}
         aria-hidden
       />
@@ -124,7 +124,7 @@ export function TJAIHub({ locale }: { locale: Locale }) {
           <div className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="inline-flex items-center gap-2 text-[28px] font-extrabold text-[#D4A574]">
+                <p className="inline-flex items-center gap-2 text-[28px] font-extrabold text-[#22D3EE]">
                   <Sparkles className="sparkle-pulse h-7 w-7" />
                   TJAI
                 </p>
@@ -142,13 +142,13 @@ export function TJAIHub({ locale }: { locale: Locale }) {
                     "rounded-full border px-3 py-1 text-xs font-semibold",
                     tier === "pro"
                       ? "border-blue-400/35 bg-blue-400/10 text-blue-300"
-                      : "border-[rgba(212,165,116,0.35)] bg-[rgba(212,165,116,0.12)] text-[#D4A574]"
+                      : "border-[rgba(34,211,238,0.35)] bg-[rgba(34,211,238,0.12)] text-[#22D3EE]"
                   )}>
                     [{tierLabel(locale, tier).toUpperCase()}]
                   </span>
                 )}
                 {tier === "core" ? (
-                  <a href={`/${locale}/membership`} className="text-xs font-semibold text-[#D4A574] hover:text-white">
+                  <a href={`/${locale}/membership`} className="text-xs font-semibold text-[#22D3EE] hover:text-white">
                     Upgrade →
                   </a>
                 ) : null}
