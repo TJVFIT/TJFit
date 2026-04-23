@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState, type MutableRefObject } from "react";
 
-export type HeroStageVariant = "scarab" | "dumbbell" | "nutrient" | "neural";
+export type HeroStageVariant = "scarab" | "dumbbell" | "nutrient" | "neural" | "curl-athlete";
 
 type Props = {
   variant?: HeroStageVariant;

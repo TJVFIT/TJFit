@@ -5,6 +5,7 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { TJScene } from "./scene";
 import {
+  CurlAthleteCenterpiece,
   DumbbellCenterpiece,
   NeuralOrbCenterpiece,
   NutrientCenterpiece,
@@ -34,6 +35,8 @@ function ParallaxCamera({ pointerRef }: { pointerRef: HeroPointerRef }) {
 
 function Centerpiece({ variant, pointerRef, speed }: Props) {
   switch (variant) {
+    case "curl-athlete":
+      return <CurlAthleteCenterpiece pointerRef={pointerRef} speed={speed} />;
     case "dumbbell":
       return <DumbbellCenterpiece pointerRef={pointerRef} speed={speed} />;
     case "nutrient":

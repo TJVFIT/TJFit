@@ -314,6 +314,32 @@ export function ImmersiveHome({
       />
 
       <SectionTransition variant="soft" />
+
+      {/* Compact TJAI summary — first thing after hero, before anything else */}
+      <section
+        className="reveal-section relative border-t border-[#1E2028] bg-[rgba(10,10,11,0.7)] px-6 py-16 lg:px-12 lg:py-20"
+        aria-label="TJAI overview"
+      >
+        <div className="mx-auto flex max-w-5xl flex-col items-start gap-8 md:flex-row md:items-center md:justify-between md:gap-10">
+          <div className="max-w-xl">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">TJAI</p>
+            <h2 className="mt-3 font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+              Your AI coach, built for your body.
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-[var(--color-text-secondary)] sm:text-base">
+              Answer 25 questions — TJAI generates a full 12-week training plan, diet, and supplement stack
+              tuned to your goals, equipment and time. Preview it free; unlock the full plan when you&rsquo;re ready.
+            </p>
+          </div>
+          <Link
+            href={`/${locale}/tjai`}
+            className="lux-btn-primary inline-flex min-h-[48px] shrink-0 items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-bold text-background shadow-[0_4px_24px_rgba(34,211,238,0.35)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02]"
+          >
+            Try TJAI <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </section>
+
       {/* Editorial rail — no marquee, no shouty caps */}
       <div className="-mt-px border-y border-white/[0.06] bg-[#111215]/35">
         <p className="mx-auto max-w-6xl px-6 py-4 text-center text-[10px] font-medium uppercase leading-loose tracking-[0.28em] text-[#52525B] lg:px-12">
@@ -369,7 +395,7 @@ export function ImmersiveHome({
       <SectionTransition variant="soft" />
 
       {/* ══════════════ PROGRAMS — Parallax BG ══════════════ */}
-      <div ref={programsSectionRef} className="reveal-section relative overflow-hidden border-t border-[#1E2028]">
+      <div id="programs" ref={programsSectionRef} className="reveal-section relative overflow-hidden border-t border-[#1E2028] scroll-mt-20">
         <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
           <ParallaxLayer reduce={reduce} strength={9} className="absolute inset-0 h-full w-full">
             <div className="absolute inset-0">
@@ -557,7 +583,7 @@ export function ImmersiveHome({
 
       {/* ══════════════ DIETS ══════════════ */}
       {dietSlice.length > 0 && (
-        <section className="reveal-section relative border-t border-[#1E2028] bg-[#0A0A0B] px-6 py-24 lg:px-12 lg:py-32">
+        <section id="diets" className="reveal-section relative border-t border-[#1E2028] bg-[#0A0A0B] px-6 py-24 lg:px-12 lg:py-32 scroll-mt-20">
           <span className="ghost-text pointer-events-none start-1/2 top-16 z-0 -translate-x-1/2 text-[#A78BFA] opacity-[0.04]" aria-hidden>
             NUTRITION
           </span>
@@ -600,7 +626,9 @@ export function ImmersiveHome({
       <LogoShowcase locale={locale} reduce={reduce} />
 
       {/* ══════════════ COACH CTA ══════════════ */}
-      <HomeCoachCta locale={locale} />
+      <div id="coaches" className="scroll-mt-20">
+        <HomeCoachCta locale={locale} />
+      </div>
 
       {/* ══════════════ NEWSLETTER ══════════════ */}
       <HomeNewsletterBar locale={locale} />

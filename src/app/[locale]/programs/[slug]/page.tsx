@@ -56,6 +56,7 @@ export default async function ProgramDetailPage({
   let customProgramPdfUrl: string | null = null;
   let customProgramTranslatedText: string | null = null;
 
+  let customProgramPdfPath: string | null = null;
   if (!staticProgram) {
     const supabase = getSupabaseServerClient();
     if (supabase) {
@@ -69,8 +70,7 @@ export default async function ProgramDetailPage({
         const row = data as CustomProgramRow;
         customProgram = localizeCustomProgramRow(row, locale);
         customProgramTranslatedText = row.localized_pdf_text?.[locale] ?? row.source_pdf_text ?? "";
-        const { data: signed } = await supabase.storage.from("program-assets").createSignedUrl(row.pdf_path, 60 * 20);
-        customProgramPdfUrl = signed?.signedUrl ?? null;
+        customProgramPdfPath = row.pdf_path;
       }
     }
   }
@@ -97,10 +97,24 @@ export default async function ProgramDetailPage({
   if (program && !program.is_free && !userId) {
     redirect(`/${locale}/signup?redirect=${encodeURIComponent(`/${locale}/programs/${slug}`)}`);
   }
+  if (customProgram && !userId) {
+    redirect(`/${locale}/signup?redirect=${encodeURIComponent(`/${locale}/programs/${slug}`)}`);
+  }
   let hasPaidOrder = false;
   if (authCtx && program && !program.is_free) {
     hasPaidOrder = await userHasPaidProgram(authCtx.supabase, userId!, slug);
   }
+  let hasPaidCustomProgram = false;
+  if (authCtx && customProgram) {
+    hasPaidCustomProgram = isAdmin || (await userHasPaidProgram(authCtx.supabase, userId!, slug));
+    if (hasPaidCustomProgram && customProgramPdfPath) {
+      const { data: signed } = await authCtx.supabase.storage
+        .from("program-assets")
+        .createSignedUrl(customProgramPdfPath, 60 * 20);
+      customProgramPdfUrl = signed?.signedUrl ?? null;
+    }
+  }
+  const customProgramLocked = Boolean(customProgram) && !hasPaidCustomProgram;
   const access = resolveStaticProgramAccess(program ?? null, userId, hasPaidOrder, isAdmin);
 
   const baseTry = program ? getProgramBasePriceTry(program) : customProgram?.price_try ?? 400;
@@ -267,10 +281,10 @@ export default async function ProgramDetailPage({
             <div className="mt-8 rounded-[24px] border border-white/10 bg-white/5 p-6">
               <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{copy.autoTranslatedPdf}</p>
               <p className="mt-3 text-sm leading-7 text-zinc-300">
-                {(customProgramTranslatedText ?? "").slice(0, 1200)}
-                {(customProgramTranslatedText ?? "").length > 1200 ? "..." : ""}
+                {(customProgramTranslatedText ?? "").slice(0, customProgramLocked ? 400 : 1200)}
+                {(customProgramTranslatedText ?? "").length > (customProgramLocked ? 400 : 1200) ? "..." : ""}
               </p>
-              {customProgramPdfUrl && (
+              {customProgramPdfUrl && !customProgramLocked ? (
                 <div className="mt-4">
                   <a
                     href={customProgramPdfUrl}
@@ -281,7 +295,16 @@ export default async function ProgramDetailPage({
                     {copy.downloadUploadedPdf}
                   </a>
                 </div>
-              )}
+              ) : customProgramLocked ? (
+                <div className="mt-4">
+                  <Link
+                    href={checkoutHref}
+                    className="gradient-button inline-flex items-center rounded-full px-5 py-2.5 text-sm font-medium text-white"
+                  >
+                    {copy.getFullAccess}
+                  </Link>
+                </div>
+              ) : null}
             </div>
           )}
 

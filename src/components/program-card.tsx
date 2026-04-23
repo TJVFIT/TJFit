@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowRight, Lock } from "lucide-react";
 
 import { useCardInCenter } from "@/hooks/useCardInCenter";
@@ -15,15 +15,34 @@ const shellClass =
 
 function useCardSpotlight() {
   const [pos, setPos] = useState({ x: 50, y: 50, visible: false });
+  const rafRef = useRef<number | null>(null);
+  const pendingRef = useRef<{ x: number; y: number } | null>(null);
   const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    setPos({
+    pendingRef.current = {
       x: ((e.clientX - rect.left) / rect.width) * 100,
-      y: ((e.clientY - rect.top) / rect.height) * 100,
-      visible: true
+      y: ((e.clientY - rect.top) / rect.height) * 100
+    };
+    if (rafRef.current != null) return;
+    rafRef.current = window.requestAnimationFrame(() => {
+      rafRef.current = null;
+      const next = pendingRef.current;
+      if (next) setPos({ x: next.x, y: next.y, visible: true });
     });
   };
-  const onLeave = () => setPos((p) => ({ ...p, visible: false }));
+  const onLeave = () => {
+    if (rafRef.current != null) {
+      window.cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+    setPos((p) => ({ ...p, visible: false }));
+  };
+  useEffect(
+    () => () => {
+      if (rafRef.current != null) window.cancelAnimationFrame(rafRef.current);
+    },
+    []
+  );
   return { pos, onMove, onLeave };
 }
 
@@ -247,13 +266,18 @@ export function ProgramCard({
   const priceLine = priceLabel ?? String(program.price);
   const { pos, onMove, onLeave } = useCardSpotlight();
 
+  const spotlightStyle = useMemo<React.CSSProperties>(
+    () => ({
+      opacity: pos.visible ? 1 : 0,
+      background: `radial-gradient(200px circle at ${pos.x}% ${pos.y}%, rgba(34,211,238,0.07), transparent 70%)`
+    }),
+    [pos.x, pos.y, pos.visible]
+  );
+
   const spotlightOverlay = (
     <div
       className="pointer-events-none absolute inset-0 z-10 transition-opacity duration-300"
-      style={{
-        opacity: pos.visible ? 1 : 0,
-        background: `radial-gradient(200px circle at ${pos.x}% ${pos.y}%, rgba(34,211,238,0.07), transparent 70%)`
-      }}
+      style={spotlightStyle}
       aria-hidden
     />
   );
