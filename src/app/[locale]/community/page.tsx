@@ -1,14 +1,12 @@
-import { CommunityHub } from "@/components/community-hub";
-import { requireLocaleParam } from "@/lib/require-locale";
+"use client";
 
-export default function CommunityPage({
-  params,
-  searchParams
-}: {
-  params: { locale: string };
-  searchParams?: { tab?: string };
-}) {
-  const locale = requireLocaleParam(params.locale);
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-  return <CommunityHub locale={locale} initialTab={searchParams?.tab ?? null} />;
+export default function CommunityPage({ params }: { params: { locale: string } }) {
+  const router = useRouter();
+  useEffect(() => {
+    router.replace(`/${params.locale}#community`);
+  }, [router, params.locale]);
+  return null;
 }
