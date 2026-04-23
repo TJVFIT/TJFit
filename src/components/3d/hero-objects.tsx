@@ -153,6 +153,8 @@ export function CurlAthleteCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
   const rightForearmRef = useRef<THREE.Group>(null);
   const leftBicepRef = useRef<THREE.Mesh>(null);
   const rightBicepRef = useRef<THREE.Mesh>(null);
+  const leftPecRef = useRef<THREE.Mesh>(null);
+  const rightPecRef = useRef<THREE.Mesh>(null);
   const torsoWireRef = useRef<THREE.Mesh>(null);
 
   const REST = 0.16;
@@ -173,40 +175,44 @@ export function CurlAthleteCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
     if (leftForearmRef.current) leftForearmRef.current.rotation.x = -leftAngle;
     if (rightForearmRef.current) rightForearmRef.current.rotation.x = -rightAngle;
 
-    if (leftBicepRef.current) {
-      const mat = leftBicepRef.current.material as THREE.MeshStandardMaterial;
-      mat.emissiveIntensity = 0.55 + leftAmt * 0.7;
-      const s = 1 + leftAmt * 0.08;
-      leftBicepRef.current.scale.set(s, 1, s);
-    }
-    if (rightBicepRef.current) {
-      const mat = rightBicepRef.current.material as THREE.MeshStandardMaterial;
-      mat.emissiveIntensity = 0.55 + rightAmt * 0.7;
-      const s = 1 + rightAmt * 0.08;
-      rightBicepRef.current.scale.set(s, 1, s);
-    }
+    const pulseBicep = (ref: React.RefObject<THREE.Mesh>, amt: number) => {
+      if (!ref.current) return;
+      const mat = ref.current.material as THREE.MeshStandardMaterial;
+      mat.emissiveIntensity = 0.65 + amt * 0.8;
+      const s = 1 + amt * 0.14;
+      ref.current.scale.set(s, s * 0.95, s);
+    };
+    pulseBicep(leftBicepRef, leftAmt);
+    pulseBicep(rightBicepRef, rightAmt);
+
+    const pulsePec = (ref: React.RefObject<THREE.Mesh>, amt: number) => {
+      if (!ref.current) return;
+      const mat = ref.current.material as THREE.MeshStandardMaterial;
+      mat.emissiveIntensity = 0.5 + amt * 0.4;
+    };
+    pulsePec(leftPecRef, leftAmt);
+    pulsePec(rightPecRef, rightAmt);
 
     if (rootRef.current) {
-      const breath = Math.sin(t * 0.9) * 0.018;
+      const breath = Math.sin(t * 0.9) * 0.02;
       rootRef.current.position.y = -0.15 + breath;
-      rootRef.current.rotation.z = (leftAmt - rightAmt) * 0.04;
-      rootRef.current.rotation.y = -0.28 + m.x * 0.06;
-      rootRef.current.rotation.x = 0.06 + m.y * 0.03;
+      rootRef.current.rotation.z = (leftAmt - rightAmt) * 0.05;
+      rootRef.current.rotation.y = -0.22 + m.x * 0.06;
+      rootRef.current.rotation.x = 0.05 + m.y * 0.03;
     }
 
     if (torsoWireRef.current) {
-      torsoWireRef.current.rotation.y = t * 0.08;
+      torsoWireRef.current.rotation.y = t * 0.1;
     }
   });
 
   const skinMat = TJ_MATERIAL.emberCore;
   const accentMat = TJ_MATERIAL.liquidGold;
-  const wireMat = TJ_MATERIAL.brushedChampagne;
 
-  const UPPER_ARM_LEN = 1.0;
+  const UPPER_ARM_LEN = 1.05;
   const FOREARM_LEN = 0.95;
-  const SHOULDER_Y = 0.7;
-  const SHOULDER_X = 0.72;
+  const SHOULDER_Y = 0.78;
+  const SHOULDER_X = 1.08;
   const UPPER_ARM_DROP = -UPPER_ARM_LEN / 2;
   const ELBOW_Y = -UPPER_ARM_LEN;
   const FOREARM_DROP = -FOREARM_LEN / 2;
@@ -215,17 +221,17 @@ export function CurlAthleteCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
   const Dumbbell = (
     <group>
       <mesh rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[0.05, 0.05, 0.62, 16]} />
+        <cylinderGeometry args={[0.055, 0.055, 0.68, 16]} />
         <meshStandardMaterial {...accentMat} />
       </mesh>
-      {[-0.28, 0.28].map((x) => (
+      {[-0.32, 0.32].map((x) => (
         <group key={x} position={[x, 0, 0]}>
           <mesh rotation={[0, 0, Math.PI / 2]}>
-            <cylinderGeometry args={[0.16, 0.16, 0.16, 24]} />
+            <cylinderGeometry args={[0.19, 0.19, 0.2, 24]} />
             <meshStandardMaterial {...TJ_MATERIAL.polishedObsidian} />
           </mesh>
           <mesh rotation={[0, 0, Math.PI / 2]}>
-            <torusGeometry args={[0.16, 0.018, 10, 40]} />
+            <torusGeometry args={[0.19, 0.02, 10, 40]} />
             <meshStandardMaterial {...accentMat} />
           </mesh>
         </group>
@@ -243,30 +249,45 @@ export function CurlAthleteCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
     bicepRef: React.RefObject<THREE.Mesh>;
   }) => (
     <group position={[SHOULDER_X * side, SHOULDER_Y, 0.05]}>
-      <mesh>
-        <icosahedronGeometry args={[0.22, 1]} />
-        <meshStandardMaterial {...skinMat} emissiveIntensity={0.5} />
+      {/* Deltoid cap — big round shoulder, signature "jacked" silhouette */}
+      <mesh position={[side * 0.05, 0.04, 0]}>
+        <sphereGeometry args={[0.34, 20, 16]} />
+        <meshStandardMaterial color={TJ_PALETTE.champagneHi} emissive={TJ_PALETTE.champagne} emissiveIntensity={0.55} metalness={0.25} roughness={0.22} />
       </mesh>
+      {/* Upper arm — tapered from thick shoulder to narrower elbow */}
       <mesh position={[0, UPPER_ARM_DROP, 0]}>
-        <cylinderGeometry args={[0.13, 0.1, UPPER_ARM_LEN, 16]} />
-        <meshStandardMaterial {...skinMat} emissiveIntensity={0.5} />
+        <cylinderGeometry args={[0.22, 0.15, UPPER_ARM_LEN, 18]} />
+        <meshStandardMaterial {...skinMat} emissiveIntensity={0.55} />
       </mesh>
-      <mesh ref={bicepRef} position={[side * 0.02, UPPER_ARM_DROP + 0.12, 0.06]}>
-        <sphereGeometry args={[0.14, 18, 14]} />
-        <meshStandardMaterial color={TJ_PALETTE.champagneHi} emissive={TJ_PALETTE.champagne} emissiveIntensity={0.55} metalness={0.2} roughness={0.2} />
+      {/* Bicep peak — front-facing bulge that swells on the concentric */}
+      <mesh ref={bicepRef} position={[side * 0.04, UPPER_ARM_DROP + 0.15, 0.14]}>
+        <sphereGeometry args={[0.2, 22, 18]} />
+        <meshStandardMaterial color={TJ_PALETTE.champagneHi} emissive={TJ_PALETTE.champagne} emissiveIntensity={0.65} metalness={0.2} roughness={0.2} />
+      </mesh>
+      {/* Tricep mass — back of the upper arm */}
+      <mesh position={[side * 0.02, UPPER_ARM_DROP, -0.14]}>
+        <sphereGeometry args={[0.18, 18, 14]} />
+        <meshStandardMaterial {...skinMat} emissiveIntensity={0.5} />
       </mesh>
       <group ref={forearmRef} position={[0, ELBOW_Y, 0]}>
-        <mesh position={[0, 0, 0]}>
-          <icosahedronGeometry args={[0.11, 0]} />
-          <meshStandardMaterial {...skinMat} emissiveIntensity={0.45} />
+        {/* Elbow joint */}
+        <mesh>
+          <icosahedronGeometry args={[0.15, 0]} />
+          <meshStandardMaterial {...skinMat} emissiveIntensity={0.5} />
         </mesh>
+        {/* Forearm — bulges in the middle (brachioradialis) */}
         <mesh position={[0, FOREARM_DROP, 0]}>
-          <cylinderGeometry args={[0.1, 0.085, FOREARM_LEN, 14]} />
-          <meshStandardMaterial {...skinMat} emissiveIntensity={0.45} />
+          <cylinderGeometry args={[0.16, 0.11, FOREARM_LEN, 16]} />
+          <meshStandardMaterial {...skinMat} emissiveIntensity={0.5} />
         </mesh>
+        <mesh position={[0, FOREARM_DROP + 0.1, 0.06]}>
+          <sphereGeometry args={[0.14, 16, 12]} />
+          <meshStandardMaterial {...skinMat} emissiveIntensity={0.55} />
+        </mesh>
+        {/* Hand + dumbbell */}
         <group position={[0, HAND_Y - 0.02, 0]}>
           <mesh>
-            <icosahedronGeometry args={[0.12, 0]} />
+            <icosahedronGeometry args={[0.15, 0]} />
             <meshStandardMaterial {...skinMat} emissiveIntensity={0.5} />
           </mesh>
           {Dumbbell}
@@ -277,37 +298,94 @@ export function CurlAthleteCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
 
   return (
     <group ref={rootRef} position={[0, -0.15, 0]}>
-      <mesh position={[0, 1.55, 0]}>
-        <icosahedronGeometry args={[0.32, 1]} />
+      {/* Head — faceless icosahedron, squared-off jaw via scaling */}
+      <mesh position={[0, 1.78, 0]} scale={[0.95, 1.05, 0.95]}>
+        <icosahedronGeometry args={[0.36, 1]} />
         <meshStandardMaterial {...skinMat} emissiveIntensity={0.55} />
       </mesh>
-      <mesh position={[0, 1.18, 0]}>
-        <cylinderGeometry args={[0.13, 0.18, 0.2, 14]} />
-        <meshStandardMaterial {...skinMat} emissiveIntensity={0.45} />
-      </mesh>
-      <mesh position={[0, 0.45, 0]}>
-        <cylinderGeometry args={[0.92, 0.58, 1.3, 10]} />
-        <meshStandardMaterial color={TJ_PALETTE.champagneHi} emissive={TJ_PALETTE.champagne} emissiveIntensity={0.4} metalness={0.35} roughness={0.25} />
-      </mesh>
-      <mesh ref={torsoWireRef} position={[0, 0.45, 0]}>
-        <icosahedronGeometry args={[1.18, 1]} />
-        <meshStandardMaterial color={TJ_PALETTE.champagneHi} wireframe transparent opacity={0.32} emissive={TJ_PALETTE.champagne} emissiveIntensity={0.4} />
-      </mesh>
-      <mesh position={[0, -0.45, 0]}>
-        <cylinderGeometry args={[0.52, 0.7, 0.5, 10]} />
+      {/* Thick neck + traps ridge */}
+      <mesh position={[0, 1.32, 0]}>
+        <cylinderGeometry args={[0.2, 0.34, 0.28, 14]} />
         <meshStandardMaterial {...skinMat} emissiveIntensity={0.5} />
       </mesh>
-      <mesh position={[0, -1.25, 0]}>
-        <coneGeometry args={[0.62, 1.3, 6]} />
-        <meshStandardMaterial {...wireMat} wireframe transparent opacity={0.42} emissive={TJ_PALETTE.champagne} emissiveIntensity={0.3} />
+      {/* Trap caps — the "no-neck" lift on either side */}
+      {[-0.34, 0.34].map((x) => (
+        <mesh key={x} position={[x, 1.18, 0]}>
+          <sphereGeometry args={[0.2, 16, 12]} />
+          <meshStandardMaterial {...skinMat} emissiveIntensity={0.5} />
+        </mesh>
+      ))}
+
+      {/* Torso — wide chest tapering into narrow waist = V-shape */}
+      <mesh position={[0, 0.45, 0]}>
+        <cylinderGeometry args={[1.15, 0.55, 1.6, 12]} />
+        <meshStandardMaterial color={TJ_PALETTE.champagneHi} emissive={TJ_PALETTE.champagne} emissiveIntensity={0.42} metalness={0.3} roughness={0.25} />
       </mesh>
+      {/* Pec slabs — two separate domes for chest mass */}
+      <mesh ref={leftPecRef} position={[-0.42, 0.88, 0.55]} rotation={[0, -0.08, 0.08]}>
+        <sphereGeometry args={[0.48, 22, 16]} />
+        <meshStandardMaterial color={TJ_PALETTE.champagneHi} emissive={TJ_PALETTE.champagne} emissiveIntensity={0.55} metalness={0.25} roughness={0.28} />
+      </mesh>
+      <mesh ref={rightPecRef} position={[0.42, 0.88, 0.55]} rotation={[0, 0.08, -0.08]}>
+        <sphereGeometry args={[0.48, 22, 16]} />
+        <meshStandardMaterial color={TJ_PALETTE.champagneHi} emissive={TJ_PALETTE.champagne} emissiveIntensity={0.55} metalness={0.25} roughness={0.28} />
+      </mesh>
+      {/* Ab block — six-pack read without detail */}
+      <mesh position={[0, 0.15, 0.5]}>
+        <boxGeometry args={[0.55, 0.68, 0.22]} />
+        <meshStandardMaterial color={TJ_PALETTE.champagneHi} emissive={TJ_PALETTE.champagne} emissiveIntensity={0.45} metalness={0.2} roughness={0.3} />
+      </mesh>
+      {/* Lat spread — flare at mid-torso sells the V-taper from the side */}
+      {[-1, 1].map((s) => (
+        <mesh key={s} position={[s * 0.68, 0.5, -0.1]} rotation={[0, 0, s * -0.18]}>
+          <boxGeometry args={[0.28, 0.9, 0.45]} />
+          <meshStandardMaterial {...skinMat} emissiveIntensity={0.5} />
+        </mesh>
+      ))}
+
+      {/* Wireframe shell — premium "tech" overlay */}
+      <mesh ref={torsoWireRef} position={[0, 0.45, 0]}>
+        <icosahedronGeometry args={[1.48, 1]} />
+        <meshStandardMaterial color={TJ_PALETTE.champagneHi} wireframe transparent opacity={0.28} emissive={TJ_PALETTE.champagne} emissiveIntensity={0.38} />
+      </mesh>
+
+      {/* Hips — narrow */}
+      <mesh position={[0, -0.55, 0]}>
+        <cylinderGeometry args={[0.5, 0.6, 0.42, 10]} />
+        <meshStandardMaterial {...skinMat} emissiveIntensity={0.5} />
+      </mesh>
+
+      {/* Legs — individual quads for a serious lower body, not a wireframe cone */}
+      {[-1, 1].map((s) => (
+        <group key={s} position={[s * 0.3, -1.1, 0]}>
+          <mesh position={[0, 0, 0.02]}>
+            <cylinderGeometry args={[0.32, 0.22, 1.2, 14]} />
+            <meshStandardMaterial {...skinMat} emissiveIntensity={0.5} />
+          </mesh>
+          {/* Quad bulge */}
+          <mesh position={[s * -0.04, 0.05, 0.22]}>
+            <sphereGeometry args={[0.22, 16, 12]} />
+            <meshStandardMaterial color={TJ_PALETTE.champagneHi} emissive={TJ_PALETTE.champagne} emissiveIntensity={0.45} metalness={0.2} roughness={0.3} />
+          </mesh>
+          {/* Calf */}
+          <mesh position={[0, -0.95, 0]}>
+            <cylinderGeometry args={[0.2, 0.13, 0.8, 12]} />
+            <meshStandardMaterial {...skinMat} emissiveIntensity={0.5} />
+          </mesh>
+          <mesh position={[0, -0.85, -0.14]}>
+            <sphereGeometry args={[0.18, 14, 12]} />
+            <meshStandardMaterial {...skinMat} emissiveIntensity={0.5} />
+          </mesh>
+        </group>
+      ))}
 
       <ArmGroup side={-1} forearmRef={leftForearmRef} bicepRef={leftBicepRef} />
       <ArmGroup side={1} forearmRef={rightForearmRef} bicepRef={rightBicepRef} />
 
-      <mesh position={[0, 0.3, -0.6]}>
-        <torusGeometry args={[1.9, 0.006, 8, 140]} />
-        <meshStandardMaterial color={TJ_PALETTE.champagneHi} emissive={TJ_PALETTE.champagne} emissiveIntensity={0.6} transparent opacity={0.55} />
+      {/* Aura halo behind figure */}
+      <mesh position={[0, 0.3, -0.7]}>
+        <torusGeometry args={[2.1, 0.008, 8, 140]} />
+        <meshStandardMaterial color={TJ_PALETTE.champagneHi} emissive={TJ_PALETTE.champagne} emissiveIntensity={0.7} transparent opacity={0.6} />
       </mesh>
     </group>
   );

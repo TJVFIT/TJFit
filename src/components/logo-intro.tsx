@@ -7,15 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { BRAND_LOGO_SRC } from "@/lib/brand-assets";
 import { locales, type Locale } from "@/lib/i18n";
 
-type Phase =
-  | "hidden"
-  | "t"
-  | "tj"
-  | "fit"
-  | "man"
-  | "hold"
-  | "languages"
-  | "exit";
+type Phase = "hidden" | "t" | "tj" | "full" | "hold" | "languages" | "exit";
 
 const LANG_LABELS: Record<Locale, { name: string; native: string }> = {
   en: { name: "English", native: "English" },
@@ -32,6 +24,15 @@ const PICKER_TITLE: Record<Locale, string> = {
   es: "Elige tu idioma",
   fr: "Choisissez votre langue"
 };
+
+// The brand PNG is 1024 × 584. We slice it into three regions via clip-path
+// so that three stacked copies of the same image reveal in sequence.
+//   • T layer   — just the T (top-left block).
+//   • J layer   — just the J letter silhouette (top-right block). Slides up.
+//   • Full logo — reveals everything (man inside + "FIT" wordmark).
+const CLIP_T = "inset(2% 53% 26% 2%)";
+const CLIP_J = "inset(10% 4% 26% 48%)";
+const LOGO_SIZE = "clamp(200px, 34vw, 360px)";
 
 export function LogoIntro({
   locale,
@@ -60,11 +61,10 @@ export function LogoIntro({
 
     const timers: number[] = [];
     timers.push(window.setTimeout(() => setPhase("t"), 80));
-    timers.push(window.setTimeout(() => setPhase("tj"), 620));
-    timers.push(window.setTimeout(() => setPhase("fit"), 1180));
-    timers.push(window.setTimeout(() => setPhase("man"), 1680));
-    timers.push(window.setTimeout(() => setPhase("hold"), 2380));
-    timers.push(window.setTimeout(() => setPhase("languages"), 3000));
+    timers.push(window.setTimeout(() => setPhase("tj"), 700));
+    timers.push(window.setTimeout(() => setPhase("full"), 1500));
+    timers.push(window.setTimeout(() => setPhase("hold"), 2500));
+    timers.push(window.setTimeout(() => setPhase("languages"), 3200));
     return () => timers.forEach((t) => window.clearTimeout(t));
   }, [onComplete]);
 
@@ -109,7 +109,7 @@ export function LogoIntro({
             ctx.beginPath();
             ctx.moveTo(nodes[i].x, nodes[i].y);
             ctx.lineTo(nodes[j].x, nodes[j].y);
-            ctx.strokeStyle = `rgba(34,211,238,${(1 - dist / maxDist) * 0.28})`;
+            ctx.strokeStyle = `rgba(34,211,238,${(1 - dist / maxDist) * 0.26})`;
             ctx.lineWidth = 0.8;
             ctx.stroke();
           }
@@ -154,12 +154,28 @@ export function LogoIntro({
 
   if (done) return null;
 
-  const showT = phase !== "hidden" && phase !== "exit" && phase !== "languages";
-  const showJ = ["tj", "fit", "man", "hold"].includes(phase);
-  const showFit = ["fit", "man", "hold"].includes(phase);
-  const showImage = phase === "man" || phase === "hold";
+  const showT = ["t", "tj", "full", "hold"].includes(phase);
+  const showJ = ["tj", "full", "hold"].includes(phase);
+  const showFull = ["full", "hold"].includes(phase);
   const showLangs = phase === "languages";
   const isExiting = phase === "exit";
+
+  const imgProps = {
+    src: BRAND_LOGO_SRC,
+    alt: "",
+    width: 1024,
+    height: 584,
+    priority: true,
+    style: {
+      height: LOGO_SIZE,
+      width: "auto",
+      filter: [
+        "drop-shadow(0 0 10px rgba(34,211,238,0.9))",
+        "drop-shadow(0 0 32px rgba(34,211,238,0.55))",
+        "drop-shadow(0 0 80px rgba(34,211,238,0.25))"
+      ].join(" ")
+    } as React.CSSProperties
+  };
 
   return (
     <div
@@ -175,7 +191,7 @@ export function LogoIntro({
         className="pointer-events-none absolute inset-0"
         aria-hidden
         style={{
-          opacity: showT && !showLangs ? 0.8 : 0,
+          opacity: showT && !showLangs ? 0.85 : 0,
           transition: "opacity 500ms ease"
         }}
       />
@@ -185,82 +201,51 @@ export function LogoIntro({
         aria-hidden
         style={{
           background: showT
-            ? "radial-gradient(ellipse 55% 45% at 50% 50%, rgba(34,211,238,0.12) 0%, rgba(34,211,238,0.03) 50%, transparent 70%)"
+            ? "radial-gradient(ellipse 55% 45% at 50% 50%, rgba(34,211,238,0.14) 0%, rgba(34,211,238,0.04) 50%, transparent 70%)"
             : "transparent",
           transition: "background 600ms ease"
         }}
       />
 
       {!showLangs ? (
-        <div className="relative flex flex-col items-center">
-          <div className="relative flex items-end justify-center" style={{ minHeight: "clamp(120px, 22vw, 220px)" }}>
-            <span
-              className="font-display font-black leading-none tracking-tight text-accent"
-              style={{
-                fontSize: "clamp(120px, 22vw, 220px)",
-                opacity: showT ? 1 : 0,
-                transform: showT ? "translateY(0)" : "translateY(8px)",
-                transition: "opacity 480ms cubic-bezier(0.16,1,0.3,1), transform 480ms cubic-bezier(0.16,1,0.3,1)",
-                textShadow: "0 0 24px rgba(34,211,238,0.6), 0 0 72px rgba(34,211,238,0.25)"
-              }}
-            >
-              T
-            </span>
-            <span
-              className="font-display font-black leading-none tracking-tight text-accent"
-              style={{
-                fontSize: "clamp(120px, 22vw, 220px)",
-                opacity: showJ ? 1 : 0,
-                transform: showJ ? "translateY(0)" : "translateY(64px)",
-                transition: "opacity 520ms cubic-bezier(0.16,1,0.3,1), transform 560ms cubic-bezier(0.22,1,0.36,1)",
-                textShadow: "0 0 24px rgba(34,211,238,0.6), 0 0 72px rgba(34,211,238,0.25)",
-                marginInlineStart: "-0.04em"
-              }}
-            >
-              J
-            </span>
-          </div>
-
-          <div className="relative mt-2 flex items-center justify-center">
-            <span
-              className="font-display font-semibold uppercase tracking-[0.22em] text-accent"
-              style={{
-                fontSize: "clamp(28px, 4.4vw, 44px)",
-                opacity: showFit && !showImage ? 1 : 0,
-                transform: showFit ? "translateY(0)" : "translateY(10px)",
-                transition: "opacity 420ms cubic-bezier(0.16,1,0.3,1), transform 420ms cubic-bezier(0.16,1,0.3,1)",
-                textShadow: "0 0 18px rgba(34,211,238,0.4)"
-              }}
-            >
-              FIT
-            </span>
-          </div>
-
+        <div className="relative" style={{ height: LOGO_SIZE, width: `calc(${LOGO_SIZE} * (1024/584))` }}>
+          {/* Layer 1: just the T letter */}
           <div
-            className="pointer-events-none absolute inset-0 flex items-center justify-center"
+            className="absolute inset-0"
             style={{
-              opacity: showImage ? 1 : 0,
-              transform: showImage ? "scale(1)" : "scale(0.92)",
-              transition: "opacity 620ms cubic-bezier(0.16,1,0.3,1), transform 620ms cubic-bezier(0.16,1,0.3,1)"
+              clipPath: CLIP_T,
+              WebkitClipPath: CLIP_T,
+              opacity: showT ? 1 : 0,
+              transition: "opacity 520ms cubic-bezier(0.16,1,0.3,1)"
             }}
-            aria-hidden
           >
-            <Image
-              src={BRAND_LOGO_SRC}
-              alt=""
-              width={1024}
-              height={836}
-              priority
-              style={{
-                height: "clamp(180px, 30vw, 320px)",
-                width: "auto",
-                filter: [
-                  "drop-shadow(0 0 8px rgba(34,211,238,1))",
-                  "drop-shadow(0 0 25px rgba(34,211,238,0.8))",
-                  "drop-shadow(0 0 60px rgba(34,211,238,0.45))"
-                ].join(" ")
-              }}
-            />
+            <Image {...imgProps} alt="" />
+          </div>
+
+          {/* Layer 2: just the J letter — slides up from below */}
+          <div
+            className="absolute inset-0"
+            style={{
+              clipPath: CLIP_J,
+              WebkitClipPath: CLIP_J,
+              opacity: showJ ? 1 : 0,
+              transform: showJ ? "translateY(0)" : "translateY(60px)",
+              transition:
+                "opacity 520ms cubic-bezier(0.16,1,0.3,1), transform 640ms cubic-bezier(0.22,1,0.36,1)"
+            }}
+          >
+            <Image {...imgProps} alt="" />
+          </div>
+
+          {/* Layer 3: full logo — reveals the man inside + FIT wordmark */}
+          <div
+            className="absolute inset-0"
+            style={{
+              opacity: showFull ? 1 : 0,
+              transition: "opacity 700ms cubic-bezier(0.16,1,0.3,1)"
+            }}
+          >
+            <Image {...imgProps} alt="TJFit" />
           </div>
         </div>
       ) : null}
