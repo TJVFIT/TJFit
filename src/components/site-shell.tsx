@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useState } from "react";
 
 import { CursorTrail } from "@/components/cursor-trail";
 import { DelayedEarlyAccessPopup } from "@/components/delayed-early-access-popup";
@@ -28,23 +28,10 @@ export function SiteShell({
   locale: Locale;
   children: ReactNode;
 }) {
-  const [introDone, setIntroDone] = useState(true);
+  const [introDone, setIntroDone] = useState(false);
   const { blur, scale } = useScrollVelocity();
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      const seen = window.sessionStorage.getItem("tjfit_intro_seen");
-      if (!seen) setIntroDone(false);
-    } catch {
-      setIntroDone(true);
-    }
-  }, []);
-
   const handleIntroComplete = () => {
-    try {
-      window.sessionStorage.setItem("tjfit_intro_seen", "1");
-    } catch {}
     setIntroDone(true);
   };
 
@@ -52,7 +39,7 @@ export function SiteShell({
     <DynamicIslandProvider>
       <PendingNotificationPoller />
       <div className="min-h-screen overflow-x-hidden bg-background text-text">
-        {!introDone ? <LogoIntro onComplete={handleIntroComplete} /> : null}
+        {!introDone ? <LogoIntro locale={locale} onComplete={handleIntroComplete} /> : null}
         <CursorTrail />
         <SpotlightCursor />
         <ScrollToTop />
