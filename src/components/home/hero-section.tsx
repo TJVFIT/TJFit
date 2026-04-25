@@ -2,7 +2,7 @@
 
 import type { CSSProperties, Ref } from "react";
 import Link from "next/link";
-import { ChevronDown, ArrowRight, Sparkles } from "lucide-react";
+import { Activity, ArrowRight, ChevronDown, Gauge, Sparkles, Timer } from "lucide-react";
 
 import { TJ_PALETTE } from "@/components/3d/palette";
 import { TJHeroStage } from "@/components/3d/hero-stage";
@@ -29,6 +29,28 @@ function MagneticLink({
     <Link href={href} className={className} onClick={onClick} ref={ref} style={style}>
       {children}
     </Link>
+  );
+}
+
+function HeroReadout({
+  icon: Icon,
+  label,
+  value,
+  className
+}: {
+  icon: React.ElementType;
+  label: string;
+  value: string;
+  className?: string;
+}) {
+  return (
+    <div className={cn("tj-hero-readout pointer-events-auto hidden lg:block", className)}>
+      <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#71717A]">
+        <Icon className="h-3.5 w-3.5 text-[#67E8F9]" strokeWidth={1.6} />
+        {label}
+      </div>
+      <p className="mt-2 font-display text-xl font-semibold tracking-tight text-white">{value}</p>
+    </div>
   );
 }
 
@@ -66,7 +88,7 @@ export function HeroSection({
   return (
     <section
       ref={sectionRef}
-      className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden px-5 pb-16 pt-20 lg:px-10 lg:px-12"
+      className="tj-hero-premium-stage relative flex min-h-[100svh] flex-col justify-center overflow-hidden px-5 pb-16 pt-20 lg:px-10 lg:px-12"
       style={{ minHeight: "max(720px, 100svh)", background: TJ_PALETTE.obsidian }}
     >
       {/* Deep obsidian wash with cyan brand pool */}
@@ -77,6 +99,8 @@ export function HeroSection({
         }}
         aria-hidden
       />
+      <div className="tj-hero-depth-grid pointer-events-none absolute inset-0 z-0" aria-hidden />
+      <div className="tj-hero-aperture pointer-events-none absolute inset-0 z-[1]" aria-hidden />
 
       {/* Editorial ghost typography */}
       <span className="ghost-text start-[-4%] top-[7%] max-md:start-0 max-md:top-[9%]" aria-hidden style={{ color: "rgba(246,243,237,0.04)" }}>
@@ -106,11 +130,30 @@ export function HeroSection({
         }}
         aria-hidden
       >
+        <div className="tj-hero-kinetic-frame pointer-events-none absolute inset-[7%] hidden lg:block" aria-hidden />
         <TJHeroStage
           variant="curl-athlete"
           pointerReactive={!reduce}
           speed={reduce ? 0 : 0.75}
           intensity={0.95}
+        />
+        <HeroReadout
+          icon={Activity}
+          label="live model"
+          value="Adaptive split"
+          className="absolute right-[8%] top-[18%]"
+        />
+        <HeroReadout
+          icon={Timer}
+          label="cycle"
+          value="12 weeks"
+          className="absolute bottom-[22%] right-[12%]"
+        />
+        <HeroReadout
+          icon={Gauge}
+          label="output"
+          value="Plan + macros"
+          className="absolute bottom-[14%] left-[12%]"
         />
       </div>
 
@@ -218,14 +261,17 @@ export function HeroSection({
           </div>
 
           <div
-            className="mt-10 flex max-w-xl flex-wrap items-center gap-x-5 gap-y-2 text-xs"
+            className="mt-10 grid max-w-xl grid-cols-1 gap-2 text-xs sm:grid-cols-3"
             style={{ ...lineIn(640), color: TJ_PALETTE.textSubtle }}
           >
-            <span className="inline-flex items-center gap-2">No credit card required</span>
-            <span className="hidden sm:inline" aria-hidden style={{ color: TJ_PALETTE.hairline }}>·</span>
-            <span className="inline-flex items-center gap-2">5 languages</span>
-            <span className="hidden sm:inline" aria-hidden style={{ color: TJ_PALETTE.hairline }}>·</span>
-            <span className="inline-flex items-center gap-2">Expert coaches</span>
+            {["No credit card required", "5 languages", "Expert coaches"].map((item) => (
+              <span
+                key={item}
+                className="rounded-full border border-white/[0.07] bg-white/[0.025] px-3 py-2 text-center backdrop-blur-sm"
+              >
+                {item}
+              </span>
+            ))}
           </div>
         </div>
       </div>

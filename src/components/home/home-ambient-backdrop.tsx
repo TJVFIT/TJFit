@@ -12,7 +12,8 @@ export function HomeAmbientBackdrop({ reduce }: { reduce: boolean }) {
       <div
         className="absolute inset-0"
         style={{
-          background: "linear-gradient(180deg, #0A0A0B 0%, #0C0D10 38%, #111215 100%)",
+          background:
+            "radial-gradient(ellipse 70% 42% at 70% 12%, rgba(34,211,238,0.055), transparent 62%), radial-gradient(ellipse 48% 34% at 18% 74%, rgba(246,243,237,0.035), transparent 66%), linear-gradient(180deg, #09090A 0%, #0C0D10 42%, #111215 100%)",
         }}
       />
       <div className={cn("tj-ambient-noise absolute inset-0", reduce && "opacity-0")} />

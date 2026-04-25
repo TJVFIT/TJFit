@@ -2,12 +2,36 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { Activity, ArrowRight, BarChart3, CalendarDays, RefreshCw } from "lucide-react";
 import type { Locale } from "@/lib/i18n";
 import { TJAI_ONE_TIME_PRICE_USD, TJAI_SUBSCRIPTION_PRICES_USD } from "@/lib/tjai-pricing";
 import { TJHeroStage } from "@/components/3d/hero-stage";
 import { TJ_PALETTE } from "@/components/3d/palette";
 
 type TabKey = "training" | "nutrition" | "macros";
+
+const FEATURE_ROWS = [
+  {
+    Icon: Activity,
+    title: "Personalized science",
+    body: "Mifflin-St Jeor BMR, TDEE math, and evidence-based macro targets."
+  },
+  {
+    Icon: CalendarDays,
+    title: "12-week plan",
+    body: "Weekly training schedule plus daily meals, sets, reps, rest, and structure."
+  },
+  {
+    Icon: BarChart3,
+    title: "Science-based numbers",
+    body: "BMR, TDEE, and macro targets calculated for your body and goal pace."
+  },
+  {
+    Icon: RefreshCw,
+    title: "Adaptive updates",
+    body: "If progress stalls, TJAI can adjust training load and nutrition targets."
+  }
+];
 
 const COPY: Record<
   Locale,
@@ -34,7 +58,7 @@ const COPY: Record<
     pricingTitle: "Choose your level",
     faqTitle: "FAQ",
     finalTitle: "Your transformation starts with one question.",
-    finalCta: "Start TJAI →"
+    finalCta: "Start TJAI"
   },
   tr: {
     heroTitle: "TJAI ile tanis.",
@@ -46,7 +70,7 @@ const COPY: Record<
     pricingTitle: "Seviyeni sec",
     faqTitle: "SSS",
     finalTitle: "Donusumun tek bir soruyla baslar.",
-    finalCta: "TJAI'yi Baslat →"
+    finalCta: "TJAI'yi Baslat"
   },
   ar: {
     heroTitle: "تعرّف على TJAI.",
@@ -58,7 +82,7 @@ const COPY: Record<
     pricingTitle: "اختر مستواك",
     faqTitle: "الأسئلة الشائعة",
     finalTitle: "تحوّلك يبدأ بسؤال واحد.",
-    finalCta: "ابدأ TJAI →"
+    finalCta: "ابدأ TJAI"
   },
   es: {
     heroTitle: "Conoce TJAI.",
@@ -70,7 +94,7 @@ const COPY: Record<
     pricingTitle: "Elige tu nivel",
     faqTitle: "FAQ",
     finalTitle: "Tu transformacion empieza con una pregunta.",
-    finalCta: "Empezar TJAI →"
+    finalCta: "Empezar TJAI"
   },
   fr: {
     heroTitle: "Decouvrez TJAI.",
@@ -82,7 +106,7 @@ const COPY: Record<
     pricingTitle: "Choisissez votre niveau",
     faqTitle: "FAQ",
     finalTitle: "Votre transformation commence par une question.",
-    finalCta: "Demarrer TJAI →"
+    finalCta: "Demarrer TJAI"
   }
 };
 
@@ -101,10 +125,11 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
   return (
     <main className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
       <section
-        className="relative overflow-hidden rounded-3xl border p-8 text-center sm:p-12"
+        className="relative overflow-hidden rounded-[1.75rem] border p-6 sm:p-10 lg:p-12"
         style={{
           borderColor: TJ_PALETTE.hairline,
-          background: `radial-gradient(ellipse 90% 80% at 50% 0%, rgba(34,211,238,0.12), transparent 60%), ${TJ_PALETTE.obsidian}`
+          background:
+            `radial-gradient(ellipse 70% 60% at 70% 20%, rgba(34,211,238,0.14), transparent 62%), radial-gradient(ellipse 44% 40% at 12% 100%, rgba(246,243,237,0.05), transparent 68%), ${TJ_PALETTE.obsidian}`
         }}
       >
         <div
@@ -114,61 +139,80 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
         >
           <TJHeroStage variant="neural" speed={0.85} intensity={0.95} />
         </div>
-        <div className="relative z-10">
-          <p className="text-[11px] uppercase tracking-[0.28em]" style={{ color: TJ_PALETTE.accent }}>
-            AI FITNESS COACH
-          </p>
-          <h1
-            className="mt-4 font-display text-4xl font-extrabold sm:text-6xl"
-            style={{ color: TJ_PALETTE.textPrimary, letterSpacing: "-0.02em" }}
-          >
-            {copy.heroTitle}
-          </h1>
-          <p className="mx-auto mt-3 max-w-2xl text-sm sm:text-base" style={{ color: TJ_PALETTE.textMuted }}>
-            {copy.heroSub}
-          </p>
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#09090B] to-transparent" aria-hidden />
+        <div className="relative z-10 grid gap-8 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-center">
+          <div className="text-left">
+            <p className="text-[11px] uppercase tracking-[0.28em]" style={{ color: TJ_PALETTE.accent }}>
+              AI FITNESS COACH
+            </p>
+            <h1
+              className="mt-4 max-w-xl font-display text-4xl font-extrabold leading-[0.98] sm:text-6xl"
+              style={{ color: TJ_PALETTE.textPrimary, letterSpacing: "-0.03em" }}
+            >
+              {copy.heroTitle}
+            </h1>
+            <p className="mt-5 max-w-xl text-sm leading-relaxed sm:text-base" style={{ color: TJ_PALETTE.textMuted }}>
+              {copy.heroSub}
+            </p>
+            <Link
+              href={`/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`}
+              className="mt-7 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-full px-8 text-sm font-bold transition-[filter,transform] duration-200 hover:-translate-y-0.5 hover:brightness-110"
+              style={{
+                background: `linear-gradient(180deg, ${TJ_PALETTE.accentHi}, ${TJ_PALETTE.accent})`,
+                color: TJ_PALETTE.obsidian,
+                boxShadow: "0 12px 40px rgba(34,211,238,0.28)"
+              }}
+            >
+              {copy.heroCta}
+              <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+            <p className="mt-3 text-xs" style={{ color: TJ_PALETTE.textSubtle }}>
+              {copy.noCard}
+            </p>
+          </div>
           <div
-            className="mx-auto mt-6 max-w-xl rounded-2xl border p-4 text-start text-sm"
+            className="rounded-2xl border p-4 text-start text-sm lg:ms-auto lg:w-full lg:max-w-xl"
             style={{
               borderColor: TJ_PALETTE.hairline,
-              background: "rgba(8,8,10,0.6)",
+              background: "linear-gradient(145deg, rgba(13,15,18,0.82), rgba(17,18,21,0.48))",
               color: TJ_PALETTE.textMuted,
-              backdropFilter: "blur(8px)"
+              backdropFilter: "blur(14px)",
+              boxShadow: "0 24px 70px rgba(0,0,0,0.34), inset 0 1px 0 rgba(255,255,255,0.06)"
             }}
           >
+            <div className="mb-4 flex items-center justify-between border-b border-white/[0.06] pb-3">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#71717A]">Live preview</span>
+              <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-2.5 py-1 text-[10px] font-semibold text-cyan-200">
+                adaptive
+              </span>
+            </div>
             <p className="typing-line">Analyzing your profile...</p>
             <p className="typing-line delay">Calculating BMR, TDEE, and macros...</p>
             <p className="typing-line delay-2">Building your 12-week training split...</p>
+            <div className="mt-5 grid grid-cols-3 gap-2 text-center">
+              {["BMR", "TDEE", "Macros"].map((item) => (
+                <span key={item} className="rounded-lg border border-white/[0.06] bg-white/[0.03] px-2 py-2 text-[11px] text-zinc-300">
+                  {item}
+                </span>
+              ))}
+            </div>
           </div>
-          <Link
-            href={`/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`}
-            className="mt-7 inline-flex min-h-[50px] items-center justify-center rounded-full px-8 text-sm font-bold transition-[filter,transform] duration-200 hover:brightness-110"
-            style={{
-              background: `linear-gradient(180deg, ${TJ_PALETTE.accentHi}, ${TJ_PALETTE.accent})`,
-              color: TJ_PALETTE.obsidian,
-              boxShadow: "0 12px 40px rgba(34,211,238,0.28)"
-            }}
-          >
-            {copy.heroCta}
-          </Link>
-          <p className="mt-2 text-xs" style={{ color: TJ_PALETTE.textSubtle }}>
-            {copy.noCard}
-          </p>
         </div>
       </section>
 
       <section className="mt-10">
         <h2 className="text-2xl font-bold text-white">{copy.doesTitle}</h2>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
-          {[
-            ["🧠 Personalized Science", "Mifflin-St Jeor BMR, TDEE math, and evidence-based macro targets."],
-            ["📅 12-Week Plan", "Weekly training schedule + daily meals, sets, reps, rest, and structure."],
-            ["📊 Science-Based Numbers", "BMR, TDEE, and evidence-based macros. Calculated for YOUR body using Mifflin-St Jeor formula."],
-            ["🔄 Adaptive", "If progress stalls, TJAI updates training load and nutrition targets."]
-          ].map(([title, body]) => (
-            <article key={title} className="rounded-2xl border border-divider bg-surface p-5">
-              <p className="text-lg font-semibold text-white">{title}</p>
-              <p className="mt-2 text-sm text-muted">{body}</p>
+          {FEATURE_ROWS.map(({ Icon, title, body }) => (
+            <article
+              key={title}
+              className="group rounded-2xl border border-divider bg-surface p-5 transition-[border-color,background-color,transform] duration-200 hover:-translate-y-1 hover:border-cyan-300/25 hover:bg-surface-2"
+            >
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03] text-cyan-200">
+                <Icon className="h-5 w-5" strokeWidth={1.6} />
+              </span>
+              <p className="mt-4 text-lg font-semibold text-white">{title}</p>
+              <p className="mt-2 text-sm leading-relaxed text-muted">{body}</p>
             </article>
           ))}
         </div>
@@ -220,7 +264,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
           </div>
         ) : null}
         <Link href={`/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`} className="mt-4 inline-flex text-sm font-semibold text-cyan-300">
-          Unlock full plan at checkout →
+          Unlock full plan at checkout <ArrowRight className="ms-1 h-4 w-4" aria-hidden />
         </Link>
       </section>
 
@@ -237,7 +281,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
               <p className="text-lg font-semibold text-white">{title}</p>
               <p className="mt-2 whitespace-pre-line text-sm text-muted">{body}</p>
               <Link href={href} className="mt-4 inline-flex text-sm font-semibold text-cyan-300">
-                Choose →
+                Choose <ArrowRight className="ms-1 h-4 w-4" aria-hidden />
               </Link>
             </article>
           ))}
@@ -262,6 +306,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
           className="mt-5 inline-flex min-h-[52px] items-center justify-center rounded-full bg-accent px-10 text-base font-bold text-[#09090B]"
         >
           {copy.finalCta}
+          <ArrowRight className="ms-2 h-4 w-4" aria-hidden />
         </Link>
       </section>
 

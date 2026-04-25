@@ -75,14 +75,14 @@ export function SiteTopBar({ locale }: { locale: Locale }) {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-40 transition-transform duration-300 ease-out",
+        "tj-topbar fixed inset-x-0 top-0 z-40 transition-transform duration-300 ease-out",
         hidden ? "-translate-y-full" : "translate-y-0"
       )}
       style={{
-        background: "rgba(8,8,10,0.72)",
-        backdropFilter: "blur(18px)",
-        WebkitBackdropFilter: "blur(18px)",
-        borderBottom: "1px solid var(--color-border)"
+        background: "linear-gradient(180deg, rgba(8,8,10,0.82), rgba(8,8,10,0.58))",
+        backdropFilter: "blur(22px) saturate(1.18)",
+        WebkitBackdropFilter: "blur(22px) saturate(1.18)",
+        borderBottom: "1px solid rgba(255,255,255,0.07)"
       }}
       aria-label="Primary"
     >
@@ -99,7 +99,7 @@ export function SiteTopBar({ locale }: { locale: Locale }) {
           aria-label="Primary sections"
           className="pointer-events-none absolute inset-x-0 top-0 flex h-full items-center justify-center"
         >
-          <ul className="pointer-events-auto inline-flex items-center gap-1 rounded-full border border-[var(--color-border)] bg-[rgba(17,18,21,0.6)] p-1 text-sm font-medium">
+          <ul className="pointer-events-auto inline-flex items-center gap-1 rounded-full border border-white/[0.08] bg-[rgba(17,18,21,0.52)] p-1 text-sm font-medium shadow-[0_12px_40px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.06)]">
             {tabs.map((tab) => {
               const active = isTabActive(pathname, tab, locale);
               return (
@@ -110,8 +110,8 @@ export function SiteTopBar({ locale }: { locale: Locale }) {
                     className={cn(
                       "relative inline-flex min-h-[36px] items-center rounded-full px-3 py-1.5 text-[13px] transition-colors duration-150 sm:px-4 sm:text-sm",
                       active
-                        ? "bg-accent/10 text-accent shadow-[inset_0_0_0_1px_rgba(34,211,238,0.35)]"
-                        : "text-[var(--color-text-secondary)] hover:text-white"
+                        ? "bg-accent/12 text-accent shadow-[inset_0_0_0_1px_rgba(34,211,238,0.28),0_8px_22px_rgba(34,211,238,0.08)]"
+                        : "text-[var(--color-text-secondary)] hover:bg-white/[0.04] hover:text-white"
                     )}
                   >
                     {tab.label}
@@ -127,8 +127,8 @@ export function SiteTopBar({ locale }: { locale: Locale }) {
             href={accountHref}
             aria-label={user ? "Account" : SIGN_IN_LABEL[locale]}
             className={cn(
-              "inline-flex min-h-[36px] items-center gap-2 rounded-full border border-[var(--color-border)] px-3 py-1.5 text-[13px] font-medium transition-colors duration-150",
-              "hover:border-[rgba(255,255,255,0.15)] hover:bg-[rgba(255,255,255,0.04)]",
+              "inline-flex min-h-[36px] items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.025] px-3 py-1.5 text-[13px] font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-[border-color,background-color,transform] duration-150",
+              "hover:-translate-y-0.5 hover:border-[rgba(255,255,255,0.15)] hover:bg-[rgba(255,255,255,0.05)]",
               user ? "text-white" : "text-accent"
             )}
           >

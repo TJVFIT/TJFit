@@ -3133,7 +3133,7 @@ button[aria-disabled="true"],
   }
 }
 
-/* Global reduced-motion safety net — collapses any animation/transition
+/* Global reduced-motion safety net - collapses any animation/transition
    that escaped per-component handling, while preserving opacity transitions
    for state legibility. */
 @media (prefers-reduced-motion: reduce) {
@@ -3144,5 +3144,119 @@ button[aria-disabled="true"],
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* Premium 2026 hero/shell upgrade */
+.tj-topbar::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.26), rgba(246, 243, 237, 0.1), transparent);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.tj-hero-premium-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 48% 36% at 76% 32%, rgba(103, 232, 249, 0.13), transparent 64%),
+    radial-gradient(ellipse 34% 24% at 54% 72%, rgba(246, 243, 237, 0.045), transparent 68%);
+  mix-blend-mode: screen;
+}
+
+.tj-hero-depth-grid {
+  background-image:
+    linear-gradient(rgba(246, 243, 237, 0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(246, 243, 237, 0.026) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse 74% 70% at 72% 44%, black 0%, transparent 76%);
+  opacity: 0.72;
+  transform: perspective(900px) rotateX(58deg) translateY(-12%);
+  transform-origin: 50% 38%;
+  animation: tjHeroGridGlide 26s linear infinite;
+}
+
+.tj-hero-aperture {
+  background:
+    linear-gradient(90deg, rgba(10, 10, 11, 0.18), transparent 34%, transparent 72%, rgba(10, 10, 11, 0.32)),
+    radial-gradient(ellipse 76% 82% at 70% 46%, transparent 34%, rgba(10, 10, 11, 0.5) 100%);
+}
+
+.tj-hero-kinetic-frame {
+  border: 1px solid rgba(246, 243, 237, 0.065);
+  border-radius: 999px;
+  box-shadow:
+    inset 0 0 0 1px rgba(34, 211, 238, 0.045),
+    0 0 80px rgba(34, 211, 238, 0.08);
+  mask-image: linear-gradient(90deg, transparent 0%, black 18%, black 86%, transparent 100%);
+}
+
+.tj-hero-kinetic-frame::before,
+.tj-hero-kinetic-frame::after {
+  content: "";
+  position: absolute;
+  inset: 12%;
+  border-radius: inherit;
+  border: 1px solid rgba(34, 211, 238, 0.08);
+}
+
+.tj-hero-kinetic-frame::after {
+  inset: 24%;
+  border-color: rgba(246, 243, 237, 0.055);
+}
+
+.tj-hero-readout {
+  min-width: 168px;
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  border-radius: 14px;
+  background:
+    linear-gradient(145deg, rgba(17, 18, 21, 0.74), rgba(13, 15, 18, 0.42)),
+    radial-gradient(circle at 0% 0%, rgba(34, 211, 238, 0.1), transparent 52%);
+  padding: 0.85rem 1rem;
+  backdrop-filter: blur(18px) saturate(1.12);
+  -webkit-backdrop-filter: blur(18px) saturate(1.12);
+  box-shadow:
+    0 18px 42px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  animation: tjHeroReadoutFloat 8s var(--tj-ease-premium) infinite;
+}
+
+.tj-hero-readout:nth-of-type(2) {
+  animation-delay: -2.2s;
+}
+
+.tj-hero-readout:nth-of-type(3) {
+  animation-delay: -4.4s;
+}
+
+@keyframes tjHeroGridGlide {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 72px 72px, 72px 72px; }
+}
+
+@keyframes tjHeroReadoutFloat {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -7px, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tj-hero-depth-grid,
+  .tj-hero-readout {
+    animation: none;
+  }
+}
+
+@media (max-width: 1023px) {
+  .tj-hero-depth-grid {
+    opacity: 0.36;
+    transform: none;
+    background-size: 56px 56px;
   }
 }
