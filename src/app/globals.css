@@ -640,19 +640,33 @@ strong, b {
   border-radius: 9999px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   padding: 0.625rem 1.25rem;
+  min-height: 44px;
   font-size: 0.875rem;
   font-weight: 500;
   color: rgb(228 228 231);
   transition:
     border-color 0.25s ease,
     background-color 0.25s ease,
-    box-shadow 0.3s ease;
+    box-shadow 0.3s ease,
+    transform 0.15s ease;
 }
 
 .tj-btn-ghost:hover {
   border-color: rgba(34, 211, 238, 0.3);
   background: rgba(255, 255, 255, 0.04);
   box-shadow: 0 0 28px -12px rgba(34, 211, 238, 0.15);
+}
+
+.tj-btn-ghost:active {
+  background: rgba(255, 255, 255, 0.07);
+  transform: scale(0.98);
+}
+
+.tj-btn-ghost:disabled,
+.tj-btn-ghost[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .section-y {
@@ -669,6 +683,7 @@ strong, b {
 
 .lux-btn-primary {
   background: var(--gradient-btn-primary);
+  min-height: 44px;
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.12) inset,
     0 0 20px rgba(34, 211, 238, 0.3);
@@ -685,12 +700,21 @@ strong, b {
     0 0 28px rgba(34, 211, 238, 0.4);
 }
 
+.lux-btn-primary:active {
+  transform: scale(0.97);
+}
+
+.lux-btn-primary:disabled,
+.lux-btn-primary[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none;
+}
+
 @media (hover: hover) and (pointer: fine) {
   .lux-btn-primary:hover {
     transform: scale(1.02);
-  }
-  .lux-btn-primary:active {
-    transform: scale(0.98);
   }
 }
 
@@ -698,11 +722,13 @@ strong, b {
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: linear-gradient(165deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
   backdrop-filter: blur(12px);
+  min-height: 44px;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset;
   transition:
     border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
     background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.15s ease;
 }
 
 .lux-btn-secondary:hover {
@@ -711,6 +737,19 @@ strong, b {
   box-shadow:
     0 0 0 1px rgba(0, 0, 0, 0.2) inset,
     0 0 36px -14px rgba(34, 211, 238, 0.18);
+}
+
+.lux-btn-secondary:active {
+  transform: scale(0.98);
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.12) 0%, rgba(34, 211, 238, 0.06) 100%);
+}
+
+.lux-btn-secondary:disabled,
+.lux-btn-secondary[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none;
 }
 
 .gradient-button {
@@ -3030,6 +3069,27 @@ a:focus-visible,
   outline: 2px solid rgba(34,211,238, 0.95);
   outline-offset: 3px;
   box-shadow: 0 0 0 4px rgba(34,211,238, 0.18);
+}
+
+/* 44x44 minimum touch target — apply to icon buttons, chips, and small links */
+.tj-touch {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Global cursor + select hygiene for clickable elements */
+button:not(:disabled):not([aria-disabled="true"]),
+[role="button"]:not([aria-disabled="true"]),
+a[href] {
+  cursor: pointer;
+}
+button:disabled,
+button[aria-disabled="true"],
+[role="button"][aria-disabled="true"] {
+  cursor: not-allowed;
 }
 
 .tj-cursor-glow {
