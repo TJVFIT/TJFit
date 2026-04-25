@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { ChevronRight, X } from "lucide-react";
+import { Activity, ChevronRight, Command, Search, X } from "lucide-react";
 
 import { useAuth } from "@/components/auth-provider";
 import { Logo } from "@/components/ui/Logo";
@@ -158,17 +158,18 @@ export function SiteSideOverlay({ locale }: { locale: Locale }) {
         onClick={() => setOpen(true)}
         className={cn(
           "group fixed start-0 top-1/2 z-40 -translate-y-1/2",
-          "flex h-20 w-[18px] items-center justify-center rounded-e-full",
-          "border border-s-0 border-[rgba(34,211,238,0.35)] bg-[rgba(8,8,10,0.65)] backdrop-blur",
-          "shadow-[0_0_18px_rgba(34,211,238,0.25)]",
-          "transition-[width,background-color,box-shadow] duration-200 ease-out",
-          "hover:w-6 hover:bg-[rgba(8,8,10,0.85)] hover:shadow-[0_0_26px_rgba(34,211,238,0.45)]",
-          "focus-visible:w-6 focus-visible:outline-none",
+          "flex h-24 w-[22px] items-center justify-center rounded-e-2xl",
+          "border border-s-0 border-[rgba(34,211,238,0.32)] bg-[rgba(8,8,10,0.76)] backdrop-blur-xl",
+          "shadow-[0_0_28px_rgba(34,211,238,0.22),inset_0_1px_0_rgba(255,255,255,0.06)]",
+          "transition-[width,background-color,box-shadow,transform] duration-200 ease-out",
+          "hover:w-9 hover:bg-[rgba(8,8,10,0.92)] hover:shadow-[0_0_38px_rgba(34,211,238,0.42),inset_0_1px_0_rgba(255,255,255,0.08)]",
+          "focus-visible:w-9 focus-visible:outline-none",
           open && "pointer-events-none opacity-0"
         )}
       >
         <span className="absolute inset-y-3 left-1.5 w-px bg-gradient-to-b from-transparent via-accent to-transparent opacity-80 transition-opacity duration-200 group-hover:opacity-100" />
-        <ChevronRight className="relative h-3.5 w-3.5 text-accent opacity-0 transition-opacity duration-200 group-hover:opacity-100" aria-hidden />
+        <span className="absolute left-2 top-3 h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_14px_rgba(34,211,238,0.9)]" />
+        <ChevronRight className="relative h-4 w-4 text-accent opacity-0 transition-opacity duration-200 group-hover:opacity-100" aria-hidden />
       </button>
 
       <div
@@ -190,14 +191,30 @@ export function SiteSideOverlay({ locale }: { locale: Locale }) {
         />
         <div
           className={cn(
-            "absolute inset-y-0 start-0 flex w-full max-w-[720px] flex-col overflow-hidden border-e border-[var(--color-border)]",
-            "bg-[rgba(10,10,11,0.96)] shadow-[24px_0_60px_rgba(0,0,0,0.55)]",
+            "tj-side-panel absolute inset-y-0 start-0 flex w-full max-w-[860px] flex-col overflow-hidden border-e border-white/[0.08]",
+            "bg-[rgba(8,8,10,0.96)] shadow-[28px_0_80px_rgba(0,0,0,0.62)] backdrop-blur-2xl",
             "transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
             open ? "translate-x-0" : "-translate-x-full"
           )}
         >
-          <div className="flex items-center justify-between px-6 pt-6">
-            <Logo variant="full" size="navbar" linked={false} />
+          <div className="pointer-events-none absolute inset-0 opacity-80" aria-hidden>
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_44%_at_20%_0%,rgba(34,211,238,0.12),transparent_62%),radial-gradient(ellipse_52%_36%_at_92%_80%,rgba(246,243,237,0.045),transparent_64%)]" />
+            <div className="absolute inset-0 tj-side-grid" />
+          </div>
+
+          <div className="relative z-[1] flex items-start justify-between px-6 pt-6 sm:px-8">
+            <div>
+              <Logo variant="full" size="navbar" linked={false} />
+              <div className="mt-6 max-w-sm">
+                <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">
+                  <Command className="h-3.5 w-3.5" aria-hidden />
+                  Command center
+                </p>
+                <p className="mt-2 text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+                  Move through TJFit without losing momentum.
+                </p>
+              </div>
+            </div>
             <button
               type="button"
               onClick={close}
@@ -208,9 +225,24 @@ export function SiteSideOverlay({ locale }: { locale: Locale }) {
             </button>
           </div>
 
-          <div className="grid flex-1 gap-10 overflow-y-auto px-6 py-10 sm:grid-cols-2 lg:grid-cols-4">
-            {filteredGroups.map((group) => (
-              <section key={group.title}>
+          <div className="relative z-[1] mx-6 mt-8 grid gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.035] p-3 sm:mx-8 sm:grid-cols-[1fr_auto] sm:items-center">
+            <div className="flex items-center gap-3 rounded-xl bg-black/20 px-3 py-3">
+              <Search className="h-4 w-4 text-accent" aria-hidden />
+              <span className="text-sm text-[var(--color-text-secondary)]">Programs, TJAI, messages, coaches</span>
+            </div>
+            <div className="flex items-center gap-2 rounded-xl border border-white/[0.07] px-3 py-3 text-xs text-[var(--color-text-muted)]">
+              <Activity className="h-4 w-4 text-accent" aria-hidden />
+              Ready
+            </div>
+          </div>
+
+          <div className="relative z-[1] grid flex-1 gap-4 overflow-y-auto px-6 py-8 sm:grid-cols-2 sm:px-8 lg:grid-cols-4">
+            {filteredGroups.map((group, groupIndex) => (
+              <section
+                key={group.title}
+                className="tj-side-group rounded-2xl border border-white/[0.07] bg-white/[0.025] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.045)]"
+                style={{ animationDelay: `${groupIndex * 70}ms` }}
+              >
                 <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--color-text-muted)]">
                   {group.title}
                 </h2>
@@ -223,14 +255,14 @@ export function SiteSideOverlay({ locale }: { locale: Locale }) {
                           href={item.href}
                           onClick={close}
                           className={cn(
-                            "inline-flex w-full items-center justify-between rounded-lg px-3 py-2 text-[15px] transition-colors duration-150",
+                            "group/link inline-flex min-h-[42px] w-full items-center justify-between rounded-xl px-3 py-2 text-[15px] transition-[background-color,color,transform,box-shadow] duration-150",
                             active
-                              ? "bg-accent/10 text-accent shadow-[inset_0_0_0_1px_rgba(34,211,238,0.25)]"
-                              : "text-[var(--color-text-secondary)] hover:bg-[rgba(255,255,255,0.04)] hover:text-white"
+                              ? "bg-accent/12 text-accent shadow-[inset_0_0_0_1px_rgba(34,211,238,0.24),0_10px_24px_rgba(34,211,238,0.08)]"
+                              : "text-[var(--color-text-secondary)] hover:translate-x-1 hover:bg-[rgba(255,255,255,0.055)] hover:text-white"
                           )}
                         >
                           <span>{item.label}</span>
-                          <ChevronRight className="h-3.5 w-3.5 opacity-50" aria-hidden />
+                          <ChevronRight className="h-3.5 w-3.5 opacity-35 transition-opacity group-hover/link:opacity-80" aria-hidden />
                         </Link>
                       </li>
                     );
@@ -241,7 +273,7 @@ export function SiteSideOverlay({ locale }: { locale: Locale }) {
           </div>
 
           {user ? (
-            <div className="border-t border-[var(--color-border)] px-6 py-5">
+            <div className="relative z-[1] border-t border-white/[0.08] px-6 py-5 sm:px-8">
               <button
                 type="button"
                 onClick={signOut}

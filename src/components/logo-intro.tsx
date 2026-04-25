@@ -60,11 +60,11 @@ export function LogoIntro({
 
     const timers: number[] = [];
     timers.push(window.setTimeout(() => setPhase("t"), 80));
-    timers.push(window.setTimeout(() => setPhase("tj"), 620));
-    timers.push(window.setTimeout(() => setPhase("fit"), 1180));
-    timers.push(window.setTimeout(() => setPhase("man"), 1680));
-    timers.push(window.setTimeout(() => setPhase("hold"), 2380));
-    timers.push(window.setTimeout(() => setPhase("languages"), 3000));
+    timers.push(window.setTimeout(() => setPhase("tj"), 420));
+    timers.push(window.setTimeout(() => setPhase("fit"), 860));
+    timers.push(window.setTimeout(() => setPhase("man"), 1260));
+    timers.push(window.setTimeout(() => setPhase("hold"), 1880));
+    timers.push(window.setTimeout(() => setPhase("languages"), 2480));
     return () => timers.forEach((t) => window.clearTimeout(t));
   }, [onComplete]);
 
@@ -163,7 +163,7 @@ export function LogoIntro({
 
   return (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-background"
+      className="tj-intro-root fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-background"
       style={{
         opacity: isExiting ? 0 : 1,
         transition: isExiting ? "opacity 520ms cubic-bezier(0.4,0,1,1)" : "none"
@@ -190,16 +190,45 @@ export function LogoIntro({
           transition: "background 600ms ease"
         }}
       />
+      <div className="tj-intro-scan pointer-events-none absolute inset-0" aria-hidden />
+      <div className="tj-intro-vignette pointer-events-none absolute inset-0" aria-hidden />
 
       {!showLangs ? (
-        <div className="relative flex flex-col items-center">
-          <div className="relative flex items-end justify-center" style={{ minHeight: "clamp(120px, 22vw, 220px)" }}>
+        <div className="relative flex w-full max-w-3xl flex-col items-center px-6">
+          <div className="tj-intro-orbit absolute left-1/2 top-1/2 h-[min(58vw,520px)] w-[min(58vw,520px)] -translate-x-1/2 -translate-y-1/2 rounded-full" aria-hidden />
+          <div className="tj-intro-orbit tj-intro-orbit--inner absolute left-1/2 top-1/2 h-[min(42vw,380px)] w-[min(42vw,380px)] -translate-x-1/2 -translate-y-1/2 rounded-full" aria-hidden />
+
+          <div className="relative flex items-center justify-center" style={{ minHeight: "clamp(190px, 32vw, 340px)" }}>
+            <div
+              className="tj-intro-logo-shell absolute flex items-center justify-center rounded-[2rem] border border-white/[0.08] bg-white/[0.025] backdrop-blur-md"
+              style={{
+                opacity: showImage ? 1 : 0,
+                transform: showImage ? "scale(1) translateY(0)" : "scale(0.82) translateY(18px)",
+                transition: "opacity 620ms cubic-bezier(0.16,1,0.3,1), transform 720ms cubic-bezier(0.16,1,0.3,1)"
+              }}
+              aria-hidden
+            >
+              <Image
+                src={BRAND_LOGO_SRC}
+                alt=""
+                width={1024}
+                height={836}
+                priority
+                className="h-[clamp(138px,22vw,250px)] w-auto"
+                style={{
+                  filter: [
+                    "drop-shadow(0 0 10px rgba(34,211,238,0.85))",
+                    "drop-shadow(0 0 32px rgba(34,211,238,0.42))"
+                  ].join(" ")
+                }}
+              />
+            </div>
             <span
               className="font-display font-black leading-none tracking-tight text-accent"
               style={{
-                fontSize: "clamp(120px, 22vw, 220px)",
-                opacity: showT ? 1 : 0,
-                transform: showT ? "translateY(0)" : "translateY(8px)",
+                fontSize: "clamp(90px, 15vw, 160px)",
+                opacity: showImage ? 0 : showT ? 1 : 0,
+                transform: showT ? "translateY(0) scale(1)" : "translateY(20px) scale(0.94)",
                 transition: "opacity 480ms cubic-bezier(0.16,1,0.3,1), transform 480ms cubic-bezier(0.16,1,0.3,1)",
                 textShadow: "0 0 24px rgba(34,211,238,0.6), 0 0 72px rgba(34,211,238,0.25)"
               }}
@@ -209,9 +238,9 @@ export function LogoIntro({
             <span
               className="font-display font-black leading-none tracking-tight text-accent"
               style={{
-                fontSize: "clamp(120px, 22vw, 220px)",
-                opacity: showJ ? 1 : 0,
-                transform: showJ ? "translateY(0)" : "translateY(64px)",
+                fontSize: "clamp(90px, 15vw, 160px)",
+                opacity: showImage ? 0 : showJ ? 1 : 0,
+                transform: showJ ? "translateY(0) scale(1)" : "translateY(46px) scale(0.94)",
                 transition: "opacity 520ms cubic-bezier(0.16,1,0.3,1), transform 560ms cubic-bezier(0.22,1,0.36,1)",
                 textShadow: "0 0 24px rgba(34,211,238,0.6), 0 0 72px rgba(34,211,238,0.25)",
                 marginInlineStart: "-0.04em"
@@ -221,11 +250,11 @@ export function LogoIntro({
             </span>
           </div>
 
-          <div className="relative mt-2 flex items-center justify-center">
+          <div className="relative -mt-6 flex items-center justify-center">
             <span
-              className="font-display font-semibold uppercase tracking-[0.22em] text-accent"
+              className="font-display font-semibold uppercase tracking-[0.28em] text-accent"
               style={{
-                fontSize: "clamp(28px, 4.4vw, 44px)",
+                fontSize: "clamp(18px, 2.6vw, 28px)",
                 opacity: showFit && !showImage ? 1 : 0,
                 transform: showFit ? "translateY(0)" : "translateY(10px)",
                 transition: "opacity 420ms cubic-bezier(0.16,1,0.3,1), transform 420ms cubic-bezier(0.16,1,0.3,1)",
@@ -236,31 +265,20 @@ export function LogoIntro({
             </span>
           </div>
 
-          <div
-            className="pointer-events-none absolute inset-0 flex items-center justify-center"
-            style={{
-              opacity: showImage ? 1 : 0,
-              transform: showImage ? "scale(1)" : "scale(0.92)",
-              transition: "opacity 620ms cubic-bezier(0.16,1,0.3,1), transform 620ms cubic-bezier(0.16,1,0.3,1)"
-            }}
-            aria-hidden
-          >
-            <Image
-              src={BRAND_LOGO_SRC}
-              alt=""
-              width={1024}
-              height={836}
-              priority
-              style={{
-                height: "clamp(180px, 30vw, 320px)",
-                width: "auto",
-                filter: [
-                  "drop-shadow(0 0 8px rgba(34,211,238,1))",
-                  "drop-shadow(0 0 25px rgba(34,211,238,0.8))",
-                  "drop-shadow(0 0 60px rgba(34,211,238,0.45))"
-                ].join(" ")
-              }}
-            />
+          <div className="mt-10 grid w-full max-w-xl gap-2 text-left sm:grid-cols-3">
+            {["loading brand system", "syncing locale", "opening platform"].map((line, index) => (
+              <div
+                key={line}
+                className="tj-intro-status rounded-xl border border-white/[0.07] bg-white/[0.025] px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--color-text-muted)]"
+                style={{
+                  opacity: showT ? 1 : 0,
+                  transform: showT ? "translateY(0)" : "translateY(8px)",
+                  transition: `opacity 420ms cubic-bezier(0.16,1,0.3,1) ${index * 110}ms, transform 420ms cubic-bezier(0.16,1,0.3,1) ${index * 110}ms`
+                }}
+              >
+                {line}
+              </div>
+            ))}
           </div>
         </div>
       ) : null}

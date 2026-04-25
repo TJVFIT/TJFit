@@ -149,6 +149,9 @@ export function NutrientCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
 /** Alternating dumbbell curl athlete — homepage hero centerpiece. */
 export function CurlAthleteCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
   const rootRef = useRef<THREE.Group>(null);
+  const haloARef = useRef<THREE.Mesh>(null);
+  const haloBRef = useRef<THREE.Mesh>(null);
+  const scanRef = useRef<THREE.Mesh>(null);
   const leftForearmRef = useRef<THREE.Group>(null);
   const rightForearmRef = useRef<THREE.Group>(null);
   const leftBicepRef = useRef<THREE.Mesh>(null);
@@ -190,12 +193,25 @@ export function CurlAthleteCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
       const breath = Math.sin(t * 0.9) * 0.018;
       rootRef.current.position.y = -0.15 + breath;
       rootRef.current.rotation.z = (leftAmt - rightAmt) * 0.04;
-      rootRef.current.rotation.y = -0.28 + m.x * 0.06;
+      rootRef.current.rotation.y = 0.34 + m.x * 0.08;
       rootRef.current.rotation.x = 0.06 + m.y * 0.03;
     }
 
     if (torsoWireRef.current) {
       torsoWireRef.current.rotation.y = t * 0.08;
+    }
+    if (haloARef.current) {
+      haloARef.current.rotation.z = t * 0.18;
+      haloARef.current.rotation.x = Math.PI / 2.25 + Math.sin(t * 0.24) * 0.08;
+    }
+    if (haloBRef.current) {
+      haloBRef.current.rotation.z = -t * 0.12;
+      haloBRef.current.rotation.y = Math.PI / 5 + Math.sin(t * 0.18) * 0.1;
+    }
+    if (scanRef.current) {
+      scanRef.current.position.y = -0.36 + ((Math.sin(t * 0.85) + 1) / 2) * 1.36;
+      const mat = scanRef.current.material as THREE.MeshStandardMaterial;
+      mat.opacity = 0.2 + Math.sin(t * 1.7) * 0.08;
     }
   });
 
@@ -277,21 +293,38 @@ export function CurlAthleteCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
 
   return (
     <group ref={rootRef} position={[0, -0.15, 0]}>
+      <mesh ref={haloARef} rotation={[Math.PI / 2.25, 0, 0]} position={[0, 0.42, -0.1]}>
+        <torusGeometry args={[2.0, 0.01, 8, 180]} />
+        <meshStandardMaterial color={TJ_PALETTE.accentHi} emissive={TJ_PALETTE.accent} emissiveIntensity={0.7} transparent opacity={0.72} metalness={0.5} roughness={0.2} />
+      </mesh>
+      <mesh ref={haloBRef} rotation={[Math.PI / 2.85, Math.PI / 5, 0]} position={[0, 0.36, -0.22]}>
+        <torusGeometry args={[2.42, 0.006, 8, 220]} />
+        <meshStandardMaterial color={TJ_PALETTE.frostIce} emissive={TJ_PALETTE.accent} emissiveIntensity={0.34} transparent opacity={0.36} metalness={0.7} roughness={0.28} />
+      </mesh>
+
       <mesh position={[0, 1.55, 0]}>
-        <icosahedronGeometry args={[0.32, 1]} />
-        <meshStandardMaterial {...skinMat} emissiveIntensity={0.55} />
+        <sphereGeometry args={[0.3, 28, 20]} />
+        <meshStandardMaterial {...skinMat} emissiveIntensity={0.55} transparent opacity={0.92} />
+      </mesh>
+      <mesh position={[0, 1.55, 0]}>
+        <icosahedronGeometry args={[0.43, 1]} />
+        <meshStandardMaterial color={TJ_PALETTE.accentHi} wireframe transparent opacity={0.22} emissive={TJ_PALETTE.accent} emissiveIntensity={0.42} />
       </mesh>
       <mesh position={[0, 1.18, 0]}>
         <cylinderGeometry args={[0.13, 0.18, 0.2, 14]} />
         <meshStandardMaterial {...skinMat} emissiveIntensity={0.45} />
       </mesh>
       <mesh position={[0, 0.45, 0]}>
-        <cylinderGeometry args={[0.92, 0.58, 1.3, 10]} />
-        <meshStandardMaterial color={TJ_PALETTE.accentHi} emissive={TJ_PALETTE.accent} emissiveIntensity={0.4} metalness={0.35} roughness={0.25} />
+        <cylinderGeometry args={[0.72, 0.48, 1.28, 36]} />
+        <meshStandardMaterial color={TJ_PALETTE.accentHi} emissive={TJ_PALETTE.accent} emissiveIntensity={0.52} metalness={0.42} roughness={0.22} transparent opacity={0.9} />
+      </mesh>
+      <mesh ref={scanRef} position={[0, 0.12, 0.02]}>
+        <cylinderGeometry args={[0.76, 0.52, 0.035, 48, 1, true]} />
+        <meshStandardMaterial color={TJ_PALETTE.accentHi} emissive={TJ_PALETTE.accent} emissiveIntensity={1.1} transparent opacity={0.24} side={THREE.DoubleSide} />
       </mesh>
       <mesh ref={torsoWireRef} position={[0, 0.45, 0]}>
-        <icosahedronGeometry args={[1.18, 1]} />
-        <meshStandardMaterial color={TJ_PALETTE.accentHi} wireframe transparent opacity={0.32} emissive={TJ_PALETTE.accent} emissiveIntensity={0.4} />
+        <icosahedronGeometry args={[1.22, 2]} />
+        <meshStandardMaterial color={TJ_PALETTE.accentHi} wireframe transparent opacity={0.22} emissive={TJ_PALETTE.accent} emissiveIntensity={0.46} />
       </mesh>
       <mesh position={[0, -0.45, 0]}>
         <cylinderGeometry args={[0.52, 0.7, 0.5, 10]} />
@@ -309,6 +342,16 @@ export function CurlAthleteCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
         <torusGeometry args={[1.9, 0.006, 8, 140]} />
         <meshStandardMaterial color={TJ_PALETTE.accentHi} emissive={TJ_PALETTE.accent} emissiveIntensity={0.6} transparent opacity={0.55} />
       </mesh>
+      {Array.from({ length: 18 }).map((_, i) => {
+        const angle = (i / 18) * Math.PI * 2;
+        const radius = 1.42 + (i % 3) * 0.18;
+        return (
+          <mesh key={i} position={[Math.cos(angle) * radius, -0.36 + (i % 6) * 0.32, Math.sin(angle) * 0.36 - 0.18]}>
+            <sphereGeometry args={[0.022 + (i % 2) * 0.008, 10, 8]} />
+            <meshStandardMaterial color={TJ_PALETTE.accentHi} emissive={TJ_PALETTE.accent} emissiveIntensity={0.9} transparent opacity={0.72} />
+          </mesh>
+        );
+      })}
     </group>
   );
 }
