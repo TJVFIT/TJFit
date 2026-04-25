@@ -27,12 +27,12 @@ export function AdminCoachApplications({
   return (
     <div className="glass-panel rounded-[32px] p-6">
       <p className="text-lg font-semibold text-white">{dict.coachApplications}</p>
-      <p className="mt-2 text-sm text-zinc-400">
+      <p className="mt-2 text-sm text-muted">
         {applications.length} {dict.coachApplicationsCount}{applications.length !== 1 ? "s" : ""} received
       </p>
       <div className="mt-6 max-h-96 space-y-4 overflow-y-auto">
         {applications.length === 0 ? (
-          <p className="text-sm text-zinc-500">{dict.noApplications}</p>
+          <p className="text-sm text-faint">{dict.noApplications}</p>
         ) : (
           applications.map((app) => (
             <div
@@ -41,17 +41,17 @@ export function AdminCoachApplications({
             >
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <p className="font-medium text-white">{app.full_name}</p>
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-faint">
                   {new Date(app.created_at).toLocaleDateString()}
                 </p>
               </div>
-              <div className="mt-3 grid gap-2 text-sm text-zinc-300 sm:grid-cols-2">
-                <p><span className="text-zinc-500">Age:</span> {app.age}</p>
-                <p><span className="text-zinc-500">Specialty:</span> {app.specialty}</p>
-                <p><span className="text-zinc-500">Languages:</span> {app.languages}</p>
-                <p><span className="text-zinc-500">Country:</span> {app.country}</p>
+              <div className="mt-3 grid gap-2 text-sm text-bright sm:grid-cols-2">
+                <p><span className="text-faint">Age:</span> {app.age}</p>
+                <p><span className="text-faint">Specialty:</span> {app.specialty}</p>
+                <p><span className="text-faint">Languages:</span> {app.languages}</p>
+                <p><span className="text-faint">Country:</span> {app.country}</p>
               </div>
-              <p className="mt-3 text-sm text-zinc-400 line-clamp-2">
+              <p className="mt-3 text-sm text-muted line-clamp-2">
                 {app.certifications_and_style}
               </p>
             </div>

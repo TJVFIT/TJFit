@@ -116,7 +116,7 @@ function StatCard({ value, label, delay, active }: { value: number; label: strin
   const count = useCountUp(value, 1200, active);
   return (
     <div
-      className="rounded-[14px] border border-[#1E2028] bg-[#111215] p-6 text-center transition-[border-color,box-shadow,opacity,transform] duration-500 ease-out [@media(hover:hover)]:hover:border-[rgba(34,211,238,0.2)] [@media(hover:hover)]:hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)]"
+      className="rounded-[14px] border border-divider bg-surface p-6 text-center transition-[border-color,box-shadow,opacity,transform] duration-500 ease-out [@media(hover:hover)]:hover:border-[rgba(34,211,238,0.2)] [@media(hover:hover)]:hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)]"
       style={{
         transitionDelay: `${delay}ms`,
         opacity: active ? 1 : 0,
@@ -124,8 +124,8 @@ function StatCard({ value, label, delay, active }: { value: number; label: strin
         perspective: "800px"
       }}
     >
-      <p className="font-display text-[40px] font-extrabold leading-none text-[#22D3EE] stat-number-glow">{count}</p>
-      <p className="mt-2 text-[13px] font-medium uppercase tracking-widest text-[#52525B]">{label}</p>
+      <p className="font-display text-[40px] font-extrabold leading-none text-accent stat-number-glow">{count}</p>
+      <p className="mt-2 text-[13px] font-medium uppercase tracking-widest text-dim">{label}</p>
     </div>
   );
 }
@@ -168,24 +168,24 @@ function QuickLogWidget({ locale }: { locale: Locale }) {
   const placeholder = locale === "tr" ? "Egzersiz adı" : locale === "ar" ? "اسم التمرين" : locale === "es" ? "Ejercicio" : locale === "fr" ? "Exercice" : "Exercise name";
 
   return (
-    <section className="rounded-2xl border border-[#1E2028] bg-[#111215] transition-[border-color] duration-200 hover:border-white/[0.08]">
+    <section className="rounded-2xl border border-divider bg-surface transition-[border-color] duration-200 hover:border-white/[0.08]">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         className="flex w-full items-center justify-between px-6 py-4 text-left"
       >
         <div className="flex items-center gap-2.5">
-          <Dumbbell className="h-4 w-4 text-[#22D3EE]" strokeWidth={2} />
+          <Dumbbell className="h-4 w-4 text-accent" strokeWidth={2} />
           <span className="text-sm font-semibold text-white">Log today&apos;s workout</span>
         </div>
-        <Plus className={cn("h-4 w-4 text-zinc-500 transition-transform duration-200", open && "rotate-45")} />
+        <Plus className={cn("h-4 w-4 text-faint transition-transform duration-200", open && "rotate-45")} />
       </button>
 
       <div
         className="overflow-hidden transition-all duration-300 ease-out"
         style={{ maxHeight: open ? "300px" : "0px" }}
       >
-        <div className="border-t border-[#1E2028] px-6 pb-5 pt-4">
+        <div className="border-t border-divider px-6 pb-5 pt-4">
           {saved ? (
             <div className="flex items-center gap-2 rounded-xl border border-green-500/25 bg-[#0D1F17] px-4 py-3 text-sm font-medium text-green-400">
               <CheckCircle2 className="h-4 w-4" /> Logged!
@@ -209,11 +209,11 @@ function QuickLogWidget({ locale }: { locale: Locale }) {
                   type="button"
                   onClick={() => void submit()}
                   disabled={saving || !exercise.trim()}
-                  className="inline-flex min-h-[38px] items-center justify-center rounded-full bg-[#22D3EE] px-5 text-sm font-bold text-black transition-opacity disabled:opacity-50"
+                  className="inline-flex min-h-[38px] items-center justify-center rounded-full bg-accent px-5 text-sm font-bold text-black transition-opacity disabled:opacity-50"
                 >
                   {saving ? "Logging…" : "Log workout"}
                 </button>
-                <Link href={`/${locale}/progress`} className="text-xs text-zinc-500 hover:text-zinc-300">
+                <Link href={`/${locale}/progress`} className="text-xs text-faint hover:text-bright">
                   Full progress log →
                 </Link>
               </div>
@@ -308,7 +308,7 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
         <p className="text-sm text-red-400">{loadError ?? t.loadError}</p>
         <button
           type="button"
-          className="mt-4 rounded-full border border-white/15 px-5 py-2 text-sm text-zinc-200 hover:border-white/25"
+          className="mt-4 rounded-full border border-white/15 px-5 py-2 text-sm text-bright hover:border-white/25"
           onClick={() => void load()}
         >
           {t.retry}
@@ -343,7 +343,7 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
       >
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div className="min-w-0 flex-1">
-            <p className="text-base text-[#52525B]">{hour !== null ? greetingLead(locale, hour) : "\u00a0"}</p>
+            <p className="text-base text-dim">{hour !== null ? greetingLead(locale, hour) : "\u00a0"}</p>
             <p className="mt-1 break-words font-display text-[36px] font-extrabold leading-tight tracking-[-0.025em] text-white [hyphens:auto] md:text-[56px]">
               {displayName}.
             </p>
@@ -356,7 +356,7 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
                 <span className="text-sm font-bold text-orange-300">{summary.currentStreak} day streak</span>
               </div>
             )}
-            <p className="text-sm text-[#52525B]">{formatDashboardDate(locale)}</p>
+            <p className="text-sm text-dim">{formatDashboardDate(locale)}</p>
           </div>
         </div>
         <div
@@ -381,22 +381,22 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
 
       {!isBrandNew && hasPaidProgram ? (
         <section className="space-y-3">
-          <h2 className="text-[13px] font-medium uppercase tracking-widest text-[#52525B]">{t.activeProgram}</h2>
+          <h2 className="text-[13px] font-medium uppercase tracking-widest text-dim">{t.activeProgram}</h2>
           <Link
             href={`/${locale}/programs/${encodeURIComponent(summary.latestPaidProgramSlug!)}`}
-            className="group/ap flex flex-col gap-6 rounded-2xl border border-[#1E2028] bg-[#111215] p-8 transition-[border-color,box-shadow,transform] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:border-[rgba(34,211,238,0.22)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.45)] motion-reduce:hover:transform-none [@media(hover:hover)]:hover:-translate-y-1"
+            className="group/ap flex flex-col gap-6 rounded-2xl border border-divider bg-surface p-8 transition-[border-color,box-shadow,transform] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:border-[rgba(34,211,238,0.22)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.45)] motion-reduce:hover:transform-none [@media(hover:hover)]:hover:-translate-y-1"
           >
             <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0 flex-1">
                 <p className="text-lg font-semibold text-white">{programTitle}</p>
-                <div className="mt-5 h-1 w-full max-w-md overflow-hidden rounded-full bg-[#1E2028]">
+                <div className="mt-5 h-1 w-full max-w-md overflow-hidden rounded-full bg-divider">
                   <div
                     className="h-full origin-left rounded-full bg-gradient-to-r from-[#22D3EE] to-[#A78BFA] transition-transform duration-1000 ease-[cubic-bezier(0,0,0.2,1)] motion-reduce:transition-none"
                     style={{ transform: `scaleX(${progressOn ? progressPct / 100 : 0})` }}
                   />
                 </div>
               </div>
-              <span className="inline-flex min-h-[48px] shrink-0 items-center justify-center rounded-full border border-[rgba(34,211,238,0.25)] bg-[rgba(34,211,238,0.08)] px-6 py-2.5 text-sm font-semibold text-[#22D3EE] transition-[transform,box-shadow] duration-150 group-hover/ap:scale-[1.02] group-hover/ap:shadow-[0_0_24px_rgba(34,211,238,0.12)]">
+              <span className="inline-flex min-h-[48px] shrink-0 items-center justify-center rounded-full border border-[rgba(34,211,238,0.25)] bg-[rgba(34,211,238,0.08)] px-6 py-2.5 text-sm font-semibold text-accent transition-[transform,box-shadow] duration-150 group-hover/ap:scale-[1.02] group-hover/ap:shadow-[0_0_24px_rgba(34,211,238,0.12)]">
                 Continue →
               </span>
             </div>
@@ -412,19 +412,19 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
 
       {!isBrandNew && summary.progressEntryCount > 0 ? (
         <section className="space-y-3">
-          <h2 className="text-[13px] font-medium uppercase tracking-widest text-[#52525B]">{t.recentActivity}</h2>
-          <div className="rounded-2xl border border-[#1E2028] bg-[#111215] p-2 sm:p-4">
-            <ul className="text-sm text-[#A1A1AA]">
+          <h2 className="text-[13px] font-medium uppercase tracking-widest text-dim">{t.recentActivity}</h2>
+          <div className="rounded-2xl border border-divider bg-surface p-2 sm:p-4">
+            <ul className="text-sm text-muted">
               {summary.recentEntryDates.map((d) => (
                 <li
                   key={d}
                   className="flex min-h-[48px] items-center justify-between gap-3 border-b border-[rgba(255,255,255,0.04)] py-3.5 transition-[background-color] duration-150 ease-out last:border-b-0 [@media(hover:hover)]:hover:rounded-lg [@media(hover:hover)]:hover:bg-[rgba(255,255,255,0.02)] [@media(hover:hover)]:hover:px-3"
                 >
                   <span className="flex items-center gap-2 text-white">
-                    <Activity className="h-4 w-4 shrink-0 text-[#22D3EE]" strokeWidth={2} aria-hidden />
+                    <Activity className="h-4 w-4 shrink-0 text-accent" strokeWidth={2} aria-hidden />
                     Log entry
                   </span>
-                  <time className="text-[13px] text-[#52525B]" dateTime={d}>
+                  <time className="text-[13px] text-dim" dateTime={d}>
                     {d}
                   </time>
                 </li>
@@ -432,7 +432,7 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
             </ul>
             <Link
               href={`/${locale}/progress`}
-              className="mt-4 inline-block text-sm font-medium text-[#22D3EE] transition-colors duration-150 hover:text-white"
+              className="mt-4 inline-block text-sm font-medium text-accent transition-colors duration-150 hover:text-white"
             >
               {t.progressLink}
             </Link>

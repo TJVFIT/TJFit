@@ -163,7 +163,7 @@ export function LogoIntro({
 
   return (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-[#0A0A0B]"
+      className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-background"
       style={{
         opacity: isExiting ? 0 : 1,
         transition: isExiting ? "opacity 520ms cubic-bezier(0.4,0,1,1)" : "none"

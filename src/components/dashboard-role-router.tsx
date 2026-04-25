@@ -31,7 +31,7 @@ export function DashboardRoleRouter({ locale }: { locale: Locale }) {
   if (role === "admin") {
     return (
       <div className="flex items-center justify-center py-16">
-        <p className="text-sm text-zinc-400">Redirecting to admin panel…</p>
+        <p className="text-sm text-muted">Redirecting to admin panel…</p>
       </div>
     );
   }

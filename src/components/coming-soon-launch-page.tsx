@@ -156,7 +156,7 @@ export function ComingSoonLaunchPage({
 }) {
   const c = COPY[locale]?.[page] ?? COPY.en[page];
   return (
-    <section className="relative min-h-[100svh] overflow-hidden bg-[#09090B] px-4 py-12 sm:px-6 lg:px-8">
+    <section className="relative min-h-[100svh] overflow-hidden bg-background px-4 py-12 sm:px-6 lg:px-8">
       <div
         className="pointer-events-none absolute left-1/2 top-0 h-[32rem] w-[32rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.10)_0%,transparent_72%)]"
         aria-hidden
@@ -178,7 +178,7 @@ export function ComingSoonLaunchPage({
           {c.headline}
         </h1>
         <p
-          className="mt-4 max-w-2xl text-sm leading-relaxed text-zinc-400 sm:text-base animate-[tj-fade-up_420ms_ease-out_forwards]"
+          className="mt-4 max-w-2xl text-sm leading-relaxed text-muted sm:text-base animate-[tj-fade-up_420ms_ease-out_forwards]"
           style={{ animationDelay: "500ms", opacity: 0 }}
         >
           {c.sub}
@@ -189,7 +189,7 @@ export function ComingSoonLaunchPage({
         >
           <LeadCaptureForm locale={locale} source={source} variant="panel" />
         </div>
-        <Link href={`/${locale}`} className="mt-8 text-sm text-zinc-400 transition-colors hover:text-white">
+        <Link href={`/${locale}`} className="mt-8 text-sm text-muted transition-colors hover:text-white">
           <span className="rtl:rotate-180 inline-block">←</span> {c.back}
         </Link>
       </div>

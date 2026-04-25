@@ -48,7 +48,7 @@ export function ProgramContentLock({
             <Lock className="h-5 w-5 text-[var(--color-text-muted)]" aria-hidden />
           </div>
           <p className="mt-4 text-base font-semibold text-white">{title}</p>
-          {subtitle ? <p className="mt-2 text-sm leading-relaxed text-zinc-400">{subtitle}</p> : null}
+          {subtitle ? <p className="mt-2 text-sm leading-relaxed text-muted">{subtitle}</p> : null}
           <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Link
               href={ctaHref}

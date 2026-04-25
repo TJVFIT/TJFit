@@ -29,7 +29,7 @@ export function AuthPageFrame({ children }: { children: React.ReactNode }) {
           entered ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
         )}
       >
-        <div className="rounded-[20px] border border-[#1E2028] bg-[#111215] p-8 shadow-[0_24px_64px_rgba(0,0,0,0.6)] sm:p-12 max-sm:rounded-none max-sm:border-0 max-sm:shadow-none max-sm:max-w-none">
+        <div className="rounded-[20px] border border-divider bg-surface p-8 shadow-[0_24px_64px_rgba(0,0,0,0.6)] sm:p-12 max-sm:rounded-none max-sm:border-0 max-sm:shadow-none max-sm:max-w-none">
           {children}
         </div>
       </div>

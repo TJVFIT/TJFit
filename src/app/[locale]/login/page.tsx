@@ -79,7 +79,7 @@ function LoginForm({ params }: { params: { locale: string } }) {
         <h1 className="mt-6 text-center font-display text-[32px] font-bold leading-tight tracking-[-0.015em] text-white">
           {copy.loginTitle}
         </h1>
-        <p className="mt-2 text-center text-sm leading-relaxed text-[#A1A1AA]">{copy.loginSubtitle}</p>
+        <p className="mt-2 text-center text-sm leading-relaxed text-muted">{copy.loginSubtitle}</p>
 
         <form
           onSubmit={(e) => {
@@ -105,7 +105,7 @@ function LoginForm({ params }: { params: { locale: string } }) {
             required
           />
           <div className="flex justify-end">
-            <Link href={`/${locale}/forgot-password`} className="text-xs text-zinc-500 hover:text-zinc-300">
+            <Link href={`/${locale}/forgot-password`} className="text-xs text-faint hover:text-bright">
               Forgot password?
             </Link>
           </div>
@@ -121,9 +121,9 @@ function LoginForm({ params }: { params: { locale: string } }) {
             {copy.loginButton}
           </AsyncButton>
         </form>
-        <p className="mt-3 text-center text-sm text-zinc-400">
+        <p className="mt-3 text-center text-sm text-muted">
           {copy.newHere}{" "}
-          <Link href={signupHref} className="text-white underline underline-offset-4 hover:text-zinc-200">
+          <Link href={signupHref} className="text-white underline underline-offset-4 hover:text-bright">
             {copy.createAccount}
           </Link>
         </p>

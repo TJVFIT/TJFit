@@ -186,70 +186,70 @@ export function StartFunnelClient({ locale }: { locale: Locale }) {
     <PremiumPageShell className="max-w-6xl">
       <div className="px-4 py-12 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="text-xs uppercase tracking-[0.14em] text-[#22D3EE]">TJFit</p>
+          <p className="text-xs uppercase tracking-[0.14em] text-accent">TJFit</p>
           <h1 className="mt-4 text-4xl font-extrabold text-white sm:text-5xl">{copy.heroTitle}</h1>
-          <p className="mt-3 text-sm text-[#A1A1AA] sm:text-base">{copy.heroSub}</p>
+          <p className="mt-3 text-sm text-muted sm:text-base">{copy.heroSub}</p>
         </div>
 
         <div className="mt-10 grid gap-4 lg:grid-cols-3">
           <article className="rounded-3xl border border-white/10 bg-[linear-gradient(135deg,rgba(34,211,238,0.12),rgba(14,165,233,0.03))] p-6">
-            <Dumbbell className="h-10 w-10 text-[#22D3EE]" />
+            <Dumbbell className="h-10 w-10 text-accent" />
             <h2 className="mt-4 text-xl font-bold text-white">{copy.freePrograms}</h2>
-            <p className="mt-2 text-sm text-[#A1A1AA]">{copy.freeProgramsSub}</p>
+            <p className="mt-2 text-sm text-muted">{copy.freeProgramsSub}</p>
             <div className="mt-4 flex gap-2">
               <button
                 type="button"
                 onClick={() => setFreeTab("programs")}
-                className={`rounded-full border px-3 py-1.5 text-xs ${freeTab === "programs" ? "border-[#22D3EE] bg-[#22D3EE]/20 text-[#22D3EE]" : "border-white/20 text-zinc-300"}`}
+                className={`rounded-full border px-3 py-1.5 text-xs ${freeTab === "programs" ? "border-accent bg-accent/20 text-accent" : "border-white/20 text-bright"}`}
               >
                 {copy.freeProgramsTab}
               </button>
               <button
                 type="button"
                 onClick={() => setFreeTab("diets")}
-                className={`rounded-full border px-3 py-1.5 text-xs ${freeTab === "diets" ? "border-[#22D3EE] bg-[#22D3EE]/20 text-[#22D3EE]" : "border-white/20 text-zinc-300"}`}
+                className={`rounded-full border px-3 py-1.5 text-xs ${freeTab === "diets" ? "border-accent bg-accent/20 text-accent" : "border-white/20 text-bright"}`}
               >
                 {copy.freeDietsTab}
               </button>
             </div>
-            <ul className="mt-4 space-y-2 text-sm text-zinc-200">
+            <ul className="mt-4 space-y-2 text-sm text-bright">
               {starterNames.map((name) => (
                 <li key={name}>- {name}</li>
               ))}
             </ul>
             <Link
               href={freeTab === "programs" ? `/${locale}/programs?free=1&filter=free` : `/${locale}/diets?free=1&filter=free`}
-              className="mt-5 inline-flex min-h-[46px] w-full items-center justify-center rounded-full bg-[#22D3EE] px-4 text-sm font-bold text-[#09090B]"
+              className="mt-5 inline-flex min-h-[46px] w-full items-center justify-center rounded-full bg-accent px-4 text-sm font-bold text-[#09090B]"
             >
               {freeTab === "programs" ? copy.browsePrograms : copy.browseDiets}
             </Link>
           </article>
 
           <article className="rounded-3xl border border-white/10 bg-[linear-gradient(135deg,rgba(34,211,238,0.12),rgba(14,165,233,0.03))] p-6">
-            <Sparkles className="h-10 w-10 text-[#22D3EE]" />
+            <Sparkles className="h-10 w-10 text-accent" />
             <div className="mt-4 flex items-center justify-between gap-2">
               <h2 className="text-xl font-bold text-white">{copy.tjai}</h2>
               <span className="rounded-full border border-cyan-400/30 bg-cyan-500/10 px-2 py-1 text-[10px] font-semibold text-cyan-200">
                 {copy.trial}
               </span>
             </div>
-            <p className="mt-2 text-sm text-[#A1A1AA]">{copy.tjaiSub}</p>
-            <div className="mt-4 rounded-xl border border-white/10 bg-[#0D1015] p-3 text-sm text-zinc-300">
+            <p className="mt-2 text-sm text-muted">{copy.tjaiSub}</p>
+            <div className="mt-4 rounded-xl border border-white/10 bg-[#0D1015] p-3 text-sm text-bright">
               <p className="typing-line">Calculating your macros...</p>
               <p className="typing-line delay">Building your 12-week plan...</p>
             </div>
             <Link
               href={`/${locale}/tjai`}
-              className="mt-5 inline-flex min-h-[46px] w-full items-center justify-center rounded-full bg-[#22D3EE] px-4 text-sm font-bold text-[#09090B]"
+              className="mt-5 inline-flex min-h-[46px] w-full items-center justify-center rounded-full bg-accent px-4 text-sm font-bold text-[#09090B]"
             >
               {copy.startTjai}
             </Link>
           </article>
 
           <article className="rounded-3xl border border-white/10 bg-[linear-gradient(135deg,rgba(34,211,238,0.12),rgba(14,165,233,0.03))] p-6">
-            <Calculator className="h-10 w-10 text-[#22D3EE]" />
+            <Calculator className="h-10 w-10 text-accent" />
             <h2 className="mt-4 text-xl font-bold text-white">{copy.calculator}</h2>
-            <p className="mt-2 text-sm text-[#A1A1AA]">{copy.calculatorSub}</p>
+            <p className="mt-2 text-sm text-muted">{copy.calculatorSub}</p>
             <div className="mt-4 flex items-center gap-3 rounded-xl border border-white/10 bg-[#0D1015] p-3">
               <Brain className="h-5 w-5 text-cyan-300" />
               <div className="h-2 w-full rounded-full bg-white/5">
@@ -258,7 +258,7 @@ export function StartFunnelClient({ locale }: { locale: Locale }) {
             </div>
             <Link
               href={`/${locale}/calculator`}
-              className="mt-5 inline-flex min-h-[46px] w-full items-center justify-center rounded-full bg-[#22D3EE] px-4 text-sm font-bold text-[#09090B]"
+              className="mt-5 inline-flex min-h-[46px] w-full items-center justify-center rounded-full bg-accent px-4 text-sm font-bold text-[#09090B]"
             >
               {copy.calcTdee}
             </Link>
@@ -266,9 +266,9 @@ export function StartFunnelClient({ locale }: { locale: Locale }) {
         </div>
 
         <div className="mx-auto mt-8 max-w-xl text-center">
-          <p className="text-xs uppercase tracking-[0.2em] text-[#52525B]">{copy.or}</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-dim">{copy.or}</p>
           <h3 className="mt-3 text-2xl font-bold text-white">{copy.allIn}</h3>
-          <p className="mt-2 text-sm text-[#A1A1AA]">{copy.allInSub}</p>
+          <p className="mt-2 text-sm text-muted">{copy.allInSub}</p>
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
             <Link
               href={`/${locale}/membership?tier=pro`}
@@ -278,14 +278,14 @@ export function StartFunnelClient({ locale }: { locale: Locale }) {
             </Link>
             <Link
               href={`/${locale}/membership?tier=apex`}
-              className="inline-flex min-h-[46px] items-center justify-center rounded-full bg-[#22D3EE] px-4 text-sm font-bold text-[#09090B]"
+              className="inline-flex min-h-[46px] items-center justify-center rounded-full bg-accent px-4 text-sm font-bold text-[#09090B]"
             >
               {copy.getApex}
             </Link>
           </div>
         </div>
 
-        <div className="mt-10 grid gap-2 text-center text-xs text-[#52525B] sm:grid-cols-4">
+        <div className="mt-10 grid gap-2 text-center text-xs text-dim sm:grid-cols-4">
           <p>🔒 {copy.trustSecure}</p>
           <p>✓ {copy.trustNoCard}</p>
           <p>🌍 {copy.trustLanguages}</p>

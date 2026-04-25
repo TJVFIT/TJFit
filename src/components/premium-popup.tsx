@@ -93,7 +93,7 @@ export function PremiumPopup({
           ref={closeRef}
           type="button"
           onClick={onClose}
-          className="absolute end-3 top-3 flex h-11 w-11 touch-manipulation items-center justify-center rounded-xl border border-white/[0.08] text-zinc-400 transition hover:border-white/[0.12] hover:bg-white/[0.04] hover:text-white sm:end-4 sm:top-4 sm:h-10 sm:w-10"
+          className="absolute end-3 top-3 flex h-11 w-11 touch-manipulation items-center justify-center rounded-xl border border-white/[0.08] text-muted transition hover:border-white/[0.12] hover:bg-white/[0.04] hover:text-white sm:end-4 sm:top-4 sm:h-10 sm:w-10"
           aria-label={closeLabel}
         >
           <X className="h-5 w-5" strokeWidth={1.5} />

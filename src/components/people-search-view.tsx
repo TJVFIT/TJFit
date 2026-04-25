@@ -87,7 +87,7 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
   if (authLoading) {
     return (
       <div className="relative mx-auto flex min-h-[50vh] max-w-2xl items-center justify-center px-4 py-16">
-        <p className="text-sm text-zinc-500">{s.loading}</p>
+        <p className="text-sm text-faint">{s.loading}</p>
       </div>
     );
   }
@@ -97,13 +97,13 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
       <div className="relative mx-auto min-h-[70dvh] max-w-2xl px-4 py-10 sm:px-6 sm:py-14">
         <div className="pointer-events-none absolute inset-x-0 -top-24 h-64 bg-gradient-to-b from-cyan-500/10 via-transparent to-transparent blur-3xl" />
         <div className="relative">
-          <Link href={`/${locale}`} className="text-xs font-medium text-zinc-500 transition hover:text-zinc-300">
+          <Link href={`/${locale}`} className="text-xs font-medium text-faint transition hover:text-bright">
             ← {dict.nav.home}
           </Link>
           <h1 className="mt-5 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
             {s.peopleSearchTitle}
           </h1>
-          <p className="mt-2 max-w-xl text-sm leading-relaxed text-zinc-400">{s.peopleSearchSubtitle}</p>
+          <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted">{s.peopleSearchSubtitle}</p>
         </div>
         <div className="relative mt-12">
           <AuthRequiredPanel locale={locale} className="w-full" />
@@ -117,22 +117,22 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
       <div className="pointer-events-none absolute inset-x-0 -top-24 h-64 bg-gradient-to-b from-cyan-500/10 via-transparent to-transparent blur-3xl" />
 
       <div className="relative">
-        <Link href={`/${locale}/messages`} className="text-xs font-medium text-zinc-500 transition hover:text-zinc-300">
+        <Link href={`/${locale}/messages`} className="text-xs font-medium text-faint transition hover:text-bright">
           ← {s.threadBack}
         </Link>
 
         <h1 className="mt-5 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
           {s.peopleSearchTitle}
         </h1>
-        <p className="mt-2 max-w-xl text-sm leading-relaxed text-zinc-400">{s.peopleSearchSubtitle}</p>
-        <p className="mt-3 max-w-xl text-xs leading-relaxed text-zinc-600">{s.searchPrivacyNote}</p>
+        <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted">{s.peopleSearchSubtitle}</p>
+        <p className="mt-3 max-w-xl text-xs leading-relaxed text-dim">{s.searchPrivacyNote}</p>
 
         <div className="relative mt-8">
-          <div className="pointer-events-none absolute inset-y-0 left-4 flex items-center text-zinc-500">
+          <div className="pointer-events-none absolute inset-y-0 left-4 flex items-center text-faint">
             <Search className="h-4 w-4" strokeWidth={2} aria-hidden />
           </div>
           <input
-            className="input w-full rounded-2xl border-white/[0.12] bg-[#0c0c0f]/80 py-3.5 pl-11 pr-4 text-[15px] text-white shadow-[0_0_0_1px_rgba(255,255,255,0.04)] backdrop-blur-sm placeholder:text-zinc-600 focus:border-cyan-400/35 focus:ring-cyan-400/20"
+            className="input w-full rounded-2xl border-white/[0.12] bg-[#0c0c0f]/80 py-3.5 pl-11 pr-4 text-[15px] text-white shadow-[0_0_0_1px_rgba(255,255,255,0.04)] backdrop-blur-sm placeholder:text-dim focus:border-cyan-400/35 focus:ring-cyan-400/20"
             placeholder={s.searchPlaceholder}
             value={q}
             onChange={(e) => setQ(e.target.value)}
@@ -144,7 +144,7 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
         </div>
 
         {debounced.length > 0 && debounced.length < 2 ? (
-          <p className="mt-3 text-xs text-[#A1A1AA]">{s.searchHint}</p>
+          <p className="mt-3 text-xs text-muted">{s.searchHint}</p>
         ) : null}
       </div>
 
@@ -154,7 +154,7 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
             <Search className="h-6 w-6" strokeWidth={1.75} aria-hidden />
           </div>
           <p className="font-display text-lg font-semibold text-white">{s.searchStartPrompt}</p>
-          <p className="mx-auto mt-2 max-w-sm text-sm text-zinc-500">{s.searchStartDetail}</p>
+          <p className="mx-auto mt-2 max-w-sm text-sm text-faint">{s.searchStartDetail}</p>
         </div>
       ) : null}
 
@@ -166,7 +166,7 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
           <p>{error}</p>
           <button
             type="button"
-            className="mt-3 rounded-full border border-white/15 px-4 py-1.5 text-xs text-zinc-200 hover:border-white/25"
+            className="mt-3 rounded-full border border-white/15 px-4 py-1.5 text-xs text-bright hover:border-white/25"
             onClick={() => void runSearch()}
           >
             {s.retryLabel}
@@ -222,11 +222,11 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
                 <article className="group overflow-hidden rounded-[24px] border border-white/[0.08] bg-gradient-to-br from-white/[0.07] via-white/[0.02] to-transparent p-4 shadow-[0_0_40px_-24px_rgba(34,211,238,0.35)] transition hover:border-cyan-400/20 sm:p-5">
                   <div className="flex flex-col gap-5 sm:flex-row sm:items-stretch sm:gap-6">
                     <div className="flex min-w-0 flex-1 gap-4">
-                      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 shadow-inner ring-1 ring-white/5">
+                      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-background shadow-inner ring-1 ring-white/5">
                         {r.avatar_url ? (
                           <Image src={r.avatar_url} alt="" fill sizes="64px" className="h-full w-full object-cover" />
                         ) : (
-                          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-zinc-800 to-zinc-900 text-sm font-semibold text-zinc-400">
+                          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-zinc-800 to-zinc-900 text-sm font-semibold text-muted">
                             {initials(displayName, uname)}
                           </div>
                         )}
@@ -243,7 +243,7 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
                         </div>
                         <p className="mt-0.5 font-mono text-sm text-cyan-200/70">@{uname}</p>
                         {safeBio ? (
-                          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-zinc-400">{safeBio}</p>
+                          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted">{safeBio}</p>
                         ) : null}
                       </div>
                     </div>
@@ -255,12 +255,12 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
                         {uname !== "—" ? (
                           <Link
                             href={`/${locale}/profile/${encodeURIComponent(uname)}`}
-                            className="rounded-full border border-white/15 bg-white/[0.04] px-4 py-2.5 text-center text-xs font-semibold text-zinc-100 transition hover:border-cyan-400/35 hover:bg-white/[0.08]"
+                            className="rounded-full border border-white/15 bg-white/[0.04] px-4 py-2.5 text-center text-xs font-semibold text-bright transition hover:border-cyan-400/35 hover:bg-white/[0.08]"
                           >
                             {s.viewProfileButton}
                           </Link>
                         ) : (
-                          <span className="rounded-full border border-white/10 px-4 py-2.5 text-center text-xs text-zinc-500">
+                          <span className="rounded-full border border-white/10 px-4 py-2.5 text-center text-xs text-faint">
                             {s.viewProfileButton}
                           </span>
                         )}

@@ -46,7 +46,7 @@ export function BodySilhouetteSelector({
               onClick={() => onSelect({ bodyType: option.bodyType, estimatedBF: option.estimatedBF })}
               className={cn(
                 "w-[130px] rounded-xl border p-3 text-center transition-all sm:w-[150px]",
-                selected ? "border-[#22D3EE] bg-[rgba(34,211,238,0.06)]" : "border-[#1E2028] bg-[#111215] hover:border-[rgba(34,211,238,0.4)]"
+                selected ? "border-accent bg-[rgba(34,211,238,0.06)]" : "border-divider bg-surface hover:border-[rgba(34,211,238,0.4)]"
               )}
             >
               <svg
@@ -57,8 +57,8 @@ export function BodySilhouetteSelector({
                   <path d={bodyPath} fill={selected ? "rgba(34,211,238,0.06)" : "transparent"} stroke={selected ? "#22D3EE" : "#1E2028"} strokeWidth="2.2" />
                 </g>
               </svg>
-              <div className={cn("mt-2 text-xs font-medium", selected ? "text-white" : "text-[#A1A1AA]")}>{option.bodyType}</div>
-              <div className="mt-1 text-[10px] text-[#52525B]">{option.bfRange}</div>
+              <div className={cn("mt-2 text-xs font-medium", selected ? "text-white" : "text-muted")}>{option.bodyType}</div>
+              <div className="mt-1 text-[10px] text-dim">{option.bfRange}</div>
             </button>
           );
         })}

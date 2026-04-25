@@ -95,7 +95,7 @@ export default function ForgotPasswordPage({ params }: { params: { locale: strin
           <Logo variant="icon" size="auth" href={`/${locale}`} />
         </div>
         <h1 className="text-center font-display text-2xl font-bold text-white">{copy.title}</h1>
-        <p className="mt-2 text-center text-sm text-zinc-400">{copy.sub}</p>
+        <p className="mt-2 text-center text-sm text-muted">{copy.sub}</p>
         {sent ? (
           <div className="mt-6 rounded-xl border border-emerald-400/25 bg-emerald-500/10 p-4 text-center text-sm text-emerald-300">
             {copy.success}
@@ -120,7 +120,7 @@ export default function ForgotPasswordPage({ params }: { params: { locale: strin
             </button>
           </form>
         )}
-        <Link href={`/${locale}/login`} className="mt-5 block text-center text-sm text-zinc-500 hover:text-zinc-300">
+        <Link href={`/${locale}/login`} className="mt-5 block text-center text-sm text-faint hover:text-bright">
           {copy.backToLogin}
         </Link>
       </div>

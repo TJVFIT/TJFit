@@ -194,7 +194,7 @@ export default function BecomeCoachPage({ params }: { params: { locale: string }
   const c = COPY[locale] ?? COPY.en;
 
   return (
-    <div className="bg-[#09090B]">
+    <div className="bg-background">
       {/* Hero */}
       <section className="relative overflow-hidden px-4 py-20 sm:px-6 lg:px-8">
         <div
@@ -208,10 +208,10 @@ export default function BecomeCoachPage({ params }: { params: { locale: string }
           <h1 className="mt-6 text-balance font-display text-4xl font-extrabold leading-tight tracking-[-0.02em] text-white sm:text-5xl">
             {c.hero}
           </h1>
-          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-zinc-400 sm:text-base">{c.heroSub}</p>
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted sm:text-base">{c.heroSub}</p>
           <a
             href="#apply"
-            className="mt-8 inline-flex min-h-[52px] items-center justify-center rounded-full bg-[#22D3EE] px-8 py-3 text-base font-bold text-[#09090B] transition hover:bg-white"
+            className="mt-8 inline-flex min-h-[52px] items-center justify-center rounded-full bg-accent px-8 py-3 text-base font-bold text-[#09090B] transition hover:bg-white"
           >
             {c.applyNow}
           </a>
@@ -226,9 +226,9 @@ export default function BecomeCoachPage({ params }: { params: { locale: string }
             { title: c.b2title, sub: c.b2sub },
             { title: c.b3title, sub: c.b3sub }
           ].map((b) => (
-            <div key={b.title} className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6 text-center">
+            <div key={b.title} className="rounded-2xl border border-divider bg-surface p-6 text-center">
               <p className="text-lg font-semibold text-white">{b.title}</p>
-              <p className="mt-2 text-sm text-zinc-400">{b.sub}</p>
+              <p className="mt-2 text-sm text-muted">{b.sub}</p>
             </div>
           ))}
         </div>
@@ -239,10 +239,10 @@ export default function BecomeCoachPage({ params }: { params: { locale: string }
         <h2 className="text-center text-2xl font-bold text-white">{c.howTitle}</h2>
         <div className="mt-8 grid gap-4 sm:grid-cols-4">
           {c.steps.map((step) => (
-            <div key={step.num} className="rounded-2xl border border-[#1E2028] bg-[#111215] p-5 text-center">
-              <p className="text-3xl font-extrabold text-[#22D3EE] opacity-60">{step.num}</p>
+            <div key={step.num} className="rounded-2xl border border-divider bg-surface p-5 text-center">
+              <p className="text-3xl font-extrabold text-accent opacity-60">{step.num}</p>
               <p className="mt-2 font-semibold text-white">{step.title}</p>
-              <p className="mt-1 text-sm text-zinc-400">{step.sub}</p>
+              <p className="mt-1 text-sm text-muted">{step.sub}</p>
             </div>
           ))}
         </div>
@@ -252,24 +252,24 @@ export default function BecomeCoachPage({ params }: { params: { locale: string }
       <section className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
         <h2 className="text-center text-2xl font-bold text-white">{c.createTitle}</h2>
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          <div className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
+          <div className="rounded-2xl border border-divider bg-surface p-6">
             <p className="text-lg font-semibold text-white">{c.c1}</p>
-            <p className="mt-2 text-sm text-zinc-400">{c.c1sub}</p>
+            <p className="mt-2 text-sm text-muted">{c.c1sub}</p>
           </div>
-          <div className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
+          <div className="rounded-2xl border border-divider bg-surface p-6">
             <p className="text-lg font-semibold text-white">{c.c2}</p>
-            <p className="mt-2 text-sm text-zinc-400">{c.c2sub}</p>
+            <p className="mt-2 text-sm text-muted">{c.c2sub}</p>
           </div>
         </div>
       </section>
 
       {/* Requirements */}
       <section className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
-        <div className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
+        <div className="rounded-2xl border border-divider bg-surface p-6">
           <h2 className="text-lg font-semibold text-white">{c.reqTitle}</h2>
           <ul className="mt-4 space-y-3">
             {c.reqs.map((req) => (
-              <li key={req} className={`text-sm ${req.startsWith("✗") ? "text-zinc-500" : "text-zinc-300"}`}>
+              <li key={req} className={`text-sm ${req.startsWith("✗") ? "text-faint" : "text-bright"}`}>
                 {req}
               </li>
             ))}
@@ -279,7 +279,7 @@ export default function BecomeCoachPage({ params }: { params: { locale: string }
 
       {/* Application Form */}
       <section id="apply" className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
-        <div className="rounded-3xl border border-[#1E2028] bg-[#111215] p-6 sm:p-10">
+        <div className="rounded-3xl border border-divider bg-surface p-6 sm:p-10">
           <span className="inline-flex rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-300">
             {c.badge}
           </span>
@@ -295,9 +295,9 @@ export default function BecomeCoachPage({ params }: { params: { locale: string }
         <h2 className="text-xl font-bold text-white">{c.faqTitle}</h2>
         <div className="mt-5 space-y-4">
           {c.faqs.map((faq) => (
-            <details key={faq.q} className="rounded-2xl border border-[#1E2028] bg-[#111215] p-5">
+            <details key={faq.q} className="rounded-2xl border border-divider bg-surface p-5">
               <summary className="cursor-pointer font-semibold text-white">{faq.q}</summary>
-              <p className="mt-3 text-sm text-zinc-400">{faq.a}</p>
+              <p className="mt-3 text-sm text-muted">{faq.a}</p>
             </details>
           ))}
         </div>
@@ -310,7 +310,7 @@ export default function BecomeCoachPage({ params }: { params: { locale: string }
           </Link>
           <Link
             href={`/${locale}/coaches`}
-            className="rounded-full border border-white/15 px-5 py-2.5 text-sm font-medium text-zinc-200 transition hover:border-white/25"
+            className="rounded-full border border-white/15 px-5 py-2.5 text-sm font-medium text-bright transition hover:border-white/25"
           >
             Meet the Coaches
           </Link>

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { AsyncButton } from "@/components/ui/AsyncButton";
@@ -134,7 +134,7 @@ export function AdminCoachAuthorization({ locale }: { locale: Locale }) {
   return (
     <div className="glass-panel rounded-[32px] p-6">
       <p className="text-lg font-semibold text-white">{copy.title}</p>
-      <p className="mt-2 text-sm text-zinc-400">{copy.subtitle}</p>
+      <p className="mt-2 text-sm text-muted">{copy.subtitle}</p>
 
       <form
         onSubmit={(e) => {
@@ -181,12 +181,12 @@ export function AdminCoachAuthorization({ locale }: { locale: Locale }) {
         </p>
         <div className="mt-3 max-h-40 space-y-2 overflow-y-auto">
           {coaches.length === 0 ? (
-            <p className="text-sm text-zinc-500">{copy.empty}</p>
+            <p className="text-sm text-faint">{copy.empty}</p>
           ) : (
             coaches.map((c) => (
               <div
                 key={c.id}
-                className="rounded-[16px] border border-white/10 bg-white/5 px-4 py-2 text-sm text-zinc-300"
+                className="rounded-[16px] border border-white/10 bg-white/5 px-4 py-2 text-sm text-bright"
               >
                 {c.email}
               </div>

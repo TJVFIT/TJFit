@@ -56,10 +56,10 @@ export default function BlogWritePage({ params }: { params: { locale: string } }
   if (allowed === false) {
     return (
       <PremiumPageShell>
-        <section className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
+        <section className="rounded-2xl border border-divider bg-surface p-6">
           <h1 className="text-2xl font-bold text-white">Blog posting locked</h1>
-          <p className="mt-2 text-sm text-[#A1A1AA]">Complete a 12-week program and be active for 30+ days to unlock.</p>
-          <p className="mt-3 text-sm text-zinc-300">
+          <p className="mt-2 text-sm text-muted">Complete a 12-week program and be active for 30+ days to unlock.</p>
+          <p className="mt-3 text-sm text-bright">
             Program completed: {progress.paidPrograms > 0 ? "✓" : "✗"} · Days active: {progress.daysActive}/30
           </p>
         </section>
@@ -83,23 +83,23 @@ export default function BlogWritePage({ params }: { params: { locale: string } }
 
   return (
     <PremiumPageShell>
-      <section className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
+      <section className="rounded-2xl border border-divider bg-surface p-6">
         <h1 className="text-3xl font-extrabold text-white">Write a Blog Post</h1>
         <form className="mt-6 space-y-4" onSubmit={submit}>
-          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" className="w-full rounded-xl border border-[#1E2028] bg-[#09090B] px-3 py-2 text-white" required />
-          <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full rounded-xl border border-[#1E2028] bg-[#09090B] px-3 py-2 text-white">
+          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" className="w-full rounded-xl border border-divider bg-background px-3 py-2 text-white" required />
+          <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full rounded-xl border border-divider bg-background px-3 py-2 text-white">
             <option>Training</option>
             <option>Nutrition</option>
             <option>Mindset</option>
             <option>Recovery</option>
             <option>Lifestyle</option>
           </select>
-          <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="Write your article..." className="min-h-[220px] w-full rounded-xl border border-[#1E2028] bg-[#09090B] px-3 py-2 text-white" required />
-          <input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="Tags (comma separated)" className="w-full rounded-xl border border-[#1E2028] bg-[#09090B] px-3 py-2 text-white" />
-          <input type="file" accept="image/*" onChange={(e) => setImage(e.target.files?.[0] ?? null)} className="w-full text-sm text-zinc-300" />
-          <p className="text-xs text-zinc-500">SEO description preview: {seoDescription || "-"}</p>
+          <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="Write your article..." className="min-h-[220px] w-full rounded-xl border border-divider bg-background px-3 py-2 text-white" required />
+          <input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="Tags (comma separated)" className="w-full rounded-xl border border-divider bg-background px-3 py-2 text-white" />
+          <input type="file" accept="image/*" onChange={(e) => setImage(e.target.files?.[0] ?? null)} className="w-full text-sm text-bright" />
+          <p className="text-xs text-faint">SEO description preview: {seoDescription || "-"}</p>
           <Button type="submit">Submit for Review</Button>
-          {status ? <p className="text-sm text-zinc-300">{status}</p> : null}
+          {status ? <p className="text-sm text-bright">{status}</p> : null}
         </form>
       </section>
     </PremiumPageShell>

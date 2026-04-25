@@ -227,12 +227,12 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
         <p className="text-sm text-red-400">{initialLoadError}</p>
         <button
           type="button"
-          className="rounded-full border border-white/15 px-5 py-2.5 text-sm text-zinc-200 hover:border-white/25"
+          className="rounded-full border border-white/15 px-5 py-2.5 text-sm text-bright hover:border-white/25"
           onClick={() => void load()}
         >
           {s.retryLabel}
         </button>
-        <Link href={`/${locale}`} className="block text-xs text-zinc-500 hover:text-zinc-300">
+        <Link href={`/${locale}`} className="block text-xs text-faint hover:text-bright">
           ← {s.threadBack}
         </Link>
       </div>
@@ -245,13 +245,13 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
   return (
     <div className="mx-auto max-w-lg space-y-8 px-4 py-14 sm:px-6">
       <div>
-        <Link href={`/${locale}/messages`} className="text-xs text-zinc-500 hover:text-zinc-300">
+        <Link href={`/${locale}/messages`} className="text-xs text-faint hover:text-bright">
           ← {s.threadBack}
         </Link>
         <h1 className="mt-4 font-display text-3xl font-semibold text-white">{s.profileEditPageTitle}</h1>
-        <p className="mt-2 text-sm text-zinc-400">{s.messageSettingsSubtitle}</p>
+        <p className="mt-2 text-sm text-muted">{s.messageSettingsSubtitle}</p>
         {(since || updated) && (
-          <p className="mt-2 text-xs text-zinc-600">
+          <p className="mt-2 text-xs text-dim">
             {since ? (
               <>
                 {s.memberSinceLabel}: {since}
@@ -281,7 +281,7 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
 
       <div className="glass-panel space-y-5 rounded-[28px] p-6">
         <label className="block">
-          <span className="text-xs font-medium uppercase tracking-wider text-zinc-500">{s.usernameLabel}</span>
+          <span className="text-xs font-medium uppercase tracking-wider text-faint">{s.usernameLabel}</span>
           <input
             className="input mt-1.5 w-full"
             value={form.username}
@@ -292,14 +292,14 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
             autoComplete="username"
             spellCheck={false}
           />
-          <p className="mt-1 text-xs text-zinc-600">{s.usernameHint}</p>
+          <p className="mt-1 text-xs text-dim">{s.usernameHint}</p>
           {usernameTouched && form.username.trim() && !isValidUsername(form.username.trim()) ? (
             <p className="mt-1 text-xs text-red-400/90">{s.usernameInvalidClient}</p>
           ) : null}
         </label>
 
         <label className="block">
-          <span className="text-xs font-medium uppercase tracking-wider text-zinc-500">{s.displayNameLabel}</span>
+          <span className="text-xs font-medium uppercase tracking-wider text-faint">{s.displayNameLabel}</span>
           <input
             className="input mt-1.5 w-full"
             value={form.display_name}
@@ -309,7 +309,7 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
         </label>
 
         <label className="block">
-          <span className="text-xs font-medium uppercase tracking-wider text-zinc-500">{s.avatarUrlLabel}</span>
+          <span className="text-xs font-medium uppercase tracking-wider text-faint">{s.avatarUrlLabel}</span>
           <input
             className="input mt-1.5 w-full"
             value={form.avatar_url ?? ""}
@@ -319,19 +319,19 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
         </label>
 
         <label className="block">
-          <span className="text-xs font-medium uppercase tracking-wider text-zinc-500">{s.bioLabel}</span>
+          <span className="text-xs font-medium uppercase tracking-wider text-faint">{s.bioLabel}</span>
           <textarea
             className="input mt-1.5 min-h-[100px] w-full resize-y"
             value={form.bio}
             onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value.slice(0, 160) }))}
           />
-          <p className="mt-1 text-xs text-zinc-500">{form.bio.length} / 160</p>
+          <p className="mt-1 text-xs text-faint">{form.bio.length} / 160</p>
         </label>
 
         <div>
-          <span className="text-xs font-medium uppercase tracking-wider text-zinc-500">{s.accountVisibilityLabel}</span>
+          <span className="text-xs font-medium uppercase tracking-wider text-faint">{s.accountVisibilityLabel}</span>
           <div className="mt-2 space-y-2">
-            <label className="flex cursor-pointer items-center gap-2 text-sm text-zinc-300">
+            <label className="flex cursor-pointer items-center gap-2 text-sm text-bright">
               <input
                 type="radio"
                 name="vis"
@@ -340,7 +340,7 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
               />
               {s.visibilityPublic}
             </label>
-            <label className="flex cursor-pointer items-center gap-2 text-sm text-zinc-300">
+            <label className="flex cursor-pointer items-center gap-2 text-sm text-bright">
               <input
                 type="radio"
                 name="vis"
@@ -352,7 +352,7 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
           </div>
         </div>
 
-        <label className="flex cursor-pointer items-start gap-3 text-sm text-zinc-300">
+        <label className="flex cursor-pointer items-start gap-3 text-sm text-bright">
           <input
             type="checkbox"
             className="mt-1"
@@ -361,12 +361,12 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
           />
           <span>
             <span className="font-medium text-white">{s.searchableLabel}</span>
-            <span className="mt-0.5 block text-xs text-zinc-500">{s.searchableHelp}</span>
+            <span className="mt-0.5 block text-xs text-faint">{s.searchableHelp}</span>
           </span>
         </label>
 
         <label className="block">
-          <span className="text-xs font-medium uppercase tracking-wider text-zinc-500">{s.messagePrivacyLabel}</span>
+          <span className="text-xs font-medium uppercase tracking-wider text-faint">{s.messagePrivacyLabel}</span>
           <select
             className="input mt-1.5 w-full"
             value={form.message_privacy}
@@ -396,7 +396,7 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
       </div>
 
       <div className="glass-panel space-y-5 rounded-[28px] p-6">
-        <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-zinc-400">Profile Appearance</h2>
+        <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-muted">Profile Appearance</h2>
         <div className="grid grid-cols-4 gap-2">
           {["#111215", "#0F172A", "#1A0B2E", "#0B1A2E", "#0B2E0B", "#2E0B0B", "#1A1A0B", "#1C1412"].map((color) => (
             <button
@@ -410,7 +410,7 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
         </div>
 
         <label className="block">
-          <span className="text-xs font-medium uppercase tracking-wider text-zinc-500">Featured Badge</span>
+          <span className="text-xs font-medium uppercase tracking-wider text-faint">Featured Badge</span>
           <select
             value={form.display_badge_key ?? ""}
             onChange={(e) => setForm((f) => ({ ...f, display_badge_key: e.target.value || null }))}
@@ -426,14 +426,14 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
         </label>
 
         <div className="space-y-2">
-          <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">Privacy Settings</p>
+          <p className="text-xs font-medium uppercase tracking-wider text-faint">Privacy Settings</p>
           {[
             ["show_streak", "Show my streak"],
             ["show_coins", "Show my TJCOIN balance"],
             ["show_programs", "Show programs I'm doing"],
             ["show_posts", "Show my community posts"]
           ].map(([key, label]) => (
-            <label key={key} className="flex items-center gap-3 text-sm text-zinc-300">
+            <label key={key} className="flex items-center gap-3 text-sm text-bright">
               <input
                 type="checkbox"
                 checked={Boolean(form.privacy_settings?.[key as keyof NonNullable<ProfileRow["privacy_settings"]>])}

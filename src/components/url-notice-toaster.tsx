@@ -56,7 +56,7 @@ export function UrlNoticeToaster({ locale }: { locale: Locale }) {
       )}
       role="status"
     >
-      <div className="pointer-events-auto max-w-lg rounded-2xl border border-cyan-400/25 bg-[#111215]/95 px-4 py-3 text-center text-sm text-zinc-100 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.85)] backdrop-blur-md">
+      <div className="pointer-events-auto max-w-lg rounded-2xl border border-cyan-400/25 bg-surface/95 px-4 py-3 text-center text-sm text-bright shadow-[0_20px_50px_-20px_rgba(0,0,0,0.85)] backdrop-blur-md">
         <p>{bannerText}</p>
         <button
           type="button"

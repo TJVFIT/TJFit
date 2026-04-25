@@ -263,7 +263,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
       <div>
         <span className="badge">{t.title}</span>
         <h1 className="mt-4 font-display text-3xl font-semibold text-white sm:text-4xl">{t.title}</h1>
-        <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-400">{t.subtitle}</p>
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-muted">{t.subtitle}</p>
       </div>
 
       {/* ME1 — Recharts gradient area charts with animated draw-on */}
@@ -334,7 +334,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
         {/* Body metrics — MI13 section icon */}
         <section className="glass-panel rounded-[28px] p-6">
           <div className="flex items-center gap-2">
-            <Scale className="h-4 w-4 text-[#22D3EE]" />
+            <Scale className="h-4 w-4 text-accent" />
             <p className="text-lg font-semibold text-white">{t.metrics}</p>
           </div>
           <div className="mt-4 grid gap-3">
@@ -342,7 +342,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
               <input className="input" placeholder={t.weightPlaceholder} value={weight} onChange={(e) => setWeight(e.target.value)} type="number" step="0.1" min="0" />
               <input className="input" placeholder={t.bodyFatPlaceholder} value={bodyFat} onChange={(e) => setBodyFat(e.target.value)} type="number" step="0.1" min="0" />
             </div>
-            <p className="text-[11px] font-medium uppercase tracking-widest text-zinc-600">Measurements (cm)</p>
+            <p className="text-[11px] font-medium uppercase tracking-widest text-dim">Measurements (cm)</p>
             <div className="grid grid-cols-3 gap-2">
               <input className="input text-center text-sm" placeholder="Waist" value={waist} onChange={(e) => setWaist(e.target.value)} type="number" step="0.1" min="0" />
               <input className="input text-center text-sm" placeholder="Chest" value={chest} onChange={(e) => setChest(e.target.value)} type="number" step="0.1" min="0" />
@@ -354,16 +354,16 @@ export function ProgressView({ locale }: { locale: Locale }) {
           </div>
           <div className="mt-5 space-y-2">
             {entries.length === 0 ? (
-              <p className="text-sm text-zinc-500">{t.noData}</p>
+              <p className="text-sm text-faint">{t.noData}</p>
             ) : (
               entries.slice(0, 6).map((entry) => (
-                <div key={entry.id} className="rounded-xl border border-white/10 p-3 text-xs text-zinc-300">
+                <div key={entry.id} className="rounded-xl border border-white/10 p-3 text-xs text-bright">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium text-zinc-400">{relativeDate(entry.entry_date)}</span>
-                    <span className="text-[#22D3EE]">{entry.weight_kg ?? "–"} kg · {entry.body_fat_percent ?? "–"}%</span>
+                    <span className="font-medium text-muted">{relativeDate(entry.entry_date)}</span>
+                    <span className="text-accent">{entry.weight_kg ?? "–"} kg · {entry.body_fat_percent ?? "–"}%</span>
                   </div>
                   {(entry.waist_cm || entry.chest_cm || entry.hips_cm) && (
-                    <div className="mt-1 flex gap-3 text-zinc-500">
+                    <div className="mt-1 flex gap-3 text-faint">
                       {entry.waist_cm ? <span>W:{entry.waist_cm}</span> : null}
                       {entry.chest_cm ? <span>C:{entry.chest_cm}</span> : null}
                       {entry.hips_cm ? <span>H:{entry.hips_cm}</span> : null}
@@ -378,7 +378,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
         {/* Workouts — MI13 section icon + F4 grouped + ME10 slide-in */}
         <section className="glass-panel rounded-[28px] p-6">
           <div className="flex items-center gap-2">
-            <Dumbbell className="h-4 w-4 text-[#22D3EE]" />
+            <Dumbbell className="h-4 w-4 text-accent" />
             <p className="text-lg font-semibold text-white">{t.workouts}</p>
           </div>
           <div className="mt-4 grid gap-3">
@@ -397,20 +397,20 @@ export function ProgressView({ locale }: { locale: Locale }) {
           </div>
           <div className="mt-5 space-y-4 overflow-y-auto" style={{ maxHeight: 340 }}>
             {workouts.length === 0 ? (
-              <p className="text-sm text-zinc-500">{t.noData}</p>
+              <p className="text-sm text-faint">{t.noData}</p>
             ) : (
               groupedWorkouts.map(([date, ws]) => (
                 <div key={date}>
-                  <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-widest text-zinc-600">{relativeDate(date)}</p>
+                  <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-widest text-dim">{relativeDate(date)}</p>
                   <div className="space-y-1.5">
                     {ws.map((w) => (
                       <div
                         key={w.id}
-                        className="rounded-xl border border-white/10 p-3 text-xs text-zinc-300"
+                        className="rounded-xl border border-white/10 p-3 text-xs text-bright"
                         style={newEntryIds.current.has(w.id) ? { animation: "workout-slide-in 400ms ease-out forwards" } : undefined}
                       >
                         <span className="font-medium text-white">{w.exercise}</span>
-                        <div className="mt-0.5 flex flex-wrap gap-2 text-zinc-500">
+                        <div className="mt-0.5 flex flex-wrap gap-2 text-faint">
                           {w.sets ? <span>{w.sets} sets</span> : null}
                           {w.reps ? <span>{w.reps} reps</span> : null}
                           {w.weight_kg ? <span>{w.weight_kg} kg</span> : null}
@@ -428,7 +428,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
         {/* Milestones — MI13 section icon + U6 target value */}
         <section className="glass-panel rounded-[28px] p-6">
           <div className="flex items-center gap-2">
-            <Flag className="h-4 w-4 text-[#22D3EE]" />
+            <Flag className="h-4 w-4 text-accent" />
             <p className="text-lg font-semibold text-white">{t.milestones}</p>
           </div>
           <div className="mt-4 grid gap-3">
@@ -440,15 +440,15 @@ export function ProgressView({ locale }: { locale: Locale }) {
           </div>
           <div className="mt-5 space-y-2">
             {milestones.length === 0 ? (
-              <p className="text-sm text-zinc-500">{t.noData}</p>
+              <p className="text-sm text-faint">{t.noData}</p>
             ) : (
               milestones.map((m) => (
-                <div key={m.id} className="rounded-xl border border-white/10 p-3 text-sm text-zinc-300">
+                <div key={m.id} className="rounded-xl border border-white/10 p-3 text-sm text-bright">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <p className="font-medium text-white">{m.title}</p>
                       {m.target_value && (
-                        <p className="mt-0.5 text-xs text-[#22D3EE]">🎯 {m.target_value}</p>
+                        <p className="mt-0.5 text-xs text-accent">🎯 {m.target_value}</p>
                       )}
                     </div>
                     {m.status !== "completed" ? (

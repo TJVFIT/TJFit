@@ -11,11 +11,11 @@ export default function PrivacyPolicyPage({ params }: { params: { locale: string
       <span className="badge">{copy.badge}</span>
       <h1 className="text-4xl font-semibold text-white">{copy.title}</h1>
       {copy.paragraphs.map((paragraph) => (
-        <p key={paragraph} className="text-sm leading-7 text-zinc-300">
+        <p key={paragraph} className="text-sm leading-7 text-bright">
           {paragraph}
         </p>
       ))}
-      <p className="text-sm text-zinc-500">{copy.lastUpdatedLabel}</p>
+      <p className="text-sm text-faint">{copy.lastUpdatedLabel}</p>
     </div>
   );
 }

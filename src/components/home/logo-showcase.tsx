@@ -15,7 +15,7 @@ type LogoShowcaseProps = {
 /** Dedicated brand moment — not a nav stamp */
 export function LogoShowcase({ locale, reduce }: LogoShowcaseProps) {
   return (
-    <section className="relative overflow-hidden border-y border-[#1E2028] bg-[#0A0A0B] py-24 lg:py-32">
+    <section className="relative overflow-hidden border-y border-divider bg-background py-24 lg:py-32">
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         <div
           className="absolute inset-0 opacity-40"
@@ -26,7 +26,7 @@ export function LogoShowcase({ locale, reduce }: LogoShowcaseProps) {
         {!reduce && <div className="tj-logo-wireframe absolute left-1/2 top-1/2 h-[min(120vw,520px)] w-[min(120vw,520px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-white/[0.07]" />}
       </div>
       <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center px-6 text-center">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#52525B]">Brand</p>
+        <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-dim">Brand</p>
         <div className="relative mt-10">
           {!reduce && <div className="tj-logo-sweep pointer-events-none absolute inset-[-30%] overflow-hidden rounded-2xl" aria-hidden />}
           <Link

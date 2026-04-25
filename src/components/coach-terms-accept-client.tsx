@@ -64,18 +64,18 @@ export function CoachTermsAcceptClient({
       <div>
         <span className="badge">{copy.badge}</span>
         <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">{copy.title}</h1>
-        <p className="mt-3 text-sm leading-7 text-zinc-400">{copy.subtitle}</p>
-        <p className="mt-2 text-xs text-zinc-500">
+        <p className="mt-3 text-sm leading-7 text-muted">{copy.subtitle}</p>
+        <p className="mt-2 text-xs text-faint">
           Version {termsVersion} —{" "}
           {locale !== "en" ? bindingNoteByLocale[locale] : versionNoteByLocale[locale]}
         </p>
       </div>
 
-      <div className="space-y-8 rounded-[28px] border border-white/[0.08] bg-[#111215]/90 p-6 sm:p-8">
+      <div className="space-y-8 rounded-[28px] border border-white/[0.08] bg-surface/90 p-6 sm:p-8">
         {sections.map((s) => (
           <section key={s.heading}>
             <h2 className="text-lg font-semibold text-white">{s.heading}</h2>
-            <div className="mt-3 space-y-3 text-sm leading-7 text-zinc-400">
+            <div className="mt-3 space-y-3 text-sm leading-7 text-muted">
               {s.paragraphs.map((p) => (
                 <p key={p}>{p}</p>
               ))}
@@ -85,7 +85,7 @@ export function CoachTermsAcceptClient({
       </div>
 
       <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.03] p-6">
-        <label className="flex cursor-pointer items-start gap-3 text-sm text-zinc-200">
+        <label className="flex cursor-pointer items-start gap-3 text-sm text-bright">
           <input
             type="checkbox"
             checked={checked}

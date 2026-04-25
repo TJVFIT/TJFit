@@ -101,7 +101,7 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
         <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <button
             type="button"
-            className="rounded-full border border-white/15 px-5 py-2 text-sm text-zinc-200 hover:border-white/25"
+            className="rounded-full border border-white/15 px-5 py-2 text-sm text-bright hover:border-white/25"
             onClick={() => window.location.reload()}
           >
             {s.retryLabel}
@@ -154,7 +154,7 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
     <>
       <AmbientBackground variant="violet" intensity="low" />
       <div className="relative z-[1] mx-auto max-w-5xl px-4 py-10 sm:px-6">
-        <div className="overflow-hidden rounded-2xl border border-[#1E2028] bg-[#111215]">
+        <div className="overflow-hidden rounded-2xl border border-divider bg-surface">
           <div
             className="h-[140px] sm:h-[200px]"
             style={{ background: `linear-gradient(180deg, ${bannerColor}, #09090B)` }}
@@ -173,9 +173,9 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
                 </div>
                 <div>
                   <h1 className="text-xl font-bold text-white">{profile.display_name || profile.username}</h1>
-                  <p className="text-sm text-zinc-500">@{profile.username}</p>
+                  <p className="text-sm text-faint">@{profile.username}</p>
                   <p className="mt-1 text-xs uppercase tracking-[0.14em] text-cyan-300">{roleLabel(profile.role)}</p>
-                  {profile.bio ? <p className="mt-2 max-w-xl text-sm text-zinc-300">{profile.bio}</p> : null}
+                  {profile.bio ? <p className="mt-2 max-w-xl text-sm text-bright">{profile.bio}</p> : null}
                 </div>
               </div>
 
@@ -199,7 +199,7 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
               </div>
             </div>
 
-            <div className="mt-3 text-sm text-zinc-400">
+            <div className="mt-3 text-sm text-muted">
               <button type="button" className="hover:text-white" onClick={() => void openList("followers")}>
                 {stats?.followers ?? 0} Followers
               </button>{" "}
@@ -211,82 +211,82 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
           </div>
         </div>
 
-        <section className="mt-5 rounded-2xl border border-[#1E2028] bg-[#111215] p-4">
+        <section className="mt-5 rounded-2xl border border-divider bg-surface p-4">
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             {statList.map((item) => (
-              <div key={item.label} className="rounded-lg border border-white/10 bg-[#0E0F12] px-3 py-3">
+              <div key={item.label} className="rounded-lg border border-white/10 bg-surface-2 px-3 py-3">
                 <p className="text-xl font-bold text-white">
                   {item.icon} {item.value ?? "—"}
                 </p>
-                <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-zinc-500">{item.label}</p>
+                <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-faint">{item.label}</p>
               </div>
             ))}
           </div>
         </section>
 
-        <section className="mt-5 rounded-2xl border border-[#1E2028] bg-[#111215] p-4">
+        <section className="mt-5 rounded-2xl border border-divider bg-surface p-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold text-white">Badges</h2>
-            <span className="text-xs text-zinc-500">{badges.length}</span>
+            <span className="text-xs text-faint">{badges.length}</span>
           </div>
           <div className="mt-3 flex gap-2 overflow-x-auto">
             {badgePreview.map((badge) => (
-              <div key={`${badge.badge_key}-${badge.earned_at}`} className="shrink-0 rounded-full border border-white/10 px-3 py-2 text-xs text-zinc-200">
+              <div key={`${badge.badge_key}-${badge.earned_at}`} className="shrink-0 rounded-full border border-white/10 px-3 py-2 text-xs text-bright">
                 {badge.badge_key}
               </div>
             ))}
-            {badgePreview.length === 0 ? <p className="text-sm text-zinc-500">No badges yet</p> : null}
+            {badgePreview.length === 0 ? <p className="text-sm text-faint">No badges yet</p> : null}
           </div>
         </section>
 
         {activeProgram ? (
-          <section className="mt-5 rounded-2xl border border-[#1E2028] bg-[#111215] p-4">
+          <section className="mt-5 rounded-2xl border border-divider bg-surface p-4">
             <h2 className="text-sm font-semibold text-white">Active Program</h2>
-            <p className="mt-1 text-sm text-zinc-300">
+            <p className="mt-1 text-sm text-bright">
               {activeProgram.program_slug} - Week {activeProgram.week} of 12
             </p>
-            <div className="mt-2 h-2 overflow-hidden rounded-full bg-[#1E2028]">
+            <div className="mt-2 h-2 overflow-hidden rounded-full bg-divider">
               <div className="h-full bg-cyan-400" style={{ width: `${activeProgram.completion_percent}%` }} />
             </div>
           </section>
         ) : null}
 
         <section className="mt-5 grid gap-4 md:grid-cols-2">
-          <div className="rounded-2xl border border-[#1E2028] bg-[#111215] p-4">
+          <div className="rounded-2xl border border-divider bg-surface p-4">
             <h2 className="text-sm font-semibold text-white">Recent Blog Posts</h2>
             <div className="mt-3 space-y-2">
               {recentBlogs.map((post) => (
-                <div key={post.id} className="rounded-lg border border-white/10 bg-[#0E0F12] p-3">
+                <div key={post.id} className="rounded-lg border border-white/10 bg-surface-2 p-3">
                   <p className="text-sm text-white">{post.title}</p>
-                  <p className="mt-1 text-xs text-zinc-500">
+                  <p className="mt-1 text-xs text-faint">
                     {new Date(post.created_at).toLocaleDateString(locale)} · {post.views} views
                   </p>
                 </div>
               ))}
-              {recentBlogs.length === 0 ? <p className="text-sm text-zinc-500">No posts</p> : null}
+              {recentBlogs.length === 0 ? <p className="text-sm text-faint">No posts</p> : null}
             </div>
           </div>
 
-          <div className="rounded-2xl border border-[#1E2028] bg-[#111215] p-4">
+          <div className="rounded-2xl border border-divider bg-surface p-4">
             <h2 className="text-sm font-semibold text-white">Recent Community Posts</h2>
             <div className="mt-3 space-y-2">
               {recentPosts.map((post) => (
-                <div key={post.id} className="rounded-lg border border-white/10 bg-[#0E0F12] p-3">
-                  <p className="line-clamp-2 text-sm text-zinc-300">{post.content || post.title}</p>
-                  <p className="mt-1 text-xs text-zinc-500">{new Date(post.created_at).toLocaleDateString(locale)}</p>
+                <div key={post.id} className="rounded-lg border border-white/10 bg-surface-2 p-3">
+                  <p className="line-clamp-2 text-sm text-bright">{post.content || post.title}</p>
+                  <p className="mt-1 text-xs text-faint">{new Date(post.created_at).toLocaleDateString(locale)}</p>
                 </div>
               ))}
-              {recentPosts.length === 0 ? <p className="text-sm text-zinc-500">No posts</p> : null}
+              {recentPosts.length === 0 ? <p className="text-sm text-faint">No posts</p> : null}
             </div>
           </div>
         </section>
 
         {showList ? (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-            <div className="w-full max-w-md rounded-2xl border border-[#1E2028] bg-[#111215] p-4">
+            <div className="w-full max-w-md rounded-2xl border border-divider bg-surface p-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-white">{showList === "followers" ? "Followers" : "Following"}</h3>
-                <button type="button" className="text-zinc-400" onClick={() => setShowList(null)}>
+                <button type="button" className="text-muted" onClick={() => setShowList(null)}>
                   Close
                 </button>
               </div>
@@ -295,13 +295,13 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
                   <Link
                     key={item.id}
                     href={`/${locale}/profile/${encodeURIComponent(item.username)}`}
-                    className="block rounded-lg border border-white/10 bg-[#0E0F12] p-3 text-sm text-white"
+                    className="block rounded-lg border border-white/10 bg-surface-2 p-3 text-sm text-white"
                   >
                     {item.display_name || item.username}
-                    <span className="ml-1 text-zinc-500">@{item.username}</span>
+                    <span className="ml-1 text-faint">@{item.username}</span>
                   </Link>
                 ))}
-                {listItems.length === 0 ? <p className="text-sm text-zinc-500">No users</p> : null}
+                {listItems.length === 0 ? <p className="text-sm text-faint">No users</p> : null}
               </div>
             </div>
           </div>

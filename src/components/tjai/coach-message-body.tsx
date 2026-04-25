@@ -59,9 +59,9 @@ export function CoachMessageBody({ text, className }: { text: string; className?
         } else break;
       }
       blocks.push(
-        <ul key={`ul-${k++}`} className="my-1 list-disc space-y-1 ps-4 marker:text-[#22D3EE]/55">
+        <ul key={`ul-${k++}`} className="my-1 list-disc space-y-1 ps-4 marker:text-accent/55">
           {items.map((item, j) => (
-            <li key={j} className="text-[#D4D4D8] [&_strong]:text-white">
+            <li key={j} className="text-bright [&_strong]:text-white">
               {parseInlineBold(item)}
             </li>
           ))}
@@ -75,7 +75,7 @@ export function CoachMessageBody({ text, className }: { text: string; className?
       continue;
     }
     blocks.push(
-      <p key={`p-${k++}`} className="text-[#D4D4D8] leading-relaxed [&_strong]:text-white">
+      <p key={`p-${k++}`} className="text-bright leading-relaxed [&_strong]:text-white">
         {parseInlineBold(line)}
       </p>
     );
@@ -88,17 +88,17 @@ export function CoachMessageBody({ text, className }: { text: string; className?
 export function CoachThinkingPulse() {
   return (
     <div className="flex items-center gap-2 py-0.5" aria-live="polite" aria-label="TJAI is thinking">
-      <span className="text-[11px] font-medium uppercase tracking-[0.14em] text-[#52525B]">Thinking</span>
+      <span className="text-[11px] font-medium uppercase tracking-[0.14em] text-dim">Thinking</span>
       <span className="flex gap-1 motion-reduce:hidden">
         {[0, 1, 2].map((d) => (
           <span
             key={d}
-            className="inline-block h-1.5 w-1.5 animate-bounce rounded-full bg-[#22D3EE]/90"
+            className="inline-block h-1.5 w-1.5 animate-bounce rounded-full bg-accent/90"
             style={{ animationDelay: `${d * 140}ms` }}
           />
         ))}
       </span>
-      <span className="hidden text-xs text-[#52525B] motion-reduce:inline">…</span>
+      <span className="hidden text-xs text-dim motion-reduce:inline">…</span>
     </div>
   );
 }

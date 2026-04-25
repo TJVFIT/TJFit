@@ -47,7 +47,7 @@ function useCardSpotlight() {
 }
 
 const ctaPillClass = cn(
-  "inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-[rgba(34,211,238,0.2)] bg-transparent px-4 py-3 text-xs font-semibold text-[#22D3EE] sm:w-auto sm:justify-start sm:py-2.5",
+  "inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-[rgba(34,211,238,0.2)] bg-transparent px-4 py-3 text-xs font-semibold text-accent sm:w-auto sm:justify-start sm:py-2.5",
   "transition-[gap,box-shadow,background-color,border-color] duration-200 ease-out",
   "group-hover:gap-2 group-hover:border-[rgba(34,211,238,0.35)] group-hover:bg-[rgba(34,211,238,0.10)] group-hover:shadow-[0_0_20px_rgba(34,211,238,0.12)]"
 );
@@ -74,7 +74,7 @@ function difficultyDots(difficulty?: string) {
   return (
     <div className="difficulty-dots flex items-center gap-1" aria-label={difficulty ?? "Difficulty"}>
       {Array.from({ length: 5 }).map((_, idx) => (
-        <span key={idx} className={cn("h-1.5 w-1.5 rounded-full", idx < filled ? "bg-[#22D3EE]" : "bg-[#1E2028]")} />
+        <span key={idx} className={cn("h-1.5 w-1.5 rounded-full", idx < filled ? "bg-accent" : "bg-divider")} />
       ))}
     </div>
   );
@@ -145,11 +145,11 @@ function PremiumProgramCardInner({
         <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-4 pb-2">
           <div className="flex min-w-0 flex-1 flex-col gap-1.5">
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="max-w-[min(100%,12rem)] truncate rounded border border-cyan-400/25 bg-cyan-400/10 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.05em] text-[#22D3EE] backdrop-blur-md sm:max-w-[58%] sm:text-[10px]">
+              <span className="max-w-[min(100%,12rem)] truncate rounded border border-cyan-400/25 bg-cyan-400/10 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.05em] text-accent backdrop-blur-md sm:max-w-[58%] sm:text-[10px]">
                 {categoryLabel}
               </span>
               {freeBadgeLabel ? (
-                <span className="shrink-0 rounded border border-violet-400/25 bg-violet-400/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.05em] text-[#A78BFA] backdrop-blur-sm">
+                <span className="shrink-0 rounded border border-violet-400/25 bg-violet-400/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.05em] text-accent-violet backdrop-blur-sm">
                   {freeBadgeLabel}
                 </span>
               ) : null}
@@ -162,7 +162,7 @@ function PremiumProgramCardInner({
                   </span>
                 ) : null}
                 {trainingLocationBadge ? (
-                  <span className="rounded-full border border-white/12 bg-black/40 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-zinc-200/90">
+                  <span className="rounded-full border border-white/12 bg-black/40 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-bright/90">
                     {trainingLocationBadge}
                   </span>
                 ) : null}
@@ -191,9 +191,9 @@ function PremiumProgramCardInner({
           <h3 className="font-display text-lg font-semibold leading-snug tracking-tight text-white sm:text-xl">
             <span className="line-clamp-2 [text-shadow:0_2px_12px_rgba(0,0,0,0.65)]">{title}</span>
           </h3>
-          <p className="mt-1.5 text-[11px] font-medium uppercase tracking-[0.2em] text-zinc-400">{duration}</p>
+          <p className="mt-1.5 text-[11px] font-medium uppercase tracking-[0.2em] text-muted">{duration}</p>
           {metaLine ? (
-            <p className="mt-1.5 text-xs font-medium tabular-nums text-[#A1A1AA] [text-shadow:0_1px_10px_rgba(0,0,0,0.5)]">
+            <p className="mt-1.5 text-xs font-medium tabular-nums text-muted [text-shadow:0_1px_10px_rgba(0,0,0,0.5)]">
               {metaLine}
             </p>
           ) : null}
@@ -202,7 +202,7 @@ function PremiumProgramCardInner({
 
       <div className="flex min-h-0 flex-1 flex-col px-4 pb-5 pt-4 sm:px-5">
         {showDescription && description ? (
-          <p className="line-clamp-3 text-sm leading-relaxed text-zinc-500">{description}</p>
+          <p className="line-clamp-3 text-sm leading-relaxed text-faint">{description}</p>
         ) : (
           <div className="min-h-[3.25rem]" aria-hidden />
         )}
@@ -326,21 +326,21 @@ export function ProgramCard({
                 {spotlightOverlay}
                 {inner}
               </Link>
-              <div className="tj-flip-back flex flex-col rounded-[14px] border border-[#1E2028] bg-[#0A0B0F] p-5 text-center">
+              <div className="tj-flip-back flex flex-col rounded-[14px] border border-divider bg-[#0A0B0F] p-5 text-center">
                 <h3 className="text-lg font-semibold text-white">{program.title}</h3>
-                <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-[#A1A1AA]">
-                  <div className="rounded-lg border border-[#1E2028] bg-[#111215] p-2">{program.duration}</div>
-                  <div className="rounded-lg border border-[#1E2028] bg-[#111215] p-2">{trainingLocationBadge ?? "Home / Gym"}</div>
-                  <div className="rounded-lg border border-[#1E2028] bg-[#111215] p-2">{trainingGoalBadge ?? program.category}</div>
-                  <div className="flex items-center justify-center rounded-lg border border-[#1E2028] bg-[#111215] p-2">
+                <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-muted">
+                  <div className="rounded-lg border border-divider bg-surface p-2">{program.duration}</div>
+                  <div className="rounded-lg border border-divider bg-surface p-2">{trainingLocationBadge ?? "Home / Gym"}</div>
+                  <div className="rounded-lg border border-divider bg-surface p-2">{trainingGoalBadge ?? program.category}</div>
+                  <div className="flex items-center justify-center rounded-lg border border-divider bg-surface p-2">
                     {difficultyDots(program.difficulty)}
                   </div>
                 </div>
-                <p className="mt-4 text-sm font-semibold text-[#22D3EE]">{program.category}</p>
+                <p className="mt-4 text-sm font-semibold text-accent">{program.category}</p>
                 <div className="mt-auto pt-5">
                   <Link
                     href={href}
-                    className="btn-primary-shimmer inline-flex w-full min-h-[48px] items-center justify-center rounded-full bg-[#22D3EE] px-4 py-3 text-sm font-extrabold text-[#09090B] shadow-[0_12px_40px_rgba(34,211,238,0.2)] transition-[filter,transform] duration-200 hover:brightness-110 hover:-translate-y-0.5"
+                    className="btn-primary-shimmer inline-flex w-full min-h-[48px] items-center justify-center rounded-full bg-accent px-4 py-3 text-sm font-extrabold text-[#09090B] shadow-[0_12px_40px_rgba(34,211,238,0.2)] transition-[filter,transform] duration-200 hover:brightness-110 hover:-translate-y-0.5"
                   >
                     {viewLabel}
                     <ArrowRight className="ms-1 h-4 w-4" aria-hidden />

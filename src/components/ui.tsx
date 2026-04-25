@@ -42,10 +42,10 @@ export function CoachCard({ coach, href }: { coach: Coach; href: string }) {
             </div>
             <div>
               <p className="font-medium text-white">{coach.name}</p>
-              <p className="text-sm text-zinc-400">{coach.specialty}</p>
+              <p className="text-sm text-muted">{coach.specialty}</p>
             </div>
           </div>
-          <div className="flex items-center gap-1 rounded-full bg-white/5 px-3 py-1 text-sm text-zinc-200">
+          <div className="flex items-center gap-1 rounded-full bg-white/5 px-3 py-1 text-sm text-bright">
             <Star className="h-4 w-4 fill-current text-cyan-300" />
             {coach.rating}
           </div>
@@ -53,7 +53,7 @@ export function CoachCard({ coach, href }: { coach: Coach; href: string }) {
 
         <div className="mt-6 flex flex-wrap gap-2">
           {coach.languages.map((language) => (
-            <span key={language} className="rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-300">
+            <span key={language} className="rounded-full border border-white/10 px-3 py-1 text-xs text-bright">
               {language}
             </span>
           ))}
@@ -61,7 +61,7 @@ export function CoachCard({ coach, href }: { coach: Coach; href: string }) {
 
         <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-5">
           <div />
-          <span className="inline-flex items-center gap-2 text-sm text-zinc-200">
+          <span className="inline-flex items-center gap-2 text-sm text-bright">
             View profile <ArrowRight className="h-4 w-4" />
           </span>
         </div>
@@ -80,9 +80,9 @@ export function ProductCard({ product }: { product: Product }) {
         <div className="mt-5 flex items-start justify-between gap-4">
           <div>
             <p className="text-lg font-semibold text-white">{product.name}</p>
-            <p className="mt-2 text-sm text-zinc-400">{product.description}</p>
+            <p className="mt-2 text-sm text-muted">{product.description}</p>
           </div>
-          <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-300">
+          <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-bright">
             {product.category}
           </span>
         </div>
@@ -102,7 +102,7 @@ export function StatGrid({ stats }: { stats: { label: string; value: string }[] 
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {stats.map((stat) => (
         <div key={stat.label} className="glass-panel p-5">
-          <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{stat.label}</p>
+          <p className="text-xs uppercase tracking-[0.24em] text-faint">{stat.label}</p>
           <p className="mt-4 text-3xl font-semibold text-white">{stat.value}</p>
         </div>
       ))}
@@ -121,25 +121,25 @@ export function TransformationCard({
     <HoverLift>
       <Link href={href} className="glass-panel block p-6">
         <div className="grid gap-4 md:grid-cols-[1fr_1.3fr_1fr]">
-          <div className="rounded-3xl border border-dashed border-white/10 bg-black/30 p-6 text-center text-xs uppercase tracking-[0.2em] text-zinc-500">
+          <div className="rounded-3xl border border-dashed border-white/10 bg-black/30 p-6 text-center text-xs uppercase tracking-[0.2em] text-faint">
             Before
           </div>
           <div>
-            <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{transformation.category}</p>
+            <p className="text-xs uppercase tracking-[0.24em] text-faint">{transformation.category}</p>
             <p className="mt-3 text-2xl font-semibold text-white">{transformation.userName}</p>
-            <p className="mt-3 text-sm leading-7 text-zinc-400">{transformation.story}</p>
+            <p className="mt-3 text-sm leading-7 text-muted">{transformation.story}</p>
             <div className="mt-4 flex flex-wrap gap-2">
               {transformation.measurements.map((item) => (
                 <span
                   key={item}
-                  className="inline-flex rounded-full border border-white/[0.1] bg-white/[0.05] px-3 py-1 text-xs text-zinc-300 shadow-[0_0_0_1px_rgba(0,0,0,0.2)_inset]"
+                  className="inline-flex rounded-full border border-white/[0.1] bg-white/[0.05] px-3 py-1 text-xs text-bright shadow-[0_0_0_1px_rgba(0,0,0,0.2)_inset]"
                 >
                   {item}
                 </span>
               ))}
             </div>
           </div>
-          <div className="rounded-3xl border border-dashed border-white/10 bg-black/30 p-6 text-center text-xs uppercase tracking-[0.2em] text-zinc-500">
+          <div className="rounded-3xl border border-dashed border-white/10 bg-black/30 p-6 text-center text-xs uppercase tracking-[0.2em] text-faint">
             After
           </div>
         </div>
@@ -153,15 +153,15 @@ export function ChallengeCard({ challenge }: { challenge: Challenge }) {
     <HoverLift>
       <div className="glass-panel p-6">
         <div className="flex items-center justify-between gap-4">
-          <span className="inline-flex rounded-full border border-white/[0.1] bg-white/[0.05] px-3 py-1 text-[11px] font-medium text-zinc-400">
+          <span className="inline-flex rounded-full border border-white/[0.1] bg-white/[0.05] px-3 py-1 text-[11px] font-medium text-muted">
             {challenge.category}
           </span>
-          <span className="text-sm text-zinc-400">{challenge.duration}</span>
+          <span className="text-sm text-muted">{challenge.duration}</span>
         </div>
         <p className="mt-5 text-2xl font-semibold text-white">{challenge.name}</p>
-        <p className="mt-3 text-sm leading-[1.65] text-zinc-400">{challenge.description}</p>
+        <p className="mt-3 text-sm leading-[1.65] text-muted">{challenge.description}</p>
         <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-5 text-sm">
-          <span className="text-zinc-300">{challenge.participants} participants</span>
+          <span className="text-bright">{challenge.participants} participants</span>
           <span className="text-white">{challenge.reward}</span>
         </div>
       </div>
@@ -175,19 +175,19 @@ export function CommunityPostCard({ post }: { post: CommunityPost }) {
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="font-medium text-white">{post.author}</p>
-          <p className="text-sm text-zinc-400">{post.role}</p>
+          <p className="text-sm text-muted">{post.role}</p>
         </div>
-        <span className="inline-flex rounded-full border border-white/[0.1] bg-white/[0.05] px-3 py-1 text-[11px] font-medium text-zinc-400">
+        <span className="inline-flex rounded-full border border-white/[0.1] bg-white/[0.05] px-3 py-1 text-[11px] font-medium text-muted">
           {post.likes} likes
         </span>
       </div>
-      <p className="mt-5 text-sm leading-[1.65] text-zinc-200">{post.content}</p>
+      <p className="mt-5 text-sm leading-[1.65] text-bright">{post.content}</p>
       {post.coachReply ? (
-        <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-zinc-300">
+        <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-bright">
           Coach reply: {post.coachReply}
         </div>
       ) : null}
-      <div className="mt-5 flex items-center gap-4 text-sm text-zinc-400">
+      <div className="mt-5 flex items-center gap-4 text-sm text-muted">
         <span>{post.comments} comments</span>
         <span>Share to Instagram / TikTok / X / WhatsApp</span>
       </div>

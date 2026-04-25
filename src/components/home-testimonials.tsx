@@ -101,7 +101,7 @@ export function HomeTestimonials({ locale }: { locale: Locale }) {
 
   return (
     <section
-      className="reveal-section relative overflow-hidden border-y border-[rgba(255,255,255,0.06)] bg-[#09090B] px-6 py-[clamp(3.5rem,8vw,7.5rem)] lg:px-12"
+      className="reveal-section relative overflow-hidden border-y border-[rgba(255,255,255,0.06)] bg-background px-6 py-[clamp(3.5rem,8vw,7.5rem)] lg:px-12"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -111,18 +111,18 @@ export function HomeTestimonials({ locale }: { locale: Locale }) {
 
       <div className="relative z-[1] mx-auto max-w-6xl">
         <header className="mb-10 max-w-2xl">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-[#22D3EE]">{copy.label}</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-accent">{copy.label}</p>
           <h3 className="mt-4 font-display text-[clamp(1.75rem,5vw,3rem)] font-extrabold tracking-[-0.02em] text-white">
             {copy.title}
           </h3>
-          <p className="mt-3 text-sm leading-relaxed text-[#A1A1AA]">{copy.sub}</p>
+          <p className="mt-3 text-sm leading-relaxed text-muted">{copy.sub}</p>
         </header>
 
         <div className="relative">
           <button
             type="button"
             onClick={() => go(-1)}
-            className="absolute start-0 top-1/2 z-[2] hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(13,15,18,0.85)] text-[#A1A1AA] backdrop-blur-md transition-[border-color,color,transform] duration-200 hover:border-[rgba(34,211,238,0.35)] hover:text-[#22D3EE] md:flex"
+            className="absolute start-0 top-1/2 z-[2] hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(13,15,18,0.85)] text-muted backdrop-blur-md transition-[border-color,color,transform] duration-200 hover:border-[rgba(34,211,238,0.35)] hover:text-accent md:flex"
             aria-label="Previous testimonial"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -130,7 +130,7 @@ export function HomeTestimonials({ locale }: { locale: Locale }) {
           <button
             type="button"
             onClick={() => go(1)}
-            className="absolute end-0 top-1/2 z-[2] hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(13,15,18,0.85)] text-[#A1A1AA] backdrop-blur-md transition-[border-color,color,transform] duration-200 hover:border-[rgba(34,211,238,0.35)] hover:text-[#22D3EE] md:flex"
+            className="absolute end-0 top-1/2 z-[2] hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(13,15,18,0.85)] text-muted backdrop-blur-md transition-[border-color,color,transform] duration-200 hover:border-[rgba(34,211,238,0.35)] hover:text-accent md:flex"
             aria-label="Next testimonial"
           >
             <ChevronRight className="h-5 w-5" />
@@ -157,12 +157,12 @@ export function HomeTestimonials({ locale }: { locale: Locale }) {
                   </div>
                   <p className="mt-5 line-clamp-4 text-[15px] italic leading-[1.7] text-white">{t.quote}</p>
                   <div className="mt-8 flex items-center gap-3 border-t border-[rgba(255,255,255,0.06)] pt-6">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[rgba(34,211,238,0.2)] bg-[rgba(34,211,238,0.08)] text-sm font-bold text-[#22D3EE]">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[rgba(34,211,238,0.2)] bg-[rgba(34,211,238,0.08)] text-sm font-bold text-accent">
                       {t.name.slice(0, 1)}
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-white">{t.name}</p>
-                      <span className="mt-1 inline-flex rounded-full border border-[rgba(34,197,94,0.22)] bg-[rgba(34,197,94,0.1)] px-2 py-0.5 text-[11px] font-semibold text-[#22C55E]">
+                      <span className="mt-1 inline-flex rounded-full border border-[rgba(34,197,94,0.22)] bg-[rgba(34,197,94,0.1)] px-2 py-0.5 text-[11px] font-semibold text-success">
                         {t.tag}
                       </span>
                     </div>
@@ -181,7 +181,7 @@ export function HomeTestimonials({ locale }: { locale: Locale }) {
               onClick={() => setActiveIdx(idx)}
               className={cn(
                 "h-2 rounded-full transition-[width,background-color] duration-300 ease-out",
-                idx === activeIdx ? "w-6 bg-[#22D3EE]" : "w-2 border border-[rgba(34,211,238,0.35)] bg-transparent hover:bg-[rgba(34,211,238,0.2)]"
+                idx === activeIdx ? "w-6 bg-accent" : "w-2 border border-[rgba(34,211,238,0.35)] bg-transparent hover:bg-[rgba(34,211,238,0.2)]"
               )}
               aria-label={`Slide ${idx + 1}`}
               aria-current={idx === activeIdx}
@@ -189,7 +189,7 @@ export function HomeTestimonials({ locale }: { locale: Locale }) {
           ))}
         </nav>
 
-        <p className="mx-auto mt-8 max-w-2xl text-center text-xs leading-relaxed text-[#52525B]">{copy.disclaimer}</p>
+        <p className="mx-auto mt-8 max-w-2xl text-center text-xs leading-relaxed text-dim">{copy.disclaimer}</p>
       </div>
     </section>
   );

@@ -50,7 +50,7 @@ export function CinematicListingHeader({
       )}
     >
       <div
-        className="pointer-events-none absolute inset-0 bg-[#09090B]"
+        className="pointer-events-none absolute inset-0 bg-background"
         aria-hidden
       />
       <div
@@ -60,7 +60,7 @@ export function CinematicListingHeader({
       <div className="relative z-[1] mx-auto w-full min-w-0 max-w-[1200px]">
         <p
           className={cn(
-            "text-[11px] font-medium uppercase tracking-[0.15em] text-[#22D3EE] transition-opacity duration-500 ease-out motion-reduce:opacity-100",
+            "text-[11px] font-medium uppercase tracking-[0.15em] text-accent transition-opacity duration-500 ease-out motion-reduce:opacity-100",
             inView ? "opacity-100" : "opacity-0"
           )}
           style={{ transitionDelay: inView ? "100ms" : "0ms" }}
@@ -81,7 +81,7 @@ export function CinematicListingHeader({
         </h1>
         <p
           className={cn(
-            "mt-4 max-w-[480px] break-words text-base leading-[1.7] text-[#A1A1AA] transition-opacity duration-500 ease-out motion-reduce:opacity-100 [hyphens:auto]",
+            "mt-4 max-w-[480px] break-words text-base leading-[1.7] text-muted transition-opacity duration-500 ease-out motion-reduce:opacity-100 [hyphens:auto]",
             inView ? "opacity-100" : "opacity-0"
           )}
           style={{ transitionDelay: inView ? "350ms" : "0ms" }}

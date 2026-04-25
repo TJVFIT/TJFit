@@ -468,10 +468,10 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
 
   return (
     <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-background">
-      <header className="flex shrink-0 items-center gap-2 border-b border-[#1E2028] bg-[#111215] px-3 py-3 sm:gap-3 sm:px-4">
+      <header className="flex shrink-0 items-center gap-2 border-b border-divider bg-surface px-3 py-3 sm:gap-3 sm:px-4">
         <Link
           href={`/${locale}/messages`}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 text-zinc-300 transition hover:border-white/20 hover:text-white lg:hidden"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 text-bright transition hover:border-white/20 hover:text-white lg:hidden"
           aria-label={s.threadBack}
         >
           <span className="text-lg leading-none">‹</span>
@@ -481,17 +481,17 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
             {peer?.avatar_url ? (
               <Image src={peer.avatar_url} alt="" fill sizes="40px" className="object-cover" />
             ) : (
-              <div className="flex h-full w-full items-center justify-center text-xs font-semibold text-zinc-400">
+              <div className="flex h-full w-full items-center justify-center text-xs font-semibold text-muted">
                 {(peer?.display_name || peer?.username || "?").slice(0, 2).toUpperCase()}
               </div>
             )}
           </div>
           <div className="min-w-0">
             <p className="truncate font-medium text-white">{peer?.display_name || "…"}</p>
-            <p className="truncate text-xs text-zinc-500">
+            <p className="truncate text-xs text-faint">
               @{peer?.username || "…"}
               {peer?.conversation_type === "coach_student" ? (
-                <span className="ml-1.5 text-[10px] uppercase tracking-wider text-zinc-600">· {s.conversationCoach}</span>
+                <span className="ml-1.5 text-[10px] uppercase tracking-wider text-dim">· {s.conversationCoach}</span>
               ) : null}
             </p>
           </div>
@@ -499,7 +499,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
         {peer?.username ? (
           <Link
             href={`/${locale}/profile/${encodeURIComponent(peer.username)}`}
-            className="inline-flex min-h-10 shrink-0 items-center justify-center rounded-full border border-white/10 px-3 py-2 text-xs text-zinc-300 transition hover:border-cyan-400/30 hover:text-white"
+            className="inline-flex min-h-10 shrink-0 items-center justify-center rounded-full border border-white/10 px-3 py-2 text-xs text-bright transition hover:border-cyan-400/30 hover:text-white"
           >
             {s.openProfile}
           </Link>
@@ -529,7 +529,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
             <p className="text-sm text-red-400">{fetchError}</p>
             <button
               type="button"
-              className="mt-4 rounded-full border border-white/15 px-4 py-2 text-sm text-zinc-200 hover:border-white/25"
+              className="mt-4 rounded-full border border-white/15 px-4 py-2 text-sm text-bright hover:border-white/25"
               onClick={() => void loadMessages()}
             >
               {t.threadRetry}
@@ -540,7 +540,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
         ) : sorted.length === 0 ? (
           <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
             <p className="max-w-xs text-sm italic text-[var(--color-text-muted)]">{t.threadEmpty}</p>
-            <p className="mt-2 text-[11px] text-zinc-600">{t.encrypted}</p>
+            <p className="mt-2 text-[11px] text-dim">{t.encrypted}</p>
           </div>
         ) : (
           <div className="mx-auto max-w-3xl space-y-1 pb-2">
@@ -550,7 +550,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
                   type="button"
                   onClick={() => void loadOlder()}
                   disabled={loadingOlder}
-                  className="rounded-full border border-white/15 px-3 py-1 text-xs text-zinc-300 hover:border-white/25 disabled:opacity-60"
+                  className="rounded-full border border-white/15 px-3 py-1 text-xs text-bright hover:border-white/25 disabled:opacity-60"
                 >
                   {loadingOlder ? "Loading..." : "Load older messages"}
                 </button>
@@ -579,7 +579,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
                         "w-full px-4 py-3 text-[15px] leading-snug text-white transition-[box-shadow] duration-200",
                         mine
                           ? "rounded-2xl rounded-br rounded-tl-2xl border border-[rgba(34,211,238,0.2)] bg-[rgba(34,211,238,0.12)] hover:shadow-[0_0_20px_rgba(34,211,238,0.1)]"
-                          : "rounded-2xl rounded-bl rounded-tr-2xl border border-[#1E2028] bg-[#111215] hover:border-white/10"
+                          : "rounded-2xl rounded-bl rounded-tr-2xl border border-divider bg-surface hover:border-white/10"
                       )}
                     >
                       {msg.plaintext === null
@@ -587,14 +587,14 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
                         : msg.plaintext || (msg.message_type === "text" ? "" : `[${msg.message_type}]`)}
                     </div>
                     <time
-                      className="px-1 text-[10px] tabular-nums text-zinc-600"
+                      className="px-1 text-[10px] tabular-nums text-dim"
                       dateTime={msg.created_at}
                       suppressHydrationWarning
                     >
                       {bubbleTime(msg.created_at, locale)}
                     </time>
                     {mine ? (
-                      <span className={clsx("px-1 text-[10px] tabular-nums", msg.pending ? "text-zinc-500" : msg.read_at ? "text-cyan-300" : "text-zinc-500")}>
+                      <span className={clsx("px-1 text-[10px] tabular-nums", msg.pending ? "text-faint" : msg.read_at ? "text-cyan-300" : "text-faint")}>
                         {msg.pending ? "✓" : "✓✓"}
                       </span>
                     ) : null}
@@ -611,13 +611,13 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
       ) : null}
 
       <div
-        className="sticky bottom-0 z-10 shrink-0 border-t border-[#1E2028] bg-[#111215]/95 px-3 pt-2 backdrop-blur-md supports-[backdrop-filter]:bg-[#111215]/85"
+        className="sticky bottom-0 z-10 shrink-0 border-t border-divider bg-surface/95 px-3 pt-2 backdrop-blur-md supports-[backdrop-filter]:bg-surface/85"
         style={{ paddingBottom: "max(0.65rem, env(safe-area-inset-bottom, 0px))" }}
       >
         <div className="mx-auto flex max-w-3xl items-stretch gap-2 pb-2 sm:items-center">
           <input
             ref={inputRef}
-            className="input min-h-[46px] min-w-0 flex-1 rounded-xl border-white/[0.08] bg-surface-elevated/80 py-2.5 pl-4 pr-3 text-[15px] text-white placeholder:text-zinc-500"
+            className="input min-h-[46px] min-w-0 flex-1 rounded-xl border-white/[0.08] bg-surface-elevated/80 py-2.5 pl-4 pr-3 text-[15px] text-white placeholder:text-faint"
             placeholder={t.messageInputPlaceholder}
             value={messageText}
             disabled={!showComposer || sending}

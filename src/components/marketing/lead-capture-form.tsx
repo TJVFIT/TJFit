@@ -84,8 +84,8 @@ export function LeadCaptureForm({
 
   const inputCls =
     variant === "minimal"
-      ? "min-h-[48px] w-full rounded-full border border-white/[0.1] bg-black/30 px-4 text-base text-white placeholder:text-zinc-600 outline-none ring-cyan-400/30 focus:border-cyan-400/35 focus:ring-2 sm:text-sm"
-      : "min-h-[52px] w-full rounded-full border border-white/[0.12] bg-white/[0.04] px-5 text-base text-white placeholder:text-zinc-500 outline-none ring-cyan-400/25 focus:border-cyan-400/40 focus:ring-2 sm:min-h-[48px] sm:text-sm";
+      ? "min-h-[48px] w-full rounded-full border border-white/[0.1] bg-black/30 px-4 text-base text-white placeholder:text-dim outline-none ring-cyan-400/30 focus:border-cyan-400/35 focus:ring-2 sm:text-sm"
+      : "min-h-[52px] w-full rounded-full border border-white/[0.12] bg-white/[0.04] px-5 text-base text-white placeholder:text-faint outline-none ring-cyan-400/25 focus:border-cyan-400/40 focus:ring-2 sm:min-h-[48px] sm:text-sm";
 
   const btnCls =
     variant === "footer"
@@ -110,8 +110,8 @@ export function LeadCaptureForm({
           disabled={working}
           className={inputCls}
         />
-        {err ? <p className="mt-2 text-xs text-[#EF4444]">{err}</p> : null}
-        <p className="mt-2 text-[11px] text-zinc-600 sm:text-xs">{copy.privacyNote}</p>
+        {err ? <p className="mt-2 text-xs text-danger">{err}</p> : null}
+        <p className="mt-2 text-[11px] text-dim sm:text-xs">{copy.privacyNote}</p>
       </div>
       <button type="submit" disabled={working} className={btnCls}>
         {working ? copy.submitting : copy.submit}

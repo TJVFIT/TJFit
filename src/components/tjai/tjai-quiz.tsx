@@ -214,9 +214,9 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
 
   if (!step) {
     return (
-      <section className="relative min-h-[100svh] overflow-hidden bg-[#09090B] px-4 py-6 text-white sm:py-10">
+      <section className="relative min-h-[100svh] overflow-hidden bg-background px-4 py-6 text-white sm:py-10">
         <div className="mx-auto flex min-h-[50svh] w-full max-w-[640px] items-center justify-center">
-          <p className="text-sm text-[#A1A1AA]">Loading quiz...</p>
+          <p className="text-sm text-muted">Loading quiz...</p>
         </div>
       </section>
     );
@@ -336,7 +336,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
       const singleOptions = Array.isArray(step.options) ? step.options : [];
       if (singleOptions.length === 0) {
         return (
-          <div className="rounded-[10px] border border-[#1E2028] bg-[#111215] p-4 text-sm text-[#A1A1AA]">
+          <div className="rounded-[10px] border border-divider bg-surface p-4 text-sm text-muted">
             This question failed to load options. Please tap Continue to move to the next question.
           </div>
         );
@@ -353,14 +353,14 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
                 className={cn(
                   "flex w-full items-center gap-3 rounded-[10px] border px-4 py-3.5 text-left text-sm font-medium transition-all duration-200 ease-out",
                   selected
-                    ? "border-[#22D3EE] bg-[rgba(34,211,238,0.08)] text-white"
-                    : "border-[#1E2028] bg-[#111215] text-[#A1A1AA] hover:border-[rgba(34,211,238,0.3)] hover:bg-[rgba(34,211,238,0.04)] hover:text-white"
+                    ? "border-accent bg-[rgba(34,211,238,0.08)] text-white"
+                    : "border-divider bg-surface text-muted hover:border-[rgba(34,211,238,0.3)] hover:bg-[rgba(34,211,238,0.04)] hover:text-white"
                 )}
               >
                 <span
                   className={cn(
                     "relative inline-flex h-[18px] w-[18px] shrink-0 rounded-full border-[1.5px]",
-                    selected ? "border-[#22D3EE] bg-[#22D3EE]" : "border-current"
+                    selected ? "border-accent bg-accent" : "border-current"
                   )}
                 >
                   {selected ? <span className="absolute left-1/2 top-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white" /> : null}
@@ -378,7 +378,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
       const multiOptions = Array.isArray(step.options) ? step.options : [];
       if (multiOptions.length === 0) {
         return (
-          <div className="rounded-[10px] border border-[#1E2028] bg-[#111215] p-4 text-sm text-[#A1A1AA]">
+          <div className="rounded-[10px] border border-divider bg-surface p-4 text-sm text-muted">
             This question failed to load options. Please tap Continue to move to the next question.
           </div>
         );
@@ -403,14 +403,14 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
                 className={cn(
                   "flex w-full items-center gap-3 rounded-[10px] border px-4 py-3.5 text-left text-sm font-medium transition-all duration-200 ease-out",
                   active
-                    ? "border-[#22D3EE] bg-[rgba(34,211,238,0.08)] text-white"
-                    : "border-[#1E2028] bg-[#111215] text-[#A1A1AA] hover:border-[rgba(34,211,238,0.3)] hover:bg-[rgba(34,211,238,0.04)] hover:text-white"
+                    ? "border-accent bg-[rgba(34,211,238,0.08)] text-white"
+                    : "border-divider bg-surface text-muted hover:border-[rgba(34,211,238,0.3)] hover:bg-[rgba(34,211,238,0.04)] hover:text-white"
                 )}
               >
                 <span
                   className={cn(
                     "inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[4px] border-[1.5px]",
-                    active ? "border-[#22D3EE] bg-[#22D3EE] text-[#09090B]" : "border-current"
+                    active ? "border-accent bg-accent text-[#09090B]" : "border-current"
                   )}
                 >
                   {active ? "✓" : ""}
@@ -426,7 +426,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
     if (step.type === "number") {
       return (
         <div>
-          <div className="mb-4 text-center text-5xl font-extrabold text-[#22D3EE]">
+          <div className="mb-4 text-center text-5xl font-extrabold text-accent">
             {typeof currentAnswer === "number" ? currentAnswer : "--"}
           </div>
           <div className="relative">
@@ -436,9 +436,9 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
               max={step.max}
               value={typeof currentAnswer === "number" ? currentAnswer : ""}
               onChange={(event) => updateAnswer(Number(event.target.value))}
-              className="w-full rounded-[10px] border border-[#1E2028] bg-[#111215] px-4 py-3 text-base text-white outline-none transition-all focus:border-[#22D3EE] focus:ring-2 focus:ring-[rgba(34,211,238,0.2)]"
+              className="w-full rounded-[10px] border border-divider bg-surface px-4 py-3 text-base text-white outline-none transition-all focus:border-accent focus:ring-2 focus:ring-[rgba(34,211,238,0.2)]"
             />
-            <span className="pointer-events-none absolute end-4 top-1/2 -translate-y-1/2 text-sm text-[#52525B]">{step.unit}</span>
+            <span className="pointer-events-none absolute end-4 top-1/2 -translate-y-1/2 text-sm text-dim">{step.unit}</span>
           </div>
         </div>
       );
@@ -453,8 +453,8 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
       return (
         <div>
           <div className="text-center">
-            <div className="text-5xl font-extrabold text-[#22D3EE]">{value}</div>
-            <div className="mt-2 text-sm text-[#A1A1AA]">{step.unit}</div>
+            <div className="text-5xl font-extrabold text-accent">{value}</div>
+            <div className="mt-2 text-sm text-muted">{step.unit}</div>
           </div>
           <div className="mt-6">
             <input
@@ -467,7 +467,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
               className={cn("tjai-slider w-full", direction === "rtl" && "scale-x-[-1]")}
               style={{ background: sliderFill }}
             />
-            <div className="mt-2 flex items-center justify-between text-xs text-[#52525B]">
+            <div className="mt-2 flex items-center justify-between text-xs text-dim">
               <span>{min}</span>
               <span>{max}</span>
             </div>
@@ -491,7 +491,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
                   onClick={() => updateAnswer(n)}
                   className={cn(
                     "h-10 rounded-full border text-sm transition-all",
-                    active ? "border-[#22D3EE] bg-[#22D3EE] text-[#09090B]" : "border-[#1E2028] text-[#A1A1AA] hover:border-[#22D3EE]"
+                    active ? "border-accent bg-accent text-[#09090B]" : "border-divider text-muted hover:border-accent"
                   )}
                 >
                   {n}
@@ -499,7 +499,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
               );
             })}
           </div>
-          <div className="mt-2 flex items-center justify-between text-xs text-[#52525B]">
+          <div className="mt-2 flex items-center justify-between text-xs text-dim">
             <span>{copy.quiz.notAtAll}</span>
             <span>{copy.quiz.extremely}</span>
           </div>
@@ -514,9 +514,9 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
           value={textValue}
           onChange={(event) => updateAnswer(event.target.value)}
           placeholder={step.placeholder}
-          className="min-h-[120px] w-full rounded-xl border border-[#1E2028] bg-[#111215] p-4 text-sm text-white outline-none transition-all placeholder:text-[#52525B] focus:border-[#22D3EE] focus:ring-2 focus:ring-[rgba(34,211,238,0.2)]"
+          className="min-h-[120px] w-full rounded-xl border border-divider bg-surface p-4 text-sm text-white outline-none transition-all placeholder:text-dim focus:border-accent focus:ring-2 focus:ring-[rgba(34,211,238,0.2)]"
         />
-        <div className="mt-2 text-right text-xs text-[#52525B]">
+        <div className="mt-2 text-right text-xs text-dim">
           {textValue.length} {copy.quiz.chars}
         </div>
       </div>
@@ -524,28 +524,28 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
   };
 
   return (
-    <section className="relative min-h-[100svh] overflow-hidden bg-[#09090B] px-4 py-6 text-white sm:py-10">
-      <div className="pointer-events-none absolute left-1/2 top-[-160px] h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-[#22D3EE] opacity-[0.07] blur-[60px]" />
-      <div className="pointer-events-none absolute bottom-[-120px] right-[-80px] h-[400px] w-[400px] rounded-full bg-[#A78BFA] opacity-[0.05] blur-[60px]" />
+    <section className="relative min-h-[100svh] overflow-hidden bg-background px-4 py-6 text-white sm:py-10">
+      <div className="pointer-events-none absolute left-1/2 top-[-160px] h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-accent opacity-[0.07] blur-[60px]" />
+      <div className="pointer-events-none absolute bottom-[-120px] right-[-80px] h-[400px] w-[400px] rounded-full bg-accent-violet opacity-[0.05] blur-[60px]" />
 
       <div className="mx-auto flex min-h-[90svh] w-full max-w-[640px] flex-col">
         <div className="pt-1">
-          <p className="text-[11px] uppercase tracking-[0.2em] text-[#22D3EE]">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-accent">
             {uiCopy.question} {questionNumber} of {total} · {categoryLabel}
           </p>
-          <div className="h-[2px] overflow-hidden rounded-full bg-[#1E2028]">
+          <div className="h-[2px] overflow-hidden rounded-full bg-divider">
             <div
               className="tjai-progress-fill h-full bg-[linear-gradient(90deg,#22D3EE,#A78BFA)]"
               style={{ width: `${progress}%`, marginLeft: direction === "rtl" ? "auto" : undefined }}
             />
           </div>
-          <p className="mt-3 text-[11px] uppercase tracking-[0.2em] text-[#22D3EE]">
+          <p className="mt-3 text-[11px] uppercase tracking-[0.2em] text-accent">
             {copy.nav.sectionOf} {step.sectionNumber} / {step.totalSections} - {step.section}
           </p>
         </div>
 
         {resumePrompt ? (
-          <div className="mt-4 rounded-xl border border-[#1E2028] bg-[#111215] p-4">
+          <div className="mt-4 rounded-xl border border-divider bg-surface p-4">
             <p className="text-sm text-white">{uiCopy.resumeTitle} {resumePrompt.currentStep + 1}.</p>
             <div className="mt-3 flex flex-wrap gap-2">
               <button
@@ -555,7 +555,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
                   setIdx(resumePrompt.currentStep);
                   setResumePrompt(null);
                 }}
-                className="rounded-full bg-[#22D3EE] px-4 py-2 text-xs font-semibold text-[#09090B]"
+                className="rounded-full bg-accent px-4 py-2 text-xs font-semibold text-[#09090B]"
               >
                 {uiCopy.resume}
               </button>
@@ -567,7 +567,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
                   }
                   setResumePrompt(null);
                 }}
-                className="rounded-full border border-[#1E2028] px-4 py-2 text-xs text-[#A1A1AA]"
+                className="rounded-full border border-divider px-4 py-2 text-xs text-muted"
               >
                 {uiCopy.startOver}
               </button>
@@ -578,36 +578,36 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
         <aside className="mt-4 rounded-xl border border-[rgba(34,211,238,0.15)] bg-[rgba(34,211,238,0.05)] p-4">
           <p className="text-sm font-semibold text-white">{uiCopy.numbersTitle}</p>
           <div className="mt-3 grid grid-cols-1 gap-2 text-sm sm:grid-cols-3">
-            <div className="rounded-lg border border-[#1E2028] bg-[#0F1116] p-3">
-              <p className="text-xs text-[#A1A1AA]">{uiCopy.bmr}</p>
-              <p className="text-lg font-bold text-[#22D3EE]">{bmr ? Math.round(bmr) : "..."} {bmr ? "kcal" : ""}</p>
+            <div className="rounded-lg border border-divider bg-[#0F1116] p-3">
+              <p className="text-xs text-muted">{uiCopy.bmr}</p>
+              <p className="text-lg font-bold text-accent">{bmr ? Math.round(bmr) : "..."} {bmr ? "kcal" : ""}</p>
             </div>
-            <div className="rounded-lg border border-[#1E2028] bg-[#0F1116] p-3">
-              <p className="text-xs text-[#A1A1AA]">{uiCopy.tdee}</p>
-              <p className="text-lg font-bold text-[#22D3EE]">{tdee ? Math.round(tdee) : "..."} {tdee ? "kcal" : ""}</p>
+            <div className="rounded-lg border border-divider bg-[#0F1116] p-3">
+              <p className="text-xs text-muted">{uiCopy.tdee}</p>
+              <p className="text-lg font-bold text-accent">{tdee ? Math.round(tdee) : "..."} {tdee ? "kcal" : ""}</p>
             </div>
-            <div className="rounded-lg border border-[#1E2028] bg-[#0F1116] p-3">
-              <p className="text-xs text-[#A1A1AA]">{uiCopy.target}</p>
-              <p className="text-lg font-bold text-[#22D3EE]">{targetCalories ?? "..."} {targetCalories ? "kcal" : ""}</p>
+            <div className="rounded-lg border border-divider bg-[#0F1116] p-3">
+              <p className="text-xs text-muted">{uiCopy.target}</p>
+              <p className="text-lg font-bold text-accent">{targetCalories ?? "..."} {targetCalories ? "kcal" : ""}</p>
             </div>
           </div>
-          <p className="mt-2 text-xs text-[#A1A1AA]">{uiCopy.formula}</p>
+          <p className="mt-2 text-xs text-muted">{uiCopy.formula}</p>
         </aside>
 
         <div
           key={step.id}
           className="question-enter mt-8 flex-1"
         >
-          <div className="mb-4 text-[11px] uppercase tracking-[0.2em] text-[#22D3EE]">{step.section}</div>
+          <div className="mb-4 text-[11px] uppercase tracking-[0.2em] text-accent">{step.section}</div>
           <h1 className="text-[clamp(1.375rem,3vw,1.75rem)] font-bold leading-[1.3] text-white">{step.question}</h1>
-          {step.sub ? <p className="mt-2 text-sm leading-6 text-[#A1A1AA]">{step.sub}</p> : null}
+          {step.sub ? <p className="mt-2 text-sm leading-6 text-muted">{step.sub}</p> : null}
           <div className="mt-7">{renderInput()}</div>
-          {showError && !canContinue ? <p className="mt-3 text-sm text-[#EF4444]">{copy.validation.required}</p> : null}
+          {showError && !canContinue ? <p className="mt-3 text-sm text-danger">{copy.validation.required}</p> : null}
         </div>
 
-        <div className="sticky bottom-0 mt-8 border-t border-[#1E2028]/80 bg-[#09090B]/90 py-4 backdrop-blur">
+        <div className="sticky bottom-0 mt-8 border-t border-divider/80 bg-background/90 py-4 backdrop-blur">
           <div className="flex items-center justify-between gap-3">
-            <span className="text-xs text-[#52525B]">
+            <span className="text-xs text-dim">
               {copy.nav.stepOf} {idx + 1} / {total}
             </span>
             <div className="flex items-center gap-2">
@@ -615,7 +615,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
                 <button
                   type="button"
                   onClick={() => setIdx((v) => Math.max(0, v - 1))}
-                  className="min-h-11 rounded-full border border-[#1E2028] px-4 text-sm text-[#A1A1AA] transition-all hover:border-[rgba(255,255,255,0.2)] hover:text-white"
+                  className="min-h-11 rounded-full border border-divider px-4 text-sm text-muted transition-all hover:border-[rgba(255,255,255,0.2)] hover:text-white"
                 >
                   <span className="sm:hidden">{"←"}</span>
                   <span className="hidden sm:inline">{copy.nav.back}</span>

@@ -29,7 +29,7 @@ export function AuthRequiredPanel({
         <Link href={`/${loc}/login`} className="lux-btn-primary inline-flex min-h-[48px] justify-center rounded-full px-8 py-3 text-sm font-semibold text-[#05080a]">
           {nav.loginLabel}
         </Link>
-        <Link href={`/${loc}/signup`} className="lux-btn-secondary inline-flex min-h-[48px] justify-center rounded-full px-8 py-3 text-sm font-medium text-zinc-100">
+        <Link href={`/${loc}/signup`} className="lux-btn-secondary inline-flex min-h-[48px] justify-center rounded-full px-8 py-3 text-sm font-medium text-bright">
           {nav.joinLabel}
         </Link>
       </div>

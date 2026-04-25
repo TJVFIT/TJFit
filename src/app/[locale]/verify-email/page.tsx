@@ -124,8 +124,8 @@ export default function VerifyEmailPage({ params }: { params: { locale: string }
     <section className="mx-auto flex min-h-[100svh] w-full max-w-[560px] flex-col items-center justify-center px-6 py-14 text-center">
       <Logo variant="icon" size="auth" href={`/${locale}`} priority />
       <h1 className="mt-6 text-2xl font-semibold text-white sm:text-3xl">{copy.title}</h1>
-      <p className="mt-3 max-w-[42ch] text-sm text-[#A1A1AA] sm:text-base">{copy.sub}</p>
-      <p className="mt-2 text-xs text-[#52525B]">Do not forget to check your spam folder.</p>
+      <p className="mt-3 max-w-[42ch] text-sm text-muted sm:text-base">{copy.sub}</p>
+      <p className="mt-2 text-xs text-dim">Do not forget to check your spam folder.</p>
 
       <div className="mt-8 w-full max-w-[360px]">
         <input
@@ -150,12 +150,12 @@ export default function VerifyEmailPage({ params }: { params: { locale: string }
         </AsyncButton>
       </div>
 
-      {status ? <p className="mt-4 text-sm text-[#A1A1AA]">{status}</p> : null}
+      {status ? <p className="mt-4 text-sm text-muted">{status}</p> : null}
 
       <Link
         href={redirectSafe ? `/${locale}/login?redirect=${encodeURIComponent(redirectSafe)}` : `/${locale}/login`}
         onClick={() => router.prefetch(`/${locale}/login`)}
-        className="mt-8 text-sm text-[#22D3EE] hover:text-white"
+        className="mt-8 text-sm text-accent hover:text-white"
       >
         {copy.login}
       </Link>

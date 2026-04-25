@@ -92,7 +92,7 @@ export function HomeLeadNudge({
         <button
           type="button"
           onClick={dismiss}
-          className="absolute right-4 top-4 rounded-full p-1.5 text-zinc-500 transition hover:bg-white/[0.06] hover:text-zinc-300"
+          className="absolute right-4 top-4 rounded-full p-1.5 text-faint transition hover:bg-white/[0.06] hover:text-bright"
           aria-label={copy.closePanel}
         >
           <X className="h-4 w-4" strokeWidth={1.5} />
@@ -100,12 +100,12 @@ export function HomeLeadNudge({
         <p id="tjfit-nudge-title" className="pr-10 font-display text-lg font-semibold text-white sm:text-xl">
           {title}
         </p>
-        <p className="mt-2 text-sm text-zinc-500">{sub}</p>
+        <p className="mt-2 text-sm text-faint">{sub}</p>
         <div className="mt-6">
           <LeadCaptureForm locale={locale} source="home-nudge" variant="compact" />
         </div>
-        <p className="mt-4 text-center text-[11px] text-zinc-600">
-          <Link href={`/${locale}/privacy-policy`} className="underline-offset-2 hover:text-zinc-400 hover:underline">
+        <p className="mt-4 text-center text-[11px] text-dim">
+          <Link href={`/${locale}/privacy-policy`} className="underline-offset-2 hover:text-muted hover:underline">
             {copy.privacyNote}
           </Link>
         </p>

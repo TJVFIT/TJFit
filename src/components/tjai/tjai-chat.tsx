@@ -164,7 +164,7 @@ export function TJAIChat({
         <div className="flex items-start justify-between gap-3">
           <div>
             <h3 className="text-lg font-semibold tracking-tight text-white">Ask TJAI</h3>
-            <p className="mt-1 max-w-xl text-sm leading-relaxed text-[#A1A1AA]">
+            <p className="mt-1 max-w-xl text-sm leading-relaxed text-muted">
               Your coach knows your plan and your logged sessions — ask with specifics for sharper answers.
             </p>
           </div>
@@ -180,10 +180,10 @@ export function TJAIChat({
                 key={s.label}
                 type="button"
                 onClick={() => void ask(s.prompt)}
-                className="rounded-xl border border-white/[0.06] bg-[#111215]/90 px-4 py-3 text-start text-sm text-white/95 shadow-sm transition-all duration-200 hover:border-[#22D3EE]/35 hover:bg-[rgba(34,211,238,0.06)] hover:shadow-[0_0_24px_rgba(34,211,238,0.08)] active:scale-[0.99]"
+                className="rounded-xl border border-white/[0.06] bg-surface/90 px-4 py-3 text-start text-sm text-white/95 shadow-sm transition-all duration-200 hover:border-accent/35 hover:bg-[rgba(34,211,238,0.06)] hover:shadow-[0_0_24px_rgba(34,211,238,0.08)] active:scale-[0.99]"
               >
-                <span className="block text-[11px] font-semibold uppercase tracking-[0.12em] text-[#52525B]">{s.label}</span>
-                <span className="mt-1 block text-[13px] font-medium text-zinc-200">Tap to ask</span>
+                <span className="block text-[11px] font-semibold uppercase tracking-[0.12em] text-dim">{s.label}</span>
+                <span className="mt-1 block text-[13px] font-medium text-bright">Tap to ask</span>
               </button>
             ))}
           </div>
@@ -197,7 +197,7 @@ export function TJAIChat({
                 "max-w-[min(92%,28rem)] rounded-2xl px-4 py-3 text-sm shadow-sm transition-[transform,box-shadow] duration-200",
                 m.role === "user"
                   ? "chat-bubble-user ms-auto rounded-br-md border border-[rgba(34,211,238,0.22)] bg-gradient-to-br from-[rgba(34,211,238,0.14)] to-[rgba(34,211,238,0.06)] text-white"
-                  : "chat-bubble-ai me-auto rounded-bl-md border border-white/[0.07] bg-[#111215]/95 text-[#D4D4D8]"
+                  : "chat-bubble-ai me-auto rounded-bl-md border border-white/[0.07] bg-surface/95 text-bright"
               )}
             >
               {m.role === "assistant" ? (
@@ -210,7 +210,7 @@ export function TJAIChat({
                 <p className="whitespace-pre-wrap leading-relaxed">{m.content}</p>
               )}
               {loading && !thinking && m.role === "assistant" && i === history.length - 1 && m.content ? (
-                <span className="ms-1 inline-block animate-pulse text-[#22D3EE]" aria-hidden>
+                <span className="ms-1 inline-block animate-pulse text-accent" aria-hidden>
                   ▋
                 </span>
               ) : null}
@@ -221,7 +221,7 @@ export function TJAIChat({
 
         {showFollowUps ? (
           <div className="relative mt-4 flex flex-wrap gap-2">
-            <span className="w-full text-[10px] font-semibold uppercase tracking-[0.14em] text-[#52525B]">Refine</span>
+            <span className="w-full text-[10px] font-semibold uppercase tracking-[0.14em] text-dim">Refine</span>
             {(
               [
                 { k: "simplify", label: "Simplify" },
@@ -236,7 +236,7 @@ export function TJAIChat({
                 key={k}
                 type="button"
                 onClick={() => void ask(COACH_FOLLOW_UP_PROMPTS[k])}
-                className="rounded-full border border-white/[0.08] bg-[#15171c] px-3 py-1.5 text-xs font-medium text-zinc-200 transition-all hover:border-[#22D3EE]/40 hover:text-white active:scale-[0.98]"
+                className="rounded-full border border-white/[0.08] bg-[#15171c] px-3 py-1.5 text-xs font-medium text-bright transition-all hover:border-accent/40 hover:text-white active:scale-[0.98]"
               >
                 {label}
               </button>
@@ -256,7 +256,7 @@ export function TJAIChat({
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Ask about meals, sessions, or your plan…"
-            className="tj-chat-input-premium min-h-11 flex-1 rounded-xl border border-white/[0.08] bg-[#0E1014]/95 px-4 text-sm text-white outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-[#52525B] focus-visible:border-[#22D3EE]/55 focus-visible:ring-2 focus-visible:ring-[#22D3EE]/15"
+            className="tj-chat-input-premium min-h-11 flex-1 rounded-xl border border-white/[0.08] bg-[#0E1014]/95 px-4 text-sm text-white outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-dim focus-visible:border-accent/55 focus-visible:ring-2 focus-visible:ring-accent/15"
           />
           <button
             type="submit"

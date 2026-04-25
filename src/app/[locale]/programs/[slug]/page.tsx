@@ -234,7 +234,7 @@ export default async function ProgramDetailPage({
           ) : null}
 
           <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4">
-            <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{copy.languageOptionsLabel}</p>
+            <p className="text-xs uppercase tracking-[0.24em] text-faint">{copy.languageOptionsLabel}</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {locales.map((targetLocale) => (
                 <Link
@@ -243,7 +243,7 @@ export default async function ProgramDetailPage({
                   className={`rounded-full border px-3 py-1.5 text-xs transition ${
                     targetLocale === locale
                       ? "border-white/40 bg-white/10 text-white"
-                      : "border-white/15 text-zinc-300 hover:border-white/30 hover:text-white"
+                      : "border-white/15 text-bright hover:border-white/30 hover:text-white"
                   }`}
                 >
                   {localeNames[targetLocale]}
@@ -254,7 +254,7 @@ export default async function ProgramDetailPage({
 
           <div className={`mt-8 rounded-[28px] border border-white/10 bg-gradient-to-br p-7 ${programTheme}`}>
             <div className="flex items-center justify-between gap-3">
-              <p className="text-xs uppercase tracking-[0.22em] text-zinc-100/85">{premiumBannerLabel}</p>
+              <p className="text-xs uppercase tracking-[0.22em] text-bright/85">{premiumBannerLabel}</p>
               <div className="flex shrink-0 items-center gap-2">
                 <span className="rounded-full border border-white/25 bg-black/20 px-3 py-1 text-xs font-semibold text-white">
                   {tier}
@@ -272,15 +272,15 @@ export default async function ProgramDetailPage({
               </div>
             </div>
             <h2 className="mt-6 text-3xl font-semibold text-white">{programTitle}</h2>
-            <p className="mt-3 text-sm text-zinc-100/90">{programDuration}</p>
+            <p className="mt-3 text-sm text-bright/90">{programDuration}</p>
             <p className="mt-3 text-sm font-medium text-white/95">{localizedPrice}</p>
           </div>
 
 
           {!program && (
             <div className="mt-8 rounded-[24px] border border-white/10 bg-white/5 p-6">
-              <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{copy.autoTranslatedPdf}</p>
-              <p className="mt-3 text-sm leading-7 text-zinc-300">
+              <p className="text-xs uppercase tracking-[0.24em] text-faint">{copy.autoTranslatedPdf}</p>
+              <p className="mt-3 text-sm leading-7 text-bright">
                 {(customProgramTranslatedText ?? "").slice(0, customProgramLocked ? 400 : 1200)}
                 {(customProgramTranslatedText ?? "").length > (customProgramLocked ? 400 : 1200) ? "..." : ""}
               </p>
@@ -310,19 +310,19 @@ export default async function ProgramDetailPage({
 
           {blueprint ? (
             <div className="mt-10 space-y-6">
-              <div className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
-                <p className="text-xs uppercase tracking-[0.24em] text-[#52525B]">{copy.blueprintTitle}</p>
+              <div className="rounded-2xl border border-divider bg-surface p-6">
+                <p className="text-xs uppercase tracking-[0.24em] text-dim">{copy.blueprintTitle}</p>
                 <div className="mt-4 grid gap-3 md:grid-cols-3">
-                  <div className="rounded-xl border border-[#1E2028] bg-[#18191E] p-3 text-sm text-[#A1A1AA]">
-                    <p className="text-xs uppercase tracking-[0.2em] text-[#52525B]">{copy.blueprintGoal}</p>
+                  <div className="rounded-xl border border-divider bg-[#18191E] p-3 text-sm text-muted">
+                    <p className="text-xs uppercase tracking-[0.2em] text-dim">{copy.blueprintGoal}</p>
                     <p className="mt-2 text-white">{blueprint.goal}</p>
                   </div>
-                  <div className="rounded-xl border border-[#1E2028] bg-[#18191E] p-3 text-sm text-[#A1A1AA]">
-                    <p className="text-xs uppercase tracking-[0.2em] text-[#52525B]">{copy.blueprintLevel}</p>
+                  <div className="rounded-xl border border-divider bg-[#18191E] p-3 text-sm text-muted">
+                    <p className="text-xs uppercase tracking-[0.2em] text-dim">{copy.blueprintLevel}</p>
                     <p className="mt-2 text-white">{blueprint.level}</p>
                   </div>
-                  <div className="rounded-xl border border-[#1E2028] bg-[#18191E] p-3 text-sm text-[#A1A1AA]">
-                    <p className="text-xs uppercase tracking-[0.2em] text-[#52525B]">{copy.blueprintEquipment}</p>
+                  <div className="rounded-xl border border-divider bg-[#18191E] p-3 text-sm text-muted">
+                    <p className="text-xs uppercase tracking-[0.2em] text-dim">{copy.blueprintEquipment}</p>
                     <p className="mt-2 text-white">{blueprint.equipment}</p>
                   </div>
                 </div>
@@ -379,11 +379,11 @@ export default async function ProgramDetailPage({
 
         <aside className="space-y-6">
           <div className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-white/[0.015] p-6">
-            <p className="text-sm text-zinc-400">{copy.coachLabel}</p>
+            <p className="text-sm text-muted">{copy.coachLabel}</p>
             <p className="mt-2 text-2xl font-semibold text-white">{coach?.name ?? copy.teamFallback}</p>
-            <p className="mt-2 text-sm text-zinc-400">{coach?.specialty ?? copy.teamFallback}</p>
+            <p className="mt-2 text-sm text-muted">{coach?.specialty ?? copy.teamFallback}</p>
 
-            <div className="mt-6 space-y-3 text-sm text-zinc-300">
+            <div className="mt-6 space-y-3 text-sm text-bright">
               <div className="flex items-center justify-between gap-2">
                 <span>{copy.difficultyLabel}</span>
                 <span className="text-right text-white">{programDifficulty}</span>
@@ -426,17 +426,17 @@ export default async function ProgramDetailPage({
           <div className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-white/[0.015] p-6">
             <p className="text-lg font-semibold text-white">{copy.recommendedEquipment}</p>
             <div className="mt-6 space-y-4">
-              {recommendedProducts.length === 0 && <p className="text-sm text-zinc-400">{copy.noEquipment}</p>}
+              {recommendedProducts.length === 0 && <p className="text-sm text-muted">{copy.noEquipment}</p>}
               {recommendedProducts.map((product) => (
                 <div key={product.slug} className="rounded-[24px] border border-white/10 bg-white/5 p-4">
                   <div className="flex items-center justify-between gap-4">
                     <div>
                       <p className="font-medium text-white">{product.name}</p>
-                      <p className="mt-1 text-sm text-zinc-400">{product.description}</p>
+                      <p className="mt-1 text-sm text-muted">{product.description}</p>
                     </div>
                     <div className="text-right">
                       <p className="text-white">{localizedPrice}</p>
-                      <p className="mt-1 text-xs text-zinc-500">{formatCoachCommissionLine(locale, product.coachCommissionRate)}</p>
+                      <p className="mt-1 text-xs text-faint">{formatCoachCommissionLine(locale, product.coachCommissionRate)}</p>
                     </div>
                   </div>
                 </div>
@@ -450,7 +450,7 @@ export default async function ProgramDetailPage({
         <ScrollReveal className="mx-auto mt-12 max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="rounded-2xl border border-[rgba(34,211,238,0.15)] bg-[linear-gradient(135deg,rgba(34,211,238,0.05),rgba(167,139,250,0.05))] p-10 text-center sm:p-12">
             <p className="text-base font-semibold text-white">{copy.paidPreviewTitle}</p>
-            <p className="mt-2 text-sm text-[#A1A1AA]">{copy.paidPreviewSubtitle}</p>
+            <p className="mt-2 text-sm text-muted">{copy.paidPreviewSubtitle}</p>
             <Link
               href={checkoutHref}
               className="lux-btn-primary mt-6 inline-flex min-h-[48px] items-center justify-center rounded-full px-8 py-2.5 text-sm font-bold text-[#09090B] transition-[transform,box-shadow] duration-150 ease-out hover:scale-[1.02] active:scale-[0.97] motion-reduce:hover:scale-100 motion-reduce:active:scale-100"

@@ -120,15 +120,15 @@ export function TJAIHub({ locale }: { locale: Locale }) {
         <TJHeroStage variant="neural" speed={0.6} intensity={0.7} />
       </div>
       <div className="relative z-[1] flex min-h-[100svh] flex-col">
-        <header className="sticky top-0 z-20 border-b border-[#1E2028] bg-[rgba(9,9,11,0.88)] backdrop-blur-xl">
+        <header className="sticky top-0 z-20 border-b border-divider bg-[rgba(9,9,11,0.88)] backdrop-blur-xl">
           <div className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="inline-flex items-center gap-2 text-[28px] font-extrabold text-[#22D3EE]">
+                <p className="inline-flex items-center gap-2 text-[28px] font-extrabold text-accent">
                   <Sparkles className="sparkle-pulse h-7 w-7" />
                   TJAI
                 </p>
-                <p className="text-[13px] text-[#A1A1AA]">{HUB_SUBTITLE[locale]}</p>
+                <p className="text-[13px] text-muted">{HUB_SUBTITLE[locale]}</p>
               </div>
               <div className="flex items-center gap-3">
                 {tier === "apex" ? (
@@ -142,19 +142,19 @@ export function TJAIHub({ locale }: { locale: Locale }) {
                     "rounded-full border px-3 py-1 text-xs font-semibold",
                     tier === "pro"
                       ? "border-blue-400/35 bg-blue-400/10 text-blue-300"
-                      : "border-[rgba(34,211,238,0.35)] bg-[rgba(34,211,238,0.12)] text-[#22D3EE]"
+                      : "border-[rgba(34,211,238,0.35)] bg-[rgba(34,211,238,0.12)] text-accent"
                   )}>
                     [{tierLabel(locale, tier).toUpperCase()}]
                   </span>
                 )}
                 {tier === "core" ? (
-                  <a href={`/${locale}/membership`} className="text-xs font-semibold text-[#22D3EE] hover:text-white">
+                  <a href={`/${locale}/membership`} className="text-xs font-semibold text-accent hover:text-white">
                     Upgrade →
                   </a>
                 ) : null}
               </div>
             </div>
-            <nav className="mt-4 flex flex-wrap gap-1 rounded-[10px] border border-[#1E2028] bg-[#0D0F12] p-1.5">
+            <nav className="mt-4 flex flex-wrap gap-1 rounded-[10px] border border-divider bg-[#0D0F12] p-1.5">
               {tabItems.map((item) => (
                 <button
                   key={item.key}
@@ -169,8 +169,8 @@ export function TJAIHub({ locale }: { locale: Locale }) {
                   className={cn(
                     "inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm transition-colors duration-150",
                     tab === item.key
-                      ? "bg-[#22D3EE] font-bold text-[#09090B]"
-                      : "bg-transparent text-[#A1A1AA] hover:bg-[rgba(255,255,255,0.04)] hover:text-white"
+                      ? "bg-accent font-bold text-[#09090B]"
+                      : "bg-transparent text-muted hover:bg-[rgba(255,255,255,0.04)] hover:text-white"
                   )}
                 >
                   {(() => {

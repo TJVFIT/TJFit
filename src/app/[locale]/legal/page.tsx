@@ -28,30 +28,30 @@ export default function LegalHubPage({ params }: { params: { locale: string } })
           <div className="lg:grid lg:grid-cols-[minmax(0,11rem)_minmax(0,1fr)] lg:gap-12">
             <aside className="mb-10 lg:mb-0">
               <nav
-                className="sticky top-24 flex flex-row flex-wrap gap-2 border-b border-[#1E2028] pb-4 lg:flex-col lg:border-b-0 lg:border-e lg:border-[#1E2028] lg:pb-0 lg:pe-6"
+                className="sticky top-24 flex flex-row flex-wrap gap-2 border-b border-divider pb-4 lg:flex-col lg:border-b-0 lg:border-e lg:border-divider lg:pb-0 lg:pe-6"
                 aria-label={copy.pageTitle}
               >
                 <a
                   href="#faq"
-                  className="rounded-full border border-[#1E2028] px-3 py-1.5 text-xs text-[#A1A1AA] transition-[border-color,color] duration-150 hover:border-[rgba(255,255,255,0.1)] hover:text-white"
+                  className="rounded-full border border-divider px-3 py-1.5 text-xs text-muted transition-[border-color,color] duration-150 hover:border-[rgba(255,255,255,0.1)] hover:text-white"
                 >
                   {copy.navFaq}
                 </a>
                 <a
                   href="#user-terms"
-                  className="rounded-full border border-[#1E2028] px-3 py-1.5 text-xs text-[#A1A1AA] transition-[border-color,color] duration-150 hover:border-[rgba(255,255,255,0.1)] hover:text-white"
+                  className="rounded-full border border-divider px-3 py-1.5 text-xs text-muted transition-[border-color,color] duration-150 hover:border-[rgba(255,255,255,0.1)] hover:text-white"
                 >
                   {copy.navUserTerms}
                 </a>
                 <a
                   href="#coach-terms"
-                  className="rounded-full border border-[#1E2028] px-3 py-1.5 text-xs text-[#A1A1AA] transition-[border-color,color] duration-150 hover:border-[rgba(255,255,255,0.1)] hover:text-white"
+                  className="rounded-full border border-divider px-3 py-1.5 text-xs text-muted transition-[border-color,color] duration-150 hover:border-[rgba(255,255,255,0.1)] hover:text-white"
                 >
                   {copy.navCoachTerms}
                 </a>
                 <a
                   href="#privacy"
-                  className="rounded-full border border-[#1E2028] px-3 py-1.5 text-xs text-[#A1A1AA] transition-[border-color,color] duration-150 hover:border-[rgba(255,255,255,0.1)] hover:text-white"
+                  className="rounded-full border border-divider px-3 py-1.5 text-xs text-muted transition-[border-color,color] duration-150 hover:border-[rgba(255,255,255,0.1)] hover:text-white"
                 >
                   {copy.navPrivacy}
                 </a>
@@ -70,13 +70,13 @@ export default function LegalHubPage({ params }: { params: { locale: string } })
                   {copy.faq.map((item, idx) => (
                     <details
                       key={item.id}
-                      className={`legal-faq-details tj-blur-reveal tj-revealed tj-stagger-${Math.min(6, (idx % 6) + 1)} group rounded-xl border border-[#1E2028] bg-[#111215] transition-[border-color] duration-200 ease-out open:border-[rgba(34,211,238,0.2)] hover:border-[rgba(255,255,255,0.1)]`}
+                      className={`legal-faq-details tj-blur-reveal tj-revealed tj-stagger-${Math.min(6, (idx % 6) + 1)} group rounded-xl border border-divider bg-surface transition-[border-color] duration-200 ease-out open:border-[rgba(34,211,238,0.2)] hover:border-[rgba(255,255,255,0.1)]`}
                     >
                       <summary className="cursor-pointer list-none px-5 py-4 text-[15px] font-semibold text-white outline-none marker:content-none [&::-webkit-details-marker]:hidden">
                         <span className="flex items-center justify-between gap-3">
                           {item.q}
                           <span
-                            className="text-[16px] text-[#52525B] transition-transform duration-[250ms] ease-out group-open:rotate-180"
+                            className="text-[16px] text-dim transition-transform duration-[250ms] ease-out group-open:rotate-180"
                             aria-hidden
                           >
                             ▾
@@ -85,7 +85,7 @@ export default function LegalHubPage({ params }: { params: { locale: string } })
                       </summary>
                       <div className="legal-faq-panel">
                         <div className="legal-faq-panel-inner px-5 pb-5">
-                          <p className="text-sm leading-[1.7] text-[#A1A1AA]">{item.a}</p>
+                          <p className="text-sm leading-[1.7] text-muted">{item.a}</p>
                         </div>
                       </div>
                     </details>
@@ -95,14 +95,14 @@ export default function LegalHubPage({ params }: { params: { locale: string } })
 
               <section id="user-terms" className="scroll-mt-28 space-y-4">
                 <h2 className="font-display text-2xl font-semibold tracking-[-0.01em] text-white">{copy.userTermsTitle}</h2>
-                <div className="space-y-3 text-base leading-[1.8] text-[#A1A1AA]">
+                <div className="space-y-3 text-base leading-[1.8] text-muted">
                   {copy.userTermsParagraphs.map((p) => (
                     <p key={p}>{p}</p>
                   ))}
                 </div>
                 <Link
                   href={`/${locale}/terms-and-conditions`}
-                  className="inline-flex text-sm font-medium text-[#22D3EE] transition-colors duration-150 hover:text-white"
+                  className="inline-flex text-sm font-medium text-accent transition-colors duration-150 hover:text-white"
                 >
                   {copy.linkTermsPage} →
                 </Link>
@@ -110,12 +110,12 @@ export default function LegalHubPage({ params }: { params: { locale: string } })
 
               <section id="coach-terms" className="scroll-mt-28 space-y-4">
                 <h2 className="font-display text-2xl font-semibold tracking-[-0.01em] text-white">{copy.coachTermsTitle}</h2>
-                <p className="text-sm text-[#52525B]">{copy.coachTermsReadOnly}</p>
-                <div className="space-y-6 rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
+                <p className="text-sm text-dim">{copy.coachTermsReadOnly}</p>
+                <div className="space-y-6 rounded-2xl border border-divider bg-surface p-6">
                   {coachSections.map((s) => (
                     <div key={s.heading}>
                       <h3 className="text-lg font-semibold text-white">{s.heading}</h3>
-                      <div className="mt-2 space-y-2 text-sm leading-[1.8] text-[#A1A1AA]">
+                      <div className="mt-2 space-y-2 text-sm leading-[1.8] text-muted">
                         {s.paragraphs.map((p) => (
                           <p key={p}>{p}</p>
                         ))}
@@ -127,14 +127,14 @@ export default function LegalHubPage({ params }: { params: { locale: string } })
 
               <section id="privacy" className="scroll-mt-28 space-y-4">
                 <h2 className="font-display text-2xl font-semibold tracking-[-0.01em] text-white">{copy.privacyTitle}</h2>
-                <div className="space-y-4 text-base leading-[1.8] text-[#A1A1AA]">
+                <div className="space-y-4 text-base leading-[1.8] text-muted">
                   {copy.privacyParagraphs.map((p) => (
                     <p key={p}>{p}</p>
                   ))}
                 </div>
                 <Link
                   href={`/${locale}/privacy-policy`}
-                  className="inline-flex text-sm font-medium text-[#22D3EE] transition-colors duration-150 hover:text-white"
+                  className="inline-flex text-sm font-medium text-accent transition-colors duration-150 hover:text-white"
                 >
                   {copy.linkPrivacyPage} →
                 </Link>

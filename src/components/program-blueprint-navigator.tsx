@@ -39,9 +39,9 @@ function PhaseRows({
           >
             <span className="text-[15px] font-semibold text-white">{detail ? title : line}</span>
             {detail ? (
-              <span className="text-[13px] font-mono text-[#A1A1AA] sm:max-w-[55%] sm:text-end">{detail}</span>
+              <span className="text-[13px] font-mono text-muted sm:max-w-[55%] sm:text-end">{detail}</span>
             ) : (
-              <span className="text-[12px] italic text-[#52525B] sm:max-w-[50%] sm:text-end">
+              <span className="text-[12px] italic text-dim sm:max-w-[50%] sm:text-end">
                 {isDiet ? "Meal note" : "Session detail"}
               </span>
             )}
@@ -67,15 +67,15 @@ function PhasePanel({
 }) {
   return (
     <div className="space-y-8">
-      <p className="text-sm leading-relaxed text-[#A1A1AA]">{phase.focus}</p>
+      <p className="text-sm leading-relaxed text-muted">{phase.focus}</p>
       <div>
-        <h3 className="border-b border-[#1E2028] pb-2 font-display text-lg font-semibold text-[#22D3EE]">{colA}</h3>
+        <h3 className="border-b border-divider pb-2 font-display text-lg font-semibold text-accent">{colA}</h3>
         <div className="mt-4">
           <PhaseRows lines={phase.trainingDays} isDiet={isDiet} />
         </div>
       </div>
       <div>
-        <h3 className="border-b border-[#1E2028] pb-2 font-display text-lg font-semibold text-[#22D3EE]">{colB}</h3>
+        <h3 className="border-b border-divider pb-2 font-display text-lg font-semibold text-accent">{colB}</h3>
         <div className="mt-4">
           <PhaseRows lines={phase.conditioning} isDiet={isDiet} />
         </div>
@@ -130,7 +130,7 @@ export function ProgramBlueprintNavigator({
 
   return (
     <div className="mt-10 space-y-6">
-      <div className="tj-nav-scroll inline-flex max-w-full flex-nowrap gap-1 overflow-x-auto rounded-[10px] border border-[#1E2028] bg-[#111215] p-1.5">
+      <div className="tj-nav-scroll inline-flex max-w-full flex-nowrap gap-1 overflow-x-auto rounded-[10px] border border-divider bg-surface p-1.5">
         {phases.map((p, i) => (
           <button
             key={p.title}
@@ -140,8 +140,8 @@ export function ProgramBlueprintNavigator({
             className={cn(
               "min-h-[44px] max-w-[min(100%,11rem)] truncate rounded-lg px-4 py-2 text-left text-[13px] font-medium transition-[color,background-color,border-color,box-shadow] duration-200 ease-out sm:min-h-0",
               tab === i
-                ? "border border-[rgba(34,211,238,0.2)] bg-[rgba(34,211,238,0.10)] text-[#22D3EE]"
-                : "border border-transparent text-[#52525B] hover:bg-[rgba(255,255,255,0.04)] hover:text-white"
+                ? "border border-[rgba(34,211,238,0.2)] bg-[rgba(34,211,238,0.10)] text-accent"
+                : "border border-transparent text-dim hover:bg-[rgba(255,255,255,0.04)] hover:text-white"
             )}
           >
             {p.title}
@@ -172,17 +172,17 @@ export function ProgramBlueprintNavigator({
 
       {!lockedTab ? (
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="rounded-2xl border border-[#1E2028] bg-[#111215] p-5">
-            <p className="text-xs uppercase tracking-[0.2em] text-[#52525B]">{qualityPack.standardsTitle}</p>
-            <ul className="mt-3 space-y-2 text-sm leading-relaxed text-[#A1A1AA]">
+          <div className="rounded-2xl border border-divider bg-surface p-5">
+            <p className="text-xs uppercase tracking-[0.2em] text-dim">{qualityPack.standardsTitle}</p>
+            <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted">
               {qualityPack.standards.map((item) => (
                 <li key={item}>- {item}</li>
               ))}
             </ul>
           </div>
-          <div className="rounded-2xl border border-[#1E2028] bg-[#111215] p-5">
-            <p className="text-xs uppercase tracking-[0.2em] text-[#52525B]">{qualityPack.checkinsTitle}</p>
-            <ul className="mt-3 space-y-2 text-sm leading-relaxed text-[#A1A1AA]">
+          <div className="rounded-2xl border border-divider bg-surface p-5">
+            <p className="text-xs uppercase tracking-[0.2em] text-dim">{qualityPack.checkinsTitle}</p>
+            <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted">
               {qualityPack.checkins.map((item) => (
                 <li key={item}>- {item}</li>
               ))}
@@ -192,9 +192,9 @@ export function ProgramBlueprintNavigator({
       ) : null}
 
       {blueprint.safety.length > 0 && !paidLocked ? (
-        <div className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
-          <p className="text-xs uppercase tracking-[0.2em] text-[#52525B]">{safetyTitle}</p>
-          <ul className="mt-3 space-y-2 text-sm leading-relaxed text-[#A1A1AA]">
+        <div className="rounded-2xl border border-divider bg-surface p-6">
+          <p className="text-xs uppercase tracking-[0.2em] text-dim">{safetyTitle}</p>
+          <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted">
             {blueprint.safety.map((item) => (
               <li key={item}>- {item}</li>
             ))}

@@ -114,7 +114,7 @@ export function ProgramUploadClient({ locale }: { locale: Locale }) {
     return (
       <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="glass-panel rounded-[32px] p-6">
-          <p className="text-sm text-zinc-300">{copy.onlyAdminsAndCoaches}</p>
+          <p className="text-sm text-bright">{copy.onlyAdminsAndCoaches}</p>
         </div>
       </div>
     );
@@ -125,9 +125,9 @@ export function ProgramUploadClient({ locale }: { locale: Locale }) {
       <div className="glass-panel rounded-[32px] p-6">
         <span className="badge">{copy.badge}</span>
         <h1 className="mt-4 text-3xl font-semibold text-white">{copy.title}</h1>
-        <p className="mt-3 text-sm text-zinc-400">{copy.subtitle}</p>
+        <p className="mt-3 text-sm text-muted">{copy.subtitle}</p>
         {role === "coach" && (
-          <p className="mt-2 text-sm text-zinc-300">
+          <p className="mt-2 text-sm text-bright">
             {copy.coachLimitLabel}: {myPrograms.length}/{maxCoachPrograms} active uploads.
           </p>
         )}
@@ -157,13 +157,13 @@ export function ProgramUploadClient({ locale }: { locale: Locale }) {
         <p className="text-lg font-semibold text-white">{copy.activeUploads}</p>
         <div className="mt-4 space-y-3">
           {myPrograms.length === 0 ? (
-            <p className="text-sm text-zinc-500">{copy.noUploads}</p>
+            <p className="text-sm text-faint">{copy.noUploads}</p>
           ) : (
             myPrograms.map((program) => (
               <div key={program.id} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-4">
                 <div>
                   <p className="text-white">{program.title}</p>
-                  <p className="text-xs text-zinc-500">
+                  <p className="text-xs text-faint">
                     {program.kind === "diet" ? copy.dietLabel : copy.programLabel} - {program.price_try} TRY
                   </p>
                 </div>

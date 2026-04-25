@@ -36,7 +36,7 @@ export function DirectMessageLaunchButton({
   const [busy, setBusy] = useState(false);
 
   const baseOutline =
-    "rounded-full border border-white/15 px-4 py-2 text-center text-xs font-semibold text-zinc-100 transition hover:border-cyan-400/35 hover:bg-white/[0.06] disabled:opacity-40 sm:min-w-[7rem]";
+    "rounded-full border border-white/15 px-4 py-2 text-center text-xs font-semibold text-bright transition hover:border-cyan-400/35 hover:bg-white/[0.06] disabled:opacity-40 sm:min-w-[7rem]";
   const baseGradient =
     "gradient-button rounded-full px-4 py-2 text-center text-xs font-semibold text-white disabled:opacity-40 sm:min-w-[7rem]";
 

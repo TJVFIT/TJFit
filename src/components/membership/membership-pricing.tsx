@@ -108,15 +108,15 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
   return (
     <section className="mt-8">
       {/* Header + billing toggle */}
-      <div className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6 sm:p-8" style={{ backdropFilter: "blur(24px)" }}>
+      <div className="rounded-2xl border border-divider bg-surface p-6 sm:p-8" style={{ backdropFilter: "blur(24px)" }}>
         <h1 className="text-3xl font-extrabold text-white">{copy.title}</h1>
-        <p className="mt-2 text-sm text-[#A1A1AA]">{copy.sub}</p>
+        <p className="mt-2 text-sm text-muted">{copy.sub}</p>
 
         {/* Sliding pill toggle — ME2 */}
         <div className="mt-6 flex items-center gap-3">
-          <div className="relative flex rounded-full border border-[#1E2028] bg-[#0D0E12] p-1">
+          <div className="relative flex rounded-full border border-divider bg-[#0D0E12] p-1">
             <div
-              className="absolute top-1 h-[calc(100%-8px)] rounded-full bg-[#22D3EE] transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+              className="absolute top-1 h-[calc(100%-8px)] rounded-full bg-accent transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
               style={{
                 left: mode === "monthly" ? "4px" : "calc(50%)",
                 width: "calc(50% - 4px)"
@@ -126,14 +126,14 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
             <button
               type="button"
               onClick={() => switchMode("monthly")}
-              className={`relative z-10 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors duration-200 ${mode === "monthly" ? "text-[#09090B]" : "text-[#A1A1AA]"}`}
+              className={`relative z-10 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors duration-200 ${mode === "monthly" ? "text-[#09090B]" : "text-muted"}`}
             >
               {copy.monthly}
             </button>
             <button
               type="button"
               onClick={() => switchMode("annual")}
-              className={`relative z-10 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors duration-200 ${mode === "annual" ? "text-[#09090B]" : "text-[#A1A1AA]"}`}
+              className={`relative z-10 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors duration-200 ${mode === "annual" ? "text-[#09090B]" : "text-muted"}`}
             >
               {copy.annual}
             </button>
@@ -152,18 +152,18 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
         </div>
       </div>
 
-      <div id="tjai-one-time" className="mt-6 rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
+      <div id="tjai-one-time" className="mt-6 rounded-2xl border border-divider bg-surface p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.14em] text-[#22D3EE]">Standalone TJAI</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.14em] text-accent">Standalone TJAI</p>
             <h2 className="mt-2 text-2xl font-extrabold text-white">${TJAI_ONE_TIME_PRICE_USD} one time</h2>
-            <p className="mt-2 text-sm text-[#A1A1AA]">
+            <p className="mt-2 text-sm text-muted">
               One adaptive TJAI assessment, one personalized plan, and PDF export. Subscriptions are optional add-ons for ongoing coaching.
             </p>
           </div>
           <a
             href={`/${locale}/tjai`}
-            className="inline-flex min-h-[46px] items-center justify-center rounded-full border border-[#22D3EE] px-5 text-sm font-semibold text-[#22D3EE] hover:bg-[rgba(34,211,238,0.06)]"
+            className="inline-flex min-h-[46px] items-center justify-center rounded-full border border-accent px-5 text-sm font-semibold text-accent hover:bg-[rgba(34,211,238,0.06)]"
           >
             Unlock TJAI
           </a>
@@ -174,7 +174,7 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
       <div className="mt-6 grid gap-4 md:grid-cols-3">
         {/* Core */}
         <article
-          className="group relative overflow-hidden rounded-2xl border border-[#1E2028] p-6 transition-[border-color,box-shadow] duration-300 hover:border-white/10 hover:shadow-[0_20px_60px_rgba(0,0,0,0.4)]"
+          className="group relative overflow-hidden rounded-2xl border border-divider p-6 transition-[border-color,box-shadow] duration-300 hover:border-white/10 hover:shadow-[0_20px_60px_rgba(0,0,0,0.4)]"
           style={{ background: "rgba(17,18,21,0.7)", backdropFilter: "blur(24px)" }}
         >
           <h3 className="text-xl font-bold text-white">{copy.cards.core.name}</h3>
@@ -182,9 +182,9 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
           <Button variant="secondary" className="mt-4 w-full" disabled>
             {copy.cards.core.cta}
           </Button>
-          <ul className="mt-4 space-y-2 text-sm text-[#A1A1AA]">
+          <ul className="mt-4 space-y-2 text-sm text-muted">
             {copy.cards.core.features.map((feature) => (
-              <li key={feature} className="flex items-start gap-2"><span className="text-[#52525B]">•</span>{feature}</li>
+              <li key={feature} className="flex items-start gap-2"><span className="text-dim">•</span>{feature}</li>
             ))}
           </ul>
         </article>
@@ -200,14 +200,14 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
           <h3 className="text-xl font-bold text-white">{copy.cards.pro.name}</h3>
           <p className="mt-3 text-3xl font-extrabold text-white">
             $<span className="tabular-nums">{proPriceDisplay}</span>{" "}
-            <span className="text-sm font-medium text-[#A1A1AA]">{mode === "monthly" ? copy.perMonthSuffix : copy.perYearSuffix}</span>
+            <span className="text-sm font-medium text-muted">{mode === "monthly" ? copy.perMonthSuffix : copy.perYearSuffix}</span>
           </p>
           <Button className="mt-4 w-full" disabled={working !== null} onClick={() => void checkout("pro")}>
             {working === "pro" ? "..." : copy.cards.pro.cta}
           </Button>
-          <ul className="mt-4 space-y-2 text-sm text-[#A1A1AA]">
+          <ul className="mt-4 space-y-2 text-sm text-muted">
             {copy.cards.pro.features.map((feature) => (
-              <li key={feature} className="flex items-start gap-2"><span className="text-[#22D3EE]">✓</span>{feature}</li>
+              <li key={feature} className="flex items-start gap-2"><span className="text-accent">✓</span>{feature}</li>
             ))}
           </ul>
         </article>
@@ -225,25 +225,25 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
           <h3 className="text-xl font-bold text-white">{copy.cards.apex.name}</h3>
           <p className="mt-3 text-3xl font-extrabold text-white">
             $<span className="tabular-nums">{apexPriceDisplay}</span>{" "}
-            <span className="text-sm font-medium text-[#A1A1AA]">{mode === "monthly" ? copy.perMonthSuffix : copy.perYearSuffix}</span>
+            <span className="text-sm font-medium text-muted">{mode === "monthly" ? copy.perMonthSuffix : copy.perYearSuffix}</span>
           </p>
           <Button className="mt-4 w-full bg-gradient-to-r from-violet-500 to-cyan-500 font-bold text-white hover:opacity-90" disabled={working !== null} onClick={() => void checkout("apex")}>
             {working === "apex" ? "..." : copy.cards.apex.cta}
           </Button>
-          <ul className="mt-4 space-y-2 text-sm text-[#A1A1AA]">
+          <ul className="mt-4 space-y-2 text-sm text-muted">
             {copy.cards.apex.features.map((feature) => (
-              <li key={feature} className="flex items-start gap-2"><span className="text-[#A78BFA]">✓</span>{feature}</li>
+              <li key={feature} className="flex items-start gap-2"><span className="text-accent-violet">✓</span>{feature}</li>
             ))}
           </ul>
         </article>
       </div>
 
-      <div className="mt-8 rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
+      <div className="mt-8 rounded-2xl border border-divider bg-surface p-6">
         <h2 className="text-lg font-semibold text-white">{copy.tableTitle}</h2>
         <div className="mt-4 overflow-x-auto">
           <table className="min-w-full text-sm">
             <thead>
-              <tr className="border-b border-[#1E2028] text-[#52525B]">
+              <tr className="border-b border-divider text-dim">
                 <th className="py-2 text-left">Feature</th>
                 <th className="py-2 text-center">{copy.cards.core.name}</th>
                 <th className="py-2 text-center">{copy.cards.pro.name}</th>
@@ -252,8 +252,8 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
             </thead>
             <tbody>
               {copy.tableRows.map((row) => (
-                <tr key={row.feature} className="border-b border-[#1E2028]/70">
-                  <td className="py-2 text-[#A1A1AA]">{row.feature}</td>
+                <tr key={row.feature} className="border-b border-divider/70">
+                  <td className="py-2 text-muted">{row.feature}</td>
                   <td className="py-2 text-center text-white">{bool(row.core)}</td>
                   <td className="py-2 text-center text-white">{bool(row.pro)}</td>
                   <td className="py-2 text-center text-white">{bool(row.apex)}</td>
@@ -263,7 +263,7 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
           </table>
         </div>
       </div>
-      {error ? <p className="mt-4 text-sm text-[#EF4444]">{error}</p> : null}
+      {error ? <p className="mt-4 text-sm text-danger">{error}</p> : null}
     </section>
   );
 }

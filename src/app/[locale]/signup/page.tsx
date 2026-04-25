@@ -206,9 +206,9 @@ function SignupForm({ params }: { params: { locale: string } }) {
         <h1 className="mt-6 text-center font-display text-[32px] font-bold leading-tight tracking-[-0.015em] text-white">
           {copy.signupTitle}
         </h1>
-        <p className="mt-2 text-center text-sm leading-relaxed text-[#A1A1AA]">{copy.signupSubtitle}</p>
+        <p className="mt-2 text-center text-sm leading-relaxed text-muted">{copy.signupSubtitle}</p>
         <div className="mt-6">
-          <p className="mb-2 text-center text-xs text-zinc-500">Step {step} of 4</p>
+          <p className="mb-2 text-center text-xs text-faint">Step {step} of 4</p>
           <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
             <div className="h-full rounded-full bg-cyan-400 transition-all duration-300" style={{ width: `${(step / 4) * 100}%` }} />
           </div>
@@ -244,7 +244,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-white"
                   aria-label="Toggle password visibility"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -281,7 +281,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={avatarPreview} alt="Avatar preview" className="h-full w-full object-cover" />
                 ) : (
-                  <div className="flex flex-col items-center text-zinc-500">
+                  <div className="flex flex-col items-center text-faint">
                     <Camera className="h-6 w-6" />
                     <Upload className="mt-1 h-4 w-4" />
                   </div>
@@ -296,10 +296,10 @@ function SignupForm({ params }: { params: { locale: string } }) {
                   setAvatarFile(f);
                   setAvatarPreview(URL.createObjectURL(f));
                 }}
-                className="block w-full text-sm text-zinc-300 file:mr-3 file:rounded-full file:border-0 file:bg-white/10 file:px-3 file:py-1.5 file:text-sm file:text-white"
+                className="block w-full text-sm text-bright file:mr-3 file:rounded-full file:border-0 file:bg-white/10 file:px-3 file:py-1.5 file:text-sm file:text-white"
               />
-              <p className="text-center text-xs text-zinc-500">You can always add a photo later in your profile.</p>
-              <button type="button" className="mx-auto block text-xs text-zinc-500 hover:text-zinc-300" onClick={() => setStep(3)}>
+              <p className="text-center text-xs text-faint">You can always add a photo later in your profile.</p>
+              <button type="button" className="mx-auto block text-xs text-faint hover:text-bright" onClick={() => setStep(3)}>
                 Skip for now
               </button>
             </div>
@@ -308,14 +308,14 @@ function SignupForm({ params }: { params: { locale: string } }) {
           {step === 3 ? (
             <div className="space-y-3">
               <input className="input" type="text" placeholder="@username" value={username} onChange={(e) => setUsername(e.target.value)} />
-              {usernameStatus === "checking" ? <p className="text-xs text-zinc-500">Checking username...</p> : null}
+              {usernameStatus === "checking" ? <p className="text-xs text-faint">Checking username...</p> : null}
               {usernameStatus === "ok" ? <p className="text-xs text-emerald-400">Available!</p> : null}
               {usernameStatus === "taken" ? <p className="text-xs text-red-400">Username taken. Try another.</p> : null}
               {usernameStatus === "invalid" ? (
                 <p className="text-xs text-red-400">3-20 characters. Letters, numbers, underscore only.</p>
               ) : null}
-              <p className="text-xs text-zinc-500">3-20 characters. Letters, numbers, underscore only.</p>
-              <p className="text-xs text-zinc-500">This is how others find and message you.</p>
+              <p className="text-xs text-faint">3-20 characters. Letters, numbers, underscore only.</p>
+              <p className="text-xs text-faint">This is how others find and message you.</p>
             </div>
           ) : null}
 
@@ -327,12 +327,12 @@ function SignupForm({ params }: { params: { locale: string } }) {
                   type="button"
                   onClick={() => setGoal(g.key)}
                   className={`rounded-2xl border p-4 text-left transition ${
-                    goal === g.key ? "border-cyan-400/55 bg-cyan-500/10 text-white" : "border-white/10 text-zinc-300 hover:border-white/20"
+                    goal === g.key ? "border-cyan-400/55 bg-cyan-500/10 text-white" : "border-white/10 text-bright hover:border-white/20"
                   }`}
                 >
                   <p className="text-lg">{g.emoji}</p>
                   <p className="mt-1 font-semibold">{g.title}</p>
-                  <p className="mt-1 text-xs text-zinc-500">{g.sub}</p>
+                  <p className="mt-1 text-xs text-faint">{g.sub}</p>
                 </button>
               ))}
             </div>
@@ -349,12 +349,12 @@ function SignupForm({ params }: { params: { locale: string } }) {
               {copy.agreePrefix}{" "}
               <Link
                 href={`/${params.locale}/terms-and-conditions`}
-                className="text-white underline underline-offset-4 hover:text-zinc-200"
+                className="text-white underline underline-offset-4 hover:text-bright"
               >
                 {copy.termsLink}
               </Link>
               ,{" "}
-              <Link href={`/${params.locale}/privacy-policy`} className="text-white underline underline-offset-4 hover:text-zinc-200">
+              <Link href={`/${params.locale}/privacy-policy`} className="text-white underline underline-offset-4 hover:text-bright">
                 {copy.privacyLink}
               </Link>
               , {BILLING_PROVIDER} {copy.billingSuffix}
@@ -366,7 +366,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
               <button
                 type="button"
                 onClick={() => setStep((s) => Math.max(1, s - 1))}
-                className="min-h-[48px] flex-1 rounded-full border border-white/15 px-5 py-3 text-sm text-zinc-200"
+                className="min-h-[48px] flex-1 rounded-full border border-white/15 px-5 py-3 text-sm text-bright"
               >
                 Back
               </button>
@@ -407,11 +407,11 @@ function SignupForm({ params }: { params: { locale: string } }) {
 
         <p className="mt-4 text-center text-xs text-[var(--color-text-muted)]">Free to join. No credit card required.</p>
 
-        <p className="mt-6 text-center text-sm text-[#52525B]">
+        <p className="mt-6 text-center text-sm text-dim">
           {copy.alreadyHaveAccount}{" "}
           <Link
             href={loginHref}
-            className="text-[#22D3EE] underline-offset-4 transition-opacity duration-150 hover:opacity-80"
+            className="text-accent underline-offset-4 transition-opacity duration-150 hover:opacity-80"
           >
             {copy.logIn}
           </Link>

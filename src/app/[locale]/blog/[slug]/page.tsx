@@ -40,29 +40,29 @@ export default async function BlogDetailPage({ params }: { params: { locale: str
 
   return (
     <PremiumPageShell>
-      <article className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
+      <article className="rounded-2xl border border-divider bg-surface p-6">
         <p className="text-xs uppercase tracking-[0.14em] text-cyan-300">{post.category ?? "General"}</p>
         <h1 className="mt-2 text-3xl font-extrabold text-white">{post.title}</h1>
-        <p className="mt-2 text-xs text-[#52525B]">
+        <p className="mt-2 text-xs text-dim">
           {post.author_name} · {post.author_type} · {post.read_time_minutes ?? 5} min · {post.views ?? 0} views · {new Date(post.created_at).toLocaleDateString(locale)}
         </p>
-        <div className="mt-6 whitespace-pre-wrap text-sm leading-7 text-zinc-200">{post.content}</div>
+        <div className="mt-6 whitespace-pre-wrap text-sm leading-7 text-bright">{post.content}</div>
       </article>
-      <section className="mt-8 rounded-xl border border-[#1E2028] bg-[#111215] p-5">
+      <section className="mt-8 rounded-xl border border-divider bg-surface p-5">
         <h2 className="text-lg font-semibold text-white">You might also like</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-3">
           {related.map((item) => (
-            <article key={item.id} className="rounded-lg border border-[#1E2028] bg-[#0E0F12] p-3">
+            <article key={item.id} className="rounded-lg border border-divider bg-surface-2 p-3">
               <p className="text-[11px] uppercase tracking-[0.12em] text-cyan-300">{item.category ?? "General"}</p>
               <h3 className="mt-2 line-clamp-2 text-sm font-semibold text-white">{item.title}</h3>
-              <p className="mt-2 line-clamp-3 text-xs text-zinc-400">{item.content}</p>
-              <Link href={`/${locale}/blog/${item.id}`} className="mt-3 inline-flex text-xs text-[#22D3EE]">
+              <p className="mt-2 line-clamp-3 text-xs text-muted">{item.content}</p>
+              <Link href={`/${locale}/blog/${item.id}`} className="mt-3 inline-flex text-xs text-accent">
                 Read →
               </Link>
             </article>
           ))}
         </div>
-        <Link href={`/${locale}/blog`} className="mt-4 inline-flex text-sm text-[#22D3EE]">
+        <Link href={`/${locale}/blog`} className="mt-4 inline-flex text-sm text-accent">
           Back to all posts →
         </Link>
       </section>

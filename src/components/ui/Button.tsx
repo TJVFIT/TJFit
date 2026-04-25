@@ -10,17 +10,17 @@ export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "link
 export type ButtonSize = "sm" | "md" | "lg";
 
 const base =
-  "inline-flex cursor-pointer select-none items-center justify-center font-medium tracking-[0.01em] transition-all duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#22D3EE] focus-visible:ring-offset-2 focus-visible:ring-offset-[#09090B] disabled:pointer-events-none disabled:opacity-50";
+  "inline-flex cursor-pointer select-none items-center justify-center font-medium tracking-[0.01em] transition-all duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-[#09090B] disabled:pointer-events-none disabled:opacity-50";
 
 const variants: Record<ButtonVariant, string> = {
   primary:
     "rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] font-bold text-[#09090B] shadow-[0_0_20px_rgba(34,211,238,0.25)] hover:scale-[1.02] hover:opacity-90 hover:shadow-[0_0_28px_rgba(34,211,238,0.35)] active:scale-[0.97]",
   secondary:
-    "rounded-[10px] border border-[#1E2028] bg-transparent text-white hover:border-[rgba(255,255,255,0.12)] hover:bg-[rgba(255,255,255,0.04)] active:bg-[rgba(255,255,255,0.07)]",
-  ghost: "rounded-[10px] border-0 bg-transparent text-[#A1A1AA] hover:text-white",
+    "rounded-[10px] border border-divider bg-transparent text-white hover:border-[rgba(255,255,255,0.12)] hover:bg-[rgba(255,255,255,0.04)] active:bg-[rgba(255,255,255,0.07)]",
+  ghost: "rounded-[10px] border-0 bg-transparent text-muted hover:text-white",
   danger:
-    "rounded-[10px] border border-[rgba(239,68,68,0.3)] bg-[rgba(239,68,68,0.12)] text-[#EF4444] hover:bg-[rgba(239,68,68,0.2)]",
-  link: "rounded-none border-0 bg-transparent p-0 text-[#A1A1AA] underline-offset-4 hover:text-white hover:underline"
+    "rounded-[10px] border border-[rgba(239,68,68,0.3)] bg-[rgba(239,68,68,0.12)] text-danger hover:bg-[rgba(239,68,68,0.2)]",
+  link: "rounded-none border-0 bg-transparent p-0 text-muted underline-offset-4 hover:text-white hover:underline"
 };
 
 const sizes: Record<ButtonSize, string> = {

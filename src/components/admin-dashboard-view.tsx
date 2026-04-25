@@ -19,7 +19,7 @@ export function AdminDashboardView({ locale }: { locale: Locale }) {
         <h1 className="mt-4 font-display text-3xl font-semibold text-white sm:text-4xl">
           {dict.dashboard.admin.title}
         </h1>
-        <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-400">
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-muted">
           {dict.dashboard.admin.subtitle}
         </p>
       </div>
@@ -29,7 +29,7 @@ export function AdminDashboardView({ locale }: { locale: Locale }) {
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {adminAdvancedStats.map((stat) => (
           <div key={stat.label} className="glass-panel rounded-[24px] p-5">
-            <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{stat.label}</p>
+            <p className="text-xs uppercase tracking-[0.24em] text-faint">{stat.label}</p>
             <p className="mt-4 text-2xl font-semibold text-white">{stat.value}</p>
           </div>
         ))}
@@ -42,14 +42,14 @@ export function AdminDashboardView({ locale }: { locale: Locale }) {
           <div className="mt-6 space-y-3">
             <Link
               href={`/${locale}/admin`}
-              className="block w-full rounded-[20px] border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-zinc-200 transition hover:border-accent/40"
+              className="block w-full rounded-[20px] border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-bright transition hover:border-accent/40"
             >
               {dict.admin.fullAdminPanel}
             </Link>
-            <button className="w-full rounded-[20px] border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-zinc-200 transition hover:border-accent/40">
+            <button className="w-full rounded-[20px] border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-bright transition hover:border-accent/40">
               {dict.admin.approveCoaches}
             </button>
-            <button className="w-full rounded-[20px] border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-zinc-200 transition hover:border-accent/40">
+            <button className="w-full rounded-[20px] border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-bright transition hover:border-accent/40">
               {dict.admin.managePayments}
             </button>
           </div>
@@ -58,10 +58,10 @@ export function AdminDashboardView({ locale }: { locale: Locale }) {
 
       <div className="glass-panel rounded-[32px] p-6">
         <p className="text-lg font-semibold text-white">{dict.admin.coachList}</p>
-        <p className="mt-2 text-sm text-zinc-400">{dict.admin.coachListSubtitle}</p>
+        <p className="mt-2 text-sm text-muted">{dict.admin.coachListSubtitle}</p>
         <div className="mt-6 max-h-48 space-y-2 overflow-y-auto">
           {coaches.length === 0 ? (
-            <p className="text-sm text-zinc-500">No coaches yet.</p>
+            <p className="text-sm text-faint">No coaches yet.</p>
           ) : (
             coaches.slice(0, 8).map((c) => (
               <div
@@ -69,7 +69,7 @@ export function AdminDashboardView({ locale }: { locale: Locale }) {
                 className="flex items-center justify-between rounded-[20px] border border-white/10 bg-white/5 px-4 py-3 text-sm"
               >
                 <span className="font-medium text-white">{c.name}</span>
-                <span className="text-zinc-400">{c.specialty} · {c.country}</span>
+                <span className="text-muted">{c.specialty} · {c.country}</span>
               </div>
             ))
           )}

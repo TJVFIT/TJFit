@@ -38,17 +38,17 @@ export default function BundlesPage({ params }: { params: { locale: string } }) 
   return (
     <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold text-white">Program Bundles</h1>
-      <p className="mt-2 text-sm text-zinc-400">Pair programs and diets together with better value.</p>
+      <p className="mt-2 text-sm text-muted">Pair programs and diets together with better value.</p>
       <div className="mt-8 grid gap-4 md:grid-cols-2">
         {BUNDLES.map((bundle) => (
-          <article key={bundle.key} className="rounded-2xl border border-[#1E2028] bg-[#111215] p-5">
-            <p className="text-xs uppercase tracking-[0.18em] text-[#22D3EE]">Bundle</p>
+          <article key={bundle.key} className="rounded-2xl border border-divider bg-surface p-5">
+            <p className="text-xs uppercase tracking-[0.18em] text-accent">Bundle</p>
             <h2 className="mt-2 text-lg font-semibold text-white">{bundle.name}</h2>
-            <p className="mt-2 text-sm text-zinc-400">
+            <p className="mt-2 text-sm text-muted">
               {bundle.program} + {bundle.diet}
             </p>
             <p className="mt-2 text-sm text-green-400">Save {bundle.save}</p>
-            <Link href={`/${locale}/programs`} className="mt-4 inline-flex rounded-full border border-[#1E2028] px-4 py-2 text-sm text-zinc-200">
+            <Link href={`/${locale}/programs`} className="mt-4 inline-flex rounded-full border border-divider px-4 py-2 text-sm text-bright">
               Get Bundle
             </Link>
           </article>

@@ -70,7 +70,7 @@ export function ProgramPaymentSuccessNotice({ message, dismissLabel, programSlug
       <button
         type="button"
         onClick={() => setVisible(false)}
-        className="shrink-0 rounded-lg px-2 py-1 text-xs font-semibold text-[#A1A1AA] transition-colors hover:text-white"
+        className="shrink-0 rounded-lg px-2 py-1 text-xs font-semibold text-muted transition-colors hover:text-white"
       >
         {dismissLabel}
       </button>

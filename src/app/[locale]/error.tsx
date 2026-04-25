@@ -59,12 +59,12 @@ export default function LocaleError({
   }, [error]);
 
   return (
-    <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-[#09090B] px-6 text-center">
+    <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-background px-6 text-center">
       <ParticleField className="pointer-events-none absolute inset-0 opacity-20" />
       <LogoMark />
-      <p className="text-[clamp(6rem,20vw,120px)] font-extrabold leading-none text-[#EF4444]">500</p>
+      <p className="text-[clamp(6rem,20vw,120px)] font-extrabold leading-none text-danger">500</p>
       <h1 className="mt-2 text-3xl font-bold text-white">{c.heading}</h1>
-      <p className="mt-3 max-w-md text-sm text-[#A1A1AA] sm:text-base">{c.sub}</p>
+      <p className="mt-3 max-w-md text-sm text-muted sm:text-base">{c.sub}</p>
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <button
           type="button"
@@ -75,7 +75,7 @@ export default function LocaleError({
         </button>
         <Link
           href={homeHref}
-          className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-white/15 px-6 py-2.5 text-sm font-semibold text-zinc-300 transition-colors hover:border-white/25 hover:text-white"
+          className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-white/15 px-6 py-2.5 text-sm font-semibold text-bright transition-colors hover:border-white/25 hover:text-white"
         >
           {c.back}
         </Link>

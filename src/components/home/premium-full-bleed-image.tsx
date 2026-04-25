@@ -105,7 +105,7 @@ export function PremiumFullBleedImage({
     preset === "programs" ? "50% 48%" : preset === "tjai" ? "58% 44%" : "50% 42%";
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-[#0A0A0B]" aria-hidden>
+    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-background" aria-hidden>
       <GlowLayer center={glowCenter} cyanOpacity={preset === "programs" ? 0.08 : 0.11} className="z-0" />
       <div
         className="absolute inset-0 z-[1]"

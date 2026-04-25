@@ -146,10 +146,10 @@ export function TJAIMealSwapTab({ locale }: { locale: string }) {
 
   if (!canUseMealSwap) {
     return (
-      <div className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
+      <div className="rounded-2xl border border-divider bg-surface p-6">
         <h3 className="text-lg font-semibold text-white">{t.locked}</h3>
-        <p className="mt-2 text-sm text-zinc-400">{t.lockedSub}</p>
-        <a href={`/${locale}/membership?tier=pro`} className="mt-4 inline-flex rounded-full bg-[#22D3EE] px-4 py-2 text-sm font-semibold text-[#09090B]">
+        <p className="mt-2 text-sm text-muted">{t.lockedSub}</p>
+        <a href={`/${locale}/membership?tier=pro`} className="mt-4 inline-flex rounded-full bg-accent px-4 py-2 text-sm font-semibold text-[#09090B]">
           {t.upgrade}
         </a>
       </div>
@@ -157,12 +157,12 @@ export function TJAIMealSwapTab({ locale }: { locale: string }) {
   }
 
   return (
-    <div className="space-y-4 rounded-2xl border border-[#1E2028] bg-[#111215] p-5">
+    <div className="space-y-4 rounded-2xl border border-divider bg-surface p-5">
       <h3 className="text-lg font-semibold text-white">{t.selectMeal}</h3>
       <select
         value={selected?.key ?? ""}
         onChange={(e) => setSelected(options.find((o) => o.key === e.target.value) ?? null)}
-        className="w-full rounded-xl border border-[#1E2028] bg-[#0E0F12] px-3 py-2 text-sm text-white"
+        className="w-full rounded-xl border border-divider bg-surface-2 px-3 py-2 text-sm text-white"
       >
         <option value="">{t.pickMeal}</option>
         {options.map((option) => (
@@ -172,7 +172,7 @@ export function TJAIMealSwapTab({ locale }: { locale: string }) {
         ))}
       </select>
 
-      <select value={reason} onChange={(e) => setReason(e.target.value)} className="w-full rounded-xl border border-[#1E2028] bg-[#0E0F12] px-3 py-2 text-sm text-white">
+      <select value={reason} onChange={(e) => setReason(e.target.value)} className="w-full rounded-xl border border-divider bg-surface-2 px-3 py-2 text-sm text-white">
         <option value="">{t.whySwap}</option>
         <option value="ingredients">{t.noIngredients}</option>
         <option value="taste">{t.dislike}</option>
@@ -186,26 +186,26 @@ export function TJAIMealSwapTab({ locale }: { locale: string }) {
             key={item}
             type="button"
             onClick={() => setNotes((prev) => (prev.includes(item) ? prev.filter((x) => x !== item) : [...prev, item]))}
-            className={`rounded-full border px-3 py-1 text-xs ${notes.includes(item) ? "border-[#22D3EE] text-[#22D3EE]" : "border-[#1E2028] text-zinc-400"}`}
+            className={`rounded-full border px-3 py-1 text-xs ${notes.includes(item) ? "border-accent text-accent" : "border-divider text-muted"}`}
           >
             {item}
           </button>
         ))}
       </div>
 
-      <button type="button" onClick={() => void doSwap()} disabled={!selected || loading || swapsRemaining <= 0} className="rounded-full bg-[#22D3EE] px-4 py-2 text-sm font-semibold text-[#09090B] disabled:opacity-50">
+      <button type="button" onClick={() => void doSwap()} disabled={!selected || loading || swapsRemaining <= 0} className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-[#09090B] disabled:opacity-50">
         {loading ? t.finding : t.findAlt}
       </button>
-      <p className="text-xs text-zinc-500">{swapsRemaining} {t.swapsRemaining}</p>
+      <p className="text-xs text-faint">{swapsRemaining} {t.swapsRemaining}</p>
 
       <div className="grid gap-3 md:grid-cols-3">
         {alternatives.map((meal) => (
-          <article key={`${meal.name}-${meal.time}`} className="rounded-xl border border-[#1E2028] bg-[#0E0F12] p-3">
+          <article key={`${meal.name}-${meal.time}`} className="rounded-xl border border-divider bg-surface-2 p-3">
             <p className="font-semibold text-white">{meal.name}</p>
-            <p className="mt-1 text-xs text-zinc-500">
+            <p className="mt-1 text-xs text-faint">
               {meal.calories} kcal · P {meal.protein} C {meal.carbs} F {meal.fat}
             </p>
-            <button type="button" onClick={() => void applyAlternative(meal)} className="mt-3 rounded-full border border-[#1E2028] px-3 py-1 text-xs text-zinc-200">
+            <button type="button" onClick={() => void applyAlternative(meal)} className="mt-3 rounded-full border border-divider px-3 py-1 text-xs text-bright">
               {t.useMeal}
             </button>
           </article>

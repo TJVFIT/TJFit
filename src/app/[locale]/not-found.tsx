@@ -87,11 +87,11 @@ export default function LocaleNotFound() {
   const [query, setQuery] = useState("");
 
   return (
-    <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-[#09090B] px-6 text-center">
+    <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-background px-6 text-center">
       <ParticleField className="pointer-events-none absolute inset-0 opacity-20" />
       <LogoMark />
       <p
-        className="animate-[tj-fade-up_380ms_ease-out_forwards] text-[clamp(6rem,20vw,120px)] font-extrabold leading-none text-[#22D3EE]"
+        className="animate-[tj-fade-up_380ms_ease-out_forwards] text-[clamp(6rem,20vw,120px)] font-extrabold leading-none text-accent"
         style={{ textShadow: "0 0 40px rgba(34,211,238,0.45)", animationDelay: "100ms", opacity: 0 }}
       >
         404
@@ -99,7 +99,7 @@ export default function LocaleNotFound() {
       <h1 className="mt-4 animate-[tj-fade-up_380ms_ease-out_forwards] text-3xl font-bold text-white" style={{ animationDelay: "200ms", opacity: 0 }}>
         {c.heading}
       </h1>
-      <p className="mt-2 animate-[tj-fade-up_380ms_ease-out_forwards] text-sm text-[#A1A1AA] sm:text-base" style={{ animationDelay: "300ms", opacity: 0 }}>
+      <p className="mt-2 animate-[tj-fade-up_380ms_ease-out_forwards] text-sm text-muted sm:text-base" style={{ animationDelay: "300ms", opacity: 0 }}>
         {c.sub}
       </p>
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -112,14 +112,14 @@ export default function LocaleNotFound() {
         </Link>
         <Link
           href={`/${locale}/programs`}
-          className="inline-flex min-h-[44px] animate-[tj-fade-up_380ms_ease-out_forwards] items-center justify-center rounded-full border border-white/15 px-6 py-2.5 text-sm font-semibold text-zinc-300 transition-colors hover:border-white/25 hover:text-white"
+          className="inline-flex min-h-[44px] animate-[tj-fade-up_380ms_ease-out_forwards] items-center justify-center rounded-full border border-white/15 px-6 py-2.5 text-sm font-semibold text-bright transition-colors hover:border-white/25 hover:text-white"
           style={{ animationDelay: "450ms", opacity: 0 }}
         >
           {c.programs}
         </Link>
       </div>
       <div className="mt-8 w-full max-w-xl animate-[tj-fade-up_380ms_ease-out_forwards]" style={{ animationDelay: "500ms", opacity: 0 }}>
-        <p className="text-sm text-[#A1A1AA]">{c.searchTitle}</p>
+        <p className="text-sm text-muted">{c.searchTitle}</p>
         <form
           className="mt-3 flex gap-2"
           onSubmit={(e) => {
@@ -135,12 +135,12 @@ export default function LocaleNotFound() {
             placeholder={c.searchPlaceholder}
             className="min-h-[44px] w-full rounded-full border border-white/10 bg-white/[0.04] px-4 text-sm text-white outline-none ring-cyan-400/30 focus:border-cyan-400/35 focus:ring-2"
           />
-          <button className="rounded-full bg-[#22D3EE] px-5 text-sm font-semibold text-[#09090B]">Go</button>
+          <button className="rounded-full bg-accent px-5 text-sm font-semibold text-[#09090B]">Go</button>
         </form>
       </div>
       <div className="mt-7 animate-[tj-fade-up_380ms_ease-out_forwards]" style={{ animationDelay: "560ms", opacity: 0 }}>
-        <p className="text-xs uppercase tracking-[0.14em] text-[#52525B]">{c.popular}</p>
-        <div className="mt-2 flex flex-wrap items-center justify-center gap-3 text-sm text-[#A1A1AA]">
+        <p className="text-xs uppercase tracking-[0.14em] text-dim">{c.popular}</p>
+        <div className="mt-2 flex flex-wrap items-center justify-center gap-3 text-sm text-muted">
           <Link href={`/${locale}/programs`} className="hover:text-white">
             {c.links.programs}
           </Link>

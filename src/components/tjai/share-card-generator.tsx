@@ -88,21 +88,21 @@ export function ShareCardGenerator({
   };
 
   return (
-    <div className="rounded-xl border border-[#1E2028] bg-[#111215] p-5">
+    <div className="rounded-xl border border-divider bg-surface p-5">
       <h3 className="text-lg font-semibold text-white">Share Your Plan</h3>
       <div className="mt-3 flex gap-2">
-        <button type="button" onClick={() => setFormat("stories")} className={`rounded-full border px-3 py-1 text-xs ${format === "stories" ? "border-[#22D3EE] text-white" : "border-[#1E2028] text-[#A1A1AA]"}`}>
+        <button type="button" onClick={() => setFormat("stories")} className={`rounded-full border px-3 py-1 text-xs ${format === "stories" ? "border-accent text-white" : "border-divider text-muted"}`}>
           Stories
         </button>
-        <button type="button" onClick={() => setFormat("square")} className={`rounded-full border px-3 py-1 text-xs ${format === "square" ? "border-[#22D3EE] text-white" : "border-[#1E2028] text-[#A1A1AA]"}`}>
+        <button type="button" onClick={() => setFormat("square")} className={`rounded-full border px-3 py-1 text-xs ${format === "square" ? "border-accent text-white" : "border-divider text-muted"}`}>
           Square
         </button>
       </div>
       <div className="mt-4 flex gap-2">
-        <button type="button" onClick={download} className="rounded-full bg-[#22D3EE] px-4 py-2 text-sm font-semibold text-[#09090B]">
+        <button type="button" onClick={download} className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-[#09090B]">
           Download Card
         </button>
-        <button type="button" onClick={() => void copyImage()} className="rounded-full border border-[#1E2028] px-4 py-2 text-sm text-[#A1A1AA]">
+        <button type="button" onClick={() => void copyImage()} className="rounded-full border border-divider px-4 py-2 text-sm text-muted">
           Copy Image
         </button>
       </div>

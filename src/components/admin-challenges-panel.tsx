@@ -52,7 +52,7 @@ export function AdminChallengesPanel() {
         <button type="submit" className="btn-primary-shimmer rounded-full bg-gradient-to-br from-[#22D3EE] to-[#0EA5E9] px-4 py-2 text-sm font-semibold text-[#09090B]">
           Create Challenge
         </button>
-        {status ? <p className="text-xs text-zinc-300">{status}</p> : null}
+        {status ? <p className="text-xs text-bright">{status}</p> : null}
       </form>
     </section>
   );

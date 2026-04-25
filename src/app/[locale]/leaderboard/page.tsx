@@ -104,7 +104,7 @@ function Podium({ items, tab }: { items: LeaderboardItem[]; tab: TabKey }) {
           <div className="text-center">
             <div className="mb-1 flex justify-center">{crowns[i]}</div>
             <p className="text-xs font-semibold text-white truncate max-w-[100px]">{item.displayName}</p>
-            <p className="text-[10px] text-zinc-500">{getMetricValue(item, tab)}</p>
+            <p className="text-[10px] text-faint">{getMetricValue(item, tab)}</p>
           </div>
           <div
             className={`w-full rounded-t-xl transition-all duration-700 ease-out ${glows[i]}`}
@@ -156,10 +156,10 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
 
   return (
     <PremiumPageShell>
-      <section className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6 sm:p-8">
-        <p className="text-xs uppercase tracking-[0.18em] text-[#52525B]">Leaderboard</p>
+      <section className="rounded-2xl border border-divider bg-surface p-6 sm:p-8">
+        <p className="text-xs uppercase tracking-[0.18em] text-dim">Leaderboard</p>
         <h1 className="mt-2 text-3xl font-extrabold text-white">TJFit Leaderboards</h1>
-        <p className="mt-2 text-sm text-[#A1A1AA]">The most active members of the TJFit community.</p>
+        <p className="mt-2 text-sm text-muted">The most active members of the TJFit community.</p>
 
         <div className="relative mt-5 flex flex-wrap gap-2">
           {TABS.map((entry, idx) => (
@@ -167,7 +167,7 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
               key={entry.key}
               type="button"
               onClick={() => { setTab(entry.key); setActiveTabIdx(idx); }}
-              className={`relative rounded-full border px-3 py-2 text-xs font-semibold transition-colors duration-200 ${tab === entry.key ? "border-cyan-400/40 bg-cyan-400/10 text-[#22D3EE]" : "border-[#1E2028] text-[#A1A1AA] hover:border-white/10 hover:text-white"}`}
+              className={`relative rounded-full border px-3 py-2 text-xs font-semibold transition-colors duration-200 ${tab === entry.key ? "border-cyan-400/40 bg-cyan-400/10 text-accent" : "border-divider text-muted hover:border-white/10 hover:text-white"}`}
             >
               {entry.label}
             </button>
@@ -179,7 +179,7 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
               key={p}
               type="button"
               onClick={() => setPeriod(p)}
-              className={`rounded-full border px-3 py-1.5 transition-colors duration-200 ${period === p ? "border-white/20 text-white" : "border-[#1E2028] text-[#A1A1AA] hover:border-white/10"}`}
+              className={`rounded-full border px-3 py-1.5 transition-colors duration-200 ${period === p ? "border-white/20 text-white" : "border-divider text-muted hover:border-white/10"}`}
             >
               {p === "week" ? "This Week" : "All Time"}
             </button>
@@ -187,7 +187,7 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
         </div>
       </section>
 
-      <section className="mt-8 rounded-2xl border border-[#1E2028] bg-[#111215] p-5">
+      <section className="mt-8 rounded-2xl border border-divider bg-surface p-5">
         {loading ? (
           <div className="space-y-3">
             {Array.from({ length: 8 }).map((_, idx) => (
@@ -196,14 +196,14 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
           </div>
         ) : items.length === 0 ? (
           <div className="flex flex-col items-center py-16 text-center">
-            <Trophy className="mx-auto h-12 w-12 text-zinc-600" />
+            <Trophy className="mx-auto h-12 w-12 text-dim" />
             <p className="mt-4 text-lg font-semibold text-white">{EMPTY_MESSAGES[tab].title}</p>
-            <p className="mt-2 max-w-sm text-sm text-zinc-400">{EMPTY_MESSAGES[tab].sub}</p>
+            <p className="mt-2 max-w-sm text-sm text-muted">{EMPTY_MESSAGES[tab].sub}</p>
             <div className="mt-5 flex flex-wrap justify-center gap-3">
-              <a href={`/${locale}/coins#how-to-earn`} className="rounded-full border border-[#22D3EE]/35 bg-[#22D3EE]/10 px-4 py-2 text-sm font-semibold text-[#22D3EE]">
+              <a href={`/${locale}/coins#how-to-earn`} className="rounded-full border border-accent/35 bg-accent/10 px-4 py-2 text-sm font-semibold text-accent">
                 How to earn TJCOIN →
               </a>
-              <a href={`/${locale}/programs`} className="rounded-full border border-[#1E2028] px-4 py-2 text-sm text-zinc-300">
+              <a href={`/${locale}/programs`} className="rounded-full border border-divider px-4 py-2 text-sm text-bright">
                 Start Earning →
               </a>
             </div>
@@ -223,11 +223,11 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
                     ? "border-cyan-400/25"
                     : isTop3
                       ? "border-cyan-400/15"
-                      : "border-[#1E2028]";
+                      : "border-divider";
                 return (
                   <div
                     key={item.userId}
-                    className={`flex items-center justify-between rounded-xl border bg-[#0D0E12] px-4 py-3 transition-all duration-200 ${rankClass} ${isMe ? "animate-pulse ring-1 ring-[#22D3EE]/40" : ""}`}
+                    className={`flex items-center justify-between rounded-xl border bg-[#0D0E12] px-4 py-3 transition-all duration-200 ${rankClass} ${isMe ? "animate-pulse ring-1 ring-accent/40" : ""}`}
                   >
                     <div className="flex items-center gap-3">
                       <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#14161D] text-sm font-bold text-white">
@@ -238,18 +238,18 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
                         ) : item.rank === 3 ? (
                           <Crown className="h-4 w-4" style={{ color: "rgba(34,211,238,0.35)" }} />
                         ) : (
-                          <span className="text-zinc-400">{item.rank}</span>
+                          <span className="text-muted">{item.rank}</span>
                         )}
                       </div>
                       <div>
                         <p className="font-medium text-white">
-                          {item.displayName} {item.isVerified ? <span className="text-[#22D3EE]">✓</span> : null}
-                          {isMe ? <span className="ml-1.5 text-[10px] text-[#22D3EE]">(you)</span> : null}
+                          {item.displayName} {item.isVerified ? <span className="text-accent">✓</span> : null}
+                          {isMe ? <span className="ml-1.5 text-[10px] text-accent">(you)</span> : null}
                         </p>
-                        <p className="text-xs text-[#52525B]">🔥 {item.streak} streak</p>
+                        <p className="text-xs text-dim">🔥 {item.streak} streak</p>
                       </div>
                     </div>
-                    <p className={`text-sm font-semibold ${isTop1 ? "text-[#22D3EE]" : isTop2 ? "text-cyan-400/70" : isTop3 ? "text-cyan-400/45" : "text-[#52525B]"}`}>
+                    <p className={`text-sm font-semibold ${isTop1 ? "text-accent" : isTop2 ? "text-cyan-400/70" : isTop3 ? "text-cyan-400/45" : "text-dim"}`}>
                       {getMetricValue(item, tab)}
                     </p>
                   </div>
@@ -260,9 +260,9 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
         )}
       </section>
 
-      <section className="mt-8 rounded-xl border border-[#1E2028] bg-[#111215] p-5 text-sm text-[#A1A1AA]">
+      <section className="mt-8 rounded-xl border border-divider bg-surface p-5 text-sm text-muted">
         <p className="inline-flex items-center gap-2 text-white">
-          <Trophy className="h-4 w-4 text-[#A78BFA]" /> Weekly top 3 bonuses: +100, +50, +25 TJCOIN
+          <Trophy className="h-4 w-4 text-accent-violet" /> Weekly top 3 bonuses: +100, +50, +25 TJCOIN
         </p>
       </section>
     </PremiumPageShell>

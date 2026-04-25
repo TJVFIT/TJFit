@@ -271,7 +271,7 @@ export function TJAIResult({
   const decisionReasons = useMemo(() => buildTjaiDecisionReasons(answers, metrics), [answers, metrics]);
 
   return (
-    <section className="bg-[#09090B] px-4 py-10 text-white">
+    <section className="bg-background px-4 py-10 text-white">
       <div className="mx-auto w-full max-w-5xl space-y-8">
 
         {/* Medical disclaimer */}
@@ -283,16 +283,16 @@ export function TJAIResult({
         </div>
 
         <div ref={summaryRef} className={cn("plan-result reveal-up", inSummary && "is-in")}>
-          <p className="text-[11px] uppercase tracking-[0.2em] text-[#22D3EE]">{copy.result.eyebrow}</p>
+          <p className="text-[11px] uppercase tracking-[0.2em] text-accent">{copy.result.eyebrow}</p>
           <h1 className="mt-3 text-3xl font-bold leading-tight sm:text-4xl">{mutablePlan.summary?.greeting}</h1>
-          <p className="mt-3 max-w-3xl text-sm leading-6 text-[#A1A1AA]">{mutablePlan.summary?.keyInsight}</p>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-muted">{mutablePlan.summary?.keyInsight}</p>
 
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {summaryCards.map((card, i) => (
               <article
                 key={card.label}
                 className={cn(
-                  "rounded-xl border border-[#1E2028] bg-[linear-gradient(135deg,#111215,#0D0F12)] p-5 reveal-up shadow-[0_2px_12px_rgba(0,0,0,0.3)]",
+                  "rounded-xl border border-divider bg-[linear-gradient(135deg,#111215,#0D0F12)] p-5 reveal-up shadow-[0_2px_12px_rgba(0,0,0,0.3)]",
                   inSummary && "is-in",
                   i === 0 && "delay-75",
                   i === 1 && "delay-100",
@@ -300,16 +300,16 @@ export function TJAIResult({
                   i === 3 && "delay-200"
                 )}
               >
-                <div className="text-3xl font-extrabold text-[#22D3EE]">
+                <div className="text-3xl font-extrabold text-accent">
                   {card.value}
-                  <span className="ms-1 text-sm font-medium text-[#52525B]">{card.unit}</span>
+                  <span className="ms-1 text-sm font-medium text-dim">{card.unit}</span>
                 </div>
-                <div className="mt-2 text-[11px] uppercase tracking-[0.15em] text-[#52525B]">{card.label}</div>
+                <div className="mt-2 text-[11px] uppercase tracking-[0.15em] text-dim">{card.label}</div>
               </article>
             ))}
           </div>
 
-          <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm text-[#A1A1AA]">
+          <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted">
             <span>
               {copy.result.metrics.water}: {mutablePlan.summary?.water ?? metrics.water}ml
             </span>
@@ -322,12 +322,12 @@ export function TJAIResult({
           </div>
         </div>
 
-        <article className="rounded-xl border border-[#1E2028] bg-[#111215] p-5">
+        <article className="rounded-xl border border-divider bg-surface p-5">
           <h3 className="text-lg font-semibold text-white">Why TJAI chose this</h3>
           <ul className="mt-4 space-y-2">
             {decisionReasons.map((reason) => (
-              <li key={reason} className="flex gap-2 text-sm text-[#D4D4D8]">
-                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[#22D3EE]" />
+              <li key={reason} className="flex gap-2 text-sm text-bright">
+                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
                 <span>{reason}</span>
               </li>
             ))}
@@ -335,28 +335,28 @@ export function TJAIResult({
         </article>
 
         <div className="grid gap-4 lg:grid-cols-2">
-          <article className="rounded-xl border border-[#1E2028] bg-[#111215] p-5">
+          <article className="rounded-xl border border-divider bg-surface p-5">
             <h3 className="text-lg font-semibold text-white">Your Transformation Forecast</h3>
             <div className="mt-3 h-[260px]">
               <Line data={lineData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: "#A1A1AA" } } }, scales: { x: { ticks: { color: "#52525B" }, grid: { color: "rgba(255,255,255,0.04)" } }, y: { ticks: { color: "#52525B" }, grid: { color: "rgba(255,255,255,0.04)" } } } }} />
             </div>
           </article>
-          <article className="rounded-xl border border-[#1E2028] bg-[#111215] p-5">
+          <article className="rounded-xl border border-divider bg-surface p-5">
             <h3 className="text-lg font-semibold text-white">Macro Split</h3>
             <div className="mt-3 h-[240px]">
               <Doughnut data={pieData} options={{ maintainAspectRatio: false, plugins: { legend: { labels: { color: "#A1A1AA" } } } }} />
             </div>
-            <div className="mt-2 text-sm text-[#A1A1AA]">P: {metrics.protein}g | C: {metrics.carbs}g | F: {metrics.fat}g</div>
+            <div className="mt-2 text-sm text-muted">P: {metrics.protein}g | C: {metrics.carbs}g | F: {metrics.fat}g</div>
             <div className="mt-4 space-y-3">
               <div>
-                <p className="text-xs text-[#A1A1AA]">Current BF% {metrics.estimatedBodyFat}%</p>
-                <div className="mt-1 h-2 rounded-full bg-[#1E2028]">
+                <p className="text-xs text-muted">Current BF% {metrics.estimatedBodyFat}%</p>
+                <div className="mt-1 h-2 rounded-full bg-divider">
                   <div className="h-full rounded-full bg-[rgba(239,68,68,0.3)]" style={{ width: `${Math.min(100, Math.max(0, metrics.estimatedBodyFat * 2))}%` }} />
                 </div>
               </div>
               <div>
-                <p className="text-xs text-[#A1A1AA]">Projected BF% {metrics.projectedFinalBF}%</p>
-                <div className="mt-1 h-2 rounded-full bg-[#1E2028]">
+                <p className="text-xs text-muted">Projected BF% {metrics.projectedFinalBF}%</p>
+                <div className="mt-1 h-2 rounded-full bg-divider">
                   <div className="h-full rounded-full bg-[rgba(34,211,238,0.3)]" style={{ width: `${Math.min(100, Math.max(0, metrics.projectedFinalBF * 2))}%` }} />
                 </div>
               </div>
@@ -364,7 +364,7 @@ export function TJAIResult({
           </article>
         </div>
 
-        <article className="rounded-xl border border-[#1E2028] bg-[#111215] p-5">
+        <article className="rounded-xl border border-divider bg-surface p-5">
           <h3 className="text-lg font-semibold text-white">Key Milestones</h3>
           <div className="mt-4 space-y-3">
             {[
@@ -375,23 +375,23 @@ export function TJAIResult({
               `Week 12: Goal window — estimated ${metrics.projectedFinalWeight}kg`
             ].map((m) => (
               <div key={m} className="flex items-start gap-3">
-                <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-[#22D3EE]" />
-                <p className="text-sm text-[#D4D4D8]">{m}</p>
+                <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-accent" />
+                <p className="text-sm text-bright">{m}</p>
               </div>
             ))}
           </div>
         </article>
 
         <div className="rounded-xl border border-[rgba(167,139,250,0.2)] bg-[rgba(167,139,250,0.06)] p-5">
-          <p className="text-sm font-semibold text-[#A78BFA]">⚡ Plateau Alert</p>
-          <p className="mt-1 text-sm text-[#D4D4D8]">
+          <p className="text-sm font-semibold text-accent-violet">⚡ Plateau Alert</p>
+          <p className="mt-1 text-sm text-bright">
             Based on your profile, most people with your metabolism plateau around Week {metrics.plateauWeek}. We already built your plateau breaker into that point.
           </p>
         </div>
         {metrics.reverseDietNeeded ? (
           <div className="rounded-xl border border-[rgba(34,211,238,0.2)] bg-[rgba(34,211,238,0.06)] p-5">
-            <p className="text-sm font-semibold text-[#22D3EE]">🔄 Metabolic Reset Added</p>
-            <p className="mt-1 text-sm text-[#D4D4D8]">We detected signs of adaptation. Your plan starts with a 2-week reset before the main 12-week system.</p>
+            <p className="text-sm font-semibold text-accent">🔄 Metabolic Reset Added</p>
+            <p className="mt-1 text-sm text-bright">We detected signs of adaptation. Your plan starts with a 2-week reset before the main 12-week system.</p>
           </div>
         ) : null}
 
@@ -401,10 +401,10 @@ export function TJAIResult({
             <button onClick={() => void generateGrocery()} className="rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] px-4 py-2 text-sm font-bold text-[#09090B]">
               {loadingGrocery ? "Building your grocery list..." : "Generate Grocery List"}
             </button>
-            <button onClick={() => void generateMealPrep()} className="rounded-full border border-[#1E2028] px-4 py-2 text-sm text-[#A1A1AA]">
+            <button onClick={() => void generateMealPrep()} className="rounded-full border border-divider px-4 py-2 text-sm text-muted">
               {loadingMealPrep ? "Generating..." : "Generate Meal Prep Guide"}
             </button>
-            <button onClick={() => void exportPdf()} className="rounded-full border border-[#1E2028] px-4 py-2 text-sm text-[#A1A1AA]">
+            <button onClick={() => void exportPdf()} className="rounded-full border border-divider px-4 py-2 text-sm text-muted">
               {loadingPdf ? "Generating PDF..." : "Download My Plan (PDF)"}
             </button>
           </div>
@@ -420,8 +420,8 @@ export function TJAIResult({
                 className={cn(
                   "rounded-full border px-4 py-2 text-sm transition-all",
                   i === dietTab
-                    ? "border-[#22D3EE] bg-[rgba(34,211,238,0.08)] text-white"
-                    : "border-[#1E2028] text-[#A1A1AA] hover:border-[#22D3EE]"
+                    ? "border-accent bg-[rgba(34,211,238,0.08)] text-white"
+                    : "border-divider text-muted hover:border-accent"
                 )}
               >
                 {phase.weekRange} · {phase.phase} {phase.isRefeed ? "· REFEED" : ""} {phase.isPlateauBreaker ? "· BREAKER" : ""}
@@ -436,7 +436,7 @@ export function TJAIResult({
                 onClick={() => setDietDayTab(i)}
                 className={cn(
                   "rounded-full border px-4 py-2 text-sm transition-all",
-                  i === dietDayTab ? "border-[#22D3EE] bg-[#111215] text-white" : "border-[#1E2028] text-[#A1A1AA]"
+                  i === dietDayTab ? "border-accent bg-surface text-white" : "border-divider text-muted"
                 )}
               >
                 {day.label}
@@ -446,46 +446,46 @@ export function TJAIResult({
 
           <div className="space-y-3">
             {(activeDietDay?.meals ?? []).map((meal, i) => (
-              <article key={`${meal.name}-${i}`} className="rounded-xl border border-[#1E2028] bg-[#111215] p-5">
+              <article key={`${meal.name}-${i}`} className="rounded-xl border border-divider bg-surface p-5">
                 <header className="flex flex-wrap items-center justify-between gap-2">
                   <h3 className="text-lg font-semibold text-white">{meal.name}</h3>
                   <div className="flex items-center gap-2">
-                    <div className="text-sm text-[#A1A1AA]">
+                    <div className="text-sm text-muted">
                       {meal.time} · {meal.calories} kcal
                     </div>
-                    <button type="button" onClick={() => void openSwap(meal, dietDayTab, i)} className="rounded-full border border-[#1E2028] px-2 py-1 text-[11px] text-[#A1A1AA] hover:border-[#22D3EE] hover:text-[#22D3EE]">
+                    <button type="button" onClick={() => void openSwap(meal, dietDayTab, i)} className="rounded-full border border-divider px-2 py-1 text-[11px] text-muted hover:border-accent hover:text-accent">
                       ↻ Swap
                     </button>
                   </div>
                 </header>
-                <ul className="mt-3 list-disc space-y-1 ps-5 text-sm text-[#D4D4D8]">
+                <ul className="mt-3 list-disc space-y-1 ps-5 text-sm text-bright">
                   {meal.foods.map((food) => (
                     <li key={food}>{food}</li>
                   ))}
                 </ul>
-                <p className="mt-3 text-xs text-[#A1A1AA]">
+                <p className="mt-3 text-xs text-muted">
                   P: {meal.protein}g · C: {meal.carbs}g · F: {meal.fat}g
                 </p>
-                <p className="mt-2 text-xs italic text-[#52525B]">{meal.prepNote}</p>
-                {meal.educationNote ? <p className="mt-2 rounded-lg border border-[#1E2028] bg-[#0f1116] px-3 py-2 text-xs text-[#A1A1AA]">? {meal.educationNote}</p> : null}
-                <button type="button" className="mt-3 text-sm text-[#A1A1AA] hover:text-white" onClick={() => setRecipeOpen((prev) => ({ ...prev, [`${dietDayTab}-${i}`]: !prev[`${dietDayTab}-${i}`] }))}>
+                <p className="mt-2 text-xs italic text-dim">{meal.prepNote}</p>
+                {meal.educationNote ? <p className="mt-2 rounded-lg border border-divider bg-[#0f1116] px-3 py-2 text-xs text-muted">? {meal.educationNote}</p> : null}
+                <button type="button" className="mt-3 text-sm text-muted hover:text-white" onClick={() => setRecipeOpen((prev) => ({ ...prev, [`${dietDayTab}-${i}`]: !prev[`${dietDayTab}-${i}`] }))}>
                   {recipeOpen[`${dietDayTab}-${i}`] ? "Hide Recipe" : "View Recipe"}
                 </button>
                 <div className={cn("overflow-hidden transition-all duration-300", recipeOpen[`${dietDayTab}-${i}`] ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0")}>
                   {meal.recipe ? (
-                    <div className="mt-3 rounded-xl border border-[#1E2028] bg-[#0f1116] p-4">
-                      <div className="flex flex-wrap gap-2 text-xs text-[#A1A1AA]">
-                        <span className="rounded-full border border-[#1E2028] px-2 py-1">Prep {meal.recipe.prepTime}</span>
-                        <span className="rounded-full border border-[#1E2028] px-2 py-1">Cook {meal.recipe.cookTime}</span>
-                        <span className="rounded-full border border-[#1E2028] px-2 py-1">{meal.recipe.difficultyLevel}</span>
+                    <div className="mt-3 rounded-xl border border-divider bg-[#0f1116] p-4">
+                      <div className="flex flex-wrap gap-2 text-xs text-muted">
+                        <span className="rounded-full border border-divider px-2 py-1">Prep {meal.recipe.prepTime}</span>
+                        <span className="rounded-full border border-divider px-2 py-1">Cook {meal.recipe.cookTime}</span>
+                        <span className="rounded-full border border-divider px-2 py-1">{meal.recipe.difficultyLevel}</span>
                       </div>
-                      <ol className="mt-3 list-decimal space-y-1 ps-5 text-sm leading-7 text-[#D4D4D8]">
+                      <ol className="mt-3 list-decimal space-y-1 ps-5 text-sm leading-7 text-bright">
                         {(meal.recipe.steps ?? []).map((stepText) => (
                           <li key={stepText}>{stepText}</li>
                         ))}
                       </ol>
-                      {meal.recipe.storageTip ? <p className="mt-3 text-xs italic text-[#A1A1AA]">{meal.recipe.storageTip}</p> : null}
-                      {meal.recipe.batchNote ? <p className="mt-1 text-xs text-[#22D3EE]">{meal.recipe.batchNote}</p> : null}
+                      {meal.recipe.storageTip ? <p className="mt-3 text-xs italic text-muted">{meal.recipe.storageTip}</p> : null}
+                      {meal.recipe.batchNote ? <p className="mt-1 text-xs text-accent">{meal.recipe.batchNote}</p> : null}
                     </div>
                   ) : null}
                 </div>
@@ -494,10 +494,10 @@ export function TJAIResult({
           </div>
 
           {activeDietDay?.totals ? (
-            <div className="rounded-xl border border-[#1E2028] bg-[#111215] p-4 text-sm text-[#D4D4D8]">
+            <div className="rounded-xl border border-divider bg-surface p-4 text-sm text-bright">
               {activeDietDay.totals.calories} kcal · P {activeDietDay.totals.protein}g · C {activeDietDay.totals.carbs}g · F{" "}
               {activeDietDay.totals.fat}g
-              {activeDietDay.waterTarget ? <span className="ms-4 text-[#A1A1AA]">{activeDietDay.waterTarget}</span> : null}
+              {activeDietDay.waterTarget ? <span className="ms-4 text-muted">{activeDietDay.waterTarget}</span> : null}
             </div>
           ) : null}
         </div>
@@ -505,14 +505,14 @@ export function TJAIResult({
         <div ref={programRef} className={cn("reveal-up space-y-4", inProgram && "is-in")}>
           <h2 className="text-2xl font-bold">{copy.result.yourProgram}</h2>
           {(mutablePlan.program.beginnerFoundations ?? []).length ? (
-            <details className="rounded-xl border border-[#1E2028] bg-[#111215] p-4">
-              <summary className="cursor-pointer text-sm font-semibold text-[#22D3EE]">Fitness Fundamentals — Read This First</summary>
-              <ul className="mt-3 list-disc space-y-1 ps-5 text-sm text-[#D4D4D8]">
+            <details className="rounded-xl border border-divider bg-surface p-4">
+              <summary className="cursor-pointer text-sm font-semibold text-accent">Fitness Fundamentals — Read This First</summary>
+              <ul className="mt-3 list-disc space-y-1 ps-5 text-sm text-bright">
                 {mutablePlan.program.beginnerFoundations?.map((rule) => <li key={rule}>{rule}</li>)}
               </ul>
             </details>
           ) : null}
-          <div className="rounded-full border border-[#1E2028] bg-[#111215] px-4 py-2 text-sm text-[#A1A1AA]">
+          <div className="rounded-full border border-divider bg-surface px-4 py-2 text-sm text-muted">
             {mutablePlan.program.structure}
           </div>
           <div className="flex flex-wrap gap-2">
@@ -523,7 +523,7 @@ export function TJAIResult({
                 onClick={() => setProgramTab(i)}
                 className={cn(
                   "rounded-full border px-4 py-2 text-sm transition-all",
-                  i === programTab ? "border-[#22D3EE] bg-[rgba(34,211,238,0.08)] text-white" : "border-[#1E2028] text-[#A1A1AA]"
+                  i === programTab ? "border-accent bg-[rgba(34,211,238,0.08)] text-white" : "border-divider text-muted"
                 )}
               >
                 {phase.weekRange} · {phase.phase} {phase.isDeload ? "· DELOAD" : ""}
@@ -532,23 +532,23 @@ export function TJAIResult({
           </div>
           <div className="space-y-3">
             {(activeProgramPhase?.days ?? []).map((day, i) => (
-              <article key={`${day.day}-${i}`} className={cn("rounded-xl border border-[#1E2028] bg-[#111215] p-5", activeProgramPhase?.isDeload && "bg-[rgba(34,211,238,0.03)]")}>
-                <h3 className="text-lg font-semibold text-[#22D3EE]">
+              <article key={`${day.day}-${i}`} className={cn("rounded-xl border border-divider bg-surface p-5", activeProgramPhase?.isDeload && "bg-[rgba(34,211,238,0.03)]")}>
+                <h3 className="text-lg font-semibold text-accent">
                   {day.day} — {day.label}
                 </h3>
                 <div className="mt-3 space-y-2">
                   {(day.exercises ?? []).map((ex) => (
                     <div key={`${ex.name}-${ex.reps}`} className="rounded-lg px-3 py-2 transition-colors hover:bg-[rgba(255,255,255,0.02)]">
                       <div className="text-[15px] font-semibold text-white">{ex.name}</div>
-                      <div className="text-xs text-[#A1A1AA]">
+                      <div className="text-xs text-muted">
                         {ex.sets} × {ex.reps} · {ex.rest}
                       </div>
-                      {ex.note ? <div className="mt-1 text-xs italic text-[#52525B]">{ex.note}</div> : null}
-                      {ex.educationNote ? <div className="mt-1 text-xs text-[#A1A1AA]">? {ex.educationNote}</div> : null}
+                      {ex.note ? <div className="mt-1 text-xs italic text-dim">{ex.note}</div> : null}
+                      {ex.educationNote ? <div className="mt-1 text-xs text-muted">? {ex.educationNote}</div> : null}
                     </div>
                   ))}
                 </div>
-                <footer className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#A1A1AA]">
+                <footer className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
                   {day.warmup ? <span>{copy.result.labels.warmup}: {day.warmup}</span> : null}
                   {day.cooldown ? <span>{copy.result.labels.cooldown}: {day.cooldown}</span> : null}
                   {day.duration ? <span>{copy.result.labels.duration}: {day.duration}</span> : null}
@@ -559,7 +559,7 @@ export function TJAIResult({
         </div>
 
         <div ref={extrasRef} className={cn("grid gap-4 md:grid-cols-2 reveal-up", inExtras && "is-in")}>
-          <article className="rounded-xl border border-[#1E2028] bg-[#111215] p-5">
+          <article className="rounded-xl border border-divider bg-surface p-5">
             <h3 className="text-lg font-semibold text-white">{copy.result.supplements}</h3>
             {(
               [
@@ -568,21 +568,21 @@ export function TJAIResult({
                 ["Tier 3 — Optional", mutablePlan.diet.supplements?.tier3 ?? [], "#52525B", "t3"]
               ] as const
             ).map(([title, items, border, key]) => (
-              <div key={title} className="mt-3 rounded-lg border border-[#1E2028]">
+              <div key={title} className="mt-3 rounded-lg border border-divider">
                 <button type="button" onClick={() => setSuppOpen((prev) => ({ ...prev, [key]: !prev[key as keyof typeof prev] }))} className="flex w-full items-center justify-between border-s-2 px-3 py-2 text-left text-sm" style={{ borderLeftColor: border }}>
                   <span>{title}</span>
-                  <span className="text-xs text-[#A1A1AA]">{suppOpen[key as keyof typeof suppOpen] ? "Hide" : "Show"}</span>
+                  <span className="text-xs text-muted">{suppOpen[key as keyof typeof suppOpen] ? "Hide" : "Show"}</span>
                 </button>
                 {suppOpen[key as keyof typeof suppOpen] ? (
-                  <div className="space-y-2 p-3 text-sm text-[#D4D4D8]">
+                  <div className="space-y-2 p-3 text-sm text-bright">
                     {items.map((s) => (
-                      <div key={`${s.name}-${s.dose}`} className="rounded-md border border-[#1E2028] p-2">
+                      <div key={`${s.name}-${s.dose}`} className="rounded-md border border-divider p-2">
                         <div className="font-medium text-white">{s.name}</div>
-                        <div className="text-xs text-[#A1A1AA]">
+                        <div className="text-xs text-muted">
                           {s.dose} · {s.timing} · {s.estimatedCost}
                         </div>
-                        <div className="mt-1 text-xs text-[#A1A1AA]">{s.why}</div>
-                        {s.alreadyUsing ? <span className="mt-1 inline-flex rounded-full bg-[rgba(34,197,94,0.15)] px-2 py-0.5 text-[11px] text-[#22C55E]">Already using ✓</span> : null}
+                        <div className="mt-1 text-xs text-muted">{s.why}</div>
+                        {s.alreadyUsing ? <span className="mt-1 inline-flex rounded-full bg-[rgba(34,197,94,0.15)] px-2 py-0.5 text-[11px] text-success">Already using ✓</span> : null}
                       </div>
                     ))}
                   </div>
@@ -590,11 +590,11 @@ export function TJAIResult({
               </div>
             ))}
           </article>
-          <article className="rounded-xl border border-[#1E2028] bg-[#111215] p-5">
+          <article className="rounded-xl border border-divider bg-surface p-5">
             <h3 className="text-lg font-semibold text-white">{copy.result.mindset}</h3>
-            <p className="mt-3 text-sm leading-6 text-[#D4D4D8]">{mutablePlan.mindset?.weeklyCheckin}</p>
-            <p className="mt-3 text-sm leading-6 text-[#A1A1AA]">{mutablePlan.mindset?.ifYouStruggle}</p>
-            <p className="mt-3 text-sm leading-6 text-[#A1A1AA]">{mutablePlan.mindset?.motivation}</p>
+            <p className="mt-3 text-sm leading-6 text-bright">{mutablePlan.mindset?.weeklyCheckin}</p>
+            <p className="mt-3 text-sm leading-6 text-muted">{mutablePlan.mindset?.ifYouStruggle}</p>
+            <p className="mt-3 text-sm leading-6 text-muted">{mutablePlan.mindset?.motivation}</p>
           </article>
         </div>
 
@@ -604,7 +604,7 @@ export function TJAIResult({
               Cheat Meal Strategy
             </button>
             {cheatOpen ? (
-              <div className="mt-3 space-y-2 text-sm text-[#D4D4D8]">
+              <div className="mt-3 space-y-2 text-sm text-bright">
                 <p>When: {mutablePlan.diet.cheatMealStrategy.optimalDay}</p>
                 {(mutablePlan.diet.cheatMealStrategy.preMeal ?? []).map((x) => <p key={x}>• {x}</p>)}
                 {(mutablePlan.diet.cheatMealStrategy.postMeal ?? []).map((x) => <p key={x}>• {x}</p>)}
@@ -614,14 +614,14 @@ export function TJAIResult({
         ) : null}
 
         {grocery ? (
-          <div className="rounded-xl border border-[#1E2028] bg-[#111215] p-5">
+          <div className="rounded-xl border border-divider bg-surface p-5">
             <h3 className="text-lg font-semibold text-white">Week 1 Grocery List</h3>
-            <p className="mt-1 text-xs text-[#A1A1AA]">Quantities are for 1 person. Multiply for more.</p>
+            <p className="mt-1 text-xs text-muted">Quantities are for 1 person. Multiply for more.</p>
             <div className="mt-3 grid gap-4 md:grid-cols-2">
               {grocery.categories.map((category) => (
                 <article key={category.name}>
-                  <h4 className="text-sm font-semibold text-[#22D3EE]">{category.name}</h4>
-                  <ul className="mt-2 space-y-1 text-sm text-[#D4D4D8]">
+                  <h4 className="text-sm font-semibold text-accent">{category.name}</h4>
+                  <ul className="mt-2 space-y-1 text-sm text-bright">
                     {category.items.map((item) => (
                       <li key={`${category.name}-${item.name}`}>
                         {item.name}: {item.quantity} {item.unit ?? ""} {item.estimatedCost ? `(${item.estimatedCost})` : ""}
@@ -635,17 +635,17 @@ export function TJAIResult({
         ) : null}
 
         {mealPrep ? (
-          <div className="rounded-xl border border-[#1E2028] bg-[#111215] p-5">
+          <div className="rounded-xl border border-divider bg-surface p-5">
             <h3 className="text-lg font-semibold text-white">Your Sunday Meal Prep Plan</h3>
-            <p className="mt-1 text-sm text-[#A1A1AA]">Prep once. Eat all week. Total time: {mealPrep.totalTime ?? "~120 min"}</p>
-            <p className="mt-2 text-xs text-[#A1A1AA]">You will need: {(mealPrep.equipment ?? []).join(", ")}</p>
+            <p className="mt-1 text-sm text-muted">Prep once. Eat all week. Total time: {mealPrep.totalTime ?? "~120 min"}</p>
+            <p className="mt-2 text-xs text-muted">You will need: {(mealPrep.equipment ?? []).join(", ")}</p>
             <div className="mt-3 space-y-3">
               {(mealPrep.timeline ?? []).map((task) => (
-                <article key={`${task.time}-${task.task}`} className="rounded-lg border border-[#1E2028] p-3">
-                  <p className="text-xs text-[#22D3EE]">{task.time}</p>
+                <article key={`${task.time}-${task.task}`} className="rounded-lg border border-divider p-3">
+                  <p className="text-xs text-accent">{task.time}</p>
                   <p className="text-sm font-semibold text-white">{task.task}</p>
-                  <p className="mt-1 text-sm text-[#D4D4D8]">{task.detail}</p>
-                  {task.storage ? <p className="mt-1 text-xs text-[#A1A1AA]">{task.storage}</p> : null}
+                  <p className="mt-1 text-sm text-bright">{task.detail}</p>
+                  {task.storage ? <p className="mt-1 text-xs text-muted">{task.storage}</p> : null}
                 </article>
               ))}
             </div>
@@ -657,9 +657,9 @@ export function TJAIResult({
         <CoachReviewRequest />
       </div>
 
-      <div className="sticky bottom-0 mt-10 border-t border-[#1E2028] bg-[#09090B]/95 px-4 py-3 backdrop-blur">
+      <div className="sticky bottom-0 mt-10 border-t border-divider bg-background/95 px-4 py-3 backdrop-blur">
         <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3">
-          <span className="text-xs text-[#52525B]">
+          <span className="text-xs text-dim">
             {copy.result.generatedAt} {new Date(generatedAt).toLocaleDateString()}
           </span>
           <div className="flex items-center gap-2">
@@ -674,45 +674,45 @@ export function TJAIResult({
             <button
               type="button"
               onClick={onStartOver}
-              className="min-h-11 rounded-full border border-[#1E2028] px-4 text-sm text-[#A1A1AA] hover:text-white"
+              className="min-h-11 rounded-full border border-divider px-4 text-sm text-muted hover:text-white"
             >
               {copy.result.startOver}
             </button>
           </div>
         </div>
-        {saveStatus === "ok" ? <p className="mx-auto mt-2 w-full max-w-5xl text-xs text-[#22D3EE]">{copy.result.saved}</p> : null}
-        {saveStatus === "err" ? <p className="mx-auto mt-2 w-full max-w-5xl text-xs text-[#EF4444]">{copy.result.saveError}</p> : null}
+        {saveStatus === "ok" ? <p className="mx-auto mt-2 w-full max-w-5xl text-xs text-accent">{copy.result.saved}</p> : null}
+        {saveStatus === "err" ? <p className="mx-auto mt-2 w-full max-w-5xl text-xs text-danger">{copy.result.saveError}</p> : null}
       </div>
 
       {swapState ? (
         <div className="fixed inset-0 z-50 flex items-end bg-black/60 p-4 md:items-center md:justify-center">
-          <div className="w-full max-w-2xl rounded-2xl border border-[#1E2028] bg-[#111215] p-5">
+          <div className="w-full max-w-2xl rounded-2xl border border-divider bg-surface p-5">
             <h3 className="text-lg font-semibold text-white">Choose an alternative meal</h3>
-            <p className="mt-1 text-sm text-[#A1A1AA]">Same calories and macros as your original</p>
+            <p className="mt-1 text-sm text-muted">Same calories and macros as your original</p>
             <div className="mt-4 space-y-3">
               {swapState.loading ? (
-                <div className="rounded-xl border border-[#1E2028] p-4 text-sm text-[#A1A1AA]">Loading alternatives...</div>
+                <div className="rounded-xl border border-divider p-4 text-sm text-muted">Loading alternatives...</div>
               ) : (
                 swapState.alternatives.map((meal) => (
-                  <article key={`${meal.name}-${meal.time}`} className="rounded-xl border border-[#1E2028] p-4">
+                  <article key={`${meal.name}-${meal.time}`} className="rounded-xl border border-divider p-4">
                     <div className="flex items-center justify-between">
                       <h4 className="font-semibold text-white">{meal.name}</h4>
-                      <span className="text-xs text-[#A1A1AA]">{meal.calories} kcal</span>
+                      <span className="text-xs text-muted">{meal.calories} kcal</span>
                     </div>
-                    <ul className="mt-2 list-disc ps-5 text-sm text-[#D4D4D8]">
+                    <ul className="mt-2 list-disc ps-5 text-sm text-bright">
                       {meal.foods.map((f) => (
                         <li key={f}>{f}</li>
                       ))}
                     </ul>
-                    <p className="mt-2 text-xs text-[#A1A1AA]">P {meal.protein}g · C {meal.carbs}g · F {meal.fat}g</p>
-                    <button type="button" onClick={() => chooseSwap(meal)} className="mt-3 rounded-full bg-[#22D3EE] px-3 py-1 text-xs font-semibold text-[#09090B]">
+                    <p className="mt-2 text-xs text-muted">P {meal.protein}g · C {meal.carbs}g · F {meal.fat}g</p>
+                    <button type="button" onClick={() => chooseSwap(meal)} className="mt-3 rounded-full bg-accent px-3 py-1 text-xs font-semibold text-[#09090B]">
                       Choose this meal
                     </button>
                   </article>
                 ))
               )}
             </div>
-            <button type="button" onClick={() => setSwapState(null)} className="mt-4 rounded-full border border-[#1E2028] px-4 py-2 text-sm text-[#A1A1AA]">
+            <button type="button" onClick={() => setSwapState(null)} className="mt-4 rounded-full border border-divider px-4 py-2 text-sm text-muted">
               Keep original meal
             </button>
           </div>

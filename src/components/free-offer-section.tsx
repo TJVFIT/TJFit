@@ -131,7 +131,7 @@ export function FreeOfferSection({
       >
         <div
           className={cn(
-            "free-starter-card group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[#1E2028] bg-[#111215] p-8",
+            "free-starter-card group relative flex h-full flex-col overflow-hidden rounded-2xl border border-divider bg-surface p-8",
             "tj-card-aura",
             "before:pointer-events-none before:absolute before:-right-[60px] before:-top-[60px] before:h-[200px] before:w-[200px] before:rounded-full",
             "before:bg-[radial-gradient(circle,rgba(34,211,238,0.06)_0%,transparent_70%)] before:opacity-0 before:transition-opacity before:duration-300 before:ease-out",
@@ -141,15 +141,15 @@ export function FreeOfferSection({
             "hover:-translate-y-1.5 hover:before:opacity-100 motion-reduce:hover:before:opacity-0"
           )}
         >
-        <span className="absolute right-6 top-6 rounded-full border border-[rgba(167,139,250,0.3)] bg-[rgba(167,139,250,0.12)] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#A78BFA]">
+        <span className="absolute right-6 top-6 rounded-full border border-[rgba(167,139,250,0.3)] bg-[rgba(167,139,250,0.12)] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-accent-violet">
           FREE
         </span>
-        <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#52525B]">
+        <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-dim">
           {kind === "training" ? copy.programKind : copy.dietKind}
         </p>
         <h3 className="mb-3 text-[22px] font-bold tracking-[-0.01em] text-white">{loc.title}</h3>
-        <p className="mb-8 flex-1 text-sm leading-relaxed text-[#A1A1AA]">{loc.description}</p>
-        <div className="mb-6 h-px bg-[#1E2028]" aria-hidden />
+        <p className="mb-8 flex-1 text-sm leading-relaxed text-muted">{loc.description}</p>
+        <div className="mb-6 h-px bg-divider" aria-hidden />
         {loading ? (
           <div className="tj-skeleton h-[50px] w-full rounded-[10px]" aria-hidden />
         ) : (
@@ -157,7 +157,7 @@ export function FreeOfferSection({
             href={href}
             className={cn(
               "fo-cta group/cta relative inline-flex w-full items-center justify-center rounded-[10px] border border-[rgba(34,211,238,0.3)] bg-[rgba(34,211,238,0.10)]",
-              "px-6 py-3.5 text-center text-sm font-semibold tracking-[0.01em] text-[#22D3EE]",
+              "px-6 py-3.5 text-center text-sm font-semibold tracking-[0.01em] text-accent",
               "transition-[background-color,border-color,box-shadow,transform] duration-200 ease-out",
               "hover:border-[rgba(34,211,238,0.5)] hover:bg-[rgba(34,211,238,0.16)] hover:shadow-[0_0_20px_rgba(34,211,238,0.12)] hover:[transform:translateY(-1px)]",
               "active:bg-[rgba(34,211,238,0.20)] active:[transform:translateY(0)]",
@@ -179,7 +179,7 @@ export function FreeOfferSection({
     <section
       ref={sectionRef}
       className={cn(
-        "relative overflow-hidden border-b border-[#1E2028] bg-[#09090B] py-16 lg:py-24",
+        "relative overflow-hidden border-b border-divider bg-background py-16 lg:py-24",
         sectionClassName
       )}
       aria-labelledby="free-starters-heading"
@@ -196,7 +196,7 @@ export function FreeOfferSection({
       <div className="relative mx-auto max-w-[1200px] px-6">
         <span
           className={cn(
-            "mb-5 inline-flex rounded-full border border-[rgba(34,211,238,0.25)] bg-[rgba(34,211,238,0.06)] px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-[#22D3EE]",
+            "mb-5 inline-flex rounded-full border border-[rgba(34,211,238,0.25)] bg-[rgba(34,211,238,0.06)] px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-accent",
             reveal(0, 8)
           )}
           style={{ transitionDelay: visible && !reduceMotion ? "0ms" : "0ms" }}
@@ -217,7 +217,7 @@ export function FreeOfferSection({
 
         <p
           className={cn(
-            "mt-0 max-w-[440px] text-[17px] leading-relaxed text-[#A1A1AA] lg:mt-1",
+            "mt-0 max-w-[440px] text-[17px] leading-relaxed text-muted lg:mt-1",
             "mb-12 lg:mb-[48px]",
             reveal(160, 12)
           )}
@@ -233,7 +233,7 @@ export function FreeOfferSection({
 
         <p
           className={cn(
-            "mt-6 text-center text-[13px] text-[#52525B]",
+            "mt-6 text-center text-[13px] text-dim",
             "transition-opacity duration-[400ms] ease-out motion-reduce:transition-none",
             visible ? "opacity-100" : "opacity-0"
           )}
@@ -242,7 +242,7 @@ export function FreeOfferSection({
           {copy.signInHint}{" "}
           <Link
             href={loginHref}
-            className="text-[#A1A1AA] transition-colors duration-150 hover:text-white"
+            className="text-muted transition-colors duration-150 hover:text-white"
           >
             {copy.signIn}
           </Link>
@@ -264,8 +264,8 @@ export function FreeOfferSection({
                 </span>
               ) : null}
               <span className="flex items-center gap-1.5">
-                <Check className="h-3 w-3 shrink-0 text-[#22D3EE]/70" strokeWidth={2.5} aria-hidden />
-                <span className="text-[13px] tracking-[0.01em] text-[#52525B]">{text}</span>
+                <Check className="h-3 w-3 shrink-0 text-accent/70" strokeWidth={2.5} aria-hidden />
+                <span className="text-[13px] tracking-[0.01em] text-dim">{text}</span>
               </span>
             </Fragment>
           ))}

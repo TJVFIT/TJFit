@@ -73,16 +73,16 @@ export default function CoinsPage() {
 
   return (
     <PremiumPageShell>
-      <section className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6 sm:p-8">
+      <section className="rounded-2xl border border-divider bg-surface p-6 sm:p-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="text-xs uppercase tracking-[0.18em] text-[#52525B]">TJCOIN SHOP</p>
+            <p className="text-xs uppercase tracking-[0.18em] text-dim">TJCOIN SHOP</p>
             <h1 className="mt-2 text-3xl font-extrabold text-white">Spend Your TJCOIN</h1>
-            <p className="mt-2 text-sm text-[#A1A1AA]">Earn more coins by completing programs, posting blogs, and daily streaks.</p>
+            <p className="mt-2 text-sm text-muted">Earn more coins by completing programs, posting blogs, and daily streaks.</p>
           </div>
           <div className="rounded-xl border border-cyan-400/25 bg-cyan-400/10 px-4 py-3 text-center">
-            <p className="text-xs uppercase tracking-[0.16em] text-[#A1A1AA]">Current Balance</p>
-            <p className="mt-1 flex items-center gap-2 text-2xl font-extrabold text-[#22D3EE]">
+            <p className="text-xs uppercase tracking-[0.16em] text-muted">Current Balance</p>
+            <p className="mt-1 flex items-center gap-2 text-2xl font-extrabold text-accent">
               <Coins className="h-5 w-5" />
               {data?.wallet.balance ?? 0}
             </p>
@@ -91,17 +91,17 @@ export default function CoinsPage() {
       </section>
 
       {/* How to Earn section */}
-      <section id="how-to-earn" className="mt-8 rounded-2xl border border-[#1E2028] bg-[#111215] p-6 sm:p-8">
-        <p className="text-xs uppercase tracking-[0.18em] text-[#52525B]">⚡ How to Earn</p>
+      <section id="how-to-earn" className="mt-8 rounded-2xl border border-divider bg-surface p-6 sm:p-8">
+        <p className="text-xs uppercase tracking-[0.18em] text-dim">⚡ How to Earn</p>
         <h2 className="mt-2 text-2xl font-extrabold text-white">Every Action Earns TJCOIN</h2>
-        <p className="mt-2 text-sm text-[#A1A1AA]">Coins accumulate automatically as you train, post, and progress.</p>
+        <p className="mt-2 text-sm text-muted">Coins accumulate automatically as you train, post, and progress.</p>
         <div className="mt-6 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {earningMethods.map((m) => (
             <div
               key={m.action}
-              className="flex items-center justify-between rounded-xl border border-[#1E2028] bg-[#0D0F12] px-4 py-3"
+              className="flex items-center justify-between rounded-xl border border-divider bg-[#0D0F12] px-4 py-3"
             >
-              <span className="text-sm text-[#D4D4D8]">{m.action}</span>
+              <span className="text-sm text-bright">{m.action}</span>
               <span className="ml-3 shrink-0 rounded-full border border-yellow-400/30 bg-yellow-400/10 px-2.5 py-0.5 text-xs font-bold text-yellow-300">
                 +{m.coins} ⚡
               </span>
@@ -112,17 +112,17 @@ export default function CoinsPage() {
 
       <section className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {loading
-          ? Array.from({ length: 6 }).map((_, idx) => <div key={idx} className="h-48 animate-pulse rounded-xl border border-[#1E2028] bg-[#111215]" />)
+          ? Array.from({ length: 6 }).map((_, idx) => <div key={idx} className="h-48 animate-pulse rounded-xl border border-divider bg-surface" />)
           : (data?.offers ?? []).map((offer) => (
-              <article key={offer.key} className="rounded-xl border border-[#1E2028] bg-[#111215] p-5">
+              <article key={offer.key} className="rounded-xl border border-divider bg-surface p-5">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-2xl font-extrabold text-[#22D3EE]">{offer.discount_percent}% OFF</p>
-                    <p className="mt-2 text-sm text-[#A1A1AA]">{offer.title}</p>
+                    <p className="text-2xl font-extrabold text-accent">{offer.discount_percent}% OFF</p>
+                    <p className="mt-2 text-sm text-muted">{offer.title}</p>
                   </div>
                   <p className="text-base font-semibold text-yellow-300">{offer.coin_cost} ⚡</p>
                 </div>
-                <p className="mt-4 text-xs text-[#52525B]">Code valid for 7 days after redemption.</p>
+                <p className="mt-4 text-xs text-dim">Code valid for 7 days after redemption.</p>
                 <Button
                   className="mt-5 w-full"
                   disabled={(data?.wallet.balance ?? 0) < offer.coin_cost || redeeming === offer.key}
@@ -134,17 +134,17 @@ export default function CoinsPage() {
             ))}
       </section>
 
-      <section className="mt-10 rounded-xl border border-[#1E2028] bg-[#0E0F13] p-6">
+      <section className="mt-10 rounded-xl border border-divider bg-[#0E0F13] p-6">
         <h2 className="flex items-center gap-2 text-lg font-semibold text-white">
-          <ShoppingBag className="h-4 w-4 text-[#52525B]" /> Coming Soon - TJFit Equipment Store
+          <ShoppingBag className="h-4 w-4 text-dim" /> Coming Soon - TJFit Equipment Store
         </h2>
-        <p className="mt-2 text-sm text-[#A1A1AA]">Coins earned now will also work in the equipment store when it launches.</p>
+        <p className="mt-2 text-sm text-muted">Coins earned now will also work in the equipment store when it launches.</p>
       </section>
 
-      <section className="mt-10 rounded-xl border border-[#1E2028] bg-[#111215] p-6">
+      <section className="mt-10 rounded-xl border border-divider bg-surface p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="flex items-center gap-2 text-lg font-semibold text-white">
-            <History className="h-4 w-4 text-[#A1A1AA]" /> Your Coin History
+            <History className="h-4 w-4 text-muted" /> Your Coin History
           </h2>
           <div className="flex gap-2 text-xs">
             {(["all", "earned", "spent"] as const).map((item) => (
@@ -152,7 +152,7 @@ export default function CoinsPage() {
                 key={item}
                 type="button"
                 onClick={() => setFilter(item)}
-                className={`rounded-full border px-3 py-1.5 ${filter === item ? "border-cyan-400/40 text-[#22D3EE]" : "border-[#1E2028] text-[#A1A1AA]"}`}
+                className={`rounded-full border px-3 py-1.5 ${filter === item ? "border-cyan-400/40 text-accent" : "border-divider text-muted"}`}
               >
                 {item.toUpperCase()}
               </button>
@@ -161,7 +161,7 @@ export default function CoinsPage() {
         </div>
         <div className="mt-4 overflow-x-auto">
           <table className="min-w-full text-sm">
-            <thead className="text-[#52525B]">
+            <thead className="text-dim">
               <tr>
                 <th className="py-2 text-left">Date</th>
                 <th className="py-2 text-left">Reason</th>
@@ -170,10 +170,10 @@ export default function CoinsPage() {
             </thead>
             <tbody>
               {ledger.map((item) => (
-                <tr key={item.id} className="border-t border-[#1E2028]">
-                  <td className="py-2 text-[#A1A1AA]">{new Date(item.created_at).toLocaleDateString()}</td>
+                <tr key={item.id} className="border-t border-divider">
+                  <td className="py-2 text-muted">{new Date(item.created_at).toLocaleDateString()}</td>
                   <td className="py-2 text-white">{item.reason}</td>
-                  <td className={`py-2 text-right font-semibold ${item.delta >= 0 ? "text-[#22C55E]" : "text-[#EF4444]"}`}>
+                  <td className={`py-2 text-right font-semibold ${item.delta >= 0 ? "text-success" : "text-danger"}`}>
                     {item.delta >= 0 ? "+" : ""}
                     {item.delta}
                   </td>

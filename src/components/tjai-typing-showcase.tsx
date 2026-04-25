@@ -91,12 +91,12 @@ function TJAIMessage({ msg, active }: { msg: Message; active: boolean }) {
 
   return (
     <div className="flex items-start gap-2">
-      <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[rgba(34,211,238,0.15)] text-[#22D3EE]">
+      <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[rgba(34,211,238,0.15)] text-accent">
         <Sparkles className="h-3.5 w-3.5" />
       </div>
-      <div className="max-w-[85%] rounded-2xl rounded-bl-sm border border-[#1E2028] bg-[#111215] px-4 py-2.5 text-sm text-[#D4D4D8]">
+      <div className="max-w-[85%] rounded-2xl rounded-bl-sm border border-divider bg-surface px-4 py-2.5 text-sm text-bright">
         {displayed}
-        {!done && <span className="cursor-blink ml-0.5 inline-block w-[2px] h-[14px] bg-[#22D3EE] align-middle" />}
+        {!done && <span className="cursor-blink ml-0.5 inline-block w-[2px] h-[14px] bg-accent align-middle" />}
       </div>
     </div>
   );
@@ -147,7 +147,7 @@ export function TJAITypingShowcase({ locale }: { locale: Locale }) {
   }, [cycleKey, messages]);
 
   return (
-    <section className="border-y border-[#1E2028] bg-[#09090B] px-6 py-16 lg:px-12 lg:py-24">
+    <section className="border-y border-divider bg-background px-6 py-16 lg:px-12 lg:py-24">
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           {/* Left: copy */}
@@ -156,10 +156,10 @@ export function TJAITypingShowcase({ locale }: { locale: Locale }) {
               {copy.badge}
             </span>
             <h2 className="mt-5 text-3xl font-extrabold text-white sm:text-4xl">{copy.title}</h2>
-            <p className="mt-3 max-w-md text-base text-[#A1A1AA]">{copy.sub}</p>
+            <p className="mt-3 max-w-md text-base text-muted">{copy.sub}</p>
             <a
               href={`/${locale}/ai`}
-              className="mt-8 inline-flex min-h-[48px] items-center justify-center rounded-full bg-[#22D3EE] px-7 py-3 text-sm font-bold text-[#09090B] transition hover:bg-white"
+              className="mt-8 inline-flex min-h-[48px] items-center justify-center rounded-full bg-accent px-7 py-3 text-sm font-bold text-[#09090B] transition hover:bg-white"
             >
               {copy.cta}
             </a>
@@ -168,15 +168,15 @@ export function TJAITypingShowcase({ locale }: { locale: Locale }) {
           {/* Right: chat mock */}
           <div
             ref={containerRef}
-            className="rounded-2xl border border-[#1E2028] bg-[#0D0F12] p-5"
+            className="rounded-2xl border border-divider bg-[#0D0F12] p-5"
           >
             {/* Header */}
-            <div className="mb-4 flex items-center gap-2 border-b border-[#1E2028] pb-3">
+            <div className="mb-4 flex items-center gap-2 border-b border-divider pb-3">
               <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[rgba(34,211,238,0.15)]">
-                <Sparkles className="h-3.5 w-3.5 text-[#22D3EE]" />
+                <Sparkles className="h-3.5 w-3.5 text-accent" />
               </div>
               <span className="text-sm font-semibold text-white">TJAI</span>
-              <span className="ml-auto flex items-center gap-1.5 text-xs text-[#22C55E]">
+              <span className="ml-auto flex items-center gap-1.5 text-xs text-success">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#22C55E] animate-pulse" />
                 Online
               </span>
@@ -190,9 +190,9 @@ export function TJAITypingShowcase({ locale }: { locale: Locale }) {
             </div>
 
             {/* Input mock */}
-            <div className="mt-4 flex items-center gap-2 rounded-xl border border-[#1E2028] bg-[#111215] px-4 py-2.5">
-              <span className="flex-1 text-sm text-[#52525B]">Ask TJAI anything...</span>
-              <span className="rounded-full bg-[#22D3EE] p-1.5">
+            <div className="mt-4 flex items-center gap-2 rounded-xl border border-divider bg-surface px-4 py-2.5">
+              <span className="flex-1 text-sm text-dim">Ask TJAI anything...</span>
+              <span className="rounded-full bg-accent p-1.5">
                 <svg className="h-3.5 w-3.5 text-[#09090B]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
                 </svg>

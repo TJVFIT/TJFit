@@ -11,12 +11,12 @@ export function TjaiEngineChrome({ active, reduce }: { active: boolean; reduce: 
         {!reduce && (
           <>
             <div className="tj-tjai-ray absolute inset-[4%] rounded-full opacity-[0.12]" />
-            <div className="tj-tjai-ring absolute inset-[6%] rounded-full border border-[#22D3EE]/15" />
+            <div className="tj-tjai-ring absolute inset-[6%] rounded-full border border-accent/15" />
             <div className="tj-tjai-ring-inner absolute inset-[14%] rounded-full border border-white/[0.06]" />
           </>
         )}
         <svg
-          className="absolute inset-[18%] text-[#22D3EE]/25"
+          className="absolute inset-[18%] text-accent/25"
           viewBox="0 0 200 200"
           fill="none"
           aria-hidden

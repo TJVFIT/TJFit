@@ -59,7 +59,7 @@ function ThreadsPanel({
 }) {
   if (posts.length === 0) {
     return (
-      <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-zinc-400">
+      <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-muted">
         {emptyLabel}
       </div>
     );
@@ -69,11 +69,11 @@ function ThreadsPanel({
     <div className="space-y-4">
       {posts.map((post) => (
         <article key={post.id} className="rounded-[24px] border border-white/10 bg-white/5 p-5">
-          <div className="flex items-center justify-between text-xs text-zinc-400">
+          <div className="flex items-center justify-between text-xs text-muted">
             <span>{post.author}</span>
             <span className="uppercase tracking-[0.2em]">{post.role}</span>
           </div>
-          <p className="mt-3 text-sm text-zinc-200">{post.content}</p>
+          <p className="mt-3 text-sm text-bright">{post.content}</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {[
               ["fire", "🔥"],
@@ -86,13 +86,13 @@ function ThreadsPanel({
                 key={key}
                 type="button"
                 onClick={() => onReact(post.id, key)}
-                className="rounded-full border border-white/15 px-2.5 py-1 text-xs text-zinc-200 hover:border-cyan-300/40"
+                className="rounded-full border border-white/15 px-2.5 py-1 text-xs text-bright hover:border-cyan-300/40"
               >
                 {emoji} {reactions[post.id]?.[key] ?? 0}
               </button>
             ))}
           </div>
-          <p className="mt-3 text-xs text-zinc-500">
+          <p className="mt-3 text-xs text-faint">
             {post.likes} likes · {post.comments} comments
           </p>
         </article>
@@ -104,7 +104,7 @@ function ThreadsPanel({
 function ChallengesPanel({ items, emptyLabel }: { items: Array<{ slug: string; category: string; name: string; description: string; duration: string; participants: number }>; emptyLabel: string }) {
   if (items.length === 0) {
     return (
-      <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-zinc-400">
+      <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-muted">
         {emptyLabel}
       </div>
     );
@@ -114,10 +114,10 @@ function ChallengesPanel({ items, emptyLabel }: { items: Array<{ slug: string; c
     <div className="grid gap-4 md:grid-cols-2">
       {items.map((item) => (
         <article key={item.slug} className="rounded-[24px] border border-white/10 bg-white/5 p-5">
-          <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">{item.category}</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-faint">{item.category}</p>
           <h3 className="mt-2 text-lg font-semibold text-white">{item.name}</h3>
-          <p className="mt-2 text-sm text-zinc-300">{item.description}</p>
-          <p className="mt-3 text-xs text-zinc-500">
+          <p className="mt-2 text-sm text-bright">{item.description}</p>
+          <p className="mt-3 text-xs text-faint">
             {item.duration} · {item.participants} joined
           </p>
         </article>
@@ -154,7 +154,7 @@ function ChallengesLivePanel({
 }) {
   const [logValueById, setLogValueById] = useState<Record<string, string>>({});
   if (items.length === 0) {
-    return <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-zinc-400">No active challenges.</div>;
+    return <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-muted">No active challenges.</div>;
   }
   return (
     <div className="space-y-4">
@@ -163,8 +163,8 @@ function ChallengesLivePanel({
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <h3 className="text-lg font-semibold text-white">{item.title}</h3>
-              <p className="mt-1 text-sm text-zinc-300">{item.description}</p>
-              <p className="mt-2 text-xs text-zinc-500">
+              <p className="mt-1 text-sm text-bright">{item.description}</p>
+              <p className="mt-2 text-xs text-faint">
                 {item.metric_type} · ends {item.end_date} · {item.participants} joined
               </p>
               <p className="mt-1 text-xs text-cyan-300">
@@ -193,17 +193,17 @@ function ChallengesLivePanel({
                 type="button"
                 disabled={item.todayLogged}
                 onClick={() => onLog(item.id, Number(logValueById[item.id] ?? 0))}
-                className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-zinc-100 disabled:opacity-50"
+                className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-bright disabled:opacity-50"
               >
                 {item.todayLogged ? `Logged today ${item.todayValue ?? ""}` : "Log Today"}
               </button>
             </div>
           ) : null}
           <details className="mt-4 rounded-xl border border-white/10 bg-black/20 p-3">
-            <summary className="cursor-pointer text-sm text-zinc-200">Leaderboard (Top 10)</summary>
+            <summary className="cursor-pointer text-sm text-bright">Leaderboard (Top 10)</summary>
             <div className="mt-3 space-y-1 text-sm">
               {item.leaderboard.map((row, idx) => (
-                <p key={`${row.userId}-${idx}`} className="text-zinc-300">
+                <p key={`${row.userId}-${idx}`} className="text-bright">
                   #{idx + 1} · {row.total}
                 </p>
               ))}
@@ -238,8 +238,8 @@ function GroupsPanel({
       {groups.map((group) => (
         <article key={group.id} className="rounded-[24px] border border-white/10 bg-white/5 p-5">
           <h3 className="text-lg font-semibold text-white">{group.name}</h3>
-          <p className="mt-2 text-sm text-zinc-300">{group.description ?? ""}</p>
-          <p className="mt-2 text-xs text-zinc-500">{group.memberCount} members</p>
+          <p className="mt-2 text-sm text-bright">{group.description ?? ""}</p>
+          <p className="mt-2 text-xs text-faint">{group.memberCount} members</p>
           <button
             type="button"
             onClick={() => onToggle(group.id, group.joined ? "leave" : "join")}
@@ -299,7 +299,7 @@ function PeoplePanel({ locale }: { locale: Locale }) {
         <div key={`${title}-${u.id}`} className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 p-3">
           <div>
             <p className="text-sm font-medium text-white">{u.display_name || u.username}</p>
-            <p className="text-xs text-zinc-500">@{u.username}</p>
+            <p className="text-xs text-faint">@{u.username}</p>
           </div>
           <FollowButton targetUserId={u.id} initialFollowing={false} initialCount={0} />
         </div>
@@ -325,7 +325,7 @@ function PeoplePanel({ locale }: { locale: Locale }) {
           <Section title="Similar Goals" users={discover.similar_goal} />
         </div>
       )}
-      <p className="text-xs text-zinc-600">
+      <p className="text-xs text-dim">
         <Link href={`/${locale}/feed`} className="text-cyan-300">
           Open feed
         </Link>
@@ -347,7 +347,7 @@ function TransformationsPanel({
 }) {
   if (items.length === 0) {
     return (
-      <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-zinc-400">
+      <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-muted">
         {emptyLabel}
       </div>
     );
@@ -357,10 +357,10 @@ function TransformationsPanel({
     <div className="grid gap-4 md:grid-cols-2">
       {items.map((item) => (
         <article key={item.slug} className="rounded-[24px] border border-white/10 bg-white/5 p-5">
-          <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">{item.category}</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-faint">{item.category}</p>
           <h3 className="mt-2 text-lg font-semibold text-white">{item.userName}</h3>
-          <p className="mt-2 text-sm text-zinc-300">{item.story}</p>
-          <p className="mt-3 text-xs text-zinc-500">{item.verified ? verifiedLabel : unverifiedLabel}</p>
+          <p className="mt-2 text-sm text-bright">{item.story}</p>
+          <p className="mt-3 text-xs text-faint">{item.verified ? verifiedLabel : unverifiedLabel}</p>
         </article>
       ))}
     </div>
@@ -629,7 +629,7 @@ export function CommunityHub({
           <div>
             <span className="lux-badge inline-flex">{copy.badge}</span>
             <h1 className="mt-4 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">{copy.title}</h1>
-            <p className="mt-3 max-w-2xl text-sm text-zinc-400">
+            <p className="mt-3 max-w-2xl text-sm text-muted">
               {copy.subtitle}
             </p>
           </div>
@@ -648,7 +648,7 @@ export function CommunityHub({
                 className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
                   activeTab === tab.key
                     ? "border-cyan-400/35 bg-cyan-500/10 text-white shadow-[0_0_24px_-10px_rgba(34,211,238,0.2)]"
-                    : "border-white/10 bg-white/[0.04] text-zinc-400 hover:border-white/15 hover:text-zinc-200"
+                    : "border-white/10 bg-white/[0.04] text-muted hover:border-white/15 hover:text-bright"
                 }`}
               >
                 {tab.label}
@@ -712,7 +712,7 @@ export function CommunityHub({
                       type="file"
                       accept="image/*"
                       onChange={(e) => setImage(e.target.files?.[0] ?? null)}
-                      className="block w-full text-sm text-zinc-300 file:mr-3 file:rounded-full file:border-0 file:bg-white/10 file:px-3 file:py-1.5 file:text-sm file:text-white"
+                      className="block w-full text-sm text-bright file:mr-3 file:rounded-full file:border-0 file:bg-white/10 file:px-3 file:py-1.5 file:text-sm file:text-white"
                     />
                     <button
                       type="submit"
@@ -728,18 +728,18 @@ export function CommunityHub({
               )}
 
               {loadingBlogs ? (
-                <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-zinc-400">
+                <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-muted">
                   {copy.loadingBlogs}
                 </div>
               ) : posts.length === 0 ? (
-                <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-zinc-400">
+                <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-muted">
                   {copy.noBlogs}
                 </div>
               ) : (
                 <div className="space-y-4">
                   {posts.map((post) => (
                     <article key={post.id} className="rounded-[24px] border border-white/10 bg-white/5 p-5">
-                      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-zinc-400">
+                      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
                         <span>
                           {post.author_name} · {post.author_role}
                         </span>
@@ -755,7 +755,7 @@ export function CommunityHub({
                       <h3 className="mt-3 text-xl font-semibold text-white">
                         {translatedView[post.id]?.title ?? post.title}
                       </h3>
-                      <p className="mt-3 whitespace-pre-wrap text-sm text-zinc-300">
+                      <p className="mt-3 whitespace-pre-wrap text-sm text-bright">
                         {translatedView[post.id]?.content ?? post.content}
                       </p>
                       <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -767,7 +767,7 @@ export function CommunityHub({
                               [post.id]: e.target.value as Locale
                             }))
                           }
-                          className="rounded-lg border border-white/15 bg-white/5 px-2.5 py-1.5 text-xs text-zinc-200"
+                          className="rounded-lg border border-white/15 bg-white/5 px-2.5 py-1.5 text-xs text-bright"
                         >
                           <option value="tr">{copy.turkish}</option>
                           <option value="ar">{copy.arabic}</option>
@@ -778,7 +778,7 @@ export function CommunityHub({
                           type="button"
                           onClick={() => translateBlog(post.id)}
                           disabled={translateLoadingId === post.id}
-                          className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-zinc-200 transition hover:bg-white/10 disabled:opacity-60"
+                          className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-bright transition hover:bg-white/10 disabled:opacity-60"
                         >
                           {translateLoadingId === post.id ? copy.translating : copy.translate}
                         </button>
@@ -792,7 +792,7 @@ export function CommunityHub({
                                 return next;
                               })
                             }
-                            className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-zinc-300 transition hover:bg-white/10"
+                            className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-bright transition hover:bg-white/10"
                           >
                             {copy.showOriginal}
                           </button>

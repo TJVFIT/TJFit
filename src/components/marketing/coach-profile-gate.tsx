@@ -27,11 +27,11 @@ export function CoachProfileGate({
         <div className="px-8 py-10 sm:px-12 sm:py-12">
           <span className="lux-badge inline-flex">{copy.badge}</span>
           <h1 className="mt-8 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">{copy.title}</h1>
-          <p className="mt-4 text-sm leading-relaxed text-zinc-400 sm:text-base">{copy.body}</p>
+          <p className="mt-4 text-sm leading-relaxed text-muted sm:text-base">{copy.body}</p>
 
           <div className="mt-10 border-t border-white/[0.08] pt-10">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-zinc-500">{copy.proofTitle}</p>
-            <ul className="mt-5 space-y-3 text-sm text-zinc-400">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-faint">{copy.proofTitle}</p>
+            <ul className="mt-5 space-y-3 text-sm text-muted">
               {copy.proofItems.map((item) => (
                 <li key={item} className="flex gap-3">
                   <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-cyan-400/70" aria-hidden />
@@ -43,7 +43,7 @@ export function CoachProfileGate({
 
           <div className="mt-10">
             <p className="font-medium text-white">{copy.notifyTitle}</p>
-            <p className="mt-1 text-sm text-zinc-500">{copy.notifySub}</p>
+            <p className="mt-1 text-sm text-faint">{copy.notifySub}</p>
             <div className="mt-6">
               <LeadCaptureForm locale={locale} source={`coach-profile-${slug}`} variant="panel" />
             </div>

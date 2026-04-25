@@ -38,7 +38,7 @@ export function ProtectedRoute({ children, locale, requireAdmin }: Props) {
   if (loading) {
     return (
       <div className="flex min-h-[40vh] items-center justify-center">
-        <p className="text-sm text-zinc-400">{loadingText[locale] ?? loadingText.en}</p>
+        <p className="text-sm text-muted">{loadingText[locale] ?? loadingText.en}</p>
       </div>
     );
   }
@@ -46,10 +46,10 @@ export function ProtectedRoute({ children, locale, requireAdmin }: Props) {
   if (!user && sessionCheckFailed) {
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center px-4 py-12 text-center">
-        <p className="max-w-md text-sm text-[#A1A1AA]">{authCopy.sessionCheckFailed}</p>
+        <p className="max-w-md text-sm text-muted">{authCopy.sessionCheckFailed}</p>
         <button
           type="button"
-          className="mt-6 rounded-full border border-white/15 bg-white/[0.06] px-6 py-2.5 text-sm font-medium text-zinc-100 transition hover:border-cyan-400/35"
+          className="mt-6 rounded-full border border-white/15 bg-white/[0.06] px-6 py-2.5 text-sm font-medium text-bright transition hover:border-cyan-400/35"
           onClick={() => window.location.reload()}
         >
           {locale === "tr" ? "Yenile" : locale === "ar" ? "تحديث" : locale === "es" ? "Actualizar" : locale === "fr" ? "Actualiser" : "Refresh"}
@@ -69,7 +69,7 @@ export function ProtectedRoute({ children, locale, requireAdmin }: Props) {
   if (requireAdmin && role !== "admin") {
     return (
       <div className="flex min-h-[40vh] items-center justify-center px-4">
-        <p className="text-sm text-zinc-400">{loadingText[locale] ?? loadingText.en}</p>
+        <p className="text-sm text-muted">{loadingText[locale] ?? loadingText.en}</p>
       </div>
     );
   }

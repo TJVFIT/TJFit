@@ -67,11 +67,11 @@ export function AdminBlogPanel() {
     <section className="glass-panel rounded-[32px] p-6">
       <h3 className="text-lg font-semibold text-white">Blog Management</h3>
       <div className="mt-4 space-y-3">
-        {pending.length === 0 ? <p className="text-sm text-zinc-400">No pending posts.</p> : null}
+        {pending.length === 0 ? <p className="text-sm text-muted">No pending posts.</p> : null}
         {pending.map((post) => (
           <div key={post.id} className="rounded-xl border border-white/10 bg-white/5 p-3">
             <p className="text-sm font-medium text-white">{post.title}</p>
-            <p className="mt-1 text-xs text-zinc-500">
+            <p className="mt-1 text-xs text-faint">
               {post.author_name} · {post.category ?? "General"}
             </p>
             <div className="mt-2 flex flex-wrap gap-2">
@@ -96,7 +96,7 @@ export function AdminBlogPanel() {
         <button type="button" onClick={() => void generate()} className="btn-primary-shimmer mt-3 rounded-full bg-gradient-to-br from-[#22D3EE] to-[#0EA5E9] px-4 py-2 text-xs font-semibold text-[#09090B]">
           Generate Draft
         </button>
-        {generated ? <textarea readOnly className="mt-3 min-h-[180px] w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs text-zinc-200" value={generated} /> : null}
+        {generated ? <textarea readOnly className="mt-3 min-h-[180px] w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs text-bright" value={generated} /> : null}
         {draftId ? (
           <Link
             href={`/${locale}/blog/write?draft_id=${encodeURIComponent(draftId)}`}

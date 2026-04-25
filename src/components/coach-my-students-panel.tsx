@@ -58,9 +58,9 @@ export function CoachMyStudentsPanel({ locale }: { locale: Locale }) {
     <div className="mt-6 rounded-[24px] border border-white/10 bg-white/5 p-5">
       <p className="font-medium text-white">{d.myStudentsSubtitle}</p>
       {error ? (
-        <p className="mt-2 text-sm text-zinc-500">{error}</p>
+        <p className="mt-2 text-sm text-faint">{error}</p>
       ) : (
-        <p className="mt-2 text-sm text-zinc-400">
+        <p className="mt-2 text-sm text-muted">
           {count === 1 ? "1 active student" : `${count ?? 0} active students`}
         </p>
       )}

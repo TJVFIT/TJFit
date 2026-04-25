@@ -109,7 +109,7 @@ export function HomeBlogsPreview({
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
           <h2 className="font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">{home.blogsTitle}</h2>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-500">{home.blogsSubtitle}</p>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-faint">{home.blogsSubtitle}</p>
         </div>
         <Link
           href={hrefAll}
@@ -121,7 +121,7 @@ export function HomeBlogsPreview({
 
       {loading ? (
         <div className="space-y-4">
-          <p className="text-center text-xs font-medium uppercase tracking-wider text-zinc-500">{copy.loadingBlogs}</p>
+          <p className="text-center text-xs font-medium uppercase tracking-wider text-faint">{copy.loadingBlogs}</p>
           <div className="grid gap-5 sm:grid-cols-2">
             {[0, 1, 2, 3].map((k) => (
               <BlogCardSkeleton key={k} />
@@ -130,7 +130,7 @@ export function HomeBlogsPreview({
         </div>
       ) : posts.length === 0 ? (
         <div className="rounded-xl border border-dashed border-white/[0.08] bg-surface/20 px-6 py-12 text-center">
-          <p className="text-sm text-zinc-500">{copy.noBlogs}</p>
+          <p className="text-sm text-faint">{copy.noBlogs}</p>
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 sm:gap-5">
@@ -153,7 +153,7 @@ export function HomeBlogsPreview({
                 </div>
               ) : null}
               <div className="flex flex-1 flex-col p-5">
-                <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-500">
+                <div className="flex flex-wrap items-center gap-2 text-xs text-faint">
                   <span>{post.author_name}</span>
                   {post.is_pinned ? (
                     <span className="rounded border border-cyan-400/25 bg-cyan-400/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-cyan-200">
@@ -161,8 +161,8 @@ export function HomeBlogsPreview({
                     </span>
                   ) : null}
                 </div>
-                <h3 className="mt-2 line-clamp-2 text-lg font-semibold text-white group-hover:text-zinc-100">{post.title}</h3>
-                <p className="mt-2 line-clamp-3 flex-1 text-sm leading-relaxed text-zinc-400">{excerpt(post.content)}</p>
+                <h3 className="mt-2 line-clamp-2 text-lg font-semibold text-white group-hover:text-bright">{post.title}</h3>
+                <p className="mt-2 line-clamp-3 flex-1 text-sm leading-relaxed text-muted">{excerpt(post.content)}</p>
               </div>
             </Link>
           ))}

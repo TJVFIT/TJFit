@@ -142,7 +142,7 @@ export function LanguageSwitcher({
                       <span className="truncate text-[11px] opacity-60">{meta.label} · {code.toUpperCase()}</span>
                     </span>
                   </span>
-                  {active ? <Check className="h-3.5 w-3.5 text-[#22D3EE]" aria-hidden /> : null}
+                  {active ? <Check className="h-3.5 w-3.5 text-accent" aria-hidden /> : null}
                 </Link>
               );
             })

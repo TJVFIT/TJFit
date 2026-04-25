@@ -187,25 +187,25 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
   }
 
   if (loading) {
-    return <div className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6 text-sm text-zinc-400">{t.loading}</div>;
+    return <div className="rounded-2xl border border-divider bg-surface p-6 text-sm text-muted">{t.loading}</div>;
   }
 
   if (!plan) {
     return (
       <div className="flex min-h-[60svh] items-center justify-center">
-        <div className="w-full max-w-xl rounded-2xl border border-[#1E2028] bg-[#111215] p-8 text-center">
-          <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-500/10 text-[#22D3EE] shadow-[0_0_24px_rgba(34,211,238,0.35)]">
+        <div className="w-full max-w-xl rounded-2xl border border-divider bg-surface p-8 text-center">
+          <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-500/10 text-accent shadow-[0_0_24px_rgba(34,211,238,0.35)]">
             <Sparkles className="h-6 w-6" />
           </div>
           <h3 className="mt-4 text-2xl font-bold text-white">{t.buildTitle}</h3>
-          <p className="mt-2 text-sm text-zinc-400">{t.buildSub}</p>
-          <button type="button" onClick={() => setShowBuilder(true)} className="mt-5 rounded-full bg-[#22D3EE] px-5 py-2 text-sm font-semibold text-[#09090B]">
+          <p className="mt-2 text-sm text-muted">{t.buildSub}</p>
+          <button type="button" onClick={() => setShowBuilder(true)} className="mt-5 rounded-full bg-accent px-5 py-2 text-sm font-semibold text-[#09090B]">
             {t.start}
           </button>
-          <a href={`/${locale}/membership?tjai_onetime=1`} className="mt-3 inline-flex rounded-full border border-[#1E2028] px-4 py-2 text-xs text-zinc-300">
+          <a href={`/${locale}/membership?tjai_onetime=1`} className="mt-3 inline-flex rounded-full border border-divider px-4 py-2 text-xs text-bright">
             {t.oneTime}
           </a>
-          <p className="mt-3 text-xs text-zinc-500">{t.note}</p>
+          <p className="mt-3 text-xs text-faint">{t.note}</p>
         </div>
       </div>
     );
@@ -215,20 +215,20 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
     <div className="plan-result space-y-5">
       <section className="grid gap-3 md:grid-cols-4">
         {summaryCards.map((item) => (
-          <article key={item.label} className="rounded-xl border border-[#1E2028] bg-[#111215] p-4">
-            <p className="text-xs uppercase tracking-[0.14em] text-zinc-500">{item.label}</p>
+          <article key={item.label} className="rounded-xl border border-divider bg-surface p-4">
+            <p className="text-xs uppercase tracking-[0.14em] text-faint">{item.label}</p>
             <p className="mt-1 text-lg font-bold text-white">{item.value}</p>
           </article>
         ))}
       </section>
 
       {whyPlan.length > 0 ? (
-        <section className="rounded-2xl border border-[#1E2028] bg-[#111215] p-5">
-          <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-zinc-500">Why TJAI built this plan</h3>
-          <ul className="mt-3 space-y-2 text-sm text-zinc-300">
+        <section className="rounded-2xl border border-divider bg-surface p-5">
+          <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-faint">Why TJAI built this plan</h3>
+          <ul className="mt-3 space-y-2 text-sm text-bright">
             {whyPlan.map((reason) => (
               <li key={reason} className="flex gap-2">
-                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[#22D3EE]" />
+                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
                 <span>{reason}</span>
               </li>
             ))}
@@ -236,7 +236,7 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
         </section>
       ) : null}
 
-      <section className="rounded-2xl border border-[#1E2028] bg-[#111215] p-4">
+      <section className="rounded-2xl border border-divider bg-surface p-4">
         <div className="flex flex-wrap gap-2">
           {plan.diet.weeks.map((week, idx) => (
             <button
@@ -246,7 +246,7 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
                 setPhaseIdx(idx);
                 setDayIdx(0);
               }}
-              className={cn("rounded-full border px-3 py-1.5 text-xs", idx === phaseIdx ? "border-[#22D3EE] bg-[rgba(34,211,238,0.08)] text-white" : "border-[#1E2028] text-zinc-400")}
+              className={cn("rounded-full border px-3 py-1.5 text-xs", idx === phaseIdx ? "border-accent bg-[rgba(34,211,238,0.08)] text-white" : "border-divider text-muted")}
             >
               {week.weekRange}
             </button>
@@ -258,7 +258,7 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
               key={`${day.label}-${idx}`}
               type="button"
               onClick={() => setDayIdx(idx)}
-              className={cn("rounded-full border px-3 py-1.5 text-xs", idx === dayIdx ? "border-[#22D3EE] bg-[rgba(34,211,238,0.08)] text-white" : "border-[#1E2028] text-zinc-400")}
+              className={cn("rounded-full border px-3 py-1.5 text-xs", idx === dayIdx ? "border-accent bg-[rgba(34,211,238,0.08)] text-white" : "border-divider text-muted")}
             >
               {day.label}
             </button>
@@ -267,32 +267,32 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
 
         {activeDay ? (
           <div className="mt-4 grid gap-4 lg:grid-cols-2">
-            <article className="rounded-xl border border-[#1E2028] bg-[#0E0F12] p-4">
+            <article className="rounded-xl border border-divider bg-surface-2 p-4">
               <h4 className="font-semibold text-white">{t.workout}</h4>
               <div className="mt-2 space-y-2">
                 {(plan.program.weeks[phaseIdx]?.days[dayIdx]?.exercises ?? []).map((exercise) => (
-                  <div key={`${exercise.name}-${exercise.reps}`} className="rounded-lg border border-[#1E2028] p-2 text-sm text-zinc-300">
+                  <div key={`${exercise.name}-${exercise.reps}`} className="rounded-lg border border-divider p-2 text-sm text-bright">
                     <p className="font-medium text-white">{exercise.name}</p>
-                    <p className="text-xs text-zinc-500">
+                    <p className="text-xs text-faint">
                       {exercise.sets} sets · {exercise.reps} reps · {exercise.rest}
                     </p>
                   </div>
                 ))}
               </div>
             </article>
-            <article className="rounded-xl border border-[#1E2028] bg-[#0E0F12] p-4">
+            <article className="rounded-xl border border-divider bg-surface-2 p-4">
               <h4 className="font-semibold text-white">{t.nutrition}</h4>
               <div className="mt-2 space-y-2">
                 {activeDay.meals.map((meal) => (
-                  <div key={`${meal.name}-${meal.time}`} className="rounded-lg border border-[#1E2028] p-2 text-sm text-zinc-300">
+                  <div key={`${meal.name}-${meal.time}`} className="rounded-lg border border-divider p-2 text-sm text-bright">
                     <p className="font-medium text-white">{meal.name}</p>
-                    <p className="text-xs text-zinc-500">
+                    <p className="text-xs text-faint">
                       {meal.calories} kcal · P {meal.protein} / C {meal.carbs} / F {meal.fat}
                     </p>
                   </div>
                 ))}
               </div>
-              <p className="mt-3 text-xs text-zinc-400">
+              <p className="mt-3 text-xs text-muted">
                 {t.dailyTotals}: {activeDay.totals.calories} kcal · P {activeDay.totals.protein} · C {activeDay.totals.carbs} · F {activeDay.totals.fat}
               </p>
             </article>
@@ -305,7 +305,7 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
           type="button"
           disabled={!canDownloadPdf}
           onClick={() => window.open("/api/tjai/generate-pdf", "_blank")}
-          className="rounded-full border border-[#1E2028] px-4 py-2 text-sm text-zinc-200 disabled:opacity-50"
+          className="rounded-full border border-divider px-4 py-2 text-sm text-bright disabled:opacity-50"
         >
           {t.downloadPdf}
         </button>
@@ -313,7 +313,7 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
           type="button"
           disabled={!canRegenerate}
           onClick={() => setShowBuilder(true)}
-          className="rounded-full border border-[#1E2028] px-4 py-2 text-sm text-zinc-200 disabled:opacity-50"
+          className="rounded-full border border-divider px-4 py-2 text-sm text-bright disabled:opacity-50"
         >
           {t.regenerate}
         </button>

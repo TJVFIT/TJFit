@@ -18,7 +18,7 @@ type Suggestion = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  under_review: "border-zinc-500/30 bg-zinc-500/10 text-zinc-300",
+  under_review: "border-faint/30 bg-faint/10 text-bright",
   planned: "border-cyan-400/30 bg-cyan-500/10 text-cyan-200",
   done: "border-emerald-400/30 bg-emerald-500/10 text-emerald-200",
   rejected: "border-red-400/20 bg-red-500/10 text-red-300"
@@ -92,15 +92,15 @@ export default function SuggestionsPage({ params }: { params: { locale: string }
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <Lightbulb className="h-7 w-7 text-[#22D3EE]" />
+            <Lightbulb className="h-7 w-7 text-accent" />
             <h1 className="text-3xl font-extrabold text-white">Share Your Ideas</h1>
           </div>
-          <p className="mt-2 text-sm text-zinc-400">Help us build the best fitness platform in the world.</p>
+          <p className="mt-2 text-sm text-muted">Help us build the best fitness platform in the world.</p>
         </div>
         <button
           type="button"
           onClick={() => { if (!user) { window.location.href = `/${locale}/login?redirect=/${locale}/suggestions`; return; } setShowModal(true); }}
-          className="shrink-0 rounded-full bg-[#22D3EE] px-4 py-2.5 text-sm font-bold text-[#09090B]"
+          className="shrink-0 rounded-full bg-accent px-4 py-2.5 text-sm font-bold text-[#09090B]"
         >
           Submit an idea →
         </button>
@@ -109,7 +109,7 @@ export default function SuggestionsPage({ params }: { params: { locale: string }
       <div className="mt-6 flex flex-wrap gap-2">
         {FILTERS.map((f) => (
           <button key={f.key} type="button" onClick={() => setFilter(f.key)}
-            className={`rounded-full border px-4 py-1.5 text-sm transition ${filter === f.key ? "border-[#22D3EE] bg-[rgba(34,211,238,0.1)] text-white" : "border-[#1E2028] text-zinc-400 hover:text-white"}`}
+            className={`rounded-full border px-4 py-1.5 text-sm transition ${filter === f.key ? "border-accent bg-[rgba(34,211,238,0.1)] text-white" : "border-divider text-muted hover:text-white"}`}
           >
             {f.label}
           </button>
@@ -118,18 +118,18 @@ export default function SuggestionsPage({ params }: { params: { locale: string }
 
       <div className="mt-6 space-y-3">
         {loading ? (
-          Array.from({ length: 3 }).map((_, i) => <div key={i} className="h-24 animate-pulse rounded-2xl border border-[#1E2028] bg-[#111215]" />)
+          Array.from({ length: 3 }).map((_, i) => <div key={i} className="h-24 animate-pulse rounded-2xl border border-divider bg-surface" />)
         ) : items.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-[#1E2028] bg-[#0D0F12] px-6 py-16 text-center">
-            <Lightbulb className="mx-auto h-10 w-10 text-zinc-600" />
+          <div className="rounded-2xl border border-dashed border-divider bg-[#0D0F12] px-6 py-16 text-center">
+            <Lightbulb className="mx-auto h-10 w-10 text-dim" />
             <p className="mt-4 text-lg font-semibold text-white">No ideas yet.</p>
-            <p className="mt-2 text-sm text-zinc-400">Be the first to suggest something!</p>
+            <p className="mt-2 text-sm text-muted">Be the first to suggest something!</p>
           </div>
         ) : (
           items.map((item) => (
-            <article key={item.id} className="flex gap-4 rounded-2xl border border-[#1E2028] bg-[#111215] p-4">
+            <article key={item.id} className="flex gap-4 rounded-2xl border border-divider bg-surface p-4">
               <button type="button" onClick={() => void vote(item.id)}
-                className="flex shrink-0 flex-col items-center gap-1 rounded-xl border border-[#1E2028] bg-[#0D0F12] px-3 py-2 text-sm text-zinc-300 hover:border-[#22D3EE] hover:text-white"
+                className="flex shrink-0 flex-col items-center gap-1 rounded-xl border border-divider bg-[#0D0F12] px-3 py-2 text-sm text-bright hover:border-accent hover:text-white"
               >
                 <ChevronUp className="h-4 w-4" />
                 <span className="font-semibold">{item.vote_count}</span>
@@ -140,11 +140,11 @@ export default function SuggestionsPage({ params }: { params: { locale: string }
                   <span className={`rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] ${STATUS_COLORS[item.status] ?? STATUS_COLORS.under_review}`}>
                     {item.status.replace("_", " ")}
                   </span>
-                  <span className="rounded-full border border-[#1E2028] px-2 py-0.5 text-[10px] text-zinc-500">
+                  <span className="rounded-full border border-divider px-2 py-0.5 text-[10px] text-faint">
                     {item.category}
                   </span>
                 </div>
-                <p className="mt-1 text-sm text-zinc-400 line-clamp-2">{item.description}</p>
+                <p className="mt-1 text-sm text-muted line-clamp-2">{item.description}</p>
               </div>
             </article>
           ))
@@ -153,11 +153,11 @@ export default function SuggestionsPage({ params }: { params: { locale: string }
 
       {showModal ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-lg rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
+          <div className="w-full max-w-lg rounded-2xl border border-divider bg-surface p-6">
             <h2 className="text-xl font-bold text-white">Submit an Idea</h2>
             <form onSubmit={submit} className="mt-4 space-y-4">
               <input className="input" placeholder="Title" value={form.title} onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))} required />
-              <textarea className="min-h-[100px] w-full rounded-xl border border-[#1E2028] bg-[#0D0F12] p-3 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-[#22D3EE]"
+              <textarea className="min-h-[100px] w-full rounded-xl border border-divider bg-[#0D0F12] p-3 text-sm text-white outline-none placeholder:text-dim focus:border-accent"
                 placeholder="Describe your idea (min 20 characters)..."
                 value={form.description}
                 onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
@@ -168,10 +168,10 @@ export default function SuggestionsPage({ params }: { params: { locale: string }
               </select>
               {error ? <p className="text-xs text-red-400">{error}</p> : null}
               <div className="flex gap-3">
-                <button type="submit" disabled={submitting} className="flex-1 rounded-full bg-[#22D3EE] py-2.5 text-sm font-bold text-[#09090B] disabled:opacity-50">
+                <button type="submit" disabled={submitting} className="flex-1 rounded-full bg-accent py-2.5 text-sm font-bold text-[#09090B] disabled:opacity-50">
                   {submitting ? "Submitting..." : "Submit Idea"}
                 </button>
-                <button type="button" onClick={() => setShowModal(false)} className="rounded-full border border-[#1E2028] px-4 py-2.5 text-sm text-zinc-400">
+                <button type="button" onClick={() => setShowModal(false)} className="rounded-full border border-divider px-4 py-2.5 text-sm text-muted">
                   Cancel
                 </button>
               </div>

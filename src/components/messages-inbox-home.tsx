@@ -168,7 +168,7 @@ export function MessagesInboxHome({ locale }: { locale: Locale }) {
       <h2 className="font-display text-base font-semibold text-white lg:hidden">{t.newChatSectionTitle}</h2>
 
       <div className="rounded-xl border border-white/[0.07] bg-surface/25 p-4 sm:p-5">
-        <p className="text-xs text-zinc-500">{s.newChatTitle}</p>
+        <p className="text-xs text-faint">{s.newChatTitle}</p>
         <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-stretch">
           <div className="relative flex-1">
             <input
@@ -187,13 +187,13 @@ export function MessagesInboxHome({ locale }: { locale: Locale }) {
             {(searchLoading || searchResults.length > 0) && usernameInput.trim().length >= 2 ? (
               <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-20 overflow-hidden rounded-xl border border-white/10 bg-[#0c0c0f]">
                 {searchLoading ? (
-                  <p className="px-3 py-2 text-xs text-zinc-500">Searching...</p>
+                  <p className="px-3 py-2 text-xs text-faint">Searching...</p>
                 ) : (
                   searchResults.map((item) => (
                     <button
                       key={item.id}
                       type="button"
-                      className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-zinc-200 hover:bg-white/5"
+                      className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-bright hover:bg-white/5"
                       onClick={() => {
                         setUsernameInput(`@${item.username}`);
                         setSearchResults([]);
@@ -201,7 +201,7 @@ export function MessagesInboxHome({ locale }: { locale: Locale }) {
                       }}
                     >
                       <span className="truncate">{item.display_name || item.username}</span>
-                      <span className="ml-2 shrink-0 text-xs text-zinc-500">@{item.username}</span>
+                      <span className="ml-2 shrink-0 text-xs text-faint">@{item.username}</span>
                     </button>
                   ))
                 )}
@@ -225,7 +225,7 @@ export function MessagesInboxHome({ locale }: { locale: Locale }) {
 
       {role === "user" && activeCoachId ? (
         <div className="rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-3">
-          <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">{s.coachChatShortcut}</p>
+          <p className="text-[10px] font-medium uppercase tracking-wider text-faint">{s.coachChatShortcut}</p>
           <button
             type="button"
             disabled={busy}
@@ -237,8 +237,8 @@ export function MessagesInboxHome({ locale }: { locale: Locale }) {
         </div>
       ) : null}
 
-      <p className="text-center text-xs text-zinc-600 lg:pb-2">
-        <Link href={`/${locale}/profile/search`} className="text-zinc-400 underline-offset-2 hover:text-cyan-200/80 hover:underline">
+      <p className="text-center text-xs text-dim lg:pb-2">
+        <Link href={`/${locale}/profile/search`} className="text-muted underline-offset-2 hover:text-cyan-200/80 hover:underline">
           {s.peopleSearchTitle}
         </Link>
       </p>

@@ -52,9 +52,9 @@ export function GuestOnboardingPopup({ locale }: { locale: Locale }) {
   return (
     <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/75 px-4">
       <div className="glass-panel w-full max-w-lg rounded-[28px] p-6">
-        <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{copy.welcome}</p>
+        <p className="text-xs uppercase tracking-[0.24em] text-faint">{copy.welcome}</p>
         <h2 className="mt-3 text-2xl font-semibold text-white">{copy.entryTitle}</h2>
-        <p className="mt-3 text-sm text-zinc-400">{copy.entrySubtitle}</p>
+        <p className="mt-3 text-sm text-muted">{copy.entrySubtitle}</p>
         <div className="mt-6 flex flex-wrap gap-3">
           <button
             onClick={chooseCreateAccount}

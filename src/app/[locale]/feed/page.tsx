@@ -49,23 +49,23 @@ export default function FeedPage({ params }: { params: { locale: string } }) {
 
   return (
     <PremiumPageShell>
-      <section className="rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
+      <section className="rounded-2xl border border-divider bg-surface p-6">
         <div className="flex items-center justify-between gap-3">
           <h1 className="text-2xl font-bold text-white">Feed</h1>
           <button
             type="button"
             onClick={() => void load()}
-            className="rounded-full border border-white/15 px-4 py-1.5 text-xs text-zinc-200"
+            className="rounded-full border border-white/15 px-4 py-1.5 text-xs text-bright"
           >
             Refresh
           </button>
         </div>
 
-        {loading ? <p className="mt-4 text-sm text-zinc-400">Loading feed...</p> : null}
+        {loading ? <p className="mt-4 text-sm text-muted">Loading feed...</p> : null}
 
         {!loading && items.length === 0 ? (
-          <div className="mt-5 rounded-xl border border-white/10 bg-[#0E0F12] p-5 text-center">
-            <p className="text-sm text-zinc-300">Follow other members to see their activity here.</p>
+          <div className="mt-5 rounded-xl border border-white/10 bg-surface-2 p-5 text-center">
+            <p className="text-sm text-bright">Follow other members to see their activity here.</p>
             <Link href={`/${locale}/community?tab=people`} className="mt-3 inline-flex text-sm text-cyan-300">
               Discover People →
             </Link>
@@ -74,14 +74,14 @@ export default function FeedPage({ params }: { params: { locale: string } }) {
 
         <div className="mt-5 space-y-3">
           {items.map((item) => (
-            <article key={item.id} className="rounded-xl border border-white/10 bg-[#0E0F12] p-4">
-              <p className="text-sm text-zinc-200">
+            <article key={item.id} className="rounded-xl border border-white/10 bg-surface-2 p-4">
+              <p className="text-sm text-bright">
                 <Link href={`/${locale}/profile/${encodeURIComponent(item.profile?.username ?? "")}`} className="font-semibold text-white">
                   {item.profile?.display_name ?? "Member"}
                 </Link>{" "}
                 {item.message}
               </p>
-              <p className="mt-1 text-xs text-zinc-500">{new Date(item.created_at).toLocaleString(locale)}</p>
+              <p className="mt-1 text-xs text-faint">{new Date(item.created_at).toLocaleString(locale)}</p>
             </article>
           ))}
         </div>
@@ -91,7 +91,7 @@ export default function FeedPage({ params }: { params: { locale: string } }) {
             type="button"
             onClick={() => void load(true)}
             disabled={loadingMore}
-            className="mt-4 rounded-full border border-white/15 px-4 py-1.5 text-xs text-zinc-200 disabled:opacity-50"
+            className="mt-4 rounded-full border border-white/15 px-4 py-1.5 text-xs text-bright disabled:opacity-50"
           >
             {loadingMore ? "Loading..." : "Load more"}
           </button>

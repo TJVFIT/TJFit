@@ -18,7 +18,7 @@ const ImmersiveHome = dynamic(() => import("@/components/immersive-home").then((
 
 function HomeLuxurySkeleton() {
   return (
-    <div className="min-h-[100dvh] bg-[#09090B] px-4 pb-24 pt-24 sm:px-6 lg:px-8 lg:pt-28">
+    <div className="min-h-[100dvh] bg-background px-4 pb-24 pt-24 sm:px-6 lg:px-8 lg:pt-28">
       <div className="mx-auto max-w-6xl animate-pulse">
         <div className="h-7 w-20 rounded-full bg-white/[0.08]" />
         <div className="mt-10 h-10 max-w-md rounded-lg bg-white/[0.07]" />
@@ -81,14 +81,14 @@ export default function HomePage({ params }: { params: { locale: string } }) {
     <ClientErrorBoundary
       sentryScope="home-luxury"
       fallback={
-        <div className="min-h-[100dvh] bg-[#09090B] px-4 py-24 sm:px-6 lg:px-8">
+        <div className="min-h-[100dvh] bg-background px-4 py-24 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-lg text-center">
-            <p className="text-sm text-zinc-400">
+            <p className="text-sm text-muted">
               The homepage could not be displayed. Please reload or try again later.
             </p>
             <a
               href={`/${locale}/programs`}
-              className="mt-8 inline-flex rounded-full border border-white/[0.12] bg-white/[0.06] px-6 py-2.5 text-sm font-medium text-zinc-100"
+              className="mt-8 inline-flex rounded-full border border-white/[0.12] bg-white/[0.06] px-6 py-2.5 text-sm font-medium text-bright"
             >
               Browse programs
             </a>

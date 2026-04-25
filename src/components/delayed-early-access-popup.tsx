@@ -89,7 +89,7 @@ export function DelayedEarlyAccessPopup({ locale }: Props) {
       <h2 id={titleId} className="mt-3 pe-12 font-display text-xl font-semibold leading-snug tracking-tight text-white sm:text-2xl">
         {copy.headline}
       </h2>
-      <p className="mt-4 text-[15px] leading-relaxed text-zinc-400 sm:text-sm">{copy.body}</p>
+      <p className="mt-4 text-[15px] leading-relaxed text-muted sm:text-sm">{copy.body}</p>
       <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
         <Link
           href={`/${activeLocale}/signup?from=early-access-popup`}
@@ -101,7 +101,7 @@ export function DelayedEarlyAccessPopup({ locale }: Props) {
         <Link
           href={`/${activeLocale}/programs`}
           onClick={dismiss}
-          className="inline-flex min-h-[48px] w-full touch-manipulation items-center justify-center rounded-full border border-white/[0.12] px-6 text-sm font-medium text-zinc-200 transition hover:border-white/[0.18] hover:bg-white/[0.04] sm:w-auto"
+          className="inline-flex min-h-[48px] w-full touch-manipulation items-center justify-center rounded-full border border-white/[0.12] px-6 text-sm font-medium text-bright transition hover:border-white/[0.18] hover:bg-white/[0.04] sm:w-auto"
         >
           {copy.secondaryCta}
         </Link>

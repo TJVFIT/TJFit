@@ -364,7 +364,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
         ? "text-emerald-300"
         : statusTone === "pending"
           ? "text-cyan-200/90"
-          : "text-zinc-400";
+          : "text-muted";
 
   return (
     <ProtectedRoute locale={rawLocale as Locale}>
@@ -374,8 +374,8 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
           <h1 className="mt-5 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
             {copy.title}
           </h1>
-          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-zinc-500 sm:text-base">{copy.lead}</p>
-          <p className="mt-4 text-xs text-zinc-600 sm:text-sm">
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-faint sm:text-base">{copy.lead}</p>
+          <p className="mt-4 text-xs text-dim sm:text-sm">
             {TJFIT_COINS_PER_PROGRAM_PURCHASE} TJFITcoin / purchase · 1 USD ≈ {TJFIT_COINS_PER_USD} TJFITcoin
           </p>
         </PremiumPanel>
@@ -383,14 +383,14 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
         {savedOrderId ? (
           <PremiumPanel className="mb-8 border-cyan-400/20 bg-cyan-950/10">
             <p className="text-sm font-semibold text-cyan-100">{copy.pendingTitle}</p>
-            <p className="mt-2 text-sm leading-relaxed text-zinc-400">{copy.pendingBody}</p>
+            <p className="mt-2 text-sm leading-relaxed text-muted">{copy.pendingBody}</p>
             {pendingAmountTry != null ? (
-              <p className="mt-4 text-sm text-zinc-300">
-                <span className="text-zinc-500">{copy.amountDue}: </span>
+              <p className="mt-4 text-sm text-bright">
+                <span className="text-faint">{copy.amountDue}: </span>
                 <span className="font-medium text-white">{formatProgramPrice(pendingAmountTry, locale)}</span>
               </p>
             ) : null}
-            <p className="mt-3 font-mono text-xs text-zinc-600">ID · {savedOrderId}</p>
+            <p className="mt-3 font-mono text-xs text-dim">ID · {savedOrderId}</p>
             {pendingAmountTry != null ? (
               <button
                 type="button"
@@ -401,13 +401,13 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
                 {working ? copy.paddleOpening : copy.gatewayPayCta}
               </button>
             ) : null}
-            <p className="mt-4 text-center text-xs text-zinc-500">{copy.securePaymentTrust}</p>
+            <p className="mt-4 text-center text-xs text-faint">{copy.securePaymentTrust}</p>
           </PremiumPanel>
         ) : null}
 
         <div className="grid gap-6 lg:grid-cols-2">
           <PremiumPanel>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-600">{copy.selectProgram}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-dim">{copy.selectProgram}</p>
             <select
               className="input mt-3"
               value={activeSlug}
@@ -422,13 +422,13 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
 
             {selectedProgram && (
               <div className="mt-6 rounded-xl border border-white/[0.08] bg-white/[0.03] p-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-600">{copy.orderSummary}</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-dim">{copy.orderSummary}</p>
                 <p className="mt-3 text-lg font-semibold text-white">{selectedProgram.title}</p>
-                <p className="mt-2 text-sm leading-relaxed text-zinc-500">{selectedProgram.description}</p>
-                <p className="mt-4 text-sm text-zinc-400">
+                <p className="mt-2 text-sm leading-relaxed text-faint">{selectedProgram.description}</p>
+                <p className="mt-4 text-sm text-muted">
                   {copy.price}: <span className="font-medium text-white">{basePrice}</span>
                 </p>
-                <p className="mt-1 text-sm text-zinc-400">
+                <p className="mt-1 text-sm text-muted">
                   {copy.coinsOnPurchase}:{" "}
                   <span className="font-medium text-white">{TJFIT_COINS_PER_PROGRAM_PURCHASE}</span>
                 </p>
@@ -436,7 +436,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
             )}
 
             <div className="mt-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-600">{copy.discountLabel}</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-dim">{copy.discountLabel}</p>
               <select
                 className="input mt-3"
                 value={selectedCode}
@@ -450,7 +450,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
                 ))}
               </select>
               <label className="mt-4 block">
-                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-600">
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-dim">
                   {copy.promoCodeLabel}
                 </span>
                 <input
@@ -475,7 +475,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
                   setPromoMessage(code ? `${copy.promoAppliedPrefix} ${code}` : null);
                 }}
                 disabled={working}
-                className="mt-3 inline-flex min-h-[44px] items-center justify-center rounded-full border border-white/15 px-4 py-2 text-xs font-semibold text-zinc-200 transition-colors hover:border-white/25 hover:text-white disabled:opacity-50"
+                className="mt-3 inline-flex min-h-[44px] items-center justify-center rounded-full border border-white/15 px-4 py-2 text-xs font-semibold text-bright transition-colors hover:border-white/25 hover:text-white disabled:opacity-50"
               >
                 {copy.promoApplyCta}
               </button>
@@ -490,18 +490,18 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
             >
               {working ? copy.ctaWorking : copy.ctaPay}
             </button>
-            <p className="mt-3 text-center text-xs text-zinc-500">{copy.securePaymentTrust}</p>
-            <p className="mt-4 text-xs leading-relaxed text-zinc-600">{copy.footnote}</p>
+            <p className="mt-3 text-center text-xs text-faint">{copy.securePaymentTrust}</p>
+            <p className="mt-4 text-xs leading-relaxed text-dim">{copy.footnote}</p>
             {status ? <p className={`mt-4 text-sm ${statusClass}`}>{status}</p> : null}
           </PremiumPanel>
 
           <div className="space-y-6">
             <PremiumPanel>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-600">{copy.walletTitle}</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-dim">{copy.walletTitle}</p>
               <p className="mt-3 font-display text-3xl font-semibold tabular-nums text-white">
                 {walletData?.wallet.balance ?? 0}
               </p>
-              <p className="mt-2 text-sm text-zinc-500">
+              <p className="mt-2 text-sm text-faint">
                 {copy.walletLifetime}: {walletData?.wallet.lifetime_earned ?? 0} /{" "}
                 {walletData?.wallet.lifetime_spent ?? 0}
               </p>
@@ -517,7 +517,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
                   >
                     <div className="min-w-0">
                       <p className="font-medium text-white">{offer.title}</p>
-                      <p className="text-sm text-zinc-500">
+                      <p className="text-sm text-faint">
                         {offer.discount_percent}% · {offer.coin_cost} coins
                       </p>
                     </div>
@@ -525,7 +525,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
                       type="button"
                       onClick={() => redeemOffer(offer.key)}
                       disabled={working}
-                      className="lux-btn-secondary shrink-0 rounded-full px-4 py-2 text-xs font-medium text-zinc-200 disabled:opacity-50"
+                      className="lux-btn-secondary shrink-0 rounded-full px-4 py-2 text-xs font-medium text-bright disabled:opacity-50"
                     >
                       {copy.redeem}
                     </button>

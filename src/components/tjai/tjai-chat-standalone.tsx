@@ -335,14 +335,14 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
 
   return (
     <div className="grid h-[calc(100svh-220px)] gap-4 md:grid-cols-[250px,1fr]">
-      <aside className="hidden rounded-2xl border border-[#1E2028] bg-[#111215] p-3 md:block">
+      <aside className="hidden rounded-2xl border border-divider bg-surface p-3 md:block">
         <button
           type="button"
           onClick={() => {
             setConversationId(crypto.randomUUID());
             setMessages([]);
           }}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#1E2028] px-3 py-2 text-xs text-zinc-200"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-divider px-3 py-2 text-xs text-bright"
         >
           <Plus className="h-4 w-4" /> {t.newChat}
         </button>
@@ -352,7 +352,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
               key={item.conversation_id}
               type="button"
               onClick={() => void loadConversation(item.conversation_id)}
-              className="block w-full rounded-lg border border-[#1E2028] bg-[#0E0F12] px-3 py-2 text-left text-xs text-zinc-300"
+              className="block w-full rounded-lg border border-divider bg-surface-2 px-3 py-2 text-left text-xs text-bright"
             >
               {item.starter || t.fallbackConversation}
             </button>
@@ -377,10 +377,10 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
                   key={`s-${index}`}
                   type="button"
                   onClick={() => void sendMessage(STARTER_PROMPTS[index] ?? item)}
-                  className="rounded-xl border border-white/[0.06] bg-[#111215]/90 px-4 py-3 text-start text-sm text-white/95 shadow-sm transition-all duration-200 hover:border-[#22D3EE]/35 hover:bg-[rgba(34,211,238,0.05)] active:scale-[0.99]"
+                  className="rounded-xl border border-white/[0.06] bg-surface/90 px-4 py-3 text-start text-sm text-white/95 shadow-sm transition-all duration-200 hover:border-accent/35 hover:bg-[rgba(34,211,238,0.05)] active:scale-[0.99]"
                 >
-                  <span className="block text-[11px] font-semibold uppercase tracking-[0.12em] text-[#52525B]">Starter</span>
-                  <span className="mt-1 block font-medium text-zinc-100">{item}</span>
+                  <span className="block text-[11px] font-semibold uppercase tracking-[0.12em] text-dim">Starter</span>
+                  <span className="mt-1 block font-medium text-bright">{item}</span>
                 </button>
               ))}
             </div>
@@ -392,15 +392,15 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
                 "group relative max-w-[min(92%,28rem)] rounded-2xl px-4 py-3 text-sm shadow-sm transition-[transform,box-shadow] duration-200",
                 message.role === "user"
                   ? "ms-auto bg-gradient-to-br from-[#22D3EE] to-[#0EA5E9] text-[#0A0A0B]"
-                  : "me-auto border border-white/[0.07] bg-[#111215]/95 text-white"
+                  : "me-auto border border-white/[0.07] bg-surface/95 text-white"
               )}
             >
-              {message.role === "assistant" ? <Sparkles className="mb-1 h-3.5 w-3.5 text-[#22D3EE]" /> : null}
+              {message.role === "assistant" ? <Sparkles className="mb-1 h-3.5 w-3.5 text-accent" /> : null}
               {message.role === "assistant" ? (
                 <button
                   type="button"
                   onClick={() => navigator.clipboard.writeText(message.content)}
-                  className="absolute end-2 top-2 hidden rounded-md border border-white/[0.08] bg-[#0E1014]/90 px-1.5 py-0.5 text-[10px] text-[#A1A1AA] backdrop-blur group-hover:inline-flex"
+                  className="absolute end-2 top-2 hidden rounded-md border border-white/[0.08] bg-[#0E1014]/90 px-1.5 py-0.5 text-[10px] text-muted backdrop-blur group-hover:inline-flex"
                 >
                   Copy
                 </button>
@@ -415,22 +415,22 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
                 <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
               )}
               {isStreaming && message.role === "assistant" && message.id === messages[messages.length - 1]?.id && message.content ? (
-                <span className="ms-1 inline-block animate-pulse text-[#22D3EE]" aria-hidden>
+                <span className="ms-1 inline-block animate-pulse text-accent" aria-hidden>
                   ▋
                 </span>
               ) : null}
-              <p className="mt-1 text-[10px] text-zinc-500">{message.created_at ? new Date(message.created_at).toLocaleTimeString(locale) : ""}</p>
+              <p className="mt-1 text-[10px] text-faint">{message.created_at ? new Date(message.created_at).toLocaleTimeString(locale) : ""}</p>
             </article>
           ))}
         </div>
 
         <div className="relative z-[1] border-t border-white/[0.06] px-3 py-3">
-          {showVoiceTip ? <p className="mb-2 text-xs text-zinc-500">{t.voiceInput}</p> : null}
+          {showVoiceTip ? <p className="mb-2 text-xs text-faint">{t.voiceInput}</p> : null}
           {!voiceSupported ? <p className="mb-2 text-xs text-red-300">{t.voiceUnsupportedInline}</p> : null}
           {apiError ? <p className="mb-2 text-xs text-red-300">{apiError}</p> : null}
           {showFollowUps ? (
             <div className="mb-3 flex flex-wrap gap-2">
-              <span className="w-full text-[10px] font-semibold uppercase tracking-[0.14em] text-[#52525B]">Refine</span>
+              <span className="w-full text-[10px] font-semibold uppercase tracking-[0.14em] text-dim">Refine</span>
               {(
                 [
                   { k: "simplify", label: "Simplify" },
@@ -445,7 +445,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
                   key={k}
                   type="button"
                   onClick={() => void sendMessage(COACH_FOLLOW_UP_PROMPTS[k])}
-                  className="rounded-full border border-white/[0.08] bg-[#15171c] px-3 py-1.5 text-xs font-medium text-zinc-200 transition-all hover:border-[#22D3EE]/40 hover:text-white active:scale-[0.98]"
+                  className="rounded-full border border-white/[0.08] bg-[#15171c] px-3 py-1.5 text-xs font-medium text-bright transition-all hover:border-accent/40 hover:text-white active:scale-[0.98]"
                 >
                   {label}
                 </button>
@@ -454,7 +454,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
           ) : null}
           {messages.length > 0 && !showFollowUps ? (
             <div className="mb-3 flex flex-wrap gap-2">
-              <span className="w-full text-[10px] font-semibold uppercase tracking-[0.14em] text-[#52525B]">Try</span>
+              <span className="w-full text-[10px] font-semibold uppercase tracking-[0.14em] text-dim">Try</span>
               {[
                 "Swap chicken for fish",
                 "Deload this week",
@@ -465,7 +465,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
                   key={q}
                   type="button"
                   onClick={() => void sendMessage(q)}
-                  className="rounded-full border border-white/[0.08] bg-[#15171c] px-3 py-1.5 text-xs font-medium text-zinc-300 transition-all hover:border-[#22D3EE]/45 hover:text-white active:scale-[0.98]"
+                  className="rounded-full border border-white/[0.08] bg-[#15171c] px-3 py-1.5 text-xs font-medium text-bright transition-all hover:border-accent/45 hover:text-white active:scale-[0.98]"
                 >
                   {q}
                 </button>
@@ -485,14 +485,14 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
               onChange={(event) => setInput(event.target.value)}
               rows={1}
               placeholder={t.askPlaceholder}
-              className="tj-chat-input-premium max-h-[120px] min-h-[42px] flex-1 resize-none rounded-xl border border-white/[0.08] bg-[#0E1014]/95 px-3 py-2 text-sm text-white outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-[#52525B] focus-visible:border-[#22D3EE]/55 focus-visible:ring-2 focus-visible:ring-[#22D3EE]/15"
+              className="tj-chat-input-premium max-h-[120px] min-h-[42px] flex-1 resize-none rounded-xl border border-white/[0.08] bg-[#0E1014]/95 px-3 py-2 text-sm text-white outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-dim focus-visible:border-accent/55 focus-visible:ring-2 focus-visible:ring-accent/15"
             />
             <button
               type="button"
               onClick={startVoice}
               className={cn(
                 "inline-flex h-10 items-center gap-2 rounded-full border px-3 text-xs transition-colors",
-                isListening ? "border-red-400/50 text-red-300" : "border-white/[0.08] text-zinc-200 hover:border-[#22D3EE]/30"
+                isListening ? "border-red-400/50 text-red-300" : "border-white/[0.08] text-bright hover:border-accent/30"
               )}
             >
               <Mic className={cn("h-4 w-4", isListening && "animate-pulse")} />
@@ -507,21 +507,21 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
             </button>
           </form>
           ) : (
-            <p className="text-xs text-zinc-500">Or type any fitness question below after choosing a starter.</p>
+            <p className="text-xs text-faint">Or type any fitness question below after choosing a starter.</p>
           )}
-          <p className="mt-2 text-xs text-zinc-500">{tier === "core" ? `${remaining} ${t.coreRemaining}` : tier === "pro" ? t.proUnlocked : t.apexUnlimited}</p>
+          <p className="mt-2 text-xs text-faint">{tier === "core" ? `${remaining} ${t.coreRemaining}` : tier === "pro" ? t.proUnlocked : t.apexUnlimited}</p>
         </div>
       </section>
 
       {showLimitOverlay ? (
         <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-md rounded-2xl border border-[#1E2028] bg-[#111215] p-6">
+          <div className="w-full max-w-md rounded-2xl border border-divider bg-surface p-6">
             <h3 className="text-lg font-semibold text-white">{t.trialUsed}</h3>
-            <p className="mt-2 text-sm text-zinc-400">{t.trialSub}</p>
-            <a href={`/${locale}/membership`} className="mt-4 inline-flex rounded-full bg-[#22D3EE] px-4 py-2 text-sm font-semibold text-[#09090B]">
+            <p className="mt-2 text-sm text-muted">{t.trialSub}</p>
+            <a href={`/${locale}/membership`} className="mt-4 inline-flex rounded-full bg-accent px-4 py-2 text-sm font-semibold text-[#09090B]">
               {t.upgrade}
             </a>
-            <button type="button" className="mt-3 block text-xs text-zinc-500" onClick={() => setShowLimitOverlay(false)}>
+            <button type="button" className="mt-3 block text-xs text-faint" onClick={() => setShowLimitOverlay(false)}>
               {t.close}
             </button>
           </div>

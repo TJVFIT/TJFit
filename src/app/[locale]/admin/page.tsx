@@ -52,7 +52,7 @@ export default async function AdminPage({ params }: { params: { locale: string }
       <div>
         <span className="badge">Admin Panel</span>
         <h1 className="mt-4 text-4xl font-semibold text-white">Marketplace operations command center.</h1>
-        <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-400">
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-muted">
           Approve coaches, review payments, issue refunds, inspect analytics, and manage programs from one premium admin experience.
         </p>
       </div>
@@ -62,7 +62,7 @@ export default async function AdminPage({ params }: { params: { locale: string }
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {adminAdvancedStats.map((stat) => (
           <div key={stat.label} className="glass-panel rounded-[24px] p-5">
-            <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{stat.label}</p>
+            <p className="text-xs uppercase tracking-[0.24em] text-faint">{stat.label}</p>
             <p className="mt-4 text-2xl font-semibold text-white">{stat.value}</p>
           </div>
         ))}
@@ -86,7 +86,7 @@ export default async function AdminPage({ params }: { params: { locale: string }
             ].map((item) => (
               <button
                 key={item}
-                className="w-full rounded-[20px] border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-zinc-200 transition hover:border-accent/40"
+                className="w-full rounded-[20px] border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-bright transition hover:border-accent/40"
               >
                 {item}
               </button>
@@ -99,7 +99,7 @@ export default async function AdminPage({ params }: { params: { locale: string }
           <div className="glass-panel rounded-[32px] p-6">
           <p className="text-lg font-semibold text-white">Approval queue</p>
           <div className="mt-6">
-            <p className="text-sm text-zinc-500">No pending approvals.</p>
+            <p className="text-sm text-faint">No pending approvals.</p>
           </div>
           </div>
         </section>
@@ -119,8 +119,8 @@ export default async function AdminPage({ params }: { params: { locale: string }
               ["Membership growth", "0%"]
             ].map(([label, value]) => (
               <div key={label} className="rounded-[24px] border border-white/10 bg-white/5 p-5">
-                <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{label}</p>
-                <p className="mt-3 text-sm leading-7 text-zinc-200">{value}</p>
+                <p className="text-xs uppercase tracking-[0.24em] text-faint">{label}</p>
+                <p className="mt-3 text-sm leading-7 text-bright">{value}</p>
               </div>
             ))}
           </div>
@@ -136,7 +136,7 @@ export default async function AdminPage({ params }: { params: { locale: string }
               "Rate limiting for public endpoints",
               "Architecture ready for AI workout, nutrition, and injury prevention"
             ].map((item) => (
-              <div key={item} className="rounded-[20px] border border-white/10 bg-white/5 px-4 py-3 text-sm text-zinc-300">
+              <div key={item} className="rounded-[20px] border border-white/10 bg-white/5 px-4 py-3 text-sm text-bright">
                 {item}
               </div>
             ))}

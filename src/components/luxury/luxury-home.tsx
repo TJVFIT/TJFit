@@ -372,7 +372,7 @@ export function LuxuryHome({
             <Logo variant="full" size="hero" glow href={`/${locale}`} />
           </div>
           {copy.hero.eyebrow ? (
-            <span className="inline-flex items-center rounded-full border border-[rgba(34,211,238,0.25)] bg-[rgba(34,211,238,0.06)] px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#22D3EE]">
+            <span className="inline-flex items-center rounded-full border border-[rgba(34,211,238,0.25)] bg-[rgba(34,211,238,0.06)] px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">
               {copy.hero.eyebrow}
             </span>
           ) : (
@@ -434,7 +434,7 @@ export function LuxuryHome({
               {trustItems.map((t, i) => (
                 <span
                   key={`trust-${i}-${t}`}
-                  className="inline-flex max-w-full items-center rounded-full border border-white/[0.09] bg-white/[0.03] px-3.5 py-2 text-left text-[12px] font-medium leading-snug text-zinc-400 shadow-[0_0_0_1px_rgba(0,0,0,0.25)_inset] backdrop-blur-sm transition hover:border-white/[0.12] hover:bg-white/[0.05] sm:text-[13px]"
+                  className="inline-flex max-w-full items-center rounded-full border border-white/[0.09] bg-white/[0.03] px-3.5 py-2 text-left text-[12px] font-medium leading-snug text-muted shadow-[0_0_0_1px_rgba(0,0,0,0.25)_inset] backdrop-blur-sm transition hover:border-white/[0.12] hover:bg-white/[0.05] sm:text-[13px]"
                 >
                   {t}
                 </span>
@@ -460,7 +460,7 @@ export function LuxuryHome({
               return (
                 <Reveal key={`feature-${i}-${item.title}`} delay={i * 0.04} className="h-full">
                   <div className="tj-card-premium-hover tj-card-aura flex h-full flex-col rounded-[14px] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.4),0_0_0_1px_var(--color-border)]">
-                    <Icon className="h-7 w-7 shrink-0 text-[#22D3EE]" strokeWidth={1.35} aria-hidden />
+                    <Icon className="h-7 w-7 shrink-0 text-accent" strokeWidth={1.35} aria-hidden />
                     <h3 className="mt-5 text-lg font-semibold tracking-[-0.005em] text-white">{item.title}</h3>
                     <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-secondary)]">{item.desc}</p>
                   </div>
@@ -480,7 +480,7 @@ export function LuxuryHome({
             <h2 className="font-display text-2xl font-semibold tracking-[-0.02em] text-white sm:text-3xl sm:tracking-tight">
               {copy.social.title}
             </h2>
-            <p className="mt-5 max-w-lg text-sm leading-relaxed text-zinc-500 sm:mt-4 sm:text-[15px] sm:leading-[1.65]">
+            <p className="mt-5 max-w-lg text-sm leading-relaxed text-faint sm:mt-4 sm:text-[15px] sm:leading-[1.65]">
               {copy.social.subtitle}
             </p>
           </Reveal>
@@ -493,7 +493,7 @@ export function LuxuryHome({
                   className="relative rounded-2xl border border-white/[0.05] bg-white/[0.02] px-5 py-6 shadow-[0_0_0_1px_rgba(0,0,0,0.2)_inset] transition duration-300 hover:border-cyan-500/15 hover:shadow-[0_0_40px_-20px_rgba(34,211,238,0.12)] sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:shadow-none sm:hover:shadow-none"
                 >
                   <p className="font-display text-3xl font-semibold tabular-nums tracking-tight text-white sm:text-4xl">{s.value}</p>
-                  <p className="mt-2.5 text-sm leading-snug text-zinc-500">{s.label}</p>
+                  <p className="mt-2.5 text-sm leading-snug text-faint">{s.label}</p>
                 </div>
               ))}
             </div>
@@ -503,10 +503,10 @@ export function LuxuryHome({
             {testimonials.map((t, i) => (
               <Reveal key={`testimonial-${i}-${t.author}`} delay={0.06 + i * 0.04}>
                 <blockquote className="relative border-s-2 border-cyan-400/25 ps-6 sm:ps-8">
-                  <p className="text-lg font-light leading-[1.65] text-zinc-200 sm:text-xl sm:leading-[1.6]">&ldquo;{t.quote}&rdquo;</p>
-                  <footer className="mt-6 text-sm text-zinc-600">
-                    <span className="font-medium text-zinc-400">{t.author}</span>
-                    <span className="text-zinc-700"> · </span>
+                  <p className="text-lg font-light leading-[1.65] text-bright sm:text-xl sm:leading-[1.6]">&ldquo;{t.quote}&rdquo;</p>
+                  <footer className="mt-6 text-sm text-dim">
+                    <span className="font-medium text-muted">{t.author}</span>
+                    <span className="text-dim"> · </span>
                     <span>{t.role}</span>
                   </footer>
                 </blockquote>
@@ -528,10 +528,10 @@ export function LuxuryHome({
               <h2 className="mt-8 font-display text-2xl font-semibold tracking-[-0.02em] text-white sm:text-3xl">
                 {copy.leadMagnet.title}
               </h2>
-              <p className="mt-5 max-w-2xl text-sm leading-[1.65] text-zinc-500 sm:mt-4 sm:text-[15px]">
+              <p className="mt-5 max-w-2xl text-sm leading-[1.65] text-faint sm:mt-4 sm:text-[15px]">
                 {copy.leadMagnet.sub}
               </p>
-              <ul className="mt-9 max-w-xl space-y-3.5 text-sm leading-relaxed text-zinc-400">
+              <ul className="mt-9 max-w-xl space-y-3.5 text-sm leading-relaxed text-muted">
                 {leadBullets.map((b, i) => (
                   <li key={`bullet-${i}`} className="flex gap-3">
                     <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gradient-to-br from-cyan-300 to-cyan-600 shadow-[0_0_12px_-2px_rgba(34,211,238,0.6)]" aria-hidden />
@@ -544,7 +544,7 @@ export function LuxuryHome({
               </div>
               <div className="mt-11 border-t border-white/[0.08] pt-11">
                 <span className="lux-badge inline-flex">{copy.leadMagnet.tjaiBadge}</span>
-                <p className="mt-3 max-w-xl text-sm leading-relaxed text-zinc-500">{copy.leadMagnet.tjaiSub}</p>
+                <p className="mt-3 max-w-xl text-sm leading-relaxed text-faint">{copy.leadMagnet.tjaiSub}</p>
               </div>
             </div>
           </Reveal>
@@ -559,7 +559,7 @@ export function LuxuryHome({
               <h2 className="font-display text-xl font-semibold tracking-[-0.02em] text-white sm:text-2xl">
                 {copy.midCta.title}
               </h2>
-              <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-zinc-500 sm:text-[15px] sm:leading-[1.65]">{copy.midCta.sub}</p>
+              <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-faint sm:text-[15px] sm:leading-[1.65]">{copy.midCta.sub}</p>
             </div>
             <div className="mx-auto mt-11 max-w-xl">
               <LeadCaptureForm locale={locale} source="mid-page" variant="panel" />
@@ -663,7 +663,7 @@ export function LuxuryHome({
                 <Reveal delay={0.05}>
                   <Link
                     href={`/${locale}/diets`}
-                    className="lux-btn-secondary inline-flex w-fit rounded-full px-5 py-2.5 text-sm font-medium text-zinc-200"
+                    className="lux-btn-secondary inline-flex w-fit rounded-full px-5 py-2.5 text-sm font-medium text-bright"
                   >
                     {dietSectionCopy.cta}
                   </Link>
@@ -713,7 +713,7 @@ export function LuxuryHome({
               <div className="mt-8 flex justify-center">
                 <Link
                   href={`/${locale}/diets`}
-                  className="text-sm font-semibold text-[#22D3EE] transition-colors duration-150 hover:text-white"
+                  className="text-sm font-semibold text-accent transition-colors duration-150 hover:text-white"
                   onClick={() => trackMarketingEvent("hero_cta_click", { cta: "diets_all", surface: "home_diets" })}
                 >
                   {dietSectionCopy.cta}
@@ -738,7 +738,7 @@ export function LuxuryHome({
                 {copy.systemProof.stats.map((s, i) => (
                   <Reveal key={`${s.label}-${i}`} delay={i * 0.05}>
                     <div>
-                      <p className="font-display text-[clamp(2rem,5vw,3.5rem)] font-extrabold leading-[1.08] tracking-[-0.025em] text-[#22D3EE] lg:text-[56px]">
+                      <p className="font-display text-[clamp(2rem,5vw,3.5rem)] font-extrabold leading-[1.08] tracking-[-0.025em] text-accent lg:text-[56px]">
                         {s.value}
                       </p>
                       <p className="mt-3 text-lg font-semibold tracking-[-0.005em] text-[var(--color-text-muted)]">
@@ -756,7 +756,7 @@ export function LuxuryHome({
       <ClientErrorBoundary
         fallback={
           <section className="border-t border-white/[0.05] py-20">
-            <div className="mx-auto max-w-6xl px-4 text-sm text-zinc-500 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-6xl px-4 text-sm text-faint sm:px-6 lg:px-8">
               Membership preview is temporarily unavailable.
             </div>
           </section>
@@ -772,17 +772,17 @@ export function LuxuryHome({
             <h2 className="font-display text-2xl font-semibold tracking-[-0.02em] text-white sm:text-3xl">
               {copy.coaches.title}
             </h2>
-            <p className="mt-5 max-w-lg text-sm leading-[1.65] text-zinc-500 sm:mt-4 sm:text-[15px]">{copy.coaches.subtitle}</p>
+            <p className="mt-5 max-w-lg text-sm leading-[1.65] text-faint sm:mt-4 sm:text-[15px]">{copy.coaches.subtitle}</p>
           </Reveal>
 
           {coaches.length === 0 ? (
             <Reveal className="mt-14" delay={0.06}>
               <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-8 sm:p-12">
                 <h3 className="text-xl font-medium text-white">{copy.coaches.emptyTitle}</h3>
-                <p className="mt-4 max-w-xl text-sm leading-relaxed text-zinc-500">{copy.coaches.emptyDesc}</p>
+                <p className="mt-4 max-w-xl text-sm leading-relaxed text-faint">{copy.coaches.emptyDesc}</p>
                 <div className="mt-8 flex flex-wrap gap-3">
                   <div
-                    className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.02] px-6 py-2.5 text-sm text-zinc-400"
+                    className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.02] px-6 py-2.5 text-sm text-muted"
                     role="group"
                     aria-disabled="true"
                     aria-label={`${copy.coaches.applyComingSoonBadge}: ${copy.coaches.cta}`}
@@ -794,7 +794,7 @@ export function LuxuryHome({
                   </div>
                   <Link
                     href={`/${locale}/coaches`}
-                    className="lux-btn-secondary inline-flex rounded-full px-6 py-2.5 text-sm font-medium text-zinc-200"
+                    className="lux-btn-secondary inline-flex rounded-full px-6 py-2.5 text-sm font-medium text-bright"
                   >
                     {copy.coaches.browse}
                   </Link>
@@ -818,11 +818,11 @@ export function LuxuryHome({
                         {c.specialty}
                       </span>
                       <p className="mt-4 font-display text-lg font-semibold text-white">{c.name}</p>
-                      <p className="mt-3 text-sm text-zinc-500 sm:text-xs">
+                      <p className="mt-3 text-sm text-faint sm:text-xs">
                         ★{" "}
                         {typeof c.rating === "number" && Number.isFinite(c.rating) ? c.rating.toFixed(1) : "—"}
-                        <span className="text-zinc-700"> · </span>
-                        <span className="text-zinc-600 transition group-hover:text-zinc-400">
+                        <span className="text-dim"> · </span>
+                        <span className="text-dim transition group-hover:text-muted">
                           {copy.coaches.viewProfile}
                         </span>
                       </p>
@@ -840,7 +840,7 @@ export function LuxuryHome({
         <ClientErrorBoundary
           fallback={
             <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
-              <p className="text-sm text-zinc-500">Community highlights are temporarily unavailable.</p>
+              <p className="text-sm text-faint">Community highlights are temporarily unavailable.</p>
             </div>
           }
         >
@@ -859,7 +859,7 @@ export function LuxuryHome({
             <h2 className="font-display text-xl font-semibold tracking-[-0.02em] text-white sm:text-2xl">
               {copy.finalCta.title}
             </h2>
-            <p className="mx-auto mt-5 max-w-md text-sm leading-[1.65] text-zinc-500">{copy.finalCta.sub}</p>
+            <p className="mx-auto mt-5 max-w-md text-sm leading-[1.65] text-faint">{copy.finalCta.sub}</p>
             <div className="mt-9 flex flex-col items-center justify-center gap-3.5 sm:flex-row sm:flex-wrap sm:gap-4">
               <GlowButton
                 href={`/${locale}/signup`}
@@ -871,7 +871,7 @@ export function LuxuryHome({
               </GlowButton>
               <Link
                 href={`/${locale}/membership`}
-                className="lux-btn-secondary inline-flex min-h-[50px] items-center justify-center rounded-full px-8 py-3.5 text-sm font-medium tracking-tight text-zinc-100 sm:min-h-[52px] sm:text-[15px]"
+                className="lux-btn-secondary inline-flex min-h-[50px] items-center justify-center rounded-full px-8 py-3.5 text-sm font-medium tracking-tight text-bright sm:min-h-[52px] sm:text-[15px]"
                 onClick={() => trackMarketingEvent("hero_cta_click", { cta: "membership", surface: "final" })}
               >
                 {copy.finalCta.secondary}
@@ -880,7 +880,7 @@ export function LuxuryHome({
             <div className="mx-auto mt-11 max-w-md border-t border-white/[0.08] pt-9">
               <LeadCaptureForm locale={locale} source="final-cta" variant="minimal" />
             </div>
-            <p className="mt-6 text-xs leading-relaxed text-zinc-600">{copy.finalCta.nudge}</p>
+            <p className="mt-6 text-xs leading-relaxed text-dim">{copy.finalCta.nudge}</p>
           </div>
         </Reveal>
       </section>
@@ -888,7 +888,7 @@ export function LuxuryHome({
       {/* Mobile sticky CTA — appears after hero scroll (no exit animation — avoids Framer AnimatePresence edge cases) */}
       {stickyCta ? (
         <div
-          className="fixed inset-x-0 bottom-0 z-40 border-t border-white/[0.08] bg-[#0A0A0B]/88 px-4 py-3.5 shadow-[0_-12px_48px_-16px_rgba(0,0,0,0.55),0_0_0_1px_rgba(255,255,255,0.04)_inset] backdrop-blur-xl backdrop-saturate-150 lg:hidden"
+          className="fixed inset-x-0 bottom-0 z-40 border-t border-white/[0.08] bg-background/88 px-4 py-3.5 shadow-[0_-12px_48px_-16px_rgba(0,0,0,0.55),0_0_0_1px_rgba(255,255,255,0.04)_inset] backdrop-blur-xl backdrop-saturate-150 lg:hidden"
           style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
         >
           <div className="mx-auto flex max-w-lg items-center gap-3">
@@ -903,7 +903,7 @@ export function LuxuryHome({
             </GlowButton>
             <Link
               href={`/${locale}/signup`}
-              className="inline-flex min-h-11 shrink-0 items-center px-2 py-2 text-xs font-medium text-zinc-500 underline-offset-4 hover:text-zinc-300"
+              className="inline-flex min-h-11 shrink-0 items-center px-2 py-2 text-xs font-medium text-faint underline-offset-4 hover:text-bright"
               onClick={() => trackMarketingEvent("hero_cta_click", { cta: "signup", surface: "sticky" })}
             >
               {copy.hero.ctaSecondary}

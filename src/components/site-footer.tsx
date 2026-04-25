@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { Logo } from "@/components/ui/Logo";
@@ -34,7 +34,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
   const heads = COL_HEAD[locale] ?? COL_HEAD.en;
 
   const linkClass =
-    "text-[#52525B] transition-colors duration-150 hover:text-[#A1A1AA] inline-block text-sm leading-relaxed";
+    "text-dim transition-colors duration-150 hover:text-muted inline-block text-sm leading-relaxed";
 
   const platformLinks = [
     { href: `/${locale}/programs`, label: copy.programs },
@@ -63,7 +63,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
   ];
 
   return (
-    <footer className="border-t border-[rgba(255,255,255,0.04)] bg-[#09090B]">
+    <footer className="border-t border-[rgba(255,255,255,0.04)] bg-background">
       <div className="mx-auto max-w-[1200px] px-6 pb-12 pt-10 lg:px-8">
         <div className="mb-10 flex justify-center" aria-hidden>
           <svg width="100%" height="16" viewBox="0 0 400 16" className="max-w-md text-[rgba(255,255,255,0.08)]">
@@ -78,12 +78,12 @@ export function SiteFooter({ locale }: { locale: Locale }) {
             <div className="inline-flex justify-center sm:justify-start">
               <Logo variant="full" size="footer" href={`/${locale}`} glow />
             </div>
-            <p className="mt-4 text-sm font-medium leading-relaxed text-[#A1A1AA]">{copy.tagline}</p>
-            <p className="mt-3 max-w-xs text-xs leading-relaxed text-[#52525B] sm:max-w-none">{copy.description}</p>
+            <p className="mt-4 text-sm font-medium leading-relaxed text-muted">{copy.tagline}</p>
+            <p className="mt-3 max-w-xs text-xs leading-relaxed text-dim sm:max-w-none">{copy.description}</p>
           </div>
 
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-[#22D3EE]">{heads.platform}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-accent">{heads.platform}</p>
             <div className="mt-4 flex flex-col gap-2.5">
               {platformLinks.map(({ href, label }) => (
                 <Link key={href} href={href} className={linkClass}>
@@ -94,7 +94,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
           </div>
 
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-[#22D3EE]">{heads.coaches}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-accent">{heads.coaches}</p>
             <div className="mt-4 flex flex-col gap-2.5">
               {coachLinks.map(({ href, label }) => (
                 <Link key={href} href={href} className={linkClass}>
@@ -102,7 +102,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
                 </Link>
               ))}
             </div>
-            <p className="mt-8 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#52525B]">{copy.supportTitle}</p>
+            <p className="mt-8 text-[11px] font-semibold uppercase tracking-[0.15em] text-dim">{copy.supportTitle}</p>
             <div className="mt-3 flex flex-col gap-2.5">
               {supportLinks.map(({ href, label }) => (
                 <Link key={href} href={href} className={linkClass}>
@@ -113,7 +113,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
           </div>
 
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-[#52525B]">{copy.companyTitle}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-dim">{copy.companyTitle}</p>
             <div className="mt-4 flex flex-col gap-2.5">
               {companyLinks.map(({ href, label }) => (
                 <Link key={href} href={href} className={linkClass}>
@@ -126,7 +126,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
       </div>
 
       <div className="border-t border-[rgba(255,255,255,0.04)] px-6 py-5 lg:px-8">
-        <div className="mx-auto flex max-w-[1200px] flex-col items-center justify-between gap-4 text-xs text-[#52525B] sm:flex-row">
+        <div className="mx-auto flex max-w-[1200px] flex-col items-center justify-between gap-4 text-xs text-dim sm:flex-row">
           <p>© {new Date().getFullYear()} TJFit. All rights reserved.</p>
           <div className="flex flex-wrap justify-center gap-2 sm:justify-end">
             {supportedLocales.map((loc) => (
@@ -151,7 +151,7 @@ function cnPill(active: boolean) {
   return [
     "rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide transition-[border-color,color,background-color] duration-150",
     active
-      ? "border-[rgba(34,211,238,0.45)] bg-[rgba(34,211,238,0.12)] text-[#22D3EE]"
-      : "border-[rgba(255,255,255,0.08)] bg-[rgba(13,15,18,0.6)] text-[#52525B] hover:border-[rgba(34,211,238,0.35)] hover:text-[#A1A1AA]",
+      ? "border-[rgba(34,211,238,0.45)] bg-[rgba(34,211,238,0.12)] text-accent"
+      : "border-[rgba(255,255,255,0.08)] bg-[rgba(13,15,18,0.6)] text-dim hover:border-[rgba(34,211,238,0.35)] hover:text-muted",
   ].join(" ");
 }

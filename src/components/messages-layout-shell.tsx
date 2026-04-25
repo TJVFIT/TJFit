@@ -191,7 +191,7 @@ export function MessagesLayoutShell({
           <p>{loadError}</p>
           <button
             type="button"
-            className="mt-2 rounded-full border border-white/15 px-3 py-1 text-[11px] text-zinc-200 hover:border-white/25"
+            className="mt-2 rounded-full border border-white/15 px-3 py-1 text-[11px] text-bright hover:border-white/25"
             onClick={() => void load()}
           >
             {t.threadRetry}
@@ -227,7 +227,7 @@ export function MessagesLayoutShell({
                     <div className="relative shrink-0">
                       <div
                         className={clsx(
-                          "flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-[#1E2028] bg-[#18191E] text-xs font-semibold text-[#A1A1AA]",
+                          "flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-divider bg-[#18191E] text-xs font-semibold text-muted",
                           unread ? "border-[rgba(34,211,238,0.35)]" : ""
                         )}
                       >
@@ -249,15 +249,15 @@ export function MessagesLayoutShell({
                           {c.peer.display_name}
                         </p>
                         <time
-                          className="ms-auto shrink-0 text-[11px] text-[#52525B]"
+                          className="ms-auto shrink-0 text-[11px] text-dim"
                           dateTime={c.last_message_at ?? c.created_at}
                           suppressHydrationWarning
                         >
                           {formatInboxTime(c.last_message_at ?? c.created_at, locale)}
                         </time>
                       </div>
-                      <p className="truncate text-[13px] text-[#52525B]">@{c.peer.username}</p>
-                      <p className="mt-0.5 truncate text-[13px] leading-snug text-[#52525B]">
+                      <p className="truncate text-[13px] text-dim">@{c.peer.username}</p>
+                      <p className="mt-0.5 truncate text-[13px] leading-snug text-dim">
                         {previewLabel(c.last_message_preview)}
                       </p>
                     </div>
@@ -283,26 +283,26 @@ export function MessagesLayoutShell({
       {/* Inbox column: full width on mobile; sidebar on desktop */}
       <aside
         className={clsx(
-          "flex min-h-0 w-full flex-col border-[#1E2028] bg-[#09090B] lg:w-[320px] lg:max-w-[320px] lg:shrink-0 lg:border-r",
+          "flex min-h-0 w-full flex-col border-divider bg-background lg:w-[320px] lg:max-w-[320px] lg:shrink-0 lg:border-r",
           activeId ? "hidden lg:flex" : "flex flex-1 lg:flex-none"
         )}
       >
-        <div className="shrink-0 border-b border-[#1E2028] px-5 pb-4 pt-5">
+        <div className="shrink-0 border-b border-divider px-5 pb-4 pt-5">
           <div className="flex items-center justify-between gap-3">
             <div>
               <h1 className="font-display text-2xl font-semibold tracking-tight text-white">{t.title}</h1>
-              <p className="mt-0.5 text-[11px] text-[#52525B]">{t.encrypted}</p>
+              <p className="mt-0.5 text-[11px] text-dim">{t.encrypted}</p>
             </div>
             <Link
               href={`/${locale}/profile/edit`}
-              className="rounded-full border border-white/12 px-3 py-1.5 text-xs text-zinc-300 transition hover:border-white/20 hover:text-white"
+              className="rounded-full border border-white/12 px-3 py-1.5 text-xs text-bright transition hover:border-white/20 hover:text-white"
             >
               {s.settingsLink}
             </Link>
           </div>
           <Link
             href={`/${locale}/profile/search`}
-            className="mt-4 flex w-full items-center justify-center rounded-xl border border-white/[0.08] py-3 text-sm font-medium text-zinc-200 transition hover:border-white/[0.12] hover:bg-white/[0.03]"
+            className="mt-4 flex w-full items-center justify-center rounded-xl border border-white/[0.08] py-3 text-sm font-medium text-bright transition hover:border-white/[0.12] hover:bg-white/[0.03]"
           >
             {s.peopleSearchTitle}
           </Link>
@@ -317,15 +317,15 @@ export function MessagesLayoutShell({
       {/* Desktop: new chat or thread */}
       <main
         className={clsx(
-          "flex h-full min-h-0 min-w-0 flex-1 flex-col border-[#1E2028] bg-[#09090B] lg:border-l",
+          "flex h-full min-h-0 min-w-0 flex-1 flex-col border-divider bg-background lg:border-l",
           activeId ? "flex" : "hidden lg:flex"
         )}
       >
         {!activeId ? (
           <div className="hidden min-h-0 flex-1 flex-col overflow-y-auto lg:flex">
-            <div className="border-b border-[#1E2028] px-6 py-5">
+            <div className="border-b border-divider px-6 py-5">
               <h2 className="font-display text-lg font-semibold text-white">{t.newChatSectionTitle}</h2>
-              <p className="mt-1 text-xs text-[#52525B]">{t.subtitle}</p>
+              <p className="mt-1 text-xs text-dim">{t.subtitle}</p>
             </div>
             <div className="flex-1 px-6 py-6">{children}</div>
           </div>

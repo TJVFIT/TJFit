@@ -12,12 +12,20 @@ const config: Config = {
         background: "#0A0A0B",
         surface: {
           DEFAULT: "#111215",
-          elevated: "#15171A"
+          elevated: "#15171A",
+          2: "#0E0F12"
         },
+        divider: "#1E2028",
+        muted: "#A1A1AA",
+        dim: "#52525B",
+        faint: "#71717A",
+        bright: "#D4D4D8",
         accent: "#22D3EE",
         "accent-muted": "#67E8F9",
+        "accent-sky": "#0EA5E9",
         "accent-violet": "#A78BFA",
         success: "#22C55E",
+        danger: "#EF4444",
         text: "#FFFFFF"
       },
       fontFamily: {

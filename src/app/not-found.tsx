@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function RootNotFound() {
   return (
-    <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-[#09090B] px-6 text-center">
+    <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-background px-6 text-center">
       <div
         className="pointer-events-none absolute left-1/2 top-0 h-[25rem] w-[25rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.06)_0%,transparent_72%)]"
         aria-hidden
@@ -13,7 +13,7 @@ export default function RootNotFound() {
       <h1 className="mt-4 animate-[tj-fade-up_380ms_ease-out_forwards] text-3xl font-bold text-white" style={{ animationDelay: "200ms", opacity: 0 }}>
         Page not found.
       </h1>
-      <p className="mt-2 animate-[tj-fade-up_380ms_ease-out_forwards] text-sm text-[#A1A1AA] sm:text-base" style={{ animationDelay: "300ms", opacity: 0 }}>
+      <p className="mt-2 animate-[tj-fade-up_380ms_ease-out_forwards] text-sm text-muted sm:text-base" style={{ animationDelay: "300ms", opacity: 0 }}>
         This page does not exist or has been moved.
       </p>
       <Link

@@ -15,13 +15,13 @@ export default function TermsPage({ params }: { params: { locale: string } }) {
         <section key={section.title} className="space-y-3 rounded-[24px] border border-white/10 bg-white/5 p-6">
           <h2 className="text-lg font-semibold text-white">{section.title}</h2>
           {section.body.map((paragraph) => (
-            <p key={paragraph} className="text-sm leading-7 text-zinc-300">
+            <p key={paragraph} className="text-sm leading-7 text-bright">
               {paragraph}
             </p>
           ))}
         </section>
       ))}
-      <p className="text-sm text-zinc-500">{copy.versionLabel}</p>
+      <p className="text-sm text-faint">{copy.versionLabel}</p>
     </div>
   );
 }

@@ -31,16 +31,16 @@ function CancellationModal({ open, onClose }: { open: boolean; onClose: () => vo
       return (
         <>
           <h3 className="text-xl font-semibold text-white">Are you sure you want to cancel?</h3>
-          <ul className="mt-3 space-y-1 text-sm text-zinc-400">
+          <ul className="mt-3 space-y-1 text-sm text-muted">
             <li>Unlimited TJAI</li>
             <li>Custom 12-week plans</li>
             <li>75 TJCOIN/month</li>
           </ul>
           <div className="mt-4 flex gap-2">
-            <button className="rounded-full bg-[#22D3EE] px-4 py-2 text-sm font-semibold text-[#09090B]" onClick={onClose}>
+            <button className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-[#09090B]" onClick={onClose}>
               Keep My Subscription
             </button>
-            <button className="rounded-full border border-[#1E2028] px-4 py-2 text-sm text-zinc-300" onClick={() => setStep(2)}>
+            <button className="rounded-full border border-divider px-4 py-2 text-sm text-bright" onClick={() => setStep(2)}>
               Continue to Cancel
             </button>
           </div>
@@ -51,7 +51,7 @@ function CancellationModal({ open, onClose }: { open: boolean; onClose: () => vo
       return (
         <>
           <h3 className="text-xl font-semibold text-white">Need a break?</h3>
-          <p className="mt-2 text-sm text-zinc-400">Pause your subscription for 1 or 2 months instead.</p>
+          <p className="mt-2 text-sm text-muted">Pause your subscription for 1 or 2 months instead.</p>
           <div className="mt-4 flex flex-wrap gap-2">
             <button className="rounded-full border border-cyan-400/30 px-4 py-2 text-sm text-cyan-200" onClick={() => setStep(4)}>
               Pause for 1 Month
@@ -59,7 +59,7 @@ function CancellationModal({ open, onClose }: { open: boolean; onClose: () => vo
             <button className="rounded-full border border-cyan-400/30 px-4 py-2 text-sm text-cyan-200" onClick={() => setStep(4)}>
               Pause for 2 Months
             </button>
-            <button className="text-sm text-zinc-500" onClick={() => setStep(3)}>
+            <button className="text-sm text-faint" onClick={() => setStep(3)}>
               I still want to cancel
             </button>
           </div>
@@ -70,7 +70,7 @@ function CancellationModal({ open, onClose }: { open: boolean; onClose: () => vo
       return (
         <>
           <h3 className="text-xl font-semibold text-white">Stay for less</h3>
-          <p className="mt-2 text-sm text-zinc-400">We&apos;d like to offer you 1 month at 50% off.</p>
+          <p className="mt-2 text-sm text-muted">We&apos;d like to offer you 1 month at 50% off.</p>
           <div className="mt-4 flex gap-2">
             <button
               className="rounded-full bg-green-500 px-4 py-2 text-sm font-semibold text-white"
@@ -81,7 +81,7 @@ function CancellationModal({ open, onClose }: { open: boolean; onClose: () => vo
             >
               Accept Offer
             </button>
-            <button className="text-sm text-zinc-500" onClick={() => setStep(4)}>
+            <button className="text-sm text-faint" onClick={() => setStep(4)}>
               No thanks, cancel
             </button>
           </div>
@@ -91,8 +91,8 @@ function CancellationModal({ open, onClose }: { open: boolean; onClose: () => vo
     return (
       <>
         <h3 className="text-xl font-semibold text-white">Subscription updated</h3>
-        <p className="mt-2 text-sm text-zinc-400">Access continues until your current billing period ends.</p>
-        <button className="mt-4 rounded-full border border-[#1E2028] px-4 py-2 text-sm text-zinc-300" onClick={onClose}>
+        <p className="mt-2 text-sm text-muted">Access continues until your current billing period ends.</p>
+        <button className="mt-4 rounded-full border border-divider px-4 py-2 text-sm text-bright" onClick={onClose}>
           Close
         </button>
       </>
@@ -101,7 +101,7 @@ function CancellationModal({ open, onClose }: { open: boolean; onClose: () => vo
 
   return (
     <div className="fixed inset-0 z-[120] flex items-end bg-black/70 p-0 sm:items-center sm:justify-center sm:p-4">
-      <div className="w-full rounded-t-2xl border border-[#1E2028] bg-[#111215] p-5 sm:max-w-lg sm:rounded-2xl">{content}</div>
+      <div className="w-full rounded-t-2xl border border-divider bg-surface p-5 sm:max-w-lg sm:rounded-2xl">{content}</div>
       <button className="absolute inset-0 -z-10" onClick={onClose} aria-label="Close modal backdrop" />
     </div>
   );
@@ -114,9 +114,9 @@ export default function SettingsSubscriptionPage({ params }: { params: { locale:
     <ProtectedRoute locale={locale}>
       <section className="mx-auto max-w-3xl space-y-4 px-4 py-10 sm:px-6">
         <h1 className="text-3xl font-bold text-white">Subscription</h1>
-        <p className="text-sm text-zinc-400">Manage your current plan and billing preferences.</p>
-        <div className="rounded-2xl border border-[#1E2028] bg-[#111215] p-5">
-          <p className="text-sm text-zinc-300">Current tier: Apex</p>
+        <p className="text-sm text-muted">Manage your current plan and billing preferences.</p>
+        <div className="rounded-2xl border border-divider bg-surface p-5">
+          <p className="text-sm text-bright">Current tier: Apex</p>
           <button className="mt-4 rounded-full border border-red-500/30 px-4 py-2 text-sm text-red-300" onClick={() => setOpen(true)}>
             Cancel Subscription
           </button>

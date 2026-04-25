@@ -38,7 +38,7 @@ export function PricingPreviewHome({
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <span className="lux-badge inline-flex">{rest.badge}</span>
         <h2 className="mt-8 font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">{rest.title}</h2>
-        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-zinc-500 sm:text-[15px]">{rest.sub}</p>
+        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-faint sm:text-[15px]">{rest.sub}</p>
 
         <div className="mt-14 grid gap-4 md:grid-cols-3">
           {tiers.map((t) => (
@@ -48,12 +48,12 @@ export function PricingPreviewHome({
             >
               <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-cyan-300/80">{tierStatus}</p>
               <p className="mt-4 font-display text-xl font-semibold text-white">{t.name}</p>
-              <p className="mt-3 text-sm leading-relaxed text-zinc-500">{t.teaser}</p>
+              <p className="mt-3 text-sm leading-relaxed text-faint">{t.teaser}</p>
             </div>
           ))}
         </div>
 
-        <p className="mt-10 max-w-2xl text-xs leading-relaxed text-zinc-600 sm:text-sm">{rest.footnote}</p>
+        <p className="mt-10 max-w-2xl text-xs leading-relaxed text-dim sm:text-sm">{rest.footnote}</p>
 
         <div className="mt-10 max-w-xl">
           <LeadCaptureForm locale={locale} source="membership-waitlist-home" variant="panel" />

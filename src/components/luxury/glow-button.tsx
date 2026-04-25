@@ -20,7 +20,7 @@ export function GlowButton({ href, variant, className = "", children, reducedMot
   const base =
     variant === "primary"
       ? "lux-btn-primary group relative inline-flex min-h-[50px] items-center justify-center overflow-hidden rounded-full px-8 py-3.5 text-sm font-semibold tracking-tight text-[#05080a] shadow-none sm:min-h-[52px] sm:text-[15px]"
-      : "lux-btn-secondary group relative inline-flex min-h-[50px] items-center justify-center overflow-hidden rounded-full px-8 py-3.5 text-sm font-medium tracking-tight text-zinc-100 sm:min-h-[52px] sm:text-[15px]";
+      : "lux-btn-secondary group relative inline-flex min-h-[50px] items-center justify-center overflow-hidden rounded-full px-8 py-3.5 text-sm font-medium tracking-tight text-bright sm:min-h-[52px] sm:text-[15px]";
 
   const motionCls =
     reducedMotion === true

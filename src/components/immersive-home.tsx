@@ -88,7 +88,7 @@ function CountUp({ target, suffix = "", label }: { target: number; suffix?: stri
       <p className="font-display text-[clamp(1.65rem,3.8vw,2.65rem)] font-medium tabular-nums tracking-tight text-white">
         {val}{suffix}
       </p>
-      <p className="mt-3 max-w-[11rem] text-[10px] font-medium uppercase leading-relaxed tracking-[0.22em] text-[#71717A]">
+      <p className="mt-3 max-w-[11rem] text-[10px] font-medium uppercase leading-relaxed tracking-[0.22em] text-faint">
         {label}
       </p>
     </div>
@@ -169,15 +169,15 @@ function PlatformFeatureCard({
       />
       <div
         className={cn(
-          "mb-6 flex h-10 w-10 shrink-0 items-center justify-center border border-white/[0.08] bg-[#0A0A0B]",
+          "mb-6 flex h-10 w-10 shrink-0 items-center justify-center border border-white/[0.08] bg-background",
           span === 2 && "md:mb-0"
         )}
       >
-        <Icon className="h-[18px] w-[18px] text-[#A1A1AA] transition-colors group-hover:text-white" strokeWidth={1.5} />
+        <Icon className="h-[18px] w-[18px] text-muted transition-colors group-hover:text-white" strokeWidth={1.5} />
       </div>
       <div className="min-w-0 flex-1">
         <h3 className="font-display text-lg font-medium tracking-tight text-white">{title}</h3>
-        <p className="mt-3 max-w-prose text-sm leading-relaxed text-[#71717A]">{desc}</p>
+        <p className="mt-3 max-w-prose text-sm leading-relaxed text-faint">{desc}</p>
       </div>
     </article>
   );
@@ -290,7 +290,7 @@ export function ImmersiveHome({
 
   return (
     <div
-      className="relative min-h-screen bg-[#0A0A0B] text-white"
+      className="relative min-h-screen bg-background text-white"
       dir={direction}
       style={{ "--tj-reveal-distance": "40px" } as CSSProperties}
     >
@@ -317,7 +317,7 @@ export function ImmersiveHome({
 
       {/* Compact TJAI summary — first thing after hero, before anything else */}
       <section
-        className="reveal-section relative border-t border-[#1E2028] bg-[rgba(10,10,11,0.7)] px-6 py-16 lg:px-12 lg:py-20"
+        className="reveal-section relative border-t border-divider bg-[rgba(10,10,11,0.7)] px-6 py-16 lg:px-12 lg:py-20"
         aria-label="TJAI overview"
       >
         <div className="mx-auto flex max-w-5xl flex-col items-start gap-8 md:flex-row md:items-center md:justify-between md:gap-10">
@@ -341,8 +341,8 @@ export function ImmersiveHome({
       </section>
 
       {/* Editorial rail — no marquee, no shouty caps */}
-      <div className="-mt-px border-y border-white/[0.06] bg-[#111215]/35">
-        <p className="mx-auto max-w-6xl px-6 py-4 text-center text-[10px] font-medium uppercase leading-loose tracking-[0.28em] text-[#52525B] lg:px-12">
+      <div className="-mt-px border-y border-white/[0.06] bg-surface/35">
+        <p className="mx-auto max-w-6xl px-6 py-4 text-center text-[10px] font-medium uppercase leading-loose tracking-[0.28em] text-dim lg:px-12">
           {[
             "12-week periodization",
             "Macro-aware meals",
@@ -354,20 +354,20 @@ export function ImmersiveHome({
       </div>
 
       {/* Platform spec */}
-      <section className="reveal-section border-t border-[#1E2028] px-6 py-24 lg:px-12 lg:py-32">
+      <section className="reveal-section border-t border-divider px-6 py-24 lg:px-12 lg:py-32">
         <div className="mx-auto max-w-6xl">
           <MotionReveal reducedMotion={reduce} className="max-w-2xl">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#52525B]">The stack</p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-dim">The stack</p>
             <h2 className="mt-5 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-[2.65rem] lg:leading-[1.12]">
               Built like training software,
-              <span className="text-[#71717A]"> not a toy app.</span>
+              <span className="text-faint"> not a toy app.</span>
             </h2>
-            <p className="mt-5 text-sm leading-relaxed text-[#A1A1AA]">
+            <p className="mt-5 text-sm leading-relaxed text-muted">
               Structured plans, real nutrition systems, AI that respects constraints, and human coaches when you want them — one surface, one visual language.
             </p>
           </MotionReveal>
 
-          <div className="mt-16 grid grid-cols-1 gap-px bg-[#1E2028] md:grid-cols-2">
+          <div className="mt-16 grid grid-cols-1 gap-px bg-divider md:grid-cols-2">
             {features.map((f, i) => (
               <MotionReveal reducedMotion={reduce} key={f.title} delayMs={i * 60} className={cn(f.span === 2 && "md:col-span-2")}>
                 <PlatformFeatureCard {...f} />
@@ -381,7 +381,7 @@ export function ImmersiveHome({
       <CinematicTransformation reduce={reduce} />
 
       {/* Stats — restrained, no neon scoreboard */}
-      <section className="reveal-section border-y border-[#1E2028] bg-[#0A0A0B] py-16 lg:py-20">
+      <section className="reveal-section border-y border-divider bg-background py-16 lg:py-20">
         <MotionReveal reducedMotion={reduce} className="mx-auto max-w-5xl px-6 lg:px-12">
           <div className="flex flex-col divide-y divide-[#1E2028] lg:flex-row lg:divide-x lg:divide-y-0">
             <CountUp target={programCount} suffix="+" label="Expert Programs" />
@@ -395,7 +395,7 @@ export function ImmersiveHome({
       <SectionTransition variant="soft" />
 
       {/* ══════════════ PROGRAMS — Parallax BG ══════════════ */}
-      <div id="programs" ref={programsSectionRef} className="reveal-section relative overflow-hidden border-t border-[#1E2028] scroll-mt-20">
+      <div id="programs" ref={programsSectionRef} className="reveal-section relative overflow-hidden border-t border-divider scroll-mt-20">
         <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
           <ParallaxLayer reduce={reduce} strength={9} className="absolute inset-0 h-full w-full">
             <div className="absolute inset-0">
@@ -419,13 +419,13 @@ export function ImmersiveHome({
           <div className="relative z-[1] mx-auto max-w-6xl">
             <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <MotionReveal reducedMotion={reduce}>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#22D3EE]">Transformation systems</p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent">Transformation systems</p>
                 <h2 className="mt-3 font-display text-4xl font-semibold tracking-tight text-white lg:text-5xl">
-                  {programCount}+ complete<br /><span className="text-[#22D3EE]">programs</span>
+                  {programCount}+ complete<br /><span className="text-accent">programs</span>
                 </h2>
               </MotionReveal>
               <MotionReveal reducedMotion={reduce} delayMs={100}>
-                <Link href={`/${locale}/programs`} className="inline-flex items-center gap-2 text-sm font-semibold text-[#22D3EE] transition-opacity hover:opacity-80">
+                <Link href={`/${locale}/programs`} className="inline-flex items-center gap-2 text-sm font-semibold text-accent transition-opacity hover:opacity-80">
                   View all programs <ArrowRight className="h-4 w-4" />
                 </Link>
               </MotionReveal>
@@ -462,7 +462,7 @@ export function ImmersiveHome({
       {/* ══════════════ TJAI — KINETIC HEART CORE ══════════════ */}
       <section
         ref={(el) => { tjaiRef.current = el; }}
-        className="reveal-section relative overflow-hidden border-t border-[#1E2028] bg-[#09090B]"
+        className="reveal-section relative overflow-hidden border-t border-divider bg-background"
         style={{ minHeight: "min(90vh, 700px)" }}
       >
         <span
@@ -501,17 +501,17 @@ export function ImmersiveHome({
               <div className="absolute inset-10 rounded-full border border-[rgba(34,211,238,0.18)]" />
               <div className="absolute inset-20 rounded-full border border-[rgba(34,211,238,0.12)]" />
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="font-display text-5xl font-bold tracking-tight text-[#22D3EE]">TJAI</span>
+                <span className="font-display text-5xl font-bold tracking-tight text-accent">TJAI</span>
               </div>
             </div>
           </div>
 
           <MotionReveal reducedMotion={reduce}>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-[#22D3EE]">AI transformation engine</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-accent">AI transformation engine</p>
             <h2 className="mt-4 font-display text-[clamp(2rem,5vw,3.25rem)] font-extrabold leading-[1.05] tracking-[-0.02em] text-white">
               Meet TJAI.
             </h2>
-            <p className="mt-4 max-w-xl text-base leading-relaxed text-[#A1A1AA]">
+            <p className="mt-4 max-w-xl text-base leading-relaxed text-muted">
               Complete an adaptive intake and get a complete 12-week plan in minutes — training blocks, meals, macros, and progression tuned to your metabolism, schedule, and feedback.
             </p>
 
@@ -546,11 +546,11 @@ export function ImmersiveHome({
                   <span
                     className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(34,211,238,0.06)] transition-[border-color,box-shadow] duration-200 group-hover:border-[rgba(34,211,238,0.35)]"
                   >
-                    <row.Icon className="h-5 w-5 text-[#22D3EE]" strokeWidth={1.5} />
+                    <row.Icon className="h-5 w-5 text-accent" strokeWidth={1.5} />
                   </span>
                   <div className="min-w-0">
                     <p className="text-[15px] font-semibold text-white">{row.title}</p>
-                    <p className="mt-1 text-[13px] leading-relaxed text-[#52525B] group-hover:text-[#A1A1AA]">{row.desc}</p>
+                    <p className="mt-1 text-[13px] leading-relaxed text-dim group-hover:text-muted">{row.desc}</p>
                   </div>
                 </li>
               ))}
@@ -559,21 +559,21 @@ export function ImmersiveHome({
             <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
               <TjaiMagneticPrimary
                 href={`/${locale}/ai`}
-                className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-[10px] bg-[#22D3EE] px-8 py-3.5 text-[15px] font-extrabold text-[#09090B] shadow-[0_12px_40px_rgba(34,211,238,0.28)] transition-[filter,transform,box-shadow] duration-200 hover:brightness-110 hover:-translate-y-0.5"
+                className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-[10px] bg-accent px-8 py-3.5 text-[15px] font-extrabold text-[#09090B] shadow-[0_12px_40px_rgba(34,211,238,0.28)] transition-[filter,transform,box-shadow] duration-200 hover:brightness-110 hover:-translate-y-0.5"
               >
                 <Zap className="h-4 w-4 shrink-0" aria-hidden />
                 Build my plan — free preview
               </TjaiMagneticPrimary>
               <Link
                 href={`/${locale}/ai`}
-                className="inline-flex min-h-[52px] items-center justify-center rounded-[10px] border border-[rgba(255,255,255,0.14)] px-8 py-3.5 text-[15px] font-semibold text-white transition-[border-color,background-color,color] duration-200 hover:border-[rgba(34,211,238,0.35)] hover:bg-[rgba(34,211,238,0.04)] hover:text-[#22D3EE]"
+                className="inline-flex min-h-[52px] items-center justify-center rounded-[10px] border border-[rgba(255,255,255,0.14)] px-8 py-3.5 text-[15px] font-semibold text-white transition-[border-color,background-color,color] duration-200 hover:border-[rgba(34,211,238,0.35)] hover:bg-[rgba(34,211,238,0.04)] hover:text-accent"
               >
                 See a sample plan
                 <ArrowRight className="ms-1 h-4 w-4" aria-hidden />
               </Link>
             </div>
-            <p className="mt-6 text-xs text-[#52525B]">
-              <Link href={`/${locale}/membership`} className="text-[#A1A1AA] underline-offset-4 transition-colors hover:text-[#22D3EE]">
+            <p className="mt-6 text-xs text-dim">
+              <Link href={`/${locale}/membership`} className="text-muted underline-offset-4 transition-colors hover:text-accent">
                 Core (Free) · TJAI unlock $10 · Pro $6/mo · Apex $10/mo
               </Link>
             </p>
@@ -583,20 +583,20 @@ export function ImmersiveHome({
 
       {/* ══════════════ DIETS ══════════════ */}
       {dietSlice.length > 0 && (
-        <section id="diets" className="reveal-section relative border-t border-[#1E2028] bg-[#0A0A0B] px-6 py-24 lg:px-12 lg:py-32 scroll-mt-20">
-          <span className="ghost-text pointer-events-none start-1/2 top-16 z-0 -translate-x-1/2 text-[#A78BFA] opacity-[0.04]" aria-hidden>
+        <section id="diets" className="reveal-section relative border-t border-divider bg-background px-6 py-24 lg:px-12 lg:py-32 scroll-mt-20">
+          <span className="ghost-text pointer-events-none start-1/2 top-16 z-0 -translate-x-1/2 text-accent-violet opacity-[0.04]" aria-hidden>
             NUTRITION
           </span>
           <div className="relative z-[1] mx-auto max-w-6xl">
             <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <MotionReveal reducedMotion={reduce}>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#A78BFA]">Nutrition</p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent-violet">Nutrition</p>
                 <h2 className="mt-3 font-display text-4xl font-semibold tracking-tight text-white lg:text-5xl">
-                  {dietCount}+ diet<br /><span className="text-[#A78BFA]">systems</span>
+                  {dietCount}+ diet<br /><span className="text-accent-violet">systems</span>
                 </h2>
               </MotionReveal>
               <MotionReveal reducedMotion={reduce} delayMs={100}>
-                <Link href={`/${locale}/diets`} className="inline-flex items-center gap-2 text-sm font-semibold text-[#A78BFA] transition-opacity hover:opacity-80">
+                <Link href={`/${locale}/diets`} className="inline-flex items-center gap-2 text-sm font-semibold text-accent-violet transition-opacity hover:opacity-80">
                   View all diets <ArrowRight className="h-4 w-4" />
                 </Link>
               </MotionReveal>
@@ -636,7 +636,7 @@ export function ImmersiveHome({
       {/* ══════════════ FINAL CTA — NEXUS BG ══════════════ */}
       <section
         ref={(el) => { nexusRef.current = el; }}
-        className="relative overflow-hidden border-t border-[#1E2028] px-6 py-32 text-center lg:px-12 lg:py-44"
+        className="relative overflow-hidden border-t border-divider px-6 py-32 text-center lg:px-12 lg:py-44"
       >
         <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
           <ParallaxLayer reduce={reduce} strength={4} className="absolute inset-0 h-full w-full">
@@ -689,13 +689,13 @@ export function ImmersiveHome({
         {/* CTA content */}
         <div className="relative z-10 mx-auto max-w-3xl">
           <MotionReveal reducedMotion={reduce}>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-[#52525B]">Access</p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-dim">Access</p>
             <h2 className="mt-5 font-display text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
               Start your next{" "}
               <span className="bg-gradient-to-r from-[#22D3EE] to-[#A78BFA] bg-clip-text text-transparent">12 weeks</span>
-              <span className="text-[#71717A]">.</span>
+              <span className="text-faint">.</span>
             </h2>
-            <p className="mt-6 text-lg text-[#A1A1AA]">{copy.midCta?.sub ?? "Join thousands already training smarter with TJFit."}</p>
+            <p className="mt-6 text-lg text-muted">{copy.midCta?.sub ?? "Join thousands already training smarter with TJFit."}</p>
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link
                 href={`/${locale}/signup`}
@@ -710,7 +710,7 @@ export function ImmersiveHome({
                 Browse Programs
               </Link>
             </div>
-            <p className="mt-8 text-[13px] text-[#52525B]">{copy.hero.trustLine}</p>
+            <p className="mt-8 text-[13px] text-dim">{copy.hero.trustLine}</p>
           </MotionReveal>
         </div>
       </section>

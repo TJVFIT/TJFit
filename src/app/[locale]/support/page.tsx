@@ -112,7 +112,7 @@ export default function SupportPage({ params }: { params: { locale: string } }) 
     <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
       <span className="badge">{copy.badge}</span>
       <h1 className="mt-4 font-display text-3xl font-semibold text-white sm:text-4xl">{copy.title}</h1>
-      <p className="mt-2 text-sm text-zinc-400">{copy.sub}</p>
+      <p className="mt-2 text-sm text-muted">{copy.sub}</p>
 
       {sent ? (
         <div className="mt-8 rounded-2xl border border-emerald-400/25 bg-emerald-500/10 p-6 text-sm text-emerald-300">
@@ -128,21 +128,21 @@ export default function SupportPage({ params }: { params: { locale: string } }) 
             {SUBJECTS.map((s) => <option key={s} value={s}>{s}</option>)}
           </select>
           <textarea
-            className="min-h-[120px] w-full rounded-xl border border-[#1E2028] bg-[#111215] p-3 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-[#22D3EE]"
+            className="min-h-[120px] w-full rounded-xl border border-divider bg-surface p-3 text-sm text-white outline-none placeholder:text-dim focus:border-accent"
             placeholder={copy.message} value={form.message}
             onChange={(e) => setForm((p) => ({ ...p, message: e.target.value }))}
             required minLength={20}
           />
           {error ? <p className="text-xs text-red-400">{error}</p> : null}
           <button type="submit" disabled={loading}
-            className="w-full rounded-full bg-[#22D3EE] py-3 text-sm font-bold text-[#09090B] disabled:opacity-50">
+            className="w-full rounded-full bg-accent py-3 text-sm font-bold text-[#09090B] disabled:opacity-50">
             {loading ? copy.sending : copy.cta}
           </button>
         </form>
       )}
 
       <div className="mt-6 text-center">
-        <Link href={`/${locale}/legal`} className="text-sm text-zinc-500 hover:text-zinc-300">
+        <Link href={`/${locale}/legal`} className="text-sm text-faint hover:text-bright">
           {copy.faqLink}
         </Link>
       </div>
