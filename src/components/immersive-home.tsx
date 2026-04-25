@@ -258,10 +258,10 @@ export function ImmersiveHome({
   const features = [
     { icon: Brain, title: "TJAI — Your AI Coach", desc: "Adaptive intake, progress-aware memory, and AI-built 12-week transformation plans. Diet + training + supplements.", accent: "#22D3EE", span: 2 as const },
     { icon: Dumbbell, title: "20+ Expert Programs", desc: "12-week structured plans for home or gym. Fat loss, muscle gain — all levels.", accent: "#67E8F9", span: 1 as const },
-    { icon: Apple, title: "Full Diet Systems", desc: "Daily meal plans with macros, recipes, grocery lists. Halal, vegan, budget — covered.", accent: "#A78BFA", span: 1 as const },
+    { icon: Apple, title: "Full Diet Systems", desc: "Daily meal plans with macros, recipes, grocery lists. Halal, vegan, budget - covered.", accent: "#94A3B8", span: 1 as const },
     { icon: Users, title: "Coach Marketplace", desc: "Book certified coaches. 1-on-1 guidance and personalized feedback.", accent: "#22D3EE", span: 1 as const },
-    { icon: Trophy, title: "Leaderboards", desc: "Earn TJCOIN, compete on weekly boards, unlock rewards for consistency.", accent: "#A78BFA", span: 1 as const },
-    { icon: Globe, title: "5 Languages", desc: "English, Turkish, Arabic, Spanish, French. Premium fitness in your language.", accent: "#A78BFA", span: 1 as const }
+    { icon: Trophy, title: "Leaderboards", desc: "Earn TJCOIN, compete on weekly boards, unlock rewards for consistency.", accent: "#94A3B8", span: 1 as const },
+    { icon: Globe, title: "5 Languages", desc: "English, Turkish, Arabic, Spanish, French. Premium fitness in your language.", accent: "#94A3B8", span: 1 as const }
   ] as const;
 
   // TJAI section ref for reveal trigger
@@ -692,7 +692,7 @@ export function ImmersiveHome({
             <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-dim">Access</p>
             <h2 className="mt-5 font-display text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
               Start your next{" "}
-              <span className="bg-gradient-to-r from-[#22D3EE] to-[#A78BFA] bg-clip-text text-transparent">12 weeks</span>
+              <span className="bg-gradient-to-r from-[#22D3EE] to-[#F6F3ED] bg-clip-text text-transparent">12 weeks</span>
               <span className="text-faint">.</span>
             </h2>
             <p className="mt-6 text-lg text-muted">{copy.midCta?.sub ?? "Join thousands already training smarter with TJFit."}</p>

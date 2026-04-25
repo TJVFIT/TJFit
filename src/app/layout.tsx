@@ -1,17 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import { Sora, DM_Sans } from "next/font/google";
+import { Manrope, Outfit } from "next/font/google";
 
 import { AuthProvider } from "@/components/auth-provider";
 import { TrackingScripts } from "@/components/marketing/tracking-scripts";
 import { BrandOrganizationJsonLd } from "@/components/brand-organization-json-ld";
-import { CursorGlow } from "@/components/motion/cursor-glow";
 import { BRAND } from "@/lib/brand-assets";
 import { getSiteUrl } from "@/lib/site-url";
 import "../../sentry.client.config";
 import "./globals.css";
 
 // Display font — Sora: premium geometric, modern tech-forward
-const sora = Sora({
+const outfit = Outfit({
   subsets: ["latin", "latin-ext"],
   weight: ["300", "400", "500", "600", "700", "800"],
   display: "swap",
@@ -20,7 +19,7 @@ const sora = Sora({
 });
 
 // Body font — DM Sans: ultra-clean, engineered for screens
-const dmSans = DM_Sans({
+const manrope = Manrope({
   subsets: ["latin", "latin-ext"],
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",
@@ -98,11 +97,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${dmSans.variable} ${sora.variable}`}>
+    <html lang="en" className={`${manrope.variable} ${outfit.variable}`}>
       <body className="tj-grain font-sans antialiased">
         <BrandOrganizationJsonLd />
         <TrackingScripts />
-        <CursorGlow />
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

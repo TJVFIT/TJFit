@@ -23,7 +23,7 @@ const config: Config = {
         accent: "#22D3EE",
         "accent-muted": "#67E8F9",
         "accent-sky": "#0EA5E9",
-        "accent-violet": "#A78BFA",
+        "accent-violet": "#94A3B8",
         success: "#22C55E",
         danger: "#EF4444",
         text: "#FFFFFF"
@@ -35,12 +35,12 @@ const config: Config = {
       boxShadow: {
         glass: "0 20px 80px rgba(0, 0, 0, 0.45)",
         "lux-glow": "0 0 60px -12px rgba(34, 211, 238, 0.35)",
-        "lux-violet": "0 0 50px -14px rgba(167, 139, 250, 0.3)",
+        "lux-violet": "0 18px 50px -24px rgba(148, 163, 184, 0.24)",
         "premium-card": "0 12px 40px -16px rgba(0,0,0,0.5)"
       },
       backgroundImage: {
         "hero-gradient":
-          "radial-gradient(circle at 50% 0%, rgba(34,211,238,0.18), transparent 42%), radial-gradient(circle at 100% 40%, rgba(167,139,250,0.14), transparent 38%)"
+          "radial-gradient(circle at 50% 0%, rgba(34,211,238,0.14), transparent 42%), radial-gradient(circle at 100% 40%, rgba(246,243,237,0.06), transparent 38%)"
       }
     }
   },

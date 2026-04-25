@@ -7,6 +7,7 @@ vercel-env-paste.txt
 dist
 coverage
 *.tsbuildinfo
+*.log
 
 .vercel
 scripts/_pdfgen/

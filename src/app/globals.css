@@ -15,9 +15,9 @@
   --color-accent-cyan: #22d3ee;
   --color-accent-cyan-dim: rgba(34, 211, 238, 0.12);
   --color-accent-cyan-glow: rgba(34, 211, 238, 0.35);
-  --color-accent-violet: #a78bfa;
-  --color-accent-violet-dim: rgba(167, 139, 250, 0.1);
-  --color-accent-violet-glow: rgba(167, 139, 250, 0.25);
+  --color-accent-violet: #94a3b8;
+  --color-accent-violet-dim: rgba(148, 163, 184, 0.1);
+  --color-accent-violet-glow: rgba(148, 163, 184, 0.18);
   --color-text-primary: #ffffff;
   --color-text-secondary: #a1a1aa;
   --color-text-muted: #52525b;
@@ -25,8 +25,8 @@
   --color-success: #22c55e;
 
   --gradient-hero:
-    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(34, 211, 238, 0.12) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(167, 139, 250, 0.08) 0%, transparent 60%), #0a0a0b;
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(34, 211, 238, 0.09) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(246, 243, 237, 0.035) 0%, transparent 60%), #0a0a0b;
 
   /* Homepage motion system (transform/opacity friendly) */
   --tj-motion-fast: 220ms;
@@ -39,7 +39,7 @@
   --tj-duration-slow: 10s;
   --tj-duration-medium: 5s;
   --tj-duration-fast: 0.8s;
-  --gradient-card-hover: linear-gradient(135deg, rgba(34, 211, 238, 0.04) 0%, rgba(167, 139, 250, 0.03) 100%);
+  --gradient-card-hover: linear-gradient(135deg, rgba(34, 211, 238, 0.035) 0%, rgba(246, 243, 237, 0.025) 100%);
   --gradient-divider: linear-gradient(90deg, transparent 0%, rgba(34, 211, 238, 0.4) 50%, transparent 100%);
   --gradient-btn-primary: linear-gradient(135deg, #22d3ee 0%, #0ea5e9 100%);
 
@@ -260,7 +260,7 @@ body {
   /* Latin: Sora/DM Sans. Cyrillic/Arabic/Devanagari: fall back to high-quality system fonts
      available on the user's OS (Segoe UI / SF / Noto / system-ui). Browsers will pick
      per-glyph fallback automatically. */
-  font-family: var(--font-sans, "DM Sans"), "Segoe UI", "Noto Sans", "Noto Sans Arabic",
+  font-family: var(--font-sans, "Manrope"), "Segoe UI", "Noto Sans", "Noto Sans Arabic",
     "Noto Sans Devanagari", "SF Pro Text", system-ui, -apple-system, sans-serif;
   font-feature-settings: "cv11", "ss01"; /* DM Sans optical features */
   -webkit-font-smoothing: antialiased;
@@ -272,7 +272,7 @@ body {
 /* Premium heading rendering */
 h1, h2, h3, h4, h5, h6,
 .font-display {
-  font-family: var(--font-display, "Sora"), "Segoe UI", "Noto Sans", "Noto Sans Arabic",
+  font-family: var(--font-display, "Outfit"), "Segoe UI", "Noto Sans", "Noto Sans Arabic",
     "Noto Sans Devanagari", ui-sans-serif, sans-serif;
   letter-spacing: -0.02em;
   font-feature-settings: "cv01", "ss01";
@@ -293,22 +293,18 @@ h1, h2, h3, h4, h5, h6,
   border-color: var(--tj-border);
 }
 
-/* ????????????????????????????????????????
-   PREMIUM CYAN GLOW SYSTEM
-   Multi-layer neon glow ? the signature
-   of the TJFit premium design language.
-???????????????????????????????????????? */
+/* Premium light system: restrained cyan, warm graphite surfaces. */
 
 /* Glow token variables */
 :root {
-  --glow-cyan-text: 0 0 6px rgba(34,211,238,0.85), 0 0 18px rgba(34,211,238,0.45), 0 0 45px rgba(34,211,238,0.18);
-  --glow-cyan-text-strong: 0 0 4px rgba(34,211,238,1), 0 0 14px rgba(34,211,238,0.7), 0 0 35px rgba(34,211,238,0.35), 0 0 80px rgba(34,211,238,0.12);
-  --glow-cyan-border: 0 0 0 1px rgba(34,211,238,0.3), 0 0 12px rgba(34,211,238,0.25), 0 0 35px rgba(34,211,238,0.08);
-  --glow-cyan-box: 0 0 20px rgba(34,211,238,0.2), 0 0 60px rgba(34,211,238,0.08);
-  --glow-violet-text: 0 0 6px rgba(167,139,250,0.7), 0 0 20px rgba(167,139,250,0.3), 0 0 50px rgba(167,139,250,0.12);
+  --glow-cyan-text: 0 0 18px rgba(34,211,238,0.16);
+  --glow-cyan-text-strong: 0 0 22px rgba(34,211,238,0.24), 0 0 54px rgba(34,211,238,0.1);
+  --glow-cyan-border: 0 0 0 1px rgba(34,211,238,0.18), 0 18px 44px rgba(0,0,0,0.22);
+  --glow-cyan-box: 0 16px 52px rgba(0,0,0,0.28), 0 0 36px rgba(34,211,238,0.06);
+  --glow-violet-text: 0 0 18px rgba(148,163,184,0.12);
 }
 
-/* ?? Text glow utilities ?????????????????? */
+/* Text glow utilities */
 .glow-cyan {
   text-shadow: var(--glow-cyan-text);
 }
@@ -321,20 +317,20 @@ h1, h2, h3, h4, h5, h6,
   text-shadow: var(--glow-violet-text);
 }
 
-/* ?? Global: all cyan-colored text gets automatic glow ?? */
+/* Keep accent text crisp; reserve glow for intentional hero moments. */
 [class*="text-[#22D3EE]"],
 [class*="text-cyan"],
 [class*="text-accent"],
 .text-accent {
-  text-shadow: var(--glow-cyan-text);
+  text-shadow: none;
 }
 
-/* Gradient text (clip-text) ? can't use text-shadow, use filter instead */
+/* Gradient text should read like ink, not neon signage. */
 [class*="bg-gradient"][class*="bg-clip-text"][class*="text-transparent"] {
-  filter: drop-shadow(0 0 12px rgba(34,211,238,0.3));
+  filter: drop-shadow(0 10px 30px rgba(0,0,0,0.24));
 }
 
-/* ?? Border glow on cyan borders ?? */
+/* Cyan borders get a controlled optical lift. */
 [class*="border-cyan"],
 [class*="border-[#22D3EE]"],
 [class*="border-[rgba(34,211,238"] {
@@ -345,18 +341,16 @@ h1, h2, h3, h4, h5, h6,
 .btn-primary-shimmer {
   box-shadow:
     0 0 0 1px rgba(255,255,255,0.12) inset,
-    0 0 18px rgba(34,211,238,0.55),
-    0 0 45px rgba(34,211,238,0.22),
-    0 0 80px rgba(34,211,238,0.08);
+    0 14px 34px rgba(0,0,0,0.28),
+    0 0 30px rgba(34,211,238,0.12);
   transition: box-shadow 200ms ease, transform 200ms ease, opacity 200ms ease;
 }
 
 .btn-primary-shimmer:hover {
   box-shadow:
     0 0 0 1px rgba(255,255,255,0.18) inset,
-    0 0 24px rgba(34,211,238,0.75),
-    0 0 60px rgba(34,211,238,0.35),
-    0 0 100px rgba(34,211,238,0.12);
+    0 18px 42px rgba(0,0,0,0.32),
+    0 0 38px rgba(34,211,238,0.18);
 }
 
 /* Glowing section dividers */
@@ -365,7 +359,7 @@ h1, h2, h3, h4, h5, h6,
   filter: drop-shadow(0 0 4px rgba(34,211,238,0.35));
 }
 
-/* ?? Premium input focus glow ?? */
+/* Premium input focus glow */
 .input:focus {
   outline: none;
   border-color: rgba(34,211,238,0.55) !important;
@@ -374,7 +368,7 @@ h1, h2, h3, h4, h5, h6,
     0 0 12px rgba(34,211,238,0.2) !important;
 }
 
-/* ?? Badge premium glow ?? */
+/* Badge premium lift */
 .badge,
 .lux-badge {
   box-shadow: 0 0 12px rgba(34,211,238,0.15), 0 0 0 1px rgba(34,211,238,0.12) inset;
@@ -386,13 +380,13 @@ h1, h2, h3, h4, h5, h6,
   box-shadow: 0 0 20px rgba(34,211,238,0.3), 0 0 0 1px rgba(34,211,238,0.2) inset;
 }
 
-/* ?? Pulsing glow animation ?? */
+/* Pulsing glow animation */
 @keyframes glow-pulse-cyan {
   0%, 100% {
-    text-shadow: 0 0 6px rgba(34,211,238,0.7), 0 0 20px rgba(34,211,238,0.3);
+    text-shadow: 0 0 12px rgba(34,211,238,0.16);
   }
   50% {
-    text-shadow: 0 0 10px rgba(34,211,238,1), 0 0 30px rgba(34,211,238,0.6), 0 0 60px rgba(34,211,238,0.2);
+    text-shadow: 0 0 20px rgba(34,211,238,0.24), 0 0 46px rgba(34,211,238,0.08);
   }
 }
 
@@ -753,7 +747,7 @@ strong, b {
 }
 
 .gradient-button {
-  background: linear-gradient(135deg, #22d3ee 0%, #06b6d4 45%, #a78bfa 100%);
+  background: linear-gradient(135deg, #22d3ee 0%, #06b6d4 52%, #94a3b8 100%);
   box-shadow: 0 0 32px -10px rgba(34, 211, 238, 0.4);
 }
 
@@ -1161,7 +1155,7 @@ strong, b {
     transparent 0%,
     transparent 20%,
     #22d3ee 40%,
-    #a78bfa 50%,
+    rgba(246, 243, 237, 0.7) 50%,
     #22d3ee 60%,
     transparent 80%,
     transparent 100%
@@ -1880,7 +1874,7 @@ html {
 }
 @keyframes apex-spin { to { --apex-angle: 360deg; } }
 .apex-rotating-border {
-  background: conic-gradient(from var(--apex-angle), #a78bfa, #22d3ee, #a78bfa);
+  background: conic-gradient(from var(--apex-angle), #94a3b8, #22d3ee, #94a3b8);
   animation: apex-spin 3s linear infinite;
   padding: 2px;
   border-radius: 99px;
@@ -1889,7 +1883,7 @@ html {
   background: #0d0f12;
   border-radius: 97px;
   padding: 4px 12px;
-  color: #a78bfa;
+  color: #94a3b8;
   font-size: 12px;
   font-weight: 700;
 }
@@ -1937,7 +1931,7 @@ html {
 .mesh-bg {
   background-image:
     radial-gradient(at 20% 30%, rgba(34,211,238,0.06) 0px, transparent 50%),
-    radial-gradient(at 80% 70%, rgba(167,139,250,0.06) 0px, transparent 50%);
+    radial-gradient(at 80% 70%, rgba(246,243,237,0.035) 0px, transparent 50%);
 }
 
 /* ?? Premium glow on focus-visible inputs ????????????????????????? */
@@ -3133,6 +3127,77 @@ button[aria-disabled="true"],
   }
 }
 
+/* Vector brand lockup */
+.tj-logo-lockup {
+  color: #f6f3ed;
+  transform: translateZ(0);
+}
+
+.tj-logo-lockup svg path:first-of-type {
+  filter: drop-shadow(0 0 10px rgba(34, 211, 238, 0.16));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  a:hover .tj-logo-lockup {
+    transform: translate3d(0, -1px, 0);
+  }
+}
+
+/* Watermark-free campaign surfaces replacing raster AI backgrounds. */
+.tj-procedural-programs,
+.tj-procedural-tjai,
+.tj-procedural-nexus {
+  transform: translateZ(0);
+}
+
+.tj-procedural-programs::before,
+.tj-procedural-tjai::before,
+.tj-procedural-nexus::before {
+  content: "";
+  position: absolute;
+  inset: 8% 6%;
+  border: 1px solid rgba(246, 243, 237, 0.055);
+  border-radius: 999px;
+  mask-image: linear-gradient(90deg, transparent, black 18%, black 82%, transparent);
+}
+
+.tj-procedural-programs::after {
+  content: "";
+  position: absolute;
+  inset: 18% 9%;
+  background:
+    linear-gradient(90deg, rgba(34, 211, 238, 0.22), transparent 18% 82%, rgba(34, 211, 238, 0.16)),
+    repeating-linear-gradient(90deg, transparent 0 88px, rgba(246, 243, 237, 0.08) 88px 89px);
+  clip-path: polygon(4% 64%, 24% 42%, 44% 56%, 66% 28%, 92% 46%, 92% 72%, 4% 72%);
+  opacity: 0.42;
+}
+
+.tj-procedural-tjai::after {
+  content: "TJAI";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(4rem, 15vw, 13rem);
+  font-weight: 900;
+  letter-spacing: -0.06em;
+  color: rgba(246, 243, 237, 0.045);
+}
+
+.tj-procedural-nexus::after {
+  content: "";
+  position: absolute;
+  inset: 18% 10%;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(34, 211, 238, 0.34) 0 4px, transparent 5px),
+    radial-gradient(circle at 32% 28%, rgba(34, 211, 238, 0.2) 0 3px, transparent 4px),
+    radial-gradient(circle at 72% 24%, rgba(34, 211, 238, 0.18) 0 3px, transparent 4px),
+    linear-gradient(28deg, transparent 0 48%, rgba(34, 211, 238, 0.22) 48.4% 48.8%, transparent 49.2% 100%),
+    linear-gradient(152deg, transparent 0 47%, rgba(246, 243, 237, 0.08) 47.2% 47.7%, transparent 48% 100%);
+  opacity: 0.5;
+}
+
 /* Global reduced-motion safety net - collapses any animation/transition
    that escaped per-component handling, while preserving opacity transitions
    for state legibility. */
@@ -3228,6 +3293,48 @@ button[aria-disabled="true"],
   animation: tjHeroReadoutFloat 8s var(--tj-ease-premium) infinite;
 }
 
+.tj-hero-signal {
+  min-width: 168px;
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  border-radius: 14px;
+  background:
+    linear-gradient(145deg, rgba(17, 18, 21, 0.74), rgba(13, 15, 18, 0.42)),
+    radial-gradient(circle at 0% 0%, rgba(34, 211, 238, 0.09), transparent 52%);
+  padding: 0.85rem 1rem;
+  backdrop-filter: blur(18px) saturate(1.08);
+  -webkit-backdrop-filter: blur(18px) saturate(1.08);
+  box-shadow:
+    0 18px 42px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.065);
+  animation: tjHeroReadoutFloat 8s var(--tj-ease-premium) infinite;
+}
+
+.tj-hero-command-panel {
+  animation: tjHeroPanelFloat 9s var(--tj-ease-premium) infinite;
+}
+
+.tj-hero-command-row {
+  opacity: 0;
+  transform: translate3d(0, 12px, 0);
+  animation: tjHeroRowIn 760ms var(--tj-ease-premium) forwards;
+}
+
+.tj-premium-primary-cta:active {
+  transform: scale(0.985);
+}
+
+@keyframes tjHeroPanelFloat {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -8px, 0); }
+}
+
+@keyframes tjHeroRowIn {
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 .tj-hero-readout:nth-of-type(2) {
   animation-delay: -2.2s;
 }
@@ -3248,8 +3355,16 @@ button[aria-disabled="true"],
 
 @media (prefers-reduced-motion: reduce) {
   .tj-hero-depth-grid,
-  .tj-hero-readout {
+  .tj-hero-readout,
+  .tj-hero-signal,
+  .tj-hero-command-panel,
+  .tj-hero-command-row {
     animation: none;
+  }
+
+  .tj-hero-command-row {
+    opacity: 1;
+    transform: none;
   }
 }
 
