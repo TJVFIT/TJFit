@@ -5,7 +5,7 @@ import type { ProgramBlueprint } from "@/lib/program-blueprints";
 import {
   PAGE,
   PDF_THEME,
-  drawChampagneBar,
+  drawAccentBar,
   drawCoverHeader,
   drawFooter,
   drawInteriorHeader,
@@ -24,7 +24,7 @@ export type ProgramPdfArgs = {
 };
 
 /**
- * Builds an editorial, obsidian+champagne PDF for a purchased program.
+ * Builds an editorial, obsidian+accent PDF for a purchased program.
  * Output: jsPDF instance — caller decides output format (blob/buffer/arraybuffer).
  */
 export function buildProgramPdf(args: ProgramPdfArgs): jsPDF {
@@ -36,10 +36,10 @@ export function buildProgramPdf(args: ProgramPdfArgs): jsPDF {
   fillPage(pdf, PDF_THEME.obsidian);
   drawCoverHeader(pdf, `${localeLabel ?? "EN"} · Program Dossier`);
 
-  // Champagne accent bar
-  drawChampagneBar(pdf, PAGE.margin, 180, 140, 4);
+  // Accent bar
+  drawAccentBar(pdf, PAGE.margin, 180, 140, 4);
 
-  setText(pdf, PDF_THEME.champagne);
+  setText(pdf, PDF_THEME.accent);
   pdf.setFont("helvetica", "bold");
   pdf.setFontSize(10);
   pdf.text(program.category.toUpperCase(), PAGE.margin, 210);
@@ -78,7 +78,7 @@ export function buildProgramPdf(args: ProgramPdfArgs): jsPDF {
   const colW = contentWidth / metaItems.length;
   metaItems.forEach(([label, value], i) => {
     const x = PAGE.margin + colW * i;
-    setText(pdf, PDF_THEME.champagne);
+    setText(pdf, PDF_THEME.accent);
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(7);
     pdf.text(label, x, metaY - 12);
@@ -130,7 +130,7 @@ export function buildProgramPdf(args: ProgramPdfArgs): jsPDF {
     ];
     meta.forEach(([k, v]) => {
       if (y > PAGE.height - 80) return;
-      setText(pdf, PDF_THEME.champagne);
+      setText(pdf, PDF_THEME.accent);
       pdf.setFont("helvetica", "bold");
       pdf.setFontSize(8);
       pdf.text(k.toUpperCase(), PAGE.margin, y);
@@ -166,7 +166,7 @@ export function buildProgramPdf(args: ProgramPdfArgs): jsPDF {
       });
       py += 10;
 
-      setText(pdf, PDF_THEME.champagne);
+      setText(pdf, PDF_THEME.accent);
       pdf.setFont("helvetica", "bold");
       pdf.setFontSize(9);
       pdf.text("TRAINING DAYS", PAGE.margin, py);
@@ -186,7 +186,7 @@ export function buildProgramPdf(args: ProgramPdfArgs): jsPDF {
       });
 
       py += 10;
-      setText(pdf, PDF_THEME.champagne);
+      setText(pdf, PDF_THEME.accent);
       pdf.setFont("helvetica", "bold");
       pdf.setFontSize(9);
       pdf.text("CONDITIONING & RECOVERY", PAGE.margin, py);
@@ -222,10 +222,10 @@ export function buildProgramPdf(args: ProgramPdfArgs): jsPDF {
   pdf.setFontSize(22);
   pdf.text("Recover with intent.", PAGE.margin, 170);
 
-  drawChampagneBar(pdf, PAGE.margin, 190, 80, 3);
+  drawAccentBar(pdf, PAGE.margin, 190, 80, 3);
 
   let sy = 230;
-  setText(pdf, PDF_THEME.champagne);
+  setText(pdf, PDF_THEME.accent);
   pdf.setFont("helvetica", "bold");
   pdf.setFontSize(9);
   pdf.text("SAFETY CHECKPOINTS", PAGE.margin, sy);
@@ -250,7 +250,7 @@ export function buildProgramPdf(args: ProgramPdfArgs): jsPDF {
     sy += 2;
   });
 
-  setText(pdf, PDF_THEME.champagne);
+  setText(pdf, PDF_THEME.accent);
   pdf.setFont("helvetica", "italic");
   pdf.setFontSize(10);
   pdf.text("Discipline. Ritual. Legacy.", PAGE.margin, PAGE.height - 60);

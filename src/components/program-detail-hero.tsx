@@ -34,15 +34,15 @@ export function ProgramDetailHero({
   const listLabel = isDiet ? breadcrumbDiets : breadcrumbPrograms;
   const variant = isDiet ? "nutrient" : "dumbbell";
 
-  const chip = (label: string, tone: "champagne" | "muted" = "muted") => (
+  const chip = (label: string, tone: "accent" | "muted" = "muted") => (
     <span
       className="rounded-full border px-3 py-1.5 text-xs font-medium"
       style={
-        tone === "champagne"
+        tone === "accent"
           ? {
               borderColor: "rgba(34,211,238,0.32)",
               background: "rgba(34,211,238,0.08)",
-              color: TJ_PALETTE.champagne
+              color: TJ_PALETTE.accent
             }
           : {
               borderColor: TJ_PALETTE.hairline,
@@ -98,7 +98,7 @@ export function ProgramDetailHero({
         </nav>
 
         <div className="mt-4 flex flex-wrap gap-2">
-          {chip(programCategory, "champagne")}
+          {chip(programCategory, "accent")}
           {chip(goalLabel)}
           {chip(locationOrTypeLabel)}
           {chip(levelLabel)}

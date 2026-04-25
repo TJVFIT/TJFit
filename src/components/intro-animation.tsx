@@ -8,19 +8,19 @@ import { subscribeToMediaQueryChange } from "@/lib/media-query-list";
  * Premium intro — editorial, not arcade.
  *
  * Sequence (reduce-motion: everything collapses to a 400ms dissolve):
- *   000ms  Obsidian + radial champagne wash fades in
- *   220ms  "TJ" monogram strokes draw in (stroke-dasharray sweep, champagne)
- *  1000ms  Monogram fills with champagne→roseGold gradient
+ *   000ms  Obsidian + radial accent wash fades in
+ *   220ms  "TJ" monogram strokes draw in (stroke-dasharray sweep, accent)
+ *  1000ms  Monogram fills with accent→accentSoft gradient
  *  1300ms  Wordmark "TJFIT" fades up, letters tracked apart
- *  1700ms  Eyebrow "AI FITNESS INTELLIGENCE" slides in, champagne hairline
- *  2100ms  Champagne shimmer wipes diagonally across wordmark
+ *  1700ms  Eyebrow "AI FITNESS INTELLIGENCE" slides in, accent hairline
+ *  2100ms  Accent shimmer wipes diagonally across wordmark
  *  2800ms  Whole overlay fades out
  *  3300ms  onComplete — hero takes over
  */
 
-const CHAMPAGNE = "#22D3EE";
-const CHAMPAGNE_HI = "#A5F3FC";
-const ROSE_GOLD = "#67E8F9";
+const ACCENT = "#22D3EE";
+const ACCENT_HI = "#A5F3FC";
+const ACCENT_SOFT = "#67E8F9";
 const OBSIDIAN = "#08080a";
 
 type Phase = "enter" | "draw" | "fill" | "settled" | "shimmer" | "exit";
@@ -81,7 +81,7 @@ export default function IntroAnimation({ onComplete }: { onComplete: () => void 
         transition: "opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1)"
       }}
     >
-      {/* Champagne radial wash */}
+      {/* Accent radial wash */}
       <div
         style={{
           position: "absolute",
@@ -140,10 +140,10 @@ export default function IntroAnimation({ onComplete }: { onComplete: () => void 
           }}
         >
           <defs>
-            <linearGradient id="intro-champagne" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor={CHAMPAGNE_HI} />
-              <stop offset="55%" stopColor={CHAMPAGNE} />
-              <stop offset="100%" stopColor={ROSE_GOLD} />
+            <linearGradient id="intro-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor={ACCENT_HI} />
+              <stop offset="55%" stopColor={ACCENT} />
+              <stop offset="100%" stopColor={ACCENT_SOFT} />
             </linearGradient>
           </defs>
 
@@ -155,7 +155,7 @@ export default function IntroAnimation({ onComplete }: { onComplete: () => void 
             height="172"
             rx="4"
             fill="none"
-            stroke={CHAMPAGNE}
+            stroke={ACCENT}
             strokeWidth="1"
             strokeOpacity={strokeReady ? 0.35 : 0}
             style={{ transition: "stroke-opacity 0.6s ease 0.3s" }}
@@ -165,7 +165,7 @@ export default function IntroAnimation({ onComplete }: { onComplete: () => void 
           <path
             d="M 62 54 L 138 54 M 100 54 L 100 150"
             fill="none"
-            stroke="url(#intro-champagne)"
+            stroke="url(#intro-accent)"
             strokeWidth={filled ? 10 : 3}
             strokeLinecap="square"
             style={{
@@ -180,7 +180,7 @@ export default function IntroAnimation({ onComplete }: { onComplete: () => void 
           <path
             d="M 132 54 L 132 130 Q 132 150 112 150 Q 96 150 96 134"
             fill="none"
-            stroke="url(#intro-champagne)"
+            stroke="url(#intro-accent)"
             strokeWidth={filled ? 10 : 3}
             strokeLinecap="square"
             strokeLinejoin="miter"
@@ -220,7 +220,7 @@ export default function IntroAnimation({ onComplete }: { onComplete: () => void 
               fontWeight: 900,
               letterSpacing: "0.24em",
               lineHeight: 1,
-              backgroundImage: `linear-gradient(90deg, #F6F3ED 0%, ${CHAMPAGNE_HI} 45%, #F6F3ED 100%)`,
+              backgroundImage: `linear-gradient(90deg, #F6F3ED 0%, ${ACCENT_HI} 45%, #F6F3ED 100%)`,
               WebkitBackgroundClip: "text",
               backgroundClip: "text",
               color: "transparent",
@@ -256,7 +256,7 @@ export default function IntroAnimation({ onComplete }: { onComplete: () => void 
             marginTop: 14,
             fontSize: 10,
             fontWeight: 600,
-            color: CHAMPAGNE,
+            color: ACCENT,
             letterSpacing: "0.42em",
             textTransform: "uppercase",
             opacity: wordVisible ? 0.9 : 0,

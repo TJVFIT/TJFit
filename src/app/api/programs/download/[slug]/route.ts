@@ -13,7 +13,7 @@ export const runtime = "nodejs";
 
 /**
  * GET /api/programs/download/[slug]
- * Returns the premium obsidian+champagne PDF for a purchased program or diet.
+ * Returns the premium obsidian+accent PDF for a purchased program or diet.
  * - Gated by auth + paid `program_orders` row (or `is_free`).
  * - Streams the PDF as application/pdf with a filename-safe Content-Disposition.
  */

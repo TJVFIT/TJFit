@@ -115,7 +115,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
           <TJHeroStage variant="neural" speed={0.85} intensity={0.95} />
         </div>
         <div className="relative z-10">
-          <p className="text-[11px] uppercase tracking-[0.28em]" style={{ color: TJ_PALETTE.champagne }}>
+          <p className="text-[11px] uppercase tracking-[0.28em]" style={{ color: TJ_PALETTE.accent }}>
             AI FITNESS COACH
           </p>
           <h1
@@ -144,7 +144,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
             href={`/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`}
             className="mt-7 inline-flex min-h-[50px] items-center justify-center rounded-full px-8 text-sm font-bold transition-[filter,transform] duration-200 hover:brightness-110"
             style={{
-              background: `linear-gradient(180deg, ${TJ_PALETTE.champagneHi}, ${TJ_PALETTE.champagne})`,
+              background: `linear-gradient(180deg, ${TJ_PALETTE.accentHi}, ${TJ_PALETTE.accent})`,
               color: TJ_PALETTE.obsidian,
               boxShadow: "0 12px 40px rgba(34,211,238,0.28)"
             }}

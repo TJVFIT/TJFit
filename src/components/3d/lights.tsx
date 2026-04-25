@@ -7,9 +7,9 @@ import { TJ_LIGHTS } from "./palette";
 
 /**
  * SCARABUSE-style three-point cinematic lighting:
- *   - warm champagne key from upper-right
+ *   - warm accent key from upper-right
  *   - cool moonlight fill from lower-left
- *   - soft gold rim behind for silhouette edge
+ *   - soft accent rim behind for silhouette edge
  * Intensity breathes subtly.
  */
 export function TJStageLights({ intensity = 1 }: { intensity?: number }) {
@@ -31,7 +31,7 @@ export function TJStageLights({ intensity = 1 }: { intensity?: number }) {
         ref={keyRef}
         position={[4.5, 3.2, 4]}
         intensity={2.4 * intensity}
-        color={TJ_LIGHTS.keyChampagne}
+        color={TJ_LIGHTS.keyAccent}
         distance={22}
         decay={1.6}
       />
@@ -47,7 +47,7 @@ export function TJStageLights({ intensity = 1 }: { intensity?: number }) {
         ref={rimRef}
         position={[0, 1.8, -5]}
         intensity={1.6 * intensity}
-        color={TJ_LIGHTS.rimGold}
+        color={TJ_LIGHTS.rimAccent}
         distance={14}
         decay={1.4}
       />

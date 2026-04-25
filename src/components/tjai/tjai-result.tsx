@@ -275,9 +275,9 @@ export function TJAIResult({
       <div className="mx-auto w-full max-w-5xl space-y-8">
 
         {/* Medical disclaimer */}
-        <div className="flex items-start gap-3 rounded-xl border border-amber-400/20 bg-amber-400/5 px-4 py-3">
-          <span className="mt-0.5 shrink-0 text-amber-400">⚠️</span>
-          <p className="text-xs text-amber-200/80">
+        <div className="flex items-start gap-3 rounded-xl border border-cyan-400/20 bg-cyan-400/5 px-4 py-3">
+          <span className="mt-0.5 shrink-0 text-cyan-300">⚠️</span>
+          <p className="text-xs text-cyan-200/80">
             Consult a physician before starting any new training or nutrition program. TJAI generates personalized guidance but is not a substitute for professional medical advice.
           </p>
         </div>

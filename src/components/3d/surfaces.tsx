@@ -7,16 +7,16 @@ import { TJ_PALETTE } from "./palette";
 export function ObsidianPanel({
   children,
   className,
-  glow = "champagne",
+  glow = "accent",
   style
 }: {
   children: ReactNode;
   className?: string;
-  glow?: "champagne" | "moonlight" | "none";
+  glow?: "accent" | "moonlight" | "none";
   style?: CSSProperties;
 }) {
   const glowStyle: CSSProperties = {};
-  if (glow === "champagne") {
+  if (glow === "accent") {
     glowStyle.background = `radial-gradient(circle at 85% 0%, rgba(34,211,238, 0.14), transparent 55%), ${TJ_PALETTE.obsidianGlass}`;
   } else if (glow === "moonlight") {
     glowStyle.background = `radial-gradient(circle at 15% 100%, rgba(143, 164, 196, 0.12), transparent 55%), ${TJ_PALETTE.obsidianGlass}`;
@@ -50,12 +50,12 @@ export function Hairline({ className }: { className?: string }) {
   );
 }
 
-/** Champagne-inked eyebrow label. */
+/** Accent-inked eyebrow label. */
 export function TJEyebrow({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <span
       className={"inline-block text-[11px] font-medium uppercase tracking-[0.32em] " + (className ?? "")}
-      style={{ color: TJ_PALETTE.champagne }}
+      style={{ color: TJ_PALETTE.accent }}
     >
       {children}
     </span>

@@ -4,7 +4,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 import * as THREE from "three";
 
-/** M8 — slow gold torus-knot “trophy” for records hero */
+/** M8 — slow accent torus-knot “trophy” for records hero */
 function TrophyMesh() {
   const ref = useRef<THREE.Mesh>(null);
   useFrame((_, delta) => {
@@ -14,8 +14,8 @@ function TrophyMesh() {
     <mesh ref={ref}>
       <torusKnotGeometry args={[0.95, 0.3, 128, 32, 2, 3]} />
       <meshStandardMaterial
-        color="#F59E0B"
-        emissive="#F59E0B"
+        color="#22D3EE"
+        emissive="#22D3EE"
         emissiveIntensity={0.5}
         metalness={0.88}
         roughness={0.18}
@@ -35,7 +35,7 @@ export default function RecordsTrophyCanvas() {
     >
       <ambientLight intensity={0.35} />
       <directionalLight position={[4, 6, 4]} intensity={1.15} color="#fff8e7" />
-      <pointLight position={[-3, -2, 2]} intensity={0.6} color="#F59E0B" />
+      <pointLight position={[-3, -2, 2]} intensity={0.6} color="#22D3EE" />
       <TrophyMesh />
     </Canvas>
   );

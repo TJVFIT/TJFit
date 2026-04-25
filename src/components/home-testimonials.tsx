@@ -150,7 +150,7 @@ export function HomeTestimonials({ locale }: { locale: Locale }) {
                   className="glass-panel-glow shrink-0 rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[rgba(13,15,18,0.65)] px-6 py-8 sm:px-10 sm:py-10"
                   style={{ width: `${100 / total}%` }}
                 >
-                  <div className="flex gap-0.5 text-[#FBBF24]" aria-hidden>
+                  <div className="flex gap-0.5 text-[#A5F3FC]" aria-hidden>
                     {Array.from({ length: 5 }).map((_, i) => (
                       <span key={i}>★</span>
                     ))}

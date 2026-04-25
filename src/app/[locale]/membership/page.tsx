@@ -37,7 +37,7 @@ export default function MembershipPage({ params }: { params: { locale: string } 
           <span
             className="mb-5 inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.24em]"
             style={{
-              color: TJ_PALETTE.champagne,
+              color: TJ_PALETTE.accent,
               borderColor: "rgba(34,211,238,0.3)",
               background: "rgba(34,211,238,0.06)"
             }}

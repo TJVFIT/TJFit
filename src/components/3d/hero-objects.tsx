@@ -12,7 +12,7 @@ export type HeroPointerRef = MutableRefObject<{ x: number; y: number }>;
 type HeroProps = { pointerRef?: HeroPointerRef; speed?: number };
 
 /**
- * Scarab-like layered centerpiece — obsidian torus-knot nested inside a champagne halo.
+ * Scarab-like layered centerpiece — obsidian torus-knot nested inside a accent halo.
  * Used by the homepage hero. Scroll-driven intensity handled upstream.
  */
 export function ScarabCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
@@ -44,7 +44,7 @@ export function ScarabCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
     <group>
       <mesh ref={coreRef}>
         <torusKnotGeometry args={[1.05, 0.34, 200, 28, 2, 3]} />
-        <meshStandardMaterial {...TJ_MATERIAL.liquidGold} />
+        <meshStandardMaterial {...TJ_MATERIAL.liquidCyan} />
       </mesh>
 
       <mesh ref={shellRef}>
@@ -54,12 +54,12 @@ export function ScarabCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
 
       <mesh ref={haloRef} rotation={[Math.PI / 2.5, 0, 0]}>
         <torusGeometry args={[2.4, 0.012, 8, 180]} />
-        <meshStandardMaterial {...TJ_MATERIAL.brushedChampagne} />
+        <meshStandardMaterial {...TJ_MATERIAL.brushedAccent} />
       </mesh>
 
       <mesh rotation={[Math.PI / 4, Math.PI / 3, 0]}>
         <torusGeometry args={[2.95, 0.008, 8, 180]} />
-        <meshStandardMaterial color={TJ_PALETTE.champagneHi} metalness={1} roughness={0.2} />
+        <meshStandardMaterial color={TJ_PALETTE.accentHi} metalness={1} roughness={0.2} />
       </mesh>
     </group>
   );
@@ -82,7 +82,7 @@ export function DumbbellCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
     <group ref={groupRef} rotation={[0, 0, Math.PI / 2]}>
       <mesh>
         <cylinderGeometry args={[0.12, 0.12, 2.6, 32]} />
-        <meshStandardMaterial {...TJ_MATERIAL.brushedChampagne} />
+        <meshStandardMaterial {...TJ_MATERIAL.brushedAccent} />
       </mesh>
       {[-1.4, 1.4].map((y) => (
         <group key={y} position={[0, y, 0]}>
@@ -92,7 +92,7 @@ export function DumbbellCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
           </mesh>
           <mesh rotation={[Math.PI / 2, 0, 0]}>
             <torusGeometry args={[0.55, 0.04, 12, 80]} />
-            <meshStandardMaterial {...TJ_MATERIAL.liquidGold} />
+            <meshStandardMaterial {...TJ_MATERIAL.liquidCyan} />
           </mesh>
         </group>
       ))}
@@ -121,13 +121,13 @@ export function NutrientCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
     <group ref={groupRef}>
       <mesh ref={coreRef}>
         <icosahedronGeometry args={[0.85, 1]} />
-        <meshStandardMaterial {...TJ_MATERIAL.emberCore} />
+        <meshStandardMaterial {...TJ_MATERIAL.coreAccent} />
       </mesh>
 
       {[2.2, 2.6, 3.1].map((r, i) => (
         <mesh key={r} rotation={[Math.PI / 2 + i * 0.3, 0, i * 0.6]}>
           <torusGeometry args={[r, 0.008, 8, 180]} />
-          <meshStandardMaterial {...TJ_MATERIAL.brushedChampagne} />
+          <meshStandardMaterial {...TJ_MATERIAL.brushedAccent} />
         </mesh>
       ))}
 
@@ -137,7 +137,7 @@ export function NutrientCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
           <Float key={i} speed={1 + i * 0.2} rotationIntensity={0.4} floatIntensity={0.3}>
             <mesh position={[Math.cos(angle) * 2.4, Math.sin(angle * 1.3) * 0.4, Math.sin(angle) * 2.4]}>
               <dodecahedronGeometry args={[0.09 + (i % 3) * 0.04, 0]} />
-              <meshStandardMaterial {...TJ_MATERIAL.liquidGold} />
+              <meshStandardMaterial {...TJ_MATERIAL.liquidCyan} />
             </mesh>
           </Float>
         );
@@ -199,9 +199,9 @@ export function CurlAthleteCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
     }
   });
 
-  const skinMat = TJ_MATERIAL.emberCore;
-  const accentMat = TJ_MATERIAL.liquidGold;
-  const wireMat = TJ_MATERIAL.brushedChampagne;
+  const skinMat = TJ_MATERIAL.coreAccent;
+  const accentMat = TJ_MATERIAL.liquidCyan;
+  const wireMat = TJ_MATERIAL.brushedAccent;
 
   const UPPER_ARM_LEN = 1.0;
   const FOREARM_LEN = 0.95;
@@ -253,7 +253,7 @@ export function CurlAthleteCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
       </mesh>
       <mesh ref={bicepRef} position={[side * 0.02, UPPER_ARM_DROP + 0.12, 0.06]}>
         <sphereGeometry args={[0.14, 18, 14]} />
-        <meshStandardMaterial color={TJ_PALETTE.champagneHi} emissive={TJ_PALETTE.champagne} emissiveIntensity={0.55} metalness={0.2} roughness={0.2} />
+        <meshStandardMaterial color={TJ_PALETTE.accentHi} emissive={TJ_PALETTE.accent} emissiveIntensity={0.55} metalness={0.2} roughness={0.2} />
       </mesh>
       <group ref={forearmRef} position={[0, ELBOW_Y, 0]}>
         <mesh position={[0, 0, 0]}>
@@ -287,11 +287,11 @@ export function CurlAthleteCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
       </mesh>
       <mesh position={[0, 0.45, 0]}>
         <cylinderGeometry args={[0.92, 0.58, 1.3, 10]} />
-        <meshStandardMaterial color={TJ_PALETTE.champagneHi} emissive={TJ_PALETTE.champagne} emissiveIntensity={0.4} metalness={0.35} roughness={0.25} />
+        <meshStandardMaterial color={TJ_PALETTE.accentHi} emissive={TJ_PALETTE.accent} emissiveIntensity={0.4} metalness={0.35} roughness={0.25} />
       </mesh>
       <mesh ref={torsoWireRef} position={[0, 0.45, 0]}>
         <icosahedronGeometry args={[1.18, 1]} />
-        <meshStandardMaterial color={TJ_PALETTE.champagneHi} wireframe transparent opacity={0.32} emissive={TJ_PALETTE.champagne} emissiveIntensity={0.4} />
+        <meshStandardMaterial color={TJ_PALETTE.accentHi} wireframe transparent opacity={0.32} emissive={TJ_PALETTE.accent} emissiveIntensity={0.4} />
       </mesh>
       <mesh position={[0, -0.45, 0]}>
         <cylinderGeometry args={[0.52, 0.7, 0.5, 10]} />
@@ -299,7 +299,7 @@ export function CurlAthleteCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
       </mesh>
       <mesh position={[0, -1.25, 0]}>
         <coneGeometry args={[0.62, 1.3, 6]} />
-        <meshStandardMaterial {...wireMat} wireframe transparent opacity={0.42} emissive={TJ_PALETTE.champagne} emissiveIntensity={0.3} />
+        <meshStandardMaterial {...wireMat} wireframe transparent opacity={0.42} emissive={TJ_PALETTE.accent} emissiveIntensity={0.3} />
       </mesh>
 
       <ArmGroup side={-1} forearmRef={leftForearmRef} bicepRef={leftBicepRef} />
@@ -307,7 +307,7 @@ export function CurlAthleteCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
 
       <mesh position={[0, 0.3, -0.6]}>
         <torusGeometry args={[1.9, 0.006, 8, 140]} />
-        <meshStandardMaterial color={TJ_PALETTE.champagneHi} emissive={TJ_PALETTE.champagne} emissiveIntensity={0.6} transparent opacity={0.55} />
+        <meshStandardMaterial color={TJ_PALETTE.accentHi} emissive={TJ_PALETTE.accent} emissiveIntensity={0.6} transparent opacity={0.55} />
       </mesh>
     </group>
   );
@@ -340,7 +340,7 @@ export function NeuralOrbCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
     <group>
       <mesh ref={coreRef}>
         <icosahedronGeometry args={[1.05, 2]} />
-        <meshStandardMaterial {...TJ_MATERIAL.emberCore} />
+        <meshStandardMaterial {...TJ_MATERIAL.coreAccent} />
       </mesh>
       <mesh ref={shellRef}>
         <icosahedronGeometry args={[1.85, 1]} />
@@ -348,7 +348,7 @@ export function NeuralOrbCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
       </mesh>
       <mesh rotation={[Math.PI / 3, 0, 0]}>
         <torusGeometry args={[2.3, 0.006, 8, 200]} />
-        <meshStandardMaterial {...TJ_MATERIAL.liquidGold} />
+        <meshStandardMaterial {...TJ_MATERIAL.liquidCyan} />
       </mesh>
     </group>
   );

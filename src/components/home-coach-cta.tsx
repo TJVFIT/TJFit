@@ -147,7 +147,7 @@ export function HomeCoachCta({ locale }: { locale: Locale }) {
                   <p className="mt-1 text-[10px] font-medium uppercase tracking-wide text-[#52525B]">{copy.mockRevenue}</p>
                 </div>
                 <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-[rgba(17,18,21,0.6)] px-2 py-3">
-                  <p className="text-lg font-bold text-amber-300">★ 4.9</p>
+                  <p className="text-lg font-bold text-cyan-300">★ 4.9</p>
                   <p className="mt-1 text-[10px] font-medium uppercase tracking-wide text-[#52525B]">{copy.mockRating}</p>
                 </div>
               </div>

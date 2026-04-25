@@ -6,16 +6,16 @@
 import { TJ_PALETTE } from "./palette";
 
 export const TJ_MATERIAL = {
-  liquidGold: {
-    color: TJ_PALETTE.champagne,
-    emissive: TJ_PALETTE.champagneLo,
+  liquidCyan: {
+    color: TJ_PALETTE.accent,
+    emissive: TJ_PALETTE.accentLo,
     emissiveIntensity: 0.18,
     metalness: 1,
     roughness: 0.08
   },
-  brushedChampagne: {
-    color: TJ_PALETTE.champagneHi,
-    emissive: TJ_PALETTE.antiqueBronze,
+  brushedAccent: {
+    color: TJ_PALETTE.accentHi,
+    emissive: TJ_PALETTE.accentDeep,
     emissiveIntensity: 0.06,
     metalness: 0.92,
     roughness: 0.34
@@ -43,9 +43,9 @@ export const TJ_MATERIAL = {
     metalness: 1,
     roughness: 0.18
   },
-  emberCore: {
-    color: TJ_PALETTE.roseGold,
-    emissive: TJ_PALETTE.champagne,
+  coreAccent: {
+    color: TJ_PALETTE.accentSoft,
+    emissive: TJ_PALETTE.accent,
     emissiveIntensity: 0.85,
     metalness: 0.3,
     roughness: 0.15

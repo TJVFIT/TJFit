@@ -5,7 +5,7 @@ import { getDietCalorieSpec, getDietPhase } from "@/lib/diet-catalog";
 import {
   PAGE,
   PDF_THEME,
-  drawChampagneBar,
+  drawAccentBar,
   drawCoverHeader,
   drawFooter,
   drawInteriorHeader,
@@ -68,9 +68,9 @@ export function buildDietPdf(args: DietPdfArgs): jsPDF {
   fillPage(pdf, PDF_THEME.obsidian);
   drawCoverHeader(pdf, `${localeLabel ?? "EN"} · Nutrition Dossier`);
 
-  drawChampagneBar(pdf, PAGE.margin, 180, 140, 4);
+  drawAccentBar(pdf, PAGE.margin, 180, 140, 4);
 
-  setText(pdf, PDF_THEME.champagne);
+  setText(pdf, PDF_THEME.accent);
   pdf.setFont("helvetica", "bold");
   pdf.setFontSize(10);
   pdf.text(phase === "cutting" ? "CUTTING PROTOCOL" : "MASS PROTOCOL", PAGE.margin, 210);
@@ -115,7 +115,7 @@ export function buildDietPdf(args: DietPdfArgs): jsPDF {
   const colW = contentWidth / metaItems.length;
   metaItems.forEach(([label, value], i) => {
     const x = PAGE.margin + colW * i;
-    setText(pdf, PDF_THEME.champagne);
+    setText(pdf, PDF_THEME.accent);
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(7);
     pdf.text(label, x, metaY - 12);
@@ -171,7 +171,7 @@ export function buildDietPdf(args: DietPdfArgs): jsPDF {
   const structure = weeklyStructure(phase);
   let wy = 130;
   structure.forEach((row) => {
-    setText(pdf, PDF_THEME.champagne);
+    setText(pdf, PDF_THEME.accent);
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(9);
     pdf.text(row.day.toUpperCase(), PAGE.margin, wy);
@@ -199,7 +199,7 @@ export function buildDietPdf(args: DietPdfArgs): jsPDF {
   const meals = defaultMealTemplate(phase);
   let my = 130;
   meals.forEach((m) => {
-    setText(pdf, PDF_THEME.champagne);
+    setText(pdf, PDF_THEME.accent);
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(9);
     pdf.text(m.slot, PAGE.margin, my);
@@ -218,7 +218,7 @@ export function buildDietPdf(args: DietPdfArgs): jsPDF {
     });
     const itemH = itemLines.length * 13;
 
-    setText(pdf, PDF_THEME.roseGold);
+    setText(pdf, PDF_THEME.accentSoft);
     pdf.setFont("helvetica", "italic");
     pdf.setFontSize(9);
     pdf.text(m.macros, PAGE.margin + 54, my + 18 + itemH);
@@ -242,7 +242,7 @@ export function buildDietPdf(args: DietPdfArgs): jsPDF {
   pdf.text("Eat with intent.", PAGE.margin, 140);
   pdf.text("Adjust with data.", PAGE.margin, 170);
 
-  drawChampagneBar(pdf, PAGE.margin, 190, 80, 3);
+  drawAccentBar(pdf, PAGE.margin, 190, 80, 3);
 
   const tips = [
     "Weigh in 3 mornings per week, same conditions. Adjust calories every 2 weeks.",
@@ -264,7 +264,7 @@ export function buildDietPdf(args: DietPdfArgs): jsPDF {
     ty += 4;
   });
 
-  setText(pdf, PDF_THEME.champagne);
+  setText(pdf, PDF_THEME.accent);
   pdf.setFont("helvetica", "italic");
   pdf.setFontSize(10);
   pdf.text("Discipline. Ritual. Legacy.", PAGE.margin, PAGE.height - 60);

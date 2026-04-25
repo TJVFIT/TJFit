@@ -237,7 +237,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
       particleCount: 70,
       spread: 80,
       origin: { y: 0.6 },
-      colors: ["#22D3EE", "#A78BFA", "#F59E0B", "#22C55E"]
+      colors: ["#22D3EE", "#A78BFA", "#22D3EE", "#22C55E"]
     });
     showToast("Milestone completed 🎉");
     await load();

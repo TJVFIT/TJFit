@@ -3,7 +3,7 @@ import { jsPDF } from "jspdf";
 import {
   PAGE,
   PDF_THEME,
-  drawChampagneBar,
+  drawAccentBar,
   drawCoverHeader,
   drawFooter,
   drawInteriorHeader,
@@ -71,9 +71,9 @@ export function buildTjaiPdf(args: TjaiPdfArgs): jsPDF {
   // ── Cover ───────────────────────────────────────────────────────────
   fillPage(pdf, PDF_THEME.obsidian);
   drawCoverHeader(pdf, sanitize(`${localeLabel ?? "EN"} · TJAI Transformation Plan`));
-  drawChampagneBar(pdf, PAGE.margin, 180, 140, 4);
+  drawAccentBar(pdf, PAGE.margin, 180, 140, 4);
 
-  setText(pdf, PDF_THEME.champagne);
+  setText(pdf, PDF_THEME.accent);
   pdf.setFont("helvetica", "bold");
   pdf.setFontSize(10);
   pdf.text("PERSONAL DOSSIER", PAGE.margin, 210);
@@ -113,7 +113,7 @@ export function buildTjaiPdf(args: TjaiPdfArgs): jsPDF {
   const colW = contentWidth / metaItems.length;
   metaItems.forEach(([label, value], i) => {
     const x = PAGE.margin + colW * i;
-    setText(pdf, PDF_THEME.champagne);
+    setText(pdf, PDF_THEME.accent);
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(7);
     pdf.text(label, x, metaY - 12);
@@ -166,7 +166,7 @@ export function buildTjaiPdf(args: TjaiPdfArgs): jsPDF {
   const philosophy = sanitize(plan.diet?.philosophy ?? "");
   if (philosophy) {
     y += 12;
-    setText(pdf, PDF_THEME.champagne);
+    setText(pdf, PDF_THEME.accent);
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(10);
     pdf.text("DIET PHILOSOPHY", PAGE.margin, y);
@@ -184,7 +184,7 @@ export function buildTjaiPdf(args: TjaiPdfArgs): jsPDF {
   const programPhilosophy = sanitize(plan.program?.philosophy ?? "");
   if (programPhilosophy && y < PAGE.height - 120) {
     y += 12;
-    setText(pdf, PDF_THEME.champagne);
+    setText(pdf, PDF_THEME.accent);
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(10);
     pdf.text("TRAINING PHILOSOPHY", PAGE.margin, y);
@@ -221,7 +221,7 @@ export function buildTjaiPdf(args: TjaiPdfArgs): jsPDF {
         return newDietPage(week);
       });
 
-      setText(pdf, PDF_THEME.champagne);
+      setText(pdf, PDF_THEME.accent);
       pdf.setFont("helvetica", "bold");
       pdf.setFontSize(10);
       pdf.text(sanitize(day.label || "").toUpperCase(), PAGE.margin, dy);
@@ -294,7 +294,7 @@ export function buildTjaiPdf(args: TjaiPdfArgs): jsPDF {
         return newProgramPage(week);
       });
 
-      setText(pdf, PDF_THEME.champagne);
+      setText(pdf, PDF_THEME.accent);
       pdf.setFont("helvetica", "bold");
       pdf.setFontSize(11);
       pdf.text(sanitize(`${day.day ?? ""} — ${day.label ?? ""}`), PAGE.margin, py);
@@ -362,7 +362,7 @@ export function buildTjaiPdf(args: TjaiPdfArgs): jsPDF {
     let sy = 130;
     const renderTier = (label: string, items: typeof supps.tier1 = []) => {
       if (!items || !items.length) return;
-      setText(pdf, PDF_THEME.champagne);
+      setText(pdf, PDF_THEME.accent);
       pdf.setFont("helvetica", "bold");
       pdf.setFontSize(10);
       pdf.text(label, PAGE.margin, sy);
@@ -414,7 +414,7 @@ export function buildTjaiPdf(args: TjaiPdfArgs): jsPDF {
   pdf.setFontSize(22);
   pdf.text("Train with intent.", PAGE.margin, 140);
   pdf.text("Eat with purpose.", PAGE.margin, 170);
-  drawChampagneBar(pdf, PAGE.margin, 190, 80, 3);
+  drawAccentBar(pdf, PAGE.margin, 190, 80, 3);
 
   setText(pdf, PDF_THEME.textMuted);
   pdf.setFont("helvetica", "normal");
@@ -434,7 +434,7 @@ export function buildTjaiPdf(args: TjaiPdfArgs): jsPDF {
     ny += 4;
   });
 
-  setText(pdf, PDF_THEME.champagne);
+  setText(pdf, PDF_THEME.accent);
   pdf.setFont("helvetica", "italic");
   pdf.setFontSize(10);
   pdf.text("tjfit.com", PAGE.margin, PAGE.height - 60);

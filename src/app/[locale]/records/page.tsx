@@ -108,8 +108,8 @@ export default function RecordsPage({ params }: { params: { locale: string } }) 
               <div className="mt-3 flex flex-wrap gap-3">
                 {pr.max_weight_kg != null ? (
                   <div className="tj-pr-weight-shimmer relative flex items-center gap-1.5 overflow-hidden rounded-md px-1 py-0.5">
-                    <Trophy className="h-3.5 w-3.5 text-[#F59E0B]" />
-                    <PRValue value={pr.max_weight_kg} suffix=" kg" color="#F59E0B" />
+                    <Trophy className="h-3.5 w-3.5 text-[#22D3EE]" />
+                    <PRValue value={pr.max_weight_kg} suffix=" kg" color="#22D3EE" />
                   </div>
                 ) : null}
                 {pr.max_reps != null ? <div className="flex items-center gap-1.5"><Repeat className="h-3.5 w-3.5 text-[#22D3EE]" /><PRValue value={pr.max_reps} suffix=" reps" color="#22D3EE" /></div> : null}
