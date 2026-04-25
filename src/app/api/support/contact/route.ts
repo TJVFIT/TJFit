@@ -20,7 +20,9 @@ export async function POST(req: NextRequest) {
         })
       }).catch((e) => console.error("Support email send error:", e));
     } else {
-      console.log("SUPPORT MESSAGE (no RESEND_API_KEY):", { name: body.name, email: body.email, subject: body.subject, message: body.message });
+      if (process.env.NODE_ENV !== "production") {
+        console.log("SUPPORT MESSAGE (no RESEND_API_KEY):", { name: body.name, email: body.email, subject: body.subject, message: body.message });
+      }
     }
 
     return NextResponse.json({ ok: true });

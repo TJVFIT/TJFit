@@ -65,7 +65,9 @@ export async function POST(request: NextRequest) {
     const quizAnswers = effectiveAnswers as QuizAnswers;
     const metrics = calculateTJAIMetrics(quizAnswers);
 
-    console.log("[TJAI] Generating plan for user:", authResult.user.id, "| tier:", tier);
+    if (process.env.NODE_ENV !== "production") {
+      console.log("[TJAI] Generating plan for user:", authResult.user.id, "| tier:", tier);
+    }
 
     const result = await runPlanGenerationPipeline({
       userId: authResult.user.id,
@@ -80,7 +82,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: result.error }, { status: result.status });
     }
 
-    console.log("[TJAI] Plan generated and saved for user:", authResult.user.id);
+    if (process.env.NODE_ENV !== "production") {
+      console.log("[TJAI] Plan generated and saved for user:", authResult.user.id);
+    }
 
     return NextResponse.json(result.body);
   } catch (error) {
