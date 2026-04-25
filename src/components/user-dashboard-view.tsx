@@ -384,7 +384,7 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
           <h2 className="text-[13px] font-medium uppercase tracking-widest text-dim">{t.activeProgram}</h2>
           <Link
             href={`/${locale}/programs/${encodeURIComponent(summary.latestPaidProgramSlug!)}`}
-            className="group/ap flex flex-col gap-6 rounded-2xl border border-divider bg-surface p-8 transition-[border-color,box-shadow,transform] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:border-[rgba(34,211,238,0.22)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.45)] motion-reduce:hover:transform-none [@media(hover:hover)]:hover:-translate-y-1"
+            className="group/ap flex flex-col gap-6 rounded-2xl border border-divider bg-surface p-8 transition-[border-color,box-shadow,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-[rgba(34,211,238,0.22)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.45)] motion-reduce:hover:transform-none [@media(hover:hover)]:hover:-translate-y-1"
           >
             <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0 flex-1">

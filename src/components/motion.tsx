@@ -54,7 +54,7 @@ export function HoverLift({ children, className }: PropsWithChildren<{ className
       className={cn(
         className,
         fineHover &&
-          "motion-safe:transition-[transform,box-shadow] motion-safe:duration-[250ms] motion-safe:ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-safe:hover:-translate-y-2 motion-safe:hover:shadow-[0_8px_32px_rgba(0,0,0,0.5)]"
+          "motion-safe:transition-[transform,box-shadow] motion-safe:duration-[250ms] motion-safe:ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:hover:-translate-y-2 motion-safe:hover:shadow-[0_8px_32px_rgba(0,0,0,0.5)]"
       )}
     >
       {children}

@@ -11,7 +11,7 @@ export const TJ_EASE = {
   // Quick snap — for small controls, hover states.
   snap: "cubic-bezier(0.4, 0, 0.2, 1)",
   // Gentle breathe — for idle float loops.
-  breathe: "cubic-bezier(0.45, 0.05, 0.55, 0.95)"
+  breathe: "cubic-bezier(0.22, 1, 0.36, 1)"
 } as const;
 
 export const TJ_DURATION = {

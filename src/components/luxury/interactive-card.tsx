@@ -59,7 +59,7 @@ export function InteractiveCard({ children, className = "", reducedMotion }: Int
               transform: `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
               transition: leaving
                 ? "transform 300ms cubic-bezier(0.22,1,0.36,1)"
-                : "transform 120ms cubic-bezier(0.25,0.1,0.25,1)"
+                : "transform 120ms cubic-bezier(0.22,1,0.36,1)"
             }
       }
     >

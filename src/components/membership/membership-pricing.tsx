@@ -116,7 +116,7 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
         <div className="mt-6 flex items-center gap-3">
           <div className="relative flex rounded-full border border-divider bg-[#0D0E12] p-1">
             <div
-              className="absolute top-1 h-[calc(100%-8px)] rounded-full bg-accent transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+              className="absolute top-1 h-[calc(100%-8px)] rounded-full bg-accent transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
               style={{
                 left: mode === "monthly" ? "4px" : "calc(50%)",
                 width: "calc(50% - 4px)"
@@ -140,7 +140,7 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
           </div>
           {/* ME15 — animated save badge */}
           <span
-            className="inline-flex items-center rounded-full border border-cyan-400/25 bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-300 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+            className="inline-flex items-center rounded-full border border-cyan-400/25 bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-300 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
             style={{
               opacity: saveBadgeVisible ? 1 : 0,
               transform: saveBadgeVisible ? "scale(1)" : "scale(0.7)",

@@ -135,7 +135,7 @@ export function FreeOfferSection({
             "tj-card-aura",
             "before:pointer-events-none before:absolute before:-right-[60px] before:-top-[60px] before:h-[200px] before:w-[200px] before:rounded-full",
             "before:bg-[radial-gradient(circle,rgba(34,211,238,0.06)_0%,transparent_70%)] before:opacity-0 before:transition-opacity before:duration-300 before:ease-out",
-            "transition-[transform,border-color,box-shadow] duration-300 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)]",
+            "transition-[transform,border-color,box-shadow] duration-300 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)]",
             "hover:border-[rgba(34,211,238,0.25)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.5),0_0_0_1px_rgba(34,211,238,0.12),0_0_60px_rgba(34,211,238,0.04)]",
             "motion-reduce:transition-none motion-reduce:hover:translate-y-0",
             "hover:-translate-y-1.5 hover:before:opacity-100 motion-reduce:hover:before:opacity-0"

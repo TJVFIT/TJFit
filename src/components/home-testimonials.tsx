@@ -138,7 +138,7 @@ export function HomeTestimonials({ locale }: { locale: Locale }) {
 
           <div className="overflow-hidden md:mx-12">
             <div
-              className="flex transition-transform duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] motion-reduce:transition-none"
+              className="flex transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
               style={{
                 width: `${total * 100}%`,
                 transform: `translate3d(-${(100 / total) * activeIdx}%, 0, 0)`,

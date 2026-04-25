@@ -29,7 +29,7 @@ export function SplitText({
         const style = {
           opacity: inView ? 1 : 0,
           transform: inView ? "translate3d(0,0,0) rotate(0deg)" : `translate3d(${fromX}px, ${fromY}px, 0) rotate(${fromR}deg)`,
-          transition: "opacity 500ms cubic-bezier(0.34,1.56,0.64,1), transform 500ms cubic-bezier(0.34,1.56,0.64,1)",
+          transition: "opacity 500ms cubic-bezier(0.16,1,0.3,1), transform 500ms cubic-bezier(0.16,1,0.3,1)",
           transitionDelay: `${delay + index * 30}ms`
         } as CSSProperties;
 

@@ -28,13 +28,13 @@ export function useMagneticButton<T extends HTMLElement>(strength = 0.3) {
         el.style.transition = "transform 100ms ease";
       } else {
         el.style.transform = "translate(0, 0)";
-        el.style.transition = "transform 400ms cubic-bezier(0.34,1.56,0.64,1)";
+        el.style.transition = "transform 400ms cubic-bezier(0.16,1,0.3,1)";
       }
     };
 
     const handleMouseLeave = () => {
       el.style.transform = "translate(0, 0)";
-      el.style.transition = "transform 400ms cubic-bezier(0.34,1.56,0.64,1)";
+      el.style.transition = "transform 400ms cubic-bezier(0.16,1,0.3,1)";
     };
 
     window.addEventListener("mousemove", handleMouseMove, { passive: true });

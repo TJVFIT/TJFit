@@ -45,7 +45,7 @@ export function DynamicIslandProvider({ children }: { children: React.ReactNode 
       {children}
       <div className="pointer-events-none fixed left-1/2 top-4 z-[9999] -translate-x-1/2">
         {current ? (
-          <div className="animate-[tj-island-in_400ms_cubic-bezier(0.34,1.56,0.64,1)_forwards] rounded-full border border-divider bg-surface px-5 py-2.5 text-white shadow-[0_8px_32px_rgba(0,0,0,0.6)]">
+          <div className="animate-[tj-island-in_400ms_cubic-bezier(0.16,1,0.3,1)_forwards] rounded-full border border-divider bg-surface px-5 py-2.5 text-white shadow-[0_8px_32px_rgba(0,0,0,0.6)]">
             <div className="flex items-center gap-2 text-sm font-medium">
               {current.type === "achievement" ? (
                 <Trophy className="h-4 w-4 text-accent-violet" />

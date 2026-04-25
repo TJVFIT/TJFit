@@ -1035,7 +1035,7 @@ strong, b {
 }
 
 .chat-bubble-enter {
-  animation: chat-bubble-in 280ms cubic-bezier(0.34,1.56,0.64,1) forwards;
+  animation: chat-bubble-in 280ms cubic-bezier(0.16,1,0.3,1) forwards;
 }
 
 @keyframes chat-from-user {
@@ -1281,7 +1281,7 @@ strong, b {
 @media (hover: hover) and (pointer: fine) {
   .tj-card-premium-hover {
     transition:
-      transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
+      transform 300ms cubic-bezier(0.16, 1, 0.3, 1),
       box-shadow 300ms ease,
       border-color 300ms ease;
   }
@@ -3130,5 +3130,19 @@ button[aria-disabled="true"],
     transform: none;
     filter: none;
     transition: none;
+  }
+}
+
+/* Global reduced-motion safety net — collapses any animation/transition
+   that escaped per-component handling, while preserving opacity transitions
+   for state legibility. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

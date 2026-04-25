@@ -71,7 +71,7 @@ function Toast({ messages }: { messages: ToastMsg[] }) {
         <div
           key={m.id}
           className="flex items-center gap-2 rounded-xl border border-green-500/30 bg-[#0D1F17] px-4 py-3 text-sm font-medium text-green-400 shadow-lg"
-          style={{ animation: "chat-bubble-in 280ms cubic-bezier(0.34,1.56,0.64,1) forwards" }}
+          style={{ animation: "chat-bubble-in 280ms cubic-bezier(0.16,1,0.3,1) forwards" }}
         >
           <CheckCircle2 className="h-4 w-4 shrink-0" />
           {m.text}
