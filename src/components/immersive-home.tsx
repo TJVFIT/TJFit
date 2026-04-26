@@ -261,7 +261,7 @@ export function ImmersiveHome({
     { icon: Apple, title: "Full Diet Systems", desc: "Daily meal plans with macros, recipes, grocery lists. Halal, vegan, budget - covered.", accent: "#94A3B8", span: 1 as const },
     { icon: Users, title: "Coach Marketplace", desc: "Book certified coaches. 1-on-1 guidance and personalized feedback.", accent: "#22D3EE", span: 1 as const },
     { icon: Trophy, title: "Leaderboards", desc: "Earn TJCOIN, compete on weekly boards, unlock rewards for consistency.", accent: "#94A3B8", span: 1 as const },
-    { icon: Globe, title: "5 Languages", desc: "English, Turkish, Arabic, Spanish, French. Premium fitness in your language.", accent: "#94A3B8", span: 1 as const }
+    { icon: Globe, title: "10 Languages", desc: "Training and nutrition flows support 10 locales from the first visit.", accent: "#94A3B8", span: 1 as const }
   ] as const;
 
   // TJAI section ref for reveal trigger
@@ -348,7 +348,7 @@ export function ImmersiveHome({
             "Macro-aware meals",
             "TJAI · GPT-4o",
             "Coach marketplace",
-            "Five languages",
+            "10 languages",
           ].join("      ·      ")}
         </p>
       </div>
@@ -387,7 +387,7 @@ export function ImmersiveHome({
             <CountUp target={programCount} suffix="+" label="Expert Programs" />
             <CountUp target={dietCount} suffix="+" label="Diet Systems" />
             <CountUp target={12} label="Weeks Per Plan" />
-            <CountUp target={5} label="Languages" />
+            <CountUp target={10} label="Languages" />
           </div>
         </MotionReveal>
       </section>

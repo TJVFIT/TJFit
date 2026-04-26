@@ -24,7 +24,7 @@ const COPY: Record<
     sub: "Publish programs. Coach clients. Earn globally.",
     points: [
       "Sell programs to thousands of members",
-      "Available in English, Turkish, Arabic, Spanish, and French",
+      "Available in 10 member languages",
       "You set the price — we handle payments",
     ],
     cta: "Apply to Become a Coach →",

@@ -54,7 +54,7 @@ function HeroSignal({
   className?: string;
 }) {
   return (
-    <div className={cn("tj-hero-signal pointer-events-auto hidden lg:block", className)}>
+    <div className={cn("tj-hero-signal pointer-events-auto hidden xl:block", className)}>
       <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#71717A]">
         <Icon className="h-3.5 w-3.5 text-[#67E8F9]" strokeWidth={1.6} />
         {label}
@@ -72,7 +72,7 @@ function HeroCommandPanel({ reduce }: { reduce: boolean }) {
   ];
 
   return (
-    <div className="tj-hero-command-panel relative mx-auto w-full max-w-[28rem] overflow-hidden rounded-[24px] border border-white/[0.08] bg-[rgba(13,15,18,0.62)] p-4 shadow-[0_30px_90px_rgba(0,0,0,0.38),inset_0_1px_0_rgba(255,255,255,0.07)] backdrop-blur-xl">
+    <div className="tj-hero-command-panel relative mx-auto w-full max-w-[23.75rem] overflow-hidden rounded-[22px] border border-white/[0.08] bg-[rgba(13,15,18,0.58)] p-3.5 shadow-[0_30px_90px_rgba(0,0,0,0.34),inset_0_1px_0_rgba(255,255,255,0.07)] backdrop-blur-xl">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_12%,rgba(34,211,238,0.12),transparent_34%)]" aria-hidden />
       <div className="relative flex items-center justify-between border-b border-white/[0.07] pb-4">
         <div>
@@ -88,7 +88,7 @@ function HeroCommandPanel({ reduce }: { reduce: boolean }) {
         {rows.map((row, index) => (
           <div
             key={row.title}
-            className="tj-hero-command-row flex items-center gap-3 rounded-[16px] border border-white/[0.06] bg-white/[0.035] p-3"
+            className="tj-hero-command-row flex items-center gap-3 rounded-[15px] border border-white/[0.06] bg-white/[0.035] p-2.5"
             style={{ animationDelay: reduce ? undefined : `${index * 120}ms` }}
           >
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] border border-white/[0.08] bg-[#0A0A0B]">
@@ -158,7 +158,7 @@ export function HeroSection({
   return (
     <section
       ref={sectionRef}
-      className="tj-hero-premium-stage relative flex min-h-[100dvh] flex-col justify-center overflow-hidden px-5 pb-16 pt-20 lg:px-12"
+      className="tj-hero-premium-stage relative flex min-h-[100dvh] flex-col justify-center overflow-hidden px-5 pb-16 pt-24 sm:px-7 lg:px-12"
       style={{ minHeight: "max(760px, 100dvh)", background: TJ_PALETTE.obsidian }}
     >
       <div
@@ -180,13 +180,13 @@ export function HeroSection({
 
       <div
         data-tj-silhouette
-        className="pointer-events-none absolute inset-y-0 end-0 z-[1] w-full lg:w-[61%]"
+        className="pointer-events-none absolute inset-y-0 end-0 z-[1] w-full lg:w-[56%] xl:w-[58%]"
         style={{
           maskImage:
             "linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.44) 18%, #000 36%, #000 82%, transparent 100%)",
           WebkitMaskImage:
             "linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.44) 18%, #000 36%, #000 82%, transparent 100%)",
-          opacity: reduce ? 0.34 : 0.72
+          opacity: reduce ? 0.3 : 0.58
         }}
         aria-hidden
       >
@@ -208,8 +208,8 @@ export function HeroSection({
         aria-hidden
       />
 
-      <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-12 lg:grid-cols-[minmax(0,1.03fr)_minmax(22rem,0.72fr)] lg:gap-10">
-        <div className={cn("max-w-[42rem]", direction === "rtl" ? "text-right lg:ms-auto" : "text-left")}>
+      <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-12 xl:grid-cols-[minmax(0,0.98fr)_minmax(20rem,0.56fr)] xl:gap-8">
+        <div className={cn("max-w-[45rem]", direction === "rtl" ? "text-right lg:ms-auto" : "text-left")}>
           <div style={lineIn(80)}>
             <span className="inline-flex items-center gap-2 rounded-[12px] border border-[rgba(34,211,238,0.22)] bg-[rgba(34,211,238,0.055)] px-3.5 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#67E8F9]">
               <span className="relative flex h-1.5 w-1.5">
@@ -221,8 +221,8 @@ export function HeroSection({
           </div>
 
           <h1
-            className="hero-headline mt-8 max-w-[12ch] text-balance font-display font-black tracking-[-0.045em]"
-            style={{ ...lineIn(150), fontSize: "clamp(48px, 7.3vw, 104px)", lineHeight: 0.9, color: TJ_PALETTE.textPrimary }}
+            className="hero-headline mt-8 max-w-[13ch] text-balance font-display font-black tracking-[-0.035em]"
+            style={{ ...lineIn(150), fontSize: "clamp(46px, 6.4vw, 88px)", lineHeight: 0.94, color: TJ_PALETTE.textPrimary }}
           >
             {headlineLine}
           </h1>
@@ -270,11 +270,11 @@ export function HeroSection({
           <div className="mt-12 grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-3" style={lineIn(600)}>
             <HeroMetric value="12" label="weeks" hint="Structured blocks with progression and checkpoints." />
             <HeroMetric value="25" label="signals" hint="TJAI intake reads goals, schedule, equipment, and constraints." />
-            <HeroMetric value="5" label="languages" hint="Training and nutrition in the language you actually use." />
+            <HeroMetric value="10" label="languages" hint="Training and nutrition in the language you actually use." />
           </div>
         </div>
 
-        <div className="relative hidden lg:block" style={lineIn(260)} aria-hidden>
+        <div className="relative hidden xl:block" style={lineIn(260)} aria-hidden>
           <HeroCommandPanel reduce={reduce} />
         </div>
       </div>

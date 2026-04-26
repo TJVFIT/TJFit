@@ -124,7 +124,7 @@ const en: HomeLuxuryCopy = {
     ctaPrimary: "Start your transformation",
     ctaSecondary: "View Programs",
     ctaBrowsePrograms: "Browse programs",
-    trust: ["Clear plans", "Vetted coaches", "5 languages"],
+    trust: ["Clear plans", "Vetted coaches", "10 languages"],
     trustLine: "Free to start · No card · 20+ flagship programs",
     ctaNote: "",
     heroGradientTagline: "AI precision · Human intent · Measurable weeks"
@@ -167,7 +167,7 @@ const en: HomeLuxuryCopy = {
     subtitle: "Fewer decisions. More follow-through.",
     stats: [
       { value: "12+", label: "Week flagship programs" },
-      { value: "5", label: "Languages live" },
+      { value: "10", label: "Languages live" },
       { value: "24/7", label: "Train on your clock" }
     ],
     testimonials: [
@@ -258,7 +258,7 @@ const tr: HomeLuxuryCopy = {
     ctaPrimary: "Dönüşüme başla",
     ctaSecondary: "Hesap oluştur",
     ctaBrowsePrograms: "Programları keşfet",
-    trust: ["Net planlar", "Seçilmiş koçlar", "5 dil"],
+    trust: ["Net planlar", "Seçilmiş koçlar", "10 dil"],
     ctaNote: "Yol haritası e-postada · Hesap isteğe bağlı · Karmaşa yok",
     heroGradientTagline: "Yapay zekâ keskinliği · İnsan seviyesinde koçluk · Ölçülebilir haftalar"
   },
@@ -300,7 +300,7 @@ const tr: HomeLuxuryCopy = {
     subtitle: "Daha az karar. Daha çok süreklilik.",
     stats: [
       { value: "12+", label: "Amiral program haftaları" },
-      { value: "5", label: "Canlı dil" },
+      { value: "10", label: "Canlı dil" },
       { value: "7/24", label: "Senin saatine göre" }
     ],
     testimonials: [
@@ -373,7 +373,7 @@ const ar: HomeLuxuryCopy = {
     ctaPrimary: "ابدأ تحولك",
     ctaSecondary: "ابدأ مجاناً",
     ctaBrowsePrograms: "البرامج",
-    trust: ["خطط واضحة", "مدربون مختارون", "٥ لغات"],
+    trust: ["خطط واضحة", "مدربون مختارون", "10 Languages"],
     ctaNote: "خارطة بالبريد · الحساب اختياري · بلا فوضى",
     heroGradientTagline: "دقة الذكاء الاصطناعي · نية بشرية · أسابيع قابلة للقياس"
   },
@@ -415,7 +415,7 @@ const ar: HomeLuxuryCopy = {
     subtitle: "أقل تردداً. أكثر استمراراً.",
     stats: [
       { value: "+12", label: "أسابيع برامج رئيسية" },
-      { value: "5", label: "لغات مفعّلة" },
+      { value: "10", label: "لغات مفعّلة" },
       { value: "٢٤/٧", label: "تدريب في وقتك" }
     ],
     testimonials: [
@@ -488,7 +488,7 @@ const es: HomeLuxuryCopy = {
     ctaPrimary: "Empieza tu transformación",
     ctaSecondary: "Crear cuenta gratis",
     ctaBrowsePrograms: "Explorar programas",
-    trust: ["Planes claros", "Coaches seleccionados", "5 idiomas"],
+    trust: ["Planes claros", "Coaches seleccionados", "10 idiomas"],
     ctaNote: "Guía por email · Cuenta opcional · Sin ruido",
     heroGradientTagline: "Precisión de IA · Intención humana · Semanas medibles"
   },
@@ -530,7 +530,7 @@ const es: HomeLuxuryCopy = {
     subtitle: "Menos dudas. Más constancia.",
     stats: [
       { value: "12+", label: "Semanas en programas flagship" },
-      { value: "5", label: "Idiomas activos" },
+      { value: "10", label: "Idiomas activos" },
       { value: "24/7", label: "Entrena a tu ritmo" }
     ],
     testimonials: [
@@ -603,7 +603,7 @@ const fr: HomeLuxuryCopy = {
     ctaPrimary: "Lancer ma transformation",
     ctaSecondary: "Créer un compte gratuit",
     ctaBrowsePrograms: "Parcourir les programmes",
-    trust: ["Plans clairs", "Coachs sélectionnés", "5 langues"],
+    trust: ["Plans clairs", "Coachs sélectionnés", "10 langues"],
     ctaNote: "Feuille de route par e-mail · Compte optionnel · Sans surcharge",
     heroGradientTagline: "Précision IA · Intention humaine · Semaines mesurables"
   },
@@ -645,7 +645,7 @@ const fr: HomeLuxuryCopy = {
     subtitle: "Moins d’hésitation. Plus de régularité.",
     stats: [
       { value: "12+", label: "Semaines de programmes phares" },
-      { value: "5", label: "Langues actives" },
+      { value: "10", label: "Langues actives" },
       { value: "24/7", label: "A votre rythme" }
     ],
     testimonials: [

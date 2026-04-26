@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Brain, Calculator, Dumbbell, Sparkles } from "lucide-react";
+import { Brain, Calculator, Check, Dumbbell, Globe, LockKeyhole, Sparkles, Star } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { PremiumPageShell } from "@/components/premium";
@@ -59,7 +59,7 @@ const COPY: Record<
     getApex: `Get Apex — $${TJAI_SUBSCRIPTION_PRICES_USD.apex.monthly}/mo`,
     trustSecure: "Secure Payments",
     trustNoCard: "No Credit Card",
-    trustLanguages: "5 Languages",
+    trustLanguages: "10 Languages",
     trustCoaches: "Expert Coaches",
     freeProgramsTab: "Programs",
     freeDietsTab: "Diets",
@@ -85,7 +85,7 @@ const COPY: Record<
     getApex: `Apex Al — $${TJAI_SUBSCRIPTION_PRICES_USD.apex.monthly}/ay`,
     trustSecure: "Guvenli Odeme",
     trustNoCard: "Kredi Karti Yok",
-    trustLanguages: "5 Dil",
+    trustLanguages: "10 Dil",
     trustCoaches: "Uzman Koclar",
     freeProgramsTab: "Programlar",
     freeDietsTab: "Diyetler",
@@ -111,7 +111,7 @@ const COPY: Record<
     getApex: `احصل على Apex — $${TJAI_SUBSCRIPTION_PRICES_USD.apex.monthly}/شهرياً`,
     trustSecure: "مدفوعات آمنة",
     trustNoCard: "بدون بطاقة",
-    trustLanguages: "5 لغات",
+    trustLanguages: "10 Languages",
     trustCoaches: "مدربون خبراء",
     freeProgramsTab: "البرامج",
     freeDietsTab: "الأنظمة الغذائية",
@@ -137,7 +137,7 @@ const COPY: Record<
     getApex: `Get Apex — $${TJAI_SUBSCRIPTION_PRICES_USD.apex.monthly}/mes`,
     trustSecure: "Pagos Seguros",
     trustNoCard: "Sin Tarjeta",
-    trustLanguages: "5 Idiomas",
+    trustLanguages: "10 Idiomas",
     trustCoaches: "Coaches Expertos",
     freeProgramsTab: "Programas",
     freeDietsTab: "Dietas",
@@ -163,7 +163,7 @@ const COPY: Record<
     getApex: `Get Apex — $${TJAI_SUBSCRIPTION_PRICES_USD.apex.monthly}/mois`,
     trustSecure: "Paiements Securises",
     trustNoCard: "Sans Carte",
-    trustLanguages: "5 Langues",
+    trustLanguages: "10 Langues",
     trustCoaches: "Coachs Experts",
     freeProgramsTab: "Programmes",
     freeDietsTab: "Regimes",
@@ -286,10 +286,22 @@ export function StartFunnelClient({ locale }: { locale: Locale }) {
         </div>
 
         <div className="mt-10 grid gap-2 text-center text-xs text-dim sm:grid-cols-4">
-          <p>🔒 {copy.trustSecure}</p>
-          <p>✓ {copy.trustNoCard}</p>
-          <p>🌍 {copy.trustLanguages}</p>
-          <p>⭐ {copy.trustCoaches}</p>
+          <p className="inline-flex items-center justify-center gap-1.5">
+            <LockKeyhole className="h-3.5 w-3.5" aria-hidden />
+            {copy.trustSecure}
+          </p>
+          <p className="inline-flex items-center justify-center gap-1.5">
+            <Check className="h-3.5 w-3.5" aria-hidden />
+            {copy.trustNoCard}
+          </p>
+          <p className="inline-flex items-center justify-center gap-1.5">
+            <Globe className="h-3.5 w-3.5" aria-hidden />
+            {copy.trustLanguages}
+          </p>
+          <p className="inline-flex items-center justify-center gap-1.5">
+            <Star className="h-3.5 w-3.5" aria-hidden />
+            {copy.trustCoaches}
+          </p>
         </div>
       </div>
       <style jsx>{`

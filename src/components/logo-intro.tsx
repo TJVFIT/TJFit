@@ -1,11 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-import { BRAND_LOGO_SRC } from "@/lib/brand-assets";
-import { locales, type Locale } from "@/lib/i18n";
+import { Logo } from "@/components/ui/Logo";
+import { LOCALE_META, supportedLocales, type Locale, type SupportedLocale } from "@/lib/i18n";
 
 type Phase =
   | "hidden"
@@ -16,14 +15,6 @@ type Phase =
   | "hold"
   | "languages"
   | "exit";
-
-const LANG_LABELS: Record<Locale, { name: string; native: string }> = {
-  en: { name: "English", native: "English" },
-  tr: { name: "Turkish", native: "Türkçe" },
-  ar: { name: "Arabic", native: "العربية" },
-  es: { name: "Spanish", native: "Español" },
-  fr: { name: "French", native: "Français" }
-};
 
 const PICKER_TITLE: Record<Locale, string> = {
   en: "Choose your language",
@@ -139,7 +130,7 @@ export function LogoIntro({
     }, 520);
   };
 
-  const handleLanguagePick = (picked: Locale) => {
+  const handleLanguagePick = (picked: SupportedLocale) => {
     if (picked === locale) {
       finish();
       return;
@@ -208,20 +199,7 @@ export function LogoIntro({
               }}
               aria-hidden
             >
-              <Image
-                src={BRAND_LOGO_SRC}
-                alt=""
-                width={1024}
-                height={836}
-                priority
-                className="h-[clamp(138px,22vw,250px)] w-auto"
-                style={{
-                  filter: [
-                    "drop-shadow(0 0 10px rgba(34,211,238,0.85))",
-                    "drop-shadow(0 0 32px rgba(34,211,238,0.42))"
-                  ].join(" ")
-                }}
-              />
+              <Logo variant="full" size="hero" linked={false} glow animated className="scale-[1.42] sm:scale-[1.74]" />
             </div>
             <span
               className="font-display font-black leading-none tracking-tight text-accent"
@@ -297,23 +275,23 @@ export function LogoIntro({
         <h1 className="mt-4 font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
           {PICKER_TITLE[locale]}
         </h1>
-        <div className="mt-10 grid w-full max-w-md grid-cols-2 gap-3 sm:max-w-lg sm:grid-cols-3">
-          {locales.map((code) => {
-            const info = LANG_LABELS[code];
+        <div className="mt-10 grid w-full max-w-2xl grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          {supportedLocales.map((code) => {
+            const info = LOCALE_META[code];
             const active = code === locale;
             return (
               <button
                 key={code}
                 type="button"
                 onClick={() => handleLanguagePick(code)}
-                className={`group flex min-h-[64px] flex-col items-start justify-center rounded-2xl border px-4 py-3 text-left transition-[border-color,background-color,transform] duration-200 hover:scale-[1.02] ${
+                className={`group flex min-h-[74px] flex-col items-start justify-center rounded-[18px] border px-4 py-3 text-left transition-[border-color,background-color,transform] duration-200 hover:scale-[1.02] ${
                   active
                     ? "border-accent/40 bg-accent/10 text-white"
                     : "border-[var(--color-border)] bg-[rgba(17,18,21,0.6)] text-[var(--color-text-secondary)] hover:border-[rgba(255,255,255,0.18)] hover:text-white"
                 }`}
               >
                 <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--color-text-muted)]">
-                  {info.name}
+                  {info.label}
                 </span>
                 <span className="mt-1 text-lg font-semibold">{info.native}</span>
               </button>
@@ -321,7 +299,7 @@ export function LogoIntro({
           })}
         </div>
         <p className="mt-8 max-w-sm text-center text-xs text-[var(--color-text-muted)]">
-          You can change your language later in Profile → Settings → Region.
+          You can change your language later in Profile &gt; Settings &gt; Region.
         </p>
       </div>
     </div>
