@@ -15,7 +15,7 @@ type Tab = { key: "main" | "programs" | "coaches" | "tjai" | "tjaichat"; label: 
 const TAB_LABELS: Record<Locale, Record<Tab["key"], string>> = {
   en: { main: "Home", programs: "Programs", coaches: "Coaches", tjai: "TJAI", tjaichat: "TJAI Chat" },
   tr: { main: "Ana", programs: "Programlar", coaches: "Koclar", tjai: "TJAI", tjaichat: "TJAI Chat" },
-  ar: { main: "Home", programs: "Programs", coaches: "Coaches", tjai: "TJAI", tjaichat: "TJAI Chat" },
+  ar: { main: "الرئيسية", programs: "البرامج", coaches: "المدربون", tjai: "TJAI", tjaichat: "دردشة TJAI" },
   es: { main: "Inicio", programs: "Programas", coaches: "Coaches", tjai: "TJAI", tjaichat: "TJAI Chat" },
   fr: { main: "Accueil", programs: "Programmes", coaches: "Coachs", tjai: "TJAI", tjaichat: "TJAI Chat" }
 };

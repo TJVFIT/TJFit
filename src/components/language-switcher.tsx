@@ -13,7 +13,15 @@ import {
 } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
-const LOCALE_MATCH_RE = /^\/(en|tr|ar|es|fr|de|pt|ru|hi|id)(?=\/|$)/;
+const LOCALE_MATCH_RE = /^\/(en|tr|ar|es|fr)(?=\/|$)/;
+
+const SWITCHER_COPY: Record<SupportedLocale, { search: string; noMatch: string; aria: string }> = {
+  en: { search: "Search language...", noMatch: "No match.", aria: "Language" },
+  tr: { search: "Dil ara...", noMatch: "Eşleşme yok.", aria: "Dil" },
+  ar: { search: "ابحث عن لغة...", noMatch: "لا توجد نتيجة.", aria: "اللغة" },
+  es: { search: "Buscar idioma...", noMatch: "Sin resultados.", aria: "Idioma" },
+  fr: { search: "Rechercher une langue...", noMatch: "Aucun résultat.", aria: "Langue" }
+};
 
 export function LanguageSwitcher({
   locale,
@@ -58,6 +66,7 @@ export function LanguageSwitcher({
 
   const drawer = variant === "drawer";
   const current = LOCALE_META[locale as SupportedLocale] ?? LOCALE_META.en;
+  const copy = SWITCHER_COPY[locale as SupportedLocale] ?? SWITCHER_COPY.en;
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -78,7 +87,7 @@ export function LanguageSwitcher({
         type="button"
         aria-expanded={open}
         aria-haspopup="listbox"
-        aria-label={`Language: ${current.label}`}
+        aria-label={`${copy.aria}: ${current.label}`}
         onClick={() => setOpen((v) => !v)}
         className={cn(
           "inline-flex touch-manipulation items-center gap-2 rounded-lg border px-3 py-1.5 text-[13px] transition-[border-color,color,background-color] duration-150 ease-out",
@@ -97,7 +106,7 @@ export function LanguageSwitcher({
       </button>
       <div
         role="listbox"
-        aria-label="Language"
+        aria-label={copy.aria}
         className={cn(
           "absolute z-[120] rounded-[12px] border p-2 shadow-[0_24px_64px_rgba(0,0,0,0.75)] backdrop-blur-xl transition-[opacity,transform] duration-150 ease-out",
           "border-[rgba(34,211,238,0.18)] bg-[rgba(12,12,14,0.96)]",
@@ -109,7 +118,7 @@ export function LanguageSwitcher({
           <input
             ref={inputRef}
             type="text"
-            placeholder="Search language…"
+            placeholder={copy.search}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="w-full rounded-md border border-[rgba(34,211,238,0.14)] bg-[rgba(0,0,0,0.4)] px-2.5 py-1.5 text-[12px] text-[#F6F3ED] placeholder:text-[#6a6458] focus:border-[rgba(34,211,238,0.4)] focus:outline-none"
@@ -117,7 +126,7 @@ export function LanguageSwitcher({
         </div>
         <div className="max-h-[320px] overflow-y-auto pr-0.5">
           {filtered.length === 0 ? (
-            <p className="px-3 py-2 text-[12px] text-[#6a6458]">No match.</p>
+            <p className="px-3 py-2 text-[12px] text-[#6a6458]">{copy.noMatch}</p>
           ) : (
             filtered.map((code) => {
               const meta = LOCALE_META[code];

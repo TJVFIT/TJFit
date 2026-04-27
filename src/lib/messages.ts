@@ -20,11 +20,6 @@ import tr from "../../messages/tr.json";
 import ar from "../../messages/ar.json";
 import es from "../../messages/es.json";
 import fr from "../../messages/fr.json";
-import de from "../../messages/de.json";
-import pt from "../../messages/pt.json";
-import ru from "../../messages/ru.json";
-import hi from "../../messages/hi.json";
-import id from "../../messages/id.json";
 
 type Messages = typeof en;
 
@@ -33,12 +28,7 @@ const MESSAGES: Record<SupportedLocale, Messages> = {
   tr: tr as Messages,
   ar: ar as Messages,
   es: es as Messages,
-  fr: fr as Messages,
-  de: de as Messages,
-  pt: pt as Messages,
-  ru: ru as Messages,
-  hi: hi as Messages,
-  id: id as Messages
+  fr: fr as Messages
 };
 
 export function getMessages(locale: SupportedLocale): Messages {

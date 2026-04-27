@@ -6,7 +6,7 @@ import { isAdminEmail } from "@/lib/auth-utils";
 import { getCoachTermsVersion } from "@/lib/coach-terms-version";
 import { URL_NOTICE } from "@/lib/url-notice";
 
-const LOCALES = new Set(["en", "tr", "ar", "es", "fr", "de", "pt", "ru", "hi", "id"]);
+const LOCALES = new Set(["en", "tr", "ar", "es", "fr"]);
 
 function applyHtmlCacheHeaders(request: NextRequest, response: NextResponse) {
   const accept = request.headers.get("accept") ?? "";

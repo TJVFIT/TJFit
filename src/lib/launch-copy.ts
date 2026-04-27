@@ -20,6 +20,7 @@ type AuthCopy = {
   usernamePlaceholder: string;
   signingIn: string;
   loginButton: string;
+  forgotPassword: string;
   loginAsAdminButton: string;
   useEmailLogin: string;
   switchToAdminLogin: string;
@@ -217,6 +218,7 @@ const authCopy: Record<Locale, AuthCopy> = {
     usernamePlaceholder: "Username or email",
     signingIn: "Signing in…",
     loginButton: "Sign in",
+    forgotPassword: "Forgot password?",
     loginAsAdminButton: "Continue as admin",
     useEmailLogin: "Use email sign-in",
     switchToAdminLogin: "Admin sign-in",
@@ -259,6 +261,7 @@ const authCopy: Record<Locale, AuthCopy> = {
     usernamePlaceholder: "Kullanıcı adı veya e-posta",
     signingIn: "Giriş yapılıyor…",
     loginButton: "Giriş yap",
+    forgotPassword: "Şifreni mi unuttun?",
     loginAsAdminButton: "Yönetici olarak devam et",
     useEmailLogin: "E-posta ile giriş",
     switchToAdminLogin: "Yönetici girişi",
@@ -301,6 +304,7 @@ const authCopy: Record<Locale, AuthCopy> = {
     usernamePlaceholder: "اسم المستخدم أو البريد",
     signingIn: "جارٍ الدخول…",
     loginButton: "تسجيل الدخول",
+    forgotPassword: "هل نسيت كلمة المرور؟",
     loginAsAdminButton: "متابعة كمسؤول",
     useEmailLogin: "الدخول بالبريد",
     switchToAdminLogin: "دخول المسؤول",
@@ -343,6 +347,7 @@ const authCopy: Record<Locale, AuthCopy> = {
     usernamePlaceholder: "Usuario o correo",
     signingIn: "Entrando…",
     loginButton: "Entrar",
+    forgotPassword: "¿Olvidaste tu contraseña?",
     loginAsAdminButton: "Continuar como admin",
     useEmailLogin: "Entrar con correo",
     switchToAdminLogin: "Acceso admin",
@@ -385,6 +390,7 @@ const authCopy: Record<Locale, AuthCopy> = {
     usernamePlaceholder: "Pseudo ou e-mail",
     signingIn: "Connexion…",
     loginButton: "Se connecter",
+    forgotPassword: "Mot de passe oublié ?",
     loginAsAdminButton: "Continuer en admin",
     useEmailLogin: "Connexion par e-mail",
     switchToAdminLogin: "Connexion admin",

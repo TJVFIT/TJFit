@@ -28,11 +28,11 @@ const TITLES: Record<Locale, string> = {
 };
 
 const DESCRIPTIONS: Record<Locale, string> = {
-  en: "12-week fitness programs, certified coaches, and TJAI — quiz preview is free; pay to unlock your full AI plan. 10 languages.",
-  tr: "12 haftalık programlar, sertifikalı koçlar ve TJAI — quiz ön izlemesi ücretsiz; tam plan ücretli. 10 dil.",
-  ar: "برامج لياقة لمدة 12 أسبوعاً، ومدربون معتمدون، وـTJAI — معاينة الاختبار مجانية؛ ادفع لخطتك الكاملة. 10 لغات.",
-  es: "Programas de 12 semanas, coaches certificados y TJAI — vista previa del cuestionario gratis; paga por el plan completo. 10 idiomas.",
-  fr: "Programmes 12 semaines, coachs certifies et TJAI — aperçu gratuit ; plan complet payant. 10 langues."
+  en: "12-week fitness programs, certified coaches, and TJAI — quiz preview is free; pay to unlock your full AI plan. 5 languages.",
+  tr: "12 haftalık programlar, sertifikalı koçlar ve TJAI — quiz ön izlemesi ücretsiz; tam plan ücretli. 5 dil.",
+  ar: "برامج لياقة لمدة 12 أسبوعاً، ومدربون معتمدون، وـTJAI — معاينة الاختبار مجانية؛ ادفع لخطتك الكاملة. 5 لغات.",
+  es: "Programas de 12 semanas, coaches certificados y TJAI — vista previa del cuestionario gratis; paga por el plan completo. 5 idiomas.",
+  fr: "Programmes 12 semaines, coachs certifies et TJAI — aperçu gratuit ; plan complet payant. 5 langues."
 };
 
 /** BCP-47 tags for `<html lang>` and OG locale. */
@@ -41,12 +41,7 @@ const BCP47: Record<SupportedLocale, string> = {
   tr: "tr_TR",
   ar: "ar_SA",
   es: "es_ES",
-  fr: "fr_FR",
-  de: "de_DE",
-  pt: "pt_PT",
-  ru: "ru_RU",
-  hi: "hi_IN",
-  id: "id_ID"
+  fr: "fr_FR"
 };
 
 export function generateMetadata({ params }: { params: { locale?: string } }): Metadata {

@@ -919,15 +919,9 @@ export function getDirection(locale: Locale | SupportedLocale) {
 }
 
 /**
- * Extended locale set (Path B, Phase 1).
- *
- * `Locale` (5) is the "copy locale" — every `Record<Locale, X>` dictionary is keyed on it.
- * `SupportedLocale` (10) is the "routing locale" — what the URL and the language switcher see.
- * New locales (de, pt, ru, hi, id) fall back to English copy via `resolveCopyLocale()`.
- * This keeps all 30+ consumer Record<Locale, X> dictionaries working unchanged while we
- * stage phase 2 (batch AI translation) later.
+ * Public routing locales. Keep this list limited to languages with real UI copy.
  */
-export const supportedLocales = ["en", "tr", "ar", "es", "fr", "de", "pt", "ru", "hi", "id"] as const;
+export const supportedLocales = locales;
 export type SupportedLocale = (typeof supportedLocales)[number];
 
 export const LOCALE_META: Record<SupportedLocale, { label: string; native: string; flag: string; dir: "ltr" | "rtl" }> = {
@@ -936,11 +930,6 @@ export const LOCALE_META: Record<SupportedLocale, { label: string; native: strin
   ar: { label: "Arabic", native: "العربية", flag: "🇸🇦", dir: "rtl" },
   es: { label: "Spanish", native: "Español", flag: "🇪🇸", dir: "ltr" },
   fr: { label: "French", native: "Français", flag: "🇫🇷", dir: "ltr" },
-  de: { label: "German", native: "Deutsch", flag: "🇩🇪", dir: "ltr" },
-  pt: { label: "Portuguese", native: "Português", flag: "🇵🇹", dir: "ltr" },
-  ru: { label: "Russian", native: "Русский", flag: "🇷🇺", dir: "ltr" },
-  hi: { label: "Hindi", native: "हिन्दी", flag: "🇮🇳", dir: "ltr" },
-  id: { label: "Indonesian", native: "Bahasa Indonesia", flag: "🇮🇩", dir: "ltr" }
 };
 
 export function isSupportedLocale(value: string): value is SupportedLocale {
@@ -949,7 +938,6 @@ export function isSupportedLocale(value: string): value is SupportedLocale {
 
 /**
  * Map any SupportedLocale to a Locale that has copy in the existing dictionaries.
- * New locales (de/pt/ru/hi/id) fall back to English until phase-2 translation lands.
  */
 export function resolveCopyLocale(locale: string | null | undefined): Locale {
   if (!locale) return "en";
@@ -964,9 +952,4 @@ export const LANGUAGE_NAME_EN: Record<SupportedLocale, string> = {
   ar: "Arabic",
   es: "Spanish",
   fr: "French",
-  de: "German",
-  pt: "Portuguese",
-  ru: "Russian",
-  hi: "Hindi",
-  id: "Indonesian"
 };

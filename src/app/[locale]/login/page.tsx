@@ -91,6 +91,9 @@ function LoginForm({ params }: { params: { locale: string } }) {
           <input
             className="input"
             type="email"
+            name="email"
+            autoComplete="email"
+            aria-label={copy.emailPlaceholder}
             placeholder={copy.emailPlaceholder}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -99,6 +102,9 @@ function LoginForm({ params }: { params: { locale: string } }) {
           <input
             className="input"
             type="password"
+            name="password"
+            autoComplete="current-password"
+            aria-label={copy.passwordPlaceholder}
             placeholder={copy.passwordPlaceholder}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -106,7 +112,7 @@ function LoginForm({ params }: { params: { locale: string } }) {
           />
           <div className="flex justify-end">
             <Link href={`/${locale}/forgot-password`} className="text-xs text-faint hover:text-bright">
-              Forgot password?
+              {copy.forgotPassword}
             </Link>
           </div>
           {error ? <div className="tj-api-error-block">{error}</div> : null}

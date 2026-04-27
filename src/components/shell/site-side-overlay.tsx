@@ -46,6 +46,130 @@ const SIGN_OUT_LABEL: Record<Locale, string> = {
   fr: "Déconnexion"
 };
 
+const SEARCH_LABEL: Record<Locale, string> = {
+  en: "Programs, TJAI, messages, coaches",
+  tr: "Programlar, TJAI, mesajlar, koclar",
+  ar: "البرامج، TJAI، الرسائل، المدربون",
+  es: "Programas, TJAI, mensajes, coaches",
+  fr: "Programmes, TJAI, messages, coachs"
+};
+
+const NAV_LABELS: Record<Locale, Record<string, string>> = {
+  en: {},
+  tr: {
+    Programs: "Programlar",
+    Diets: "Diyetler",
+    Coaches: "Koclar",
+    Calculator: "Hesaplayici",
+    Equipment: "Ekipman",
+    "Upload program": "Program yukle",
+    Dashboard: "Panel",
+    Progress: "Progress",
+    Messages: "Mesajlar",
+    Profile: "Profil",
+    Settings: "Ayarlar",
+    Coins: "Coinler",
+    Community: "Topluluk",
+    Challenges: "Meydan okumalar",
+    Leaderboard: "Liderlik tablosu",
+    Live: "Canli",
+    Feed: "Akis",
+    Blog: "Blog",
+    Transformations: "Donusumler",
+    Support: "Destek",
+    Feedback: "Geri bildirim",
+    Press: "Basin",
+    Legal: "Yasal",
+    Admin: "Admin",
+    "Coach dashboard": "Koc paneli"
+  },
+  ar: {
+    Programs: "البرامج",
+    Diets: "الأنظمة الغذائية",
+    Coaches: "المدربون",
+    Calculator: "الحاسبة",
+    Equipment: "المعدات",
+    "Upload program": "رفع برنامج",
+    Dashboard: "لوحة التحكم",
+    Progress: "التقدم",
+    Messages: "الرسائل",
+    Profile: "الملف الشخصي",
+    Settings: "الإعدادات",
+    Coins: "النقاط",
+    Community: "المجتمع",
+    Challenges: "التحديات",
+    Leaderboard: "لوحة الصدارة",
+    Live: "مباشر",
+    Feed: "الخلاصة",
+    Blog: "المدونة",
+    Transformations: "التحولات",
+    Support: "الدعم",
+    Feedback: "الملاحظات",
+    Press: "الصحافة",
+    Legal: "القانوني",
+    Admin: "المشرف",
+    "Coach dashboard": "لوحة المدرب"
+  },
+  es: {
+    Programs: "Programas",
+    Diets: "Dietas",
+    Coaches: "Coaches",
+    Calculator: "Calculadora",
+    Equipment: "Equipo",
+    "Upload program": "Subir programa",
+    Dashboard: "Panel",
+    Progress: "Progreso",
+    Messages: "Mensajes",
+    Profile: "Perfil",
+    Settings: "Ajustes",
+    Coins: "Monedas",
+    Community: "Comunidad",
+    Challenges: "Retos",
+    Leaderboard: "Clasificacion",
+    Live: "Directo",
+    Feed: "Feed",
+    Blog: "Blog",
+    Transformations: "Transformaciones",
+    Support: "Soporte",
+    Feedback: "Feedback",
+    Press: "Prensa",
+    Legal: "Legal",
+    Admin: "Admin",
+    "Coach dashboard": "Panel de coach"
+  },
+  fr: {
+    Programs: "Programmes",
+    Diets: "Diets",
+    Coaches: "Coachs",
+    Calculator: "Calculateur",
+    Equipment: "Equipement",
+    "Upload program": "Uploader un programme",
+    Dashboard: "Tableau de bord",
+    Progress: "Progression",
+    Messages: "Messages",
+    Profile: "Profil",
+    Settings: "Reglages",
+    Coins: "Coins",
+    Community: "Communaute",
+    Challenges: "Challenges",
+    Leaderboard: "Classement",
+    Live: "Live",
+    Feed: "Fil",
+    Blog: "Blog",
+    Transformations: "Transformations",
+    Support: "Support",
+    Feedback: "Feedback",
+    Press: "Presse",
+    Legal: "Legal",
+    Admin: "Admin",
+    "Coach dashboard": "Tableau coach"
+  }
+};
+
+function navLabel(locale: Locale, label: string) {
+  return NAV_LABELS[locale]?.[label] ?? label;
+}
+
 function buildGroups(locale: Locale): NavGroup[] {
   const titles = GROUP_TITLES[locale] ?? GROUP_TITLES.en;
   const base = `/${locale}`;
@@ -207,7 +331,7 @@ export function SiteSideOverlay({ locale }: { locale: Locale }) {
 
           <div className="relative z-[1] mx-6 mt-6 flex items-center gap-3 rounded-md border border-white/[0.07] bg-white/[0.02] px-3.5 py-2.5 sm:mx-8">
             <Search className="h-4 w-4 text-white/40" aria-hidden />
-            <span className="text-sm text-white/55">Programs, TJAI, messages, coaches</span>
+            <span className="text-sm text-white/55">{SEARCH_LABEL[locale] ?? SEARCH_LABEL.en}</span>
           </div>
 
           <div className="relative z-[1] grid flex-1 gap-x-10 gap-y-7 overflow-y-auto px-6 py-7 sm:grid-cols-2 sm:px-8 lg:grid-cols-4">
@@ -232,7 +356,7 @@ export function SiteSideOverlay({ locale }: { locale: Locale }) {
                               : "text-white/65 hover:bg-white/[0.04] hover:text-white"
                           )}
                         >
-                          <span>{item.label}</span>
+                          <span>{navLabel(locale, item.label)}</span>
                           <ChevronRight
                             className={cn(
                               "h-3.5 w-3.5 transition-opacity duration-150",
