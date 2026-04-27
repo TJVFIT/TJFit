@@ -2,7 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { BadgeUnlockToast } from "@/components/tjai/badge-unlock-toast";
 import { CoachMessageBody, CoachThinkingPulse } from "@/components/tjai/coach-message-body";
+import { PersonaPicker } from "@/components/tjai/persona-picker";
+import { SpeakerButton } from "@/components/tjai/speaker-button";
+import { StreakBanner } from "@/components/tjai/streak-banner";
+import { SuggestionCards } from "@/components/tjai/suggestion-cards";
+import { UpgradePrompt, showUpgradePrompt } from "@/components/tjai/upgrade-prompt";
 import type { QuizAnswers, TJAIMetrics, TJAIPlan } from "@/lib/tjai-types";
 import { COACH_FOLLOW_UP_PROMPTS, getCoachThinkingDelayMs } from "@/lib/tjai/chat-client-utils";
 import { cn } from "@/lib/utils";
@@ -28,11 +34,32 @@ export function TJAIChat({
   const [thinking, setThinking] = useState(false);
   const [conversationId, setConversationId] = useState<string>("");
   const [apiError, setApiError] = useState<string | null>(null);
+  const [ttsAutoplay, setTtsAutoplay] = useState(false);
+  const [trialRemaining, setTrialRemaining] = useState<number | null>(null);
+  const [trialLimit, setTrialLimit] = useState<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setConversationId(crypto.randomUUID());
-  }, []);
+    fetch("/api/tjai/settings", { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data && typeof data.tts_autoplay === "boolean") setTtsAutoplay(data.tts_autoplay);
+      })
+      .catch(() => {});
+    if (coreLimited) {
+      fetch("/api/tjai/trial-status", { credentials: "include" })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+          if (!data?.trial) return;
+          const used = Number(data.trial.messagesUsed ?? 0);
+          const limit = Number(data.trial.messageLimit ?? 5);
+          setTrialLimit(limit);
+          setTrialRemaining(Math.max(0, limit - used));
+        })
+        .catch(() => {});
+    }
+  }, [coreLimited]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -50,7 +77,25 @@ export function TJAIChat({
   const ask = async (text: string) => {
     if (coreLimited) {
       const limitRes = await fetch("/api/tjai/trial-consume-message", { method: "POST" });
+      if (limitRes.ok) {
+        try {
+          const data = (await limitRes.clone().json()) as { messagesUsed?: number; messageLimit?: number };
+          if (typeof data.messagesUsed === "number" && typeof data.messageLimit === "number") {
+            setTrialLimit(data.messageLimit);
+            setTrialRemaining(Math.max(0, data.messageLimit - data.messagesUsed));
+          }
+        } catch {
+          /* ignore */
+        }
+      }
       if (!limitRes.ok) {
+        showUpgradePrompt({
+          reason: "limit_reached",
+          title: "You hit your free messages",
+          body: "TJAI is still here when you upgrade — unlimited coaching, voice replies, and adaptive weekly plans.",
+          ctaHref: "/membership",
+          ctaLabel: "Upgrade now"
+        });
         onLimitReached?.();
         return;
       }
@@ -168,10 +213,46 @@ export function TJAIChat({
               Your coach knows your plan and your logged sessions — ask with specifics for sharper answers.
             </p>
           </div>
+          <a
+            href={typeof window !== "undefined" ? `${window.location.pathname.replace(/\/$/, "")}/memory` : "./memory"}
+            className="shrink-0 rounded-md border border-white/10 px-3 py-1.5 text-[11px] uppercase tracking-wide text-white/60 hover:bg-white/5"
+          >
+            Memory
+          </a>
+        </div>
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+          <PersonaPicker compact />
+          {coreLimited && trialRemaining !== null && trialLimit !== null ? (
+            <button
+              type="button"
+              onClick={() =>
+                showUpgradePrompt({
+                  reason: "manual",
+                  title: "Get unlimited TJAI",
+                  body: "Pro removes the message cap and unlocks voice, swaps, weekly adaptive plans, and coach handoff.",
+                  ctaHref: "/membership",
+                  ctaLabel: "See plans"
+                })
+              }
+              className={`text-[11px] font-medium uppercase tracking-wide transition ${
+                trialRemaining <= 1 ? "text-amber-300" : "text-white/60 hover:text-cyan-300"
+              }`}
+              title="Free trial usage"
+            >
+              {trialRemaining} of {trialLimit} free messages left · upgrade
+            </button>
+          ) : null}
         </div>
         {apiError ? (
           <p className="mt-3 rounded-lg border border-red-500/25 bg-red-500/10 px-3 py-2 text-xs text-red-200">{apiError}</p>
         ) : null}
+
+        <div className="mt-5">
+          <StreakBanner />
+          <SuggestionCards />
+          <BadgeUnlockToast />
+          <UpgradePrompt />
+        </div>
 
         {history.length === 0 ? (
           <div className="mt-5 grid gap-2 sm:grid-cols-2">
@@ -213,6 +294,14 @@ export function TJAIChat({
                 <span className="ms-1 inline-block animate-pulse text-accent" aria-hidden>
                   ▋
                 </span>
+              ) : null}
+              {m.role === "assistant" && m.content && !(loading && i === history.length - 1) ? (
+                <div className="mt-2 flex justify-end">
+                  <SpeakerButton
+                    text={m.content}
+                    autoplay={ttsAutoplay && i === history.length - 1}
+                  />
+                </div>
               ) : null}
             </div>
           ))}

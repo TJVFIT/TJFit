@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { FreeProductBodyBlocks, FreeProductUpgradeFooter } from "@/components/free-product-detail-view";
 import { ProgramEliteSystemCard } from "@/components/program-elite-system-card";
@@ -94,12 +94,11 @@ export default async function ProgramDetailPage({
   const authCtx = await getOptionalServerUser();
   const userId = authCtx?.userId ?? null;
   const isAdmin = authCtx?.role === "admin";
-  if (program && !program.is_free && !userId) {
-    redirect(`/${locale}/signup?redirect=${encodeURIComponent(`/${locale}/programs/${slug}`)}`);
-  }
-  if (customProgram && !userId) {
-    redirect(`/${locale}/signup?redirect=${encodeURIComponent(`/${locale}/programs/${slug}`)}`);
-  }
+  // Static paid programs: public preview is OK — body sections are gated
+  // by ProgramContentLock. Custom uploaded programs are different —
+  // their body is auto-translated user-uploaded text we can't show
+  // publicly. Hide the text body and PDF link from anyone who isn't
+  // signed in AND paid (or admin).
   let hasPaidOrder = false;
   if (authCtx && program && !program.is_free) {
     hasPaidOrder = await userHasPaidProgram(authCtx.supabase, userId!, slug);
@@ -115,6 +114,14 @@ export default async function ProgramDetailPage({
     }
   }
   const customProgramLocked = Boolean(customProgram) && !hasPaidCustomProgram;
+  // Hard gate: if this is a custom program and the viewer is not signed in
+  // (or signed in but not paid/admin), strip the translated text and signed
+  // PDF URL entirely. The page still renders so they see the title and CTA,
+  // but the body content is never sent to the client.
+  if (customProgram && !hasPaidCustomProgram) {
+    customProgramTranslatedText = null;
+    customProgramPdfUrl = null;
+  }
   const access = resolveStaticProgramAccess(program ?? null, userId, hasPaidOrder, isAdmin);
 
   const baseTry = program ? getProgramBasePriceTry(program) : customProgram?.price_try ?? 400;

@@ -17,6 +17,9 @@ export async function POST(request: Request) {
   try {
     const text = await callClaude({
       maxTokens: 2000,
+      task: "extract",
+      route: "tjai/grocery-list",
+      userId: auth.user.id,
       system: "You are TJAI. Return JSON only.",
       user: `Extract ingredients from these meals, combine duplicates, total quantities for one week.
 Organize categories: proteins, carbs_and_grains, vegetables_and_fruits, dairy_and_eggs, pantry_and_condiments, supplements.

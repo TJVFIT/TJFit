@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { isAdminEmail } from "@/lib/auth-utils";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { TJAI_TRIAL_MESSAGE_LIMIT } from "@/lib/tjai/trial-config";
 
 export async function GET() {
   const authResult = await requireAuth();
@@ -54,7 +55,7 @@ export async function GET() {
       messagesUsed: isAdmin ? 0 : (finalUsage?.messages_used ?? 0),
       trialStartedAt: finalUsage?.trial_started_at ?? null,
       trialEndsAt: finalUsage?.trial_ends_at ?? null,
-      messageLimit: isAdmin ? 999 : 10
+      messageLimit: isAdmin ? 999 : TJAI_TRIAL_MESSAGE_LIMIT
     },
     isAdmin
   });

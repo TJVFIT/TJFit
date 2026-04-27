@@ -3,9 +3,16 @@ import { NextRequest } from "next/server";
 import { isAdminEmail } from "@/lib/auth-utils";
 import {
   buildChatCoachSystemPrompt,
+  detectMedicalRisk,
+  extractFactsFromMessage,
   fallbackCoachReply,
+  formatMemoryBlock,
   isLikelyFitnessQuestion,
+  loadLongMemoryFacts,
+  loadTjaiUserSettings,
   logChatCoachContextBuilt,
+  medicalSafetyResponse,
+  persistFacts,
   routeCoachChatIntent,
   TJAI_CHAT_DOMAIN_GUARD,
   type ChatCoachPlanRow,
@@ -71,7 +78,8 @@ export async function POST(request: NextRequest) {
     const isAdmin = isAdminByEmail || profile?.role === "admin";
     const tier = (sub?.tier ?? "core") as "core" | "pro" | "apex";
     const trialEndsAt = usage?.trial_ends_at ? new Date(usage.trial_ends_at).getTime() : 0;
-    const remaining = isAdmin ? 999 : Math.max(0, trialEndsAt > Date.now() ? 10 - Number(usage?.messages_used ?? 0) : 0);
+    const { TJAI_TRIAL_MESSAGE_LIMIT } = await import("@/lib/tjai/trial-config");
+    const remaining = isAdmin ? 999 : Math.max(0, trialEndsAt > Date.now() ? TJAI_TRIAL_MESSAGE_LIMIT - Number(usage?.messages_used ?? 0) : 0);
     const access = getTJAIAccess(tier, {
       hasOneTimePlanPurchase: Boolean(purchase?.id),
       coreTrialMessagesRemaining: remaining,
@@ -79,6 +87,35 @@ export async function POST(request: NextRequest) {
     });
     if (!access.canUseChat) {
       return new Response(JSON.stringify({ error: "Upgrade required for TJAI chat." }), { status: 402, headers: { "Content-Type": "application/json" } });
+    }
+
+    const medicalRisk = detectMedicalRisk(message);
+    if (medicalRisk) {
+      const safeReply = medicalSafetyResponse(
+        medicalRisk.category,
+        isSupportedLocale(locale) ? locale : "en"
+      );
+      await auth.supabase.from("tjai_chat_messages").insert([
+        { user_id: auth.user.id, conversation_id: conversationId, role: "user", content: message },
+        { user_id: auth.user.id, conversation_id: conversationId, role: "assistant", content: safeReply }
+      ]);
+      void admin.from("tjai_ai_call_logs").insert({
+        user_id: auth.user.id,
+        route: "tjai/chat",
+        task: "safety_refusal",
+        provider: "guard",
+        model: `medical:${medicalRisk.category}`,
+        input_tokens: 0,
+        output_tokens: 0,
+        cache_creation_tokens: 0,
+        cache_read_tokens: 0,
+        latency_ms: 0,
+        cost_usd: 0,
+        ok: true
+      });
+      return new Response(JSON.stringify({ message: safeReply, conversationId, refused: true }), {
+        headers: { "Content-Type": "application/json" }
+      });
     }
 
     if (!isLikelyFitnessQuestion(message)) {
@@ -106,7 +143,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const [planRow, memorySnapshot, { data: historyRows }, { data: prefRows }, recentData] = await Promise.all([
+    const [planRow, memorySnapshot, { data: historyRows }, { data: prefRows }, recentData, userSettings, longMemoryFacts] = await Promise.all([
       getLatestTjaiPlan(auth.supabase, auth.user.id),
       buildTjaiMemorySnapshot(auth.supabase, auth.user.id),
       auth.supabase
@@ -136,7 +173,9 @@ export async function POST(request: NextRequest) {
       ]).then(([w, p]) => ({
         workouts: (w.data ?? []) as ChatCoachWorkoutLog[],
         entries: (p.data ?? []) as ChatCoachProgressEntry[]
-      }))
+      })),
+      loadTjaiUserSettings(auth.supabase, auth.user.id),
+      loadLongMemoryFacts(auth.supabase, auth.user.id, 30)
     ]);
 
     const history: HistoryRow[] = (historyRows ?? []).reverse().flatMap((row) => {
@@ -156,6 +195,8 @@ export async function POST(request: NextRequest) {
 
     const coachIntent = routeCoachChatIntent(message);
 
+    const longMemoryBlock = userSettings.memory_enabled ? formatMemoryBlock(longMemoryFacts) : "";
+
     const systemPrompt = buildChatCoachSystemPrompt({
       planRow: planRow as ChatCoachPlanRow | null,
       memorySnapshot,
@@ -163,7 +204,9 @@ export async function POST(request: NextRequest) {
       workouts: recentData.workouts,
       entries: recentData.entries,
       coachIntent,
-      locale: isSupportedLocale(locale) ? locale : "en"
+      locale: isSupportedLocale(locale) ? locale : "en",
+      persona: userSettings.persona,
+      longMemoryBlock
     });
 
     const messages = [
@@ -229,6 +272,11 @@ export async function POST(request: NextRequest) {
                 );
               }
             });
+            if (userSettings.memory_enabled) {
+              void extractFactsFromMessage(message, auth.user.id).then((facts) =>
+                persistFacts(auth.supabase, auth.user.id, facts)
+              );
+            }
           }
         }
       });

@@ -37,6 +37,9 @@ export async function POST(request: Request) {
   try {
     const text = await callClaude({
       maxTokens: 1500,
+      task: "swap",
+      route: "tjai/swap-meal",
+      userId: auth.user.id,
       system: "You are TJAI. Generate 3 alternative meals. Return JSON only.",
       user: `Generate 3 meals that can replace this meal:
 ${JSON.stringify(originalMeal)}

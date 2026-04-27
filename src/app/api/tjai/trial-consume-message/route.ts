@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { isAdminEmail } from "@/lib/auth-utils";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { TJAI_TRIAL_MESSAGE_LIMIT } from "@/lib/tjai/trial-config";
 
 export async function POST(_request: NextRequest) {
   const authResult = await requireAuth();
@@ -29,7 +30,7 @@ export async function POST(_request: NextRequest) {
     .maybeSingle();
   const tier = (sub?.tier ?? "core") as "core" | "pro" | "apex";
   if (tier !== "core") {
-    return NextResponse.json({ ok: true, messagesUsed: 0, messageLimit: 10, unlimited: true });
+    return NextResponse.json({ ok: true, messagesUsed: 0, messageLimit: TJAI_TRIAL_MESSAGE_LIMIT, unlimited: true });
   }
 
   const { data: usage } = await adminClient
@@ -38,8 +39,8 @@ export async function POST(_request: NextRequest) {
     .eq("user_id", authResult.user.id)
     .maybeSingle();
   const used = Number(usage?.messages_used ?? 0);
-  if (used >= 10) {
-    return NextResponse.json({ ok: false, code: "LIMIT_REACHED", messagesUsed: used, messageLimit: 10 }, { status: 402 });
+  if (used >= TJAI_TRIAL_MESSAGE_LIMIT) {
+    return NextResponse.json({ ok: false, code: "LIMIT_REACHED", messagesUsed: used, messageLimit: TJAI_TRIAL_MESSAGE_LIMIT }, { status: 402 });
   }
 
   const nextUsed = used + 1;
@@ -52,6 +53,6 @@ export async function POST(_request: NextRequest) {
     return NextResponse.json({ error: "Failed to record trial usage. Please try again." }, { status: 500 });
   }
 
-  return NextResponse.json({ ok: true, messagesUsed: nextUsed, messageLimit: 10 });
+  return NextResponse.json({ ok: true, messagesUsed: nextUsed, messageLimit: TJAI_TRIAL_MESSAGE_LIMIT });
 }
 

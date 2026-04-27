@@ -13,11 +13,11 @@ import { cn } from "@/lib/utils";
 type Tab = { key: "main" | "programs" | "coaches" | "tjai" | "tjaichat"; label: string; href: string };
 
 const TAB_LABELS: Record<Locale, Record<Tab["key"], string>> = {
-  en: { main: "Home", programs: "Programs", coaches: "Coaches", tjai: "TJAI", tjaichat: "Chat" },
-  tr: { main: "Ana", programs: "Programlar", coaches: "Koclar", tjai: "TJAI", tjaichat: "Chat" },
-  ar: { main: "Home", programs: "Programs", coaches: "Coaches", tjai: "TJAI", tjaichat: "Chat" },
-  es: { main: "Inicio", programs: "Programas", coaches: "Coaches", tjai: "TJAI", tjaichat: "Chat" },
-  fr: { main: "Accueil", programs: "Programmes", coaches: "Coachs", tjai: "TJAI", tjaichat: "Chat" }
+  en: { main: "Home", programs: "Programs", coaches: "Coaches", tjai: "TJAI", tjaichat: "TJAI Chat" },
+  tr: { main: "Ana", programs: "Programlar", coaches: "Koclar", tjai: "TJAI", tjaichat: "TJAI Chat" },
+  ar: { main: "Home", programs: "Programs", coaches: "Coaches", tjai: "TJAI", tjaichat: "TJAI Chat" },
+  es: { main: "Inicio", programs: "Programas", coaches: "Coaches", tjai: "TJAI", tjaichat: "TJAI Chat" },
+  fr: { main: "Accueil", programs: "Programmes", coaches: "Coachs", tjai: "TJAI", tjaichat: "TJAI Chat" }
 };
 
 const SIGN_IN_LABEL: Record<Locale, string> = {
@@ -72,7 +72,7 @@ export function SiteTopBar({ locale }: { locale: Locale }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const accountHref = user ? `/${locale}/profile` : `/${locale}/login?redirect=${encodeURIComponent(pathname || `/${locale}`)}`;
+  const accountHref = user ? `/${locale}/profile/edit` : `/${locale}/login?redirect=${encodeURIComponent(pathname || `/${locale}`)}`;
 
   return (
     <header
@@ -81,10 +81,10 @@ export function SiteTopBar({ locale }: { locale: Locale }) {
         hidden ? "-translate-y-full" : "translate-y-0"
       )}
       style={{
-        background: "linear-gradient(180deg, rgba(8,8,10,0.9), rgba(8,8,10,0.66))",
-        backdropFilter: "blur(18px) saturate(1.08)",
-        WebkitBackdropFilter: "blur(18px) saturate(1.08)",
-        borderBottom: "1px solid rgba(255,255,255,0.07)"
+        background: "linear-gradient(180deg, rgba(10,10,12,0.94), rgba(10,10,12,0.78))",
+        backdropFilter: "blur(20px) saturate(1.05)",
+        WebkitBackdropFilter: "blur(20px) saturate(1.05)",
+        borderBottom: "1px solid rgba(255,255,255,0.06)"
       }}
       aria-label="Primary"
     >
@@ -97,7 +97,7 @@ export function SiteTopBar({ locale }: { locale: Locale }) {
           aria-label="Primary sections"
           className="pointer-events-none absolute inset-x-0 top-0 hidden h-full items-center justify-center md:flex"
         >
-          <ul className="pointer-events-auto inline-flex items-center gap-0.5 rounded-[14px] border border-white/[0.08] bg-[rgba(17,18,21,0.58)] p-1 text-sm font-medium shadow-[0_12px_36px_rgba(0,0,0,0.24),inset_0_1px_0_rgba(255,255,255,0.055)]">
+          <ul className="pointer-events-auto inline-flex items-center gap-1 text-sm font-medium">
             {tabs.map((tab) => {
               const active = isTabActive(pathname, tab, locale);
               return (
@@ -106,13 +106,19 @@ export function SiteTopBar({ locale }: { locale: Locale }) {
                     href={tab.href}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "relative inline-flex min-h-[36px] items-center rounded-[10px] px-3 py-1.5 text-[13px] transition-[background-color,color,box-shadow,transform] duration-150 sm:px-3.5",
+                      "relative inline-flex min-h-[36px] items-center px-3.5 text-[13px] tracking-tight transition-colors duration-150 sm:px-4",
                       active
-                        ? "bg-white/[0.075] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08),0_8px_20px_rgba(0,0,0,0.18)]"
-                        : "text-[var(--color-text-secondary)] hover:-translate-y-0.5 hover:bg-white/[0.045] hover:text-white"
+                        ? "text-white"
+                        : "text-[rgba(235,235,240,0.62)] hover:text-white"
                     )}
                   >
-                    {tab.label}
+                    <span>{tab.label}</span>
+                    {active ? (
+                      <span
+                        aria-hidden
+                        className="absolute -bottom-[15px] left-1/2 h-[2px] w-6 -translate-x-1/2 rounded-full bg-accent shadow-[0_0_12px_rgba(34,211,238,0.35)] sm:-bottom-[17px]"
+                      />
+                    ) : null}
                   </Link>
                 </li>
               );
@@ -125,9 +131,9 @@ export function SiteTopBar({ locale }: { locale: Locale }) {
             href={accountHref}
             aria-label={user ? "Account" : SIGN_IN_LABEL[locale]}
             className={cn(
-              "inline-flex min-h-[36px] items-center gap-2 rounded-[12px] border border-white/[0.08] bg-white/[0.025] px-3 py-1.5 text-[13px] font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-[border-color,background-color,transform] duration-150",
-              "hover:-translate-y-0.5 hover:border-[rgba(255,255,255,0.15)] hover:bg-[rgba(255,255,255,0.05)]",
-              user ? "text-white" : "text-accent"
+              "inline-flex min-h-[36px] items-center gap-2 rounded-md border border-white/[0.09] bg-white/[0.02] px-3.5 py-1.5 text-[13px] font-medium transition-colors duration-150",
+              "hover:border-[rgba(255,255,255,0.18)] hover:bg-[rgba(255,255,255,0.045)]",
+              user ? "text-white" : "text-white"
             )}
           >
             <UserRound className="h-4 w-4" aria-hidden />

@@ -23,7 +23,14 @@ Target keyword: ${keyword}
 Include: introduction, 5-7 subheadings with content, practical tips, conclusion, meta description.
 Tone: expert but accessible. Length: ~1200 words.`;
 
-  const content = await callClaude({ system, user, maxTokens: 4500 });
+  const content = await callClaude({
+    system,
+    user,
+    maxTokens: 4500,
+    task: "blog",
+    route: "tjai/blog-generate",
+    userId: auth.user.id
+  });
   const { data: draft, error } = await admin
     .from("community_blog_posts")
     .insert({

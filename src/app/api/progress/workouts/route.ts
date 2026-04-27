@@ -62,5 +62,23 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
-  return NextResponse.json({ workout: data }, { status: 201 });
+  let newBadges: import("@/lib/tjai/badges").BadgeMeta[] = [];
+  let streak: import("@/lib/tjai/streaks").Streak | null = null;
+  try {
+    const { bumpStreak } = await import("@/lib/tjai/streaks");
+    const { evaluateBadges } = await import("@/lib/tjai/badges");
+    streak = await bumpStreak(auth.supabase, auth.user.id);
+    const { count } = await auth.supabase
+      .from("workout_logs")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", auth.user.id);
+    newBadges = await evaluateBadges(auth.supabase, auth.user.id, {
+      workoutCount: count ?? null,
+      currentStreak: streak.current_streak
+    });
+  } catch {
+    /* swallow — streak/badges are best-effort */
+  }
+
+  return NextResponse.json({ workout: data, streak, newBadges }, { status: 201 });
 }

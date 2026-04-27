@@ -155,8 +155,7 @@ function PlatformFeatureCard({
   return (
     <article
       className={cn(
-        "glass-panel group relative flex h-full flex-col overflow-hidden p-8 transition-[transform,border-color,box-shadow,background-color] duration-[250ms] lg:p-10",
-        "tj-card-cinematic-hover hover:bg-[rgba(17,18,21,0.95)]",
+        "group relative flex h-full flex-col overflow-hidden border border-white/[0.06] bg-[#0B0C0F] p-8 transition-colors duration-200 hover:border-white/[0.12] lg:p-10",
         span === 2 && "md:col-span-2 md:min-h-[unset] md:flex-row md:items-start md:gap-14"
       )}
     >
@@ -413,9 +412,6 @@ export function ImmersiveHome({
         </div>
 
         <section className="relative z-10 px-6 py-24 lg:px-12 lg:py-32">
-          <span className="ghost-text pointer-events-none start-1/2 top-20 z-0 -translate-x-1/2" aria-hidden>
-            PROGRAMS
-          </span>
           <div className="relative z-[1] mx-auto max-w-6xl">
             <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <MotionReveal reducedMotion={reduce}>
@@ -465,13 +461,6 @@ export function ImmersiveHome({
         className="reveal-section relative overflow-hidden border-t border-divider bg-background"
         style={{ minHeight: "min(90vh, 700px)" }}
       >
-        <span
-          className="ghost-text pointer-events-none start-1/2 top-8 z-0 max-lg:opacity-[0.02] -translate-x-1/2 text-[clamp(4rem,18vw,12rem)]"
-          aria-hidden
-        >
-          INTELLIGENCE
-        </span>
-
         <PremiumFullBleedImage
           src="/assets/hero/hero-tjai-core.png"
           preset="tjai"
@@ -584,9 +573,6 @@ export function ImmersiveHome({
       {/* ══════════════ DIETS ══════════════ */}
       {dietSlice.length > 0 && (
         <section id="diets" className="reveal-section relative border-t border-divider bg-background px-6 py-24 lg:px-12 lg:py-32 scroll-mt-20">
-          <span className="ghost-text pointer-events-none start-1/2 top-16 z-0 -translate-x-1/2 text-accent-violet opacity-[0.04]" aria-hidden>
-            NUTRITION
-          </span>
           <div className="relative z-[1] mx-auto max-w-6xl">
             <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <MotionReveal reducedMotion={reduce}>

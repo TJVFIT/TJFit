@@ -1,104 +1,72 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useRef } from "react";
 import { ArrowRight, Lock } from "lucide-react";
 
 import { useCardInCenter } from "@/hooks/useCardInCenter";
-import { Logo } from "@/components/ui/Logo";
 import type { Program } from "@/lib/content";
 import { getProgramTier, getProgramVisual } from "@/lib/program-card-visual";
 import { cn } from "@/lib/utils";
 
-const shellClass =
-  "glass-panel group tj-card-premium-hover tj-card-aura tj-card-cinematic-hover relative flex h-full min-h-0 flex-col overflow-hidden rounded-[14px] border border-[rgba(255,255,255,0.06)] bg-[rgba(17,18,21,0.85)] shadow-[0_1px_3px_rgba(0,0,0,0.4)] motion-reduce:transition-none transition-[border-color,box-shadow,transform,filter] duration-[250ms]";
-
-function useCardSpotlight() {
-  const [pos, setPos] = useState({ x: 50, y: 50, visible: false });
-  const rafRef = useRef<number | null>(null);
-  const pendingRef = useRef<{ x: number; y: number } | null>(null);
-  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    pendingRef.current = {
-      x: ((e.clientX - rect.left) / rect.width) * 100,
-      y: ((e.clientY - rect.top) / rect.height) * 100
-    };
-    if (rafRef.current != null) return;
-    rafRef.current = window.requestAnimationFrame(() => {
-      rafRef.current = null;
-      const next = pendingRef.current;
-      if (next) setPos({ x: next.x, y: next.y, visible: true });
-    });
-  };
-  const onLeave = () => {
-    if (rafRef.current != null) {
-      window.cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    }
-    setPos((p) => ({ ...p, visible: false }));
-  };
-  useEffect(
-    () => () => {
-      if (rafRef.current != null) window.cancelAnimationFrame(rafRef.current);
-    },
-    []
-  );
-  return { pos, onMove, onLeave };
-}
-
-const ctaPillClass = cn(
-  "inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-[rgba(34,211,238,0.2)] bg-transparent px-4 py-3 text-xs font-semibold text-accent sm:w-auto sm:justify-start sm:py-2.5",
-  "transition-[gap,box-shadow,background-color,border-color] duration-200 ease-out",
-  "group-hover:gap-2 group-hover:border-[rgba(34,211,238,0.35)] group-hover:bg-[rgba(34,211,238,0.10)] group-hover:shadow-[0_0_20px_rgba(34,211,238,0.12)]"
+const shellClass = cn(
+  "tj-program-card group relative flex h-full min-h-0 flex-col overflow-hidden",
+  "rounded-xl border border-white/[0.06] bg-[#0E0F12]",
+  "shadow-[0_1px_0_rgba(255,255,255,0.04)_inset,0_18px_40px_-30px_rgba(0,0,0,0.9)]",
+  "transition-[border-color,box-shadow,transform] duration-200 ease-out",
+  "motion-safe:hover:-translate-y-[2px]",
+  "hover:border-white/[0.12] hover:shadow-[0_1px_0_rgba(255,255,255,0.05)_inset,0_30px_60px_-32px_rgba(0,0,0,1)]"
 );
 
-function CtaPill({ label }: { label: string }) {
-  return (
-    <span className={ctaPillClass}>
+// Pointer spotlight via CSS vars on a ref — no React rerenders.
+function useCssSpotlight() {
+  const elRef = useRef<HTMLDivElement>(null);
+  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = elRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    el.style.setProperty("--mx", `${x}%`);
+    el.style.setProperty("--my", `${y}%`);
+    el.style.setProperty("--spot", "1");
+  };
+  const onLeave = () => {
+    const el = elRef.current;
+    if (!el) return;
+    el.style.setProperty("--spot", "0");
+  };
+  return { elRef, onMove, onLeave };
+}
+
+function difficultyLabel(difficulty?: string): { dots: number; label: string } {
+  const v = (difficulty ?? "").toLowerCase();
+  if (v.includes("expert")) return { dots: 5, label: difficulty ?? "Expert" };
+  if (v.includes("advanced")) return { dots: 4, label: difficulty ?? "Advanced" };
+  if (v.includes("intermediate")) return { dots: 3, label: difficulty ?? "Intermediate" };
+  if (v.includes("beginner")) return { dots: 2, label: difficulty ?? "Beginner" };
+  return { dots: 3, label: difficulty ?? "All levels" };
+}
+
+function CardCta({ label, asButton }: { label: string; asButton?: boolean }) {
+  const base = cn(
+    "inline-flex items-center gap-1.5 text-[13px] font-semibold tracking-tight text-white",
+    "transition-colors duration-150"
+  );
+  return asButton ? (
+    <span className={base} aria-hidden>
       {label}
-      <ArrowRight
-        className="h-4 w-4 shrink-0 transition-transform duration-200 ease-out group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
-        aria-hidden
-      />
+      <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden />
+    </span>
+  ) : (
+    <span className={base}>
+      {label}
+      <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden />
     </span>
   );
 }
 
-function difficultyDots(difficulty?: string) {
-  const value = (difficulty ?? "").toLowerCase();
-  let filled = 3;
-  if (value.includes("beginner")) filled = 2;
-  if (value.includes("intermediate")) filled = 3;
-  if (value.includes("advanced")) filled = 4;
-  if (value.includes("expert")) filled = 5;
-  return (
-    <div className="difficulty-dots flex items-center gap-1" aria-label={difficulty ?? "Difficulty"}>
-      {Array.from({ length: 5 }).map((_, idx) => (
-        <span key={idx} className={cn("h-1.5 w-1.5 rounded-full", idx < filled ? "bg-accent" : "bg-divider")} />
-      ))}
-    </div>
-  );
-}
-
-function PremiumProgramCardInner({
-  visual,
-  categoryLabel,
-  tier,
-  title,
-  duration,
-  metaLine,
-  description,
-  difficulty,
-  priceLine,
-  ctaLabel,
-  showDescription = true,
-  footerCta,
-  freeBadgeLabel,
-  showPaidLock,
-  premiumLockedHint,
-  trainingGoalBadge,
-  trainingLocationBadge
-}: {
+type CardInnerProps = {
   visual: ReturnType<typeof getProgramVisual>;
   categoryLabel: string;
   tier: string;
@@ -110,120 +78,121 @@ function PremiumProgramCardInner({
   priceLine: string;
   ctaLabel: string;
   showDescription?: boolean;
-  footerCta: "link" | "button";
+  asButton?: boolean;
   freeBadgeLabel?: string;
   showPaidLock?: boolean;
   premiumLockedHint?: string;
   trainingGoalBadge?: string;
   trainingLocationBadge?: string;
-}) {
-  const cta =
-    footerCta === "button" ? (
-      <button type="button" className={cn(ctaPillClass, "cursor-default")}>
-        {ctaLabel}
-        <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
-      </button>
-    ) : (
-      <CtaPill label={ctaLabel} />
-    );
+};
+
+function CardInner({
+  visual,
+  categoryLabel,
+  tier,
+  title,
+  duration,
+  metaLine,
+  description,
+  difficulty,
+  priceLine,
+  ctaLabel,
+  showDescription = true,
+  asButton,
+  freeBadgeLabel,
+  showPaidLock,
+  premiumLockedHint,
+  trainingGoalBadge,
+  trainingLocationBadge
+}: CardInnerProps) {
+  const diff = difficultyLabel(difficulty);
+
+  // Spec strip: only show what's actually present.
+  const specs: Array<{ key: string; value: string }> = [];
+  specs.push({ key: "Length", value: duration });
+  if (trainingLocationBadge) specs.push({ key: "Setup", value: trainingLocationBadge });
+  if (trainingGoalBadge) specs.push({ key: "Goal", value: trainingGoalBadge });
+  specs.push({ key: "Level", value: diff.label });
 
   return (
     <>
-      <div className="relative aspect-[4/3] w-full min-h-[11.5rem] shrink-0 overflow-hidden sm:aspect-[16/10] sm:min-h-0 sm:max-h-[200px]">
-        <div className="absolute inset-0 origin-center transition-transform duration-[400ms] ease-out motion-reduce:transition-none [@media(hover:hover)]:group-hover:scale-[1.04]">
-          <div className={cn("absolute inset-0 bg-gradient-to-br opacity-95", visual.gradient)} aria-hidden />
-          <div
-            className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(255,255,255,0.12),transparent)]"
-            aria-hidden
-          />
-          <div
-            className="absolute inset-0 bg-[linear-gradient(to_top,rgba(9,9,11,0.9)_0%,transparent_55%)]"
-            aria-hidden
-          />
-        </div>
+      {/* Visual band */}
+      <div className="relative aspect-[16/9] w-full shrink-0 overflow-hidden">
+        <div className={cn("absolute inset-0 bg-gradient-to-br opacity-90", visual.gradient)} aria-hidden />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_0%,rgba(255,255,255,0.10),transparent_70%)]" aria-hidden />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_30%,rgba(14,15,18,0.92)_100%)]" aria-hidden />
 
-        <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-4 pb-2">
-          <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-            <div className="flex flex-wrap items-center gap-1.5">
-              <span className="max-w-[min(100%,12rem)] truncate rounded border border-cyan-400/25 bg-cyan-400/10 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.05em] text-accent backdrop-blur-md sm:max-w-[58%] sm:text-[10px]">
-                {categoryLabel}
+        {/* Top row: category + status */}
+        <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-3.5">
+          <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/85">
+            <span className="h-1 w-1 rounded-full bg-accent" aria-hidden />
+            {categoryLabel}
+          </span>
+          <div className="flex items-center gap-1.5">
+            {freeBadgeLabel ? (
+              <span className="rounded-sm border border-white/15 bg-black/30 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/85 backdrop-blur-sm">
+                {freeBadgeLabel}
               </span>
-              {freeBadgeLabel ? (
-                <span className="shrink-0 rounded border border-violet-400/25 bg-violet-400/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.05em] text-accent-violet backdrop-blur-sm">
-                  {freeBadgeLabel}
-                </span>
-              ) : null}
-            </div>
-            {trainingGoalBadge || trainingLocationBadge ? (
-              <div className="flex max-w-full flex-wrap gap-1.5">
-                {trainingGoalBadge ? (
-                  <span className="rounded-full border border-violet-400/25 bg-violet-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-violet-100/95">
-                    {trainingGoalBadge}
-                  </span>
-                ) : null}
-                {trainingLocationBadge ? (
-                  <span className="rounded-full border border-white/12 bg-black/40 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-bright/90">
-                    {trainingLocationBadge}
-                  </span>
-                ) : null}
-              </div>
             ) : null}
-          </div>
-          <div className="flex shrink-0 items-center gap-2">
             {showPaidLock ? (
               <span
-                className="inline-flex items-center justify-center rounded-full border border-white/18 bg-black/50 p-1.5 text-white backdrop-blur-sm"
+                className="inline-flex items-center justify-center rounded-sm border border-white/15 bg-black/40 p-1 text-white/85 backdrop-blur-sm"
                 title={premiumLockedHint}
+                aria-label={premiumLockedHint ?? "Locked"}
               >
-                <Lock className="h-3.5 w-3.5 opacity-90" aria-hidden />
+                <Lock className="h-3 w-3" aria-hidden />
               </span>
             ) : null}
-            <span className="rounded-full border border-white/18 bg-white/[0.1] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-white backdrop-blur-sm sm:text-[10px] sm:tracking-[0.14em]">
+            <span className="rounded-sm border border-white/15 bg-black/30 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/85 backdrop-blur-sm">
               {tier}
             </span>
-            <div className="rounded-xl border border-white/[0.1] bg-black/40 p-1 backdrop-blur-md ring-1 ring-white/[0.04]">
-              <Logo variant="icon" size="card" linked={false} className="opacity-[0.98]" alt="" />
-            </div>
           </div>
         </div>
 
-        <div className="absolute inset-x-0 bottom-0 p-4 pt-8">
-          <h3 className="font-display text-lg font-semibold leading-snug tracking-tight text-white sm:text-xl">
-            <span className="line-clamp-2 [text-shadow:0_2px_12px_rgba(0,0,0,0.65)]">{title}</span>
+        {/* Title block on bottom of visual */}
+        <div className="absolute inset-x-0 bottom-0 px-4 pb-4">
+          <h3 className="font-display text-[19px] font-semibold leading-[1.18] tracking-tight text-white sm:text-[20px]">
+            <span className="line-clamp-2 [text-shadow:0_2px_14px_rgba(0,0,0,0.7)]">{title}</span>
           </h3>
-          <p className="mt-1.5 text-[11px] font-medium uppercase tracking-[0.2em] text-muted">{duration}</p>
           {metaLine ? (
-            <p className="mt-1.5 text-xs font-medium tabular-nums text-muted [text-shadow:0_1px_10px_rgba(0,0,0,0.5)]">
+            <p className="mt-1 text-[11px] font-medium tabular-nums tracking-tight text-white/65">
               {metaLine}
             </p>
           ) : null}
         </div>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col px-4 pb-5 pt-4 sm:px-5">
+      {/* Body: optional description + spec rows + footer */}
+      <div className="flex min-h-0 flex-1 flex-col px-4 pb-4 pt-3.5">
         {showDescription && description ? (
-          <p className="line-clamp-3 text-sm leading-relaxed text-faint">{description}</p>
-        ) : (
-          <div className="min-h-[3.25rem]" aria-hidden />
-        )}
+          <p className="line-clamp-2 text-[13px] leading-[1.55] text-white/65">{description}</p>
+        ) : null}
 
-        <div className="mt-auto border-t border-white/[0.06] pt-4">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-3">
-            <div className="min-w-0">
-              {difficulty ? <div className="pt-0.5">{difficultyDots(difficulty)}</div> : null}
-              <p
-                className={cn(
-                  "text-pretty text-base font-medium tabular-nums text-white",
-                  difficulty ? "mt-1" : ""
-                )}
-              >
-                {priceLine}
-              </p>
+        <dl className="mt-3.5 grid grid-cols-2 gap-x-4 gap-y-2 text-[12px] sm:grid-cols-2">
+          {specs.map((spec) => (
+            <div key={spec.key} className="flex min-w-0 items-baseline justify-between gap-2 border-t border-white/[0.05] pt-2">
+              <dt className="shrink-0 text-[10px] font-medium uppercase tracking-[0.16em] text-white/40">{spec.key}</dt>
+              <dd className="truncate text-right font-medium tabular-nums text-white/85">{spec.value}</dd>
             </div>
-            <div className="w-full shrink-0 sm:w-auto sm:self-end">{cta}</div>
+          ))}
+        </dl>
+
+        <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+          <div className="flex items-baseline gap-2">
+            <span className="text-[15px] font-semibold tabular-nums text-white">{priceLine}</span>
           </div>
+          <CardCta label={ctaLabel} asButton={asButton} />
         </div>
       </div>
+
+      {/* Pointer spotlight overlay (CSS-driven, no rerender) */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[var(--spot,0)] transition-opacity duration-300"
+        style={{
+          background: "radial-gradient(220px circle at var(--mx,50%) var(--my,50%), rgba(34,211,238,0.07), transparent 70%)"
+        }}
+        aria-hidden
+      />
     </>
   );
 }
@@ -240,23 +209,21 @@ export function ProgramCard({
   showPaidLock,
   premiumLockedHint,
   trainingGoalBadge,
-  trainingLocationBadge,
-  flipOnHover = false
+  trainingLocationBadge
 }: {
   program: Program;
   href?: string;
   viewLabel?: string;
   priceLabel?: string;
   tierLabel?: string;
-  /** Replaces program.category in the pill (e.g. Cutting / Bulking on diets grid). */
   categoryLabelOverride?: string;
-  /** Extra line under duration on the card hero (e.g. calorie hint). */
   metaLine?: string;
   freeBadgeLabel?: string;
   showPaidLock?: boolean;
   premiumLockedHint?: string;
   trainingGoalBadge?: string;
   trainingLocationBadge?: string;
+  /** Deprecated — flip-on-hover removed in the premium redesign. */
   flipOnHover?: boolean;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -264,26 +231,10 @@ export function ProgramCard({
   const visual = getProgramVisual(program);
   const tier = tierLabel ?? getProgramTier(program);
   const priceLine = priceLabel ?? String(program.price);
-  const { pos, onMove, onLeave } = useCardSpotlight();
-
-  const spotlightStyle = useMemo<React.CSSProperties>(
-    () => ({
-      opacity: pos.visible ? 1 : 0,
-      background: `radial-gradient(200px circle at ${pos.x}% ${pos.y}%, rgba(34,211,238,0.07), transparent 70%)`
-    }),
-    [pos.x, pos.y, pos.visible]
-  );
-
-  const spotlightOverlay = (
-    <div
-      className="pointer-events-none absolute inset-0 z-10 transition-opacity duration-300"
-      style={spotlightStyle}
-      aria-hidden
-    />
-  );
+  const { elRef, onMove, onLeave } = useCssSpotlight();
 
   const inner = (
-    <PremiumProgramCardInner
+    <CardInner
       visual={visual}
       categoryLabel={categoryLabelOverride ?? program.category}
       tier={tier}
@@ -295,7 +246,7 @@ export function ProgramCard({
       priceLine={priceLine}
       ctaLabel={viewLabel}
       showDescription
-      footerCta={href ? "link" : "button"}
+      asButton={!href}
       freeBadgeLabel={freeBadgeLabel}
       showPaidLock={showPaidLock}
       premiumLockedHint={premiumLockedHint}
@@ -307,61 +258,22 @@ export function ProgramCard({
   return (
     <div
       ref={cardRef}
-      className={cn("h-full", visual.glow)}
-      style={{ "--card-accent": visual.accentColor } as React.CSSProperties}
+      className="h-full"
       onMouseMove={onMove}
       onMouseLeave={onLeave}
     >
       {href ? (
-        flipOnHover ? (
-          <div className="tj-flip-card">
-            <div className="tj-flip-inner">
-              <Link
-                href={href}
-                className={cn(
-                  shellClass,
-                  "tj-flip-front focus:outline-none focus-visible:border-cyan-400/40 focus-visible:shadow-[0_0_20px_rgba(34,211,238,0.08)]"
-                )}
-              >
-                {spotlightOverlay}
-                {inner}
-              </Link>
-              <div className="tj-flip-back flex flex-col rounded-[14px] border border-divider bg-[#0A0B0F] p-5 text-center">
-                <h3 className="text-lg font-semibold text-white">{program.title}</h3>
-                <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-muted">
-                  <div className="rounded-lg border border-divider bg-surface p-2">{program.duration}</div>
-                  <div className="rounded-lg border border-divider bg-surface p-2">{trainingLocationBadge ?? "Home / Gym"}</div>
-                  <div className="rounded-lg border border-divider bg-surface p-2">{trainingGoalBadge ?? program.category}</div>
-                  <div className="flex items-center justify-center rounded-lg border border-divider bg-surface p-2">
-                    {difficultyDots(program.difficulty)}
-                  </div>
-                </div>
-                <p className="mt-4 text-sm font-semibold text-accent">{program.category}</p>
-                <div className="mt-auto pt-5">
-                  <Link
-                    href={href}
-                    className="btn-primary-shimmer inline-flex w-full min-h-[48px] items-center justify-center rounded-full bg-accent px-4 py-3 text-sm font-extrabold text-[#09090B] shadow-[0_12px_40px_rgba(34,211,238,0.2)] transition-[filter,transform] duration-200 hover:brightness-110 hover:-translate-y-0.5"
-                  >
-                    {viewLabel}
-                    <ArrowRight className="ms-1 h-4 w-4" aria-hidden />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <Link
-            href={href}
-            className={cn(
-              shellClass,
-              "focus:outline-none focus-visible:border-cyan-400/40 focus-visible:shadow-[0_0_20px_rgba(34,211,238,0.08)]"
-            )}
-          >
-            {inner}
-          </Link>
-        )
+        <Link
+          href={href}
+          ref={elRef as unknown as React.Ref<HTMLAnchorElement>}
+          className={cn(shellClass, "focus:outline-none focus-visible:border-accent/45")}
+        >
+          {inner}
+        </Link>
       ) : (
-        <div className={shellClass}>{inner}</div>
+        <div ref={elRef} className={shellClass}>
+          {inner}
+        </div>
       )}
     </div>
   );
@@ -374,7 +286,6 @@ export function HomeProgramPreviewCard({
   fromLabel,
   tierLabel,
   metaLine,
-  reducedMotion,
   ctaLabel,
   onNavigate,
   trainingGoalBadge,
@@ -388,7 +299,6 @@ export function HomeProgramPreviewCard({
   tierLabel?: string;
   metaLine?: string;
   reducedMotion?: boolean;
-  /** Short CTA, e.g. "Open" / "İncele" */
   ctaLabel: string;
   onNavigate?: () => void;
   trainingGoalBadge?: string;
@@ -400,18 +310,17 @@ export function HomeProgramPreviewCard({
   const visual = getProgramVisual(program);
   const tier = tierLabel ?? getProgramTier(program);
   const priceLine = fromLabel ? `${fromLabel} ${priceFormatted}` : priceFormatted;
+  const { elRef, onMove, onLeave } = useCssSpotlight();
 
   return (
-    <div ref={cardRef} className={cn("h-full min-h-[320px] sm:min-h-[340px]", visual.glow)}>
+    <div ref={cardRef} className="h-full" onMouseMove={onMove} onMouseLeave={onLeave}>
       <Link
         href={href}
         onClick={onNavigate}
-        className={cn(
-          shellClass,
-          "focus:outline-none focus-visible:border-cyan-400/40 focus-visible:shadow-[0_0_20px_rgba(34,211,238,0.08)]"
-        )}
+        ref={elRef as unknown as React.Ref<HTMLAnchorElement>}
+        className={cn(shellClass, "focus:outline-none focus-visible:border-accent/45")}
       >
-        <PremiumProgramCardInner
+        <CardInner
           visual={visual}
           categoryLabel={program.category}
           tier={tier}
@@ -423,7 +332,6 @@ export function HomeProgramPreviewCard({
           priceLine={priceLine}
           ctaLabel={ctaLabel}
           showDescription={Boolean(program.description)}
-          footerCta="link"
           freeBadgeLabel={freeBadgeLabel}
           trainingGoalBadge={trainingGoalBadge}
           trainingLocationBadge={trainingLocationBadge}

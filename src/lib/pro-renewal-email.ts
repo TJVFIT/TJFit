@@ -72,7 +72,10 @@ export async function sendProMonthlyProgramEmail(input: RenewalInput) {
   const text = await callClaude({
     system,
     user: buildProgramPrompt(answers),
-    maxTokens: 3500
+    maxTokens: 3500,
+    task: "plan",
+    route: "pro-renewal-email",
+    userId: input.userId
   });
   const unsubscribeUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://tjfit.org"}/api/email/unsubscribe?token=${signUnsubscribeToken(input.userId)}`;
   const pdfBase64 = toPdfBase64(text);

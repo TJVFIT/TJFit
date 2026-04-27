@@ -35,13 +35,13 @@ function PhaseRows({
         return (
           <li
             key={`${lineIdx}-${line.slice(0, 48)}`}
-            className="flex flex-col gap-1 border-b border-[rgba(255,255,255,0.04)] py-3.5 transition-[background-color] duration-150 ease-out last:border-b-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4 [@media(hover:hover)]:hover:rounded-lg [@media(hover:hover)]:hover:bg-[rgba(255,255,255,0.02)] [@media(hover:hover)]:hover:px-3"
+            className="flex flex-col gap-1 border-b border-white/[0.04] py-3 transition-colors duration-150 last:border-b-0 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
           >
-            <span className="text-[15px] font-semibold text-white">{detail ? title : line}</span>
+            <span className="text-[14px] font-medium text-white">{detail ? title : line}</span>
             {detail ? (
-              <span className="text-[13px] font-mono text-muted sm:max-w-[55%] sm:text-end">{detail}</span>
+              <span className="font-mono text-[12px] text-white/55 sm:max-w-[58%] sm:text-end">{detail}</span>
             ) : (
-              <span className="text-[12px] italic text-dim sm:max-w-[50%] sm:text-end">
+              <span className="text-[11px] uppercase tracking-[0.18em] text-white/35 sm:max-w-[40%] sm:text-end">
                 {isDiet ? "Meal note" : "Session detail"}
               </span>
             )}
@@ -129,8 +129,9 @@ export function ProgramBlueprintNavigator({
   const inner = <PhasePanel phase={phase} copy={copy} isDiet={isDiet} colA={colA} colB={colB} />;
 
   return (
-    <div className="mt-10 space-y-6">
-      <div className="tj-nav-scroll inline-flex max-w-full flex-nowrap gap-1 overflow-x-auto rounded-[10px] border border-divider bg-surface p-1.5">
+    <div className="mt-10 space-y-8">
+      {/* Phase timeline header */}
+      <div className="tj-nav-scroll flex max-w-full flex-nowrap gap-0 overflow-x-auto border-b border-white/[0.06]">
         {phases.map((p, i) => (
           <button
             key={p.title}
@@ -138,13 +139,20 @@ export function ProgramBlueprintNavigator({
             title={p.title}
             onClick={() => setTab(i)}
             className={cn(
-              "min-h-[44px] max-w-[min(100%,11rem)] truncate rounded-lg px-4 py-2 text-left text-[13px] font-medium transition-[color,background-color,border-color,box-shadow] duration-200 ease-out sm:min-h-0",
-              tab === i
-                ? "border border-[rgba(34,211,238,0.2)] bg-[rgba(34,211,238,0.10)] text-accent"
-                : "border border-transparent text-dim hover:bg-[rgba(255,255,255,0.04)] hover:text-white"
+              "relative inline-flex min-h-[44px] shrink-0 items-center gap-2 px-4 py-3 text-left text-[13px] font-medium transition-colors duration-150 sm:px-5",
+              tab === i ? "text-white" : "text-white/45 hover:text-white/80"
             )}
           >
-            {p.title}
+            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/35">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <span className="max-w-[10rem] truncate">{p.title}</span>
+            {tab === i ? (
+              <span
+                aria-hidden
+                className="absolute inset-x-3 -bottom-px h-[2px] rounded-t bg-accent"
+              />
+            ) : null}
           </button>
         ))}
       </div>
@@ -171,20 +179,30 @@ export function ProgramBlueprintNavigator({
       </div>
 
       {!lockedTab ? (
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="rounded-2xl border border-divider bg-surface p-5">
-            <p className="text-xs uppercase tracking-[0.2em] text-dim">{qualityPack.standardsTitle}</p>
-            <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted">
+        <div className="grid gap-px overflow-hidden rounded-xl border border-white/[0.06] bg-white/[0.04] md:grid-cols-2">
+          <div className="bg-[#0C0D10] p-6">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/40">
+              {qualityPack.standardsTitle}
+            </p>
+            <ul className="mt-3 space-y-1.5 text-[13px] leading-[1.55] text-white/75">
               {qualityPack.standards.map((item) => (
-                <li key={item}>- {item}</li>
+                <li key={item} className="flex gap-2">
+                  <span className="mt-2 h-px w-3 shrink-0 bg-white/25" aria-hidden />
+                  {item}
+                </li>
               ))}
             </ul>
           </div>
-          <div className="rounded-2xl border border-divider bg-surface p-5">
-            <p className="text-xs uppercase tracking-[0.2em] text-dim">{qualityPack.checkinsTitle}</p>
-            <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted">
+          <div className="bg-[#0C0D10] p-6">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/40">
+              {qualityPack.checkinsTitle}
+            </p>
+            <ul className="mt-3 space-y-1.5 text-[13px] leading-[1.55] text-white/75">
               {qualityPack.checkins.map((item) => (
-                <li key={item}>- {item}</li>
+                <li key={item} className="flex gap-2">
+                  <span className="mt-2 h-px w-3 shrink-0 bg-white/25" aria-hidden />
+                  {item}
+                </li>
               ))}
             </ul>
           </div>
@@ -192,11 +210,14 @@ export function ProgramBlueprintNavigator({
       ) : null}
 
       {blueprint.safety.length > 0 && !paidLocked ? (
-        <div className="rounded-2xl border border-divider bg-surface p-6">
-          <p className="text-xs uppercase tracking-[0.2em] text-dim">{safetyTitle}</p>
-          <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted">
+        <div className="rounded-xl border border-white/[0.06] bg-[#0C0D10] p-6">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/40">{safetyTitle}</p>
+          <ul className="mt-3 space-y-1.5 text-[13px] leading-[1.55] text-white/75">
             {blueprint.safety.map((item) => (
-              <li key={item}>- {item}</li>
+              <li key={item} className="flex gap-2">
+                <span className="mt-2 h-px w-3 shrink-0 bg-amber-300/60" aria-hidden />
+                {item}
+              </li>
             ))}
           </ul>
         </div>

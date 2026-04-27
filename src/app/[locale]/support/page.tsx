@@ -119,20 +119,60 @@ export default function SupportPage({ params }: { params: { locale: string } }) 
           {copy.success(form.email)}
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-          <input className="input" type="text" placeholder={copy.name} value={form.name}
-            onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} required />
-          <input className="input" type="email" placeholder={copy.email} value={form.email}
-            onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))} required />
-          <select className="input" value={form.subject} onChange={(e) => setForm((p) => ({ ...p, subject: e.target.value }))}>
-            {SUBJECTS.map((s) => <option key={s} value={s}>{s}</option>)}
-          </select>
-          <textarea
-            className="min-h-[120px] w-full rounded-xl border border-divider bg-surface p-3 text-sm text-white outline-none placeholder:text-dim focus:border-accent"
-            placeholder={copy.message} value={form.message}
-            onChange={(e) => setForm((p) => ({ ...p, message: e.target.value }))}
-            required minLength={20}
-          />
+        <form onSubmit={handleSubmit} className="mt-8 space-y-4" aria-label={copy.title}>
+          <label className="block">
+            <span className="sr-only">{copy.name}</span>
+            <input
+              className="input"
+              type="text"
+              name="name"
+              autoComplete="name"
+              placeholder={copy.name}
+              aria-label={copy.name}
+              value={form.name}
+              onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
+              required
+            />
+          </label>
+          <label className="block">
+            <span className="sr-only">{copy.email}</span>
+            <input
+              className="input"
+              type="email"
+              name="email"
+              autoComplete="email"
+              placeholder={copy.email}
+              aria-label={copy.email}
+              value={form.email}
+              onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
+              required
+            />
+          </label>
+          <label className="block">
+            <span className="sr-only">{copy.subject}</span>
+            <select
+              className="input"
+              name="subject"
+              aria-label={copy.subject}
+              value={form.subject}
+              onChange={(e) => setForm((p) => ({ ...p, subject: e.target.value }))}
+            >
+              {SUBJECTS.map((s) => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </label>
+          <label className="block">
+            <span className="sr-only">{copy.message}</span>
+            <textarea
+              className="min-h-[120px] w-full rounded-xl border border-divider bg-surface p-3 text-sm text-white outline-none placeholder:text-dim focus:border-accent"
+              name="message"
+              placeholder={copy.message}
+              aria-label={copy.message}
+              value={form.message}
+              onChange={(e) => setForm((p) => ({ ...p, message: e.target.value }))}
+              required
+              minLength={20}
+            />
+          </label>
           {error ? <p className="text-xs text-red-400">{error}</p> : null}
           <button type="submit" disabled={loading}
             className="w-full rounded-full bg-accent py-3 text-sm font-bold text-[#09090B] disabled:opacity-50">

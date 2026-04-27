@@ -15,28 +15,27 @@ const rows: Array<{ key: keyof ProgramEliteMeta; labelKey: keyof ProgramEliteLab
 
 export function ProgramEliteSystemCard({ meta, labels }: { meta: ProgramEliteMeta; labels: ProgramEliteLabels }) {
   return (
-    <div className="reveal-section relative overflow-hidden rounded-2xl border border-cyan-400/15 bg-gradient-to-br from-[#0E1218]/95 via-[#0B0D11]/95 to-[#12101c]/90 p-6 shadow-[0_0_0_1px_rgba(167,139,250,0.06),0_28px_80px_-40px_rgba(0,0,0,0.85)] sm:p-8">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-50"
-        style={{
-          background:
-            "radial-gradient(ellipse 70% 50% at 0% 0%, rgba(34,211,238,0.08), transparent 55%), radial-gradient(ellipse 55% 45% at 100% 100%, rgba(167,139,250,0.07), transparent 50%)"
-        }}
-        aria-hidden
-      />
-      <div className="relative">
-        <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-cyan-300/90">{labels.badge}</p>
-        <h2 className="mt-2 text-xl font-semibold tracking-tight text-white sm:text-2xl">{labels.title}</h2>
-        <p className="mt-2 max-w-2xl text-xs leading-relaxed text-faint sm:text-sm">{labels.subtitle}</p>
-        <dl className="mt-8 grid gap-6 sm:grid-cols-2">
-          {rows.map(({ key, labelKey }) => (
-            <div key={key} className="rounded-xl border border-white/[0.06] bg-black/25 p-4 backdrop-blur-sm transition-colors duration-200 hover:border-cyan-400/20">
-              <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-faint">{labels[labelKey]}</dt>
-              <dd className="mt-2 text-sm leading-relaxed text-bright">{meta[key]}</dd>
-            </div>
-          ))}
-        </dl>
-      </div>
-    </div>
+    <section className="reveal-section relative overflow-hidden rounded-xl border border-white/[0.06] bg-[#0C0D10]">
+      <header className="border-b border-white/[0.06] px-6 py-5 sm:px-8 sm:py-6">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-accent">{labels.badge}</p>
+        <h2 className="mt-2 font-display text-[22px] font-semibold tracking-tight text-white sm:text-[26px]">
+          {labels.title}
+        </h2>
+        <p className="mt-2 max-w-2xl text-[13px] leading-[1.6] text-white/55 sm:text-sm">{labels.subtitle}</p>
+      </header>
+      <dl className="grid grid-cols-1 divide-y divide-white/[0.05] sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+        {rows.map(({ key, labelKey }, idx) => (
+          <div
+            key={key}
+            className={`px-6 py-5 sm:px-8 ${idx >= 2 ? "sm:border-t sm:border-white/[0.05]" : ""}`}
+          >
+            <dt className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/40">
+              {labels[labelKey]}
+            </dt>
+            <dd className="mt-2 text-[13px] leading-[1.55] text-white/85 sm:text-sm">{meta[key]}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
   );
 }
