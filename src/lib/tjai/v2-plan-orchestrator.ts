@@ -6,8 +6,14 @@ import {
   computeV2Macros,
   intakeContext as buildIntakeContext
 } from "@/lib/tjai/generators/macros-v2";
+import { getOrGenerateRecipe } from "@/lib/tjai/generators/recipes-v2";
 import { generateV2Workout } from "@/lib/tjai/generators/workout-v2";
-import { TJAI_PLAN_VERSION, type V2Plan, type V2PlanStreamEvent } from "@/lib/tjai/v2-plan-schema";
+import {
+  TJAI_PLAN_VERSION,
+  type V2Plan,
+  type V2PlanStreamEvent,
+  type V2Recipe
+} from "@/lib/tjai/v2-plan-schema";
 import type { QuizAnswers } from "@/lib/tjai-types";
 
 /**
@@ -67,7 +73,34 @@ export async function* runV2PlanStream(args: {
     yield { type: "section", key: "diet", data: diet };
   }
 
-  // 6. Final assembled plan
+  // 6. Recipes for day 1 only (~3-4 meals). Other days lazily generate
+  //    when the user expands them via /api/tjai/recipe-v2. We mutate the
+  //    diet's day-1 meals in place to attach recipeHash references.
+  const recipes: Record<string, V2Recipe> = {};
+  if (diet) {
+    const day1 = diet.days.find((d) => d.day === 1);
+    if (day1) {
+      for (const meal of day1.meals) {
+        const recipe = await getOrGenerateRecipe({
+          mealName: meal.name,
+          intake,
+          locale,
+          targetKcal: meal.kcal,
+          userId
+        });
+        if (recipe) {
+          meal.recipeHash = recipe.hash;
+          recipes[recipe.hash] = recipe;
+        }
+      }
+    }
+  }
+  // Don't emit a recipes section until at least one cooked successfully.
+  if (Object.keys(recipes).length > 0) {
+    yield { type: "section", key: "recipes", data: recipes };
+  }
+
+  // 7. Final assembled plan
   const plan: V2Plan = {
     version: TJAI_PLAN_VERSION,
     generatedAt: new Date().toISOString(),
@@ -76,6 +109,7 @@ export async function* runV2PlanStream(args: {
     macros,
     workout: workout ?? undefined,
     diet: diet ?? undefined,
+    recipes: Object.keys(recipes).length > 0 ? recipes : undefined,
     disclaimers: macroDisclaimers
   };
 

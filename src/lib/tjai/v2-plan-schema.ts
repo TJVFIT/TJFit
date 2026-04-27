@@ -67,8 +67,41 @@ export type V2DietMeal = {
   proteinG: number;
   carbsG: number;
   fatG: number;
-  /** Recipe slug — populated later when PR5 ships recipe gen. */
-  recipeSlug?: string;
+  /** Cache hash for this meal's full recipe in tjai_recipes_cache. */
+  recipeHash?: string;
+};
+
+export type V2RecipeStep = {
+  /** 1-based step number. */
+  n: number;
+  text: string;
+};
+
+export type V2RecipeIngredient = {
+  name: string;
+  quantity: string;
+  /** Substitution suggestions if user lacks this. */
+  swaps?: string[];
+};
+
+export type V2Recipe = {
+  hash: string;
+  mealName: string;
+  locale: string;
+  cookTimeMin: number;
+  difficulty: 1 | 2 | 3;
+  servings: number;
+  ingredients: V2RecipeIngredient[];
+  steps: V2RecipeStep[];
+  macros: {
+    kcal: number;
+    proteinG: number;
+    carbsG: number;
+    fatG: number;
+  };
+  estCost?: string;
+  /** One-line substitution note (e.g. "Swap chicken for tofu for vegetarian."). */
+  substitutionNote?: string;
 };
 
 export type V2DietDay = {
@@ -135,6 +168,10 @@ export type V2Plan = {
   macros: V2Macros;
   workout?: V2Workout;
   diet?: V2Diet;
+  /** Map of recipeHash → recipe. Populated lazily; only meals the user
+   *  actually expanded get full recipe text. The diet step references
+   *  these via meal.recipeHash. */
+  recipes?: Record<string, V2Recipe>;
   grocery?: V2Grocery;
   supplements?: V2Supplements;
   disclaimers: V2Disclaimer[];
