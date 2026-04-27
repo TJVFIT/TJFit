@@ -82,7 +82,7 @@ export function HeroSection({
       >
         <div className="relative h-full w-full">
           <Image
-            src="/assets/hero/hero-bicep-curl.png"
+            src="/assets/hero/hero-bicep-curl-clean.png"
             alt=""
             fill
             priority
