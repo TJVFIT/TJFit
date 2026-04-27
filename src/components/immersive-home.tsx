@@ -260,7 +260,7 @@ export function ImmersiveHome({
     { icon: Apple, title: "Full Diet Systems", desc: "Daily meal plans with macros, recipes, grocery lists. Halal, vegan, budget - covered.", accent: "#94A3B8", span: 1 as const },
     { icon: Users, title: "Coach Marketplace", desc: "Book certified coaches. 1-on-1 guidance and personalized feedback.", accent: "#22D3EE", span: 1 as const },
     { icon: Trophy, title: "Leaderboards", desc: "Earn TJCOIN, compete on weekly boards, unlock rewards for consistency.", accent: "#94A3B8", span: 1 as const },
-    { icon: Globe, title: "10 Languages", desc: "Training and nutrition flows support 10 locales from the first visit.", accent: "#94A3B8", span: 1 as const }
+    { icon: Globe, title: "5 Languages", desc: "Training and nutrition flows support every launch locale from the first visit.", accent: "#94A3B8", span: 1 as const }
   ] as const;
 
   // TJAI section ref for reveal trigger
@@ -347,7 +347,7 @@ export function ImmersiveHome({
             "Macro-aware meals",
             "TJAI · GPT-4o",
             "Coach marketplace",
-            "10 languages",
+            "5 languages",
           ].join("      ·      ")}
         </p>
       </div>

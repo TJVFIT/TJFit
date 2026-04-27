@@ -124,7 +124,7 @@ const en: HomeLuxuryCopy = {
     ctaPrimary: "Start your transformation",
     ctaSecondary: "View Programs",
     ctaBrowsePrograms: "Browse programs",
-    trust: ["Clear plans", "Vetted coaches", "10 languages"],
+    trust: ["Clear plans", "Vetted coaches", "5 languages"],
     trustLine: "Free to start · No card · 20+ flagship programs",
     ctaNote: "",
     heroGradientTagline: "AI precision · Human intent · Measurable weeks"
@@ -373,7 +373,7 @@ const ar: HomeLuxuryCopy = {
     ctaPrimary: "ابدأ تحولك",
     ctaSecondary: "ابدأ مجاناً",
     ctaBrowsePrograms: "البرامج",
-    trust: ["خطط واضحة", "مدربون مختارون", "10 Languages"],
+    trust: ["خطط واضحة", "مدربون مختارون", "5 languages"],
     ctaNote: "خارطة بالبريد · الحساب اختياري · بلا فوضى",
     heroGradientTagline: "دقة الذكاء الاصطناعي · نية بشرية · أسابيع قابلة للقياس"
   },

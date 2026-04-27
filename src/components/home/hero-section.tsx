@@ -155,7 +155,7 @@ export function HeroSection({
           >
             <HeroMetric value="12" label="weeks" hint="Progressive blocks with checkpoints." />
             <HeroMetric value="25" label="signals" hint="TJAI reads goals, schedule, equipment." />
-            <HeroMetric value="10" label="languages" hint="Plans in your language, not translated." />
+            <HeroMetric value="5" label="languages" hint="Plans in every supported launch language." />
           </div>
         </div>
 
