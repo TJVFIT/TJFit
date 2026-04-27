@@ -1029,6 +1029,521 @@ export function getTjaiV2Stage2Steps(locale: Locale): QuizStep[] {
   ];
 }
 
+// ───────────────────────────────────────────────────────────────────
+// STAGE 3 — HEALTH (PR3)
+// ───────────────────────────────────────────────────────────────────
+
+const YES_NO_OPTIONS: Record<Locale, QuizOption[]> = {
+  en: [
+    { value: "no", label: "No" },
+    { value: "yes", label: "Yes" }
+  ],
+  tr: [
+    { value: "no", label: "Hayır" },
+    { value: "yes", label: "Evet" }
+  ],
+  ar: [
+    { value: "no", label: "لا" },
+    { value: "yes", label: "نعم" }
+  ],
+  es: [
+    { value: "no", label: "No" },
+    { value: "yes", label: "Sí" }
+  ],
+  fr: [
+    { value: "no", label: "Non" },
+    { value: "yes", label: "Oui" }
+  ]
+};
+
+const INJURY_OPTIONS: Record<Locale, QuizOption[]> = {
+  en: [
+    { value: "none", label: "None", hint: "No issues to work around." },
+    { value: "knee", label: "Knee" },
+    { value: "lower_back", label: "Lower back" },
+    { value: "shoulder", label: "Shoulder" },
+    { value: "hip", label: "Hip" },
+    { value: "wrist_elbow", label: "Wrist or elbow" },
+    { value: "recent_surgery", label: "Recent surgery", hint: "Within the last 6 months." }
+  ],
+  tr: [
+    { value: "none", label: "Yok", hint: "Çalışmayı engelleyen bir şey yok." },
+    { value: "knee", label: "Diz" },
+    { value: "lower_back", label: "Bel" },
+    { value: "shoulder", label: "Omuz" },
+    { value: "hip", label: "Kalça" },
+    { value: "wrist_elbow", label: "Bilek veya dirsek" },
+    { value: "recent_surgery", label: "Yakın zamanda ameliyat", hint: "Son 6 ay içinde." }
+  ],
+  ar: [
+    { value: "none", label: "لا شيء", hint: "لا توجد مشاكل." },
+    { value: "knee", label: "الركبة" },
+    { value: "lower_back", label: "أسفل الظهر" },
+    { value: "shoulder", label: "الكتف" },
+    { value: "hip", label: "الورك" },
+    { value: "wrist_elbow", label: "الرسغ أو الكوع" },
+    { value: "recent_surgery", label: "جراحة حديثة", hint: "خلال آخر 6 أشهر." }
+  ],
+  es: [
+    { value: "none", label: "Ninguna" },
+    { value: "knee", label: "Rodilla" },
+    { value: "lower_back", label: "Lumbares" },
+    { value: "shoulder", label: "Hombro" },
+    { value: "hip", label: "Cadera" },
+    { value: "wrist_elbow", label: "Muñeca o codo" },
+    { value: "recent_surgery", label: "Cirugía reciente", hint: "En los últimos 6 meses." }
+  ],
+  fr: [
+    { value: "none", label: "Aucune" },
+    { value: "knee", label: "Genou" },
+    { value: "lower_back", label: "Bas du dos" },
+    { value: "shoulder", label: "Épaule" },
+    { value: "hip", label: "Hanche" },
+    { value: "wrist_elbow", label: "Poignet ou coude" },
+    { value: "recent_surgery", label: "Opération récente", hint: "Dans les 6 derniers mois." }
+  ]
+};
+
+const ALCOHOL_OPTIONS: Record<Locale, QuizOption[]> = {
+  en: [
+    { value: "none", label: "None" },
+    { value: "occasional", label: "Occasional", hint: "1–3 drinks per week." },
+    { value: "moderate", label: "Moderate", hint: "4–10 drinks per week." },
+    { value: "heavy", label: "Heavy", hint: "10+ drinks per week." }
+  ],
+  tr: [
+    { value: "none", label: "Hiç" },
+    { value: "occasional", label: "Ara sıra", hint: "Haftada 1–3 içki." },
+    { value: "moderate", label: "Orta", hint: "Haftada 4–10 içki." },
+    { value: "heavy", label: "Yoğun", hint: "Haftada 10+ içki." }
+  ],
+  ar: [
+    { value: "none", label: "لا شيء" },
+    { value: "occasional", label: "أحياناً", hint: "1–3 كؤوس أسبوعياً." },
+    { value: "moderate", label: "متوسط", hint: "4–10 كؤوس أسبوعياً." },
+    { value: "heavy", label: "كثيف", hint: "10+ كؤوس أسبوعياً." }
+  ],
+  es: [
+    { value: "none", label: "Nada" },
+    { value: "occasional", label: "Ocasional", hint: "1–3 bebidas/semana." },
+    { value: "moderate", label: "Moderado", hint: "4–10 bebidas/semana." },
+    { value: "heavy", label: "Mucho", hint: "10+ bebidas/semana." }
+  ],
+  fr: [
+    { value: "none", label: "Aucune" },
+    { value: "occasional", label: "Occasionnel", hint: "1–3 verres/semaine." },
+    { value: "moderate", label: "Modéré", hint: "4–10 verres/semaine." },
+    { value: "heavy", label: "Élevé", hint: "10+ verres/semaine." }
+  ]
+};
+
+const CAFFEINE_OPTIONS: Record<Locale, QuizOption[]> = {
+  en: [
+    { value: "none", label: "None" },
+    { value: "low", label: "1 cup/day" },
+    { value: "moderate", label: "2–3 cups/day" },
+    { value: "high", label: "4+ cups/day", hint: "Likely tolerant; pre-workout safe." }
+  ],
+  tr: [
+    { value: "none", label: "Hiç" },
+    { value: "low", label: "1 fincan/gün" },
+    { value: "moderate", label: "2–3 fincan/gün" },
+    { value: "high", label: "4+ fincan/gün", hint: "Toleranslısın; pre-workout uygun." }
+  ],
+  ar: [
+    { value: "none", label: "لا شيء" },
+    { value: "low", label: "كوب/يوم" },
+    { value: "moderate", label: "2–3 أكواب/يوم" },
+    { value: "high", label: "4+ أكواب/يوم", hint: "تحمّل عالٍ؛ pre-workout آمن." }
+  ],
+  es: [
+    { value: "none", label: "Nada" },
+    { value: "low", label: "1 taza/día" },
+    { value: "moderate", label: "2–3 tazas/día" },
+    { value: "high", label: "4+ tazas/día", hint: "Buen tolerancia; pre-entreno seguro." }
+  ],
+  fr: [
+    { value: "none", label: "Aucune" },
+    { value: "low", label: "1 tasse/jour" },
+    { value: "moderate", label: "2–3 tasses/jour" },
+    { value: "high", label: "4+ tasses/jour", hint: "Bonne tolérance; pre-workout OK." }
+  ]
+};
+
+const ALLERGY_OPTIONS: Record<Locale, QuizOption[]> = {
+  en: [
+    { value: "none", label: "None" },
+    { value: "dairy", label: "Dairy / lactose" },
+    { value: "gluten", label: "Gluten" },
+    { value: "nuts", label: "Tree nuts" },
+    { value: "peanut", label: "Peanut" },
+    { value: "shellfish", label: "Shellfish" },
+    { value: "soy", label: "Soy" },
+    { value: "egg", label: "Egg" }
+  ],
+  tr: [
+    { value: "none", label: "Yok" },
+    { value: "dairy", label: "Süt / laktoz" },
+    { value: "gluten", label: "Gluten" },
+    { value: "nuts", label: "Sert kuruyemiş" },
+    { value: "peanut", label: "Yer fıstığı" },
+    { value: "shellfish", label: "Kabuklu deniz" },
+    { value: "soy", label: "Soya" },
+    { value: "egg", label: "Yumurta" }
+  ],
+  ar: [
+    { value: "none", label: "لا شيء" },
+    { value: "dairy", label: "ألبان / لاكتوز" },
+    { value: "gluten", label: "غلوتين" },
+    { value: "nuts", label: "مكسرات" },
+    { value: "peanut", label: "فول سوداني" },
+    { value: "shellfish", label: "محار" },
+    { value: "soy", label: "صويا" },
+    { value: "egg", label: "بيض" }
+  ],
+  es: [
+    { value: "none", label: "Ninguna" },
+    { value: "dairy", label: "Lácteos / lactosa" },
+    { value: "gluten", label: "Gluten" },
+    { value: "nuts", label: "Frutos secos" },
+    { value: "peanut", label: "Cacahuete" },
+    { value: "shellfish", label: "Mariscos" },
+    { value: "soy", label: "Soja" },
+    { value: "egg", label: "Huevo" }
+  ],
+  fr: [
+    { value: "none", label: "Aucune" },
+    { value: "dairy", label: "Laitier / lactose" },
+    { value: "gluten", label: "Gluten" },
+    { value: "nuts", label: "Fruits à coque" },
+    { value: "peanut", label: "Arachide" },
+    { value: "shellfish", label: "Crustacés" },
+    { value: "soy", label: "Soja" },
+    { value: "egg", label: "Œuf" }
+  ]
+};
+
+const STAGE3_SECTIONS: Record<Locale, { medical: string; lifestyle: string; supplements: string }> = {
+  en: { medical: "Medical screen", lifestyle: "Lifestyle", supplements: "Supplements" },
+  tr: { medical: "Tıbbi tarama", lifestyle: "Yaşam tarzı", supplements: "Takviyeler" },
+  ar: { medical: "فحص طبي", lifestyle: "نمط الحياة", supplements: "المكملات" },
+  es: { medical: "Cribado médico", lifestyle: "Estilo de vida", supplements: "Suplementos" },
+  fr: { medical: "Bilan médical", lifestyle: "Mode de vie", supplements: "Compléments" }
+};
+
+/**
+ * Stage-3 question set. ~12 questions covering medical screening,
+ * lifestyle health, allergies, current supplement stack. Adaptive:
+ * pregnancy question only shows for sex=female; surgery details only
+ * appear if they answered yes to recent surgery.
+ *
+ * Critical: the medical-safety regex guard in src/lib/tjai/guards still
+ * runs on user-typed messages. This stage adds *intake-level* signals
+ * (cardio history, diabetes, pregnancy, ED history) that the plan
+ * generator can use as an extra refusal/disclaimer trigger.
+ */
+export function getTjaiV2Stage3Steps(locale: Locale): QuizStep[] {
+  const t = (en: string, tr: string, ar: string, es: string, fr: string) =>
+    ({ en, tr, ar, es, fr }[locale] ?? en);
+  const sec = STAGE3_SECTIONS[locale] ?? STAGE3_SECTIONS.en;
+  const totalStages = 3;
+  const yn = YES_NO_OPTIONS[locale] ?? YES_NO_OPTIONS.en;
+
+  return [
+    // ─── Cardiovascular ──────────────────────────────────────
+    {
+      id: "cv_history",
+      stage: "health",
+      section: sec.medical,
+      sectionNumber: 4,
+      totalSections: totalStages,
+      question: t(
+        "Heart issues, high blood pressure, or recent cardiac surgery?",
+        "Kalp sorunu, yüksek tansiyon veya yakın zamanda kalp ameliyatı var mı?",
+        "مشاكل قلبية، ضغط مرتفع، أو جراحة قلب حديثة؟",
+        "¿Problemas cardíacos, tensión alta, o cirugía cardíaca reciente?",
+        "Problèmes cardiaques, hypertension, ou chirurgie cardiaque récente ?"
+      ),
+      sub: t(
+        "If yes, we'll add a doctor-clearance disclaimer to your plan.",
+        "Evet ise, planına doktor onayı uyarısı ekleriz.",
+        "إذا نعم، سنضيف تنبيه استشارة طبيب على خطتك.",
+        "Si sí, añadiremos un aviso de chequeo médico al plan.",
+        "Si oui, on ajoute un avis de consultation médicale."
+      ),
+      type: "single",
+      options: yn,
+      required: true
+    },
+    // ─── Diabetes ────────────────────────────────────────────
+    {
+      id: "diabetes",
+      stage: "health",
+      section: sec.medical,
+      sectionNumber: 4,
+      totalSections: totalStages,
+      question: t(
+        "Diabetes (type 1 or type 2)?",
+        "Diyabet (tip 1 veya tip 2) var mı?",
+        "سكري (نوع 1 أو نوع 2)؟",
+        "¿Diabetes (tipo 1 o 2)?",
+        "Diabète (type 1 ou 2) ?"
+      ),
+      type: "single",
+      options: yn,
+      required: true
+    },
+    // ─── Pregnancy (female only) ─────────────────────────────
+    {
+      id: "pregnancy_status",
+      stage: "health",
+      section: sec.medical,
+      sectionNumber: 4,
+      totalSections: totalStages,
+      question: t(
+        "Pregnant or postpartum?",
+        "Hamile veya yeni doğum yapmış mısın?",
+        "حامل أو ما بعد الولادة؟",
+        "¿Embarazada o posparto?",
+        "Enceinte ou en post-partum ?"
+      ),
+      sub: t(
+        "Specialist guidance is required — TJAI will route to safer defaults.",
+        "Uzman rehberliği gerekir — TJAI daha güvenli varsayılanlara döner.",
+        "تحتاج إرشاد متخصص — سنحوّل لخطة أكثر أماناً.",
+        "Se necesita guía de especialista — TJAI usará valores más seguros.",
+        "Avis spécialiste requis — TJAI utilisera des paramètres plus prudents."
+      ),
+      type: "single",
+      options: yn,
+      required: false,
+      showIf: {
+        mode: "all",
+        conditions: [{ stepId: "sex", value: "female", operator: "equals" }]
+      }
+    },
+    // ─── ED screen ───────────────────────────────────────────
+    {
+      id: "ed_history",
+      stage: "health",
+      section: sec.medical,
+      sectionNumber: 4,
+      totalSections: totalStages,
+      question: t(
+        "Have you had an eating disorder, current or in recovery?",
+        "Geçmişte ya da şu an bir yeme bozukluğun var mı?",
+        "هل لديك حالياً أو سابقاً اضطراب أكل؟",
+        "¿Tienes o has tenido un trastorno alimentario?",
+        "As-tu actuellement ou eu un trouble alimentaire ?"
+      ),
+      sub: t(
+        "We won't program aggressive cuts. You can update this anytime.",
+        "Agresif cut planlamayız. İstediğin zaman değiştirebilirsin.",
+        "لن نبرمج خطط حمية صارمة. يمكنك التحديث في أي وقت.",
+        "No programaremos cortes agresivos. Puedes actualizarlo cuando quieras.",
+        "On ne programmera pas de cut agressifs. Modifiable à tout moment."
+      ),
+      type: "single",
+      options: yn,
+      required: true
+    },
+    // ─── Smoking ─────────────────────────────────────────────
+    {
+      id: "smoking",
+      stage: "health",
+      section: sec.lifestyle,
+      sectionNumber: 4,
+      totalSections: totalStages,
+      question: t(
+        "Do you smoke or vape?",
+        "Sigara veya elektronik sigara kullanıyor musun?",
+        "هل تدخن أو تستخدم السجائر الإلكترونية؟",
+        "¿Fumas o vapeas?",
+        "Tu fumes ou vapotes ?"
+      ),
+      type: "single",
+      options: yn,
+      required: true
+    },
+    // ─── Alcohol ─────────────────────────────────────────────
+    {
+      id: "alcohol",
+      stage: "health",
+      section: sec.lifestyle,
+      sectionNumber: 4,
+      totalSections: totalStages,
+      question: t(
+        "Alcohol intake?",
+        "Alkol tüketimi?",
+        "استهلاك الكحول؟",
+        "¿Consumo de alcohol?",
+        "Consommation d'alcool ?"
+      ),
+      type: "single",
+      options: ALCOHOL_OPTIONS[locale] ?? ALCOHOL_OPTIONS.en,
+      required: true,
+      showIf: {
+        mode: "all",
+        // Skip alcohol question for halal users — culturally irrelevant.
+        conditions: [{ stepId: "religion_diet", value: "halal", operator: "not_equals" }]
+      }
+    },
+    // ─── Caffeine ────────────────────────────────────────────
+    {
+      id: "caffeine",
+      stage: "health",
+      section: sec.lifestyle,
+      sectionNumber: 4,
+      totalSections: totalStages,
+      question: t(
+        "Caffeine intake (coffee, tea, energy drinks)?",
+        "Kafein tüketimi (kahve, çay, enerji içeceği)?",
+        "استهلاك الكافيين (قهوة، شاي، مشروبات طاقة)؟",
+        "¿Consumo de cafeína (café, té, bebidas energéticas)?",
+        "Consommation de caféine (café, thé, boissons énergétiques) ?"
+      ),
+      type: "single",
+      options: CAFFEINE_OPTIONS[locale] ?? CAFFEINE_OPTIONS.en,
+      required: true
+    },
+    // ─── Hydration ───────────────────────────────────────────
+    {
+      id: "hydration_liters",
+      stage: "health",
+      section: sec.lifestyle,
+      sectionNumber: 4,
+      totalSections: totalStages,
+      question: t(
+        "Roughly how much water per day?",
+        "Günde yaklaşık ne kadar su?",
+        "كم لتر ماء يومياً تقريباً؟",
+        "¿Cuántos litros de agua al día aprox.?",
+        "Combien de litres d'eau par jour environ ?"
+      ),
+      type: "number",
+      unit: t("L", "L", "ل", "L", "L"),
+      min: 0,
+      max: 6,
+      step: 0.5,
+      defaultValue: 2,
+      required: true
+    },
+    // ─── Injuries ────────────────────────────────────────────
+    {
+      id: "injuries",
+      stage: "health",
+      section: sec.medical,
+      sectionNumber: 4,
+      totalSections: totalStages,
+      question: t(
+        "Any injuries we should program around?",
+        "Etrafından dolaşmamız gereken bir sakatlığın var mı?",
+        "أي إصابات يجب أن نراعيها؟",
+        "¿Alguna lesión a tener en cuenta?",
+        "Des blessures à prendre en compte ?"
+      ),
+      sub: t(
+        "Pick all that apply — we'll swap exercises that aggravate them.",
+        "Geçerli olan her şeyi seç — onları kötüleştiren hareketleri değiştiririz.",
+        "اختر كل ما ينطبق — سنبدّل التمارين التي تفاقمها.",
+        "Selecciona todas las que apliquen — cambiaremos ejercicios que las agraven.",
+        "Sélectionne tout ce qui s'applique — on remplacera les exercices."
+      ),
+      type: "multi",
+      options: INJURY_OPTIONS[locale] ?? INJURY_OPTIONS.en,
+      required: false
+    },
+    // ─── Existing supplements ────────────────────────────────
+    {
+      id: "current_supplements",
+      stage: "health",
+      section: sec.supplements,
+      sectionNumber: 4,
+      totalSections: totalStages,
+      question: t(
+        "What supplements are you currently taking?",
+        "Şu an hangi takviyeleri kullanıyorsun?",
+        "ما المكملات التي تتناولها حالياً؟",
+        "¿Qué suplementos tomas actualmente?",
+        "Quels compléments prends-tu actuellement ?"
+      ),
+      sub: t(
+        "List anything daily so we don't double up.",
+        "Çakışmamak için günlük aldıklarını yaz.",
+        "اذكر اليومية حتى لا نكررها.",
+        "Lista los diarios para no duplicar.",
+        "Liste les quotidiens pour éviter les doublons."
+      ),
+      type: "text",
+      placeholder: t(
+        "e.g. whey protein, creatine, vitamin D",
+        "ör. whey protein, kreatin, D vitamini",
+        "مثل: واي بروتين، كرياتين، فيتامين د",
+        "ej. proteína whey, creatina, vitamina D",
+        "ex. whey, créatine, vitamine D"
+      ),
+      required: false
+    },
+    // ─── Allergies ───────────────────────────────────────────
+    {
+      id: "allergies",
+      stage: "health",
+      section: sec.supplements,
+      sectionNumber: 4,
+      totalSections: totalStages,
+      question: t(
+        "Any food or supplement allergies?",
+        "Yiyecek veya takviye alerjin var mı?",
+        "أي حساسية طعام أو مكملات؟",
+        "¿Alguna alergia alimentaria o de suplementos?",
+        "Allergies alimentaires ou de compléments ?"
+      ),
+      type: "multi",
+      options: ALLERGY_OPTIONS[locale] ?? ALLERGY_OPTIONS.en,
+      required: false
+    },
+    // ─── Medications free-text ───────────────────────────────
+    {
+      id: "medications",
+      stage: "health",
+      section: sec.supplements,
+      sectionNumber: 4,
+      totalSections: totalStages,
+      question: t(
+        "Are you on any prescription medications?",
+        "Reçeteli ilaç kullanıyor musun?",
+        "هل تتناول أدوية بوصفة؟",
+        "¿Tomas medicamentos con receta?",
+        "Tu prends des médicaments sur ordonnance ?"
+      ),
+      sub: t(
+        "Helps us flag supplement interactions. Skip if you'd rather not say.",
+        "Takviye etkileşimlerini işaretlemek için. Söylemek istemiyorsan atla.",
+        "لمساعدتنا في تنبيه التداخلات. تخطّى إن لم ترغب.",
+        "Para señalar interacciones. Sáltala si prefieres no decirlo.",
+        "Pour signaler les interactions. Passe si tu préfères."
+      ),
+      type: "text",
+      placeholder: t("Optional", "İsteğe bağlı", "اختياري", "Opcional", "Optionnel"),
+      required: false
+    }
+  ];
+}
+
+/**
+ * Helper: full v2 question set across all 3 stages, in order. Useful
+ * for the eventual hardened renderer that walks the full intake. Until
+ * PR12 swaps in a stage-aware UI, callers can still feed each stage's
+ * questions to the existing TJAIQuiz one stage at a time.
+ */
+export function getTjaiV2AllSteps(locale: Locale): QuizStep[] {
+  return [
+    ...getTjaiV2Stage1Steps(locale),
+    ...getTjaiV2Stage2Steps(locale),
+    ...getTjaiV2Stage3Steps(locale)
+  ];
+}
+
 /**
  * Concatenate every supported country's markets into one list, plus an
  * "Other" option. The renderer doesn't dynamically filter by country
