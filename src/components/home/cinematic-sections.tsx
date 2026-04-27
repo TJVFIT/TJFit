@@ -1,114 +1,105 @@
 "use client";
 
-import { Target, Sparkles, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const steps = [
   {
     n: 1,
     title: "Define your target",
-    body: "Goals, schedule, equipment, and constraints — captured once, respected everywhere.",
-    Icon: Target,
+    body: "Goals, schedule, equipment, constraints. Captured once, respected everywhere."
   },
   {
     n: 2,
     title: "TJAI builds the system",
-    body: "Metabolism-aware training blocks, meals, and progression — structured like a coach plan.",
-    Icon: Sparkles,
+    body: "Metabolism-aware training blocks, meals, and progression — the way a real coach plans."
   },
   {
     n: 3,
     title: "Train with precision",
-    body: "Log work, adapt loads, and stay consistent — the OS tracks momentum across 12 weeks.",
-    Icon: Zap,
-  },
+    body: "Log work, adapt loads, stay consistent. Twelve weeks of compounding output."
+  }
 ];
 
-/** “How it works” — glass steps + flow connectors */
+/**
+ * "How it works" — editorial three-step layout. No glow, no glass.
+ * Numbered rule above the title; content arranged on a strict baseline.
+ */
 export function CinematicHowItWorks() {
   return (
-    <section className="reveal-section relative overflow-hidden border-t border-[rgba(255,255,255,0.06)] bg-background px-6 py-[clamp(3.5rem,8vw,7.5rem)] lg:px-12">
-      <span className="ghost-text pointer-events-none start-4 top-16 max-md:opacity-[0.015] md:start-8" aria-hidden>
-        PROCESS
-      </span>
-      <div className="relative z-[1] mx-auto max-w-6xl">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-accent">How it works</p>
-        <h2 className="mt-4 font-display text-[clamp(1.75rem,5vw,3.25rem)] font-extrabold tracking-[-0.02em] text-white">
-          From intake to execution
-        </h2>
-        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">
-          Three disciplined layers — no chaos, no novelty UI. Just a pipeline that respects physiology and your calendar.
-        </p>
-
-        <div className="mt-14 grid gap-6 md:grid-cols-3 md:gap-5">
-          {steps.map((s) => (
-            <div key={s.n} className="relative flex flex-col">
-              <article
-                className={cn(
-                  "glass-panel flex flex-1 flex-col rounded-2xl p-6 transition-[transform,box-shadow,border-color] duration-[250ms]",
-                  "tj-card-cinematic-hover"
-                )}
-                style={{ transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)" }}
-              >
-                <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[rgba(34,211,238,0.2)] bg-[rgba(34,211,238,0.08)] text-[13px] font-bold text-accent">
-                  {s.n}
-                </div>
-                <div className="mt-4 flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(34,211,238,0.06)]">
-                  <s.Icon className="h-5 w-5 text-accent" strokeWidth={1.5} />
-                </div>
-                <h3 className="mt-4 text-lg font-bold tracking-tight text-white">{s.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-dim">{s.body}</p>
-              </article>
-            </div>
-          ))}
+    <section className="reveal-section relative border-t border-white/[0.06] bg-[#08080A] px-6 py-[clamp(4rem,9vw,8rem)] lg:px-12">
+      <div className="mx-auto max-w-6xl">
+        <div className="grid gap-x-12 gap-y-6 lg:grid-cols-[1fr_1.4fr]">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-accent">How it works</p>
+            <h2 className="mt-4 font-display text-[clamp(28px,4.6vw,52px)] font-semibold leading-[1.04] tracking-[-0.02em] text-white">
+              From intake to execution.
+            </h2>
+          </div>
+          <p className="max-w-xl self-end text-[15px] leading-[1.65] text-white/55">
+            Three disciplined layers. No novelty UI. A pipeline that respects physiology and your calendar.
+          </p>
         </div>
+
+        <ol className="mt-14 grid gap-px overflow-hidden rounded-xl border border-white/[0.06] bg-white/[0.04] md:grid-cols-3">
+          {steps.map((s) => (
+            <li key={s.n} className="relative flex flex-col gap-4 bg-[#0A0B0E] p-7">
+              <div className="flex items-baseline gap-3">
+                <span className="font-mono text-[12px] font-medium text-accent">
+                  {String(s.n).padStart(2, "0")}
+                </span>
+                <span className="h-px flex-1 bg-white/[0.08]" aria-hidden />
+              </div>
+              <h3 className="font-display text-[18px] font-semibold leading-tight tracking-tight text-white sm:text-[20px]">
+                {s.title}
+              </h3>
+              <p className="max-w-[28ch] text-[13px] leading-[1.6] text-white/60">{s.body}</p>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );
 }
 
-/** Before / after transformation strip */
+/**
+ * Before / after editorial split. Two columns separated by a thin "12 weeks" rule.
+ * No glass card or glow drop-shadows.
+ */
 export function CinematicTransformation({ reduce }: { reduce: boolean }) {
   return (
-    <section className="reveal-section relative border-t border-[rgba(255,255,255,0.06)] bg-background px-6 py-[clamp(3.5rem,8vw,7.5rem)] lg:px-12">
-      <div className="relative z-[1] mx-auto max-w-3xl">
-        <div className="glass-panel-glow relative grid overflow-hidden rounded-2xl border border-[rgba(255,255,255,0.06)] md:grid-cols-[1fr_auto_1fr]">
-          <div className="relative border-e border-[rgba(255,255,255,0.04)] bg-gradient-to-br from-[rgba(239,68,68,0.06)] to-transparent p-8 md:border-e-0 md:border-s-2 md:border-s-[rgba(239,68,68,0.25)]">
-            <span className="rounded-full border border-[rgba(239,68,68,0.25)] bg-[rgba(239,68,68,0.08)] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-red-300/90">
-              Week 1
-            </span>
-            <p className="mt-4 text-sm leading-relaxed text-muted">Baseline load, habit wiring, and honest volume — no hero weeks.</p>
-            <svg className="mt-8 h-28 w-full text-white/10" viewBox="0 0 120 100" preserveAspectRatio="xMidYMid meet" aria-hidden>
-              <path
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.2"
-                d="M40 85 Q55 40 70 38 Q85 36 88 55 Q90 72 78 82"
-              />
-            </svg>
+    <section className="reveal-section relative border-t border-white/[0.06] bg-[#08080A] px-6 py-[clamp(4rem,9vw,8rem)] lg:px-12">
+      <div className="mx-auto max-w-5xl">
+        <div className="mb-12 flex items-baseline justify-between gap-6 border-b border-white/[0.06] pb-4">
+          <h2 className="font-display text-[clamp(24px,3.6vw,40px)] font-semibold tracking-tight text-white">
+            What twelve weeks looks like.
+          </h2>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/40">Before / after</span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr]">
+          <div className="border-l-2 border-red-400/30 bg-gradient-to-br from-red-500/[0.04] to-transparent p-7 md:p-9">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-red-300/85">Week 1</p>
+            <p className="mt-4 text-[14px] leading-[1.65] text-white/70">
+              Baseline load, habit wiring, honest volume. No hero weeks. We measure where you actually are, not where ego says you should be.
+            </p>
           </div>
 
-          <div className="flex flex-col items-center justify-center gap-2 border-y border-[rgba(34,211,238,0.15)] bg-[#0D0F12] px-4 py-6 md:border-x md:border-y-0">
-            <div className="h-16 w-px bg-gradient-to-b from-transparent via-[rgba(34,211,238,0.35)] to-transparent" />
-            <span className="rounded-full border border-[rgba(34,211,238,0.25)] bg-[rgba(34,211,238,0.08)] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-accent">
-              12 weeks
-            </span>
-            <div className="h-16 w-px bg-gradient-to-b from-transparent via-[rgba(34,211,238,0.35)] to-transparent" />
+          <div className="flex flex-col items-center justify-center gap-3 border-y border-white/[0.06] py-5 md:border-x md:border-y-0 md:py-0 md:px-2">
+            <div className="h-14 w-px bg-gradient-to-b from-transparent via-accent/50 to-transparent" />
+            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-accent">12 weeks</span>
+            <div className="h-14 w-px bg-gradient-to-b from-transparent via-accent/50 to-transparent" />
           </div>
 
-          <div className="relative border-s border-[rgba(255,255,255,0.04)] bg-gradient-to-bl from-[rgba(34,211,238,0.07)] to-transparent p-8 md:border-s-0 md:border-e-2 md:border-e-[rgba(34,211,238,0.25)]">
-            <span className="rounded-full border border-[rgba(34,211,238,0.3)] bg-[rgba(34,211,238,0.1)] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent">
-              Week 12
-            </span>
-            <p className="mt-4 text-sm leading-relaxed text-muted">Progressive overload you can feel — strength, composition, and consistency compound.</p>
-            <svg
-              className={cn("mt-8 h-28 w-full text-accent/25", !reduce && "drop-shadow-[0_0_24px_rgba(34,211,238,0.12)]")}
-              viewBox="0 0 120 100"
-              preserveAspectRatio="xMidYMid meet"
-              aria-hidden
-            >
-              <path fill="none" stroke="currentColor" strokeWidth="1.4" d="M35 78 Q50 52 62 48 Q78 42 88 38 Q96 50 92 62 Q88 78 72 82" />
-            </svg>
+          <div
+            className={cn(
+              "border-r-2 border-accent/40 bg-gradient-to-bl from-accent/[0.05] to-transparent p-7 md:p-9",
+              !reduce && "transition-colors"
+            )}
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-accent">Week 12</p>
+            <p className="mt-4 text-[14px] leading-[1.65] text-white/85">
+              Progressive overload you can feel. Strength, composition, and consistency compound. The plan adapts when you do.
+            </p>
           </div>
         </div>
       </div>

@@ -17,6 +17,9 @@ export async function POST(request: Request) {
   try {
     const text = await callClaude({
       maxTokens: 2000,
+      task: "extract",
+      route: "tjai/meal-prep",
+      userId: auth.user.id,
       system: "You are TJAI. Return JSON only.",
       user: `Create a Sunday meal prep schedule for these meals.
 Order tasks for efficiency, include exact quantities/times/storage.

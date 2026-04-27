@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { requireAuth } from "@/lib/require-auth";
+import {
+  gatherSignals,
+  generateSuggestion,
+  persistSuggestion,
+  shouldSuggest
+} from "@/lib/tjai/suggestions";
+import { getLatestTjaiPlan } from "@/lib/tjai-plan-store";
 
 export const dynamic = "force-dynamic";
 
@@ -81,5 +88,42 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ ok: true, check_in: data });
+  let newBadges: import("@/lib/tjai/badges").BadgeMeta[] = [];
+  let streak: import("@/lib/tjai/streaks").Streak | null = null;
+  try {
+    const { bumpStreak } = await import("@/lib/tjai/streaks");
+    const { evaluateBadges } = await import("@/lib/tjai/badges");
+    streak = await bumpStreak(auth.supabase, auth.user.id);
+    const { count } = await auth.supabase
+      .from("tjai_weekly_check_ins")
+      .select("week_start", { count: "exact", head: true })
+      .eq("user_id", auth.user.id);
+    newBadges = await evaluateBadges(auth.supabase, auth.user.id, {
+      checkInCount: count ?? null,
+      currentStreak: streak.current_streak
+    });
+  } catch {
+    /* swallow */
+  }
+
+  void (async () => {
+    try {
+      const signals = await gatherSignals(auth.supabase, auth.user.id);
+      if (!shouldSuggest(signals)) return;
+      const generated = await generateSuggestion(signals, auth.user.id);
+      if (!generated) return;
+      const plan = await getLatestTjaiPlan(auth.supabase, auth.user.id);
+      await persistSuggestion(
+        auth.supabase,
+        auth.user.id,
+        generated,
+        signals,
+        (plan as { id?: string } | null)?.id ?? null
+      );
+    } catch {
+      /* swallow */
+    }
+  })();
+
+  return NextResponse.json({ ok: true, check_in: data, streak, newBadges });
 }

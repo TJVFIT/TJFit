@@ -10,6 +10,26 @@ export { createRunTrace, pushStage, logPipelineTrace, logChatCoachContextBuilt }
 export type { TjaiRunTrace, ExecutionStage } from "@/lib/tjai/types/execution";
 
 export { isLikelyFitnessQuestion, fallbackCoachReply, TJAI_CHAT_DOMAIN_GUARD } from "@/lib/tjai/guards/fitness-domain";
+export {
+  detectMedicalRisk,
+  medicalSafetyResponse,
+  MEDICAL_SAFETY_SYSTEM_ADDENDUM
+} from "@/lib/tjai/guards/medical-safety";
+export type { MedicalRisk, MedicalRiskCategory } from "@/lib/tjai/guards/medical-safety";
+
+export { TJAI_PERSONAS, TJAI_PERSONA_META, isTjaiPersona, personaSystemFragment } from "@/lib/tjai/persona";
+export type { TjaiPersona } from "@/lib/tjai/persona";
+
+export { loadTjaiUserSettings, saveTjaiUserSettings } from "@/lib/tjai/user-settings";
+export type { TjaiUserSettings } from "@/lib/tjai/user-settings";
+
+export {
+  loadLongMemoryFacts,
+  formatMemoryBlock,
+  extractFactsFromMessage,
+  persistFacts
+} from "@/lib/tjai/long-memory";
+export type { LongMemoryRow, LongMemoryCategory } from "@/lib/tjai/long-memory";
 export { buildChatCoachSystemPrompt } from "@/lib/tjai/context/chat-coach-context";
 export type {
   ChatCoachPlanRow,

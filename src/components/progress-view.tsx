@@ -202,6 +202,10 @@ export function ProgressView({ locale }: { locale: Locale }) {
     });
     const data = await res.json();
     if (data.workout?.id) newEntryIds.current.add(data.workout.id);
+    if (Array.isArray(data.newBadges) && data.newBadges.length > 0) {
+      const { celebrateBadges } = await import("@/components/tjai/badge-unlock-toast");
+      celebrateBadges(data.newBadges);
+    }
     setExercise(""); setSets(""); setReps(""); setWorkoutWeight(""); setDuration("");
     showToast("Workout logged ✓");
     await load();

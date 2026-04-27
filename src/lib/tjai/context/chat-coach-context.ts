@@ -1,5 +1,7 @@
 import { getCoachStructuredOutputContract } from "@/lib/tjai/coaching-output-contract";
 import { coachChatIntentSystemAddendum, type CoachChatIntent } from "@/lib/tjai/orchestrator/chat-intent";
+import { MEDICAL_SAFETY_SYSTEM_ADDENDUM } from "@/lib/tjai/guards/medical-safety";
+import { personaSystemFragment, type TjaiPersona } from "@/lib/tjai/persona";
 import { LANGUAGE_NAME_EN, type SupportedLocale } from "@/lib/i18n";
 import { buildTjaiUserProfile } from "@/lib/tjai-intake";
 import type { TjaiMemorySnapshot } from "@/lib/tjai-types";
@@ -78,6 +80,10 @@ export function buildChatCoachSystemPrompt(input: {
   coachIntent?: CoachChatIntent;
   /** Selected website locale — forces TJAI to respond in this language. */
   locale?: SupportedLocale;
+  /** Coaching persona chosen by the user. */
+  persona?: TjaiPersona;
+  /** Pre-formatted long-memory block (from formatMemoryBlock). */
+  longMemoryBlock?: string;
 }): string {
   const planSummary = (input.planRow?.plan_json?.summary ?? {}) as Record<string, unknown>;
   const preferencesLine =
@@ -184,5 +190,15 @@ COACHING RULES:
 - Close with the action format defined in the OUTPUT FORMAT CONTRACT (one concrete move, grounded in their data).`;
 
   const intent = input.coachIntent ?? "general_qa";
-  return core + coachChatIntentSystemAddendum(intent) + getCoachStructuredOutputContract();
+  const persona = input.persona ?? "mentor";
+  const longMemory = input.longMemoryBlock ?? "";
+  return (
+    core +
+    personaSystemFragment(persona) +
+    longMemory +
+    "\n\n" +
+    MEDICAL_SAFETY_SYSTEM_ADDENDUM +
+    coachChatIntentSystemAddendum(intent) +
+    getCoachStructuredOutputContract()
+  );
 }

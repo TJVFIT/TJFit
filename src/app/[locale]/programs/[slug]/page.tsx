@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { FreeProductBodyBlocks, FreeProductUpgradeFooter } from "@/components/free-product-detail-view";
 import { ProgramEliteSystemCard } from "@/components/program-elite-system-card";
@@ -94,12 +94,8 @@ export default async function ProgramDetailPage({
   const authCtx = await getOptionalServerUser();
   const userId = authCtx?.userId ?? null;
   const isAdmin = authCtx?.role === "admin";
-  if (program && !program.is_free && !userId) {
-    redirect(`/${locale}/signup?redirect=${encodeURIComponent(`/${locale}/programs/${slug}`)}`);
-  }
-  if (customProgram && !userId) {
-    redirect(`/${locale}/signup?redirect=${encodeURIComponent(`/${locale}/programs/${slug}`)}`);
-  }
+  // Public preview for paid + custom programs — locked sections and a sign-in CTA
+  // are surfaced inline rather than gating the entire page.
   let hasPaidOrder = false;
   if (authCtx && program && !program.is_free) {
     hasPaidOrder = await userHasPaidProgram(authCtx.supabase, userId!, slug);
