@@ -1,6 +1,6 @@
 # TJFit
 
-Premium multilingual online coaching platform built with `Next.js 14`, `Tailwind CSS`, and `Supabase`-ready architecture.
+Premium multilingual online coaching platform built on `Next.js 14`, `Tailwind CSS`, `Supabase` (Auth + Postgres + RLS + Realtime + Storage), `Paddle Billing`, `Resend`, and Anthropic + ElevenLabs AI.
 
 ## Included
 
