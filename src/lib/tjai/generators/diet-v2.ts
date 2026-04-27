@@ -1,4 +1,4 @@
-import { callClaude, extractJsonBlock } from "@/lib/tjai-anthropic";
+import { callOpenAI, safeParseJSON } from "@/lib/tjai-openai";
 
 import type { IntakeContext } from "@/lib/tjai/generators/macros-v2";
 import type { V2Diet, V2DietDay, V2Macros } from "@/lib/tjai/v2-plan-schema";
@@ -69,17 +69,16 @@ export async function generateV2Diet(input: DietGenInput): Promise<V2Diet | null
   const userPrompt = buildUserPrompt(intake, macros, pattern);
 
   try {
-    const text = await callClaude({
+    const text = await callOpenAI({
       system: SYSTEM_PROMPT,
       user: userPrompt,
       maxTokens: 4000,
+      jsonMode: true,
       task: "creative",
       route: "tjai/v2-diet-generate",
       userId: input.userId
     });
-    const json = extractJsonBlock(text);
-    if (!json) return null;
-    const parsed = JSON.parse(json) as { days?: V2DietDay[] };
+    const parsed = safeParseJSON<{ days?: V2DietDay[] }>(text);
     if (!Array.isArray(parsed.days) || parsed.days.length === 0) return null;
 
     return {

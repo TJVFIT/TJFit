@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { callClaude, extractJsonBlock } from "@/lib/tjai-anthropic";
+import { callOpenAI, safeParseJSON } from "@/lib/tjai-openai";
 
 export type SuggestionKind =
   | "deload"
@@ -140,17 +140,16 @@ export async function generateSuggestion(
 Propose ONE adjustment.`;
 
   try {
-    const text = await callClaude({
+    const text = await callOpenAI({
       system: SUGGESTION_SYSTEM,
       user: userPrompt,
       maxTokens: 600,
+      jsonMode: true,
       task: "plan",
       route: "tjai/suggestions-generate",
       userId
     });
-    const json = extractJsonBlock(text);
-    if (!json) return null;
-    const parsed = JSON.parse(json) as Partial<GeneratedSuggestion>;
+    const parsed = safeParseJSON<Partial<GeneratedSuggestion>>(text);
     if (
       !parsed ||
       typeof parsed.title !== "string" ||

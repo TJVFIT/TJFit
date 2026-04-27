@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { callClaude } from "@/lib/tjai-anthropic";
+import { callOpenAI } from "@/lib/tjai-openai";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
@@ -23,7 +23,7 @@ Target keyword: ${keyword}
 Include: introduction, 5-7 subheadings with content, practical tips, conclusion, meta description.
 Tone: expert but accessible. Length: ~1200 words.`;
 
-  const content = await callClaude({
+  const content = await callOpenAI({
     system,
     user,
     maxTokens: 4500,

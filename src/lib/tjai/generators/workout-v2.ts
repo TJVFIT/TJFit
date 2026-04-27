@@ -1,4 +1,4 @@
-import { callClaude, extractJsonBlock } from "@/lib/tjai-anthropic";
+import { callOpenAI, safeParseJSON } from "@/lib/tjai-openai";
 
 import type { IntakeContext } from "@/lib/tjai/generators/macros-v2";
 import type { V2Workout, V2WorkoutPhase } from "@/lib/tjai/v2-plan-schema";
@@ -86,17 +86,16 @@ export async function generateV2Workout(
   const userPrompt = buildUserPrompt(intake, split, daysPerWeek);
 
   try {
-    const text = await callClaude({
+    const text = await callOpenAI({
       system: SYSTEM_PROMPT,
       user: userPrompt,
       maxTokens: 5000,
+      jsonMode: true,
       task: "plan",
       route: "tjai/v2-workout-generate",
       userId: input.userId
     });
-    const json = extractJsonBlock(text);
-    if (!json) return null;
-    const parsed = JSON.parse(json) as { phases?: V2WorkoutPhase[] };
+    const parsed = safeParseJSON<{ phases?: V2WorkoutPhase[] }>(text);
     if (!Array.isArray(parsed.phases) || parsed.phases.length === 0) return null;
 
     return {

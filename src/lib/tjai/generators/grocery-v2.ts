@@ -1,4 +1,4 @@
-import { callClaude, extractJsonBlock } from "@/lib/tjai-anthropic";
+import { callOpenAI, safeParseJSON } from "@/lib/tjai-openai";
 
 import type { IntakeContext } from "@/lib/tjai/generators/macros-v2";
 import { getDeliveryLinks, getMarketsForCountry } from "@/lib/tjai/markets-by-country";
@@ -66,17 +66,16 @@ export async function generateV2Grocery(input: GroceryGenInput): Promise<V2Groce
   const userPrompt = buildPrompt(intake, mealSummary, marketLabel);
 
   try {
-    const text = await callClaude({
+    const text = await callOpenAI({
       system: SYSTEM_PROMPT,
       user: userPrompt,
       maxTokens: 3500,
+      jsonMode: true,
       task: "creative",
       route: "tjai/v2-grocery-generate",
       userId: input.userId
     });
-    const json = extractJsonBlock(text);
-    if (!json) return null;
-    const parsed = JSON.parse(json) as { items?: V2GroceryItem[]; estTotalCost?: string };
+    const parsed = safeParseJSON<{ items?: V2GroceryItem[]; estTotalCost?: string }>(text);
     if (!Array.isArray(parsed.items) || parsed.items.length === 0) return null;
 
     // Pick the first available delivery link for the user's country.

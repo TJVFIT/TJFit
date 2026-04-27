@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { isAdminEmail } from "@/lib/auth-utils";
-import { callClaude, extractJsonBlock } from "@/lib/tjai-anthropic";
+import { callOpenAI, safeParseJSON } from "@/lib/tjai-openai";
 import { getTJAIAccess } from "@/lib/tjai-access";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
@@ -35,8 +35,9 @@ export async function POST(request: Request) {
   if (!originalMeal || !planContext) return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
 
   try {
-    const text = await callClaude({
+    const text = await callOpenAI({
       maxTokens: 1500,
+      jsonMode: true,
       task: "swap",
       route: "tjai/swap-meal",
       userId: auth.user.id,
@@ -53,9 +54,7 @@ Requirements:
 - Return JSON: {"alternatives":[MealObject,MealObject,MealObject]}
 MealObject fields: name,time,foods,calories,protein,carbs,fat,prepNote,recipe`
     });
-    const json = extractJsonBlock(text);
-    if (!json) return NextResponse.json({ error: "Invalid AI response" }, { status: 502 });
-    const parsed = JSON.parse(json);
+    const parsed = safeParseJSON<{ alternatives?: unknown[] }>(text);
     return NextResponse.json({ alternatives: parsed.alternatives ?? [] });
   } catch (error) {
     return NextResponse.json({ error: "Swap generation failed", details: String(error) }, { status: 500 });

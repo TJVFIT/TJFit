@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { callClaude, extractJsonBlock } from "@/lib/tjai-anthropic";
+import { callOpenAI, safeParseJSON } from "@/lib/tjai-openai";
 
 export type LongMemoryCategory =
   | "goal"
@@ -68,17 +68,16 @@ export async function extractFactsFromMessage(message: string, userId: string): 
   const wordCount = message.trim().split(/\s+/).filter(Boolean).length;
   if (wordCount < 6) return [];
   try {
-    const text = await callClaude({
+    const text = await callOpenAI({
       system: EXTRACTION_SYSTEM,
       user: message,
       maxTokens: 400,
+      jsonMode: true,
       task: "extract",
       route: "tjai/long-memory-extract",
       userId
     });
-    const json = extractJsonBlock(text);
-    if (!json) return [];
-    const parsed = JSON.parse(json) as { facts?: ExtractedFact[] };
+    const parsed = safeParseJSON<{ facts?: ExtractedFact[] }>(text);
     const facts = Array.isArray(parsed.facts) ? parsed.facts : [];
     return facts
       .filter((f): f is ExtractedFact => Boolean(f && typeof f.fact === "string" && typeof f.category === "string"))

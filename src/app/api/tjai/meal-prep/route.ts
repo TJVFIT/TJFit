@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { callClaude, extractJsonBlock } from "@/lib/tjai-anthropic";
+import { callOpenAI, safeParseJSON } from "@/lib/tjai-openai";
 import { requireAuth } from "@/lib/require-auth";
 
 export const dynamic = "force-dynamic";
@@ -15,8 +15,9 @@ export async function POST(request: Request) {
   if (!week) return NextResponse.json({ error: "Missing week meals" }, { status: 400 });
 
   try {
-    const text = await callClaude({
+    const text = await callOpenAI({
       maxTokens: 2000,
+      jsonMode: true,
       task: "extract",
       route: "tjai/meal-prep",
       userId: auth.user.id,
@@ -29,9 +30,7 @@ Return JSON:
 Meals:
 ${JSON.stringify(week)}`
     });
-    const json = extractJsonBlock(text);
-    if (!json) return NextResponse.json({ error: "Invalid AI response" }, { status: 502 });
-    return NextResponse.json(JSON.parse(json));
+    return NextResponse.json(safeParseJSON(text));
   } catch (error) {
     return NextResponse.json({ error: "Meal prep generation failed", details: String(error) }, { status: 500 });
   }

@@ -1,4 +1,4 @@
-import { callClaude, extractJsonBlock } from "@/lib/tjai-anthropic";
+import { callOpenAI, safeParseJSON } from "@/lib/tjai-openai";
 
 import type { IntakeContext } from "@/lib/tjai/generators/macros-v2";
 import type { V2SupplementItem, V2Supplements } from "@/lib/tjai/v2-plan-schema";
@@ -150,21 +150,20 @@ export async function generateV2Supplements(
   const userPrompt = buildPrompt(intake, baseStack);
 
   try {
-    const text = await callClaude({
+    const text = await callOpenAI({
       system: SYSTEM_PROMPT,
       user: userPrompt,
       maxTokens: 1500,
+      jsonMode: true,
       task: "creative",
       route: "tjai/v2-supplements-generate",
       userId: input.userId
     });
-    const json = extractJsonBlock(text);
-    if (!json) return fallbackOutput(baseStack);
-    const parsed = JSON.parse(json) as {
+    const parsed = safeParseJSON<{
       items?: V2SupplementItem[];
       monthlyCostEstimate?: string;
       warnings?: string[];
-    };
+    }>(text);
     if (!Array.isArray(parsed.items)) return fallbackOutput(baseStack);
 
     const items: V2SupplementItem[] = parsed.items.map((item, idx) => ({

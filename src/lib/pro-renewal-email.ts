@@ -3,7 +3,7 @@ import { jsPDF } from "jspdf";
 import { sendEmail } from "@/lib/email";
 import { signUnsubscribeToken } from "@/lib/email-preferences";
 import { EmailTemplates } from "@/lib/email-templates";
-import { callClaude } from "@/lib/tjai-anthropic";
+import { callOpenAI } from "@/lib/tjai-openai";
 
 type RenewalInput = {
   userId: string;
@@ -69,7 +69,7 @@ export async function sendProMonthlyProgramEmail(input: RenewalInput) {
   const month = new Date().toLocaleString("en-US", { month: "long", year: "numeric" });
   const answers = input.answers && Object.keys(input.answers).length > 0 ? input.answers : defaultAnswers();
   const system = "You are TJAI coach. Build practical progressive training plans.";
-  const text = await callClaude({
+  const text = await callOpenAI({
     system,
     user: buildProgramPrompt(answers),
     maxTokens: 3500,

@@ -1,7 +1,7 @@
 import { createHash } from "crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { callClaude, extractJsonBlock } from "@/lib/tjai-anthropic";
+import { callOpenAI, safeParseJSON } from "@/lib/tjai-openai";
 import type { IntakeContext } from "@/lib/tjai/generators/macros-v2";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import type { V2Recipe } from "@/lib/tjai/v2-plan-schema";
@@ -153,17 +153,16 @@ async function generateRecipe(args: RecipeGenInput, hash: string): Promise<V2Rec
   const userPrompt = buildPrompt(args);
 
   try {
-    const text = await callClaude({
+    const text = await callOpenAI({
       system: SYSTEM_PROMPT,
       user: userPrompt,
       maxTokens: 1500,
+      jsonMode: true,
       task: "creative",
       route: "tjai/v2-recipe-generate",
       userId: args.userId ?? null
     });
-    const json = extractJsonBlock(text);
-    if (!json) return null;
-    const parsed = JSON.parse(json) as Omit<V2Recipe, "hash" | "mealName" | "locale">;
+    const parsed = safeParseJSON<Omit<V2Recipe, "hash" | "mealName" | "locale">>(text);
     if (!Array.isArray(parsed.ingredients) || !Array.isArray(parsed.steps)) return null;
 
     return {
