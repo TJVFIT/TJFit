@@ -1,12 +1,21 @@
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
-// Anthropic API model IDs. Override via env vars without code changes when
-// Anthropic publishes a new release. Always verify the exact ID strings in
-// the Anthropic console before deploying — IDs are case-sensitive.
+// Anthropic API model IDs.
+//
+// Defaults are pinned to officially documented, generally-available model
+// IDs from Anthropic's public model list. They are conservative on purpose
+// — the tiering still works (opus = highest, sonnet = mid, haiku = cheap)
+// without shipping un-verified strings to production.
+//
+// Override via env when you have access to a newer release and have
+// verified the exact ID in your Anthropic console:
+//   ANTHROPIC_MODEL_OPUS=claude-opus-4-...
+//   ANTHROPIC_MODEL_SONNET=claude-sonnet-4-...
+//   ANTHROPIC_MODEL_HAIKU=claude-haiku-4-...
 export const CLAUDE_MODELS = {
-  opus: process.env.ANTHROPIC_MODEL_OPUS ?? "claude-opus-4-1-20250805",
-  sonnet: process.env.ANTHROPIC_MODEL_SONNET ?? "claude-sonnet-4-5-20250929",
-  haiku: process.env.ANTHROPIC_MODEL_HAIKU ?? "claude-haiku-4-5"
+  opus: process.env.ANTHROPIC_MODEL_OPUS ?? "claude-3-opus-20240229",
+  sonnet: process.env.ANTHROPIC_MODEL_SONNET ?? "claude-3-5-sonnet-20241022",
+  haiku: process.env.ANTHROPIC_MODEL_HAIKU ?? "claude-3-5-haiku-20241022"
 } as const;
 
 // Pricing keyed by model FAMILY rather than full ID, so dated/aliased model
