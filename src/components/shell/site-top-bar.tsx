@@ -72,7 +72,7 @@ export function SiteTopBar({ locale }: { locale: Locale }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const accountHref = user ? `/${locale}/profile` : `/${locale}/login?redirect=${encodeURIComponent(pathname || `/${locale}`)}`;
+  const accountHref = user ? `/${locale}/profile/edit` : `/${locale}/login?redirect=${encodeURIComponent(pathname || `/${locale}`)}`;
 
   return (
     <header

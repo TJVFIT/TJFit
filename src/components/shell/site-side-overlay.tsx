@@ -67,7 +67,7 @@ function buildGroups(locale: Locale): NavGroup[] {
         { label: "Dashboard", href: `${base}/dashboard`, authOnly: true },
         { label: "Progress", href: `${base}/progress`, authOnly: true },
         { label: "Messages", href: `${base}/messages`, authOnly: true },
-        { label: "Profile", href: `${base}/profile`, authOnly: true },
+        { label: "Profile", href: `${base}/profile/edit`, authOnly: true },
         { label: "Settings", href: `${base}/settings`, authOnly: true },
         { label: "Coins", href: `${base}/coins`, authOnly: true }
       ]
@@ -199,7 +199,7 @@ export function SiteSideOverlay({ locale }: { locale: Locale }) {
               type="button"
               onClick={close}
               aria-label={CLOSE_LABEL[locale] ?? CLOSE_LABEL.en}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/[0.08] text-white/70 transition-colors duration-150 hover:border-white/20 hover:bg-white/[0.04] hover:text-white"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/[0.08] text-white/70 transition-colors duration-150 hover:border-white/20 hover:bg-white/[0.04] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
             >
               <X className="h-4 w-4" aria-hidden />
             </button>
@@ -226,6 +226,7 @@ export function SiteSideOverlay({ locale }: { locale: Locale }) {
                           onClick={close}
                           className={cn(
                             "group/link flex min-h-[36px] items-center justify-between rounded-md px-2 py-1.5 text-[14px] transition-colors duration-150",
+                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0B0E]",
                             active
                               ? "bg-white/[0.06] text-white"
                               : "text-white/65 hover:bg-white/[0.04] hover:text-white"

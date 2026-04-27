@@ -94,8 +94,11 @@ export default async function ProgramDetailPage({
   const authCtx = await getOptionalServerUser();
   const userId = authCtx?.userId ?? null;
   const isAdmin = authCtx?.role === "admin";
-  // Public preview for paid + custom programs — locked sections and a sign-in CTA
-  // are surfaced inline rather than gating the entire page.
+  // Static paid programs: public preview is OK — body sections are gated
+  // by ProgramContentLock. Custom uploaded programs are different —
+  // their body is auto-translated user-uploaded text we can't show
+  // publicly. Hide the text body and PDF link from anyone who isn't
+  // signed in AND paid (or admin).
   let hasPaidOrder = false;
   if (authCtx && program && !program.is_free) {
     hasPaidOrder = await userHasPaidProgram(authCtx.supabase, userId!, slug);
@@ -111,6 +114,14 @@ export default async function ProgramDetailPage({
     }
   }
   const customProgramLocked = Boolean(customProgram) && !hasPaidCustomProgram;
+  // Hard gate: if this is a custom program and the viewer is not signed in
+  // (or signed in but not paid/admin), strip the translated text and signed
+  // PDF URL entirely. The page still renders so they see the title and CTA,
+  // but the body content is never sent to the client.
+  if (customProgram && !hasPaidCustomProgram) {
+    customProgramTranslatedText = null;
+    customProgramPdfUrl = null;
+  }
   const access = resolveStaticProgramAccess(program ?? null, userId, hasPaidOrder, isAdmin);
 
   const baseTry = program ? getProgramBasePriceTry(program) : customProgram?.price_try ?? 400;

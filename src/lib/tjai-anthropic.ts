@@ -1,18 +1,27 @@
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
-// Latest Claude 4.x family — see env doc.
+// Anthropic API model IDs. Override via env vars without code changes when
+// Anthropic publishes a new release. Always verify the exact ID strings in
+// the Anthropic console before deploying — IDs are case-sensitive.
 export const CLAUDE_MODELS = {
-  opus: "claude-opus-4-7",
-  sonnet: "claude-sonnet-4-6",
-  haiku: "claude-haiku-4-5-20251001"
+  opus: process.env.ANTHROPIC_MODEL_OPUS ?? "claude-opus-4-1-20250805",
+  sonnet: process.env.ANTHROPIC_MODEL_SONNET ?? "claude-sonnet-4-5-20250929",
+  haiku: process.env.ANTHROPIC_MODEL_HAIKU ?? "claude-haiku-4-5"
 } as const;
 
-// Per-million-token USD list prices. Update when Anthropic publishes new rates.
-const MODEL_PRICING: Record<string, { input: number; output: number; cacheWrite: number; cacheRead: number }> = {
-  "claude-opus-4-7": { input: 15, output: 75, cacheWrite: 18.75, cacheRead: 1.5 },
-  "claude-sonnet-4-6": { input: 3, output: 15, cacheWrite: 3.75, cacheRead: 0.3 },
-  "claude-haiku-4-5-20251001": { input: 1, output: 5, cacheWrite: 1.25, cacheRead: 0.1 }
+// Pricing keyed by model FAMILY rather than full ID, so dated/aliased model
+// strings still match. Per-million-token USD list prices.
+const FAMILY_PRICING: Record<"opus" | "sonnet" | "haiku", { input: number; output: number; cacheWrite: number; cacheRead: number }> = {
+  opus: { input: 15, output: 75, cacheWrite: 18.75, cacheRead: 1.5 },
+  sonnet: { input: 3, output: 15, cacheWrite: 3.75, cacheRead: 0.3 },
+  haiku: { input: 1, output: 5, cacheWrite: 1.25, cacheRead: 0.1 }
 };
+
+function modelFamily(model: string): "opus" | "sonnet" | "haiku" {
+  if (model.includes("opus")) return "opus";
+  if (model.includes("sonnet")) return "sonnet";
+  return "haiku";
+}
 
 export type ClaudeTask = "chat" | "extract" | "classify" | "swap" | "plan" | "creative" | "blog";
 
@@ -41,8 +50,7 @@ type AnthropicUsage = {
 };
 
 function computeCostUsd(model: string, usage: AnthropicUsage): number {
-  const price = MODEL_PRICING[model];
-  if (!price) return 0;
+  const price = FAMILY_PRICING[modelFamily(model)];
   const input = usage.input_tokens ?? 0;
   const output = usage.output_tokens ?? 0;
   const cacheWrite = usage.cache_creation_input_tokens ?? 0;
