@@ -17,6 +17,9 @@ export type QuizCondition = {
   operator?: "equals" | "includes" | "not_equals";
 };
 
+/** TJAI v2 intake stage. Only set on v2 question sets. */
+export type QuizStage = "persona" | "personal" | "local" | "health";
+
 export type QuizStep = {
   id: string;
   section: string;
@@ -37,6 +40,8 @@ export type QuizStep = {
     mode?: "all" | "any";
     conditions: QuizCondition[];
   };
+  /** v2 only — top-level grouping for the 3-stage indicator. */
+  stage?: QuizStage;
 };
 
 export type QuizAnswerValue = string | string[] | number | boolean | null | { [key: string]: unknown };

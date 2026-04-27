@@ -223,19 +223,23 @@ Joseph's pick: **start with Stage 1 intake** (personal questions) replacing the 
 
 ---
 
-## Open questions for Joseph
+## Resolved policy decisions
 
-These came up during synthesis and need a clear call before building:
+1. **Extreme requests**: Keep the strict regex refusal for hard-extreme
+   asks (>2 kg/week loss, BMI<17 cuts, ED-pattern, drug-dosing). The
+   disclaimer path applies to grayer health signals (cardiovascular
+   history, smoking, alcohol, etc.).
 
-1. **The >2 kg/week disclaimer choice** conflicts with the strict extreme-cut refusal already in production. Pick one:
-   - A) Keep the strict refusal (recommended — already there, lower legal risk).
-   - B) Replace with disclaimer-only (your stated pick — higher legal risk, more conversions).
+2. **Recipe caching**: Cache regional recipe **templates** and ingredient
+   lookups (per cuisine + dietary restriction). The user's specific
+   generated recipe text is fresh per generation via Haiku (~$0.05/recipe).
 
-2. **Notion + Google Docs export** — chose this over PDF-only. Build cost: 1 day Notion API + 1 day Google Docs API. Confirm priority vs faster-launch alternatives.
+3. **External export**: PDF-only for v1. Notion + Google Docs export
+   deferred to Phase 2 polish. No OAuth work in the launch path.
 
-3. **No coach handoff promotion** — your stated pick. But existing `request-coach-review` API and `coach-review-request.tsx` component still exist in code. Action: leave them but don't surface them in TJAI UI? Or rip them out? Recommend: leave dormant, surface elsewhere (program detail pages where they already are).
-
-4. **"Generate fresh per user via Claude" + "Don't cache"** were both selected for recipes — contradictory. Synthesizing as: cache the **structural templates** but the **user's specific generated plan** is fresh each time. Confirm this is what you meant.
+4. **Coach handoff**: Leave existing `request-coach-review` API and
+   `coach-review-request.tsx` component in place — they already work on
+   program detail pages. Don't surface them inside the TJAI flow itself.
 
 ---
 
