@@ -6,7 +6,6 @@ import { ProgramEliteSystemCard } from "@/components/program-elite-system-card";
 import { ProgramBlueprintNavigator } from "@/components/program-blueprint-navigator";
 import { ProgramDetailHero } from "@/components/program-detail-hero";
 import { ScrollReveal } from "@/components/scroll-reveal";
-import { Logo } from "@/components/ui/Logo";
 import { ProgramViewTracker } from "@/components/marketing/program-view-tracker";
 import { ProgramPaymentSuccessNotice } from "@/components/program-payment-success-notice";
 import { ProgramContentLock } from "@/components/program-content-lock";
@@ -259,28 +258,23 @@ export default async function ProgramDetailPage({
             </div>
           </div>
 
-          <div className={`mt-8 rounded-[28px] border border-white/10 bg-gradient-to-br p-7 ${programTheme}`}>
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-xs uppercase tracking-[0.22em] text-bright/85">{premiumBannerLabel}</p>
-              <div className="flex shrink-0 items-center gap-2">
-                <span className="rounded-full border border-white/25 bg-black/20 px-3 py-1 text-xs font-semibold text-white">
-                  {tier}
-                </span>
-                <span className="inline-flex items-center rounded-full border border-white/25 bg-black/20 px-2.5 py-1.5">
-                  <Logo
-                    variant="icon"
-                    size="navbar"
-                    href={`/${locale}`}
-                    suppressMinTouchTarget
-                    className="shrink-0"
-                    alt=""
-                  />
-                </span>
-              </div>
+          <div className={`mt-8 overflow-hidden rounded-xl border border-white/[0.08] bg-gradient-to-br ${programTheme}`}>
+            <div className="flex items-center justify-between gap-3 border-b border-white/[0.08] bg-black/30 px-5 py-3">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/85">
+                {premiumBannerLabel}
+              </p>
+              <span className="rounded-sm border border-white/[0.18] bg-black/30 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/85">
+                {tier}
+              </span>
             </div>
-            <h2 className="mt-6 text-3xl font-semibold text-white">{programTitle}</h2>
-            <p className="mt-3 text-sm text-bright/90">{programDuration}</p>
-            <p className="mt-3 text-sm font-medium text-white/95">{localizedPrice}</p>
+            <div className="px-5 py-5 sm:px-6 sm:py-6">
+              <p className="text-[12px] font-medium uppercase tracking-[0.18em] text-white/65">
+                {programDuration}
+              </p>
+              <p className="mt-2 font-display text-2xl font-semibold tracking-tight text-white">
+                {localizedPrice}
+              </p>
+            </div>
           </div>
 
 
@@ -303,13 +297,21 @@ export default async function ProgramDetailPage({
                   </a>
                 </div>
               ) : customProgramLocked ? (
-                <div className="mt-4">
+                <div className="mt-4 flex flex-wrap gap-2">
                   <Link
-                    href={checkoutHref}
+                    href={userId ? checkoutHref : signupUnlockHref}
                     className="gradient-button inline-flex items-center rounded-full px-5 py-2.5 text-sm font-medium text-white"
                   >
-                    {copy.getFullAccess}
+                    {userId ? copy.getFullAccess : copy.signUpToUnlockFree}
                   </Link>
+                  {!userId ? (
+                    <Link
+                      href={loginUnlockHref}
+                      className="inline-flex items-center rounded-full border border-white/15 px-5 py-2.5 text-sm font-medium text-white/85 hover:border-white/30 hover:text-white"
+                    >
+                      {copy.logInToUnlockFree}
+                    </Link>
+                  ) : null}
                 </div>
               ) : null}
             </div>
@@ -417,14 +419,30 @@ export default async function ProgramDetailPage({
                   <p className="text-sm font-medium text-emerald-300/95">{copy.youHaveFullAccess}</p>
                 </>
               ) : program && !access.showFullPaidContent ? (
-                <Link href={checkoutHref} className="gradient-button rounded-full px-5 py-2.5 text-sm font-medium text-white">
-                  {copy.getFullAccess}
-                </Link>
+                <>
+                  <Link
+                    href={userId ? checkoutHref : signupUnlockHref}
+                    className="gradient-button rounded-full px-5 py-2.5 text-sm font-medium text-white"
+                  >
+                    {userId ? copy.getFullAccess : copy.signUpToUnlockFree}
+                  </Link>
+                  {!userId ? (
+                    <Link
+                      href={loginUnlockHref}
+                      className="inline-flex items-center rounded-full border border-white/15 px-5 py-2.5 text-sm font-medium text-white/85 hover:border-white/30 hover:text-white"
+                    >
+                      {copy.logInToUnlockFree}
+                    </Link>
+                  ) : null}
+                </>
               ) : program && access.showFullPaidContent ? (
                 <p className="text-sm font-medium text-emerald-300/95">{copy.youHaveFullAccess}</p>
               ) : (
-                <Link href={checkoutHref} className="gradient-button rounded-full px-5 py-2.5 text-sm font-medium text-white">
-                  {copy.getFullAccess}
+                <Link
+                  href={userId ? checkoutHref : signupUnlockHref}
+                  className="gradient-button rounded-full px-5 py-2.5 text-sm font-medium text-white"
+                >
+                  {userId ? copy.getFullAccess : copy.signUpToUnlockFree}
                 </Link>
               )}
             </div>
@@ -442,7 +460,7 @@ export default async function ProgramDetailPage({
                       <p className="mt-1 text-sm text-muted">{product.description}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-white">{localizedPrice}</p>
+                      <p className="tabular-nums text-white">{formatProgramPrice(product.price, locale)}</p>
                       <p className="mt-1 text-xs text-faint">{formatCoachCommissionLine(locale, product.coachCommissionRate)}</p>
                     </div>
                   </div>
@@ -455,15 +473,25 @@ export default async function ProgramDetailPage({
 
       {paidContentLocked && program && !program.is_free ? (
         <ScrollReveal className="mx-auto mt-12 max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="rounded-2xl border border-[rgba(34,211,238,0.15)] bg-[linear-gradient(135deg,rgba(34,211,238,0.05),rgba(167,139,250,0.05))] p-10 text-center sm:p-12">
+          <div className="rounded-2xl border border-[rgba(34,211,238,0.15)] bg-[linear-gradient(135deg,rgba(34,211,238,0.05),rgba(167,139,250,0.05))] p-8 text-center sm:p-12">
             <p className="text-base font-semibold text-white">{copy.paidPreviewTitle}</p>
             <p className="mt-2 text-sm text-muted">{copy.paidPreviewSubtitle}</p>
-            <Link
-              href={checkoutHref}
-              className="lux-btn-primary mt-6 inline-flex min-h-[48px] items-center justify-center rounded-full px-8 py-2.5 text-sm font-bold text-[#09090B] transition-[transform,box-shadow] duration-150 ease-out hover:scale-[1.02] active:scale-[0.97] motion-reduce:hover:scale-100 motion-reduce:active:scale-100"
-            >
-              {copy.getFullAccess} — {programTitle}
-            </Link>
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                href={userId ? checkoutHref : signupUnlockHref}
+                className="lux-btn-primary inline-flex min-h-[48px] items-center justify-center rounded-full px-8 py-2.5 text-sm font-bold text-[#09090B] transition-[transform,box-shadow] duration-150 ease-out hover:scale-[1.02] active:scale-[0.97] motion-reduce:hover:scale-100 motion-reduce:active:scale-100"
+              >
+                {userId ? `${copy.getFullAccess} — ${programTitle}` : copy.signUpToUnlockFree}
+              </Link>
+              {!userId ? (
+                <Link
+                  href={loginUnlockHref}
+                  className="inline-flex min-h-[44px] items-center rounded-full border border-white/15 px-5 py-2 text-sm text-white/85 hover:border-white/30 hover:text-white"
+                >
+                  {copy.logInToUnlockFree}
+                </Link>
+              ) : null}
+            </div>
           </div>
         </ScrollReveal>
       ) : null}
