@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { generateV2Diet } from "@/lib/tjai/generators/diet-v2";
+import { generateV2Grocery } from "@/lib/tjai/generators/grocery-v2";
 import {
   blockingSignals,
   computeV2Macros,
@@ -100,7 +101,13 @@ export async function* runV2PlanStream(args: {
     yield { type: "section", key: "recipes", data: recipes };
   }
 
-  // 7. Final assembled plan
+  // 7. Grocery list (Haiku) — needs the diet to consolidate from
+  const grocery = diet ? await generateV2Grocery({ intake, diet, userId }) : null;
+  if (grocery) {
+    yield { type: "section", key: "grocery", data: grocery };
+  }
+
+  // 8. Final assembled plan
   const plan: V2Plan = {
     version: TJAI_PLAN_VERSION,
     generatedAt: new Date().toISOString(),
@@ -110,6 +117,7 @@ export async function* runV2PlanStream(args: {
     workout: workout ?? undefined,
     diet: diet ?? undefined,
     recipes: Object.keys(recipes).length > 0 ? recipes : undefined,
+    grocery: grocery ?? undefined,
     disclaimers: macroDisclaimers
   };
 
