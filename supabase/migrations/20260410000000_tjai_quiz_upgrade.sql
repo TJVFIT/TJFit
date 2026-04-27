@@ -19,11 +19,18 @@ CREATE TABLE IF NOT EXISTS tjai_plan_analytics (
 -- No RLS: no personal data, admin-only via service role
 
 -- ── Public read access for catalog tables ────────────────────────────────────
-DROP POLICY IF EXISTS "Public reads programs" ON programs;
-CREATE POLICY "Public reads programs" ON programs FOR SELECT USING (true);
+DO $$
+BEGIN
+  IF to_regclass('public.programs') IS NOT NULL THEN
+    DROP POLICY IF EXISTS "Public reads programs" ON programs;
+    CREATE POLICY "Public reads programs" ON programs FOR SELECT USING (true);
+  END IF;
 
-DROP POLICY IF EXISTS "Public reads diets" ON diets;
-CREATE POLICY "Public reads diets" ON diets FOR SELECT USING (true);
+  IF to_regclass('public.diets') IS NOT NULL THEN
+    DROP POLICY IF EXISTS "Public reads diets" ON diets;
+    CREATE POLICY "Public reads diets" ON diets FOR SELECT USING (true);
+  END IF;
+END $$;
 
 -- Allow public to read profiles for coach directory
 DROP POLICY IF EXISTS "Public reads coach profiles" ON profiles;

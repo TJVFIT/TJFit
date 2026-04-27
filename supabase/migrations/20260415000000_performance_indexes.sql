@@ -25,9 +25,18 @@ create index if not exists idx_progress_milestones_user_created
 create index if not exists idx_program_orders_user_status
   on program_orders(user_id, status);
 
--- program_orders: coach sales stats
-create index if not exists idx_program_orders_coach_status
-  on program_orders(coach_id, status);
+-- program_orders: coach sales stats (some production schemas do not track
+-- coach_id on orders yet).
+do $$
+begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'program_orders' and column_name = 'coach_id'
+  ) then
+    create index if not exists idx_program_orders_coach_status
+      on program_orders(coach_id, status);
+  end if;
+end $$;
 
 -- user_subscriptions: tier lookups (checked on every TJAI + gated page)
 create index if not exists idx_user_subscriptions_user_id

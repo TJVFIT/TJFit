@@ -100,12 +100,17 @@ CREATE POLICY "Users own suggestion votes" ON suggestion_votes
   FOR ALL USING (auth.uid() = user_id);
 
 -- ── Public read policies for catalog tables ───────────────────────────────────
-DROP POLICY IF EXISTS "Public reads programs v2" ON programs;
-CREATE POLICY "Public reads programs v2" ON programs FOR SELECT USING (true);
+DO $$
+BEGIN
+  IF to_regclass('public.programs') IS NOT NULL THEN
+    DROP POLICY IF EXISTS "Public reads programs v2" ON programs;
+    CREATE POLICY "Public reads programs v2" ON programs FOR SELECT USING (true);
+  END IF;
 
-DROP POLICY IF EXISTS "Public reads diets v2" ON diets;
--- diets may be same table as programs, skip if separate
--- CREATE POLICY "Public reads diets v2" ON diets FOR SELECT USING (true);
+  IF to_regclass('public.diets') IS NOT NULL THEN
+    DROP POLICY IF EXISTS "Public reads diets v2" ON diets;
+  END IF;
+END $$;
 
 DROP POLICY IF EXISTS "Public reads coach profiles" ON profiles;
 CREATE POLICY "Public reads coach profiles" ON profiles FOR SELECT USING (true);

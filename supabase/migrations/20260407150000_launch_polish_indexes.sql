@@ -36,4 +36,16 @@ begin
   end if;
 end $$;
 
-create index if not exists idx_workout_logs_user_exercise on workout_logs(user_id, exercise_name);
+-- Older production databases may already have workout_logs from a prior schema
+-- without the later tracking columns. Add the indexed column before creating
+-- the launch lookup index.
+do $$
+begin
+  if exists (
+    select 1 from information_schema.tables
+    where table_schema = 'public' and table_name = 'workout_logs'
+  ) then
+    alter table workout_logs add column if not exists exercise_name text;
+    create index if not exists idx_workout_logs_user_exercise on workout_logs(user_id, exercise_name);
+  end if;
+end $$;
