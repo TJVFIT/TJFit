@@ -191,7 +191,7 @@ export default async function ProgramDetailPage({
       : programDuration;
 
   return (
-    <div className="relative pb-16 pt-0 sm:pb-20 lg:pb-24">
+    <div className="relative pb-32 pt-0 sm:pb-20 lg:pb-24 xl:pb-24">
       <ProgramViewTracker slug={slug} />
       <div className="mx-auto max-w-6xl px-4 pt-4 sm:px-6 lg:px-8">
         <Suspense fallback={null}>
@@ -386,7 +386,7 @@ export default async function ProgramDetailPage({
           ) : null}
         </section>
 
-        <aside className="space-y-6">
+        <aside className="space-y-6 xl:sticky xl:top-24 xl:self-start">
           <div className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-white/[0.015] p-6">
             <p className="text-sm text-muted">{copy.coachLabel}</p>
             <p className="mt-2 text-2xl font-semibold text-white">{coach?.name ?? copy.teamFallback}</p>
@@ -494,6 +494,54 @@ export default async function ProgramDetailPage({
             </div>
           </div>
         </ScrollReveal>
+      ) : null}
+
+      {/* Mobile sticky purchase bar — only when there's an actual purchase
+          decision to make. Hidden on xl where the sticky aside takes over. */}
+      {program && !program.is_free && !access.showFullPaidContent ? (
+        <div
+          role="region"
+          aria-label={copy.priceLabel}
+          className="fixed inset-x-0 bottom-0 z-40 border-t border-white/[0.08] bg-[#0B0B0E]/95 backdrop-blur-md xl:hidden"
+        >
+          <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+            <div className="min-w-0">
+              <p className="truncate text-[11px] font-medium uppercase tracking-[0.18em] text-white/45">
+                {programDuration}
+              </p>
+              <p className="truncate text-[15px] font-semibold tabular-nums text-white">{localizedPrice}</p>
+            </div>
+            <Link
+              href={userId ? checkoutHref : signupUnlockHref}
+              className="lux-btn-primary inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-full px-5 py-2 text-sm font-bold text-[#09090B]"
+            >
+              {userId ? copy.getFullAccess : copy.signUpToUnlockFree}
+            </Link>
+          </div>
+        </div>
+      ) : null}
+
+      {customProgram && customProgramLocked ? (
+        <div
+          role="region"
+          aria-label={copy.priceLabel}
+          className="fixed inset-x-0 bottom-0 z-40 border-t border-white/[0.08] bg-[#0B0B0E]/95 backdrop-blur-md xl:hidden"
+        >
+          <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+            <div className="min-w-0">
+              <p className="truncate text-[11px] font-medium uppercase tracking-[0.18em] text-white/45">
+                {programDuration || copy.programKindPremium}
+              </p>
+              <p className="truncate text-[15px] font-semibold tabular-nums text-white">{localizedPrice}</p>
+            </div>
+            <Link
+              href={userId ? checkoutHref : signupUnlockHref}
+              className="lux-btn-primary inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-full px-5 py-2 text-sm font-bold text-[#09090B]"
+            >
+              {userId ? copy.getFullAccess : copy.signUpToUnlockFree}
+            </Link>
+          </div>
+        </div>
       ) : null}
     </div>
   );
