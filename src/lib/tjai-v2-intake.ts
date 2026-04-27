@@ -1,4 +1,5 @@
 import type { Locale } from "@/lib/i18n";
+import { COUNTRIES, getMarketsForCountry } from "@/lib/tjai/markets-by-country";
 import type { QuizOption, QuizStage, QuizStep } from "@/lib/tjai-types";
 
 /**
@@ -640,3 +641,421 @@ export function getTjaiV2Stage1Steps(locale: Locale): QuizStep[] {
     }
   ];
 }
+
+// ───────────────────────────────────────────────────────────────────
+// STAGE 2 — LOCAL (PR2)
+// ───────────────────────────────────────────────────────────────────
+
+const COUNTRY_OPTIONS: QuizOption[] = COUNTRIES.map((c) => ({
+  value: c.code,
+  label: c.name,
+  hint: c.currencySymbol
+}));
+
+const UNITS_OPTIONS: Record<Locale, QuizOption[]> = {
+  en: [
+    { value: "metric", label: "Metric", hint: "kg / cm" },
+    { value: "imperial", label: "Imperial", hint: "lb / ft" }
+  ],
+  tr: [
+    { value: "metric", label: "Metrik", hint: "kg / cm" },
+    { value: "imperial", label: "İmperyal", hint: "lb / ft" }
+  ],
+  ar: [
+    { value: "metric", label: "متري", hint: "كجم / سم" },
+    { value: "imperial", label: "إمبراطوري", hint: "رطل / قدم" }
+  ],
+  es: [
+    { value: "metric", label: "Métrico", hint: "kg / cm" },
+    { value: "imperial", label: "Imperial", hint: "lb / ft" }
+  ],
+  fr: [
+    { value: "metric", label: "Métrique", hint: "kg / cm" },
+    { value: "imperial", label: "Impérial", hint: "lb / ft" }
+  ]
+};
+
+const COOK_TIME_OPTIONS: Record<Locale, QuizOption[]> = {
+  en: [
+    { value: "15", label: "≤ 15 min", hint: "Fast meals only." },
+    { value: "30", label: "≤ 30 min", hint: "Standard prep." },
+    { value: "60", label: "≤ 60 min", hint: "Comfortable cooking." },
+    { value: "any", label: "I love cooking", hint: "Any time works." }
+  ],
+  tr: [
+    { value: "15", label: "≤ 15 dk", hint: "Sadece hızlı yemekler." },
+    { value: "30", label: "≤ 30 dk", hint: "Standart hazırlık." },
+    { value: "60", label: "≤ 60 dk", hint: "Rahat yemek pişirme." },
+    { value: "any", label: "Yemek yapmayı seviyorum", hint: "Süre fark etmez." }
+  ],
+  ar: [
+    { value: "15", label: "≤ 15 د", hint: "وجبات سريعة فقط." },
+    { value: "30", label: "≤ 30 د", hint: "تحضير عادي." },
+    { value: "60", label: "≤ 60 د", hint: "طبخ مريح." },
+    { value: "any", label: "أحب الطبخ", hint: "أي مدة تناسبني." }
+  ],
+  es: [
+    { value: "15", label: "≤ 15 min", hint: "Solo comidas rápidas." },
+    { value: "30", label: "≤ 30 min", hint: "Preparación estándar." },
+    { value: "60", label: "≤ 60 min", hint: "Cocinar con calma." },
+    { value: "any", label: "Me encanta cocinar", hint: "Cualquier tiempo." }
+  ],
+  fr: [
+    { value: "15", label: "≤ 15 min", hint: "Repas rapides uniquement." },
+    { value: "30", label: "≤ 30 min", hint: "Préparation standard." },
+    { value: "60", label: "≤ 60 min", hint: "Cuisiner posé." },
+    { value: "any", label: "J'adore cuisiner", hint: "Peu importe le temps." }
+  ]
+};
+
+const FAMILY_OPTIONS: Record<Locale, QuizOption[]> = {
+  en: [
+    { value: "solo", label: "Just me", hint: "Single portion math." },
+    { value: "couple", label: "Two of us", hint: "Double portions or shared." },
+    { value: "family", label: "Family of 3+", hint: "Family-style cooking." }
+  ],
+  tr: [
+    { value: "solo", label: "Sadece ben", hint: "Tek porsiyon." },
+    { value: "couple", label: "İki kişiyiz", hint: "Çift porsiyon ya da paylaşımlı." },
+    { value: "family", label: "Aile (3+)", hint: "Aile yemekleri." }
+  ],
+  ar: [
+    { value: "solo", label: "أنا فقط", hint: "حصة واحدة." },
+    { value: "couple", label: "اثنان", hint: "حصتان أو مشتركة." },
+    { value: "family", label: "عائلة 3+", hint: "طبخ عائلي." }
+  ],
+  es: [
+    { value: "solo", label: "Solo yo", hint: "Una porción." },
+    { value: "couple", label: "Dos personas", hint: "Doble porción o compartido." },
+    { value: "family", label: "Familia 3+", hint: "Cocina familiar." }
+  ],
+  fr: [
+    { value: "solo", label: "Juste moi", hint: "Une portion." },
+    { value: "couple", label: "À deux", hint: "Double portion ou partagé." },
+    { value: "family", label: "Famille 3+", hint: "Cuisine familiale." }
+  ]
+};
+
+const RAMADAN_OPTIONS: Record<Locale, QuizOption[]> = {
+  en: [
+    { value: "no", label: "No, normal eating", hint: "Standard meal timing." },
+    { value: "ramadan", label: "Yes, currently in Ramadan", hint: "Suhoor + iftar structured plan." },
+    { value: "intermittent", label: "Yes, regular intermittent fasting", hint: "16:8 or similar." }
+  ],
+  tr: [
+    { value: "no", label: "Hayır, normal yemek", hint: "Standart yemek saatleri." },
+    { value: "ramadan", label: "Evet, Ramazan'dayım", hint: "Sahur + iftar planı." },
+    { value: "intermittent", label: "Evet, aralıklı oruç", hint: "16:8 veya benzeri." }
+  ],
+  ar: [
+    { value: "no", label: "لا، أكل عادي", hint: "أوقات وجبات اعتيادية." },
+    { value: "ramadan", label: "نعم، في رمضان", hint: "خطة سحور + إفطار." },
+    { value: "intermittent", label: "نعم، صيام متقطع منتظم", hint: "16:8 أو مشابه." }
+  ],
+  es: [
+    { value: "no", label: "No, alimentación normal", hint: "Horarios estándar." },
+    { value: "ramadan", label: "Sí, en Ramadán", hint: "Plan suhoor + iftar." },
+    { value: "intermittent", label: "Sí, ayuno intermitente", hint: "16:8 o similar." }
+  ],
+  fr: [
+    { value: "no", label: "Non, alimentation normale", hint: "Horaires standards." },
+    { value: "ramadan", label: "Oui, en Ramadan", hint: "Plan suhoor + iftar." },
+    { value: "intermittent", label: "Oui, jeûne intermittent", hint: "16:8 ou similaire." }
+  ]
+};
+
+const RELIGION_DIET_OPTIONS: Record<Locale, QuizOption[]> = {
+  en: [
+    { value: "none", label: "No restriction", hint: "Eat anything." },
+    { value: "halal", label: "Halal only", hint: "No pork, only halal meat." },
+    { value: "kosher", label: "Kosher", hint: "Kosher rules." },
+    { value: "vegetarian", label: "Vegetarian", hint: "No meat or fish." }
+  ],
+  tr: [
+    { value: "none", label: "Kısıtlama yok", hint: "Her şey yiyebilirim." },
+    { value: "halal", label: "Sadece helal", hint: "Domuz yok, sadece helal et." },
+    { value: "kosher", label: "Koşer", hint: "Koşer kuralları." },
+    { value: "vegetarian", label: "Vejetaryen", hint: "Et veya balık yok." }
+  ],
+  ar: [
+    { value: "none", label: "بدون قيود", hint: "آكل أي شيء." },
+    { value: "halal", label: "حلال فقط", hint: "بدون لحم خنزير، لحم حلال." },
+    { value: "kosher", label: "كوشير", hint: "قواعد الكوشير." },
+    { value: "vegetarian", label: "نباتي", hint: "بدون لحم أو سمك." }
+  ],
+  es: [
+    { value: "none", label: "Sin restricción", hint: "Como de todo." },
+    { value: "halal", label: "Solo halal", hint: "Sin cerdo, solo carne halal." },
+    { value: "kosher", label: "Kosher", hint: "Reglas kosher." },
+    { value: "vegetarian", label: "Vegetariano", hint: "Sin carne ni pescado." }
+  ],
+  fr: [
+    { value: "none", label: "Pas de restriction", hint: "Je mange de tout." },
+    { value: "halal", label: "Halal uniquement", hint: "Pas de porc, viande halal." },
+    { value: "kosher", label: "Casher", hint: "Règles casher." },
+    { value: "vegetarian", label: "Végétarien", hint: "Pas de viande ni poisson." }
+  ]
+};
+
+const STAGE2_SECTIONS: Record<Locale, { region: string; market: string; food: string }> = {
+  en: { region: "Where you live", market: "Where you shop", food: "How you eat" },
+  tr: { region: "Nerede yaşıyorsun", market: "Nereden alışveriş", food: "Nasıl yiyorsun" },
+  ar: { region: "أين تعيش", market: "من أين تتسوق", food: "كيف تأكل" },
+  es: { region: "Dónde vives", market: "Dónde compras", food: "Cómo comes" },
+  fr: { region: "Où tu vis", market: "Où tu achètes", food: "Comment tu manges" }
+};
+
+/**
+ * Stage-2 question set. ~8 questions covering region, market, and
+ * food cultural context. Adaptive: market picker shows country-specific
+ * options; Ramadan question only shows for halal users.
+ *
+ * Note: market options are stage-determined by the user's earlier
+ * `country` answer, but `QuizStep.options` is static. We surface the
+ * full union of markets across all supported countries here; the UI
+ * filter is enforced via `showIf` on each market entry's country
+ * predicate. This keeps the existing renderer untouched. PR12's UI
+ * polish pass can swap in a dedicated country-aware single-select.
+ */
+export function getTjaiV2Stage2Steps(locale: Locale): QuizStep[] {
+  const t = (en: string, tr: string, ar: string, es: string, fr: string) =>
+    ({ en, tr, ar, es, fr }[locale] ?? en);
+  const sec = STAGE2_SECTIONS[locale] ?? STAGE2_SECTIONS.en;
+  const totalStages = 3;
+
+  return [
+    {
+      id: "country",
+      stage: "local",
+      section: sec.region,
+      sectionNumber: 3,
+      totalSections: totalStages,
+      question: t(
+        "Which country do you live in?",
+        "Hangi ülkede yaşıyorsun?",
+        "في أي بلد تعيش؟",
+        "¿En qué país vives?",
+        "Dans quel pays vis-tu ?"
+      ),
+      type: "single",
+      options: COUNTRY_OPTIONS,
+      required: true
+    },
+    {
+      id: "city",
+      stage: "local",
+      section: sec.region,
+      sectionNumber: 3,
+      totalSections: totalStages,
+      question: t(
+        "Which city?",
+        "Hangi şehir?",
+        "أي مدينة؟",
+        "¿Qué ciudad?",
+        "Quelle ville ?"
+      ),
+      sub: t(
+        "Used to suggest local markets and prices.",
+        "Yerel marketleri ve fiyatları önermek için.",
+        "لاقتراح متاجر محلية وأسعار.",
+        "Para sugerir mercados y precios locales.",
+        "Pour suggérer des marchés et prix locaux."
+      ),
+      type: "text",
+      placeholder: t("e.g. Istanbul", "ör. İstanbul", "مثال: الرياض", "ej. Madrid", "ex. Paris"),
+      required: true
+    },
+    {
+      id: "units",
+      stage: "local",
+      section: sec.region,
+      sectionNumber: 3,
+      totalSections: totalStages,
+      question: t(
+        "Metric or imperial?",
+        "Metrik mi imperyal mı?",
+        "متري أم إمبراطوري؟",
+        "¿Métrico o imperial?",
+        "Métrique ou impérial ?"
+      ),
+      type: "single",
+      options: UNITS_OPTIONS[locale] ?? UNITS_OPTIONS.en,
+      required: true
+    },
+    {
+      id: "market",
+      stage: "local",
+      section: sec.market,
+      sectionNumber: 3,
+      totalSections: totalStages,
+      question: t(
+        "Where do you usually grocery shop?",
+        "Genelde nereden alışveriş yapıyorsun?",
+        "من أين تتسوق عادةً؟",
+        "¿Dónde compras normalmente?",
+        "Où achètes-tu d'habitude ?"
+      ),
+      sub: t(
+        "Pick your main store. We'll tailor the grocery list to it.",
+        "Ana mağazanı seç. Listeni ona göre yapıyoruz.",
+        "اختر متجرك الأساسي. سنفصّل القائمة بناءً عليه.",
+        "Elige tu tienda principal. Adaptamos la lista a ella.",
+        "Choisis ton magasin principal. On adapte la liste."
+      ),
+      type: "single",
+      options: aggregateMarketOptions(locale),
+      required: true,
+      showIf: {
+        mode: "all",
+        // The renderer doesn't filter market options by country — we
+        // rely on the fact that the user only picks one market and
+        // can manually pick "Other" + write-in if their country isn't
+        // listed.
+        conditions: [{ stepId: "country", value: "", operator: "not_equals" }]
+      }
+    },
+    {
+      id: "market_writein",
+      stage: "local",
+      section: sec.market,
+      sectionNumber: 3,
+      totalSections: totalStages,
+      question: t(
+        "Which store?",
+        "Hangi mağaza?",
+        "أي متجر؟",
+        "¿Qué tienda?",
+        "Quel magasin ?"
+      ),
+      type: "text",
+      placeholder: t("Store name", "Mağaza adı", "اسم المتجر", "Nombre de la tienda", "Nom du magasin"),
+      required: false,
+      showIf: {
+        mode: "all",
+        conditions: [{ stepId: "market", value: "other", operator: "equals" }]
+      }
+    },
+    {
+      id: "cook_time",
+      stage: "local",
+      section: sec.food,
+      sectionNumber: 3,
+      totalSections: totalStages,
+      question: t(
+        "How much time can you cook each day?",
+        "Her gün yemek için ne kadar vaktin var?",
+        "كم من الوقت تستطيع الطبخ يومياً؟",
+        "¿Cuánto tiempo puedes cocinar al día?",
+        "Combien de temps de cuisine par jour ?"
+      ),
+      type: "single",
+      options: COOK_TIME_OPTIONS[locale] ?? COOK_TIME_OPTIONS.en,
+      required: true
+    },
+    {
+      id: "family_size",
+      stage: "local",
+      section: sec.food,
+      sectionNumber: 3,
+      totalSections: totalStages,
+      question: t(
+        "Are you cooking just for yourself?",
+        "Sadece kendin için mi yemek yapıyorsun?",
+        "هل تطبخ لنفسك فقط؟",
+        "¿Cocinas solo para ti?",
+        "Tu cuisines juste pour toi ?"
+      ),
+      type: "single",
+      options: FAMILY_OPTIONS[locale] ?? FAMILY_OPTIONS.en,
+      required: true
+    },
+    {
+      id: "religion_diet",
+      stage: "local",
+      section: sec.food,
+      sectionNumber: 3,
+      totalSections: totalStages,
+      question: t(
+        "Any dietary or religious restrictions?",
+        "Beslenme veya dini kısıtlama var mı?",
+        "أي قيود غذائية أو دينية؟",
+        "¿Restricciones dietéticas o religiosas?",
+        "Restrictions alimentaires ou religieuses ?"
+      ),
+      type: "single",
+      options: RELIGION_DIET_OPTIONS[locale] ?? RELIGION_DIET_OPTIONS.en,
+      required: true
+    },
+    {
+      id: "fasting_pattern",
+      stage: "local",
+      section: sec.food,
+      sectionNumber: 3,
+      totalSections: totalStages,
+      question: t(
+        "Are you fasting?",
+        "Oruç tutuyor musun?",
+        "هل تصوم؟",
+        "¿Estás ayunando?",
+        "Tu jeûnes ?"
+      ),
+      sub: t(
+        "We'll structure meals around suhoor / iftar or your fasting window.",
+        "Yemekleri sahur / iftar veya oruç pencerene göre yaparız.",
+        "سنرتّب الوجبات حول السحور / الإفطار أو نافذة صيامك.",
+        "Estructuramos comidas en torno a tu ventana de ayuno.",
+        "On structure les repas selon ta fenêtre de jeûne."
+      ),
+      type: "single",
+      options: RAMADAN_OPTIONS[locale] ?? RAMADAN_OPTIONS.en,
+      required: false,
+      showIf: {
+        mode: "any",
+        conditions: [
+          { stepId: "religion_diet", value: "halal", operator: "equals" },
+          { stepId: "country", value: "TR", operator: "equals" },
+          { stepId: "country", value: "AE", operator: "equals" },
+          { stepId: "country", value: "SA", operator: "equals" },
+          { stepId: "country", value: "EG", operator: "equals" },
+          { stepId: "country", value: "MA", operator: "equals" },
+          { stepId: "country", value: "JO", operator: "equals" },
+          { stepId: "country", value: "QA", operator: "equals" },
+          { stepId: "country", value: "KW", operator: "equals" },
+          { stepId: "country", value: "OM", operator: "equals" },
+          { stepId: "country", value: "BH", operator: "equals" }
+        ]
+      }
+    }
+  ];
+}
+
+/**
+ * Concatenate every supported country's markets into one list, plus an
+ * "Other" option. The renderer doesn't dynamically filter by country
+ * yet (PR12), but the answer captures a stable market id so downstream
+ * grocery generation works.
+ */
+function aggregateMarketOptions(locale: Locale): QuizOption[] {
+  const all: QuizOption[] = [];
+  const seen = new Set<string>();
+  for (const country of COUNTRIES) {
+    for (const market of getMarketsForCountry(country.code)) {
+      if (seen.has(market.id)) continue;
+      seen.add(market.id);
+      all.push({ value: market.id, label: market.label, hint: country.name });
+    }
+  }
+  all.push({
+    value: "other",
+    label: ({ en: "Other", tr: "Diğer", ar: "أخرى", es: "Otro", fr: "Autre" })[locale] ?? "Other",
+    hint: ({
+      en: "Type your store next",
+      tr: "Sonraki adımda mağaza adı",
+      ar: "اكتب اسم متجرك بعدها",
+      es: "Escribe la tienda después",
+      fr: "Écris le magasin ensuite"
+    })[locale]
+  });
+  return all;
+}
+
