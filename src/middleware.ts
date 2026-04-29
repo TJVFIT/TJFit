@@ -8,6 +8,32 @@ import { URL_NOTICE } from "@/lib/url-notice";
 
 const LOCALES = new Set(["en", "tr", "ar", "es", "fr"]);
 
+const LAUNCH_GATE_BYPASS_SEGMENTS = new Set([
+  "login",
+  "signup",
+  "forgot-password",
+  "verify-email"
+]);
+
+function isLaunchGateActive(): boolean {
+  return (process.env.LAUNCH_GATE ?? "").toLowerCase() === "coming-soon";
+}
+
+function isLaunchGateBypass(pathname: string): boolean {
+  if (pathname === "/coming-soon" || pathname.startsWith("/coming-soon/")) return true;
+  if (pathname.startsWith("/api/")) return true;
+  if (pathname === "/robots.txt" || pathname === "/sitemap.xml") return true;
+  const segments = pathname.split("/").filter(Boolean);
+  if (
+    segments.length >= 2 &&
+    LOCALES.has(segments[0]) &&
+    LAUNCH_GATE_BYPASS_SEGMENTS.has(segments[1])
+  ) {
+    return true;
+  }
+  return false;
+}
+
 function applyHtmlCacheHeaders(request: NextRequest, response: NextResponse) {
   const accept = request.headers.get("accept") ?? "";
   if (accept.includes("text/html")) {
@@ -100,6 +126,17 @@ export async function middleware(request: NextRequest) {
   const {
     data: { user }
   } = await supabase.auth.getUser();
+
+  if (isLaunchGateActive() && !isLaunchGateBypass(request.nextUrl.pathname)) {
+    const isAdmin = Boolean(user?.email && isAdminEmail(user.email));
+    if (!isAdmin) {
+      const target = new URL("/coming-soon", request.url);
+      const redirectRes = NextResponse.redirect(target);
+      copyCookies(response, redirectRes);
+      applyHtmlCacheHeaders(request, redirectRes);
+      return redirectRes;
+    }
+  }
 
   const guard = matchHtmlGuard(request.nextUrl.pathname);
   if (guard) {
