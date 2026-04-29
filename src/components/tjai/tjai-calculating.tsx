@@ -6,6 +6,8 @@ import { Logo } from "@/components/ui/Logo";
 import { cn } from "@/lib/utils";
 import type { TJAICopy, TJAIMetrics } from "@/lib/tjai-types";
 
+import styles from "./tjai-calculating.module.css";
+
 type Props = {
   copy: TJAICopy;
   metrics: TJAIMetrics | null;
@@ -27,17 +29,19 @@ export function TJAICalculating({ copy, metrics, done = false }: Props) {
 
   useEffect(() => {
     if (done) {
-      setProgress(100);
-      return;
+      const t = window.setTimeout(() => setProgress(100), 80);
+      return () => window.clearTimeout(t);
     }
     const start = Date.now();
     const t = window.setInterval(() => {
       const elapsed = Date.now() - start;
-      const next = Math.min(95, (elapsed / 25000) * 95);
+      const next = Math.min(92, (elapsed / 22000) * 92);
       setProgress((prev) => (next > prev ? next : prev));
     }, 180);
     return () => window.clearInterval(t);
   }, [done]);
+
+  const isFinalizing = !done && progress >= 90;
 
   const stats = useMemo(
     () =>
@@ -62,16 +66,30 @@ export function TJAICalculating({ copy, metrics, done = false }: Props) {
             <Logo size="hero" linked={false} />
           </div>
           <h2 className="mt-8 text-2xl font-bold text-white">{copy.calculating.title}</h2>
-          <p key={msgIdx} className="mt-3 text-sm text-muted animate-[tjai-fade-in_300ms_ease]">
-            {currentMessage}
+          <p
+            key={isFinalizing ? "finalizing" : msgIdx}
+            className={cn(
+              "mt-3 text-sm text-muted animate-[tjai-fade-in_300ms_ease]",
+              isFinalizing && styles.finalizing
+            )}
+          >
+            {isFinalizing ? "Finalizing your plan…" : currentMessage}
           </p>
 
-          <div className="mt-8 h-[2px] w-full overflow-hidden rounded-full bg-divider">
+          <div
+            className={cn(
+              "mt-8 h-[3px] w-full rounded-full bg-divider",
+              styles.barShimmer
+            )}
+          >
             <div
-              className="h-full bg-[linear-gradient(90deg,#22D3EE,#A78BFA)] transition-[width] duration-500 ease-out"
+              className="h-full rounded-full bg-[linear-gradient(90deg,#22D3EE,#A78BFA)] shadow-[0_0_18px_rgba(34,211,238,0.45)] transition-[width] duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)]"
               style={{ width: `${Math.max(0, Math.min(progress, 100))}%` }}
             />
           </div>
+          <p className="mt-2 text-[10px] uppercase tracking-[0.18em] text-dim">
+            {Math.round(progress)}%
+          </p>
 
           <div className="mt-6 grid gap-3">
             {stats.map((s, i) => (
