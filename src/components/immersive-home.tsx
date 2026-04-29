@@ -155,7 +155,8 @@ function PlatformFeatureCard({
   return (
     <article
       className={cn(
-        "group relative flex h-full flex-col overflow-hidden border border-white/[0.06] bg-[#0B0C0F] p-8 transition-colors duration-200 hover:border-white/[0.12] lg:p-10",
+        "glass-panel group relative flex h-full flex-col overflow-hidden p-8 transition-[transform,border-color,box-shadow,background-color] duration-[250ms] lg:p-10",
+        "tj-card-cinematic-hover hover:bg-[rgba(17,18,21,0.95)]",
         span === 2 && "md:col-span-2 md:min-h-[unset] md:flex-row md:items-start md:gap-14"
       )}
     >
@@ -237,7 +238,7 @@ export function ImmersiveHome({
       const rect = programsSectionRef.current.getBoundingClientRect();
       const sectionCenter = rect.top + rect.height / 2;
       const viewportCenter = window.innerHeight / 2;
-      setParallaxY((sectionCenter - viewportCenter) * 0.28);
+      setParallaxY((sectionCenter - viewportCenter) * 0.28 * 0.85);
     };
     window.addEventListener("scroll", fn, { passive: true });
     return () => window.removeEventListener("scroll", fn);
@@ -260,7 +261,7 @@ export function ImmersiveHome({
     { icon: Apple, title: "Full Diet Systems", desc: "Daily meal plans with macros, recipes, grocery lists. Halal, vegan, budget - covered.", accent: "#94A3B8", span: 1 as const },
     { icon: Users, title: "Coach Marketplace", desc: "Book certified coaches. 1-on-1 guidance and personalized feedback.", accent: "#22D3EE", span: 1 as const },
     { icon: Trophy, title: "Leaderboards", desc: "Earn TJCOIN, compete on weekly boards, unlock rewards for consistency.", accent: "#94A3B8", span: 1 as const },
-    { icon: Globe, title: "5 Languages", desc: "Training and nutrition flows support every launch locale from the first visit.", accent: "#94A3B8", span: 1 as const }
+    { icon: Globe, title: "10 Languages", desc: "Training and nutrition flows support 10 locales from the first visit.", accent: "#94A3B8", span: 1 as const }
   ] as const;
 
   // TJAI section ref for reveal trigger
@@ -281,7 +282,7 @@ export function ImmersiveHome({
       const rect = nexusRef.current.getBoundingClientRect();
       const c = rect.top + rect.height / 2;
       const vc = window.innerHeight / 2;
-      setNexusParallaxY((c - vc) * 0.14);
+      setNexusParallaxY((c - vc) * 0.14 * 0.85);
     };
     window.addEventListener("scroll", fn, { passive: true });
     return () => window.removeEventListener("scroll", fn);
@@ -314,7 +315,6 @@ export function ImmersiveHome({
 
       <SectionTransition variant="soft" />
 
-      {/* Compact TJAI summary — first thing after hero, before anything else */}
       <section
         className="reveal-section relative border-t border-divider bg-[rgba(10,10,11,0.7)] px-6 py-16 lg:px-12 lg:py-20"
         aria-label="TJAI overview"
@@ -347,7 +347,7 @@ export function ImmersiveHome({
             "Macro-aware meals",
             "TJAI · GPT-4o",
             "Coach marketplace",
-            "5 languages",
+            "10 languages",
           ].join("      ·      ")}
         </p>
       </div>
@@ -412,6 +412,9 @@ export function ImmersiveHome({
         </div>
 
         <section className="relative z-10 px-6 py-24 lg:px-12 lg:py-32">
+          <span className="ghost-text pointer-events-none start-1/2 top-20 z-0 -translate-x-1/2" aria-hidden>
+            PROGRAMS
+          </span>
           <div className="relative z-[1] mx-auto max-w-6xl">
             <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <MotionReveal reducedMotion={reduce}>
@@ -461,6 +464,13 @@ export function ImmersiveHome({
         className="reveal-section relative overflow-hidden border-t border-divider bg-background"
         style={{ minHeight: "min(90vh, 700px)" }}
       >
+        <span
+          className="ghost-text pointer-events-none start-1/2 top-8 z-0 max-lg:opacity-[0.02] -translate-x-1/2 text-[clamp(4rem,18vw,12rem)]"
+          aria-hidden
+        >
+          INTELLIGENCE
+        </span>
+
         <PremiumFullBleedImage
           src="/assets/hero/hero-tjai-core.png"
           preset="tjai"
@@ -573,6 +583,9 @@ export function ImmersiveHome({
       {/* ══════════════ DIETS ══════════════ */}
       {dietSlice.length > 0 && (
         <section id="diets" className="reveal-section relative border-t border-divider bg-background px-6 py-24 lg:px-12 lg:py-32 scroll-mt-20">
+          <span className="ghost-text pointer-events-none start-1/2 top-16 z-0 -translate-x-1/2 text-accent-violet opacity-[0.04]" aria-hidden>
+            NUTRITION
+          </span>
           <div className="relative z-[1] mx-auto max-w-6xl">
             <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <MotionReveal reducedMotion={reduce}>
@@ -678,7 +691,7 @@ export function ImmersiveHome({
             <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-dim">Access</p>
             <h2 className="mt-5 font-display text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
               Start your next{" "}
-              <span className="bg-gradient-to-r from-[#22D3EE] to-[#F6F3ED] bg-clip-text text-transparent">12 weeks</span>
+              <span className="bg-gradient-to-r from-[#22D3EE] to-[#67E8F9] bg-clip-text text-transparent">12 weeks</span>
               <span className="text-faint">.</span>
             </h2>
             <p className="mt-6 text-lg text-muted">{copy.midCta?.sub ?? "Join thousands already training smarter with TJFit."}</p>
