@@ -26,20 +26,21 @@
 
   --gradient-hero:
     radial-gradient(ellipse 80% 50% at 50% -10%, rgba(34, 211, 238, 0.09) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(246, 243, 237, 0.035) 0%, transparent 60%), #0a0a0b;
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(14, 165, 233, 0.04) 0%, transparent 60%), #0a0a0b;
 
   /* Homepage motion system (transform/opacity friendly) */
   --tj-motion-fast: 220ms;
   --tj-motion-medium: 480ms;
   --tj-motion-slow: 880ms;
   --tj-motion-hero: 1040ms;
-  --tj-ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+  /** Canonical easing — mirrors tailwind `ease-premium` */
+  --tj-ease-premium: cubic-bezier(0.2, 0.8, 0.2, 1);
   --tj-reveal-distance: 20px;
   --tj-reveal-blur: 8px;
   --tj-duration-slow: 10s;
   --tj-duration-medium: 5s;
   --tj-duration-fast: 0.8s;
-  --gradient-card-hover: linear-gradient(135deg, rgba(34, 211, 238, 0.035) 0%, rgba(246, 243, 237, 0.025) 100%);
+  --gradient-card-hover: linear-gradient(135deg, rgba(34, 211, 238, 0.04) 0%, rgba(14, 165, 233, 0.02) 100%);
   --gradient-divider: linear-gradient(90deg, transparent 0%, rgba(34, 211, 238, 0.4) 50%, transparent 100%);
   --gradient-btn-primary: linear-gradient(135deg, #22d3ee 0%, #0ea5e9 100%);
 
@@ -73,6 +74,11 @@
   --tj-space-8: 2rem;
   --tj-space-10: 2.5rem;
   --tj-space-12: 3rem;
+
+  /* Tiered card elevation — cyan/blue brand only */
+  --tj-elev-rest: 0 8px 28px rgba(0, 0, 0, 0.38);
+  --tj-elev-hover: 0 18px 48px rgba(0, 0, 0, 0.48), 0 0 0 1px rgba(34, 211, 238, 0.12);
+  --tj-elev-pressed: 0 6px 20px rgba(0, 0, 0, 0.55), inset 0 2px 8px rgba(0, 0, 0, 0.45);
 }
 
 /* Start funnel + subtle scroll reveals (no Framer Motion) */
@@ -284,7 +290,7 @@ h1, h2, h3, h4, h5, h6,
 :root[lang="ru"] body { font-feature-settings: normal; }
 
 ::selection {
-  background: rgba(34, 211, 238, 0.28);
+  background: rgb(34 211 238 / 0.3);
   color: #ffffff;
   text-shadow: none;
 }
@@ -359,13 +365,16 @@ h1, h2, h3, h4, h5, h6,
   filter: drop-shadow(0 0 4px rgba(34,211,238,0.35));
 }
 
-/* Premium input focus glow */
+/* Premium input focus glow — 220ms ease-premium */
 .input:focus {
   outline: none;
-  border-color: rgba(34,211,238,0.55) !important;
+  border-color: rgba(34, 211, 238, 0.55) !important;
   box-shadow:
-    0 0 0 3px rgba(34,211,238,0.12),
-    0 0 12px rgba(34,211,238,0.2) !important;
+    0 0 0 3px rgb(34 211 238 / 0.3),
+    0 0 12px rgb(34 211 238 / 0.16) !important;
+  transition:
+    border-color 220ms var(--tj-ease-premium),
+    box-shadow 220ms var(--tj-ease-premium);
 }
 
 /* Badge premium lift */
@@ -852,7 +861,9 @@ strong, b {
   font-size: 14px;
   color: var(--color-text-primary);
   outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 220ms var(--tj-ease-premium),
+    box-shadow 220ms var(--tj-ease-premium);
 }
 
 .input::placeholder {
@@ -867,7 +878,10 @@ strong, b {
 
 .input:focus-visible {
   border-color: var(--color-accent-cyan);
-  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.12);
+  box-shadow: 0 0 0 3px rgb(34 211 238 / 0.3);
+  transition:
+    border-color 220ms var(--tj-ease-premium),
+    box-shadow 220ms var(--tj-ease-premium);
 }
 
 /* Scroll reveal (use with useInView applying .is-in) */
@@ -1448,11 +1462,6 @@ strong, b {
   }
 }
 
-::selection {
-  background: rgba(34, 211, 238, 0.25);
-  color: #ffffff;
-}
-
 *::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -1507,16 +1516,6 @@ html {
   .free-starter-card::before,
   .free-starter-card:hover::before {
     transition: none !important;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
   }
 }
 
@@ -1840,16 +1839,18 @@ html {
   animation: word-rise 0.6s cubic-bezier(0.22,1,0.36,1) both;
 }
 
-/* ?? Scroll-triggered reveals ???????????????????????????????????? */
+/* Homepage / marketing — editorial section reveal + optional stagger (--tj-reveal-delay) */
 .reveal-section {
   opacity: 0;
-  transform: translateY(40px);
-  transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1),
-              transform 0.7s cubic-bezier(0.22,1,0.36,1);
+  transform: translate3d(0, 40px, 0) scale(0.98);
+  transition:
+    opacity 720ms var(--tj-ease-premium) var(--tj-reveal-delay, 0ms),
+    transform 720ms var(--tj-ease-premium) var(--tj-reveal-delay, 0ms);
+  will-change: opacity, transform;
 }
 .reveal-section.revealed {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate3d(0, 0, 0) scale(1);
 }
 
 /* ?? Blinking cursor (TJAI typing) ??????????????????????????????? */
@@ -2756,22 +2757,7 @@ textarea:focus-visible {
   }
 }
 
-/* =============================================================================
-   TJFit ? cinematic ?Luxury AI Performance Lab? system (transform + opacity)
-   ============================================================================= */
-
-.reveal-section {
-  opacity: 0;
-  transform: translate3d(0, 48px, 0);
-  transition:
-    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.reveal-section.revealed {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
-}
+/* TJFit cinematic system — `.reveal-section` defined earlier */
 
 .ghost-text {
   position: absolute;
@@ -3052,17 +3038,89 @@ textarea:focus-visible {
   .tj-grain::before { display: none; }
 }
 
-*:focus-visible {
-  outline: 2px solid rgba(34,211,238, 0.85);
-  outline-offset: 2px;
-  border-radius: 4px;
+/* Tiered elevation — compose on glass/card surfaces */
+.tj-card-tier {
+  box-shadow: var(--tj-elev-rest);
+  transition:
+    box-shadow 240ms var(--tj-ease-premium),
+    transform 220ms var(--tj-ease-premium);
 }
+
+@media (hover: hover) {
+  .tj-card-tier:hover {
+    box-shadow: var(--tj-elev-hover);
+    transform: translateY(-2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tj-card-tier:hover {
+    transform: none;
+  }
+}
+
+.tj-card-tier:active {
+  box-shadow: var(--tj-elev-pressed);
+  transform: translateY(0) scale(0.992);
+}
+
+@media (hover: none) {
+  .tj-card-tier:hover {
+    transform: none;
+    box-shadow: var(--tj-elev-rest);
+  }
+}
+
+@keyframes tj-dynamic-toast-mobile {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes tj-dynamic-toast-desktop {
+  from {
+    opacity: 0;
+    transform: translate(18px, -10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+.tj-dynamic-island-bubble {
+  animation: tj-dynamic-toast-mobile 280ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@media (min-width: 768px) {
+  .tj-dynamic-island-bubble {
+    animation-name: tj-dynamic-toast-desktop;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tj-dynamic-island-bubble {
+    animation: none !important;
+  }
+}
+
+:focus-visible {
+  outline: none;
+}
+
+a[href]:focus-visible,
 button:focus-visible,
-a:focus-visible,
-[role="button"]:focus-visible {
-  outline: 2px solid rgba(34,211,238, 0.95);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 4px rgba(34,211,238, 0.18);
+[role="button"]:focus-visible,
+[role="tab"]:focus-visible,
+summary:focus-visible {
+  outline: 2px solid rgb(34 211 238 / 0.6);
+  outline-offset: 4px;
+  border-radius: 4px;
 }
 
 /* 44x44 minimum touch target — apply to icon buttons, chips, and small links */
@@ -3129,7 +3187,7 @@ button[aria-disabled="true"],
 
 /* Vector brand lockup */
 .tj-logo-lockup {
-  color: #f6f3ed;
+  color: #fafafa;
   transform: translateZ(0);
 }
 
