@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { ChevronDown } from "lucide-react";
+import { useLayoutEffect, useRef, useState } from "react";
 import type { ProgramBlueprint } from "@/lib/program-blueprints";
 import { ProgramContentLock } from "@/components/program-content-lock";
 import type { Locale } from "@/lib/i18n";
 import { getProgramQualityPack } from "@/lib/program-quality-copy";
-import { cn } from "@/lib/utils";
 
 type Copy = {
   blueprintTrainingDays: string;
@@ -84,6 +84,92 @@ function PhasePanel({
   );
 }
 
+function PhaseAccordion({
+  phase,
+  index,
+  open,
+  onToggle,
+  copy,
+  isDiet,
+  colA,
+  colB,
+  locked,
+  checkoutHref,
+  lockTitle,
+  lockSubtitle,
+  lockCtaLabel
+}: {
+  phase: ProgramBlueprint["weeklyPhases"][number];
+  index: number;
+  open: boolean;
+  onToggle: () => void;
+  copy: Copy;
+  isDiet: boolean;
+  colA: string;
+  colB: string;
+  locked: boolean;
+  checkoutHref: string;
+  lockTitle: string;
+  lockSubtitle: string;
+  lockCtaLabel: string;
+}) {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState(0);
+  const inner = <PhasePanel phase={phase} copy={copy} isDiet={isDiet} colA={colA} colB={colB} />;
+
+  useLayoutEffect(() => {
+    const node = contentRef.current;
+    if (!node) return;
+    setHeight(open ? node.scrollHeight : 0);
+  }, [open, phase]);
+
+  return (
+    <article className="overflow-hidden rounded-[14px] border border-white/[0.07] bg-[#0C0D10] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors duration-200 hover:bg-white/[0.035] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/60"
+      >
+        <span className="min-w-0">
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-cyan-100/60">
+            {String(index + 1).padStart(2, "0")}
+          </span>
+          <span className="mt-1 block truncate font-display text-lg font-semibold tracking-tight text-white">
+            {phase.title}
+          </span>
+        </span>
+        <ChevronDown
+          className={`h-5 w-5 shrink-0 text-cyan-100 transition-transform duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${
+            open ? "rotate-180" : ""
+          }`}
+          aria-hidden
+        />
+      </button>
+      <div
+        className="overflow-hidden transition-[height] duration-[320ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none"
+        style={{ height }}
+      >
+        <div ref={contentRef} className="px-5 pb-5">
+          {locked ? (
+            <ProgramContentLock
+              locked
+              title={lockTitle}
+              subtitle={lockSubtitle}
+              ctaHref={checkoutHref}
+              ctaLabel={lockCtaLabel}
+            >
+              <div className="p-4">{inner}</div>
+            </ProgramContentLock>
+          ) : (
+            inner
+          )}
+        </div>
+      </div>
+    </article>
+  );
+}
+
 export function ProgramBlueprintNavigator({
   blueprint,
   copy,
@@ -109,76 +195,37 @@ export function ProgramBlueprintNavigator({
 }) {
   const phases = blueprint.weeklyPhases;
   const qualityPack = getProgramQualityPack(locale, blueprint, isDiet);
-  const [tab, setTab] = useState(0);
-  const [contentOn, setContentOn] = useState(true);
+  const [openPhase, setOpenPhase] = useState(0);
 
   const colA = isDiet ? "Daily structure" : copy.blueprintTrainingDays;
   const colB = isDiet ? "Targets & recovery" : copy.blueprintConditioning;
 
-  useEffect(() => {
-    setContentOn(false);
-    const t = window.setTimeout(() => setContentOn(true), 20);
-    return () => window.clearTimeout(t);
-  }, [tab]);
-
   if (!phases.length) return null;
-
-  const phase = phases[tab] ?? phases[0];
-  const lockedTab = paidLocked && tab > 0;
-
-  const inner = <PhasePanel phase={phase} copy={copy} isDiet={isDiet} colA={colA} colB={colB} />;
 
   return (
     <div className="mt-10 space-y-8">
-      {/* Phase timeline header */}
-      <div className="tj-nav-scroll flex max-w-full flex-nowrap gap-0 overflow-x-auto border-b border-white/[0.06]">
-        {phases.map((p, i) => (
-          <button
-            key={p.title}
-            type="button"
-            title={p.title}
-            onClick={() => setTab(i)}
-            className={cn(
-              "relative inline-flex min-h-[44px] shrink-0 items-center gap-2 px-4 py-3 text-left text-[13px] font-medium transition-colors duration-150 sm:px-5",
-              tab === i ? "text-white" : "text-white/45 hover:text-white/80"
-            )}
-          >
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/35">
-              {String(i + 1).padStart(2, "0")}
-            </span>
-            <span className="max-w-[10rem] truncate">{p.title}</span>
-            {tab === i ? (
-              <span
-                aria-hidden
-                className="absolute inset-x-3 -bottom-px h-[2px] rounded-t bg-accent"
-              />
-            ) : null}
-          </button>
+      <div className="space-y-3">
+        {phases.map((phase, index) => (
+          <PhaseAccordion
+            key={phase.title}
+            phase={phase}
+            index={index}
+            open={openPhase === index}
+            onToggle={() => setOpenPhase((current) => (current === index ? -1 : index))}
+            copy={copy}
+            isDiet={isDiet}
+            colA={colA}
+            colB={colB}
+            locked={paidLocked && index > 0}
+            checkoutHref={checkoutHref}
+            lockTitle={lockTitle}
+            lockSubtitle={lockSubtitle}
+            lockCtaLabel={lockCtaLabel}
+          />
         ))}
       </div>
 
-      <div
-        className={cn(
-          "transition-[opacity,transform] duration-[250ms] ease-out motion-reduce:translate-y-0 motion-reduce:opacity-100",
-          contentOn ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
-        )}
-      >
-        {lockedTab ? (
-          <ProgramContentLock
-            locked
-            title={lockTitle}
-            subtitle={lockSubtitle}
-            ctaHref={checkoutHref}
-            ctaLabel={lockCtaLabel}
-          >
-            <div className="p-4">{inner}</div>
-          </ProgramContentLock>
-        ) : (
-          inner
-        )}
-      </div>
-
-      {!lockedTab ? (
+      {!paidLocked ? (
         <div className="grid gap-px overflow-hidden rounded-xl border border-white/[0.06] bg-white/[0.04] md:grid-cols-2">
           <div className="bg-[#0C0D10] p-6">
             <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/40">
@@ -215,7 +262,7 @@ export function ProgramBlueprintNavigator({
           <ul className="mt-3 space-y-1.5 text-[13px] leading-[1.55] text-white/75">
             {blueprint.safety.map((item) => (
               <li key={item} className="flex gap-2">
-                <span className="mt-2 h-px w-3 shrink-0 bg-amber-300/60" aria-hidden />
+                <span className="mt-2 h-px w-3 shrink-0 bg-cyan-300/60" aria-hidden />
                 {item}
               </li>
             ))}

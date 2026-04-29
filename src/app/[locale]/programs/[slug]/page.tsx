@@ -1,14 +1,16 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { FreeProductBodyBlocks, FreeProductUpgradeFooter } from "@/components/free-product-detail-view";
 import { ProgramEliteSystemCard } from "@/components/program-elite-system-card";
 import { ProgramBlueprintNavigator } from "@/components/program-blueprint-navigator";
 import { ProgramDetailHero } from "@/components/program-detail-hero";
+import { ProgramDetailTabs } from "@/components/programs/program-detail-tabs";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { ProgramViewTracker } from "@/components/marketing/program-view-tracker";
 import { ProgramPaymentSuccessNotice } from "@/components/program-payment-success-notice";
 import { ProgramContentLock } from "@/components/program-content-lock";
+import { StickyPurchaseRail } from "@/components/sticky-purchase-rail";
+import { MobileCtaBar } from "@/components/mobile-cta-bar";
 import { coaches, products, programs } from "@/lib/content";
 import { localizeCustomProgramRow, type CustomProgramRow } from "@/lib/custom-programs";
 import { getFreeProductPageModel, isFreeProductSlug } from "@/lib/free-product-pages";
@@ -30,10 +32,10 @@ import { getProgramEliteLabels, getProgramEliteMeta } from "@/lib/program-elite-
 
 function getProgramTheme(category: string) {
   const base = category.toLowerCase();
-  if (base.includes("nutrition")) return "from-cyan-400/30 via-teal-400/20 to-sky-400/30";
-  if (base.includes("fat")) return "from-cyan-400/30 via-sky-400/20 to-violet-400/30";
-  if (base.includes("muscle")) return "from-violet-400/30 via-indigo-400/20 to-cyan-400/30";
-  return "from-cyan-400/30 via-sky-400/20 to-indigo-400/30";
+  if (base.includes("nutrition")) return "from-cyan-400/30 via-sky-400/20 to-blue-400/30";
+  if (base.includes("fat")) return "from-cyan-400/30 via-sky-400/20 to-blue-400/30";
+  if (base.includes("muscle")) return "from-blue-400/30 via-sky-400/20 to-cyan-400/30";
+  return "from-cyan-400/30 via-sky-400/20 to-blue-400/30";
 }
 
 function trainingLocationLabel(slug: string, copy: ReturnType<typeof getProgramUiCopy>): string {
@@ -74,10 +76,6 @@ export default async function ProgramDetailPage({
     }
   }
 
-  if (!staticProgram && !customProgram) {
-    notFound();
-  }
-
   const program = staticProgram;
   const localeNames: Record<Locale, string> = {
     en: "English",
@@ -89,6 +87,10 @@ export default async function ProgramDetailPage({
   const localizedProgram = program ? localizeProgram(program, locale) : null;
   const copy = getProgramUiCopy(locale);
   const programManagementCopy = getProgramManagementCopy(locale);
+
+  if (!staticProgram && !customProgram) {
+    return <ProgramUnavailableState locale={locale} />;
+  }
 
   const authCtx = await getOptionalServerUser();
   const userId = authCtx?.userId ?? null;
@@ -125,6 +127,7 @@ export default async function ProgramDetailPage({
 
   const baseTry = program ? getProgramBasePriceTry(program) : customProgram?.price_try ?? 400;
   const localizedPrice = program?.is_free ? copy.freePriceLabel : formatProgramPrice(baseTry, locale);
+  const priceTreatmentCopy = program && (program.is_free || baseTry === 0) ? "Free preview" : localizedPrice;
 
   const programTheme = getProgramTheme((localizedProgram ?? customProgram!).category);
   const tier =
@@ -189,6 +192,18 @@ export default async function ProgramDetailPage({
     : program
       ? `${programDuration} · ${trainingLocationLabel(slug, copy)}`
       : programDuration;
+  const railNeedsCheckout = !program || (!program.is_free && !access.showFullPaidContent);
+  const railPrimaryHref = program?.is_free ? freeDownloadHref : railNeedsCheckout ? (userId ? checkoutHref : signupUnlockHref) : undefined;
+  const railPrimaryLabel = program?.is_free
+    ? freeDownloadLabel[locale]
+    : railNeedsCheckout
+      ? userId
+        ? copy.getFullAccess
+        : copy.signUpToUnlockFree
+      : undefined;
+  const railSecondaryHref = !program?.is_free && railNeedsCheckout && !userId ? loginUnlockHref : undefined;
+  const railSecondaryLabel = railSecondaryHref ? copy.logInToUnlockFree : undefined;
+  const railAccessCopy = program?.is_free || (program && access.showFullPaidContent) ? copy.youHaveFullAccess : undefined;
 
   return (
     <div className="relative pb-32 pt-0 sm:pb-20 lg:pb-24 xl:pb-24">
@@ -214,6 +229,7 @@ export default async function ProgramDetailPage({
         locationOrTypeLabel={heroLocation}
         levelLabel={heroLevel}
         metaLine={heroMeta}
+        imageLabels={program?.previewImages}
       />
 
       <div className="mx-auto mt-12 grid max-w-6xl gap-8 px-4 sm:px-6 lg:px-8 xl:grid-cols-[1.05fr_0.95fr]">
@@ -230,6 +246,13 @@ export default async function ProgramDetailPage({
             {isDiet ? copy.dietPageTrust : copy.programPageTrust}
           </p>
 
+          <ProgramDetailTabs
+            tabs={[
+              {
+                id: "overview",
+                label: "Overview",
+                content: (
+                  <>
           {program ? (
             <div className="mt-10">
               <ProgramEliteSystemCard
@@ -272,7 +295,7 @@ export default async function ProgramDetailPage({
                 {programDuration}
               </p>
               <p className="mt-2 font-display text-2xl font-semibold tracking-tight text-white">
-                {localizedPrice}
+                {priceTreatmentCopy}
               </p>
             </div>
           </div>
@@ -317,6 +340,14 @@ export default async function ProgramDetailPage({
             </div>
           )}
 
+                  </>
+                )
+              },
+              {
+                id: "structure",
+                label: "Structure",
+                content: (
+                  <>
           {blueprint ? (
             <div className="mt-10 space-y-6">
               <div className="rounded-2xl border border-divider bg-surface p-6">
@@ -352,8 +383,21 @@ export default async function ProgramDetailPage({
                 safetyTitle={copy.blueprintSafety}
               />
             </div>
-          ) : null}
+          ) : (
+            <div className="rounded-[14px] border border-cyan-300/15 bg-cyan-300/[0.06] p-6 text-center">
+              <p className="font-display text-xl font-semibold text-white">{copy.blueprintTitle}</p>
+              <p className="mt-2 text-sm leading-6 text-white/58">Structure details are being prepared for this program.</p>
+            </div>
+          )}
 
+                  </>
+                )
+              },
+              {
+                id: "preview",
+                label: "Preview",
+                content: (
+                  <>
           {program && freeModel ? (
             <div className="mt-10 space-y-2">
               {freeContentUnlocked ? (
@@ -383,70 +427,36 @@ export default async function ProgramDetailPage({
                 freeDownloadLabel={freeDownloadLabel[locale]}
               />
             </div>
-          ) : null}
+          ) : (
+            <div className="rounded-[14px] border border-cyan-300/15 bg-[linear-gradient(135deg,rgba(34,211,238,0.08),rgba(14,165,233,0.025))] p-6 text-center">
+              <p className="font-display text-xl font-semibold text-white">{priceTreatmentCopy}</p>
+              <p className="mt-2 text-sm leading-6 text-white/58">{programDescription}</p>
+            </div>
+          )}
+                  </>
+                )
+              }
+            ]}
+          />
         </section>
 
         <aside className="space-y-6 xl:sticky xl:top-24 xl:self-start">
-          <div className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-white/[0.015] p-6">
-            <p className="text-sm text-muted">{copy.coachLabel}</p>
-            <p className="mt-2 text-2xl font-semibold text-white">{coach?.name ?? copy.teamFallback}</p>
-            <p className="mt-2 text-sm text-muted">{coach?.specialty ?? copy.teamFallback}</p>
-
-            <div className="mt-6 space-y-3 text-sm text-bright">
-              <div className="flex items-center justify-between gap-2">
-                <span>{copy.difficultyLabel}</span>
-                <span className="text-right text-white">{programDifficulty}</span>
-              </div>
-              <div className="flex items-center justify-between gap-2">
-                <span>{copy.durationLabel}</span>
-                <span className="text-right text-white">{programDuration}</span>
-              </div>
-              <div className="flex items-center justify-between gap-2">
-                <span>{copy.priceLabel}</span>
-                <span className="text-right text-white">{localizedPrice}</span>
-              </div>
-            </div>
-
-            <div className="mt-6 flex flex-col flex-wrap gap-3 sm:flex-row">
-              {program?.is_free ? (
-                <>
-                  <a
-                    href={freeDownloadHref}
-                    className="lux-btn-primary inline-flex min-h-[44px] justify-center rounded-full px-5 py-2.5 text-center text-sm font-bold text-[#09090B]"
-                  >
-                    {freeDownloadLabel[locale]}
-                  </a>
-                  <p className="text-sm font-medium text-emerald-300/95">{copy.youHaveFullAccess}</p>
-                </>
-              ) : program && !access.showFullPaidContent ? (
-                <>
-                  <Link
-                    href={userId ? checkoutHref : signupUnlockHref}
-                    className="gradient-button rounded-full px-5 py-2.5 text-sm font-medium text-white"
-                  >
-                    {userId ? copy.getFullAccess : copy.signUpToUnlockFree}
-                  </Link>
-                  {!userId ? (
-                    <Link
-                      href={loginUnlockHref}
-                      className="inline-flex items-center rounded-full border border-white/15 px-5 py-2.5 text-sm font-medium text-white/85 hover:border-white/30 hover:text-white"
-                    >
-                      {copy.logInToUnlockFree}
-                    </Link>
-                  ) : null}
-                </>
-              ) : program && access.showFullPaidContent ? (
-                <p className="text-sm font-medium text-emerald-300/95">{copy.youHaveFullAccess}</p>
-              ) : (
-                <Link
-                  href={userId ? checkoutHref : signupUnlockHref}
-                  className="gradient-button rounded-full px-5 py-2.5 text-sm font-medium text-white"
-                >
-                  {userId ? copy.getFullAccess : copy.signUpToUnlockFree}
-                </Link>
-              )}
-            </div>
-          </div>
+          <StickyPurchaseRail
+            coachLabel={copy.coachLabel}
+            coachName={coach?.name ?? copy.teamFallback}
+            coachSpecialty={coach?.specialty ?? copy.teamFallback}
+            difficultyLabel={copy.difficultyLabel}
+            difficulty={programDifficulty}
+            durationLabel={copy.durationLabel}
+            duration={programDuration}
+            priceLabel={copy.priceLabel}
+            priceCopy={priceTreatmentCopy}
+            primaryHref={railPrimaryHref}
+            primaryLabel={railPrimaryLabel}
+            secondaryHref={railSecondaryHref}
+            secondaryLabel={railSecondaryLabel}
+            accessCopy={railAccessCopy || undefined}
+          />
 
           <div className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-white/[0.015] p-6">
             <p className="text-lg font-semibold text-white">{copy.recommendedEquipment}</p>
@@ -473,7 +483,7 @@ export default async function ProgramDetailPage({
 
       {paidContentLocked && program && !program.is_free ? (
         <ScrollReveal className="mx-auto mt-12 max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="rounded-2xl border border-[rgba(34,211,238,0.15)] bg-[linear-gradient(135deg,rgba(34,211,238,0.05),rgba(167,139,250,0.05))] p-8 text-center sm:p-12">
+          <div className="rounded-2xl border border-[rgba(34,211,238,0.15)] bg-[linear-gradient(135deg,rgba(34,211,238,0.07),rgba(14,165,233,0.05))] p-8 text-center sm:p-12">
             <p className="text-base font-semibold text-white">{copy.paidPreviewTitle}</p>
             <p className="mt-2 text-sm text-muted">{copy.paidPreviewSubtitle}</p>
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
@@ -499,50 +509,47 @@ export default async function ProgramDetailPage({
       {/* Mobile sticky purchase bar — only when there's an actual purchase
           decision to make. Hidden on xl where the sticky aside takes over. */}
       {program && !program.is_free && !access.showFullPaidContent ? (
-        <div
-          role="region"
-          aria-label={copy.priceLabel}
-          className="fixed inset-x-0 bottom-0 z-40 border-t border-white/[0.08] bg-[#0B0B0E]/95 backdrop-blur-md xl:hidden"
-        >
-          <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
-            <div className="min-w-0">
-              <p className="truncate text-[11px] font-medium uppercase tracking-[0.18em] text-white/45">
-                {programDuration}
-              </p>
-              <p className="truncate text-[15px] font-semibold tabular-nums text-white">{localizedPrice}</p>
-            </div>
-            <Link
-              href={userId ? checkoutHref : signupUnlockHref}
-              className="lux-btn-primary inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-full px-5 py-2 text-sm font-bold text-[#09090B]"
-            >
-              {userId ? copy.getFullAccess : copy.signUpToUnlockFree}
-            </Link>
-          </div>
-        </div>
+        <MobileCtaBar
+          ariaLabel={copy.priceLabel}
+          eyebrow={programDuration}
+          priceCopy={priceTreatmentCopy}
+          href={userId ? checkoutHref : signupUnlockHref}
+          label={userId ? copy.getFullAccess : copy.signUpToUnlockFree}
+        />
       ) : null}
 
       {customProgram && customProgramLocked ? (
-        <div
-          role="region"
-          aria-label={copy.priceLabel}
-          className="fixed inset-x-0 bottom-0 z-40 border-t border-white/[0.08] bg-[#0B0B0E]/95 backdrop-blur-md xl:hidden"
-        >
-          <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
-            <div className="min-w-0">
-              <p className="truncate text-[11px] font-medium uppercase tracking-[0.18em] text-white/45">
-                {programDuration || copy.programKindPremium}
-              </p>
-              <p className="truncate text-[15px] font-semibold tabular-nums text-white">{localizedPrice}</p>
-            </div>
-            <Link
-              href={userId ? checkoutHref : signupUnlockHref}
-              className="lux-btn-primary inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-full px-5 py-2 text-sm font-bold text-[#09090B]"
-            >
-              {userId ? copy.getFullAccess : copy.signUpToUnlockFree}
-            </Link>
-          </div>
-        </div>
+        <MobileCtaBar
+          ariaLabel={copy.priceLabel}
+          eyebrow={programDuration || copy.programKindPremium}
+          priceCopy={priceTreatmentCopy}
+          href={userId ? checkoutHref : signupUnlockHref}
+          label={userId ? copy.getFullAccess : copy.signUpToUnlockFree}
+        />
       ) : null}
     </div>
+  );
+}
+
+function ProgramUnavailableState({ locale }: { locale: Locale }) {
+  return (
+    <main className="relative min-h-[100dvh] bg-[#08080A] px-5 py-28 text-white sm:px-8">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_45%_at_50%_0%,rgba(34,211,238,0.12),transparent_60%)]" />
+      <section className="relative mx-auto max-w-xl rounded-[18px] border border-cyan-300/15 bg-[linear-gradient(135deg,rgba(34,211,238,0.08),rgba(14,165,233,0.025))] p-8 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-cyan-200/20 bg-cyan-300/10">
+          <span className="h-6 w-6 rounded-full border border-cyan-100/80" aria-hidden />
+        </div>
+        <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight">Program coming soon</h1>
+        <p className="mt-3 text-sm leading-6 text-white/60">
+          This program is not available yet. Browse the catalog for live previews and structured TJFit systems.
+        </p>
+        <Link
+          href={`/${locale}/programs`}
+          className="mt-7 inline-flex min-h-[44px] items-center justify-center rounded-full bg-cyan-300 px-5 text-sm font-bold text-[#071013] transition-transform duration-150 active:scale-[0.97]"
+        >
+          Back to programs
+        </Link>
+      </section>
+    </main>
   );
 }
