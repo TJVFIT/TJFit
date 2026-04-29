@@ -77,7 +77,7 @@ export function ProgramDetailHero({
         aria-hidden
       />
 
-      <div className="relative mx-auto grid max-w-6xl gap-8 px-4 pb-12 pt-20 sm:px-6 md:pt-24 lg:grid-cols-[0.95fr_1.05fr] lg:items-end lg:gap-12 lg:px-8 lg:pb-16">
+      <div className="relative mx-auto grid max-w-6xl gap-8 px-4 pb-12 pt-20 sm:px-6 md:pt-24 lg:grid-cols-[1.08fr_0.92fr] lg:items-end lg:gap-12 lg:px-8 lg:pb-16">
         <div className="min-w-0 lg:pb-4">
           <nav className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-white/45">
             <Link href={`/${locale}`} className="transition-colors duration-150 hover:text-white">
@@ -95,7 +95,7 @@ export function ProgramDetailHero({
             {programCategory}
           </p>
 
-          <h1 className="mt-3 max-w-4xl font-display text-[40px] font-semibold leading-[1.04] tracking-[-0.02em] text-white sm:text-[52px] lg:text-[60px]">
+          <h1 className="mt-3 max-w-4xl font-display text-[40px] font-semibold leading-[1.04] tracking-[-0.02em] text-white sm:text-[52px] lg:text-[54px] xl:text-[58px]">
             {letters.map((letter, index) => (
               <span
                 key={`${letter}-${index}`}
