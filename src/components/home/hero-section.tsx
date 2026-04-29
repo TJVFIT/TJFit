@@ -191,7 +191,7 @@ export function HeroSection({
         aria-hidden
       >
         <div className="tj-hero-kinetic-frame pointer-events-none absolute inset-[8%] hidden lg:block" aria-hidden />
-        <TJHeroStage variant="curl-athlete" pointerReactive={!reduce} speed={reduce ? 0 : 0.52} intensity={0.82} />
+        <TJHeroStage variant="neural" pointerReactive={!reduce} speed={reduce ? 0 : 0.78} intensity={0.95} />
         <HeroSignal icon={Activity} label="model" value="Adaptive split" className="absolute right-[7%] top-[19%]" />
         <HeroSignal icon={Timer} label="cycle" value="12 weeks" className="absolute bottom-[24%] right-[10%]" />
         <HeroSignal icon={Gauge} label="output" value="Plan + macros" className="absolute bottom-[13%] left-[12%]" />

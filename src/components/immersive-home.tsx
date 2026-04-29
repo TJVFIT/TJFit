@@ -34,6 +34,8 @@ import { SectionTransition } from "@/components/home/section-transition";
 import { TjaiEngineChrome } from "@/components/home/tjai-engine-chrome";
 import { HeroTjaiBrainDeco } from "@/components/hero-tjai-brain-deco";
 import { CinematicHowItWorks, CinematicTransformation } from "@/components/home/cinematic-sections";
+import { Cinematic3DAct } from "@/components/home/cinematic-3d-act";
+import { SplineShowcase } from "@/components/home/spline-showcase";
 import { useMagneticButton } from "@/hooks/useMagneticButton";
 
 function useReducedMotion() {
@@ -315,6 +317,10 @@ export function ImmersiveHome({
 
       <SectionTransition variant="soft" />
 
+      <Cinematic3DAct />
+
+      <SectionTransition variant="soft" />
+
       <section
         className="reveal-section relative border-t border-divider bg-[rgba(10,10,11,0.7)] px-6 py-16 lg:px-12 lg:py-20"
         aria-label="TJAI overview"
@@ -378,6 +384,8 @@ export function ImmersiveHome({
 
       <CinematicHowItWorks />
       <CinematicTransformation reduce={reduce} />
+
+      <SplineShowcase />
 
       {/* Stats — restrained, no neon scoreboard */}
       <section className="reveal-section border-y border-divider bg-background py-16 lg:py-20">
