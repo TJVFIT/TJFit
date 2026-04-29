@@ -4,6 +4,8 @@ import { Fragment, type ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
+import styles from "./tjai-chat.module.css";
+
 function parseInlineBold(text: string): ReactNode {
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
   return parts.map((part, i) => {
@@ -87,18 +89,35 @@ export function CoachMessageBody({ text, className }: { text: string; className?
 
 export function CoachThinkingPulse() {
   return (
-    <div className="flex items-center gap-2 py-0.5" aria-live="polite" aria-label="TJAI is thinking">
-      <span className="text-[11px] font-medium uppercase tracking-[0.14em] text-dim">Thinking</span>
-      <span className="flex gap-1 motion-reduce:hidden">
+    <div
+      className="flex items-center gap-2.5 py-0.5"
+      aria-live="polite"
+      aria-label="TJAI is thinking"
+      role="status"
+    >
+      <span
+        className={cn(
+          "text-[11px] font-medium uppercase tracking-[0.18em] text-cyan-200/75 motion-reduce:opacity-90",
+          styles.thinkLabel
+        )}
+      >
+        TJAI is thinking
+      </span>
+      <span className="flex items-end gap-[3px] motion-reduce:hidden" aria-hidden>
         {[0, 1, 2].map((d) => (
           <span
             key={d}
-            className="inline-block h-1.5 w-1.5 animate-bounce rounded-full bg-accent/90"
-            style={{ animationDelay: `${d * 140}ms` }}
+            className={cn(
+              "inline-block h-1.5 w-1.5 rounded-full bg-cyan-300/90",
+              styles.thinkDot
+            )}
+            style={{ animationDelay: `${d * 180}ms` }}
           />
         ))}
       </span>
-      <span className="hidden text-xs text-dim motion-reduce:inline">…</span>
+      <span className="hidden text-xs text-dim motion-reduce:inline" aria-hidden>
+        …
+      </span>
     </div>
   );
 }

@@ -1,0 +1,86 @@
+@keyframes thinkPulse {
+  0%,
+  100% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0.45;
+  }
+  30% {
+    transform: translateY(-5px) translateX(1px) scale(1.05);
+    opacity: 1;
+  }
+  55% {
+    transform: translateY(-1px) translateX(-1px) scale(0.98);
+    opacity: 0.85;
+  }
+}
+
+@keyframes thinkLabelShimmer {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes messageEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes composerFocusGlow {
+  0% {
+    box-shadow:
+      0 0 0 0 rgba(34, 211, 238, 0),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+  100% {
+    box-shadow:
+      0 0 0 4px rgba(34, 211, 238, 0.12),
+      0 0 24px rgba(34, 211, 238, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+}
+
+.thinkDot {
+  animation: thinkPulse 1.4s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+}
+
+.thinkLabel {
+  animation: thinkLabelShimmer 2.6s ease-in-out infinite;
+}
+
+.messageEnter {
+  animation: messageEnter 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.composer {
+  transition:
+    border-color 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.composer:focus-within {
+  animation: composerFocusGlow 220ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thinkDot,
+  .thinkLabel,
+  .messageEnter {
+    animation: none;
+  }
+  .composer:focus-within {
+    animation: none;
+    box-shadow:
+      0 0 0 2px rgba(34, 211, 238, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+}

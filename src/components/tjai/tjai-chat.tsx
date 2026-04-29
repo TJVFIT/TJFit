@@ -13,6 +13,8 @@ import type { QuizAnswers, TJAIMetrics, TJAIPlan } from "@/lib/tjai-types";
 import { COACH_FOLLOW_UP_PROMPTS, getCoachThinkingDelayMs } from "@/lib/tjai/chat-client-utils";
 import { cn } from "@/lib/utils";
 
+import styles from "./tjai-chat.module.css";
+
 type ChatMessage = { role: "user" | "assistant"; content: string };
 type ChatLocale = "en" | "tr" | "ar" | "es" | "fr";
 
@@ -133,6 +135,7 @@ export function TJAIChat({
   const [trialRemaining, setTrialRemaining] = useState<number | null>(null);
   const [trialLimit, setTrialLimit] = useState<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const composerRef = useRef<HTMLTextAreaElement>(null);
   const copy = CHAT_COPY[getChatLocale()];
 
   useEffect(() => {
@@ -160,6 +163,20 @@ export function TJAIChat({
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [history, thinking]);
+
+  useEffect(() => {
+    const el = composerRef.current;
+    if (!el) return;
+    el.style.height = "0px";
+    const next = Math.min(el.scrollHeight, 168);
+    el.style.height = `${Math.max(44, next)}px`;
+  }, [message]);
+
+  const submitComposer = () => {
+    const trimmed = message.trim();
+    if (!trimmed || loading || thinking) return;
+    void ask(trimmed);
+  };
 
   const suggestions = copy.suggestions;
 
@@ -219,7 +236,7 @@ export function TJAIChat({
           const updated = [...prev];
           updated[updated.length - 1] = {
             role: "assistant",
-            content: assistantText || "I could not respond right now. Please try again."
+            content: assistantText || "TJAI couldn't pick that up — mind asking again?"
           };
           return updated;
         });
@@ -265,11 +282,11 @@ export function TJAIChat({
         const updated = [...prev];
         updated[updated.length - 1] = {
           role: "assistant",
-          content: "I had a brief connection issue. Please try again."
+          content: "Lost the connection mid-thought — try again?"
         };
         return updated;
       });
-      setApiError("Connection issue. Please try again.");
+      setApiError("Briefly lost connection. Send it again.");
     } finally {
       setLoading(false);
       setThinking(false);
@@ -323,12 +340,17 @@ export function TJAIChat({
                   ctaLabel: "See plans"
                 })
               }
-              className={`text-[11px] font-medium uppercase tracking-wide transition ${
-                trialRemaining <= 1 ? "text-amber-300" : "text-white/60 hover:text-cyan-300"
-              }`}
-              title="Free trial usage"
+              className={cn(
+                "text-[11px] font-medium uppercase tracking-[0.14em] transition",
+                trialRemaining <= 1
+                  ? "text-cyan-200 underline-offset-4 hover:underline"
+                  : "text-white/60 hover:text-cyan-200"
+              )}
+              title="Free preview usage"
             >
-              {trialRemaining} of {trialLimit} free messages left · upgrade
+              {trialRemaining <= 1
+                ? `${trialRemaining} preview message left — unlock unlimited`
+                : `${trialRemaining} of ${trialLimit} preview messages — go unlimited`}
             </button>
           ) : null}
         </div>
@@ -350,21 +372,30 @@ export function TJAIChat({
                 key={s.label}
                 type="button"
                 onClick={() => void ask(s.prompt)}
-                className="rounded-xl border border-white/[0.06] bg-surface/90 px-4 py-3 text-start text-sm text-white/95 shadow-sm transition-all duration-200 hover:border-accent/35 hover:bg-[rgba(34,211,238,0.06)] hover:shadow-[0_0_24px_rgba(34,211,238,0.08)] active:scale-[0.99]"
+                className="group rounded-xl border border-white/[0.06] bg-surface/90 px-4 py-3.5 text-start text-sm text-white/95 shadow-sm transition-[border-color,background-color,transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-[rgba(34,211,238,0.06)] hover:shadow-[0_0_28px_rgba(34,211,238,0.1)] active:translate-y-0 active:scale-[0.99]"
               >
-                <span className="block text-[11px] font-semibold uppercase tracking-[0.12em] text-dim">{s.label}</span>
-                <span className="mt-1 block text-[13px] font-medium text-bright">{copy.tapToAsk}</span>
+                <span className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-cyan-200/70 transition-colors group-hover:text-cyan-200">
+                  {s.label}
+                </span>
+                <span className="mt-1.5 line-clamp-2 block text-[13px] font-medium leading-snug text-bright/95">
+                  {s.prompt}
+                </span>
               </button>
             ))}
           </div>
         ) : null}
 
-        <div className="mt-5 max-h-[min(420px,52vh)] space-y-3 overflow-y-auto pe-1">
+        <div
+          className="mt-5 max-h-[min(420px,52vh)] space-y-3 overflow-y-auto pe-1"
+          aria-live="polite"
+          aria-relevant="additions"
+        >
           {history.map((m, i) => (
             <div
               key={`${m.role}-${i}`}
               className={cn(
                 "max-w-[min(92%,28rem)] rounded-2xl px-4 py-3 text-sm shadow-sm transition-[transform,box-shadow] duration-200",
+                styles.messageEnter,
                 m.role === "user"
                   ? "chat-bubble-user ms-auto rounded-br-md border border-[rgba(34,211,238,0.22)] bg-gradient-to-br from-[rgba(34,211,238,0.14)] to-[rgba(34,211,238,0.06)] text-white"
                   : "chat-bubble-ai me-auto rounded-bl-md border border-white/[0.07] bg-surface/95 text-bright"
@@ -423,27 +454,42 @@ export function TJAIChat({
         ) : null}
 
         <form
-          className="relative mt-5 flex items-center gap-2"
+          className={cn(
+            "relative mt-5 flex items-end gap-2 rounded-2xl border border-white/[0.08] bg-[#0E1014]/95 p-1.5",
+            styles.composer
+          )}
           onSubmit={(e) => {
             e.preventDefault();
-            if (!message.trim() || loading || thinking) return;
-            void ask(message.trim());
+            submitComposer();
           }}
         >
-          <input
+          <textarea
+            ref={composerRef}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+                e.preventDefault();
+                submitComposer();
+              }
+            }}
             placeholder={copy.emptyPrompt}
-            className="tj-chat-input-premium min-h-11 flex-1 rounded-xl border border-white/[0.08] bg-[#0E1014]/95 px-4 text-sm text-white outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-dim focus-visible:border-accent/55 focus-visible:ring-2 focus-visible:ring-accent/15"
+            aria-label={copy.askTitle}
+            rows={1}
+            className="tj-chat-input-premium min-h-11 max-h-[168px] flex-1 resize-none bg-transparent px-3.5 py-2.5 text-sm leading-snug text-white outline-none placeholder:text-dim"
           />
           <button
             type="submit"
-            disabled={loading || thinking}
-            className="inline-flex h-11 min-w-[44px] items-center justify-center rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-4 text-sm font-bold text-[#0A0A0B] shadow-[0_0_20px_rgba(34,211,238,0.22)] transition-[transform,filter,box-shadow] duration-200 hover:brightness-110 hover:shadow-[0_0_28px_rgba(34,211,238,0.28)] active:scale-[0.96] disabled:pointer-events-none disabled:opacity-45"
+            aria-label={copy.send}
+            disabled={loading || thinking || !message.trim()}
+            className="inline-flex h-10 min-w-[44px] items-center justify-center rounded-xl bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-4 text-sm font-bold text-[#0A0A0B] shadow-[0_0_20px_rgba(34,211,238,0.22)] transition-[transform,filter,box-shadow,opacity] duration-150 hover:brightness-110 hover:shadow-[0_0_28px_rgba(34,211,238,0.28)] active:scale-[0.94] disabled:pointer-events-none disabled:opacity-40"
           >
             {copy.send}
           </button>
         </form>
+        <p className="mt-2 text-center text-[10px] uppercase tracking-[0.18em] text-dim">
+          Enter to send · Shift + Enter for newline
+        </p>
       </div>
     </section>
   );
