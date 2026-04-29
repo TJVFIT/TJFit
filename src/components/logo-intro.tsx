@@ -6,6 +6,9 @@ import { useEffect, useRef, useState } from "react";
 import { Logo } from "@/components/ui/Logo";
 import { LOCALE_META, supportedLocales, type Locale, type SupportedLocale } from "@/lib/i18n";
 
+const SESSION_SKIP_KEY = "tj-fit-logo-intro-skip-session";
+const PHASE_EASE = "cubic-bezier(0.2, 0.8, 0.2, 1)";
+
 type Phase =
   | "hidden"
   | "t"
@@ -24,6 +27,16 @@ const PICKER_TITLE: Record<Locale, string> = {
   fr: "Choisissez votre langue"
 };
 
+/** ~1100ms automated brand runway before language picker (premium ease, no abrupt snap). */
+const TIMINGS_MS = {
+  t: 50,
+  tj: 180,
+  fit: 320,
+  man: 420,
+  hold: 560,
+  languages: 740
+} as const;
+
 export function LogoIntro({
   locale,
   onComplete
@@ -40,22 +53,36 @@ export function LogoIntro({
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    try {
+      if (sessionStorage.getItem(SESSION_SKIP_KEY) === "1") {
+        queueMicrotask(() => {
+          setDone(true);
+          onComplete();
+        });
+        return;
+      }
+    } catch {}
+
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) {
       const t = window.setTimeout(() => {
         setDone(true);
+        try {
+          sessionStorage.setItem(SESSION_SKIP_KEY, "1");
+        } catch {}
         onComplete();
-      }, 200);
+      }, 160);
       return () => window.clearTimeout(t);
     }
 
     const timers: number[] = [];
-    timers.push(window.setTimeout(() => setPhase("t"), 80));
-    timers.push(window.setTimeout(() => setPhase("tj"), 420));
-    timers.push(window.setTimeout(() => setPhase("fit"), 860));
-    timers.push(window.setTimeout(() => setPhase("man"), 1260));
-    timers.push(window.setTimeout(() => setPhase("hold"), 1880));
-    timers.push(window.setTimeout(() => setPhase("languages"), 2480));
+    timers.push(window.setTimeout(() => setPhase("t"), TIMINGS_MS.t));
+    timers.push(window.setTimeout(() => setPhase("tj"), TIMINGS_MS.tj));
+    timers.push(window.setTimeout(() => setPhase("fit"), TIMINGS_MS.fit));
+    timers.push(window.setTimeout(() => setPhase("man"), TIMINGS_MS.man));
+    timers.push(window.setTimeout(() => setPhase("hold"), TIMINGS_MS.hold));
+    timers.push(window.setTimeout(() => setPhase("languages"), TIMINGS_MS.languages));
+
     return () => timers.forEach((t) => window.clearTimeout(t));
   }, [onComplete]);
 
@@ -126,8 +153,11 @@ export function LogoIntro({
     setPhase("exit");
     window.setTimeout(() => {
       setDone(true);
+      try {
+        sessionStorage.setItem(SESSION_SKIP_KEY, "1");
+      } catch {}
       onComplete();
-    }, 520);
+    }, 320);
   };
 
   const handleLanguagePick = (picked: SupportedLocale) => {
@@ -157,7 +187,7 @@ export function LogoIntro({
       className="tj-intro-root fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-background"
       style={{
         opacity: isExiting ? 0 : 1,
-        transition: isExiting ? "opacity 520ms cubic-bezier(0.4,0,1,1)" : "none"
+        transition: isExiting ? `opacity 340ms ${PHASE_EASE}` : "none"
       }}
       aria-hidden={done}
     >
@@ -167,7 +197,7 @@ export function LogoIntro({
         aria-hidden
         style={{
           opacity: showT && !showLangs ? 0.8 : 0,
-          transition: "opacity 500ms ease"
+          transition: `opacity ${showLangs ? 280 : 360}ms ${PHASE_EASE}`
         }}
       />
 
@@ -178,7 +208,7 @@ export function LogoIntro({
           background: showT
             ? "radial-gradient(ellipse 55% 45% at 50% 50%, rgba(34,211,238,0.12) 0%, rgba(34,211,238,0.03) 50%, transparent 70%)"
             : "transparent",
-          transition: "background 600ms ease"
+          transition: `background ${showLangs ? 240 : 360}ms ${PHASE_EASE}`
         }}
       />
       <div className="tj-intro-scan pointer-events-none absolute inset-0" aria-hidden />
@@ -194,8 +224,8 @@ export function LogoIntro({
               className="tj-intro-logo-shell absolute flex items-center justify-center rounded-[2rem] border border-white/[0.08] bg-white/[0.025] backdrop-blur-md"
               style={{
                 opacity: showImage ? 1 : 0,
-                transform: showImage ? "scale(1) translateY(0)" : "scale(0.82) translateY(18px)",
-                transition: "opacity 620ms cubic-bezier(0.16,1,0.3,1), transform 720ms cubic-bezier(0.16,1,0.3,1)"
+                transform: showImage ? "scale(1) translateY(0)" : "scale(0.92) translateY(14px)",
+                transition: `opacity 460ms ${PHASE_EASE}, transform 500ms ${PHASE_EASE}`
               }}
               aria-hidden
             >
@@ -206,8 +236,8 @@ export function LogoIntro({
               style={{
                 fontSize: "clamp(90px, 15vw, 160px)",
                 opacity: showImage ? 0 : showT ? 1 : 0,
-                transform: showT ? "translateY(0) scale(1)" : "translateY(20px) scale(0.94)",
-                transition: "opacity 480ms cubic-bezier(0.16,1,0.3,1), transform 480ms cubic-bezier(0.16,1,0.3,1)",
+                transform: showT ? "translateY(0) scale(1)" : "translateY(16px) scale(0.95)",
+                transition: `opacity 360ms ${PHASE_EASE}, transform 380ms ${PHASE_EASE}`,
                 textShadow: "0 0 24px rgba(34,211,238,0.6), 0 0 72px rgba(34,211,238,0.25)"
               }}
             >
@@ -218,8 +248,8 @@ export function LogoIntro({
               style={{
                 fontSize: "clamp(90px, 15vw, 160px)",
                 opacity: showImage ? 0 : showJ ? 1 : 0,
-                transform: showJ ? "translateY(0) scale(1)" : "translateY(46px) scale(0.94)",
-                transition: "opacity 520ms cubic-bezier(0.16,1,0.3,1), transform 560ms cubic-bezier(0.22,1,0.36,1)",
+                transform: showJ ? "translateY(0) scale(1)" : "translateY(36px) scale(0.95)",
+                transition: `opacity 400ms ${PHASE_EASE}, transform 440ms cubic-bezier(0.2, 0.8, 0.2, 1)`,
                 textShadow: "0 0 24px rgba(34,211,238,0.6), 0 0 72px rgba(34,211,238,0.25)",
                 marginInlineStart: "-0.04em"
               }}
@@ -235,7 +265,7 @@ export function LogoIntro({
                 fontSize: "clamp(18px, 2.6vw, 28px)",
                 opacity: showFit && !showImage ? 1 : 0,
                 transform: showFit ? "translateY(0)" : "translateY(10px)",
-                transition: "opacity 420ms cubic-bezier(0.16,1,0.3,1), transform 420ms cubic-bezier(0.16,1,0.3,1)",
+                transition: `opacity 320ms ${PHASE_EASE}, transform 320ms ${PHASE_EASE}`,
                 textShadow: "0 0 18px rgba(34,211,238,0.4)"
               }}
             >
@@ -251,7 +281,7 @@ export function LogoIntro({
                 style={{
                   opacity: showT ? 1 : 0,
                   transform: showT ? "translateY(0)" : "translateY(8px)",
-                  transition: `opacity 420ms cubic-bezier(0.16,1,0.3,1) ${index * 110}ms, transform 420ms cubic-bezier(0.16,1,0.3,1) ${index * 110}ms`
+                  transition: `opacity 320ms ${PHASE_EASE} ${index * 60}ms, transform 320ms ${PHASE_EASE} ${index * 60}ms`
                 }}
               >
                 {line}
@@ -266,7 +296,8 @@ export function LogoIntro({
         style={{
           opacity: showLangs ? 1 : 0,
           pointerEvents: showLangs ? "auto" : "none",
-          transition: "opacity 420ms cubic-bezier(0.16,1,0.3,1)"
+          transform: showLangs ? "translateY(0) scale(1)" : "translateY(12px)",
+          transition: `opacity 320ms ${PHASE_EASE}, transform 340ms ${PHASE_EASE}`
         }}
       >
         <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--color-text-muted)]">
@@ -284,7 +315,7 @@ export function LogoIntro({
                 key={code}
                 type="button"
                 onClick={() => handleLanguagePick(code)}
-                className={`group flex min-h-[74px] flex-col items-start justify-center rounded-[18px] border px-4 py-3 text-left transition-[border-color,background-color,transform] duration-200 hover:scale-[1.02] ${
+                className={`group flex min-h-[74px] flex-col items-start justify-center rounded-[18px] border px-4 py-3 text-left transition-[border-color,background-color,transform] duration-200 hover:scale-[1.02] motion-reduce:transform-none ${
                   active
                     ? "border-accent/40 bg-accent/10 text-white"
                     : "border-[var(--color-border)] bg-[rgba(17,18,21,0.6)] text-[var(--color-text-secondary)] hover:border-[rgba(255,255,255,0.18)] hover:text-white"
