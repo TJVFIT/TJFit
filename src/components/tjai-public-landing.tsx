@@ -8,6 +8,40 @@ import { TJAI_ONE_TIME_PRICE_USD, TJAI_SUBSCRIPTION_PRICES_USD } from "@/lib/tja
 import { TJHeroStage } from "@/components/3d/hero-stage";
 import { TJ_PALETTE } from "@/components/3d/palette";
 
+import styles from "./tjai-landing.module.css";
+
+function HeroTitle({ text, locale }: { text: string; locale: Locale }) {
+  const isArabic = locale === "ar";
+  const parts: string[] = isArabic
+    ? (text.match(/\S+|\s+/g) ?? [text])
+    : Array.from(text);
+  const stagger = isArabic ? 90 : 38;
+  return (
+    <h1
+      className="mt-4 max-w-xl font-display text-4xl font-extrabold leading-[0.98] sm:text-6xl"
+      style={{ color: TJ_PALETTE.textPrimary, letterSpacing: "-0.03em" }}
+      aria-label={text}
+    >
+      <span aria-hidden="true">
+        {parts.map((part, i) => {
+          if (/^\s+$/.test(part)) {
+            return <span key={i}>{" "}</span>;
+          }
+          return (
+            <span
+              key={i}
+              className={styles.letter}
+              style={{ animationDelay: `${i * stagger}ms` }}
+            >
+              {part}
+            </span>
+          );
+        })}
+      </span>
+    </h1>
+  );
+}
+
 type TabKey = "training" | "nutrition" | "macros";
 
 const FEATURE_ROWS = [
@@ -145,22 +179,16 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
             <p className="text-[11px] uppercase tracking-[0.28em]" style={{ color: TJ_PALETTE.accent }}>
               AI FITNESS COACH
             </p>
-            <h1
-              className="mt-4 max-w-xl font-display text-4xl font-extrabold leading-[0.98] sm:text-6xl"
-              style={{ color: TJ_PALETTE.textPrimary, letterSpacing: "-0.03em" }}
-            >
-              {copy.heroTitle}
-            </h1>
+            <HeroTitle text={copy.heroTitle} locale={locale} />
             <p className="mt-5 max-w-xl text-sm leading-relaxed sm:text-base" style={{ color: TJ_PALETTE.textMuted }}>
               {copy.heroSub}
             </p>
             <Link
               href={`/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`}
-              className="mt-7 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-full px-8 text-sm font-bold transition-[filter,transform] duration-200 hover:-translate-y-0.5 hover:brightness-110"
+              className={`mt-7 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-full px-8 text-sm font-bold transition-[filter,transform] duration-200 hover:-translate-y-0.5 hover:brightness-110 ${styles.ctaGlow}`}
               style={{
                 background: `linear-gradient(180deg, ${TJ_PALETTE.accentHi}, ${TJ_PALETTE.accent})`,
-                color: TJ_PALETTE.obsidian,
-                boxShadow: "0 12px 40px rgba(34,211,238,0.28)"
+                color: TJ_PALETTE.obsidian
               }}
             >
               {copy.heroCta}
@@ -186,12 +214,29 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
                 adaptive
               </span>
             </div>
-            <p className="typing-line">Analyzing your profile...</p>
-            <p className="typing-line delay">Calculating BMR, TDEE, and macros...</p>
-            <p className="typing-line delay-2">Building your 12-week training split...</p>
+            <ul className="space-y-1">
+              {[
+                { text: "Analyzing your profile…", delay: 0 },
+                { text: "Calculating BMR, TDEE, and macros…", delay: 220 },
+                { text: "Building your 12-week training split…", delay: 440 }
+              ].map((line) => (
+                <li
+                  key={line.text}
+                  className={`${styles.previewLine} text-[13px] text-white/85`}
+                  style={{ animationDelay: `${line.delay}ms` }}
+                >
+                  <span className={styles.previewDot} aria-hidden />
+                  <span className="relative z-[1]">{line.text}</span>
+                </li>
+              ))}
+            </ul>
             <div className="mt-5 grid grid-cols-3 gap-2 text-center">
-              {["BMR", "TDEE", "Macros"].map((item) => (
-                <span key={item} className="rounded-lg border border-white/[0.06] bg-white/[0.03] px-2 py-2 text-[11px] text-zinc-300">
+              {["BMR", "TDEE", "Macros"].map((item, i) => (
+                <span
+                  key={item}
+                  className={`${styles.sectionRise} rounded-lg border border-white/[0.06] bg-white/[0.03] px-2 py-2 text-[11px] text-zinc-300`}
+                  style={{ animationDelay: `${700 + i * 100}ms` }}
+                >
                   {item}
                 </span>
               ))}
@@ -272,16 +317,54 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
         <h2 className="text-2xl font-bold text-white">{copy.pricingTitle}</h2>
         <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {[
-            ["Core (Free)", "Adaptive preview + metrics snapshot\nPreview the system before buying", `/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`],
-            [`Pro ($${TJAI_SUBSCRIPTION_PRICES_USD.pro.monthly}/mo)`, "Unlimited TJAI chat\nDiscount code + early access\nDaily meal email (early access)", `/${locale}/membership?tier=pro`],
-            [`Apex ($${TJAI_SUBSCRIPTION_PRICES_USD.apex.monthly}/mo)`, "Everything in Pro\nFull regeneration\nAdvanced meal swaps + deeper adaptation", `/${locale}/membership?tier=apex`],
-            [`One-time TJAI ($${TJAI_ONE_TIME_PRICE_USD})`, "Generate one adaptive plan\nDownload PDF\nNo subscription required", `/${locale}/membership?tjai_onetime=1`]
-          ].map(([title, body, href]) => (
-            <article key={title} className="rounded-2xl border border-divider bg-surface p-5">
+            {
+              title: "Core (Free)",
+              body: "Adaptive preview + metrics snapshot\nPreview the system before buying",
+              href: `/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`,
+              best: false
+            },
+            {
+              title: `Pro ($${TJAI_SUBSCRIPTION_PRICES_USD.pro.monthly}/mo)`,
+              body: "Unlimited TJAI chat\nDiscount code + early access\nDaily meal email (early access)",
+              href: `/${locale}/membership?tier=pro`,
+              best: false
+            },
+            {
+              title: `Apex ($${TJAI_SUBSCRIPTION_PRICES_USD.apex.monthly}/mo)`,
+              body: "Everything in Pro\nFull regeneration\nAdvanced meal swaps + deeper adaptation",
+              href: `/${locale}/membership?tier=apex`,
+              best: false
+            },
+            {
+              title: `One-time TJAI ($${TJAI_ONE_TIME_PRICE_USD})`,
+              body: "Generate one adaptive plan\nDownload PDF\nNo subscription required",
+              href: `/${locale}/membership?tjai_onetime=1`,
+              best: true
+            }
+          ].map(({ title, body, href, best }) => (
+            <article
+              key={title}
+              className={`relative rounded-2xl border p-5 transition-[border-color,transform,box-shadow] duration-200 hover:-translate-y-1 ${
+                best
+                  ? "border-cyan-400/35 bg-[linear-gradient(180deg,rgba(34,211,238,0.06),rgba(34,211,238,0.01))] shadow-[0_0_42px_rgba(34,211,238,0.12)] hover:shadow-[0_0_56px_rgba(34,211,238,0.18)]"
+                  : "border-divider bg-surface hover:border-cyan-300/25 hover:shadow-[0_0_28px_rgba(34,211,238,0.06)]"
+              }`}
+            >
+              {best ? (
+                <span
+                  className={`absolute -top-3 start-5 inline-flex items-center gap-1.5 rounded-full border border-cyan-300/35 bg-[#06080d] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200 ${styles.bestPulse}`}
+                >
+                  Best value
+                </span>
+              ) : null}
               <p className="text-lg font-semibold text-white">{title}</p>
               <p className="mt-2 whitespace-pre-line text-sm text-muted">{body}</p>
-              <Link href={href} className="mt-4 inline-flex text-sm font-semibold text-cyan-300">
-                Choose <ArrowRight className="ms-1 h-4 w-4" aria-hidden />
+              <Link
+                href={href}
+                className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-cyan-300 transition-colors hover:text-cyan-200"
+              >
+                Choose
+                <ArrowRight className="ms-1 h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
               </Link>
             </article>
           ))}
@@ -310,39 +393,6 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
         </Link>
       </section>
 
-      <style jsx>{`
-        .typing-line {
-          width: fit-content;
-          border-right: 1px solid rgba(34, 211, 238, 0.45);
-          white-space: nowrap;
-          overflow: hidden;
-          animation: tjtyping 3.4s steps(40, end) infinite;
-        }
-        .typing-line.delay {
-          animation-delay: 0.6s;
-        }
-        .typing-line.delay-2 {
-          animation-delay: 1.2s;
-        }
-        @keyframes tjtyping {
-          0% {
-            max-width: 0;
-            opacity: 0.6;
-          }
-          20% {
-            max-width: 100%;
-            opacity: 1;
-          }
-          70% {
-            max-width: 100%;
-            opacity: 1;
-          }
-          100% {
-            max-width: 0;
-            opacity: 0.6;
-          }
-        }
-      `}</style>
     </main>
   );
 }

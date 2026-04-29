@@ -1,0 +1,170 @@
+@keyframes letterIn {
+  0% {
+    opacity: 0;
+    transform: translateY(26px);
+    filter: blur(8px);
+  }
+  60% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes previewLineIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes dotPulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.35);
+  }
+}
+
+@keyframes scanShimmer {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0.4;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(120%);
+    opacity: 0.4;
+  }
+}
+
+@keyframes ctaGlow {
+  0%,
+  100% {
+    box-shadow: 0 12px 40px rgba(34, 211, 238, 0.28);
+  }
+  50% {
+    box-shadow: 0 12px 56px rgba(34, 211, 238, 0.46);
+  }
+}
+
+@keyframes bestPulse {
+  0%,
+  100% {
+    opacity: 0.78;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes sectionRise {
+  0% {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.letter {
+  display: inline-block;
+  animation: letterIn 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.previewLine {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  opacity: 0;
+  animation: previewLineIn 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.previewLine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(34, 211, 238, 0.16) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+  animation: scanShimmer 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.previewLine:nth-of-type(2)::after {
+  animation-delay: 1.5s;
+}
+
+.previewLine:nth-of-type(3)::after {
+  animation-delay: 3s;
+}
+
+.previewDot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: rgba(34, 211, 238, 0.9);
+  box-shadow: 0 0 12px rgba(34, 211, 238, 0.55);
+  animation: dotPulse 1.8s ease-in-out infinite;
+}
+
+.previewLine:nth-of-type(2) .previewDot {
+  animation-delay: 0.4s;
+}
+
+.previewLine:nth-of-type(3) .previewDot {
+  animation-delay: 0.8s;
+}
+
+.ctaGlow {
+  animation: ctaGlow 4s ease-in-out infinite;
+}
+
+.bestPulse {
+  animation: bestPulse 2.6s ease-in-out infinite;
+}
+
+.sectionRise {
+  animation: sectionRise 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .letter,
+  .previewLine,
+  .previewDot,
+  .ctaGlow,
+  .bestPulse,
+  .sectionRise {
+    animation: none;
+  }
+  .previewLine {
+    opacity: 1;
+  }
+  .previewLine::after {
+    display: none;
+  }
+}
