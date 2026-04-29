@@ -136,6 +136,8 @@ export function TJAIChat({
   const [trialLimit, setTrialLimit] = useState<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const composerRef = useRef<HTMLTextAreaElement>(null);
+  const threadRef = useRef<HTMLDivElement>(null);
+  const stickToBottomRef = useRef(true);
   const copy = CHAT_COPY[getChatLocale()];
 
   useEffect(() => {
@@ -161,6 +163,18 @@ export function TJAIChat({
   }, [coreLimited]);
 
   useEffect(() => {
+    const el = threadRef.current;
+    if (!el) return;
+    const handler = () => {
+      const distance = el.scrollHeight - el.scrollTop - el.clientHeight;
+      stickToBottomRef.current = distance < 80;
+    };
+    el.addEventListener("scroll", handler, { passive: true });
+    return () => el.removeEventListener("scroll", handler);
+  }, []);
+
+  useEffect(() => {
+    if (!stickToBottomRef.current) return;
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [history, thinking]);
 
@@ -207,6 +221,7 @@ export function TJAIChat({
       }
     }
 
+    stickToBottomRef.current = true;
     setHistory((prev) => [...prev, { role: "user", content: text }, { role: "assistant", content: "" }]);
     setMessage("");
     setLoading(true);
@@ -386,6 +401,7 @@ export function TJAIChat({
         ) : null}
 
         <div
+          ref={threadRef}
           className="mt-5 max-h-[min(420px,52vh)] space-y-3 overflow-y-auto pe-1"
           aria-live="polite"
           aria-relevant="additions"
