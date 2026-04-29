@@ -9,32 +9,40 @@ import type { Program } from "@/lib/content";
 import { getProgramTier, getProgramVisual } from "@/lib/program-card-visual";
 import { cn } from "@/lib/utils";
 
+import styles from "./program-card.module.css";
+
 const shellClass = cn(
   "tj-program-card group relative flex h-full min-h-0 flex-col overflow-hidden",
   "rounded-xl border border-white/[0.06] bg-[#0E0F12]",
   "before:pointer-events-none before:absolute before:inset-0 before:rounded-xl before:border before:border-transparent before:[background:linear-gradient(135deg,rgba(34,211,238,0.15),rgba(34,211,238,0)_42%)_border-box] before:[mask:linear-gradient(#fff_0_0)_padding-box,linear-gradient(#fff_0_0)] before:[mask-composite:exclude]",
   "shadow-[0_1px_0_rgba(255,255,255,0.04)_inset,0_18px_40px_-30px_rgba(0,0,0,0.9)]",
-  "transition-[border-color,box-shadow,transform] duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)]",
-  "motion-safe:hover:-translate-y-[2px]",
-  "hover:border-cyan-300/[0.18] hover:shadow-[0_1px_0_rgba(255,255,255,0.05)_inset,0_34px_70px_-34px_rgba(34,211,238,0.45),0_24px_58px_-34px_rgba(0,0,0,1)]"
+  "hover:border-cyan-300/[0.18] hover:shadow-[0_1px_0_rgba(255,255,255,0.05)_inset,0_34px_70px_-34px_rgba(34,211,238,0.45),0_24px_58px_-34px_rgba(0,0,0,1)]",
+  styles.card3d
 );
 
-// Pointer spotlight via CSS vars on a ref — no React rerenders.
-function useCssSpotlight() {
+// Pointer-tracked 3D tilt + spotlight via CSS vars on a ref — no React rerenders.
+// Tilt range deliberately small (±5° Y, ±4° X inverted) — feels premium, not novelty.
+function useCard3D() {
   const elRef = useRef<HTMLDivElement>(null);
   const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const el = elRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    el.style.setProperty("--mx", `${x}%`);
-    el.style.setProperty("--my", `${y}%`);
+    const px = (e.clientX - rect.left) / rect.width;
+    const py = (e.clientY - rect.top) / rect.height;
+    const rx = (px - 0.5) * 10;
+    const ry = (py - 0.5) * -8;
+    el.style.setProperty("--rx", `${rx.toFixed(2)}deg`);
+    el.style.setProperty("--ry", `${ry.toFixed(2)}deg`);
+    el.style.setProperty("--mx", `${(px * 100).toFixed(2)}%`);
+    el.style.setProperty("--my", `${(py * 100).toFixed(2)}%`);
     el.style.setProperty("--spot", "1");
   };
   const onLeave = () => {
     const el = elRef.current;
     if (!el) return;
+    el.style.setProperty("--rx", "0deg");
+    el.style.setProperty("--ry", "0deg");
     el.style.setProperty("--spot", "0");
   };
   return { elRef, onMove, onLeave };
@@ -190,14 +198,18 @@ function CardInner({
         </div>
       </div>
 
-      {/* Pointer spotlight overlay (CSS-driven, no rerender) */}
+      {/* Pointer spotlight overlay — cyan glow under the cursor */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[var(--spot,0)] transition-opacity duration-300"
         style={{
-          background: "radial-gradient(220px circle at var(--mx,50%) var(--my,50%), rgba(34,211,238,0.07), transparent 70%)"
+          background: "radial-gradient(220px circle at var(--mx,50%) var(--my,50%), rgba(34,211,238,0.08), transparent 70%)"
         }}
         aria-hidden
       />
+      {/* White sheen highlight — soft diffuse light tracking the cursor */}
+      <div className={styles.sheen} aria-hidden />
+      {/* Cyan specular sweep — diagonal accent that shifts with cursor position */}
+      <div className={styles.specular} aria-hidden />
     </>
   );
 }
@@ -236,7 +248,7 @@ export function ProgramCard({
   const visual = getProgramVisual(program);
   const tier = tierLabel ?? getProgramTier(program);
   const priceLine = priceLabel ?? String(program.price);
-  const { elRef, onMove, onLeave } = useCssSpotlight();
+  const { elRef, onMove, onLeave } = useCard3D();
 
   const inner = (
     <CardInner
@@ -315,7 +327,7 @@ export function HomeProgramPreviewCard({
   const visual = getProgramVisual(program);
   const tier = tierLabel ?? getProgramTier(program);
   const priceLine = fromLabel ? `${fromLabel} ${priceFormatted}` : priceFormatted;
-  const { elRef, onMove, onLeave } = useCssSpotlight();
+  const { elRef, onMove, onLeave } = useCard3D();
 
   return (
     <div ref={cardRef} className="h-full" onMouseMove={onMove} onMouseLeave={onLeave}>
