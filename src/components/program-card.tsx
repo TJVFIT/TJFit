@@ -12,10 +12,11 @@ import { cn } from "@/lib/utils";
 const shellClass = cn(
   "tj-program-card group relative flex h-full min-h-0 flex-col overflow-hidden",
   "rounded-xl border border-white/[0.06] bg-[#0E0F12]",
+  "before:pointer-events-none before:absolute before:inset-0 before:rounded-xl before:border before:border-transparent before:[background:linear-gradient(135deg,rgba(34,211,238,0.15),rgba(34,211,238,0)_42%)_border-box] before:[mask:linear-gradient(#fff_0_0)_padding-box,linear-gradient(#fff_0_0)] before:[mask-composite:exclude]",
   "shadow-[0_1px_0_rgba(255,255,255,0.04)_inset,0_18px_40px_-30px_rgba(0,0,0,0.9)]",
-  "transition-[border-color,box-shadow,transform] duration-200 ease-out",
+  "transition-[border-color,box-shadow,transform] duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)]",
   "motion-safe:hover:-translate-y-[2px]",
-  "hover:border-white/[0.12] hover:shadow-[0_1px_0_rgba(255,255,255,0.05)_inset,0_30px_60px_-32px_rgba(0,0,0,1)]"
+  "hover:border-cyan-300/[0.18] hover:shadow-[0_1px_0_rgba(255,255,255,0.05)_inset,0_34px_70px_-34px_rgba(34,211,238,0.45),0_24px_58px_-34px_rgba(0,0,0,1)]"
 );
 
 // Pointer spotlight via CSS vars on a ref — no React rerenders.
@@ -62,6 +63,14 @@ function CardCta({ label, asButton }: { label: string; asButton?: boolean }) {
     <span className={base}>
       {label}
       <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden />
+    </span>
+  );
+}
+
+function StatusPill({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="rounded-full border border-cyan-300/30 bg-cyan-300/[0.12] px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-cyan-100 backdrop-blur-md">
+      {children}
     </span>
   );
 }
@@ -120,7 +129,7 @@ function CardInner({
       <div className="relative aspect-[16/9] w-full shrink-0 overflow-hidden">
         <div className={cn("absolute inset-0 bg-gradient-to-br opacity-90", visual.gradient)} aria-hidden />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_0%,rgba(255,255,255,0.10),transparent_70%)]" aria-hidden />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_30%,rgba(14,15,18,0.92)_100%)]" aria-hidden />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0)_18%,rgba(0,0,0,0.60)_100%)]" aria-hidden />
 
         {/* Top row: category + status */}
         <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-3.5">
@@ -130,22 +139,18 @@ function CardInner({
           </span>
           <div className="flex items-center gap-1.5">
             {freeBadgeLabel ? (
-              <span className="rounded-sm border border-white/15 bg-black/30 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/85 backdrop-blur-sm">
-                {freeBadgeLabel}
-              </span>
+              <StatusPill>{freeBadgeLabel}</StatusPill>
             ) : null}
             {showPaidLock ? (
               <span
-                className="inline-flex items-center justify-center rounded-sm border border-white/15 bg-black/40 p-1 text-white/85 backdrop-blur-sm"
+                className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-cyan-300/25 bg-cyan-300/10 text-cyan-100 backdrop-blur-md"
                 title={premiumLockedHint}
                 aria-label={premiumLockedHint ?? "Locked"}
               >
                 <Lock className="h-3 w-3" aria-hidden />
               </span>
             ) : null}
-            <span className="rounded-sm border border-white/15 bg-black/30 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/85 backdrop-blur-sm">
-              {tier}
-            </span>
+            <StatusPill>{tier}</StatusPill>
           </div>
         </div>
 
