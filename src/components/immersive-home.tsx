@@ -238,7 +238,7 @@ export function ImmersiveHome({
       const rect = programsSectionRef.current.getBoundingClientRect();
       const sectionCenter = rect.top + rect.height / 2;
       const viewportCenter = window.innerHeight / 2;
-      setParallaxY((sectionCenter - viewportCenter) * 0.28);
+      setParallaxY((sectionCenter - viewportCenter) * 0.28 * 0.85);
     };
     window.addEventListener("scroll", fn, { passive: true });
     return () => window.removeEventListener("scroll", fn);
@@ -282,7 +282,7 @@ export function ImmersiveHome({
       const rect = nexusRef.current.getBoundingClientRect();
       const c = rect.top + rect.height / 2;
       const vc = window.innerHeight / 2;
-      setNexusParallaxY((c - vc) * 0.14);
+      setNexusParallaxY((c - vc) * 0.14 * 0.85);
     };
     window.addEventListener("scroll", fn, { passive: true });
     return () => window.removeEventListener("scroll", fn);
@@ -315,7 +315,6 @@ export function ImmersiveHome({
 
       <SectionTransition variant="soft" />
 
-      {/* Compact TJAI summary — first thing after hero, before anything else */}
       <section
         className="reveal-section relative border-t border-divider bg-[rgba(10,10,11,0.7)] px-6 py-16 lg:px-12 lg:py-20"
         aria-label="TJAI overview"
@@ -692,7 +691,7 @@ export function ImmersiveHome({
             <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-dim">Access</p>
             <h2 className="mt-5 font-display text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
               Start your next{" "}
-              <span className="bg-gradient-to-r from-[#22D3EE] to-[#F6F3ED] bg-clip-text text-transparent">12 weeks</span>
+              <span className="bg-gradient-to-r from-[#22D3EE] to-[#67E8F9] bg-clip-text text-transparent">12 weeks</span>
               <span className="text-faint">.</span>
             </h2>
             <p className="mt-6 text-lg text-muted">{copy.midCta?.sub ?? "Join thousands already training smarter with TJFit."}</p>
