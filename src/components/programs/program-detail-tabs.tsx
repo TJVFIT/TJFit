@@ -43,7 +43,7 @@ export function ProgramDetailTabs({ tabs }: ProgramDetailTabsProps) {
             type="button"
             onClick={() => setActiveId(tab.id)}
             className={cn(
-              "relative min-h-[40px] shrink-0 rounded-full px-4 text-[12px] font-bold uppercase tracking-[0.16em]",
+              "relative min-h-[44px] shrink-0 rounded-full px-4 text-[12px] font-bold uppercase tracking-[0.16em]",
               "transition-colors duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/60",
               activeId === tab.id ? "text-[#071013]" : "text-white/48 hover:text-white"
             )}

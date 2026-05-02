@@ -1,3 +1,13 @@
+// DEPRECATED 2026-05-02: trial consumption now happens atomically inside
+// /api/tjai/chat via the `consume_trial_message` Postgres RPC. The chat
+// client no longer calls this route — the previous client-side increment
+// was bypassable in DevTools, so the canonical path is server-only.
+//
+// Route retained for compatibility (admin tooling, ad-hoc tests). Calls
+// here still bump `tjai_trial_usage.messages_used` for the calling user;
+// the bump is non-atomic with any concurrent /chat request, but that's
+// acceptable since /chat is now the only client-driven entry point.
+
 import { NextRequest, NextResponse } from "next/server";
 
 import { isAdminEmail } from "@/lib/auth-utils";

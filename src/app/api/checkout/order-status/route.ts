@@ -3,6 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
+// Reads request.nextUrl.searchParams + auth cookies — must not be
+// statically exported. Without this, `next build` fails the export
+// phase ("Export encountered errors on /api/checkout/order-status").
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   const supabase = createServerSupabaseClient();
   const {

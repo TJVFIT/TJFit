@@ -209,7 +209,7 @@ function QuickLogWidget({ locale }: { locale: Locale }) {
                   type="button"
                   onClick={() => void submit()}
                   disabled={saving || !exercise.trim()}
-                  className="inline-flex min-h-[38px] items-center justify-center rounded-full bg-accent px-5 text-sm font-bold text-black transition-opacity disabled:opacity-50"
+                  className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-accent px-5 text-sm font-bold text-black transition-opacity disabled:opacity-50"
                 >
                   {saving ? "Logging…" : "Log workout"}
                 </button>

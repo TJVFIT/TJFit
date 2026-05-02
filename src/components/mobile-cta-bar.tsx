@@ -40,7 +40,7 @@ export function MobileCtaBar({ ariaLabel, eyebrow, priceCopy, href, label }: Mob
       role="region"
       aria-label={ariaLabel}
       className={cn(
-        "fixed inset-x-0 bottom-0 z-40 border-t border-white/[0.08] bg-[#0B0D10]/82 backdrop-blur-xl xl:hidden",
+        "fixed inset-x-0 bottom-0 z-40 border-t border-white/[0.08] bg-[#0B0D10]/82 backdrop-blur-xl md:hidden",
         "transition-transform duration-[320ms] ease-[cubic-bezier(0.2,0.8,0.2,1.12)] motion-reduce:transition-none",
         hidden ? "translate-y-full" : "translate-y-0"
       )}

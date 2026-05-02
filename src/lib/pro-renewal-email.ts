@@ -3,6 +3,9 @@ import { jsPDF } from "jspdf";
 import { sendEmail } from "@/lib/email";
 import { signUnsubscribeToken } from "@/lib/email-preferences";
 import { EmailTemplates } from "@/lib/email-templates";
+// Anthropic-backed (dual-provider). Uses Claude via @/lib/tjai-anthropic
+// for personalized renewal-email copy; the rest of TJAI runs on OpenAI.
+// Requires ANTHROPIC_API_KEY in env (see .env.example).
 import { callClaude } from "@/lib/tjai-anthropic";
 
 type RenewalInput = {

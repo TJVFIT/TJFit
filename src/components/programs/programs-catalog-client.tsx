@@ -97,7 +97,7 @@ function FilterPill({
       aria-pressed={active}
       onClick={onClick}
       className={cn(
-        "inline-flex min-h-[36px] items-center rounded-full border px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.14em]",
+        "inline-flex min-h-[44px] items-center rounded-full border px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.14em]",
         "transition-[background-color,border-color,color,transform] duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] active:scale-[0.97] motion-reduce:transition-none",
         active
           ? "border-cyan-300/70 bg-cyan-300 text-[#071013] shadow-[0_14px_34px_-22px_rgba(34,211,238,0.9)]"
@@ -212,7 +212,7 @@ export function ProgramsCatalogClient({
                   setGoal("all");
                   setLocation("all");
                 }}
-                className="inline-flex min-h-[36px] items-center gap-2 rounded-full border border-white/[0.08] px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-white/55 transition-colors duration-200 hover:border-cyan-300/35 hover:text-white"
+                className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-white/[0.08] px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-white/55 transition-colors duration-200 hover:border-cyan-300/35 hover:text-white"
               >
                 <RotateCcw className="h-3.5 w-3.5" aria-hidden />
                 {clearLabel}
@@ -256,7 +256,7 @@ export function ProgramsCatalogClient({
                 setGoal("all");
                 setLocation("all");
               }}
-              className="mt-6 inline-flex min-h-[42px] items-center justify-center rounded-full bg-cyan-300 px-5 text-sm font-bold text-[#071013] transition-transform duration-150 active:scale-[0.97]"
+              className="mt-6 inline-flex min-h-[44px] items-center justify-center rounded-full bg-cyan-300 px-5 text-sm font-bold text-[#071013] transition-transform duration-150 active:scale-[0.97]"
             >
               {emptyCta}
             </button>

@@ -349,7 +349,7 @@ export function SiteSideOverlay({ locale }: { locale: Locale }) {
                           href={item.href}
                           onClick={close}
                           className={cn(
-                            "group/link flex min-h-[36px] items-center justify-between rounded-md px-2 py-1.5 text-[14px] transition-colors duration-150",
+                            "group/link flex min-h-[44px] items-center justify-between rounded-md px-2 py-1.5 text-[14px] transition-colors duration-150",
                             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0B0E]",
                             active
                               ? "bg-white/[0.06] text-white"

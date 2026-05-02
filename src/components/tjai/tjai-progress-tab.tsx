@@ -235,7 +235,7 @@ export function TJAIProgressTab({ locale = "en" }: { locale?: string }) {
                 <button
                   type="button"
                   onClick={() => router.push(`/${locale}/ai?regen=1`)}
-                  className="mt-4 inline-flex min-h-[40px] items-center justify-center rounded-full border border-orange-500/40 bg-orange-500/15 px-5 py-2 text-sm font-semibold text-orange-400 transition-colors hover:bg-orange-500/25"
+                  className="mt-4 inline-flex min-h-[44px] items-center justify-center rounded-full border border-orange-500/40 bg-orange-500/15 px-5 py-2 text-sm font-semibold text-orange-400 transition-colors hover:bg-orange-500/25"
                 >
                   {t.updatePlan}
                 </button>

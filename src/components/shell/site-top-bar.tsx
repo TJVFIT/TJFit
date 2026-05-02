@@ -106,7 +106,7 @@ export function SiteTopBar({ locale }: { locale: Locale }) {
                     href={tab.href}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "relative inline-flex min-h-[36px] items-center px-3.5 text-[13px] tracking-tight transition-colors duration-150 sm:px-4",
+                      "relative inline-flex min-h-[44px] items-center px-3.5 text-[13px] tracking-tight transition-colors duration-150 sm:px-4",
                       active
                         ? "text-white"
                         : "text-[rgba(235,235,240,0.62)] hover:text-white"
@@ -131,7 +131,7 @@ export function SiteTopBar({ locale }: { locale: Locale }) {
             href={accountHref}
             aria-label={user ? "Account" : SIGN_IN_LABEL[locale]}
             className={cn(
-              "inline-flex min-h-[36px] items-center gap-2 rounded-md border border-white/[0.09] bg-white/[0.02] px-3.5 py-1.5 text-[13px] font-medium transition-colors duration-150",
+              "inline-flex min-h-[44px] items-center gap-2 rounded-md border border-white/[0.09] bg-white/[0.02] px-3.5 py-1.5 text-[13px] font-medium transition-colors duration-150",
               "hover:border-[rgba(255,255,255,0.18)] hover:bg-[rgba(255,255,255,0.045)]",
               user ? "text-white" : "text-white"
             )}

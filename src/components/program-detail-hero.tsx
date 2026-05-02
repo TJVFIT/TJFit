@@ -4,6 +4,14 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef } from "react";
 import type { Locale } from "@/lib/i18n";
 
+const SPEC_LABELS: Record<Locale, { goal: string; type: string; setup: string; level: string }> = {
+  en: { goal: "Goal", type: "Type", setup: "Setup", level: "Level" },
+  tr: { goal: "Hedef", type: "Tür", setup: "Yer", level: "Seviye" },
+  ar: { goal: "الهدف", type: "النوع", setup: "المكان", level: "المستوى" },
+  es: { goal: "Objetivo", type: "Tipo", setup: "Lugar", level: "Nivel" },
+  fr: { goal: "Objectif", type: "Type", setup: "Lieu", level: "Niveau" }
+};
+
 type ProgramDetailHeroProps = {
   locale: Locale;
   programTitle: string;
@@ -38,6 +46,7 @@ export function ProgramDetailHero({
   const listLabel = isDiet ? breadcrumbDiets : breadcrumbPrograms;
   const letters = useMemo(() => Array.from(programTitle), [programTitle]);
   const frameLabels = imageLabels.length > 0 ? imageLabels.slice(0, 3) : [programCategory, goalLabel, levelLabel];
+  const specLabels = SPEC_LABELS[locale] ?? SPEC_LABELS.en;
 
   useEffect(() => {
     const node = visualRef.current;
@@ -109,10 +118,10 @@ export function ProgramDetailHero({
 
           <p className="mt-4 max-w-2xl text-sm text-white/58">{metaLine}</p>
 
-          <dl className="mt-8 grid grid-cols-3 gap-x-4 gap-y-3 border-t border-white/[0.06] pt-5 text-[12px] sm:max-w-xl">
-            <Spec label="Goal" value={goalLabel} />
-            <Spec label={isDiet ? "Type" : "Setup"} value={locationOrTypeLabel} />
-            <Spec label="Level" value={levelLabel} />
+          <dl className="mt-8 grid grid-cols-1 gap-x-4 gap-y-3 border-t border-white/[0.06] pt-5 text-[12px] sm:grid-cols-3 sm:max-w-xl">
+            <Spec label={specLabels.goal} value={goalLabel} />
+            <Spec label={isDiet ? specLabels.type : specLabels.setup} value={locationOrTypeLabel} />
+            <Spec label={specLabels.level} value={levelLabel} />
           </dl>
         </div>
 
@@ -159,7 +168,7 @@ function Spec({ label, value }: { label: string; value: string }) {
   return (
     <div className="min-w-0">
       <dt className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/35">{label}</dt>
-      <dd className="mt-1.5 truncate text-[13px] font-medium text-white/90">{value}</dd>
+      <dd className="mt-1.5 text-[13px] font-medium text-white/90">{value}</dd>
     </div>
   );
 }

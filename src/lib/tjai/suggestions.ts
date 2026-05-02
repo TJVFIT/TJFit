@@ -1,5 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+// Anthropic-backed (dual-provider). Uses Claude via @/lib/tjai-anthropic
+// for adaptive suggestion classification; the rest of TJAI runs on
+// OpenAI. Requires ANTHROPIC_API_KEY in env (see .env.example).
 import { callClaude, extractJsonBlock } from "@/lib/tjai-anthropic";
 
 export type SuggestionKind =

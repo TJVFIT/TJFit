@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 
 import { isSupportedLocale, LOCALE_META } from "@/lib/i18n";
 import { requireAuth } from "@/lib/require-auth";
+import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { getTJAIAccess } from "@/lib/tjai-access";
 import { buildTjaiPdf } from "@/lib/tjai-pdf-builder";
 
 export const dynamic = "force-dynamic";
@@ -20,6 +22,32 @@ export async function POST(request: Request) {
   const auth = await requireAuth();
   if (!auth.ok) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const admin = getSupabaseServerClient();
+  if (!admin) {
+    return NextResponse.json({ error: "Server not configured" }, { status: 500 });
+  }
+
+  // Mirror /api/tjai/generate-pdf paywall: require a one-time plan
+  // purchase or Pro/Apex subscription. Previously this route exported
+  // PDFs to anyone authed — bypass for the canonical PDF endpoint.
+  const [{ data: subscription }, { data: purchase }] = await Promise.all([
+    admin.from("user_subscriptions").select("tier").eq("user_id", auth.user.id).maybeSingle(),
+    admin
+      .from("tjai_plan_purchases")
+      .select("id")
+      .eq("user_id", auth.user.id)
+      .order("purchased_at", { ascending: false })
+      .limit(1)
+      .maybeSingle()
+  ]);
+  const tier = (subscription?.tier ?? "core") as "core" | "pro" | "apex";
+  const access = getTJAIAccess(tier, { hasOneTimePlanPurchase: Boolean(purchase?.id) });
+  if (!access.canDownloadPdf) {
+    return NextResponse.json(
+      { error: "Upgrade required to export PDF", code: "PRO_REQUIRED" },
+      { status: 402 }
+    );
   }
 
   const body = await request.json().catch(() => null);

@@ -3,17 +3,48 @@ import Link from "next/link";
 
 import { ProgramsCatalogClient } from "@/components/programs/programs-catalog-client";
 import { programs } from "@/lib/content";
+import { isCatalogDiet } from "@/lib/diet-catalog";
 import type { Locale } from "@/lib/i18n";
 import { formatProgramPrice, getProgramBasePriceTry, getProgramUiCopy, localizeProgram } from "@/lib/program-localization";
 import { normalizeCatalogProgram } from "@/lib/program-catalog";
 import { requireLocaleParam } from "@/lib/require-locale";
 
-export const metadata: Metadata = {
-  title: "Programs - TJFit",
-  description:
-    "Premium training and nutrition programs from the TJFit operating system. Browse by goal, equipment, and length."
+const PAGE_METADATA: Record<Locale, { title: string; description: string }> = {
+  en: {
+    title: "Programs — TJFit",
+    description: "Premium training and nutrition programs from the TJFit operating system. Browse by goal, equipment, and length."
+  },
+  tr: {
+    title: "Programlar — TJFit",
+    description: "TJFit sisteminden premium antrenman ve beslenme programları. Hedef, ekipman ve süreye göre incele."
+  },
+  ar: {
+    title: "البرامج — TJFit",
+    description: "برامج تدريب وتغذية متميزة من نظام TJFit. تصفح حسب الهدف والمعدات والمدة."
+  },
+  es: {
+    title: "Programas — TJFit",
+    description: "Programas premium de entrenamiento y nutrición del sistema TJFit. Explora por objetivo, equipo y duración."
+  },
+  fr: {
+    title: "Programmes — TJFit",
+    description: "Programmes premium d'entraînement et de nutrition du système TJFit. Parcours par objectif, équipement et durée."
+  }
 };
 
+export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
+  const locale = requireLocaleParam(params.locale);
+  const meta = PAGE_METADATA[locale] ?? PAGE_METADATA.en;
+  return { title: meta.title, description: meta.description };
+}
+
+// DEPRECATED 2026-05-02: this Set drifted out of sync with `content.ts`
+// (10 of 22 slugs no longer exist) and was breaking the diet/training
+// counter at the bottom of this file. Catalog kind is now derived via
+// `isCatalogDiet(program)` from `@/lib/diet-catalog`, which reads the
+// canonical `NUTRITION_SLUGS` set in that module. Kept here only so an
+// older import elsewhere (if any) keeps resolving — safe to remove in
+// a follow-up cleanup once nothing references it.
 const NUTRITION_SLUGS = new Set([
   "clean-bulk-diet-plan",
   "high-calorie-muscle-diet",
@@ -202,13 +233,13 @@ export default function ProgramsCatalogPage({ params }: { params: { locale: stri
         description: localized.description
       },
       href: `/${locale}/programs/${raw.slug}`,
-      viewLabel: NUTRITION_SLUGS.has(raw.slug) ? ui.viewDiet : ui.viewProgram,
+      viewLabel: isCatalogDiet(raw) ? ui.viewDiet : ui.viewProgram,
       priceLabel: isFree ? ui.freePriceLabel : formatProgramPrice(tryPrice, locale),
       freeBadgeLabel: isFree ? ui.freeBadge : undefined
     };
   });
 
-  const trainingCount = programs.filter((raw) => !NUTRITION_SLUGS.has(raw.slug)).length;
+  const trainingCount = programs.filter((raw) => !isCatalogDiet(raw)).length;
   const nutritionCount = programs.length - trainingCount;
 
   return (

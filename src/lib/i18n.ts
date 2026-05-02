@@ -1,3 +1,6 @@
+// Active routing locales. Five more (de, hi, id, pt, ru) have translations
+// under messages/ but are not wired yet — to enable any of them, add the
+// code here AND add the matching LOCALE_META + BCP47 entries below.
 export const locales = ["en", "tr", "ar", "es", "fr"] as const;
 
 export type Locale = (typeof locales)[number];

@@ -195,30 +195,13 @@ export function TJAIChat({
   const suggestions = copy.suggestions;
 
   const ask = async (text: string) => {
-    if (coreLimited) {
-      const limitRes = await fetch("/api/tjai/trial-consume-message", { method: "POST" });
-      if (limitRes.ok) {
-        try {
-          const data = (await limitRes.clone().json()) as { messagesUsed?: number; messageLimit?: number };
-          if (typeof data.messagesUsed === "number" && typeof data.messageLimit === "number") {
-            setTrialLimit(data.messageLimit);
-            setTrialRemaining(Math.max(0, data.messageLimit - data.messagesUsed));
-          }
-        } catch {
-          /* ignore */
-        }
-      }
-      if (!limitRes.ok) {
-        showUpgradePrompt({
-          reason: "limit_reached",
-          title: "You hit your free messages",
-          body: "TJAI is still here when you upgrade — unlimited coaching, voice replies, and adaptive weekly plans.",
-          ctaHref: "/membership",
-          ctaLabel: "Upgrade now"
-        });
-        onLimitReached?.();
-        return;
-      }
+    // Trial enforcement is atomic on the server inside /api/tjai/chat
+    // (consume_trial_message RPC). The previous client-side fetch to
+    // /api/tjai/trial-consume-message was bypassable in DevTools.
+    // Optimistically decrement the local counter; a 402 from /chat is
+    // handled below to surface the upgrade prompt.
+    if (coreLimited && trialRemaining !== null) {
+      setTrialRemaining(Math.max(0, trialRemaining - 1));
     }
 
     stickToBottomRef.current = true;
@@ -244,7 +227,26 @@ export function TJAIChat({
 
       const contentType = res.headers.get("Content-Type") ?? "";
       if (contentType.includes("application/json")) {
-        const data = (await res.json().catch(() => ({}))) as { message?: string; conversationId?: string };
+        const data = (await res.json().catch(() => ({}))) as {
+          message?: string;
+          conversationId?: string;
+          error?: string;
+          code?: string;
+        };
+        if (res.status === 402) {
+          // Trial limit reached server-side. Drop the optimistic user +
+          // empty-assistant rows we just appended.
+          setHistory((prev) => prev.slice(0, -2));
+          showUpgradePrompt({
+            reason: "limit_reached",
+            title: data.code === "expired" ? "Your free trial has ended" : "You hit your free messages",
+            body: "TJAI is still here when you upgrade — unlimited coaching, voice replies, and adaptive weekly plans.",
+            ctaHref: "/membership",
+            ctaLabel: "Upgrade now"
+          });
+          onLimitReached?.();
+          return;
+        }
         const assistantText = String(data?.message ?? "").trim();
         if (data?.conversationId && !conversationId) setConversationId(data.conversationId);
         setHistory((prev) => {

@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 
+// Anthropic-backed (dual-provider). Uses Claude via @/lib/tjai-anthropic
+// for grocery-list extraction; the rest of TJAI runs on OpenAI.
+// Requires ANTHROPIC_API_KEY in env (see .env.example).
 import { callClaude, extractJsonBlock } from "@/lib/tjai-anthropic";
 import { requireAuth } from "@/lib/require-auth";
 

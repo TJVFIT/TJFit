@@ -2,6 +2,60 @@
 @tailwind components;
 @tailwind utilities;
 
+/* v3 living-organism — Phase 5.1 card breathing utilities.
+   Opt-in via `.tj-breathe` (default rhythm, 4s) or one of the
+   themed variants. Each card receives a small per-instance offset
+   via `--tj-breath-jitter` so they never beat in unison. */
+@layer utilities {
+  .tj-breathe {
+    --tj-breath-duration: 4000ms;
+    --tj-breath-jitter: 0ms;
+    animation: tj-card-breathe var(--tj-breath-duration) ease-in-out
+      calc(var(--tj-breath-jitter)) infinite;
+  }
+  .tj-breathe-program { --tj-breath-duration: 4000ms; }
+  .tj-breathe-diet    { --tj-breath-duration: 5000ms; }
+  .tj-breathe-tjai    { --tj-breath-duration: 3200ms; }
+  .tj-breathe-coach   { --tj-breath-duration: 4500ms; }
+
+  /* The whole-page calm utility from `useCalmPresence`. Drop on
+     `<html>` or any root container; descendants pick up the dim +
+     slowdown automatically. */
+  .tj-calm {
+    transition: opacity 1500ms cubic-bezier(0.16, 1, 0.3, 1),
+                filter  1500ms cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0.7;
+  }
+  .tj-calm .tj-breathe,
+  .tj-calm .tj-breathe-program,
+  .tj-calm .tj-breathe-diet,
+  .tj-calm .tj-breathe-tjai,
+  .tj-calm .tj-breathe-coach {
+    animation-duration: calc(var(--tj-breath-duration) * 2);
+  }
+}
+
+@keyframes tj-card-breathe {
+  0%, 100% { transform: scale(1); }
+  60%      { transform: scale(1.012); }
+}
+
+/* All living-organism animations honor the OS reduced-motion
+   preference. Belt-and-suspenders alongside the JS gates that
+   suppress the same effects in the React layer. */
+@media (prefers-reduced-motion: reduce) {
+  .tj-breathe,
+  .tj-breathe-program,
+  .tj-breathe-diet,
+  .tj-breathe-tjai,
+  .tj-breathe-coach {
+    animation: none !important;
+  }
+  .tj-calm {
+    transition: none !important;
+  }
+}
+
 :root {
   color-scheme: dark;
   /* --font-sans / --font-display set by next/font on <html> */
@@ -21,8 +75,37 @@
   --color-text-primary: #ffffff;
   --color-text-secondary: #a1a1aa;
   --color-text-muted: #52525b;
-  --color-error: #ef4444;
+  /** Softer red — matches Tailwind `danger` token. */
+  --color-error: #f87171;
   --color-success: #22c55e;
+  /** Amber — for warnings / soft alerts. */
+  --color-warning: #f59e0b;
+  /** True purple — premium / AI / Apex / TJAI surfaces only. */
+  --color-premium: #a78bfa;
+  --color-surface-3: #1e2126;
+
+  /* v3 living-organism — fluid type scale via clamp() so headlines
+     respond to viewport without media-query breakpoints (Phase 15.2). */
+  --tj-text-xs:   clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --tj-text-sm:   clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
+  --tj-text-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+  --tj-text-lg:   clamp(1.125rem, 1rem + 0.625vw, 1.25rem);
+  --tj-text-xl:   clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+  --tj-text-2xl:  clamp(1.5rem, 1.25rem + 1.25vw, 1.875rem);
+  --tj-text-3xl:  clamp(1.875rem, 1.5rem + 1.875vw, 2.5rem);
+  --tj-text-4xl:  clamp(2.5rem, 1.875rem + 3.125vw, 3.5rem);
+  --tj-text-5xl:  clamp(3.5rem, 2.5rem + 5vw, 5rem);
+  --tj-text-6xl:  clamp(5rem, 3.5rem + 7.5vw, 7.5rem);
+  --tj-text-7xl:  clamp(7.5rem, 5rem + 12.5vw, 11rem);
+
+  /* v3 living-organism — OKLCH cyan→purple ramp (Phase 16.3).
+     Perceptually uniform; doesn't muddy in the middle the way RGB
+     does. Use `background: var(--tj-gradient-cyan-purple)` anywhere. */
+  --tj-gradient-cyan-purple: linear-gradient(
+    in oklch,
+    oklch(0.78 0.18 200) 0%,
+    oklch(0.71 0.18 285) 100%
+  );
 
   --gradient-hero:
     radial-gradient(ellipse 80% 50% at 50% -10%, rgba(34, 211, 238, 0.09) 0%, transparent 60%),

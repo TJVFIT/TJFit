@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 
+import { CookieConsentBanner } from "@/components/cookie-consent";
+import { Heartbeat } from "@/components/living/heartbeat";
 import { LocaleDocument } from "@/components/locale-document";
 import { SiteShell } from "@/components/site-shell";
+import { DeviceProvider } from "@/lib/device/DeviceContext";
 import { BRAND } from "@/lib/brand-assets";
 import {
   LOCALE_META,
@@ -99,7 +102,14 @@ export default function LocaleLayout({
   return (
     <div dir={direction} lang={routing}>
       <LocaleDocument locale={routing} direction={direction} />
-      <SiteShell locale={copy}>{children}</SiteShell>
+      <DeviceProvider>
+        {/* v3 living-organism: heartbeat sits above all content,
+            below the cookie banner, hidden under reduced-motion.
+            See src/components/living/heartbeat.tsx. */}
+        <Heartbeat />
+        <SiteShell locale={copy}>{children}</SiteShell>
+        <CookieConsentBanner locale={routing} />
+      </DeviceProvider>
     </div>
   );
 }

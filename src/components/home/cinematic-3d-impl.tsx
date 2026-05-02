@@ -5,6 +5,8 @@ import { Float, Sparkles } from "@react-three/drei";
 import { Suspense, useRef } from "react";
 import * as THREE from "three";
 
+import { useIsTouchDevice } from "@/hooks/use-is-touch-device";
+
 function CoreOrb() {
   const meshRef = useRef<THREE.Mesh>(null);
   useFrame((_, delta) => {
@@ -62,7 +64,12 @@ function OrbitRings() {
 function PointerCamera() {
   const tx = useRef(0);
   const ty = useRef(0);
+  // On touch devices there's no cursor to track — keep the camera in
+  // its rest framing rather than letting `mouse.x/y` (which stays at
+  // 0,0 with sporadic touch updates) jitter the view.
+  const isTouch = useIsTouchDevice();
   useFrame(({ camera, mouse }) => {
+    if (isTouch) return;
     tx.current = THREE.MathUtils.lerp(tx.current, mouse.x * 0.6, 0.05);
     ty.current = THREE.MathUtils.lerp(ty.current, mouse.y * 0.4, 0.05);
     camera.position.x = tx.current;

@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// Anthropic-backed (dual-provider). Uses Claude via @/lib/tjai-anthropic
+// because long-form blog generation routes to Opus (see tjai-anthropic
+// task-tiering). The rest of TJAI runs on OpenAI. Requires
+// ANTHROPIC_API_KEY in env (see .env.example).
 import { callClaude } from "@/lib/tjai-anthropic";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";

@@ -37,6 +37,7 @@ import { CinematicHowItWorks, CinematicTransformation } from "@/components/home/
 import { Cinematic3DAct } from "@/components/home/cinematic-3d-act";
 import { SplineShowcase } from "@/components/home/spline-showcase";
 import { useMagneticButton } from "@/hooks/useMagneticButton";
+import { useIsTouchDevice } from "@/hooks/use-is-touch-device";
 
 function useReducedMotion() {
   const [r, setR] = useState(false);
@@ -48,14 +49,6 @@ function useReducedMotion() {
     return () => mq.removeEventListener("change", a);
   }, []);
   return r;
-}
-
-function useIsTouchDevice() {
-  const [touch, setTouch] = useState(false);
-  useEffect(() => {
-    setTouch(window.matchMedia("(hover: none)").matches);
-  }, []);
-  return touch;
 }
 
 function formatMoney(locale: Locale, value: number) {
@@ -469,8 +462,7 @@ export function ImmersiveHome({
       {/* ══════════════ TJAI — KINETIC HEART CORE ══════════════ */}
       <section
         ref={(el) => { tjaiRef.current = el; }}
-        className="reveal-section relative overflow-hidden border-t border-divider bg-background"
-        style={{ minHeight: "min(90vh, 700px)" }}
+        className="reveal-section relative overflow-hidden border-t border-divider bg-background lg:min-h-[700px]"
       >
         <span
           className="ghost-text pointer-events-none start-1/2 top-8 z-0 max-lg:opacity-[0.02] -translate-x-1/2 text-[clamp(4rem,18vw,12rem)]"
@@ -494,7 +486,6 @@ export function ImmersiveHome({
 
         <div
           className="relative z-10 mx-auto grid max-w-6xl gap-12 px-6 py-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-center lg:gap-16 lg:px-12 lg:py-28"
-          style={{ minHeight: "inherit" }}
         >
           <div className="relative hidden min-h-[380px] lg:flex lg:items-center lg:justify-center" aria-hidden>
             {/* TJAI brand mark — cyan glow ring, no wireframe mannequin */}

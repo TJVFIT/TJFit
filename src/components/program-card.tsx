@@ -5,6 +5,7 @@ import { useRef } from "react";
 import { ArrowRight, Lock } from "lucide-react";
 
 import { useCardInCenter } from "@/hooks/useCardInCenter";
+import { useIsTouchDevice } from "@/hooks/use-is-touch-device";
 import type { Program } from "@/lib/content";
 import { getProgramTier, getProgramVisual } from "@/lib/program-card-visual";
 import { cn } from "@/lib/utils";
@@ -22,9 +23,13 @@ const shellClass = cn(
 
 // Pointer-tracked 3D tilt + spotlight via CSS vars on a ref — no React rerenders.
 // Tilt range deliberately small (±5° Y, ±4° X inverted) — feels premium, not novelty.
+// On touch devices the handlers no-op so cards don't get stuck mid-tilt
+// (mouseenter fires once on tap with no matching mouseleave on iOS Safari).
 function useCard3D() {
   const elRef = useRef<HTMLDivElement>(null);
+  const isTouch = useIsTouchDevice();
   const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isTouch) return;
     const el = elRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
@@ -39,6 +44,7 @@ function useCard3D() {
     el.style.setProperty("--spot", "1");
   };
   const onLeave = () => {
+    if (isTouch) return;
     const el = elRef.current;
     if (!el) return;
     el.style.setProperty("--rx", "0deg");

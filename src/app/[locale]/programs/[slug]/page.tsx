@@ -441,22 +441,27 @@ export default async function ProgramDetailPage({
         </section>
 
         <aside className="space-y-6 xl:sticky xl:top-24 xl:self-start">
-          <StickyPurchaseRail
-            coachLabel={copy.coachLabel}
-            coachName={coach?.name ?? copy.teamFallback}
-            coachSpecialty={coach?.specialty ?? copy.teamFallback}
-            difficultyLabel={copy.difficultyLabel}
-            difficulty={programDifficulty}
-            durationLabel={copy.durationLabel}
-            duration={programDuration}
-            priceLabel={copy.priceLabel}
-            priceCopy={priceTreatmentCopy}
-            primaryHref={railPrimaryHref}
-            primaryLabel={railPrimaryLabel}
-            secondaryHref={railSecondaryHref}
-            secondaryLabel={railSecondaryLabel}
-            accessCopy={railAccessCopy || undefined}
-          />
+          {/* Hide the inline rail below md — MobileCtaBar (md:hidden) handles
+              the small-screen purchase decision. md→xl shows the rail
+              inline; xl+ pins it sticky via the aside's xl:sticky. */}
+          <div className="hidden md:block">
+            <StickyPurchaseRail
+              coachLabel={copy.coachLabel}
+              coachName={coach?.name ?? copy.teamFallback}
+              coachSpecialty={coach?.specialty ?? copy.teamFallback}
+              difficultyLabel={copy.difficultyLabel}
+              difficulty={programDifficulty}
+              durationLabel={copy.durationLabel}
+              duration={programDuration}
+              priceLabel={copy.priceLabel}
+              priceCopy={priceTreatmentCopy}
+              primaryHref={railPrimaryHref}
+              primaryLabel={railPrimaryLabel}
+              secondaryHref={railSecondaryHref}
+              secondaryLabel={railSecondaryLabel}
+              accessCopy={railAccessCopy || undefined}
+            />
+          </div>
 
           <div className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-white/[0.015] p-6">
             <p className="text-lg font-semibold text-white">{copy.recommendedEquipment}</p>

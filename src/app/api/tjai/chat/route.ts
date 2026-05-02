@@ -86,7 +86,10 @@ export async function POST(request: NextRequest) {
       isAdmin
     });
     if (!access.canUseChat) {
-      return new Response(JSON.stringify({ error: "Upgrade required for TJAI chat." }), { status: 402, headers: { "Content-Type": "application/json" } });
+      return new Response(
+        JSON.stringify({ error: "Upgrade required for TJAI chat.", code: "access_denied" }),
+        { status: 402, headers: { "Content-Type": "application/json" } }
+      );
     }
 
     const medicalRisk = detectMedicalRisk(message);
@@ -143,6 +146,40 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Atomic trial-message consume for core users without a one-time
+    // purchase. Pro / Apex / admin / purchasers are unlimited and skip.
+    // The RPC locks the row, re-checks the limit, and bumps the count
+    // in a single transaction — closes the DevTools-bypass gap where
+    // the previous client-side increment fetch could be skipped.
+    const isCoreTrial = !isAdmin && tier === "core" && !purchase?.id;
+    if (isCoreTrial) {
+      const { data: rpcRows, error: rpcError } = await admin.rpc("consume_trial_message", {
+        p_user_id: auth.user.id,
+        p_limit: TJAI_TRIAL_MESSAGE_LIMIT
+      });
+      if (rpcError) {
+        console.error("[TJAI chat] consume_trial_message RPC failed", rpcError);
+        return new Response(
+          JSON.stringify({ error: "Trial accounting failed.", code: "rpc_error" }),
+          { status: 500, headers: { "Content-Type": "application/json" } }
+        );
+      }
+      const consume = (Array.isArray(rpcRows) ? rpcRows[0] : rpcRows) as
+        | { messages_used?: number; ok?: boolean; reason?: string }
+        | null;
+      if (!consume?.ok) {
+        return new Response(
+          JSON.stringify({
+            error: "Trial limit reached.",
+            code: String(consume?.reason ?? "limit_reached"),
+            messagesUsed: Number(consume?.messages_used ?? 0),
+            messageLimit: TJAI_TRIAL_MESSAGE_LIMIT
+          }),
+          { status: 402, headers: { "Content-Type": "application/json" } }
+        );
+      }
+    }
+
     const [planRow, memorySnapshot, { data: historyRows }, { data: prefRows }, recentData, userSettings, longMemoryFacts] = await Promise.all([
       getLatestTjaiPlan(auth.supabase, auth.user.id),
       buildTjaiMemorySnapshot(auth.supabase, auth.user.id),
@@ -160,7 +197,12 @@ export async function POST(request: NextRequest) {
       Promise.all([
         auth.supabase
           .from("workout_logs")
-          .select("workout_date,exercise,sets,reps,weight_kg,duration_minutes")
+          // Alias `exercise_name` → `exercise` so older readers (and the
+          // ChatCoachWorkoutLog type) keep working unchanged. Trigger
+          // `sync_workout_log_exercise_columns_trigger` keeps the legacy
+          // `exercise` column and the newer `exercise_name` in lockstep
+          // (migration 20260502120100), so reading either is equivalent.
+          .select("workout_date,exercise:exercise_name,sets,reps,weight_kg,duration_minutes")
           .eq("user_id", auth.user.id)
           .order("workout_date", { ascending: false })
           .limit(14),

@@ -73,7 +73,9 @@ const config: Config = {
         surface: {
           DEFAULT: "#111215",
           elevated: "#15171A",
-          2: "#0E0F12"
+          2: "#0E0F12",
+          /** Hover / sticky-bar surface — top of the elevation stack. */
+          3: "#1E2126"
         },
         divider: "#1E2028",
         muted: "#A1A1AA",
@@ -83,9 +85,14 @@ const config: Config = {
         accent: "#22D3EE",
         "accent-muted": "#67E8F9",
         "accent-sky": "#0EA5E9",
+        /** Slate accent — historical name; kept for back-compat. */
         "accent-violet": "#94A3B8",
+        /** True purple — premium / AI / Apex / TJAI badges only. */
+        premium: "#A78BFA",
         success: "#22C55E",
-        danger: "#EF4444",
+        /** Softer red than the legacy #EF4444 — pairs better with cyan accent. */
+        danger: "#F87171",
+        warning: "#F59E0B",
         text: "#FFFFFF"
       },
       fontFamily: {

@@ -7,10 +7,12 @@ export function CoachReviewRequest({ planId }: { planId?: string }) {
 
   const requestReview = async () => {
     setState("loading");
+    // Server now reads the user's subscription tier directly; no
+    // client-supplied `isPro` flag needed (or trusted).
     const response = await fetch("/api/tjai/request-coach-review", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ planId, isPro: true })
+      body: JSON.stringify({ planId })
     });
     if (response.status === 402) {
       setState("upgrade");

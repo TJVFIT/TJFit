@@ -196,13 +196,12 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
       return;
     }
 
+    // Trial enforcement is atomic on the server inside /api/tjai/chat
+    // (consume_trial_message RPC). The previous client-side fetch to
+    // /api/tjai/trial-consume-message was bypassable in DevTools.
+    // Optimistically decrement; a 402 from /chat below rolls back UI
+    // state and surfaces the limit overlay.
     if (tier === "core") {
-      const consumeRes = await fetch("/api/tjai/trial-consume-message", { method: "POST", credentials: "include" });
-      if (!consumeRes.ok) {
-        setShowLimitOverlay(true);
-        setRemaining(0);
-        return;
-      }
       setRemaining((r) => Math.max(0, r - 1));
     }
 
@@ -232,6 +231,14 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
       const contentType = response.headers.get("Content-Type") ?? "";
       if (contentType.includes("application/json")) {
         const data = await response.json().catch(() => ({}));
+        if (response.status === 402) {
+          // Trial limit reached server-side. Drop the optimistic user +
+          // empty-assistant rows we just appended.
+          setMessages((prev) => prev.filter((m) => m.id !== userMessage.id && m.id !== assistantId));
+          setShowLimitOverlay(true);
+          setRemaining(0);
+          return;
+        }
         if (!response.ok) {
           setApiError("TJAI is having trouble. Please try again.");
           throw new Error(String(data?.error ?? "Chat request failed"));
@@ -485,7 +492,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
               onChange={(event) => setInput(event.target.value)}
               rows={1}
               placeholder={t.askPlaceholder}
-              className="tj-chat-input-premium max-h-[120px] min-h-[42px] flex-1 resize-none rounded-xl border border-white/[0.08] bg-[#0E1014]/95 px-3 py-2 text-sm text-white outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-dim focus-visible:border-accent/55 focus-visible:ring-2 focus-visible:ring-accent/15"
+              className="tj-chat-input-premium max-h-[120px] min-h-[44px] flex-1 resize-none rounded-xl border border-white/[0.08] bg-[#0E1014]/95 px-3 py-2 text-sm text-white outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-dim focus-visible:border-accent/55 focus-visible:ring-2 focus-visible:ring-accent/15"
             />
             <button
               type="button"

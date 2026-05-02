@@ -34,14 +34,27 @@ export async function POST(request: Request) {
 
     if (error) {
       console.error("[TJAI Save POST] DB error:", error.message, error.code);
-      // Still return ok — client shouldn't crash because save failed
-      return NextResponse.json({ ok: true, warning: "Plan generated but not saved" });
+      return NextResponse.json(
+        {
+          error: "Failed to save plan",
+          code: error.code ?? "db_error",
+          details: error.message
+        },
+        { status: 500 }
+      );
     }
     void saveTjaiStructuredMemory(auth.supabase, auth.user.id, normalizedAnswers, "save");
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("[TJAI Save POST] Crash:", err);
-    return NextResponse.json({ ok: true, warning: "Save error" });
+    return NextResponse.json(
+      {
+        error: "Save failed",
+        code: "save_crash",
+        details: err instanceof Error ? err.message : String(err)
+      },
+      { status: 500 }
+    );
   }
 }
 

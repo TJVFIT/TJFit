@@ -12,6 +12,7 @@ export type TJAIAccess = {
   canDownloadPdf: boolean;
   canUseDailyMealEmail: boolean;
   canUseEarlyAccessPerks: boolean;
+  canRequestCoachReview: boolean;
   mealSwapDailyLimit: number;
   coreChatLimit: number;
 };
@@ -38,6 +39,7 @@ export function getTJAIAccess(
       canDownloadPdf: true,
       canUseDailyMealEmail: true,
       canUseEarlyAccessPerks: true,
+      canRequestCoachReview: true,
       mealSwapDailyLimit: 999,
       coreChatLimit: 10
     };
@@ -60,6 +62,7 @@ export function getTJAIAccess(
     canDownloadPdf: hasOneTimePlanPurchase,
     canUseDailyMealEmail: isPro || isApex,
     canUseEarlyAccessPerks: isPro || isApex,
+    canRequestCoachReview: isPro || isApex,
     mealSwapDailyLimit: isApex ? 10 : isPro ? 3 : 0,
     coreChatLimit: 10
   };
