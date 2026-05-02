@@ -12,8 +12,17 @@ import { cn } from "@/lib/utils";
 
 import styles from "./program-card.module.css";
 
+// v3.5 wow pass — every program card breathes (4 s rhythm, per-card
+// jitter) inside the existing shell. The jitter custom property is
+// set on the outer wrapper below; descendants inherit it.
+function breathJitter(slug: string): string {
+  let h = 0;
+  for (let i = 0; i < slug.length; i++) h = ((h << 5) - h + slug.charCodeAt(i)) | 0;
+  return `${Math.abs(h) % 3000}ms`;
+}
+
 const shellClass = cn(
-  "tj-program-card group relative flex h-full min-h-0 flex-col overflow-hidden",
+  "tj-program-card tj-breathe tj-breathe-program group relative flex h-full min-h-0 flex-col overflow-hidden",
   "rounded-xl border border-white/[0.06] bg-[#0E0F12]",
   "before:pointer-events-none before:absolute before:inset-0 before:rounded-xl before:border before:border-transparent before:[background:linear-gradient(135deg,rgba(34,211,238,0.15),rgba(34,211,238,0)_42%)_border-box] before:[mask:linear-gradient(#fff_0_0)_padding-box,linear-gradient(#fff_0_0)] before:[mask-composite:exclude]",
   "shadow-[0_1px_0_rgba(255,255,255,0.04)_inset,0_18px_40px_-30px_rgba(0,0,0,0.9)]",
@@ -284,6 +293,7 @@ export function ProgramCard({
       className="h-full"
       onMouseMove={onMove}
       onMouseLeave={onLeave}
+      style={{ ["--tj-breath-jitter"]: breathJitter(program.slug) } as React.CSSProperties}
     >
       {href ? (
         <Link
@@ -336,7 +346,13 @@ export function HomeProgramPreviewCard({
   const { elRef, onMove, onLeave } = useCard3D();
 
   return (
-    <div ref={cardRef} className="h-full" onMouseMove={onMove} onMouseLeave={onLeave}>
+    <div
+      ref={cardRef}
+      className="h-full"
+      onMouseMove={onMove}
+      onMouseLeave={onLeave}
+      style={{ ["--tj-breath-jitter"]: breathJitter(program.slug) } as React.CSSProperties}
+    >
       <Link
         href={href}
         onClick={onNavigate}
