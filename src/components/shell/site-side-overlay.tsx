@@ -334,29 +334,44 @@ export function SiteSideOverlay({ locale }: { locale: Locale }) {
             <span className="text-sm text-white/55">{SEARCH_LABEL[locale] ?? SEARCH_LABEL.en}</span>
           </div>
 
-          <div className="relative z-[1] grid flex-1 gap-x-10 gap-y-7 overflow-y-auto px-6 py-7 sm:grid-cols-2 sm:px-8 lg:grid-cols-4">
-            {filteredGroups.map((group) => (
-              <section key={group.title}>
+          <div
+            className={cn(
+              "relative z-[1] grid flex-1 gap-x-10 gap-y-7 overflow-y-auto px-6 py-7 sm:grid-cols-2 sm:px-8 lg:grid-cols-4",
+              open && "tj-sidebar-open"
+            )}
+          >
+            {filteredGroups.map((group, gi) => (
+              <section
+                key={group.title}
+                className="tj-sidebar-section"
+                style={{ ["--tj-section-i"]: gi } as React.CSSProperties}
+              >
                 <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-white/40">
                   {group.title}
                 </h2>
                 <ul className="space-y-0.5">
-                  {group.items.map((item) => {
+                  {group.items.map((item, li) => {
                     const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
                     return (
-                      <li key={item.href}>
+                      <li
+                        key={item.href}
+                        className="tj-sidebar-link-item"
+                        style={{ ["--tj-link-i"]: li } as React.CSSProperties}
+                      >
                         <Link
                           href={item.href}
                           onClick={close}
+                          aria-current={active ? "page" : undefined}
                           className={cn(
-                            "group/link flex min-h-[44px] items-center justify-between rounded-md px-2 py-1.5 text-[14px] transition-colors duration-150",
+                            "tj-sidebar-link group/link flex min-h-[44px] items-center justify-between rounded-md px-2 py-1.5 text-[14px] transition-colors duration-150",
                             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0B0E]",
-                            active
-                              ? "bg-white/[0.06] text-white"
-                              : "text-white/65 hover:bg-white/[0.04] hover:text-white"
+                            active ? "text-white" : "text-white/65 hover:text-white"
                           )}
                         >
-                          <span>{navLabel(locale, item.label)}</span>
+                          <span className="flex items-center">
+                            <span className="tj-sidebar-link-dot" aria-hidden />
+                            {navLabel(locale, item.label)}
+                          </span>
                           <ChevronRight
                             className={cn(
                               "h-3.5 w-3.5 transition-opacity duration-150",

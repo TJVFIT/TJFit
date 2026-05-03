@@ -4,6 +4,7 @@ import { CookieConsentBanner } from "@/components/cookie-consent";
 import { Heartbeat } from "@/components/living/heartbeat";
 import { LocaleDocument } from "@/components/locale-document";
 import { SiteShell } from "@/components/site-shell";
+import { PageTransition } from "@/components/transitions/PageTransition";
 import { DeviceProvider } from "@/lib/device/DeviceContext";
 import { BRAND } from "@/lib/brand-assets";
 import {
@@ -107,7 +108,9 @@ export default function LocaleLayout({
             below the cookie banner, hidden under reduced-motion.
             See src/components/living/heartbeat.tsx. */}
         <Heartbeat />
-        <SiteShell locale={copy}>{children}</SiteShell>
+        <SiteShell locale={copy}>
+          <PageTransition>{children}</PageTransition>
+        </SiteShell>
         <CookieConsentBanner locale={routing} />
       </DeviceProvider>
     </div>
