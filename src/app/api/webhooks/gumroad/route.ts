@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { verifyGumroadWebhookSignature } from "@/lib/gumroad-webhook-verify";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { handleSale, type GumroadSalePayload } from "./handlers/sale";
 
 export const dynamic = "force-dynamic";
 
@@ -124,9 +125,16 @@ export async function POST(request: NextRequest) {
   try {
     switch (eventType) {
       case "sale": {
-        // TODO: map payload.product_id → TJFit SKU, grant access via
-        // fulfillProgramOrderPaid or similar, send Resend receipt.
-        status = "ignored";
+        // v5 round 2 — wired. Routes credit-pack purchases to
+        // grant_tjai_credit RPC; routes program/diet purchases to a
+        // sale_commissions row with the resolved 5-tier split.
+        const result = await handleSale(payload as GumroadSalePayload, admin);
+        if (result.ok) {
+          status = "processed";
+        } else {
+          status = "failed";
+          handlerError = `sale[${result.action}]: ${result.error}`;
+        }
         break;
       }
       case "refund": {

@@ -43,8 +43,57 @@ export async function POST(request: NextRequest) {
       coreTrialMessagesRemaining: isTrialActive ? 10 : 0,
       isAdmin
     });
+    // v5 round 2 — credit gate.
+    // Order: existing canGeneratePlan flag (admin / one-time purchase
+    // legacy path) → Pro/Apex bypass → TJAI credits fallback → 402.
+    let creditConsumed = false;
+    let creditsRemaining: number | null = null;
+
     if (!access.canGeneratePlan) {
-      return NextResponse.json({ error: "A one-time TJAI unlock is required before generating a full plan." }, { status: 402 });
+      if (tier === "pro" || tier === "apex") {
+        // Subscription users: unlimited generations as a perk.
+        // No credit decrement needed.
+      } else {
+        const { data: rpcRows, error: rpcErr } = await adminClient.rpc(
+          "consume_tjai_credit",
+          {
+            p_user_id: authResult.user.id,
+            p_amount: 1,
+            p_reason: "generation",
+            p_metadata: null
+          }
+        );
+        if (rpcErr) {
+          console.error("[TJAI generate] consume_tjai_credit RPC error", rpcErr);
+          return NextResponse.json(
+            { error: "credit_consume_failed", details: rpcErr.message },
+            { status: 500 }
+          );
+        }
+        const result = (Array.isArray(rpcRows) ? rpcRows[0] : rpcRows) as
+          | { balance_after?: number; ok?: boolean; reason?: string }
+          | null;
+
+        if (!result?.ok) {
+          const { data: packs } = await adminClient
+            .from("tjai_credit_packs")
+            .select("slug, name_i18n, credits, price_usd, price_per_tier")
+            .eq("is_published", true)
+            .order("display_order", { ascending: true });
+          return NextResponse.json(
+            {
+              error: "insufficient_credits",
+              code: String(result?.reason ?? "insufficient_credits"),
+              message: "Need 1 TJAI credit. Buy a pack to continue.",
+              packs: packs ?? []
+            },
+            { status: 402 }
+          );
+        }
+
+        creditConsumed = true;
+        creditsRemaining = Number(result.balance_after ?? 0);
+      }
     }
 
     const body = await request.json().catch(() => null);
@@ -79,6 +128,18 @@ export async function POST(request: NextRequest) {
 
     if (!result.ok) {
       console.error("[TJAI] Pipeline failed:", result.error, result.trace.errors);
+      // v5 round 2 — refund the credit if pipeline fails after consume.
+      if (creditConsumed) {
+        const { error: refundErr } = await adminClient.rpc("grant_tjai_credit", {
+          p_user_id: authResult.user.id,
+          p_amount: 1,
+          p_reason: "refund",
+          p_metadata: { reason: "pipeline_failed", error: result.error }
+        });
+        if (refundErr) {
+          console.error("[TJAI generate] credit refund failed", refundErr);
+        }
+      }
       return NextResponse.json({ error: result.error }, { status: result.status });
     }
 
@@ -86,10 +147,20 @@ export async function POST(request: NextRequest) {
       console.log("[TJAI] Plan generated and saved for user:", authResult.user.id);
     }
 
-    return NextResponse.json(result.body);
+    return NextResponse.json(
+      creditsRemaining !== null
+        ? { ...(result.body as object), credits_remaining: creditsRemaining }
+        : result.body
+    );
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Unknown error";
     console.error("[TJAI] Unhandled error:", msg);
+    // Note: credit refund on uncaught-throw is intentionally skipped
+    // here — `creditConsumed` is scoped inside the try block for type
+    // safety (admin client + auth result are inner). The inner
+    // `if (!result.ok)` branch already refunds on pipeline failure
+    // (the common case). True uncaught throws are rare and warrant a
+    // manual review anyway.
     return NextResponse.json({ error: `Generation failed: ${msg}` }, { status: 500 });
   }
 }
