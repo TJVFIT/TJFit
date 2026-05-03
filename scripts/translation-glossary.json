@@ -1,0 +1,58 @@
+{
+  "_doc": "v3.9 translation glossary. Locked terms — providers MUST honour these. Add new entries as new vocabulary appears in programs / diets / UI. Format: 'en_term': { tr, ar, es, fr }.",
+
+  "TJFit": { "tr": "TJFit", "ar": "TJFit", "es": "TJFit", "fr": "TJFit" },
+  "TJAI": { "tr": "TJAI", "ar": "TJAI", "es": "TJAI", "fr": "TJAI" },
+  "Pro": { "tr": "Pro", "ar": "Pro", "es": "Pro", "fr": "Pro" },
+  "Apex": { "tr": "Apex", "ar": "Apex", "es": "Apex", "fr": "Apex" },
+
+  "rep": { "tr": "tekrar", "ar": "تكرار", "es": "repetición", "fr": "rép" },
+  "reps": { "tr": "tekrar", "ar": "تكرارات", "es": "repeticiones", "fr": "répétitions" },
+  "set": { "tr": "set", "ar": "مجموعة", "es": "serie", "fr": "série" },
+  "sets": { "tr": "set", "ar": "مجموعات", "es": "series", "fr": "séries" },
+  "RPE": { "tr": "RPE", "ar": "RPE", "es": "RPE", "fr": "RPE" },
+  "1RM": { "tr": "1RM", "ar": "1RM", "es": "1RM", "fr": "1RM" },
+  "AMRAP": { "tr": "AMRAP", "ar": "AMRAP", "es": "AMRAP", "fr": "AMRAP" },
+  "EMOM": { "tr": "EMOM", "ar": "EMOM", "es": "EMOM", "fr": "EMOM" },
+  "RIR": { "tr": "RIR", "ar": "RIR", "es": "RIR", "fr": "RIR" },
+
+  "warmup": { "tr": "ısınma", "ar": "إحماء", "es": "calentamiento", "fr": "échauffement" },
+  "cooldown": { "tr": "soğuma", "ar": "تبريد", "es": "enfriamiento", "fr": "récupération" },
+  "deload": { "tr": "deload haftası", "ar": "أسبوع الراحة", "es": "semana de descarga", "fr": "semaine de décharge" },
+  "rest": { "tr": "dinlenme", "ar": "راحة", "es": "descanso", "fr": "repos" },
+  "tempo": { "tr": "tempo", "ar": "إيقاع", "es": "tempo", "fr": "tempo" },
+  "superset": { "tr": "superset", "ar": "سوبرسيت", "es": "superserie", "fr": "superset" },
+
+  "barbell": { "tr": "halter", "ar": "بار", "es": "barra", "fr": "barre" },
+  "dumbbell": { "tr": "dambıl", "ar": "دامبل", "es": "mancuerna", "fr": "haltère" },
+  "kettlebell": { "tr": "kettlebell", "ar": "كيتل بل", "es": "pesa rusa", "fr": "kettlebell" },
+  "bench": { "tr": "bench", "ar": "بنش", "es": "banco", "fr": "banc" },
+  "rack": { "tr": "rack", "ar": "قفص الحديد", "es": "jaula", "fr": "rack" },
+  "cable": { "tr": "kablo", "ar": "كابل", "es": "cable", "fr": "câble" },
+  "pull-up bar": { "tr": "barfiks", "ar": "بار العقلة", "es": "barra de dominadas", "fr": "barre de traction" },
+
+  "squat": { "tr": "squat", "ar": "سكوات", "es": "sentadilla", "fr": "squat" },
+  "deadlift": { "tr": "deadlift", "ar": "ديدليفت", "es": "peso muerto", "fr": "soulevé de terre" },
+  "bench press": { "tr": "bench press", "ar": "بنش بريس", "es": "press de banca", "fr": "développé couché" },
+  "overhead press": { "tr": "overhead press", "ar": "ضغط فوق الرأس", "es": "press militar", "fr": "développé militaire" },
+  "row": { "tr": "row", "ar": "تجديف", "es": "remo", "fr": "rowing" },
+  "pull-up": { "tr": "barfiks", "ar": "عقلة", "es": "dominada", "fr": "traction" },
+
+  "fat loss": { "tr": "yağ yakımı", "ar": "حرق الدهون", "es": "pérdida de grasa", "fr": "perte de graisse" },
+  "muscle gain": { "tr": "kas kazanımı", "ar": "بناء العضلات", "es": "ganancia muscular", "fr": "gain musculaire" },
+  "bulking": { "tr": "kilo alma", "ar": "اكتساب الوزن", "es": "volumen", "fr": "prise de masse" },
+  "cutting": { "tr": "diyet", "ar": "تنشيف", "es": "definición", "fr": "sèche" },
+  "recomp": { "tr": "rekomp", "ar": "إعادة تركيب الجسم", "es": "recomposición", "fr": "recomposition" },
+
+  "calories": { "tr": "kalori", "ar": "سعرات حرارية", "es": "calorías", "fr": "calories" },
+  "protein": { "tr": "protein", "ar": "بروتين", "es": "proteína", "fr": "protéine" },
+  "carbs": { "tr": "karbonhidrat", "ar": "كربوهيدرات", "es": "carbohidratos", "fr": "glucides" },
+  "fat": { "tr": "yağ", "ar": "دهون", "es": "grasa", "fr": "lipides" },
+  "fiber": { "tr": "lif", "ar": "ألياف", "es": "fibra", "fr": "fibres" },
+  "macros": { "tr": "makro", "ar": "ماكروز", "es": "macros", "fr": "macros" },
+
+  "halal": { "tr": "helal", "ar": "حلال", "es": "halal", "fr": "halal" },
+  "iftar": { "tr": "iftar", "ar": "إفطار", "es": "iftar", "fr": "iftar" },
+  "suhoor": { "tr": "sahur", "ar": "سحور", "es": "suhur", "fr": "souhour" },
+  "Ramadan": { "tr": "Ramazan", "ar": "رمضان", "es": "Ramadán", "fr": "Ramadan" }
+}

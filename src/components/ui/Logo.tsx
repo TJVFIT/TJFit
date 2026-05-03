@@ -139,12 +139,9 @@ export function Logo({
         />
       </svg>
       {!markOnly ? (
-        <span className="ms-2.5 flex flex-col justify-center leading-none">
+        <span className="ms-2.5 flex items-center leading-none">
           <span className="font-display text-[1.05em] font-black tracking-[0.18em] text-[#F6F3ED]">
             TJFIT
-          </span>
-          <span className="mt-1 hidden text-[0.34em] font-bold uppercase tracking-[0.34em] text-[#67E8F9]/80 sm:block">
-            Performance
           </span>
         </span>
       ) : null}

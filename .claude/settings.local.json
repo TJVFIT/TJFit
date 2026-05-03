@@ -30,7 +30,15 @@
       "Bash(cp src/lib/content.ts /tmp/pdfgen/)",
       "Bash(sed -i 's|@/lib/|./|g; s|@/lib$|.|g' /tmp/pdfgen/*.ts)",
       "Read(//tmp/**)",
-      "Bash(python -c ' *)"
+      "Bash(python -c ' *)",
+      "Bash(gh auth *)",
+      "Bash(git restore *)",
+      "Bash(supabase --version)",
+      "Bash(npx --no-install supabase --version)",
+      "Bash(powershell -Command \"Get-Command supabase -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source\")",
+      "mcp__ce053f2b-a087-436e-a649-cdefa7222a9b__get_project",
+      "mcp__ce053f2b-a087-436e-a649-cdefa7222a9b__list_migrations",
+      "mcp__ce053f2b-a087-436e-a649-cdefa7222a9b__apply_migration"
     ]
   }
 }
