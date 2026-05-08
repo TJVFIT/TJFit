@@ -6,7 +6,6 @@ import { TrackingScripts } from "@/components/marketing/tracking-scripts";
 import { BrandOrganizationJsonLd } from "@/components/brand-organization-json-ld";
 import { BRAND } from "@/lib/brand-assets";
 import { getSiteUrl } from "@/lib/site-url";
-import "../../sentry.client.config";
 import "./globals.css";
 
 // Display font — Sora: premium geometric, modern tech-forward
