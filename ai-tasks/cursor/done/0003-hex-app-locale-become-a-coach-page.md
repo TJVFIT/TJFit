@@ -20,5 +20,5 @@ Audit pass 2 lists raw `#RRGGBB` / hex literals in bundled UI. Replace with Tail
 ## Report
 
 - **Branch:** `auto/cursor/audit-pass2-queue`
-- **Commit:** `e1ae460b8f1aa63160f22d09dcb2b06caaeda78a`
+- **Commit:** `b5bb7f8dfa4a99f7a5bc5523c2ba9f01b5bb97c8`
 - **Notes:** Replaced dark-on-accent text with `text-background`; panel surfaces with `bg-surface-2` per `tailwind.config.ts` tokens.

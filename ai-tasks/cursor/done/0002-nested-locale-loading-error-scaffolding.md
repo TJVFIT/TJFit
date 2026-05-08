@@ -17,5 +17,5 @@ Mechanical: 49 segment folders under `src/app/[locale]` (see `scripts/generate-l
 
 - **Branch:** `auto/cursor/audit-pass2-queue`
 - **Generator:** `scripts/generate-locale-nested-shells.mjs` (49 segment folders; `nested/error.tsx` includes `"use client"` before re-export)
-- **Commit:** `e1ae460b8f1aa63160f22d09dcb2b06caaeda78a`
+- **Commit:** `b5bb7f8dfa4a99f7a5bc5523c2ba9f01b5bb97c8`
 - **Notes:** Excluded top segments: `affiliate`, `become-a-coach`, `bundles`, `challenges`, `legal`, `membership`, `podcast`, `press`, `privacy-policy`, `pro`, `refund-policy`, `start`, `store`, `terms-and-conditions`; excluded `[locale]/page.tsx`.
