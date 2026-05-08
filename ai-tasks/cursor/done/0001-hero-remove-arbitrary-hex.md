@@ -20,6 +20,6 @@ Hero metric still shows `10` languages while routing supports five locales — a
 ## Report
 
 - **Branch:** `auto/cursor/0001-hero-remove-arbitrary-hex`
-- **Commit:** `b619e045830278d75a37293e50d097d1829074a0`
+- **Commit (tip):** `109fe9d76d22adc792a9f1e28203d7d19e4a5ff1` — hero/design-token change in `b619e04`; task SHA note in `109fe9d`.
 - **PR (compare):** https://github.com/TJVFIT/TJFit/compare/main...auto/cursor/0001-hero-remove-arbitrary-hex?expand=1
 - **Notes:** Replaced arbitrary zinc/cyan hex utilities with Tailwind theme keys; CTA gradient uses `TJ_PALETTE.accentHi` + `accent`. Mask feather still uses `#000` in gradient strings (non-brand mask technicality). Bootstrap: `ai-tasks/README.md`, `activity.log` (un-ignored via `!ai-tasks/shared/activity.log`), `.gitignore` adds `.claude/` and activity.log exception.
