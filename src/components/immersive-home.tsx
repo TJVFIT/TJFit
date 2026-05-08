@@ -306,6 +306,7 @@ export function ImmersiveHome({
         heroGradientTagline={copy.hero.heroGradientTagline}
         heroSub={copy.hero.sub}
         ctaPrimary={copy.hero.ctaPrimary}
+        copy={copy.hero}
       />
 
       <SectionTransition variant="soft" />
