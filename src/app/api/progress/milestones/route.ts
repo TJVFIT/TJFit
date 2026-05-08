@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
   const auth = await requireAuth();
   if (!auth.ok) return auth.response;
 
-  const limiter = rateLimit({
+  const limiter = await rateLimit({
     key: request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? request.ip ?? auth.user.id,
     limit: 30,
     windowMs: 60_000

@@ -23,6 +23,7 @@ import {
 import { isSupportedLocale } from "@/lib/i18n";
 import { getTJAIAccess } from "@/lib/tjai-access";
 import { buildTjaiMemorySnapshot, getLatestTjaiPlan } from "@/lib/tjai-plan-store";
+import { rateLimit } from "@/lib/rate-limit";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { callOpenAI, streamOpenAI } from "@/lib/tjai-openai";
@@ -56,6 +57,18 @@ export async function POST(request: NextRequest) {
   try {
     const auth = await requireAuth();
     if (!auth.ok) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+
+    // Rate limit: 30 messages/min per user (auth.user.id is the natural key
+    // since this route is auth-gated; fall back to IP if user id is absent).
+    const limiter = await rateLimit({
+      key: `tjai-chat:${auth.user.id ?? request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? request.ip ?? "unknown"}`,
+      limit: 30,
+      windowMs: 60_000
+    });
+    if (!limiter.success) {
+      return new Response(JSON.stringify({ error: "Too many requests." }), { status: 429 });
+    }
+
     const admin = getSupabaseServerClient();
     if (!admin) return new Response(JSON.stringify({ error: "Server not configured" }), { status: 500 });
 
