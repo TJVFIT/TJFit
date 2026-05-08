@@ -636,9 +636,9 @@ export function TJAIResult({
 
         {mealPrep ? (
           <div className="rounded-xl border border-divider bg-surface p-5">
-            <h3 className="text-lg font-semibold text-white">Your Sunday Meal Prep Plan</h3>
-            <p className="mt-1 text-sm text-muted">Prep once. Eat all week. Total time: {mealPrep.totalTime ?? "~120 min"}</p>
-            <p className="mt-2 text-xs text-muted">You will need: {(mealPrep.equipment ?? []).join(", ")}</p>
+            <h3 className="text-lg font-semibold text-white">{copy.result.mealPrep.title}</h3>
+            <p className="mt-1 text-sm text-muted">{copy.result.mealPrep.summaryPrefix} {mealPrep.totalTime ?? copy.result.mealPrep.totalTimeFallback}</p>
+            <p className="mt-2 text-xs text-muted">{copy.result.mealPrep.equipmentPrefix} {(mealPrep.equipment ?? []).join(", ")}</p>
             <div className="mt-3 space-y-3">
               {(mealPrep.timeline ?? []).map((task) => (
                 <article key={`${task.time}-${task.task}`} className="rounded-lg border border-divider p-3">
@@ -687,11 +687,11 @@ export function TJAIResult({
       {swapState ? (
         <div className="fixed inset-0 z-50 flex items-end bg-black/60 p-4 md:items-center md:justify-center">
           <div className="w-full max-w-2xl rounded-2xl border border-divider bg-surface p-5">
-            <h3 className="text-lg font-semibold text-white">Choose an alternative meal</h3>
-            <p className="mt-1 text-sm text-muted">Same calories and macros as your original</p>
+            <h3 className="text-lg font-semibold text-white">{copy.result.alternatives.title}</h3>
+            <p className="mt-1 text-sm text-muted">{copy.result.alternatives.subtitle}</p>
             <div className="mt-4 space-y-3">
               {swapState.loading ? (
-                <div className="rounded-xl border border-divider p-4 text-sm text-muted">Loading alternatives...</div>
+                <div className="rounded-xl border border-divider p-4 text-sm text-muted">{copy.result.alternatives.loading}</div>
               ) : (
                 swapState.alternatives.map((meal) => (
                   <article key={`${meal.name}-${meal.time}`} className="rounded-xl border border-divider p-4">
