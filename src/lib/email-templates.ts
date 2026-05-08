@@ -6,6 +6,21 @@ type BaseTemplate = {
   footerUrl?: string;
 };
 
+export type SequenceTemplateKey =
+  | "welcome"
+  | "first_program_nudge"
+  | "tip_progressive_overload"
+  | "week_one_check_in"
+  | "tjai_intro"
+  | "one_month_progress"
+  | "trial_started"
+  | "trial_value_reminder"
+  | "trial_expires_soon"
+  | "trial_expired"
+  | "we_miss_you"
+  | "streak_at_risk"
+  | "last_chance_offer";
+
 function renderTemplate({ title, body, ctaLabel, ctaUrl, footerUrl }: BaseTemplate) {
   const cta =
     ctaLabel && ctaUrl
@@ -116,3 +131,114 @@ export const EmailTemplates = {
     })
 };
 
+const sequenceTemplates: Record<
+  SequenceTemplateKey,
+  (input: { name: string; appUrl: string; unsubscribeUrl: string }) => string
+> = {
+  welcome: ({ name, appUrl, unsubscribeUrl }) => EmailTemplates.welcome(name, appUrl, unsubscribeUrl),
+  first_program_nudge: ({ appUrl, unsubscribeUrl }) =>
+    renderTemplate({
+      title: "Choose your first program",
+      body: "Pick a plan that matches your goal and lock in the first week of training.",
+      ctaLabel: "Browse Programs",
+      ctaUrl: `${appUrl}/programs`,
+      footerUrl: unsubscribeUrl
+    }),
+  tip_progressive_overload: ({ appUrl, unsubscribeUrl }) =>
+    renderTemplate({
+      title: "Small progress beats random intensity",
+      body: "Add a rep, a little weight, or cleaner form this week. That is how training compounds.",
+      ctaLabel: "Track Progress",
+      ctaUrl: `${appUrl}/progress`,
+      footerUrl: unsubscribeUrl
+    }),
+  week_one_check_in: ({ appUrl, unsubscribeUrl }) =>
+    renderTemplate({
+      title: "Week one check-in",
+      body: "You are a week in. Review your workouts, adjust your goal, and keep the next session simple.",
+      ctaLabel: "Open Dashboard",
+      ctaUrl: `${appUrl}/dashboard`,
+      footerUrl: unsubscribeUrl
+    }),
+  tjai_intro: ({ appUrl, unsubscribeUrl }) =>
+    renderTemplate({
+      title: "Meet TJAI",
+      body: "Use TJAI to turn your goals, equipment, and schedule into a plan you can actually follow.",
+      ctaLabel: "Try TJAI",
+      ctaUrl: `${appUrl}/ai`,
+      footerUrl: unsubscribeUrl
+    }),
+  one_month_progress: ({ appUrl, unsubscribeUrl }) =>
+    renderTemplate({
+      title: "One month of progress",
+      body: "Take a minute to log what changed: strength, body metrics, consistency, or confidence.",
+      ctaLabel: "Log Progress",
+      ctaUrl: `${appUrl}/progress`,
+      footerUrl: unsubscribeUrl
+    }),
+  trial_started: ({ appUrl, unsubscribeUrl }) =>
+    renderTemplate({
+      title: "Your TJAI trial has started",
+      body: "Ask TJAI for a plan, meal ideas, or adjustments while your Core trial is active.",
+      ctaLabel: "Open TJAI",
+      ctaUrl: `${appUrl}/ai`,
+      footerUrl: unsubscribeUrl
+    }),
+  trial_value_reminder: ({ appUrl, unsubscribeUrl }) =>
+    renderTemplate({
+      title: "Get more from your TJAI trial",
+      body: "The best prompt is specific: goal, schedule, equipment, food preferences, and injury limits.",
+      ctaLabel: "Continue Trial",
+      ctaUrl: `${appUrl}/ai`,
+      footerUrl: unsubscribeUrl
+    }),
+  trial_expires_soon: ({ appUrl, unsubscribeUrl }) =>
+    renderTemplate({
+      title: "Your TJAI trial expires soon",
+      body: "Save your plan and make any final adjustments before the trial window closes.",
+      ctaLabel: "Review TJAI",
+      ctaUrl: `${appUrl}/ai`,
+      footerUrl: unsubscribeUrl
+    }),
+  trial_expired: ({ appUrl, unsubscribeUrl }) =>
+    renderTemplate({
+      title: "Your TJAI trial has ended",
+      body: "Upgrade when you are ready to keep generating and refining plans with TJAI.",
+      ctaLabel: "View Membership",
+      ctaUrl: `${appUrl}/membership`,
+      footerUrl: unsubscribeUrl
+    }),
+  we_miss_you: ({ appUrl, unsubscribeUrl }) =>
+    renderTemplate({
+      title: "Your next session is waiting",
+      body: "No reset needed. Open TJFit, choose one workout, and restart with the smallest useful step.",
+      ctaLabel: "Open TJFit",
+      ctaUrl: `${appUrl}/dashboard`,
+      footerUrl: unsubscribeUrl
+    }),
+  streak_at_risk: ({ appUrl, unsubscribeUrl }) =>
+    renderTemplate({
+      title: "Protect your streak",
+      body: "A short session still counts. Log what you can today and keep the habit alive.",
+      ctaLabel: "Log Workout",
+      ctaUrl: `${appUrl}/progress`,
+      footerUrl: unsubscribeUrl
+    }),
+  last_chance_offer: ({ appUrl, unsubscribeUrl }) =>
+    renderTemplate({
+      title: "One more nudge back",
+      body: "Come back with a simple plan: one workout, one meal improvement, one logged win.",
+      ctaLabel: "Return to TJFit",
+      ctaUrl: `${appUrl}/dashboard`,
+      footerUrl: unsubscribeUrl
+    })
+};
+
+export function renderSequenceTemplate(
+  templateKey: string,
+  input: { name: string; appUrl: string; unsubscribeUrl: string }
+) {
+  const renderer = sequenceTemplates[templateKey as SequenceTemplateKey];
+  if (!renderer) return null;
+  return renderer(input);
+}

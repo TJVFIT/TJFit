@@ -67,7 +67,7 @@ type GuestPopupCopy = {
   subscribeFailed: string;
 };
 
-type CommunityCopy = {
+export type CommunityCopy = {
   badge: string;
   title: string;
   subtitle: string;
@@ -76,7 +76,43 @@ type CommunityCopy = {
     challenges: string;
     transformations: string;
     blogs: string;
+    people: string;
+    groups: string;
   };
+  reactions: {
+    fire: string;
+    muscle: string;
+    crown: string;
+    lightning: string;
+    target: string;
+  };
+  likes: string;
+  comments: string;
+  joined: string;
+  joinChallenge: string;
+  joinedChallenge: string;
+  dailyValue: string;
+  logToday: string;
+  loggedToday: string;
+  leaderboardTop10: string;
+  yourRank: string;
+  noActiveChallenges: string;
+  ends: string;
+  tjcoinPrizes: string;
+  members: string;
+  leaveGroup: string;
+  joinGroup: string;
+  peopleSearchPlaceholder: string;
+  searchResults: string;
+  topMembersThisWeek: string;
+  activeCoaches: string;
+  newMembers: string;
+  similarGoals: string;
+  openFeed: string;
+  postSubmittedNotification: string;
+  challengeJoinedNotification: string;
+  logRewardNotification: string;
+  groupJoinedNotification: string;
   threadsEmpty: string;
   challengesEmpty: string;
   transformationsEmpty: string;
@@ -529,7 +565,7 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     badge: "Community",
     title: "Community",
     subtitle: "Discussions, challenges, and wins — together in one calm space.",
-    tabs: { threads: "Threads", challenges: "Challenges", transformations: "Transformations", blogs: "Blogs" },
+    tabs: { threads: "Threads", challenges: "Challenges", transformations: "Transformations", blogs: "Blogs", people: "People", groups: "Groups" },
     threadsEmpty: "Conversations are warming up. Your feed will land here.",
     challengesEmpty: "No challenges live right now.",
     transformationsEmpty: "No public stories yet — check back soon.",
@@ -559,6 +595,34 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     pin: "Pin",
     unpin: "Unpin",
     pinned: "Pinned",
+    reactions: { fire: "Fire reaction", muscle: "Strong reaction", crown: "Champion reaction", lightning: "Energy reaction", target: "Goal reaction" },
+    likes: "likes",
+    comments: "comments",
+    joined: "joined",
+    joinChallenge: "Join Challenge",
+    joinedChallenge: "Joined",
+    dailyValue: "Daily value",
+    logToday: "Log Today",
+    loggedToday: "Logged today",
+    leaderboardTop10: "Leaderboard (Top 10)",
+    yourRank: "Your rank",
+    noActiveChallenges: "No active challenges.",
+    ends: "ends",
+    tjcoinPrizes: "TJCOIN prizes",
+    members: "members",
+    leaveGroup: "Leave Group",
+    joinGroup: "Join Group",
+    peopleSearchPlaceholder: "Search people",
+    searchResults: "Search Results",
+    topMembersThisWeek: "Top Members This Week",
+    activeCoaches: "Active Coaches",
+    newMembers: "New Members",
+    similarGoals: "Similar Goals",
+    openFeed: "Open feed",
+    postSubmittedNotification: "Post submitted - admin will review soon",
+    challengeJoinedNotification: "Challenge joined. Good luck.",
+    logRewardNotification: "+5 TJCOIN for logging today",
+    groupJoinedNotification: "Welcome to the group!",
     turkish: "Turkish",
     arabic: "Arabic",
     spanish: "Spanish",
@@ -568,7 +632,7 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     badge: "Topluluk",
     title: "Topluluk",
     subtitle: "Sohbetler, meydan okumalar ve başarı hikâyeleri — tek sakin merkezde.",
-    tabs: { threads: "Konular", challenges: "Meydan okumalar", transformations: "Dönüşümler", blogs: "Blog" },
+    tabs: { threads: "Konular", challenges: "Meydan okumalar", transformations: "Dönüşümler", blogs: "Blog", people: "Kişiler", groups: "Gruplar" },
     threadsEmpty: "Sohbetler ısınıyor. Akışın burada görünecek.",
     challengesEmpty: "Şu an canlı meydan okuma yok.",
     transformationsEmpty: "Henüz paylaşılan hikâye yok — yakında tekrar bak.",
@@ -598,6 +662,34 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     pin: "Sabitle",
     unpin: "Kaldir",
     pinned: "Sabit",
+    reactions: { fire: "Ateş tepkisi", muscle: "Güçlü tepki", crown: "Şampiyon tepkisi", lightning: "Enerji tepkisi", target: "Hedef tepkisi" },
+    likes: "beğeni",
+    comments: "yorum",
+    joined: "katıldı",
+    joinChallenge: "Meydan okumaya katıl",
+    joinedChallenge: "Katıldınız",
+    dailyValue: "Günlük değer",
+    logToday: "Bugünü kaydet",
+    loggedToday: "Bugün kaydedildi",
+    leaderboardTop10: "Liderlik tablosu (İlk 10)",
+    yourRank: "Sıralamanız",
+    noActiveChallenges: "Aktif meydan okuma yok.",
+    ends: "bitiş",
+    tjcoinPrizes: "TJCOIN ödülleri",
+    members: "üye",
+    leaveGroup: "Gruptan ayrıl",
+    joinGroup: "Gruba katıl",
+    peopleSearchPlaceholder: "Kişi arayın",
+    searchResults: "Arama sonuçları",
+    topMembersThisWeek: "Bu haftanın öne çıkan üyeleri",
+    activeCoaches: "Aktif koçlar",
+    newMembers: "Yeni üyeler",
+    similarGoals: "Benzer hedefler",
+    openFeed: "Akışı aç",
+    postSubmittedNotification: "Gönderi iletildi - yönetici inceleyecek",
+    challengeJoinedNotification: "Meydan okumaya katıldınız. Başarılar.",
+    logRewardNotification: "Bugünkü kayıt için +5 TJCOIN",
+    groupJoinedNotification: "Gruba hoş geldiniz!",
     turkish: "Turkce",
     arabic: "Arapca",
     spanish: "Ispanyolca",
@@ -607,7 +699,7 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     badge: "مركز المجتمع",
     title: "المجتمع",
     subtitle: "المنشورات والتحديات والتحولات اصبحت منظمة في مكان واحد.",
-    tabs: { threads: "المناقشات", challenges: "التحديات", transformations: "التحولات", blogs: "المدونات" },
+    tabs: { threads: "المناقشات", challenges: "التحديات", transformations: "التحولات", blogs: "المدونات", people: "الأشخاص", groups: "المجموعات" },
     threadsEmpty: "يتم تجهيز المناقشات. سيظهر نشاط المجتمع هنا.",
     challengesEmpty: "لا توجد تحديات نشطة حاليا.",
     transformationsEmpty: "لا توجد تحولات عامة حاليا.",
@@ -637,6 +729,34 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     pin: "تثبيت",
     unpin: "الغاء التثبيت",
     pinned: "مثبت",
+    reactions: { fire: "تفاعل حماسي", muscle: "تفاعل قوة", crown: "تفاعل بطل", lightning: "تفاعل طاقة", target: "تفاعل هدف" },
+    likes: "إعجاب",
+    comments: "تعليق",
+    joined: "انضم",
+    joinChallenge: "انضم إلى التحدي",
+    joinedChallenge: "تم الانضمام",
+    dailyValue: "القيمة اليومية",
+    logToday: "سجل اليوم",
+    loggedToday: "تم تسجيل اليوم",
+    leaderboardTop10: "لوحة الصدارة (أفضل 10)",
+    yourRank: "ترتيبك",
+    noActiveChallenges: "لا توجد تحديات نشطة.",
+    ends: "ينتهي",
+    tjcoinPrizes: "جوائز TJCOIN",
+    members: "عضو",
+    leaveGroup: "مغادرة المجموعة",
+    joinGroup: "الانضمام إلى المجموعة",
+    peopleSearchPlaceholder: "ابحث عن أشخاص",
+    searchResults: "نتائج البحث",
+    topMembersThisWeek: "أفضل الأعضاء هذا الأسبوع",
+    activeCoaches: "المدربون النشطون",
+    newMembers: "الأعضاء الجدد",
+    similarGoals: "أهداف مشابهة",
+    openFeed: "فتح الخلاصة",
+    postSubmittedNotification: "تم إرسال المنشور - سيراجعه المسؤول",
+    challengeJoinedNotification: "تم الانضمام إلى التحدي. بالتوفيق.",
+    logRewardNotification: "+5 TJCOIN لتسجيل اليوم",
+    groupJoinedNotification: "مرحباً بك في المجموعة!",
     turkish: "التركية",
     arabic: "العربية",
     spanish: "الاسبانية",
@@ -646,7 +766,7 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     badge: "Centro de Comunidad",
     title: "Comunidad",
     subtitle: "Hilos, retos y transformaciones ahora estan organizados en un solo lugar.",
-    tabs: { threads: "Hilos", challenges: "Retos", transformations: "Transformaciones", blogs: "Blogs" },
+    tabs: { threads: "Hilos", challenges: "Retos", transformations: "Transformaciones", blogs: "Blogs", people: "Personas", groups: "Grupos" },
     threadsEmpty: "Los hilos se estan preparando. Tu feed aparecera aqui.",
     challengesEmpty: "Aun no hay retos activos.",
     transformationsEmpty: "Aun no hay transformaciones publicas.",
@@ -676,6 +796,34 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     pin: "Fijar",
     unpin: "Desfijar",
     pinned: "Fijado",
+    reactions: { fire: "Reacción de fuego", muscle: "Reacción de fuerza", crown: "Reacción de campeón", lightning: "Reacción de energía", target: "Reacción de objetivo" },
+    likes: "me gusta",
+    comments: "comentarios",
+    joined: "se unieron",
+    joinChallenge: "Unirse al reto",
+    joinedChallenge: "Unido",
+    dailyValue: "Valor diario",
+    logToday: "Registrar hoy",
+    loggedToday: "Registrado hoy",
+    leaderboardTop10: "Tabla de posiciones (Top 10)",
+    yourRank: "Tu posición",
+    noActiveChallenges: "No hay retos activos.",
+    ends: "termina",
+    tjcoinPrizes: "Premios TJCOIN",
+    members: "miembros",
+    leaveGroup: "Salir del grupo",
+    joinGroup: "Unirse al grupo",
+    peopleSearchPlaceholder: "Buscar personas",
+    searchResults: "Resultados de búsqueda",
+    topMembersThisWeek: "Miembros destacados esta semana",
+    activeCoaches: "Coaches activos",
+    newMembers: "Nuevos miembros",
+    similarGoals: "Objetivos similares",
+    openFeed: "Abrir feed",
+    postSubmittedNotification: "Publicación enviada - el admin la revisará",
+    challengeJoinedNotification: "Te uniste al reto. Mucho éxito.",
+    logRewardNotification: "+5 TJCOIN por registrar hoy",
+    groupJoinedNotification: "Bienvenido al grupo!",
     turkish: "Turco",
     arabic: "Arabe",
     spanish: "Espanol",
@@ -685,7 +833,7 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     badge: "Centre Communaute",
     title: "Communaute",
     subtitle: "Discussions, defis et transformations sont maintenant reunis au meme endroit.",
-    tabs: { threads: "Discussions", challenges: "Defis", transformations: "Transformations", blogs: "Blogs" },
+    tabs: { threads: "Discussions", challenges: "Defis", transformations: "Transformations", blogs: "Blogs", people: "Personnes", groups: "Groupes" },
     threadsEmpty: "Les discussions sont en preparation. Votre flux apparaitra ici.",
     challengesEmpty: "Aucun defi actif pour le moment.",
     transformationsEmpty: "Aucune transformation publique pour le moment.",
@@ -715,6 +863,34 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     pin: "Epingler",
     unpin: "Retirer",
     pinned: "Epingle",
+    reactions: { fire: "Réaction feu", muscle: "Réaction force", crown: "Réaction champion", lightning: "Réaction énergie", target: "Réaction objectif" },
+    likes: "mentions j'aime",
+    comments: "commentaires",
+    joined: "inscrits",
+    joinChallenge: "Rejoindre le défi",
+    joinedChallenge: "Inscrit",
+    dailyValue: "Valeur du jour",
+    logToday: "Enregistrer aujourd'hui",
+    loggedToday: "Enregistré aujourd'hui",
+    leaderboardTop10: "Classement (Top 10)",
+    yourRank: "Votre rang",
+    noActiveChallenges: "Aucun défi actif.",
+    ends: "fin",
+    tjcoinPrizes: "Prix TJCOIN",
+    members: "membres",
+    leaveGroup: "Quitter le groupe",
+    joinGroup: "Rejoindre le groupe",
+    peopleSearchPlaceholder: "Rechercher des personnes",
+    searchResults: "Résultats de recherche",
+    topMembersThisWeek: "Membres en tête cette semaine",
+    activeCoaches: "Coachs actifs",
+    newMembers: "Nouveaux membres",
+    similarGoals: "Objectifs similaires",
+    openFeed: "Ouvrir le fil",
+    postSubmittedNotification: "Publication envoyée - un admin va la vérifier",
+    challengeJoinedNotification: "Défi rejoint. Bonne réussite.",
+    logRewardNotification: "+5 TJCOIN pour l'enregistrement du jour",
+    groupJoinedNotification: "Bienvenue dans le groupe !",
     turkish: "Turc",
     arabic: "Arabe",
     spanish: "Espagnol",

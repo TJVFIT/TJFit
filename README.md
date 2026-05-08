@@ -78,6 +78,7 @@ npm run dev
 - Payment resolution and checkout adapters are in `src/lib/payments/`
 - Simple rate limiting helper is in `src/lib/rate-limit.ts`
 - Checkout APIs are under `src/app/api/checkout/`
+- Scheduled lifecycle email sequences live in `src/lib/email/sequences.ts` with cron runners under `src/app/api/cron/email-sequences/` and `src/app/api/cron/inactive-detection/`.
 
 ## Required Database Migrations
 
@@ -133,7 +134,8 @@ npm run dev
 | CHECKOUT_PROMO_CODE | Optional | Single promo code helper env. |
 | CHECKOUT_PROMO_PERCENT | Optional | Single promo percent helper env. |
 | RESEND_API_KEY | Required for email automations | API key for transactional/system emails. |
-| EMAIL_UNSUBSCRIBE_SECRET | Recommended | HMAC secret used to sign one-click unsubscribe links. |
+| CRON_SECRET | Required for cron routes | Bearer token secret for Vercel cron endpoints. |
+| EMAIL_UNSUBSCRIBE_SECRET | Required for email sequences | HMAC secret used to sign 90-day unsubscribe JWTs. |
 | PADDLE_DEBUG_LOG | Optional | Enables debug-level Paddle logging on server routes. |
 | NEXT_PUBLIC_GA4_MEASUREMENT_ID | Optional | GA4 measurement id. |
 | NEXT_PUBLIC_META_PIXEL_ID | Optional | Meta pixel id. |

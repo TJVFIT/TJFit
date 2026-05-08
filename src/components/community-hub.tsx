@@ -9,7 +9,7 @@ import { FollowButton } from "@/components/ui/follow-button";
 import { Transformation, communityPosts, transformations } from "@/lib/content";
 import type { Locale } from "@/lib/i18n";
 import Image from "next/image";
-import { getCommunityCopy } from "@/lib/launch-copy";
+import { getCommunityCopy, type CommunityCopy } from "@/lib/launch-copy";
 
 type TabKey = "threads" | "challenges" | "groups" | "transformations" | "blogs" | "people";
 
@@ -50,11 +50,13 @@ function ThreadsPanel({
   posts,
   emptyLabel,
   reactions,
+  copy,
   onReact
 }: {
   posts: typeof communityPosts;
   emptyLabel: string;
   reactions: Record<string, Record<string, number>>;
+  copy: CommunityCopy;
   onReact: (postId: string, key: string) => void;
 }) {
   if (posts.length === 0) {
@@ -75,17 +77,19 @@ function ThreadsPanel({
           </div>
           <p className="mt-3 text-sm text-bright">{post.content}</p>
           <div className="mt-3 flex flex-wrap gap-2">
-            {[
+            {([
               ["fire", "🔥"],
               ["muscle", "💪"],
               ["crown", "👑"],
               ["lightning", "⚡"],
               ["target", "🎯"]
-            ].map(([key, emoji]) => (
+            ] as const).map(([key, emoji]) => (
               <button
                 key={key}
                 type="button"
                 onClick={() => onReact(post.id, key)}
+                aria-label={copy.reactions[key]}
+                title={copy.reactions[key]}
                 className="rounded-full border border-white/15 px-2.5 py-1 text-xs text-bright hover:border-cyan-300/40"
               >
                 {emoji} {reactions[post.id]?.[key] ?? 0}
@@ -93,7 +97,7 @@ function ThreadsPanel({
             ))}
           </div>
           <p className="mt-3 text-xs text-faint">
-            {post.likes} likes · {post.comments} comments
+            {post.likes} {copy.likes} ? {post.comments} {copy.comments}
           </p>
         </article>
       ))}
@@ -101,7 +105,7 @@ function ThreadsPanel({
   );
 }
 
-function ChallengesPanel({ items, emptyLabel }: { items: Array<{ slug: string; category: string; name: string; description: string; duration: string; participants: number }>; emptyLabel: string }) {
+function ChallengesPanel({ items, emptyLabel, copy }: { items: Array<{ slug: string; category: string; name: string; description: string; duration: string; participants: number }>; emptyLabel: string; copy: CommunityCopy }) {
   if (items.length === 0) {
     return (
       <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-muted">
@@ -118,7 +122,7 @@ function ChallengesPanel({ items, emptyLabel }: { items: Array<{ slug: string; c
           <h3 className="mt-2 text-lg font-semibold text-white">{item.name}</h3>
           <p className="mt-2 text-sm text-bright">{item.description}</p>
           <p className="mt-3 text-xs text-faint">
-            {item.duration} · {item.participants} joined
+            {item.duration} / {item.participants} {copy.joined}
           </p>
         </article>
       ))}
@@ -145,16 +149,18 @@ type DbChallenge = {
 
 function ChallengesLivePanel({
   items,
+  copy,
   onJoin,
   onLog
 }: {
   items: DbChallenge[];
+  copy: CommunityCopy;
   onJoin: (challengeId: string) => void;
   onLog: (challengeId: string, value: number) => void;
 }) {
   const [logValueById, setLogValueById] = useState<Record<string, string>>({});
   if (items.length === 0) {
-    return <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-muted">No active challenges.</div>;
+    return <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-muted">{copy.noActiveChallenges}</div>;
   }
   return (
     <div className="space-y-4">
@@ -165,10 +171,10 @@ function ChallengesLivePanel({
               <h3 className="text-lg font-semibold text-white">{item.title}</h3>
               <p className="mt-1 text-sm text-bright">{item.description}</p>
               <p className="mt-2 text-xs text-faint">
-                {item.metric_type} · ends {item.end_date} · {item.participants} joined
+                {item.metric_type} / {copy.ends} {item.end_date} / {item.participants} {copy.joined}
               </p>
               <p className="mt-1 text-xs text-cyan-300">
-                TJCOIN prizes: {item.coin_prize_1st}/{item.coin_prize_2nd}/{item.coin_prize_3rd}
+                {copy.tjcoinPrizes}: {item.coin_prize_1st}/{item.coin_prize_2nd}/{item.coin_prize_3rd}
               </p>
             </div>
             <button
@@ -176,7 +182,7 @@ function ChallengesLivePanel({
               onClick={() => onJoin(item.id)}
               className="rounded-full border border-cyan-400/35 bg-cyan-500/10 px-4 py-2 text-xs font-semibold text-cyan-100"
             >
-              {item.joined ? "Joined" : "Join Challenge"}
+              {item.joined ? copy.joinedChallenge : copy.joinChallenge}
             </button>
           </div>
           {item.joined ? (
@@ -184,7 +190,7 @@ function ChallengesLivePanel({
               <input
                 value={logValueById[item.id] ?? ""}
                 onChange={(e) => setLogValueById((prev) => ({ ...prev, [item.id]: e.target.value }))}
-                placeholder="Daily value"
+                placeholder={copy.dailyValue}
                 type="number"
                 min={1}
                 className="w-36 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white"
@@ -195,19 +201,19 @@ function ChallengesLivePanel({
                 onClick={() => onLog(item.id, Number(logValueById[item.id] ?? 0))}
                 className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-bright disabled:opacity-50"
               >
-                {item.todayLogged ? `Logged today ${item.todayValue ?? ""}` : "Log Today"}
+                {item.todayLogged ? `${copy.loggedToday} ${item.todayValue ?? ""}` : copy.logToday}
               </button>
             </div>
           ) : null}
           <details className="mt-4 rounded-xl border border-white/10 bg-black/20 p-3">
-            <summary className="cursor-pointer text-sm text-bright">Leaderboard (Top 10)</summary>
+            <summary className="cursor-pointer text-sm text-bright">{copy.leaderboardTop10}</summary>
             <div className="mt-3 space-y-1 text-sm">
               {item.leaderboard.map((row, idx) => (
                 <p key={`${row.userId}-${idx}`} className="text-bright">
                   #{idx + 1} · {row.total}
                 </p>
               ))}
-              {item.myRank ? <p className="mt-2 text-cyan-300">Your rank: #{item.myRank}</p> : null}
+              {item.myRank ? <p className="mt-2 text-cyan-300">{copy.yourRank}: #{item.myRank}</p> : null}
             </div>
           </details>
         </article>
@@ -228,9 +234,11 @@ type DiscoverUser = {
 
 function GroupsPanel({
   groups,
+  copy,
   onToggle
 }: {
   groups: DbGroup[];
+  copy: CommunityCopy;
   onToggle: (groupId: string, action: "join" | "leave") => void;
 }) {
   return (
@@ -239,13 +247,13 @@ function GroupsPanel({
         <article key={group.id} className="rounded-[24px] border border-white/10 bg-white/5 p-5">
           <h3 className="text-lg font-semibold text-white">{group.name}</h3>
           <p className="mt-2 text-sm text-bright">{group.description ?? ""}</p>
-          <p className="mt-2 text-xs text-faint">{group.memberCount} members</p>
+          <p className="mt-2 text-xs text-faint">{group.memberCount} {copy.members}</p>
           <button
             type="button"
             onClick={() => onToggle(group.id, group.joined ? "leave" : "join")}
             className="mt-4 rounded-full border border-cyan-400/35 bg-cyan-500/10 px-4 py-2 text-xs font-semibold text-cyan-100"
           >
-            {group.joined ? "Leave Group" : "Join Group"}
+            {group.joined ? copy.leaveGroup : copy.joinGroup}
           </button>
         </article>
       ))}
@@ -253,7 +261,7 @@ function GroupsPanel({
   );
 }
 
-function PeoplePanel({ locale }: { locale: Locale }) {
+function PeoplePanel({ locale, copy }: { locale: Locale; copy: CommunityCopy }) {
   const [query, setQuery] = useState("");
   const [debounced, setDebounced] = useState("");
   const [discover, setDiscover] = useState<{
@@ -312,22 +320,22 @@ function PeoplePanel({ locale }: { locale: Locale }) {
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search people"
+        placeholder={copy.peopleSearchPlaceholder}
         className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white"
       />
       {searchResults.length > 0 ? (
-        <Section title="Search Results" users={searchResults} />
+        <Section title={copy.searchResults} users={searchResults} />
       ) : (
         <div className="grid gap-5 md:grid-cols-2">
-          <Section title="Top Members This Week" users={discover.top_earners} />
-          <Section title="Active Coaches" users={discover.coaches} />
-          <Section title="New Members" users={discover.new_members} />
-          <Section title="Similar Goals" users={discover.similar_goal} />
+          <Section title={copy.topMembersThisWeek} users={discover.top_earners} />
+          <Section title={copy.activeCoaches} users={discover.coaches} />
+          <Section title={copy.newMembers} users={discover.new_members} />
+          <Section title={copy.similarGoals} users={discover.similar_goal} />
         </div>
       )}
       <p className="text-xs text-dim">
         <Link href={`/${locale}/feed`} className="text-cyan-300">
-          Open feed
+          {copy.openFeed}
         </Link>
       </p>
     </div>
@@ -382,10 +390,10 @@ export function CommunityHub({
   const copy = getCommunityCopy(locale);
   const tabs: { key: TabKey; label: string }[] = [
     { key: "blogs", label: copy.tabs.blogs },
-    { key: "people", label: "People" },
+    { key: "people", label: copy.tabs.people },
     { key: "threads", label: copy.tabs.threads },
     { key: "challenges", label: copy.tabs.challenges },
-    { key: "groups", label: "Groups" },
+    { key: "groups", label: copy.tabs.groups },
     { key: "transformations", label: copy.tabs.transformations }
   ];
 
@@ -489,7 +497,7 @@ export function CommunityHub({
         setBlogError(data.error ?? copy.publishFailed);
       } else {
         setBlogSuccess(copy.publishSuccess);
-        island?.showNotification("signup", "Post submitted — admin will review soon");
+        island?.showNotification("signup", copy.postSubmittedNotification);
         setTitle("");
         setContent("");
         setImage(null);
@@ -594,7 +602,7 @@ export function CommunityHub({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ challengeId })
     });
-    island?.showNotification("signup", "Challenge joined! Good luck 💪");
+    island?.showNotification("signup", copy.challengeJoinedNotification);
     await loadChallenges();
   };
 
@@ -605,7 +613,7 @@ export function CommunityHub({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ challengeId, value })
     });
-    island?.showNotification("coins", "+5 TJCOIN for logging today");
+    island?.showNotification("coins", copy.logRewardNotification);
     await loadChallenges();
   };
 
@@ -617,7 +625,7 @@ export function CommunityHub({
       body: JSON.stringify({ groupId, action })
     });
     if (action === "join") {
-      island?.showNotification("signup", "Welcome to the group!");
+      island?.showNotification("signup", copy.groupJoinedNotification);
     }
     await loadGroups();
   };
@@ -663,6 +671,7 @@ export function CommunityHub({
               posts={communityPosts}
               emptyLabel={copy.threadsEmpty}
               reactions={threadReactions}
+              copy={copy}
               onReact={(postId, key) => {
                 setThreadReactions((prev) => ({
                   ...prev,
@@ -677,8 +686,8 @@ export function CommunityHub({
               }}
             />
           )}
-          {activeTab === "challenges" && <ChallengesLivePanel items={challengeItems} onJoin={joinChallenge} onLog={logChallenge} />}
-          {activeTab === "groups" && <GroupsPanel groups={groupItems} onToggle={toggleGroup} />}
+          {activeTab === "challenges" && <ChallengesLivePanel items={challengeItems} copy={copy} onJoin={joinChallenge} onLog={logChallenge} />}
+          {activeTab === "groups" && <GroupsPanel groups={groupItems} copy={copy} onToggle={toggleGroup} />}
           {activeTab === "transformations" && (
             <TransformationsPanel
               items={transformations}
@@ -838,7 +847,7 @@ export function CommunityHub({
               )}
             </div>
           )}
-          {activeTab === "people" && <PeoplePanel locale={locale} />}
+          {activeTab === "people" && <PeoplePanel locale={locale} copy={copy} />}
         </div>
       </div>
     </div>

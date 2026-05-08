@@ -38,19 +38,21 @@ const HUB_SUBTITLE: Record<Locale, string> = {
   fr: "Votre coach fitness adaptatif avec memoire de plan"
 };
 
+const TIER_COPY: Record<Locale, Record<"apex" | "pro" | "core" | "upgrade", string>> = {
+  en: { apex: "Apex tier", pro: "Pro tier", core: "Core membership", upgrade: "Upgrade ->" },
+  tr: { apex: "Apex üyeliği", pro: "Pro üyeliği", core: "Core üyeliği", upgrade: "Yükselt ->" },
+  ar: { apex: "عضوية Apex", pro: "عضوية Pro", core: "عضوية Core", upgrade: "الترقية ->" },
+  es: { apex: "Membresía Apex", pro: "Membresía Pro", core: "Membresía Core", upgrade: "Mejorar ->" },
+  fr: { apex: "Abonnement Apex", pro: "Abonnement Pro", core: "Abonnement Core", upgrade: "Mettre à niveau ->" }
+};
+
 function normalizeTab(raw: string | null): TabKey {
   if (raw === "chat" || raw === "meal-swap" || raw === "progress" || raw === "my-plan") return raw;
   return "my-plan";
 }
 
-function tierLabel(locale: Locale, tier: string) {
-  if (tier === "apex") return "Apex";
-  if (tier === "pro") return "Pro";
-  if (locale === "ar") return "أساسي";
-  if (locale === "tr") return "Cekirdek";
-  if (locale === "es") return "Basico";
-  if (locale === "fr") return "Essentiel";
-  return "Core";
+function tierLabel(locale: Locale, tier: "core" | "pro" | "apex") {
+  return TIER_COPY[locale][tier];
 }
 
 export function TJAIHub({ locale }: { locale: Locale }) {
@@ -134,7 +136,7 @@ export function TJAIHub({ locale }: { locale: Locale }) {
                 {tier === "apex" ? (
                   <div className="apex-rotating-border">
                     <div className="apex-rotating-border-inner">
-                      [{tierLabel(locale, tier).toUpperCase()}]
+                      [{tierLabel(locale, tier)}]
                     </div>
                   </div>
                 ) : (
@@ -144,12 +146,12 @@ export function TJAIHub({ locale }: { locale: Locale }) {
                       ? "border-blue-400/35 bg-blue-400/10 text-blue-300"
                       : "border-[rgba(34,211,238,0.35)] bg-[rgba(34,211,238,0.12)] text-accent"
                   )}>
-                    [{tierLabel(locale, tier).toUpperCase()}]
+                    [{tierLabel(locale, tier)}]
                   </span>
                 )}
                 {tier === "core" ? (
                   <a href={`/${locale}/membership`} className="text-xs font-semibold text-accent hover:text-white">
-                    Upgrade →
+                    {TIER_COPY[locale].upgrade}
                   </a>
                 ) : null}
               </div>

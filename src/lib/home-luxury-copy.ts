@@ -26,6 +26,69 @@ export type HomeLuxuryCopy = {
     trustLine?: string;
     /** Short gradient line under the main headline (brand punch) */
     heroGradientTagline: string;
+    liveTrainingSuffix: string;
+    fallbackBadge: string;
+    commandToday: string;
+    commandPlan: string;
+    commandLive: string;
+    commandConsistency: string;
+    commandRows: { title: string; value: string; meta: string }[];
+    signals: { model: string; modelValue: string; cycle: string; cycleValue: string; output: string; outputValue: string };
+    metrics: { value: string; label: string; hint: string }[];
+    scroll: string;
+  };
+  immersive: {
+    tjaiOverview: {
+      eyebrow: string;
+      title: string;
+      body: string;
+      cta: string;
+    };
+    editorialRail: string[];
+    platform: {
+      eyebrow: string;
+      title: string;
+      titleMuted: string;
+      body: string;
+      features: { title: string; desc: string }[];
+    };
+    stats: {
+      programs: string;
+      diets: string;
+      weeks: string;
+      languages: string;
+    };
+    programs: {
+      ghost: string;
+      eyebrow: string;
+      titleSuffix: string;
+      titleAccent: string;
+      viewAll: string;
+    };
+    tjai: {
+      ghost: string;
+      eyebrow: string;
+      title: string;
+      body: string;
+      bullets: { title: string; desc: string }[];
+      primary: string;
+      secondary: string;
+      pricing: string;
+    };
+    diets: {
+      ghost: string;
+      eyebrow: string;
+      titleSuffix: string;
+      titleAccent: string;
+      viewAll: string;
+    };
+    final: {
+      eyebrow: string;
+      titlePrefix: string;
+      titleAccent: string;
+      freeSuffix: string;
+      browsePrograms: string;
+    };
   };
   /** Free value / lead magnet section */
   leadMagnet: {
@@ -127,7 +190,97 @@ const en: HomeLuxuryCopy = {
     trust: ["Clear plans", "Vetted coaches", "5 languages"],
     trustLine: "Free to start · No card · 20+ flagship programs",
     ctaNote: "",
-    heroGradientTagline: "AI precision · Human intent · Measurable weeks"
+    heroGradientTagline: "AI precision · Human intent · Measurable weeks",
+    liveTrainingSuffix: "training now",
+    fallbackBadge: "Fitness operating system",
+    commandToday: "Today",
+    commandPlan: "Adaptive plan",
+    commandLive: "Live",
+    commandConsistency: "Consistency",
+    commandRows: [
+      { title: "Training block", value: "Upper strength", meta: "Week 04 / Day 02" },
+      { title: "Macro target", value: "2,420 kcal", meta: "Protein 186g" },
+      { title: "Recovery", value: "Load -8%", meta: "Auto adjusted" }
+    ],
+    signals: {
+      model: "model",
+      modelValue: "Adaptive split",
+      cycle: "cycle",
+      cycleValue: "12 weeks",
+      output: "output",
+      outputValue: "Plan + macros"
+    },
+    metrics: [
+      { value: "12", label: "weeks", hint: "Structured blocks with progression and checkpoints." },
+      { value: "25", label: "signals", hint: "TJAI intake reads goals, schedule, equipment, and constraints." },
+      { value: "10", label: "languages", hint: "Training and nutrition in the language you actually use." }
+    ],
+    scroll: "Scroll"
+  },
+  immersive: {
+    tjaiOverview: {
+      eyebrow: "TJAI",
+      title: "Your AI coach, built for your body.",
+      body: "Answer 25 questions. TJAI generates a full 12-week training plan, diet, and supplement stack tuned to your goals, equipment, and time. Preview it free; unlock the full plan when you are ready.",
+      cta: "Try TJAI"
+    },
+    editorialRail: ["12-week periodization", "Macro-aware meals", "TJAI · GPT-4o", "Coach marketplace", "10 languages"],
+    platform: {
+      eyebrow: "The stack",
+      title: "Built like training software,",
+      titleMuted: "not a toy app.",
+      body: "Structured plans, real nutrition systems, AI that respects constraints, and human coaches when you want them — one surface, one visual language.",
+      features: [
+        { title: "TJAI — Your AI Coach", desc: "Adaptive intake, progress-aware memory, and AI-built 12-week transformation plans. Diet, training, and supplements." },
+        { title: "20+ Expert Programs", desc: "12-week structured plans for home or gym. Fat loss, muscle gain, all levels." },
+        { title: "Full Diet Systems", desc: "Daily meal plans with macros, recipes, and grocery lists. Halal, vegan, and budget options covered." },
+        { title: "Coach Marketplace", desc: "Book certified coaches for 1-on-1 guidance and personalized feedback." },
+        { title: "Leaderboards", desc: "Earn TJCOIN, compete on weekly boards, and unlock rewards for consistency." },
+        { title: "10 Languages", desc: "Training and nutrition flows support 10 locales from the first visit." }
+      ]
+    },
+    stats: {
+      programs: "Expert Programs",
+      diets: "Diet Systems",
+      weeks: "Weeks Per Plan",
+      languages: "Languages"
+    },
+    programs: {
+      ghost: "PROGRAMS",
+      eyebrow: "Transformation systems",
+      titleSuffix: "complete",
+      titleAccent: "programs",
+      viewAll: "View all programs"
+    },
+    tjai: {
+      ghost: "INTELLIGENCE",
+      eyebrow: "AI transformation engine",
+      title: "Meet TJAI.",
+      body: "Complete an adaptive intake and get a complete 12-week plan in minutes — training blocks, meals, macros, and progression tuned to your metabolism, schedule, and feedback.",
+      bullets: [
+        { title: "Science-based calculations", desc: "Metabolism, load, and recovery modeled like a performance lab — not generic templates." },
+        { title: "Complete 12-week structure", desc: "Periodized weeks, deloads, and checkpoints you can execute without guesswork." },
+        { title: "Daily meal plans + macros", desc: "Meals, grocery logic, and macro targets aligned to your training phase." },
+        { title: "Adjustable + regeneratable", desc: "Life changes. Regenerate blocks while preserving your history and intent." }
+      ],
+      primary: "Build my plan — free preview",
+      secondary: "See a sample plan",
+      pricing: "Core (Free) · TJAI unlock $10 · Pro $6/mo · Apex $10/mo"
+    },
+    diets: {
+      ghost: "NUTRITION",
+      eyebrow: "Nutrition",
+      titleSuffix: "diet",
+      titleAccent: "systems",
+      viewAll: "View all diets"
+    },
+    final: {
+      eyebrow: "Access",
+      titlePrefix: "Start your next",
+      titleAccent: "12 weeks",
+      freeSuffix: "It's Free",
+      browsePrograms: "Browse Programs"
+    }
   },
   leadMagnet: {
     badge: "Free guide",
@@ -260,7 +413,74 @@ const tr: HomeLuxuryCopy = {
     ctaBrowsePrograms: "Programları keşfet",
     trust: ["Net planlar", "Seçilmiş koçlar", "10 dil"],
     ctaNote: "Yol haritası e-postada · Hesap isteğe bağlı · Karmaşa yok",
-    heroGradientTagline: "Yapay zekâ keskinliği · İnsan seviyesinde koçluk · Ölçülebilir haftalar"
+    heroGradientTagline: "Yapay zekâ keskinliği · İnsan seviyesinde koçluk · Ölçülebilir haftalar",
+    liveTrainingSuffix: "şu anda antrenmanda",
+    fallbackBadge: "Fitness işletim sistemi",
+    commandToday: "Bugün",
+    commandPlan: "Uyarlanabilir plan",
+    commandLive: "Canlı",
+    commandConsistency: "Süreklilik",
+    commandRows: [
+      { title: "Antrenman bloğu", value: "Üst vücut güç", meta: "Hafta 04 / Gün 02" },
+      { title: "Macro hedefi", value: "2.420 kcal", meta: "Protein 186g" },
+      { title: "Toparlanma", value: "Yük -8%", meta: "Otomatik ayarlandı" }
+    ],
+    signals: {
+      model: "model",
+      modelValue: "Uyarlanabilir split",
+      cycle: "döngü",
+      cycleValue: "12 hafta",
+      output: "çıktı",
+      outputValue: "Plan + macros"
+    },
+    metrics: [
+      { value: "12", label: "hafta", hint: "İlerleme ve kontrol noktaları olan yapılandırılmış bloklar." },
+      { value: "25", label: "sinyal", hint: "TJAI hedefleri, programı, ekipmanı ve sınırları okur." },
+      { value: "10", label: "dil", hint: "Antrenman ve beslenme gerçekten kullandığınız dilde." }
+    ],
+    scroll: "Kaydır"
+  },
+  immersive: {
+    tjaiOverview: {
+      eyebrow: "TJAI",
+      title: "Vücudunuz için tasarlanmış AI koçunuz.",
+      body: "25 soruyu yanıtlayın. TJAI hedeflerinize, ekipmanınıza ve zamanınıza göre 12 haftalık antrenman planı, diyet ve supplement akışı oluşturur. Ücretsiz önizleyin; hazır olduğunuzda tam planı açın.",
+      cta: "TJAI'yi deneyin"
+    },
+    editorialRail: ["12 haftalık periodizasyon", "Macro duyarlı öğünler", "TJAI · GPT-4o", "Koç pazarı", "10 dil"],
+    platform: {
+      eyebrow: "Sistem",
+      title: "Oyuncak uygulama değil,",
+      titleMuted: "antrenman yazılımı gibi inşa edildi.",
+      body: "Yapılandırılmış planlar, gerçek beslenme sistemleri, sınırlarınıza saygı duyan AI ve istediğinizde insan koçlar — tek yüzey, tek görsel dil.",
+      features: [
+        { title: "TJAI — AI Koçunuz", desc: "Uyarlanabilir intake, ilerlemeyi bilen hafıza ve AI ile oluşturulan 12 haftalık dönüşüm planları. Diyet, antrenman ve supplement." },
+        { title: "20+ Uzman Program", desc: "Ev veya salon için 12 haftalık yapılandırılmış planlar. Yağ kaybı, kas kazanımı, tüm seviyeler." },
+        { title: "Tam Diyet Sistemleri", desc: "Macro, tarif ve alışveriş listeleriyle günlük öğün planları. Helal, vegan ve bütçe seçenekleri dahil." },
+        { title: "Koç Pazarı", desc: "Bire bir rehberlik ve kişisel geri bildirim için sertifikalı koçlarla çalışın." },
+        { title: "Liderlik Tabloları", desc: "TJCOIN kazanın, haftalık tablolarda yarışın ve süreklilik ödüllerini açın." },
+        { title: "10 Dil", desc: "Antrenman ve beslenme akışları ilk ziyaretten itibaren 10 locale destekler." }
+      ]
+    },
+    stats: { programs: "Uzman Program", diets: "Diyet Sistemi", weeks: "Plan Başına Hafta", languages: "Dil" },
+    programs: { ghost: "PROGRAMLAR", eyebrow: "Dönüşüm sistemleri", titleSuffix: "tam", titleAccent: "program", viewAll: "Tüm programları görüntüle" },
+    tjai: {
+      ghost: "ZEKÂ",
+      eyebrow: "AI dönüşüm motoru",
+      title: "TJAI ile tanışın.",
+      body: "Uyarlanabilir intake'i tamamlayın; metabolizmanıza, programınıza ve geri bildiriminize göre antrenman blokları, öğünler, macros ve ilerleme içeren 12 haftalık tam planı dakikalar içinde alın.",
+      bullets: [
+        { title: "Bilime dayalı hesaplamalar", desc: "Metabolizma, yük ve toparlanma jenerik şablon gibi değil, performans laboratuvarı gibi modellenir." },
+        { title: "Tam 12 haftalık yapı", desc: "Tahmin gerektirmeyen periodize haftalar, deload'lar ve kontrol noktaları." },
+        { title: "Günlük öğün planları + macros", desc: "Antrenman fazınızla uyumlu öğünler, alışveriş mantığı ve macro hedefleri." },
+        { title: "Ayarlanabilir + yeniden üretilebilir", desc: "Hayat değişir. Geçmişinizi ve niyetinizi koruyarak blokları yeniden oluşturun." }
+      ],
+      primary: "Planımı oluştur — ücretsiz önizleme",
+      secondary: "Örnek planı görün",
+      pricing: "Core (Ücretsiz) · TJAI açılımı $10 · Pro $6/ay · Apex $10/ay"
+    },
+    diets: { ghost: "BESLENME", eyebrow: "Beslenme", titleSuffix: "diyet", titleAccent: "sistemi", viewAll: "Tüm diyetleri görüntüle" },
+    final: { eyebrow: "Erişim", titlePrefix: "Sıradaki", titleAccent: "12 haftanıza", freeSuffix: "Ücretsiz", browsePrograms: "Programları keşfet" }
   },
   leadMagnet: {
     badge: "Ücretsiz rehber",
@@ -375,7 +595,74 @@ const ar: HomeLuxuryCopy = {
     ctaBrowsePrograms: "البرامج",
     trust: ["خطط واضحة", "مدربون مختارون", "5 languages"],
     ctaNote: "خارطة بالبريد · الحساب اختياري · بلا فوضى",
-    heroGradientTagline: "دقة الذكاء الاصطناعي · نية بشرية · أسابيع قابلة للقياس"
+    heroGradientTagline: "دقة الذكاء الاصطناعي · نية بشرية · أسابيع قابلة للقياس",
+    liveTrainingSuffix: "يتدربون الآن",
+    fallbackBadge: "نظام تشغيل للياقة",
+    commandToday: "اليوم",
+    commandPlan: "خطة قابلة للتكيف",
+    commandLive: "مباشر",
+    commandConsistency: "الاستمرارية",
+    commandRows: [
+      { title: "كتلة التدريب", value: "قوة الجزء العلوي", meta: "الأسبوع 04 / اليوم 02" },
+      { title: "هدف macros", value: "2,420 kcal", meta: "Protein 186g" },
+      { title: "التعافي", value: "الحمل -8%", meta: "تم التعديل تلقائياً" }
+    ],
+    signals: {
+      model: "النموذج",
+      modelValue: "تقسيم قابل للتكيف",
+      cycle: "الدورة",
+      cycleValue: "12 أسبوعاً",
+      output: "المخرجات",
+      outputValue: "خطة + macros"
+    },
+    metrics: [
+      { value: "12", label: "أسبوعاً", hint: "كتل منظمة مع تقدم ونقاط متابعة." },
+      { value: "25", label: "إشارة", hint: "TJAI يقرأ الأهداف والجدول والمعدات والقيود." },
+      { value: "10", label: "لغات", hint: "التدريب والتغذية باللغة التي تستخدمها فعلاً." }
+    ],
+    scroll: "مرر"
+  },
+  immersive: {
+    tjaiOverview: {
+      eyebrow: "TJAI",
+      title: "مدربك بالذكاء الاصطناعي، مصمم لجسمك.",
+      body: "أجب عن 25 سؤالاً. ينشئ TJAI خطة تدريب كاملة لمدة 12 أسبوعاً ونظاماً غذائياً ومسار supplement مضبوطاً على أهدافك ومعداتك ووقتك. عاينها مجاناً وافتح الخطة الكاملة عندما تكون جاهزاً.",
+      cta: "جرّب TJAI"
+    },
+    editorialRail: ["Periodization لمدة 12 أسبوعاً", "وجبات واعية بالـ macros", "TJAI · GPT-4o", "سوق المدربين", "10 لغات"],
+    platform: {
+      eyebrow: "النظام",
+      title: "مصمم كبرنامج تدريب،",
+      titleMuted: "وليس كتطبيق عابر.",
+      body: "خطط منظمة، أنظمة تغذية حقيقية، AI يحترم القيود، ومدربون بشر عند الحاجة — سطح واحد ولغة بصرية واحدة.",
+      features: [
+        { title: "TJAI — مدربك بالذكاء الاصطناعي", desc: "Intake قابل للتكيف وذاكرة واعية بالتقدم وخطط تحول لمدة 12 أسبوعاً مبنية بالـ AI. غذاء وتدريب وsupplements." },
+        { title: "أكثر من 20 برنامجاً خبيراً", desc: "خطط منظمة لمدة 12 أسبوعاً للمنزل أو النادي. خسارة دهون، بناء عضل، وكل المستويات." },
+        { title: "أنظمة غذائية كاملة", desc: "خطط وجبات يومية مع macros ووصفات وقوائم تسوق. خيارات حلال ونباتية وموفرة." },
+        { title: "سوق المدربين", desc: "احجز مدربين معتمدين لإرشاد فردي وملاحظات شخصية." },
+        { title: "لوحات الترتيب", desc: "اكسب TJCOIN وتنافس أسبوعياً وافتح مكافآت الاستمرارية." },
+        { title: "10 لغات", desc: "مسارات التدريب والتغذية تدعم 10 locales منذ الزيارة الأولى." }
+      ]
+    },
+    stats: { programs: "برامج خبيرة", diets: "أنظمة غذائية", weeks: "أسابيع لكل خطة", languages: "لغات" },
+    programs: { ghost: "البرامج", eyebrow: "أنظمة التحول", titleSuffix: "برنامجاً", titleAccent: "كاملاً", viewAll: "عرض كل البرامج" },
+    tjai: {
+      ghost: "الذكاء",
+      eyebrow: "محرك التحول بالـ AI",
+      title: "تعرّف على TJAI.",
+      body: "أكمل intake قابل للتكيف واحصل خلال دقائق على خطة كاملة لمدة 12 أسبوعاً — كتل تدريب، وجبات، macros، وتقدم مضبوط على الأيض والجدول والملاحظات.",
+      bullets: [
+        { title: "حسابات مبنية على العلم", desc: "الأيض والحمل والتعافي تُنمذج كمختبر أداء، لا كقوالب عامة." },
+        { title: "هيكل كامل لمدة 12 أسبوعاً", desc: "أسابيع periodized وdeloads ونقاط متابعة قابلة للتنفيذ دون تخمين." },
+        { title: "خطط وجبات يومية + macros", desc: "وجبات ومنطق تسوق وأهداف macros متوافقة مع مرحلة التدريب." },
+        { title: "قابل للتعديل وإعادة الإنشاء", desc: "الحياة تتغير. أعد إنشاء الكتل مع الحفاظ على تاريخك وهدفك." }
+      ],
+      primary: "ابنِ خطتي — معاينة مجانية",
+      secondary: "شاهد خطة نموذجية",
+      pricing: "Core (مجاني) · فتح TJAI بسعر $10 · Pro $6/شهر · Apex $10/شهر"
+    },
+    diets: { ghost: "التغذية", eyebrow: "التغذية", titleSuffix: "نظاماً", titleAccent: "غذائياً", viewAll: "عرض كل الأنظمة الغذائية" },
+    final: { eyebrow: "الوصول", titlePrefix: "ابدأ", titleAccent: "أسابيعك الـ 12 القادمة", freeSuffix: "مجاني", browsePrograms: "تصفح البرامج" }
   },
   leadMagnet: {
     badge: "دليل مجاني",
@@ -490,7 +777,74 @@ const es: HomeLuxuryCopy = {
     ctaBrowsePrograms: "Explorar programas",
     trust: ["Planes claros", "Coaches seleccionados", "10 idiomas"],
     ctaNote: "Guía por email · Cuenta opcional · Sin ruido",
-    heroGradientTagline: "Precisión de IA · Intención humana · Semanas medibles"
+    heroGradientTagline: "Precisión de IA · Intención humana · Semanas medibles",
+    liveTrainingSuffix: "entrenando ahora",
+    fallbackBadge: "Sistema operativo fitness",
+    commandToday: "Hoy",
+    commandPlan: "Plan adaptativo",
+    commandLive: "En vivo",
+    commandConsistency: "Constancia",
+    commandRows: [
+      { title: "Bloque de entrenamiento", value: "Fuerza superior", meta: "Semana 04 / Día 02" },
+      { title: "Objetivo de macros", value: "2,420 kcal", meta: "Protein 186g" },
+      { title: "Recuperación", value: "Carga -8%", meta: "Ajuste automático" }
+    ],
+    signals: {
+      model: "modelo",
+      modelValue: "Split adaptativo",
+      cycle: "ciclo",
+      cycleValue: "12 semanas",
+      output: "salida",
+      outputValue: "Plan + macros"
+    },
+    metrics: [
+      { value: "12", label: "semanas", hint: "Bloques estructurados con progresión y puntos de control." },
+      { value: "25", label: "señales", hint: "TJAI lee objetivos, agenda, equipo y restricciones." },
+      { value: "10", label: "idiomas", hint: "Entrenamiento y nutrición en el idioma que realmente usas." }
+    ],
+    scroll: "Desplazar"
+  },
+  immersive: {
+    tjaiOverview: {
+      eyebrow: "TJAI",
+      title: "Tu coach con IA, creado para tu cuerpo.",
+      body: "Responde 25 preguntas. TJAI genera un plan completo de 12 semanas, dieta y stack de suplementos ajustado a tus objetivos, equipo y tiempo. Previsualízalo gratis; desbloquea el plan completo cuando estés listo.",
+      cta: "Probar TJAI"
+    },
+    editorialRail: ["Periodización de 12 semanas", "Comidas con macros", "TJAI · GPT-4o", "Marketplace de coaches", "10 idiomas"],
+    platform: {
+      eyebrow: "El sistema",
+      title: "Construido como software de entrenamiento,",
+      titleMuted: "no como una app de juguete.",
+      body: "Planes estructurados, nutrición real, IA que respeta restricciones y coaches humanos cuando los quieres: una superficie, un lenguaje visual.",
+      features: [
+        { title: "TJAI — Tu Coach con IA", desc: "Intake adaptativo, memoria de progreso y planes de transformación de 12 semanas creados con IA. Dieta, training y suplementos." },
+        { title: "20+ Programas Expertos", desc: "Planes estructurados de 12 semanas para casa o gym. Pérdida de grasa, ganancia muscular y todos los niveles." },
+        { title: "Sistemas de Dieta Completos", desc: "Planes diarios con macros, recetas y listas de compras. Opciones halal, veganas y económicas." },
+        { title: "Marketplace de Coaches", desc: "Reserva coaches certificados para guía 1 a 1 y feedback personalizado." },
+        { title: "Rankings", desc: "Gana TJCOIN, compite en tablas semanales y desbloquea recompensas por constancia." },
+        { title: "10 Idiomas", desc: "Los flujos de entrenamiento y nutrición soportan 10 locales desde la primera visita." }
+      ]
+    },
+    stats: { programs: "Programas Expertos", diets: "Sistemas de Dieta", weeks: "Semanas por Plan", languages: "Idiomas" },
+    programs: { ghost: "PROGRAMAS", eyebrow: "Sistemas de transformación", titleSuffix: "programas", titleAccent: "completos", viewAll: "Ver todos los programas" },
+    tjai: {
+      ghost: "INTELIGENCIA",
+      eyebrow: "Motor de transformación con IA",
+      title: "Conoce TJAI.",
+      body: "Completa un intake adaptativo y recibe en minutos un plan completo de 12 semanas: bloques de training, comidas, macros y progresión ajustados a tu metabolismo, agenda y feedback.",
+      bullets: [
+        { title: "Cálculos basados en ciencia", desc: "Metabolismo, carga y recuperación modelados como un laboratorio de rendimiento, no plantillas genéricas." },
+        { title: "Estructura completa de 12 semanas", desc: "Semanas periodizadas, deloads y puntos de control ejecutables sin adivinar." },
+        { title: "Comidas diarias + macros", desc: "Comidas, lógica de compras y objetivos de macros alineados con tu fase de training." },
+        { title: "Ajustable + regenerable", desc: "La vida cambia. Regenera bloques conservando tu historial e intención." }
+      ],
+      primary: "Crear mi plan — vista previa gratis",
+      secondary: "Ver un plan de muestra",
+      pricing: "Core (Gratis) · desbloqueo TJAI $10 · Pro $6/mes · Apex $10/mes"
+    },
+    diets: { ghost: "NUTRICIÓN", eyebrow: "Nutrición", titleSuffix: "sistemas", titleAccent: "de dieta", viewAll: "Ver todas las dietas" },
+    final: { eyebrow: "Acceso", titlePrefix: "Empieza tus próximas", titleAccent: "12 semanas", freeSuffix: "Es gratis", browsePrograms: "Explorar programas" }
   },
   leadMagnet: {
     badge: "Guía gratis",
@@ -605,7 +959,74 @@ const fr: HomeLuxuryCopy = {
     ctaBrowsePrograms: "Parcourir les programmes",
     trust: ["Plans clairs", "Coachs sélectionnés", "10 langues"],
     ctaNote: "Feuille de route par e-mail · Compte optionnel · Sans surcharge",
-    heroGradientTagline: "Précision IA · Intention humaine · Semaines mesurables"
+    heroGradientTagline: "Précision IA · Intention humaine · Semaines mesurables",
+    liveTrainingSuffix: "s'entraînent maintenant",
+    fallbackBadge: "Système d'exploitation fitness",
+    commandToday: "Aujourd'hui",
+    commandPlan: "Plan adaptatif",
+    commandLive: "Live",
+    commandConsistency: "Régularité",
+    commandRows: [
+      { title: "Bloc training", value: "Force haut du corps", meta: "Semaine 04 / Jour 02" },
+      { title: "Objectif macros", value: "2,420 kcal", meta: "Protein 186g" },
+      { title: "Récupération", value: "Charge -8%", meta: "Ajusté automatiquement" }
+    ],
+    signals: {
+      model: "modèle",
+      modelValue: "Split adaptatif",
+      cycle: "cycle",
+      cycleValue: "12 semaines",
+      output: "sortie",
+      outputValue: "Plan + macros"
+    },
+    metrics: [
+      { value: "12", label: "semaines", hint: "Blocs structurés avec progression et points de contrôle." },
+      { value: "25", label: "signaux", hint: "TJAI lit objectifs, planning, équipement et contraintes." },
+      { value: "10", label: "langues", hint: "Training et nutrition dans la langue que vous utilisez vraiment." }
+    ],
+    scroll: "Défiler"
+  },
+  immersive: {
+    tjaiOverview: {
+      eyebrow: "TJAI",
+      title: "Votre coach IA, pensé pour votre corps.",
+      body: "Répondez à 25 questions. TJAI génère un plan training complet de 12 semaines, une diète et une stack supplements adaptés à vos objectifs, équipement et temps. Prévisualisez gratuitement, débloquez le plan complet quand vous êtes prêt.",
+      cta: "Essayer TJAI"
+    },
+    editorialRail: ["Périodisation 12 semaines", "Repas avec macros", "TJAI · GPT-4o", "Marketplace coach", "10 langues"],
+    platform: {
+      eyebrow: "Le système",
+      title: "Construit comme un logiciel training,",
+      titleMuted: "pas comme une app gadget.",
+      body: "Plans structurés, nutrition réelle, IA qui respecte les contraintes et coachs humains quand vous les voulez : une surface, un langage visuel.",
+      features: [
+        { title: "TJAI — Votre Coach IA", desc: "Intake adaptatif, mémoire de progression et plans de transformation 12 semaines générés par IA. Diète, training et supplements." },
+        { title: "20+ Programmes Experts", desc: "Plans structurés 12 semaines pour maison ou salle. Perte de gras, prise de muscle, tous niveaux." },
+        { title: "Systèmes Diète Complets", desc: "Plans repas quotidiens avec macros, recettes et listes de courses. Options halal, vegan et budget." },
+        { title: "Marketplace Coach", desc: "Réservez des coachs certifiés pour un accompagnement 1:1 et des retours personnalisés." },
+        { title: "Classements", desc: "Gagnez des TJCOIN, concourez chaque semaine et débloquez des récompenses de régularité." },
+        { title: "10 Langues", desc: "Les flux training et nutrition prennent en charge 10 locales dès la première visite." }
+      ]
+    },
+    stats: { programs: "Programmes Experts", diets: "Systèmes Diète", weeks: "Semaines par Plan", languages: "Langues" },
+    programs: { ghost: "PROGRAMMES", eyebrow: "Systèmes de transformation", titleSuffix: "programmes", titleAccent: "complets", viewAll: "Voir tous les programmes" },
+    tjai: {
+      ghost: "INTELLIGENCE",
+      eyebrow: "Moteur de transformation IA",
+      title: "Découvrez TJAI.",
+      body: "Complétez un intake adaptatif et recevez en quelques minutes un plan complet de 12 semaines : blocs training, repas, macros et progression adaptés à votre métabolisme, planning et feedback.",
+      bullets: [
+        { title: "Calculs fondés sur la science", desc: "Métabolisme, charge et récupération modélisés comme un labo de performance, pas comme des modèles génériques." },
+        { title: "Structure complète 12 semaines", desc: "Semaines périodisées, deloads et points de contrôle exécutables sans deviner." },
+        { title: "Plans repas quotidiens + macros", desc: "Repas, logique de courses et objectifs macros alignés avec votre phase training." },
+        { title: "Ajustable + régénérable", desc: "La vie change. Régénérez des blocs tout en gardant votre historique et votre intention." }
+      ],
+      primary: "Créer mon plan — aperçu gratuit",
+      secondary: "Voir un plan exemple",
+      pricing: "Core (Gratuit) · déblocage TJAI $10 · Pro $6/mois · Apex $10/mois"
+    },
+    diets: { ghost: "NUTRITION", eyebrow: "Nutrition", titleSuffix: "systèmes", titleAccent: "diète", viewAll: "Voir toutes les diètes" },
+    final: { eyebrow: "Accès", titlePrefix: "Commencez vos prochaines", titleAccent: "12 semaines", freeSuffix: "C'est gratuit", browsePrograms: "Parcourir les programmes" }
   },
   leadMagnet: {
     badge: "Guide gratuit",

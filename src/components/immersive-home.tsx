@@ -250,14 +250,15 @@ export function ImmersiveHome({
   const programSlice = useMemo(() => programs.slice(0, 4), [programs]);
   const dietSlice = useMemo(() => diets.slice(0, 3), [diets]);
 
-  const features = [
-    { icon: Brain, title: "TJAI — Your AI Coach", desc: "Adaptive intake, progress-aware memory, and AI-built 12-week transformation plans. Diet + training + supplements.", accent: "#22D3EE", span: 2 as const },
-    { icon: Dumbbell, title: "20+ Expert Programs", desc: "12-week structured plans for home or gym. Fat loss, muscle gain — all levels.", accent: "#67E8F9", span: 1 as const },
-    { icon: Apple, title: "Full Diet Systems", desc: "Daily meal plans with macros, recipes, grocery lists. Halal, vegan, budget - covered.", accent: "#94A3B8", span: 1 as const },
-    { icon: Users, title: "Coach Marketplace", desc: "Book certified coaches. 1-on-1 guidance and personalized feedback.", accent: "#22D3EE", span: 1 as const },
-    { icon: Trophy, title: "Leaderboards", desc: "Earn TJCOIN, compete on weekly boards, unlock rewards for consistency.", accent: "#94A3B8", span: 1 as const },
-    { icon: Globe, title: "10 Languages", desc: "Training and nutrition flows support 10 locales from the first visit.", accent: "#94A3B8", span: 1 as const }
-  ] as const;
+  const featureIcons = [Brain, Dumbbell, Apple, Users, Trophy, Globe] as const;
+  const featureAccents = ["#22D3EE", "#67E8F9", "#94A3B8", "#22D3EE", "#94A3B8", "#94A3B8"] as const;
+  const featureSpans = [2, 1, 1, 1, 1, 1] as const;
+  const features = copy.immersive.platform.features.map((item, index) => ({
+    ...item,
+    icon: featureIcons[index] ?? Brain,
+    accent: featureAccents[index] ?? "#94A3B8",
+    span: featureSpans[index] ?? 1
+  }));
 
   // TJAI section ref for reveal trigger
   const tjaiRef = useRef<HTMLElement | null>(null);
@@ -306,6 +307,7 @@ export function ImmersiveHome({
         heroGradientTagline={copy.hero.heroGradientTagline}
         heroSub={copy.hero.sub}
         ctaPrimary={copy.hero.ctaPrimary}
+        copy={copy.hero}
       />
 
       <SectionTransition variant="soft" />
@@ -316,24 +318,23 @@ export function ImmersiveHome({
 
       <section
         className="reveal-section relative border-t border-divider bg-[rgba(10,10,11,0.7)] px-6 py-16 lg:px-12 lg:py-20"
-        aria-label="TJAI overview"
+        aria-label={copy.immersive.tjaiOverview.title}
       >
         <div className="mx-auto flex max-w-5xl flex-col items-start gap-8 md:flex-row md:items-center md:justify-between md:gap-10">
           <div className="max-w-xl">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">TJAI</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">{copy.immersive.tjaiOverview.eyebrow}</p>
             <h2 className="mt-3 font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-              Your AI coach, built for your body.
+              {copy.immersive.tjaiOverview.title}
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-[var(--color-text-secondary)] sm:text-base">
-              Answer 25 questions — TJAI generates a full 12-week training plan, diet, and supplement stack
-              tuned to your goals, equipment and time. Preview it free; unlock the full plan when you&rsquo;re ready.
+              {copy.immersive.tjaiOverview.body}
             </p>
           </div>
           <Link
             href={`/${locale}/tjai`}
             className="lux-btn-primary inline-flex min-h-[48px] shrink-0 items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-bold text-background shadow-[0_4px_24px_rgba(34,211,238,0.35)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02]"
           >
-            Try TJAI <ArrowRight className="h-4 w-4" />
+            {copy.immersive.tjaiOverview.cta} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </section>
@@ -341,13 +342,7 @@ export function ImmersiveHome({
       {/* Editorial rail — no marquee, no shouty caps */}
       <div className="-mt-px border-y border-white/[0.06] bg-surface/35">
         <p className="mx-auto max-w-6xl px-6 py-4 text-center text-[10px] font-medium uppercase leading-loose tracking-[0.28em] text-dim lg:px-12">
-          {[
-            "12-week periodization",
-            "Macro-aware meals",
-            "TJAI · GPT-4o",
-            "Coach marketplace",
-            "10 languages",
-          ].join("      ·      ")}
+          {copy.immersive.editorialRail.join("      |      ")}
         </p>
       </div>
 
@@ -355,13 +350,13 @@ export function ImmersiveHome({
       <section className="reveal-section border-t border-divider px-6 py-24 lg:px-12 lg:py-32">
         <div className="mx-auto max-w-6xl">
           <MotionReveal reducedMotion={reduce} className="max-w-2xl">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-dim">The stack</p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-dim">{copy.immersive.platform.eyebrow}</p>
             <h2 className="mt-5 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-[2.65rem] lg:leading-[1.12]">
-              Built like training software,
-              <span className="text-faint"> not a toy app.</span>
+              {copy.immersive.platform.title}
+              <span className="text-faint"> {copy.immersive.platform.titleMuted}</span>
             </h2>
             <p className="mt-5 text-sm leading-relaxed text-muted">
-              Structured plans, real nutrition systems, AI that respects constraints, and human coaches when you want them — one surface, one visual language.
+              {copy.immersive.platform.body}
             </p>
           </MotionReveal>
 
@@ -384,10 +379,10 @@ export function ImmersiveHome({
       <section className="reveal-section border-y border-divider bg-background py-16 lg:py-20">
         <MotionReveal reducedMotion={reduce} className="mx-auto max-w-5xl px-6 lg:px-12">
           <div className="flex flex-col divide-y divide-[#1E2028] lg:flex-row lg:divide-x lg:divide-y-0">
-            <CountUp target={programCount} suffix="+" label="Expert Programs" />
-            <CountUp target={dietCount} suffix="+" label="Diet Systems" />
-            <CountUp target={12} label="Weeks Per Plan" />
-            <CountUp target={10} label="Languages" />
+            <CountUp target={programCount} suffix="+" label={copy.immersive.stats.programs} />
+            <CountUp target={dietCount} suffix="+" label={copy.immersive.stats.diets} />
+            <CountUp target={12} label={copy.immersive.stats.weeks} />
+            <CountUp target={10} label={copy.immersive.stats.languages} />
           </div>
         </MotionReveal>
       </section>
@@ -414,19 +409,19 @@ export function ImmersiveHome({
 
         <section className="relative z-10 px-6 py-24 lg:px-12 lg:py-32">
           <span className="ghost-text pointer-events-none start-1/2 top-20 z-0 -translate-x-1/2" aria-hidden>
-            PROGRAMS
+            {copy.immersive.programs.ghost}
           </span>
           <div className="relative z-[1] mx-auto max-w-6xl">
             <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <MotionReveal reducedMotion={reduce}>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent">Transformation systems</p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent">{copy.immersive.programs.eyebrow}</p>
                 <h2 className="mt-3 font-display text-4xl font-semibold tracking-tight text-white lg:text-5xl">
-                  {programCount}+ complete<br /><span className="text-accent">programs</span>
+                  {programCount}+ {copy.immersive.programs.titleSuffix}<br /><span className="text-accent">{copy.immersive.programs.titleAccent}</span>
                 </h2>
               </MotionReveal>
               <MotionReveal reducedMotion={reduce} delayMs={100}>
                 <Link href={`/${locale}/programs`} className="inline-flex items-center gap-2 text-sm font-semibold text-accent transition-opacity hover:opacity-80">
-                  View all programs <ArrowRight className="h-4 w-4" />
+                  {copy.immersive.programs.viewAll} <ArrowRight className="h-4 w-4" />
                 </Link>
               </MotionReveal>
             </div>
@@ -468,7 +463,7 @@ export function ImmersiveHome({
           className="ghost-text pointer-events-none start-1/2 top-8 z-0 max-lg:opacity-[0.02] -translate-x-1/2 text-[clamp(4rem,18vw,12rem)]"
           aria-hidden
         >
-          INTELLIGENCE
+          {copy.immersive.tjai.ghost}
         </span>
 
         <PremiumFullBleedImage
@@ -505,53 +500,36 @@ export function ImmersiveHome({
           </div>
 
           <MotionReveal reducedMotion={reduce}>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-accent">AI transformation engine</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-accent">{copy.immersive.tjai.eyebrow}</p>
             <h2 className="mt-4 font-display text-[clamp(2rem,5vw,3.25rem)] font-extrabold leading-[1.05] tracking-[-0.02em] text-white">
-              Meet TJAI.
+              {copy.immersive.tjai.title}
             </h2>
             <p className="mt-4 max-w-xl text-base leading-relaxed text-muted">
-              Complete an adaptive intake and get a complete 12-week plan in minutes — training blocks, meals, macros, and progression tuned to your metabolism, schedule, and feedback.
+              {copy.immersive.tjai.body}
             </p>
 
             <ul className="mt-10 space-y-4">
-              {[
-                {
-                  Icon: Sparkles,
-                  title: "Science-based calculations",
-                  desc: "Metabolism, load, and recovery modeled like a performance lab — not generic templates.",
-                },
-                {
-                  Icon: Calendar,
-                  title: "Complete 12-week structure",
-                  desc: "Periodized weeks, deloads, and checkpoints you can execute without guesswork.",
-                },
-                {
-                  Icon: Utensils,
-                  title: "Daily meal plans + macros",
-                  desc: "Meals, grocery logic, and macro targets aligned to your training phase.",
-                },
-                {
-                  Icon: RefreshCw,
-                  title: "Adjustable + regeneratable",
-                  desc: "Life changes — regenerate blocks while preserving your history and intent.",
-                },
-              ].map((row) => (
-                <li
-                  key={row.title}
-                  className="group flex gap-4 rounded-xl border border-transparent bg-transparent p-1 transition-[border-color,background-color] duration-200 hover:border-[rgba(34,211,238,0.12)] hover:bg-[rgba(34,211,238,0.03)]"
-                  style={{ transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)" }}
-                >
-                  <span
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(34,211,238,0.06)] transition-[border-color,box-shadow] duration-200 group-hover:border-[rgba(34,211,238,0.35)]"
+              {copy.immersive.tjai.bullets.map((row, index) => {
+                const bulletIcons = [Sparkles, Calendar, Utensils, RefreshCw] as const;
+                const Icon = bulletIcons[index] ?? Sparkles;
+                return (
+                  <li
+                    key={row.title}
+                    className="group flex gap-4 rounded-xl border border-transparent bg-transparent p-1 transition-[border-color,background-color] duration-200 hover:border-[rgba(34,211,238,0.12)] hover:bg-[rgba(34,211,238,0.03)]"
+                    style={{ transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)" }}
                   >
-                    <row.Icon className="h-5 w-5 text-accent" strokeWidth={1.5} />
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-[15px] font-semibold text-white">{row.title}</p>
-                    <p className="mt-1 text-[13px] leading-relaxed text-dim group-hover:text-muted">{row.desc}</p>
-                  </div>
-                </li>
-              ))}
+                    <span
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(34,211,238,0.06)] transition-[border-color,box-shadow] duration-200 group-hover:border-[rgba(34,211,238,0.35)]"
+                    >
+                      <Icon className="h-5 w-5 text-accent" strokeWidth={1.5} />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-[15px] font-semibold text-white">{row.title}</p>
+                      <p className="mt-1 text-[13px] leading-relaxed text-dim group-hover:text-muted">{row.desc}</p>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
 
             <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
@@ -560,19 +538,19 @@ export function ImmersiveHome({
                 className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-[10px] bg-accent px-8 py-3.5 text-[15px] font-extrabold text-[#09090B] shadow-[0_12px_40px_rgba(34,211,238,0.28)] transition-[filter,transform,box-shadow] duration-200 hover:brightness-110 hover:-translate-y-0.5"
               >
                 <Zap className="h-4 w-4 shrink-0" aria-hidden />
-                Build my plan — free preview
+                {copy.immersive.tjai.primary}
               </TjaiMagneticPrimary>
               <Link
                 href={`/${locale}/ai`}
                 className="inline-flex min-h-[52px] items-center justify-center rounded-[10px] border border-[rgba(255,255,255,0.14)] px-8 py-3.5 text-[15px] font-semibold text-white transition-[border-color,background-color,color] duration-200 hover:border-[rgba(34,211,238,0.35)] hover:bg-[rgba(34,211,238,0.04)] hover:text-accent"
               >
-                See a sample plan
+                {copy.immersive.tjai.secondary}
                 <ArrowRight className="ms-1 h-4 w-4" aria-hidden />
               </Link>
             </div>
             <p className="mt-6 text-xs text-dim">
               <Link href={`/${locale}/membership`} className="text-muted underline-offset-4 transition-colors hover:text-accent">
-                Core (Free) · TJAI unlock $10 · Pro $6/mo · Apex $10/mo
+                {copy.immersive.tjai.pricing}
               </Link>
             </p>
           </MotionReveal>
@@ -583,19 +561,19 @@ export function ImmersiveHome({
       {dietSlice.length > 0 && (
         <section id="diets" className="reveal-section relative border-t border-divider bg-background px-6 py-24 lg:px-12 lg:py-32 scroll-mt-20">
           <span className="ghost-text pointer-events-none start-1/2 top-16 z-0 -translate-x-1/2 text-accent-violet opacity-[0.04]" aria-hidden>
-            NUTRITION
+            {copy.immersive.diets.ghost}
           </span>
           <div className="relative z-[1] mx-auto max-w-6xl">
             <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <MotionReveal reducedMotion={reduce}>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent-violet">Nutrition</p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent-violet">{copy.immersive.diets.eyebrow}</p>
                 <h2 className="mt-3 font-display text-4xl font-semibold tracking-tight text-white lg:text-5xl">
-                  {dietCount}+ diet<br /><span className="text-accent-violet">systems</span>
+                  {dietCount}+ {copy.immersive.diets.titleSuffix}<br /><span className="text-accent-violet">{copy.immersive.diets.titleAccent}</span>
                 </h2>
               </MotionReveal>
               <MotionReveal reducedMotion={reduce} delayMs={100}>
                 <Link href={`/${locale}/diets`} className="inline-flex items-center gap-2 text-sm font-semibold text-accent-violet transition-opacity hover:opacity-80">
-                  View all diets <ArrowRight className="h-4 w-4" />
+                  {copy.immersive.diets.viewAll} <ArrowRight className="h-4 w-4" />
                 </Link>
               </MotionReveal>
             </div>
@@ -687,25 +665,25 @@ export function ImmersiveHome({
         {/* CTA content */}
         <div className="relative z-10 mx-auto max-w-3xl">
           <MotionReveal reducedMotion={reduce}>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-dim">Access</p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-dim">{copy.immersive.final.eyebrow}</p>
             <h2 className="mt-5 font-display text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
-              Start your next{" "}
-              <span className="bg-gradient-to-r from-[#22D3EE] to-[#67E8F9] bg-clip-text text-transparent">12 weeks</span>
+              {copy.immersive.final.titlePrefix}{" "}
+              <span className="bg-gradient-to-r from-[#22D3EE] to-[#67E8F9] bg-clip-text text-transparent">{copy.immersive.final.titleAccent}</span>
               <span className="text-faint">.</span>
             </h2>
-            <p className="mt-6 text-lg text-muted">{copy.midCta?.sub ?? "Join thousands already training smarter with TJFit."}</p>
+            <p className="mt-6 text-lg text-muted">{copy.midCta.sub}</p>
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link
                 href={`/${locale}/signup`}
                 className="tj-cta-glow-hover inline-flex min-h-[56px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#22D3EE] to-[#0EA5E9] px-10 py-4 text-base font-bold text-[#0A0A0B] shadow-[0_0_40px_rgba(34,211,238,0.5),0_0_80px_rgba(34,211,238,0.2)] transition-transform hover:scale-[1.04]"
               >
-                {navChrome.joinLabel} — It&apos;s Free
+                {navChrome.joinLabel} - {copy.immersive.final.freeSuffix}
               </Link>
               <Link
                 href={`/${locale}/programs`}
                 className="inline-flex min-h-[56px] items-center justify-center rounded-full border border-white/20 bg-white/[0.05] px-10 py-4 text-base font-semibold text-white backdrop-blur-sm transition-[border-color,background] hover:border-white/30 hover:bg-white/[0.08]"
               >
-                Browse Programs
+                {copy.immersive.final.browsePrograms}
               </Link>
             </div>
             <p className="mt-8 text-[13px] text-dim">{copy.hero.trustLine}</p>

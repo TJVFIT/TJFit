@@ -956,3 +956,81 @@ export const LANGUAGE_NAME_EN: Record<SupportedLocale, string> = {
   es: "Spanish",
   fr: "French",
 };
+
+export const EMAIL_SUBJECTS: Record<Locale, Record<string, string>> = {
+  en: {
+    welcome: "Welcome to TJFit",
+    first_program_nudge: "Start your first TJFit program",
+    tip_progressive_overload: "A simple way to make progress this week",
+    week_one_check_in: "Your week one TJFit check-in",
+    tjai_intro: "Meet TJAI, your planning assistant",
+    one_month_progress: "Your one-month progress check",
+    trial_started: "Your TJAI trial has started",
+    trial_value_reminder: "Make the most of your TJAI trial",
+    trial_expires_soon: "Your TJAI trial expires soon",
+    trial_expired: "Your TJAI trial has ended",
+    we_miss_you: "Your next TJFit session is waiting",
+    streak_at_risk: "Protect your TJFit streak",
+    last_chance_offer: "One more nudge back to TJFit"
+  },
+  tr: {
+    welcome: "TJFit'e hos geldin",
+    first_program_nudge: "Ilk TJFit programina basla",
+    tip_progressive_overload: "Bu hafta ilerlemenin basit yolu",
+    week_one_check_in: "TJFit ilk hafta kontrolun",
+    tjai_intro: "Planlama asistanin TJAI ile tanis",
+    one_month_progress: "Bir aylik ilerleme kontrolun",
+    trial_started: "TJAI denemen basladi",
+    trial_value_reminder: "TJAI denemenden en iyi sekilde yararlan",
+    trial_expires_soon: "TJAI denemen yakinda bitiyor",
+    trial_expired: "TJAI denemen sona erdi",
+    we_miss_you: "Siradaki TJFit antrenmanin seni bekliyor",
+    streak_at_risk: "TJFit serini koru",
+    last_chance_offer: "TJFit'e donmek icin son bir hatirlatma"
+  },
+  ar: {
+    welcome: "اهلا بك في TJFit",
+    first_program_nudge: "ابدأ اول برنامج TJFit لك",
+    tip_progressive_overload: "طريقة بسيطة للتقدم هذا الاسبوع",
+    week_one_check_in: "متابعة الاسبوع الاول في TJFit",
+    tjai_intro: "تعرف على TJAI، مساعد التخطيط الخاص بك",
+    one_month_progress: "متابعة تقدمك بعد شهر",
+    trial_started: "بدأت تجربتك مع TJAI",
+    trial_value_reminder: "استفد اكثر من تجربة TJAI",
+    trial_expires_soon: "تجربة TJAI تنتهي قريبا",
+    trial_expired: "انتهت تجربة TJAI",
+    we_miss_you: "جلستك التالية في TJFit بانتظارك",
+    streak_at_risk: "حافظ على سلسلة TJFit الخاصة بك",
+    last_chance_offer: "تذكير اخير للعودة الى TJFit"
+  },
+  es: {
+    welcome: "Bienvenido a TJFit",
+    first_program_nudge: "Empieza tu primer programa TJFit",
+    tip_progressive_overload: "Una forma simple de progresar esta semana",
+    week_one_check_in: "Tu check-in de la primera semana en TJFit",
+    tjai_intro: "Conoce TJAI, tu asistente de planificacion",
+    one_month_progress: "Tu revision de progreso del primer mes",
+    trial_started: "Tu prueba de TJAI ha comenzado",
+    trial_value_reminder: "Aprovecha al maximo tu prueba de TJAI",
+    trial_expires_soon: "Tu prueba de TJAI termina pronto",
+    trial_expired: "Tu prueba de TJAI ha terminado",
+    we_miss_you: "Tu proxima sesion de TJFit te espera",
+    streak_at_risk: "Protege tu racha en TJFit",
+    last_chance_offer: "Un ultimo empujon para volver a TJFit"
+  },
+  fr: {
+    welcome: "Bienvenue sur TJFit",
+    first_program_nudge: "Commence ton premier programme TJFit",
+    tip_progressive_overload: "Une facon simple de progresser cette semaine",
+    week_one_check_in: "Ton bilan de premiere semaine TJFit",
+    tjai_intro: "Decouvre TJAI, ton assistant de planification",
+    one_month_progress: "Ton bilan de progression du premier mois",
+    trial_started: "Ton essai TJAI a commence",
+    trial_value_reminder: "Profite au maximum de ton essai TJAI",
+    trial_expires_soon: "Ton essai TJAI expire bientot",
+    trial_expired: "Ton essai TJAI est termine",
+    we_miss_you: "Ta prochaine session TJFit t'attend",
+    streak_at_risk: "Protege ta serie TJFit",
+    last_chance_offer: "Un dernier rappel pour revenir sur TJFit"
+  }
+};

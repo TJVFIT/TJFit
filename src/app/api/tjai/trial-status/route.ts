@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { isAdminEmail } from "@/lib/auth-utils";
+import { enrollUserInSequence } from "@/lib/email/sequences";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { TJAI_TRIAL_MESSAGE_LIMIT } from "@/lib/tjai/trial-config";
@@ -46,6 +47,8 @@ export async function GET() {
       .select("messages_used,trial_started_at,trial_ends_at")
       .single();
     finalUsage = resetData ?? payload;
+    const enrollment = await enrollUserInSequence(authResult.user.id, "trial_start", adminClient);
+    if (!enrollment.ok) console.error("[trial-status] trial_start enrollment failed", enrollment.error);
   }
 
   return NextResponse.json({
