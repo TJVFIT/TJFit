@@ -97,15 +97,15 @@ export default function CalculatorPage({ params }: { params: { locale: string } 
           <p className="mt-2 text-5xl font-extrabold text-accent">{result.calories} <span className="text-2xl font-semibold text-muted">kcal/day</span></p>
           <p className="text-sm text-muted">Your personalized daily calorie target</p>
           <div className="mt-4 grid gap-2 sm:grid-cols-3">
-            <div className="rounded-lg border border-divider bg-[#0D0F14] p-3 text-center">
+            <div className="rounded-lg border border-divider bg-surface-2 p-3 text-center">
               <p className="text-xs text-faint">Protein</p>
               <p className="mt-1 text-lg font-bold text-white">{result.protein}g</p>
             </div>
-            <div className="rounded-lg border border-divider bg-[#0D0F14] p-3 text-center">
+            <div className="rounded-lg border border-divider bg-surface-2 p-3 text-center">
               <p className="text-xs text-faint">Carbs</p>
               <p className="mt-1 text-lg font-bold text-white">{result.carbs}g</p>
             </div>
-            <div className="rounded-lg border border-divider bg-[#0D0F14] p-3 text-center">
+            <div className="rounded-lg border border-divider bg-surface-2 p-3 text-center">
               <p className="text-xs text-faint">Fat</p>
               <p className="mt-1 text-lg font-bold text-white">{result.fat}g</p>
             </div>

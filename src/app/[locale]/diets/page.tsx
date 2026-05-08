@@ -66,7 +66,7 @@ export default function DietsPage({ params }: { params: { locale: string } }) {
             <Link
               key={diet.slug}
               href={`/${locale}/diets/${diet.slug}`}
-              className="tj-breathe tj-breathe-diet group relative flex h-full flex-col overflow-hidden rounded-xl border border-white/[0.06] bg-[#0E0F12] p-5 transition-colors duration-200 hover:border-cyan-300/[0.18]"
+              className="tj-breathe tj-breathe-diet group relative flex h-full flex-col overflow-hidden rounded-xl border border-white/[0.06] bg-surface-2 p-5 transition-colors duration-200 hover:border-cyan-300/[0.18]"
             >
               <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-accent/80">
                 {diet.category}

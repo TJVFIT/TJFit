@@ -396,7 +396,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
                 type="button"
                 onClick={() => void openPaddleCheckout()}
                 disabled={working}
-                className="gradient-button mt-6 w-full rounded-full px-5 py-3.5 text-sm font-semibold text-[#05080a] disabled:opacity-50"
+                className="gradient-button mt-6 w-full rounded-full px-5 py-3.5 text-sm font-semibold text-background disabled:opacity-50"
               >
                 {working ? copy.paddleOpening : copy.gatewayPayCta}
               </button>
@@ -486,7 +486,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
               type="button"
               onClick={completePurchase}
               disabled={working || !selectedProgram}
-              className="gradient-button mt-8 w-full rounded-full px-5 py-3.5 text-sm font-semibold text-[#05080a] disabled:opacity-50"
+              className="gradient-button mt-8 w-full rounded-full px-5 py-3.5 text-sm font-semibold text-background disabled:opacity-50"
             >
               {working ? copy.ctaWorking : copy.ctaPay}
             </button>

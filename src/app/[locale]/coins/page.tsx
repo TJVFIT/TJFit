@@ -99,7 +99,7 @@ export default function CoinsPage() {
           {earningMethods.map((m) => (
             <div
               key={m.action}
-              className="flex items-center justify-between rounded-xl border border-divider bg-[#0D0F12] px-4 py-3"
+              className="flex items-center justify-between rounded-xl border border-divider bg-surface-2 px-4 py-3"
             >
               <span className="text-sm text-bright">{m.action}</span>
               <span className="ml-3 shrink-0 rounded-full border border-yellow-400/30 bg-yellow-400/10 px-2.5 py-0.5 text-xs font-bold text-yellow-300">
@@ -134,7 +134,7 @@ export default function CoinsPage() {
             ))}
       </section>
 
-      <section className="mt-10 rounded-xl border border-divider bg-[#0E0F13] p-6">
+      <section className="mt-10 rounded-xl border border-divider bg-surface-2 p-6">
         <h2 className="flex items-center gap-2 text-lg font-semibold text-white">
           <ShoppingBag className="h-4 w-4 text-dim" /> Coming Soon - TJFit Equipment Store
         </h2>
