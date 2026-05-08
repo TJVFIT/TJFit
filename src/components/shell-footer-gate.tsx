@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { SiteFooter } from "@/components/site-footer";
-import type { Locale } from "@/lib/i18n";
+import type { Locale, SupportedLocale } from "@/lib/i18n";
 
 /**
  * Hides the global footer on small viewports when a chat thread is open so the
  * messages column can use the full visual viewport without scrolling past the app chrome.
  */
-export function ShellFooterGate({ locale }: { locale: Locale }) {
+export function ShellFooterGate({ locale, routingLocale }: { locale: Locale; routingLocale: SupportedLocale }) {
   const pathname = usePathname() ?? "";
   const [hideOnMobileThread, setHideOnMobileThread] = useState(false);
 
@@ -28,5 +28,5 @@ export function ShellFooterGate({ locale }: { locale: Locale }) {
     return null;
   }
 
-  return <SiteFooter locale={locale} />;
+  return <SiteFooter locale={locale} routingLocale={routingLocale} />;
 }

@@ -2,7 +2,7 @@
  * Phase-2 translation pipeline — blueprint only, NOT wired yet.
  *
  * Goal: auto-translate program + diet copy (and eventually UI messages) into all
- * 10 supported locales with cache-first serving.
+ * supported locales with cache-first serving.
  *
  * Architecture (to be implemented in Phase 2):
  *
@@ -33,10 +33,9 @@
  *     files so first-paint is cache-free (no network, no DB hit).
  *
  * Why it's not implemented yet:
- *   Phase 1 (Path B) prioritized stability — adding 10-locale routing + switcher +
- *   TJAI language lock WITHOUT touching the 919-line `i18n.ts` or the 20 copy files.
- *   Enabling the pipeline means writing a migration, a worker, an admin UI, and
- *   translation QA — at least 2 dedicated sessions. Schedule it separately.
+ *   Phase 1 prioritized stability — shipping full UI copy in 5 locales before scaling
+ *   translation infrastructure. Enabling the pipeline means writing a migration, a
+ *   worker, an admin UI, and translation QA — at least 2 dedicated sessions. Schedule it separately.
  */
 
 import type { SupportedLocale } from "@/lib/i18n";

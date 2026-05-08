@@ -270,7 +270,7 @@ export function HeroSection({
           <div className="mt-12 grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-3" style={lineIn(600)}>
             <HeroMetric value="12" label="weeks" hint="Structured blocks with progression and checkpoints." />
             <HeroMetric value="25" label="signals" hint="TJAI intake reads goals, schedule, equipment, and constraints." />
-            <HeroMetric value="10" label="languages" hint="Training and nutrition in the language you actually use." />
+            <HeroMetric value="5" label="languages" hint="Training and nutrition in the language you actually use." />
           </div>
         </div>
 

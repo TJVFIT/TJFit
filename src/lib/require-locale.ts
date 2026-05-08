@@ -5,11 +5,6 @@ import { isLocale, isSupportedLocale, resolveCopyLocale, type Locale, type Suppo
 /**
  * Validates `[locale]` dynamic segment for copy lookups.
  *
- * Accepts any of the 10 supported routing locales (en, tr, ar, es, fr, de, pt, ru, hi, id),
- * but returns the narrower 5-key `Locale` type via fallback. New locales (de/pt/ru/hi/id)
- * resolve to `en` until phase-2 translation lands — this keeps every `Record<Locale, X>`
- * consumer working unchanged while allowing the 10-locale URLs to route successfully.
- *
  * Use at the top of server pages, or after all hooks in client pages.
  */
 export function requireLocaleParam(raw: string | undefined | null): Locale {
@@ -20,9 +15,8 @@ export function requireLocaleParam(raw: string | undefined | null): Locale {
 }
 
 /**
- * Like `requireLocaleParam` but returns the full routing locale (any of the 10).
- * Use for `<html lang>`, hreflang alternates, language switcher, and anywhere
- * the URL-facing locale matters (not the dictionary-facing one).
+ * Like `requireLocaleParam` but returns the URL segment as `SupportedLocale`
+ * (same as `Locale` — every supported route has full UI copy).
  */
 export function requireSupportedLocaleParam(raw: string | undefined | null): SupportedLocale {
   if (typeof raw !== "string" || !isSupportedLocale(raw)) {

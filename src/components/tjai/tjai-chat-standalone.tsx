@@ -12,9 +12,8 @@ import { isSupportedLocale, type Locale, type SupportedLocale } from "@/lib/i18n
 import { cn } from "@/lib/utils";
 
 /**
- * Detect the routing locale from the URL (can be any of the 10 supported locales),
- * while the `locale` prop remains the 5-key copy locale used for UI strings.
- * This lets TJAI respond in de/pt/ru/hi/id even though our copy dicts fall back to EN.
+ * Detect the routing locale from the URL first path segment.
+ * Falls back to `locale` when the segment is missing or invalid.
  */
 function useRoutingLocale(fallback: Locale): SupportedLocale {
   const pathname = usePathname() ?? "";

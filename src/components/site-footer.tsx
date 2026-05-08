@@ -1,17 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Logo } from "@/components/ui/Logo";
-import { Locale, supportedLocales, LOCALE_META } from "@/lib/i18n";
-import { getFooterCopy } from "@/lib/launch-copy";
+import { usePathname } from "next/navigation";
 
-const LANG_BADGE: Record<Locale, string> = {
-  en: "EN",
-  tr: "TR",
-  ar: "AR",
-  es: "ES",
-  fr: "FR",
-};
+import { Logo } from "@/components/ui/Logo";
+import { Locale, supportedLocales, LOCALE_META, type SupportedLocale } from "@/lib/i18n";
+import { getFooterCopy } from "@/lib/launch-copy";
 
 const MEMBERSHIP: Record<Locale, string> = {
   en: "Membership",
@@ -29,37 +23,39 @@ const COL_HEAD: Record<Locale, { platform: string; coaches: string }> = {
   fr: { platform: "Plateforme", coaches: "Coachs" },
 };
 
-export function SiteFooter({ locale }: { locale: Locale }) {
+export function SiteFooter({ locale, routingLocale }: { locale: Locale; routingLocale: SupportedLocale }) {
+  const pathname = usePathname() ?? "";
+  const urlLocale = pathname.split("/").filter(Boolean)[0] ?? routingLocale;
   const copy = getFooterCopy(locale);
   const heads = COL_HEAD[locale] ?? COL_HEAD.en;
 
   const linkClass =
-    "text-dim transition-colors duration-150 hover:text-muted inline-block text-sm leading-relaxed";
+    "text-dim transition-colors duration-150 hover:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-block rounded-sm text-sm leading-relaxed";
 
   const platformLinks = [
-    { href: `/${locale}/programs`, label: copy.programs },
-    { href: `/${locale}/diets`, label: copy.diets },
-    { href: `/${locale}/start`, label: copy.startFree },
-    { href: `/${locale}/membership`, label: MEMBERSHIP[locale] ?? MEMBERSHIP.en },
+    { href: `/${routingLocale}/programs`, label: copy.programs },
+    { href: `/${routingLocale}/diets`, label: copy.diets },
+    { href: `/${routingLocale}/start`, label: copy.startFree },
+    { href: `/${routingLocale}/membership`, label: MEMBERSHIP[locale] ?? MEMBERSHIP.en }
   ];
 
   const coachLinks = [
-    { href: `/${locale}/coaches`, label: copy.findCoach },
-    { href: `/${locale}/become-a-coach`, label: copy.becomeCoach },
+    { href: `/${routingLocale}/coaches`, label: copy.findCoach },
+    { href: `/${routingLocale}/become-a-coach`, label: copy.becomeCoach }
   ];
 
   const companyLinks = [
-    { href: `/${locale}/legal`, label: copy.legalHub },
-    { href: `/${locale}/legal#faq`, label: copy.faq },
-    { href: `/${locale}/terms-and-conditions`, label: copy.terms },
-    { href: `/${locale}/privacy-policy`, label: copy.privacy },
-    { href: `/${locale}/refund-policy`, label: copy.refundPolicy },
-    { href: `/${locale}/press`, label: "Press & Media" },
+    { href: `/${routingLocale}/legal`, label: copy.legalHub },
+    { href: `/${routingLocale}/legal#faq`, label: copy.faq },
+    { href: `/${routingLocale}/terms-and-conditions`, label: copy.terms },
+    { href: `/${routingLocale}/privacy-policy`, label: copy.privacy },
+    { href: `/${routingLocale}/refund-policy`, label: copy.refundPolicy },
+    { href: `/${routingLocale}/press`, label: copy.press }
   ];
 
   const supportLinks = [
-    { href: `/${locale}/support`, label: copy.contact },
-    { href: `/${locale}/community`, label: copy.community },
+    { href: `/${routingLocale}/support`, label: copy.contact },
+    { href: `/${routingLocale}/community`, label: copy.community }
   ];
 
   return (
@@ -76,7 +72,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
         <div className="grid grid-cols-1 gap-12 text-center sm:grid-cols-2 sm:text-start lg:grid-cols-4 lg:gap-10">
           <div>
             <div className="inline-flex justify-center sm:justify-start">
-              <Logo variant="full" size="footer" href={`/${locale}`} glow />
+              <Logo variant="full" size="footer" href={`/${routingLocale}`} glow />
             </div>
             <p className="mt-4 text-sm font-medium leading-relaxed text-muted">{copy.tagline}</p>
             <p className="mt-3 max-w-xs text-xs leading-relaxed text-dim sm:max-w-none">{copy.description}</p>
@@ -133,8 +129,8 @@ export function SiteFooter({ locale }: { locale: Locale }) {
               <Link
                 key={loc}
                 href={`/${loc}`}
-                className={cnPill(loc === locale)}
-                aria-current={loc === locale ? "true" : undefined}
+                className={cnPill(loc === urlLocale)}
+                aria-current={loc === urlLocale ? "true" : undefined}
                 title={LOCALE_META[loc].native}
               >
                 {loc.toUpperCase()}

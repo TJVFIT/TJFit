@@ -9,6 +9,8 @@ coverage
 *.tsbuildinfo
 *.log
 
-.vercel
+.claude/
+*.worktree
+
 scripts/_pdfgen/
 scripts/sample-program-pdf.*

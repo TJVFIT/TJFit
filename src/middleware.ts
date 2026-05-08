@@ -6,7 +6,9 @@ import { isAdminEmail } from "@/lib/auth-utils";
 import { getCoachTermsVersion } from "@/lib/coach-terms-version";
 import { URL_NOTICE } from "@/lib/url-notice";
 
-const LOCALES = new Set(["en", "tr", "ar", "es", "fr", "de", "pt", "ru", "hi", "id"]);
+const LOCALES = new Set(["en", "tr", "ar", "es", "fr"]);
+/** Retired URL prefixes — used to ship English-only “locales”; strip from routing. */
+const RETIRED_LOCALE_PREFIXES = new Set(["de", "pt", "ru", "hi", "id"]);
 
 function applyHtmlCacheHeaders(request: NextRequest, response: NextResponse) {
   const accept = request.headers.get("accept") ?? "";
@@ -74,6 +76,18 @@ function matchHtmlGuard(pathname: string): { locale: string; kind: GuardKind } |
 }
 
 export async function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  const segments = pathname.split("/").filter(Boolean);
+  if (segments[0] && RETIRED_LOCALE_PREFIXES.has(segments[0])) {
+    const rest = segments.slice(1);
+    const targetPath = rest.length === 0 ? "/" : `/en/${rest.join("/")}`;
+    const url = new URL(targetPath, request.url);
+    url.search = request.nextUrl.search;
+    const redirectRes = NextResponse.redirect(url);
+    applyHtmlCacheHeaders(request, redirectRes);
+    return redirectRes;
+  }
+
   let response = NextResponse.next({
     request: { headers: request.headers }
   });
