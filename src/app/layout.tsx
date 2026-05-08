@@ -32,7 +32,7 @@ try {
   siteUrl = getSiteUrl();
   new URL(siteUrl);
 } catch {
-  siteUrl = "https://tjfit.com";
+  siteUrl = "https://tjfit.org";
 }
 
 if (!process.env.OPENAI_API_KEY) {

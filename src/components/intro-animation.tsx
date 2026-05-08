@@ -284,7 +284,7 @@ export default function IntroAnimation({ onComplete }: { onComplete: () => void 
           transition: "opacity 0.6s ease 0.3s"
         }}
       >
-        Est · tjfit.com
+        Est · tjfit.org
       </div>
     </div>
   );

@@ -78,7 +78,7 @@ const faqEn: { id: string; q: string; a: string }[] = [
   {
     id: "support",
     q: "How do I contact support?",
-    a: "Email support@tjfit.com or use the form at the bottom of this page."
+    a: "Email support@tjfit.org or use the form at the bottom of this page."
   }
 ];
 
@@ -136,7 +136,7 @@ const faqTr: { id: string; q: string; a: string }[] = [
   {
     id: "support",
     q: "Destek ile nasil iletisime gecerim?",
-    a: "support@tjfit.com adresine yazin veya bu sayfanin altindaki formu kullanin."
+    a: "support@tjfit.org adresine yazin veya bu sayfanin altindaki formu kullanin."
   }
 ];
 
@@ -158,7 +158,7 @@ const privacyEn = [
   "1. Data we collect: name, email, fitness preferences, and program usage. We do not collect payment card numbers (handled by Paddle).",
   "2. How we use your data: to provide and improve the TJFit platform; to send account-related notifications. We do not sell your data.",
   "3. Data storage: data is stored securely via Supabase on encrypted servers.",
-  "4. Your rights: you can request data export or deletion at any time. Contact: support@tjfit.com.",
+  "4. Your rights: you can request data export or deletion at any time. Contact: support@tjfit.org.",
   "5. Cookies: we use cookies for authentication only. No advertising cookies."
 ];
 
@@ -166,7 +166,7 @@ const privacyTr = [
   "1. Toplanan veriler: ad, e-posta, fitness tercihleri ve program kullanimi. Odeme karti numaralari toplanmaz (Paddle isler).",
   "2. Kullanim: TJFit'i sunmak ve gelistirmek; hesap bildirimleri. Verilerinizi satmayiz.",
   "3. Saklama: veriler Supabase uzerinde sifreli sunucularda guvenle tutulur.",
-  "4. Haklariniz: dilediginiz zaman veri aktarimi veya silme talep edebilirsiniz. Iletisim: support@tjfit.com.",
+  "4. Haklariniz: dilediginiz zaman veri aktarimi veya silme talep edebilirsiniz. Iletisim: support@tjfit.org.",
   "5. Cerezler: yalnizca kimlik dogrulama icin cerez kullaniriz. Reklam cerezi yoktur."
 ];
 
@@ -174,7 +174,7 @@ const privacyAr = [
   "1. البيانات: الاسم والبريد وتفضيلات اللياقة واستخدام البرامج. لا نجمع أرقام البطاقات (تتولى Paddle ذلك).",
   "2. الاستخدام: لتقديم TJFit وتحسينه وإشعارات الحساب. لا نبيع بياناتك.",
   "3. التخزين: عبر Supabase على خوادم مشفرة.",
-  "4. الحقوق: يمكنك طلب تصدير أو حذف البيانات. support@tjfit.com",
+  "4. الحقوق: يمكنك طلب تصدير أو حذف البيانات. support@tjfit.org",
   "5. ملفات تعريف الارتباط: للمصادقة فقط، دون إعلانات."
 ];
 
@@ -182,7 +182,7 @@ const privacyEs = [
   "1. Datos: nombre, email, preferencias de fitness y uso de programas. No recopilamos datos de tarjeta (Paddle).",
   "2. Uso: operar y mejorar TJFit; notificaciones de cuenta. No vendemos datos.",
   "3. Almacenamiento: Supabase en servidores cifrados.",
-  "4. Derechos: exportacion o borrado bajo solicitud. support@tjfit.com",
+  "4. Derechos: exportacion o borrado bajo solicitud. support@tjfit.org",
   "5. Cookies: solo autenticacion; sin cookies publicitarias."
 ];
 
@@ -190,7 +190,7 @@ const privacyFr = [
   "1. Donnees : nom, email, preferences fitness, usage des programmes. Pas de numeros de carte (Paddle).",
   "2. Usage : fournir et ameliorer TJFit ; notifications de compte. Pas de revente de donnees.",
   "3. Stockage : Supabase sur serveurs chiffres.",
-  "4. Droits : export ou suppression sur demande. support@tjfit.com",
+  "4. Droits : export ou suppression sur demande. support@tjfit.org",
   "5. Cookies : authentification uniquement ; pas de pub."
 ];
 
