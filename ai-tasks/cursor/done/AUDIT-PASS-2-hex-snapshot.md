@@ -11,7 +11,7 @@ Every hex finding has a **destination**: open PR, inbox task, Codex task, or doc
 ## Summary
 
 - **Total `src` files matching hex pattern:** 106
-- **Cursor inbox tasks generated (≤5 paths each, cluster-grouped):** 21 (numbered from `0003`)
+- **Cursor inbox tasks generated (≤5 paths each, cluster-grouped):** 21 (numbers `0003`–`0023`; `0003` now in `cursor/done/`)
 - **Excluded from this queue:** `hero-section` (0001; mask `#000`), `src/lib/*`, `src/app/api/*`
 
 ## Exceptions / referrals
@@ -22,7 +22,7 @@ Every hex finding has a **destination**: open PR, inbox task, Codex task, or doc
 
 ## Task index
 
-- `ai-tasks/cursor/inbox/0003-hex-app-locale-become-a-coach-page.md`
+- `ai-tasks/cursor/done/0003-hex-app-locale-become-a-coach-page.md` ✅
 - `ai-tasks/cursor/inbox/0004-hex-app-locale-equipment-page.md`
 - `ai-tasks/cursor/inbox/0005-hex-app-locale-press-page.md`
 - `ai-tasks/cursor/inbox/0006-hex-app-locale-settings-subscription-page.md`
