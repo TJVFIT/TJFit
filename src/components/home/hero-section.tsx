@@ -2,7 +2,7 @@
 
 import type { CSSProperties, Ref } from "react";
 import Link from "next/link";
-import { Activity, ArrowRight, ChevronDown, Dumbbell, Gauge, Sparkles, Timer, Utensils } from "lucide-react";
+import { Activity, ArrowRight, ChevronDown, Dumbbell, Gauge, Timer, Utensils } from "lucide-react";
 
 import { TJ_PALETTE } from "@/components/3d/palette";
 import { TJHeroStage } from "@/components/3d/hero-stage";
@@ -36,8 +36,8 @@ function HeroMetric({ label, value, hint }: { label: string; value: string; hint
   return (
     <div className="border-t border-white/[0.08] pt-4">
       <p className="font-display text-2xl font-semibold tracking-tight text-white">{value}</p>
-      <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#71717A]">{label}</p>
-      <p className="mt-2 text-xs leading-relaxed text-[#A1A1AA]">{hint}</p>
+      <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-faint">{label}</p>
+      <p className="mt-2 text-xs leading-relaxed text-muted">{hint}</p>
     </div>
   );
 }
@@ -55,8 +55,8 @@ function HeroSignal({
 }) {
   return (
     <div className={cn("tj-hero-signal pointer-events-auto hidden xl:block", className)}>
-      <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#71717A]">
-        <Icon className="h-3.5 w-3.5 text-[#67E8F9]" strokeWidth={1.6} />
+      <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-faint">
+        <Icon className="h-3.5 w-3.5 text-accent-muted" strokeWidth={1.6} />
         {label}
       </div>
       <p className="mt-2 font-display text-xl font-semibold tracking-tight text-white">{value}</p>
@@ -76,10 +76,10 @@ function HeroCommandPanel({ reduce }: { reduce: boolean }) {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_12%,rgba(34,211,238,0.12),transparent_34%)]" aria-hidden />
       <div className="relative flex items-center justify-between border-b border-white/[0.07] pb-4">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#71717A]">Today</p>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-faint">Today</p>
           <p className="mt-1 font-display text-xl font-semibold tracking-tight text-white">Adaptive plan</p>
         </div>
-        <span className="rounded-[10px] border border-[rgba(34,211,238,0.22)] bg-[rgba(34,211,238,0.08)] px-3 py-1.5 text-[11px] font-bold text-[#67E8F9]">
+        <span className="rounded-[10px] border border-accent/25 bg-accent/10 px-3 py-1.5 text-[11px] font-bold text-accent-muted">
           Live
         </span>
       </div>
@@ -91,28 +91,28 @@ function HeroCommandPanel({ reduce }: { reduce: boolean }) {
             className="tj-hero-command-row flex items-center gap-3 rounded-[15px] border border-white/[0.06] bg-white/[0.035] p-2.5"
             style={{ animationDelay: reduce ? undefined : `${index * 120}ms` }}
           >
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] border border-white/[0.08] bg-[#0A0A0B]">
-              <row.icon className="h-[18px] w-[18px] text-[#67E8F9]" strokeWidth={1.6} />
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] border border-white/[0.08] bg-background">
+              <row.icon className="h-[18px] w-[18px] text-accent-muted" strokeWidth={1.6} />
             </span>
             <span className="min-w-0 flex-1">
               <span className="block text-[13px] font-semibold text-white">{row.title}</span>
-              <span className="mt-0.5 block text-xs text-[#71717A]">{row.meta}</span>
+              <span className="mt-0.5 block text-xs text-faint">{row.meta}</span>
             </span>
-            <span className="text-right font-display text-sm font-semibold text-[#F6F3ED]">{row.value}</span>
+            <span className="text-right font-display text-sm font-semibold text-bright">{row.value}</span>
           </div>
         ))}
       </div>
 
-      <div className="relative mt-4 grid grid-cols-[1fr_auto] items-end gap-4 rounded-[18px] border border-white/[0.06] bg-[#08080A] p-4">
+      <div className="relative mt-4 grid grid-cols-[1fr_auto] items-end gap-4 rounded-[18px] border border-white/[0.06] bg-surface-2 p-4">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#71717A]">Consistency</p>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-faint">Consistency</p>
           <p className="mt-2 font-display text-3xl font-semibold tracking-tight text-white">84%</p>
         </div>
         <div className="flex h-20 items-end gap-1.5">
           {[42, 58, 52, 76, 62, 84, 78].map((h, i) => (
             <span
               key={i}
-              className="w-2 rounded-full bg-[#22D3EE]"
+              className="w-2 rounded-full bg-accent"
               style={{ height: `${h}%`, opacity: 0.28 + i * 0.08 }}
             />
           ))}
@@ -211,10 +211,10 @@ export function HeroSection({
       <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-12 xl:grid-cols-[minmax(0,0.98fr)_minmax(20rem,0.56fr)] xl:gap-8">
         <div className={cn("max-w-[45rem]", direction === "rtl" ? "text-right lg:ms-auto" : "text-left")}>
           <div style={lineIn(80)}>
-            <span className="inline-flex items-center gap-2 rounded-[12px] border border-[rgba(34,211,238,0.22)] bg-[rgba(34,211,238,0.055)] px-3.5 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#67E8F9]">
+            <span className="inline-flex items-center gap-2 rounded-[12px] border border-accent/25 bg-accent/10 px-3.5 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-accent-muted">
               <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#22D3EE] opacity-40 motion-reduce:hidden" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#22D3EE]" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-40 motion-reduce:hidden" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
               </span>
               {liveStats.activeToday > 0 ? `${liveStats.activeToday} training now` : "Fitness operating system"}
             </span>
@@ -241,7 +241,7 @@ export function HeroSection({
             aria-hidden
           />
 
-          <p className="max-w-[34rem] text-lg leading-relaxed text-[#A1A1AA] sm:text-xl" style={lineIn(340)}>
+          <p className="max-w-[34rem] text-lg leading-relaxed text-muted sm:text-xl" style={lineIn(340)}>
             {heroSub}
           </p>
 
@@ -251,7 +251,7 @@ export function HeroSection({
               onClick={() => trackMarketingEvent("hero_cta_click", { cta: "start", surface: "immersive-hero" })}
               className="tj-premium-primary-cta inline-flex min-h-[54px] min-w-[44px] flex-1 items-center justify-center gap-2 rounded-[14px] px-7 py-3.5 text-[15px] font-extrabold transition-[transform,filter,box-shadow] duration-200 hover:brightness-110 sm:flex-none"
               style={{
-                background: "linear-gradient(180deg, #A5F3FC, #22D3EE)",
+                background: `linear-gradient(180deg, ${TJ_PALETTE.accentHi}, ${TJ_PALETTE.accent})`,
                 color: TJ_PALETTE.obsidian,
                 boxShadow: "0 18px 44px rgba(0,0,0,0.3), 0 0 34px rgba(34,211,238,0.18)"
               }}
@@ -270,7 +270,7 @@ export function HeroSection({
           <div className="mt-12 grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-3" style={lineIn(600)}>
             <HeroMetric value="12" label="weeks" hint="Structured blocks with progression and checkpoints." />
             <HeroMetric value="25" label="signals" hint="TJAI intake reads goals, schedule, equipment, and constraints." />
-            <HeroMetric value="10" label="languages" hint="Training and nutrition in the language you actually use." />
+            <HeroMetric value="5" label="languages" hint="Training and nutrition in the language you actually use." />
           </div>
         </div>
 

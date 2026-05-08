@@ -4,11 +4,12 @@ node_modules
 .env.local
 vercel-env-paste.txt
 .vercel
+.claude/
 dist
 coverage
 *.tsbuildinfo
 *.log
+!ai-tasks/shared/activity.log
 
-.vercel
 scripts/_pdfgen/
 scripts/sample-program-pdf.*
