@@ -437,7 +437,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
           </div>
           <div className="mt-4 grid gap-3">
             <input className="input" placeholder={t.milestonePlaceholder} value={milestoneTitle} onChange={(e) => setMilestoneTitle(e.target.value)} />
-            <input className="input text-sm" placeholder='Target (e.g. "Bench 100kg")' value={milestoneTarget} onChange={(e) => setMilestoneTarget(e.target.value)} />
+            <input className="input text-sm" placeholder={t.milestoneTargetPlaceholder} value={milestoneTarget} onChange={(e) => setMilestoneTarget(e.target.value)} />
             <button onClick={addMilestone} className="gradient-button rounded-full px-5 py-2 text-sm font-medium text-white">
               {t.add}
             </button>
