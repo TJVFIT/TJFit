@@ -1,0 +1,6 @@
+---
+description: TJFit operating manual
+alwaysApply: true
+---
+Read /AGENTS.md before any task. It is the source of truth for stack,
+brand tokens, conventions, and what NEVER to touch.

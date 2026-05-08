@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
 import { AmbientBackground } from "@/components/ui/AmbientBackground";
+import { DietsCatalogClient, type DietCatalogItem } from "@/components/diets/diets-catalog-client";
 import { listDiets } from "@/lib/diets";
 import type { Locale } from "@/lib/i18n";
 import { requireLocaleParam } from "@/lib/require-locale";
@@ -38,6 +38,100 @@ const PRICE_LABEL: Record<Locale, string> = {
   fr: "à partir de"
 };
 
+type FilterCopy = {
+  goalLabel: string;
+  lengthLabel: string;
+  allLabel: string;
+  clearLabel: string;
+  weeksSuffix: string;
+  goalFatLoss: string;
+  goalMuscleGain: string;
+  goalMaintenance: string;
+  length4: string;
+  length12: string;
+  emptyTitle: string;
+  emptyBody: string;
+  emptyCta: string;
+};
+
+const FILTER_COPY: Record<Locale, FilterCopy> = {
+  en: {
+    goalLabel: "Goal",
+    lengthLabel: "Length",
+    allLabel: "All",
+    clearLabel: "Clear",
+    weeksSuffix: "weeks",
+    goalFatLoss: "Fat loss",
+    goalMuscleGain: "Muscle gain",
+    goalMaintenance: "Maintenance",
+    length4: "4 weeks",
+    length12: "12 weeks",
+    emptyTitle: "No diets match those filters.",
+    emptyBody: "Reset the filters to see the full diet catalog.",
+    emptyCta: "Reset filters"
+  },
+  tr: {
+    goalLabel: "Hedef",
+    lengthLabel: "Süre",
+    allLabel: "Tümü",
+    clearLabel: "Temizle",
+    weeksSuffix: "hafta",
+    goalFatLoss: "Yağ yakımı",
+    goalMuscleGain: "Kas kazanımı",
+    goalMaintenance: "Koruma",
+    length4: "4 hafta",
+    length12: "12 hafta",
+    emptyTitle: "Bu filtrelerle diyet bulunamadı.",
+    emptyBody: "Tüm diyet kataloğunu görmek için filtreleri temizle.",
+    emptyCta: "Filtreleri sıfırla"
+  },
+  ar: {
+    goalLabel: "الهدف",
+    lengthLabel: "المدة",
+    allLabel: "الكل",
+    clearLabel: "مسح",
+    weeksSuffix: "أسابيع",
+    goalFatLoss: "خسارة الدهون",
+    goalMuscleGain: "زيادة العضلات",
+    goalMaintenance: "محافظة",
+    length4: "٤ أسابيع",
+    length12: "١٢ أسبوعًا",
+    emptyTitle: "لا توجد أنظمة تطابق هذه المرشحات.",
+    emptyBody: "أعد ضبط المرشحات لمشاهدة الكتالوج كاملًا.",
+    emptyCta: "إعادة ضبط المرشحات"
+  },
+  es: {
+    goalLabel: "Objetivo",
+    lengthLabel: "Duración",
+    allLabel: "Todo",
+    clearLabel: "Limpiar",
+    weeksSuffix: "semanas",
+    goalFatLoss: "Pérdida de grasa",
+    goalMuscleGain: "Ganancia muscular",
+    goalMaintenance: "Mantenimiento",
+    length4: "4 semanas",
+    length12: "12 semanas",
+    emptyTitle: "Ninguna dieta coincide con esos filtros.",
+    emptyBody: "Restablece los filtros para ver todo el catálogo.",
+    emptyCta: "Restablecer filtros"
+  },
+  fr: {
+    goalLabel: "Objectif",
+    lengthLabel: "Durée",
+    allLabel: "Tout",
+    clearLabel: "Effacer",
+    weeksSuffix: "semaines",
+    goalFatLoss: "Perte de gras",
+    goalMuscleGain: "Prise de muscle",
+    goalMaintenance: "Maintien",
+    length4: "4 semaines",
+    length12: "12 semaines",
+    emptyTitle: "Aucun régime ne correspond à ces filtres.",
+    emptyBody: "Réinitialisez les filtres pour voir tout le catalogue.",
+    emptyCta: "Réinitialiser"
+  }
+};
+
 export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
   const locale = requireLocaleParam(params.locale);
   return {
@@ -48,7 +142,20 @@ export async function generateMetadata({ params }: { params: { locale: string } 
 
 export default function DietsPage({ params }: { params: { locale: string } }) {
   const locale = requireLocaleParam(params.locale);
+  const filterCopy = FILTER_COPY[locale];
   const diets = listDiets();
+
+  const items: DietCatalogItem[] = diets.map((diet) => ({
+    slug: diet.slug,
+    category: diet.category,
+    durationWeeks: diet.duration_weeks,
+    goalLabel: diet.goal[locale],
+    whoFor: diet.who_for[locale],
+    priceUsd: diet.pricing_usd,
+    href: `/${locale}/diets/${diet.slug}`,
+    priceLabel: `${PRICE_LABEL[locale]} $${diet.pricing_usd.toFixed(2)}`
+  }));
+
   return (
     <>
       <AmbientBackground variant="cyan" />
@@ -61,31 +168,26 @@ export default function DietsPage({ params }: { params: { locale: string } }) {
         </h1>
         <p className="mt-4 text-sm leading-relaxed text-muted">{COMING_SOON[locale]}</p>
 
-        <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {diets.map((diet) => (
-            <Link
-              key={diet.slug}
-              href={`/${locale}/diets/${diet.slug}`}
-              className="tj-breathe tj-breathe-diet group relative flex h-full flex-col overflow-hidden rounded-xl border border-white/[0.06] bg-[#0E0F12] p-5 transition-colors duration-200 hover:border-cyan-300/[0.18]"
-            >
-              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-accent/80">
-                {diet.category}
-              </p>
-              <h2 className="mt-3 font-display text-lg font-semibold tracking-tight text-white">
-                {diet.goal[locale]}
-              </h2>
-              <p className="mt-2 text-xs leading-relaxed text-muted">
-                {diet.who_for[locale]}
-              </p>
-              <div className="mt-4 flex items-center justify-between text-[11px] text-faint">
-                <span>{diet.duration_weeks} weeks</span>
-                <span className="font-semibold text-white/80">
-                  {PRICE_LABEL[locale]} ${diet.pricing_usd.toFixed(2)}
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
+        <DietsCatalogClient
+          items={items}
+          goalLabel={filterCopy.goalLabel}
+          lengthLabel={filterCopy.lengthLabel}
+          allLabel={filterCopy.allLabel}
+          clearLabel={filterCopy.clearLabel}
+          weeksSuffix={filterCopy.weeksSuffix}
+          emptyTitle={filterCopy.emptyTitle}
+          emptyBody={filterCopy.emptyBody}
+          emptyCta={filterCopy.emptyCta}
+          goalOptions={[
+            { value: "fat_loss", label: filterCopy.goalFatLoss },
+            { value: "muscle_gain", label: filterCopy.goalMuscleGain },
+            { value: "maintenance", label: filterCopy.goalMaintenance }
+          ]}
+          lengthOptions={[
+            { value: "4", label: filterCopy.length4 },
+            { value: "12", label: filterCopy.length12 }
+          ]}
+        />
       </div>
     </>
   );

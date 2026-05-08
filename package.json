@@ -4,8 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/sync-claude-md.js",
     "build": "next build",
     "start": "next start",
+    "sync:claude": "node scripts/sync-claude-md.js",
     "lint": "next lint",
     "i18n:check": "tsx scripts/i18n/check-locale-parity.ts",
     "i18n:scan": "tsx scripts/i18n/check-hardcoded-ui.ts",
