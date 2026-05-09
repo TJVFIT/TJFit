@@ -13,6 +13,18 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 90;
 
 export async function POST(request: NextRequest) {
+  // Refund-safety state. These live outside the try so the finally block can
+  // refund the credit on any non-delivery path (Vercel timeout, uncaught
+  // throw, pipeline failure). `delivered` flips true ONLY after we have a
+  // successful response object in hand. `refunded` is the idempotency guard
+  // so the finally never double-refunds.
+  let creditConsumed = false;
+  let delivered = false;
+  let refunded = false;
+  let userIdForRefund: string | null = null;
+  let clientForRefund: NonNullable<ReturnType<typeof getSupabaseServerClient>> | null = null;
+  let failureReason: string | null = null;
+
   try {
     const authResult = await requireAuth();
     if (!authResult.ok) {
@@ -46,7 +58,6 @@ export async function POST(request: NextRequest) {
     // v5 round 2 — credit gate.
     // Order: existing canGeneratePlan flag (admin / one-time purchase
     // legacy path) → Pro/Apex bypass → TJAI credits fallback → 402.
-    let creditConsumed = false;
     let creditsRemaining: number | null = null;
 
     if (!access.canGeneratePlan) {
@@ -92,6 +103,8 @@ export async function POST(request: NextRequest) {
         }
 
         creditConsumed = true;
+        userIdForRefund = authResult.user.id;
+        clientForRefund = adminClient;
         creditsRemaining = Number(result.balance_after ?? 0);
       }
     }
@@ -100,6 +113,7 @@ export async function POST(request: NextRequest) {
     const rawAnswers = body?.answers ?? body;
     const paceOverride = typeof body?.paceOverride === "string" ? body.paceOverride : null;
     if (!rawAnswers || typeof rawAnswers !== "object") {
+      failureReason = "invalid_payload";
       return NextResponse.json({ error: "Invalid answers payload" }, { status: 400 });
     }
 
@@ -108,6 +122,7 @@ export async function POST(request: NextRequest) {
     const profile = buildTjaiUserProfile(effectiveAnswers);
 
     if (!Number.isFinite(profile.age) || profile.age <= 0 || !Number.isFinite(profile.weightKg) || profile.weightKg <= 0 || !Number.isFinite(profile.heightCm) || profile.heightCm <= 0) {
+      failureReason = "missing_required_fields";
       return NextResponse.json({ error: "Missing required fields: age, weight, height. Please complete all questions." }, { status: 400 });
     }
 
@@ -128,18 +143,8 @@ export async function POST(request: NextRequest) {
 
     if (!result.ok) {
       console.error("[TJAI] Pipeline failed:", result.error, result.trace.errors);
-      // v5 round 2 — refund the credit if pipeline fails after consume.
-      if (creditConsumed) {
-        const { error: refundErr } = await adminClient.rpc("grant_tjai_credit", {
-          p_user_id: authResult.user.id,
-          p_amount: 1,
-          p_reason: "refund",
-          p_metadata: { reason: "pipeline_failed", error: result.error }
-        });
-        if (refundErr) {
-          console.error("[TJAI generate] credit refund failed", refundErr);
-        }
-      }
+      failureReason = `pipeline_failed:${result.error}`;
+      // Refund handled in finally — see refund-safety state at top.
       return NextResponse.json({ error: result.error }, { status: result.status });
     }
 
@@ -147,20 +152,38 @@ export async function POST(request: NextRequest) {
       console.log("[TJAI] Plan generated and saved for user:", authResult.user.id);
     }
 
-    return NextResponse.json(
+    const response = NextResponse.json(
       creditsRemaining !== null
         ? { ...(result.body as object), credits_remaining: creditsRemaining }
         : result.body
     );
+    // Mark delivered AFTER we have a successful response in hand. Anything
+    // that throws between here and the return will skip the refund (the
+    // user got their plan; no double-refund on success-then-throw).
+    delivered = true;
+    return response;
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Unknown error";
     console.error("[TJAI] Unhandled error:", msg);
-    // Note: credit refund on uncaught-throw is intentionally skipped
-    // here — `creditConsumed` is scoped inside the try block for type
-    // safety (admin client + auth result are inner). The inner
-    // `if (!result.ok)` branch already refunds on pipeline failure
-    // (the common case). True uncaught throws are rare and warrant a
-    // manual review anyway.
+    failureReason = `uncaught:${msg}`;
     return NextResponse.json({ error: `Generation failed: ${msg}` }, { status: 500 });
+  } finally {
+    // Refund in finally so Vercel timeouts and uncaught throws still return the credit.
+    // Caveat: when Vercel hard-kills the function at maxDuration, the runtime
+    // may not actually drain async work in finally. This still covers
+    // synchronous throws, rejected promises, and most pre-timeout failure
+    // modes — strictly better than the old `if (!result.ok)` gate.
+    if (creditConsumed && !delivered && !refunded && clientForRefund && userIdForRefund) {
+      refunded = true;
+      const { error: refundErr } = await clientForRefund.rpc("grant_tjai_credit", {
+        p_user_id: userIdForRefund,
+        p_amount: 1,
+        p_reason: "refund",
+        p_metadata: { reason: failureReason ?? "not_delivered" }
+      });
+      if (refundErr) {
+        console.error("[TJAI generate] credit refund failed", refundErr);
+      }
+    }
   }
 }

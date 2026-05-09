@@ -42,27 +42,27 @@ const COPY: Record<Locale, Record<ComingSoonKey, Copy>> = {
   tr: {
     live: {
       badge: "YAKINDA",
-      headline: "Canli Antrenman. Yakinda.",
-      sub: "Planli canli dersler, yonlendirmeli koçluk ve premium yayinlar geliyor.",
-      back: "TJFit'e don"
+      headline: "Canlı Antrenman. Yakında.",
+      sub: "Planlı canlı dersler, yönlendirmeli koçluk ve premium yayınlar geliyor.",
+      back: "TJFit'e dön"
     },
     store: {
       badge: "YAKINDA",
-      headline: "TJFit Store. Yakinda.",
-      sub: "Premium ekipmanlar ve secili urunler cok yakinda.",
-      back: "TJFit'e don"
+      headline: "TJFit Store. Yakında.",
+      sub: "Premium ekipmanlar ve seçili ürünler çok yakında.",
+      back: "TJFit'e dön"
     },
     ai: {
       badge: "YAKINDA",
-      headline: "TJAI - Yapay Zeka Koçun. Yakinda.",
-      sub: "Yapilandirilmis yonlendirme, akilli ayarlamalar ve gunluk takip geliyor.",
-      back: "TJFit'e don"
+      headline: "TJAI - Yapay Zeka Koçun. Yakında.",
+      sub: "Yapılandırılmış yönlendirme, akıllı ayarlamalar ve günlük takip geliyor.",
+      back: "TJFit'e dön"
     },
     membership: {
       badge: "YAKINDA",
-      headline: "TJFit Uyelik. Yakinda.",
-      sub: "Programlar ve uyelere ozel ozellikler icin tek premium uyelik.",
-      back: "TJFit'e don"
+      headline: "TJFit Üyelik. Yakında.",
+      sub: "Programlar ve üyelere özel özellikler için tek premium üyelik.",
+      back: "TJFit'e dön"
     }
   },
   ar: {

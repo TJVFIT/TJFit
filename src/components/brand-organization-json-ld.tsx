@@ -7,7 +7,7 @@ function safeOrigin(): string {
     new URL(u);
     return u.replace(/\/$/, "");
   } catch {
-    return "https://tjfit.com";
+    return "https://tjfit.org";
   }
 }
 

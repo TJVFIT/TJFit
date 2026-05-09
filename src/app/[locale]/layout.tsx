@@ -21,7 +21,7 @@ export function generateStaticParams() {
   return supportedLocales.map((locale) => ({ locale }));
 }
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://tjfit.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://tjfit.org";
 
 const TITLES: Record<Locale, string> = {
   en: "TJFit — AI Fitness Programs, Coaching & Nutrition | Transform Your Body",

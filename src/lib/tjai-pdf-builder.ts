@@ -437,7 +437,7 @@ export function buildTjaiPdf(args: TjaiPdfArgs): jsPDF {
   setText(pdf, PDF_THEME.accent);
   pdf.setFont("helvetica", "italic");
   pdf.setFontSize(10);
-  pdf.text("tjfit.com", PAGE.margin, PAGE.height - 60);
+  pdf.text("tjfit.org", PAGE.margin, PAGE.height - 60);
 
   drawFooter(pdf, pageNum, "TJAI");
 
