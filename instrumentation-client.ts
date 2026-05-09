@@ -10,3 +10,6 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
     replaysSessionSampleRate: 0
   });
 }
+
+// Required by Next 14 + Sentry to instrument client-side navigations.
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
