@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { verifyGumroadWebhookSignature } from "@/lib/gumroad-webhook-verify";
+import { checkGumroadWebhookFreshness, verifyGumroadWebhookSignature } from "@/lib/gumroad-webhook-verify";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { handleSale, type GumroadSalePayload } from "./handlers/sale";
 
@@ -76,6 +76,15 @@ export async function POST(request: NextRequest) {
     payload = JSON.parse(rawBody) as GumroadEventBody;
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+
+  // Replay-window check (best-effort — see checkGumroadWebhookFreshness
+  // for caveats; idempotency on (provider, event_id) is the primary
+  // defense, this is defense-in-depth).
+  const freshness = checkGumroadWebhookFreshness(payload);
+  if (!freshness.ok) {
+    console.warn("[gumroad webhook] freshness check failed", freshness.reason);
+    return NextResponse.json({ error: "Webhook too old", reason: freshness.reason }, { status: 400 });
   }
 
   const eventType = payload.resource_name ?? "unknown";
