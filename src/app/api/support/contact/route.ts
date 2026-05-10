@@ -1,7 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
+    const limiter = await rateLimit({
+      key: req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? req.ip ?? "unknown",
+      limit: 5,
+      windowMs: 60_000
+    });
+    if (!limiter.success) {
+      return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+    }
+
     const body = await req.json().catch(() => null);
     if (!body?.name || !body?.email || !body?.message) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });

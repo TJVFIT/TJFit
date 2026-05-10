@@ -7,7 +7,7 @@ const VALID_TYPES = ["complaint", "suggestion", "feedback", "help_request", "ref
 
 export async function POST(request: NextRequest) {
   try {
-    const limiter = rateLimit({
+    const limiter = await rateLimit({
       key:
         request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
         request.ip ??
