@@ -138,15 +138,15 @@ export function HomeCoachCta({ locale }: { locale: Locale }) {
             >
               <p className="text-center text-xs font-semibold uppercase tracking-[0.12em] text-muted">{copy.mockTitle}</p>
               <div className="mt-5 grid grid-cols-3 gap-2 text-center">
-                <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-[rgba(17,18,21,0.6)] px-2 py-3">
+                <div className="rounded-lg border border-cyan-300/12 bg-[rgba(17,18,21,0.6)] px-2 py-3 shadow-[inset_0_0_18px_-8px_rgba(34,211,238,0.18)]">
                   <p className="font-display text-lg font-bold tabular-nums text-white">142</p>
                   <p className="mt-1 text-[10px] font-medium uppercase tracking-wide text-dim">{copy.mockStudents}</p>
                 </div>
-                <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-[rgba(17,18,21,0.6)] px-2 py-3">
+                <div className="rounded-lg border border-cyan-300/12 bg-[rgba(17,18,21,0.6)] px-2 py-3 shadow-[inset_0_0_18px_-8px_rgba(34,211,238,0.18)]">
                   <p className="font-display text-lg font-bold tabular-nums text-accent">€2,840</p>
                   <p className="mt-1 text-[10px] font-medium uppercase tracking-wide text-dim">{copy.mockRevenue}</p>
                 </div>
-                <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-[rgba(17,18,21,0.6)] px-2 py-3">
+                <div className="rounded-lg border border-cyan-300/12 bg-[rgba(17,18,21,0.6)] px-2 py-3 shadow-[inset_0_0_18px_-8px_rgba(34,211,238,0.18)]">
                   <p className="text-lg font-bold text-cyan-300">★ 4.9</p>
                   <p className="mt-1 text-[10px] font-medium uppercase tracking-wide text-dim">{copy.mockRating}</p>
                 </div>
