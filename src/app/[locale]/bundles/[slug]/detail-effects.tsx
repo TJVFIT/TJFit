@@ -1,7 +1,7 @@
 "use client";
 
 import { FileDown } from "lucide-react";
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { useParallax, useReveal, useTilt } from "@/components/effects/use-3d";
 import { useMagnetic, useMergedRef, useRipple } from "@/components/effects/use-magnetic";
@@ -70,6 +70,14 @@ export function ScrollProgressBar() {
  */
 export function DetailHero({ image }: { image: string }) {
   const ref = useParallax<HTMLDivElement>({ strength: 0.18 });
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // One-frame delay so the initial scale (1.28) paints before we animate
+    // to the resting scale (1.15). Without this the transition would skip.
+    const id = window.requestAnimationFrame(() => setMounted(true));
+    return () => window.cancelAnimationFrame(id);
+  }, []);
 
   return (
     <div
@@ -79,18 +87,21 @@ export function DetailHero({ image }: { image: string }) {
       aria-hidden
     >
       <div
-        className="absolute inset-0 bg-cover bg-center will-change-transform"
+        className="absolute inset-0 bg-cover bg-center will-change-transform motion-safe:transition-transform"
         style={{
           backgroundImage: `url(${image})`,
-          transform: "translate3d(0, var(--parallax-y), 0) scale(1.15)"
+          transform: `translate3d(0, var(--parallax-y), 0) scale(${mounted ? 1.15 : 1.28})`,
+          transitionDuration: "1800ms",
+          transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)"
         }}
       />
       {/* Top-right cyan glow that stays put while the image drifts */}
       <div
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute inset-0 motion-safe:transition-opacity motion-safe:duration-[1800ms]"
         style={{
           background:
-            "radial-gradient(50% 60% at 82% 18%, rgba(34,211,238,0.22), transparent 70%)"
+            "radial-gradient(50% 60% at 82% 18%, rgba(34,211,238,0.22), transparent 70%)",
+          opacity: mounted ? 1 : 0.4
         }}
       />
       <div className="absolute inset-x-0 bottom-0 h-32 bg-[linear-gradient(180deg,rgba(8,8,11,0)_0%,rgba(8,8,11,0.85)_100%)]" />

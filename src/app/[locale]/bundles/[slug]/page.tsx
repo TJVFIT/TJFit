@@ -58,9 +58,12 @@ export default function BundleDetailPage({
       <ScrollProgressBar />
       <Link
         href={`/${locale}/bundles`}
-        className="inline-flex min-h-[44px] items-center gap-1.5 py-2 text-xs font-semibold text-cyan-300 transition-colors hover:text-cyan-200"
+        className="group/back inline-flex min-h-[44px] items-center gap-1.5 py-2 text-xs font-semibold text-cyan-300 transition-colors hover:text-cyan-200"
       >
-        <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
+        <ArrowLeft
+          className="h-3.5 w-3.5 transition-transform motion-safe:group-hover/back:-translate-x-1"
+          aria-hidden
+        />
         All bundles
       </Link>
 
@@ -105,10 +108,13 @@ export default function BundleDetailPage({
             />
             <Link
               href={`/${locale}/tjai`}
-              className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-1.5 rounded-full border border-cyan-300/25 px-4 py-2.5 text-sm font-semibold text-cyan-200 transition-colors hover:border-cyan-300/45 hover:text-cyan-100 sm:flex-none"
+              className="group/tjai inline-flex min-h-[48px] flex-1 items-center justify-center gap-1.5 rounded-full border border-cyan-300/25 px-4 py-2.5 text-sm font-semibold text-cyan-200 transition-[border-color,color,box-shadow] hover:border-cyan-300/55 hover:text-cyan-100 hover:shadow-[0_0_24px_rgba(34,211,238,0.18)] sm:flex-none"
             >
               Ask TJAI which to pick
-              <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+              <ArrowRight
+                className="h-3.5 w-3.5 transition-transform motion-safe:group-hover/tjai:translate-x-1"
+                aria-hidden
+              />
             </Link>
           </div>
         </div>
