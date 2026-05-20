@@ -16,7 +16,7 @@ const variants: Record<ButtonVariant, string> = {
   primary:
     "rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] font-bold text-background shadow-lux-glow hover:-translate-y-px hover:opacity-95 hover:shadow-[0_0_28px_rgba(34,211,238,0.35)] active:scale-[0.98]",
   secondary:
-    "rounded-[10px] border border-divider bg-transparent text-white hover:-translate-y-px hover:border-white/15 hover:bg-white/5 active:scale-[0.98] active:bg-white/[0.06]",
+    "rounded-[10px] border border-divider bg-transparent text-white transition-[border-color,background-color,color,box-shadow,transform] duration-180 hover:-translate-y-px hover:border-cyan-300/40 hover:bg-cyan-300/[0.05] hover:text-cyan-50 hover:shadow-[0_0_18px_rgba(34,211,238,0.14)] active:scale-[0.98] active:bg-white/[0.06]",
   ghost:
     "rounded-[10px] border-0 bg-transparent text-muted hover:-translate-y-px hover:text-white active:scale-[0.98] active:bg-white/5",
   danger:

@@ -191,7 +191,7 @@ export function MessagesLayoutShell({
           <p>{loadError}</p>
           <button
             type="button"
-            className="mt-2 rounded-full border border-white/15 px-3 py-1 text-[11px] text-bright hover:border-white/25"
+            className="mt-2 rounded-full border border-white/15 px-3 py-1 text-[11px] text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_14px_rgba(34,211,238,0.12)]"
             onClick={() => void load()}
           >
             {t.threadRetry}
@@ -295,7 +295,7 @@ export function MessagesLayoutShell({
             </div>
             <Link
               href={`/${locale}/profile/edit`}
-              className="rounded-full border border-white/12 px-3 py-1.5 text-xs text-bright transition hover:border-white/20 hover:text-white"
+              className="rounded-full border border-white/12 px-3 py-1.5 text-xs text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_14px_rgba(34,211,238,0.12)]"
             >
               {s.settingsLink}
             </Link>

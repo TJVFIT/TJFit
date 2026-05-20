@@ -166,7 +166,7 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
           <p>{error}</p>
           <button
             type="button"
-            className="mt-3 rounded-full border border-white/15 px-4 py-1.5 text-xs text-bright hover:border-white/25"
+            className="mt-3 rounded-full border border-white/15 px-4 py-1.5 text-xs text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_14px_rgba(34,211,238,0.12)]"
             onClick={() => void runSearch()}
           >
             {s.retryLabel}
