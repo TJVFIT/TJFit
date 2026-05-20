@@ -471,7 +471,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
       <header className="flex shrink-0 items-center gap-2 border-b border-divider bg-surface px-3 py-3 sm:gap-3 sm:px-4">
         <Link
           href={`/${locale}/messages`}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 text-bright transition hover:border-white/20 hover:text-white lg:hidden"
+          className="group/back flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_18px_rgba(34,211,238,0.16)] lg:hidden"
           aria-label={s.threadBack}
         >
           <span className="text-lg leading-none">‹</span>
@@ -529,7 +529,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
             <p className="text-sm text-red-400">{fetchError}</p>
             <button
               type="button"
-              className="mt-4 rounded-full border border-white/15 px-4 py-2 text-sm text-bright hover:border-white/25"
+              className="tj-cta-sheen mt-4 rounded-full border border-white/15 px-4 py-2 text-sm text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_18px_rgba(34,211,238,0.14)]"
               onClick={() => void loadMessages()}
             >
               {t.threadRetry}
@@ -550,7 +550,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
                   type="button"
                   onClick={() => void loadOlder()}
                   disabled={loadingOlder}
-                  className="rounded-full border border-white/15 px-3 py-1 text-xs text-bright hover:border-white/25 disabled:opacity-60"
+                  className="rounded-full border border-white/15 px-3 py-1 text-xs text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_14px_rgba(34,211,238,0.12)] disabled:opacity-60"
                 >
                   {loadingOlder ? "Loading..." : "Load older messages"}
                 </button>
@@ -579,7 +579,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
                         "w-full px-4 py-3 text-[15px] leading-snug text-white transition-[box-shadow] duration-200",
                         mine
                           ? "rounded-2xl rounded-br rounded-tl-2xl border border-[rgba(34,211,238,0.2)] bg-[rgba(34,211,238,0.12)] hover:shadow-[0_0_20px_rgba(34,211,238,0.1)]"
-                          : "rounded-2xl rounded-bl rounded-tr-2xl border border-divider bg-surface hover:border-white/10"
+                          : "rounded-2xl rounded-bl rounded-tr-2xl border border-divider bg-surface transition-[border-color] duration-150 hover:border-cyan-300/20"
                       )}
                     >
                       {msg.plaintext === null
