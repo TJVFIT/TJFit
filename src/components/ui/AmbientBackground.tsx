@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 type AmbientBackgroundProps = {
-  variant?: "cyan" | "violet" | "both";
+  variant?: "cyan" | "sky" | "both";
   intensity?: "low" | "medium";
   className?: string;
 };
@@ -16,7 +16,7 @@ export function AmbientBackground({
 }: AmbientBackgroundProps) {
   const m = intensity === "medium" ? 2 : 1;
   const cyanCore = 0.06 * m;
-  const violetCore = 0.05 * m;
+  const skyCore = 0.05 * m;
 
   return (
     <div
@@ -37,7 +37,7 @@ export function AmbientBackground({
           }}
         />
       )}
-      {(variant === "violet" || variant === "both") && (
+      {(variant === "sky" || variant === "both") && (
         <div
           className="absolute will-change-transform"
           style={{
@@ -46,7 +46,7 @@ export function AmbientBackground({
             bottom: "10%",
             right: "10%",
             borderRadius: "50%",
-            background: `radial-gradient(circle, rgba(14, 165, 233,${violetCore}) 0%, transparent 70%)`,
+            background: `radial-gradient(circle, rgba(14, 165, 233,${skyCore}) 0%, transparent 70%)`,
             filter: "blur(40px)"
           }}
         />

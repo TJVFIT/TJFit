@@ -152,7 +152,7 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
 
   return (
     <>
-      <AmbientBackground variant="violet" intensity="low" />
+      <AmbientBackground variant="sky" intensity="low" />
       <div className="relative z-[1] mx-auto max-w-5xl px-4 py-10 sm:px-6">
         <div className="overflow-hidden rounded-2xl border border-divider bg-surface">
           <div
