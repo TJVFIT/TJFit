@@ -412,7 +412,7 @@ export function TJAIChat({
             type="submit"
             aria-label={copy.send}
             disabled={loading || thinking || !message.trim()}
-            className="inline-flex h-10 min-w-[44px] items-center justify-center rounded-xl bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-4 text-sm font-bold text-[#0A0A0B] shadow-[0_0_20px_rgba(34,211,238,0.22)] transition-[transform,filter,box-shadow,opacity] duration-150 hover:brightness-110 hover:shadow-[0_0_28px_rgba(34,211,238,0.28)] active:scale-[0.94] disabled:pointer-events-none disabled:opacity-40"
+            className="tj-cta-sheen inline-flex h-10 min-w-[44px] items-center justify-center rounded-xl bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-4 text-sm font-bold text-[#0A0A0B] shadow-[0_0_20px_rgba(34,211,238,0.22)] transition-[transform,filter,box-shadow,opacity] duration-150 hover:brightness-110 hover:shadow-[0_0_28px_rgba(34,211,238,0.28)] active:scale-[0.94] disabled:pointer-events-none disabled:opacity-40"
           >
             {copy.send}
           </button>

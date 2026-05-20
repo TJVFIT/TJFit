@@ -508,7 +508,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
             <button
               type="submit"
               disabled={isStreaming || isThinking}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] text-[#0A0A0B] shadow-[0_0_18px_rgba(34,211,238,0.2)] transition-[transform,filter] duration-200 hover:brightness-110 active:scale-[0.95] disabled:opacity-45"
+              className="tj-cta-sheen inline-flex h-10 w-10 items-center justify-center rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] text-[#0A0A0B] shadow-[0_0_18px_rgba(34,211,238,0.2)] transition-[transform,filter,box-shadow] duration-200 hover:brightness-110 hover:shadow-[0_0_26px_rgba(34,211,238,0.32)] active:scale-[0.95] disabled:opacity-45"
             >
               <Send className="h-4 w-4" />
             </button>
