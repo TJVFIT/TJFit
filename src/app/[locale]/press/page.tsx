@@ -73,10 +73,17 @@ export default function PressPage({ params }: { params: { locale: string } }) {
       </section>
 
       <section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-xl border border-divider bg-surface p-4"><p className="text-xs text-dim">Members</p><p className="mt-1 text-xl font-bold text-white">Growing daily</p></div>
-        <div className="rounded-xl border border-divider bg-surface p-4"><p className="text-xs text-dim">Languages</p><p className="mt-1 text-xl font-bold text-white">5</p></div>
-        <div className="rounded-xl border border-divider bg-surface p-4"><p className="text-xs text-dim">Programs</p><p className="mt-1 text-xl font-bold text-white">{programCount}</p></div>
-        <div className="rounded-xl border border-divider bg-surface p-4"><p className="text-xs text-dim">Countries reached</p><p className="mt-1 text-xl font-bold text-white">50+</p></div>
+        {[
+          ["Members", "Growing daily"],
+          ["Languages", "5"],
+          ["Programs", String(programCount)],
+          ["Countries reached", "50+"]
+        ].map(([label, value]) => (
+          <div key={label} className="group/stat rounded-xl border border-divider bg-surface p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-cyan-300/35 hover:shadow-[0_0_22px_rgba(34,211,238,0.14)] motion-safe:hover:-translate-y-0.5">
+            <p className="text-xs text-dim">{label}</p>
+            <p className="mt-1 text-xl font-bold text-white tabular-nums transition-colors duration-200 group-hover/stat:text-cyan-100">{value}</p>
+          </div>
+        ))}
       </section>
 
       <section className="mt-6 rounded-2xl border border-divider bg-surface p-6">
