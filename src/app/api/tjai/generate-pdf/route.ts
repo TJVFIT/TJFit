@@ -1,11 +1,18 @@
 import { NextResponse } from "next/server";
 
+import { rateLimit } from "@/lib/rate-limit";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { getTJAIAccess } from "@/lib/tjai-access";
 import { buildTJAIPlanPdf } from "@/lib/tjai-pdf";
 import { getLatestTjaiPlan } from "@/lib/tjai-plan-store";
 import type { TJAIPlan } from "@/lib/tjai-types";
+
+// jsPDF needs Node APIs; on Vercel's Edge runtime it fails subtly. Pin both
+// the runtime and dynamic execution so this never accidentally serves cached
+// or edge-rendered output.
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 function titleCase(value: string) {
   return value
@@ -18,6 +25,18 @@ function titleCase(value: string) {
 export async function GET() {
   const auth = await requireAuth();
   if (!auth.ok) return auth.response;
+
+  // Rate limit: PDF generation is CPU-heavy. 10/min/user is generous for
+  // legitimate retries but prevents a tight client loop from burning lambda.
+  const limiter = await rateLimit({
+    key: `tjai-pdf:${auth.user.id}`,
+    limit: 10,
+    windowMs: 60_000
+  });
+  if (!limiter.success) {
+    return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+  }
+
   const admin = getSupabaseServerClient();
   if (!admin) return NextResponse.json({ error: "Server not configured" }, { status: 500 });
 
@@ -57,7 +76,9 @@ export async function GET() {
   return new Response(buffer, {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="tjai-plan-${auth.user.id.slice(0, 8)}.pdf"`
+      "Content-Disposition": `attachment; filename="tjai-plan-${auth.user.id.slice(0, 8)}.pdf"`,
+      // User-specific plan: never let an intermediary cache or revalidate this.
+      "Cache-Control": "private, no-store"
     }
   });
 }

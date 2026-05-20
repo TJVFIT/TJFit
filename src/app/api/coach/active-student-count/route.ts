@@ -24,7 +24,8 @@ export async function GET() {
     .eq("status", "active");
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("[coach/active-student-count] count failed", error.message, error.code);
+    return NextResponse.json({ error: "Failed to load count" }, { status: 500 });
   }
 
   return NextResponse.json({ count: count ?? 0 });

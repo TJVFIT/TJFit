@@ -42,20 +42,32 @@ export function buildTJAIPlanPdf(args: { userName: string; goal: string; generat
   pdf.text(`Time to goal: ${plan.summary.timeToGoal}`, margin, 170);
   pdf.text(plan.diet.philosophy.slice(0, 350), margin, 205, { maxWidth: 510 });
 
-  for (const week of plan.program.weeks) {
+  const startContentPage = (title: string) => {
     pdf.addPage();
     pdf.setFillColor(255, 255, 255);
     pdf.rect(0, 0, pageWidth, 842, "F");
-    addHeader(`${week.weekRange} — ${week.phase}`);
+    addHeader(title);
+  };
+
+  for (const week of plan.program.weeks) {
+    const weekTitle = `${week.weekRange} — ${week.phase}`;
+    startContentPage(weekTitle);
     let y = 110;
     for (const day of week.days) {
-      if (y > 760) break;
+      // Overflow → continue on a fresh page rather than silently truncating.
+      if (y > 760) {
+        startContentPage(`${weekTitle} (continued)`);
+        y = 110;
+      }
       pdf.setTextColor(20, 20, 20);
       pdf.setFontSize(12);
       pdf.text(`${day.day}: ${day.label}`, margin, y);
       y += 16;
-      for (const ex of day.exercises.slice(0, 8)) {
-        if (y > 760) break;
+      for (const ex of day.exercises) {
+        if (y > 760) {
+          startContentPage(`${weekTitle} (continued)`);
+          y = 110;
+        }
         pdf.setFontSize(10);
         pdf.text(`- ${ex.name} | ${ex.sets}x${ex.reps} | Rest ${ex.rest}`, margin + 10, y);
         y += 13;

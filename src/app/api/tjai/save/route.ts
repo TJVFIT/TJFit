@@ -33,12 +33,13 @@ export async function POST(request: Request) {
       : await auth.supabase.from("saved_tjai_plans").insert(payload);
 
     if (error) {
+      // Log the full Postgres error server-side; don't leak raw error.message
+      // (table names, columns, constraint text) to the client.
       console.error("[TJAI Save POST] DB error:", error.message, error.code);
       return NextResponse.json(
         {
           error: "Failed to save plan",
-          code: error.code ?? "db_error",
-          details: error.message
+          code: error.code ?? "db_error"
         },
         { status: 500 }
       );
@@ -50,8 +51,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         error: "Save failed",
-        code: "save_crash",
-        details: err instanceof Error ? err.message : String(err)
+        code: "save_crash"
       },
       { status: 500 }
     );

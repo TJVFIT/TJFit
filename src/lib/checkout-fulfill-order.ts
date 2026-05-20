@@ -9,8 +9,10 @@ export type FulfillOrderResult =
   | { ok: false; error: string };
 
 /**
- * Marks a program order paid, credits TJFITcoin, and consumes a wallet discount code if present.
- * Used by test checkout completion and Paddle webhooks (idempotent if already paid).
+ * Marks a program order paid, credits TJFITcoin atomically via SQL function,
+ * and consumes a wallet discount code if present. Safe under Paddle webhook
+ * redelivery: ledger uniqueness and the order status transition both guard
+ * against double-effects.
  */
 export async function fulfillProgramOrderPaid(
   adminClient: SupabaseClient,
@@ -32,80 +34,61 @@ export async function fulfillProgramOrderPaid(
     return { ok: false, error: "Order is not a Paddle live checkout" };
   }
 
-  if (existingOrder.status === "paid") {
-    return { ok: true, alreadyPaid: true, coinsEarned: rewardAmount };
-  }
-
-  if (existingOrder.status !== "pending") {
+  if (existingOrder.status !== "paid" && existingOrder.status !== "pending") {
     return { ok: false, error: "Order is not pending" };
   }
 
-  const { data: paidOrder, error: orderUpdateError } = await adminClient
-    .from("program_orders")
-    .update({
-      status: "paid",
-      paid_at: new Date().toISOString(),
-      tjfit_coins_earned: rewardAmount
-    })
-    .eq("id", existingOrder.id)
-    .eq("status", "pending")
-    .select("id,discount_code")
-    .single();
+  let discountCode: string | null = existingOrder.discount_code ?? null;
 
-  if (orderUpdateError || !paidOrder) {
-    return { ok: false, error: "Order could not be completed." };
+  if (existingOrder.status === "pending") {
+    const { data: paidOrder, error: orderUpdateError } = await adminClient
+      .from("program_orders")
+      .update({
+        status: "paid",
+        paid_at: new Date().toISOString(),
+        tjfit_coins_earned: rewardAmount
+      })
+      .eq("id", existingOrder.id)
+      .eq("status", "pending")
+      .select("id,discount_code")
+      .single();
+
+    if (orderUpdateError || !paidOrder) {
+      // A concurrent webhook may have flipped status under us. Re-read; if it
+      // is now paid we still need to run the (idempotent) coin grant below.
+      const { data: recheck } = await adminClient
+        .from("program_orders")
+        .select("status,discount_code")
+        .eq("id", existingOrder.id)
+        .maybeSingle();
+      if (recheck?.status !== "paid") {
+        return { ok: false, error: "Order could not be completed." };
+      }
+      discountCode = recheck.discount_code ?? null;
+    } else {
+      discountCode = paidOrder.discount_code ?? null;
+    }
   }
 
-  const { error: walletUpsertError } = await adminClient
-    .from("tjfit_coin_wallets")
-    .upsert({ user_id: existingOrder.user_id }, { onConflict: "user_id" });
-  if (walletUpsertError) {
-    console.error("fulfillProgramOrderPaid: wallet upsert failed", walletUpsertError);
-    return { ok: false, error: "Failed to initialize coin wallet." };
+  // Atomic ledger insert + wallet credit. The RPC returns false if a prior
+  // call already credited this order (ledger row exists via unique index).
+  const { data: granted, error: grantError } = await adminClient.rpc(
+    "tjfit_grant_program_purchase_coins",
+    {
+      p_user_id: existingOrder.user_id,
+      p_order_id: existingOrder.id,
+      p_amount: rewardAmount
+    }
+  );
+
+  if (grantError) {
+    console.error("fulfillProgramOrderPaid: coin grant rpc failed", grantError);
+    // Order is already paid at this point; coin grant can be retried by next
+    // webhook delivery. Return ok so we don't churn the order status.
+    return { ok: true, alreadyPaid: existingOrder.status === "paid", coinsEarned: 0 };
   }
 
-  const { data: walletBefore, error: walletFetchError } = await adminClient
-    .from("tjfit_coin_wallets")
-    .select("balance,lifetime_earned,lifetime_spent")
-    .eq("user_id", existingOrder.user_id)
-    .single();
-  if (walletFetchError || !walletBefore) {
-    console.error("fulfillProgramOrderPaid: wallet fetch failed", walletFetchError);
-    return { ok: false, error: "Failed to read coin wallet." };
-  }
-
-  const walletBalance = walletBefore.balance ?? 0;
-  const lifetimeEarned = walletBefore.lifetime_earned ?? 0;
-  const lifetimeSpent = walletBefore.lifetime_spent ?? 0;
-
-  const { error: walletUpdateError } = await adminClient
-    .from("tjfit_coin_wallets")
-    .update({
-      balance: walletBalance + rewardAmount,
-      lifetime_earned: lifetimeEarned + rewardAmount,
-      lifetime_spent: lifetimeSpent,
-      updated_at: new Date().toISOString()
-    })
-    .eq("user_id", existingOrder.user_id)
-    .eq("balance", walletBalance);
-  if (walletUpdateError) {
-    console.error("fulfillProgramOrderPaid: wallet update failed", walletUpdateError);
-    return { ok: false, error: "Failed to update coin wallet." };
-  }
-
-  const { error: ledgerError } = await adminClient.from("tjfit_coin_ledger").insert({
-    user_id: existingOrder.user_id,
-    delta: rewardAmount,
-    reason: "program_purchase",
-    order_id: existingOrder.id,
-    metadata: { source: "checkout_fulfill", coinsPerProgram: rewardAmount }
-  });
-  if (ledgerError) {
-    console.error("fulfillProgramOrderPaid: ledger insert failed", ledgerError);
-    // Non-fatal: coins were credited to wallet; ledger is for history only
-  }
-
-  if (paidOrder.discount_code) {
+  if (discountCode) {
     const { error: discountUpdateError } = await adminClient
       .from("tjfit_discount_codes")
       .update({
@@ -113,7 +96,7 @@ export async function fulfillProgramOrderPaid(
         used_at: new Date().toISOString(),
         order_id: existingOrder.id
       })
-      .eq("code", paidOrder.discount_code)
+      .eq("code", discountCode)
       .eq("user_id", existingOrder.user_id)
       .eq("status", "available");
     if (discountUpdateError) {
@@ -122,5 +105,9 @@ export async function fulfillProgramOrderPaid(
     }
   }
 
-  return { ok: true, coinsEarned: rewardAmount };
+  return {
+    ok: true,
+    alreadyPaid: existingOrder.status === "paid",
+    coinsEarned: granted === true ? rewardAmount : 0
+  };
 }

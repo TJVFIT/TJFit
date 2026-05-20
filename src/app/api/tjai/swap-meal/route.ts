@@ -5,6 +5,7 @@ import { isAdminEmail } from "@/lib/auth-utils";
 // for fast structured meal-swap reasoning; the rest of TJAI runs on
 // OpenAI. Requires ANTHROPIC_API_KEY in env (see .env.example).
 import { callClaude, extractJsonBlock } from "@/lib/tjai-anthropic";
+import { rateLimit } from "@/lib/rate-limit";
 import { getTJAIAccess } from "@/lib/tjai-access";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
@@ -30,6 +31,28 @@ export async function POST(request: Request) {
   });
   if (!access.canUseMealSwap) {
     return NextResponse.json({ error: "Upgrade required for meal swaps." }, { status: 402 });
+  }
+
+  // Enforce the tier's daily meal-swap limit. The limit was defined in
+  // getTJAIAccess (apex=10, pro=3, core=0) but never enforced — pro users
+  // could spam Claude indefinitely. Bucket size = 24h gives a per-day cap.
+  // Admins bypass via mealSwapDailyLimit=999.
+  if (access.mealSwapDailyLimit > 0) {
+    const limiter = await rateLimit({
+      key: `tjai-meal-swap:${auth.user.id}`,
+      limit: access.mealSwapDailyLimit,
+      windowMs: 24 * 60 * 60 * 1000
+    });
+    if (!limiter.success) {
+      return NextResponse.json(
+        {
+          error: "Daily meal-swap limit reached. Resets in 24h.",
+          code: "daily_limit",
+          limit: access.mealSwapDailyLimit
+        },
+        { status: 429 }
+      );
+    }
   }
 
   const body = await request.json().catch(() => null);
@@ -61,7 +84,9 @@ MealObject fields: name,time,foods,calories,protein,carbs,fat,prepNote,recipe`
     const parsed = JSON.parse(json);
     return NextResponse.json({ alternatives: parsed.alternatives ?? [] });
   } catch (error) {
-    return NextResponse.json({ error: "Swap generation failed", details: String(error) }, { status: 500 });
+    // Don't leak raw Claude/network error text to clients.
+    console.error("[tjai/swap-meal] generation failed", error);
+    return NextResponse.json({ error: "Swap generation failed" }, { status: 500 });
   }
 }
 

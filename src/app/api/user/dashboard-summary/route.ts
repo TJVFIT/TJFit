@@ -3,11 +3,18 @@ import { requireAuth } from "@/lib/require-auth";
 
 export const dynamic = "force-dynamic";
 
+// Dashboard streak ceiling. Streak rendering above this is handled by the
+// badge system (100-day streak badge, etc.), so we don't need to scan the
+// full year on every dashboard load. 90 days is the sweet spot: cheap query
+// for the average user (small handful of active days), generous enough that
+// real engagement gets correct credit on the dashboard headline number.
+const STREAK_WINDOW_DAYS = 90;
+
 function computeStreak(dateSet: Set<string>): number {
   let streak = 0;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  for (let i = 0; i < 365; i++) {
+  for (let i = 0; i < STREAK_WINDOW_DAYS; i++) {
     const d = new Date(today);
     d.setDate(today.getDate() - i);
     const iso = d.toISOString().slice(0, 10);
@@ -39,14 +46,14 @@ export async function GET() {
       .select("entry_date")
       .eq("user_id", uid)
       .order("entry_date", { ascending: false })
-      .limit(365),
+      .limit(STREAK_WINDOW_DAYS),
     auth.supabase.from("progress_milestones").select("id", { count: "exact", head: true }).eq("user_id", uid),
     auth.supabase
       .from("workout_logs")
       .select("workout_date")
       .eq("user_id", uid)
       .order("workout_date", { ascending: false })
-      .limit(365)
+      .limit(STREAK_WINDOW_DAYS)
   ]);
 
   const orders = ordersRes.data ?? [];

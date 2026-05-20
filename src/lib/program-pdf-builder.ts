@@ -156,6 +156,20 @@ export function buildProgramPdf(args: ProgramPdfArgs): jsPDF {
       drawInteriorHeader(pdf, `Phase ${idx + 1}`, phase.title);
 
       let py = 130;
+
+      // Continue this phase on a fresh page when content exceeds the body.
+      // Footer/page-num are kept in sync so safety/close pages still number
+      // correctly. Bullet items previously dropped silently past `PAGE.height - N`.
+      const continuePhase = (subtitle: string, restoreBody: () => void) => {
+        drawFooter(pdf, pageNum, program.category);
+        pageNum += 1;
+        pdf.addPage();
+        fillPage(pdf, PDF_THEME.paper);
+        drawInteriorHeader(pdf, `Phase ${idx + 1}`, `${phase.title} — ${subtitle}`);
+        py = 130;
+        restoreBody();
+      };
+
       setText(pdf, PDF_THEME.ink);
       pdf.setFont("helvetica", "italic");
       pdf.setFontSize(11);
@@ -172,12 +186,17 @@ export function buildProgramPdf(args: ProgramPdfArgs): jsPDF {
       pdf.text("TRAINING DAYS", PAGE.margin, py);
       py += 14;
 
-      setText(pdf, PDF_THEME.ink);
-      pdf.setFont("helvetica", "normal");
-      pdf.setFontSize(10);
+      const restoreBodyText = () => {
+        setText(pdf, PDF_THEME.ink);
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(10);
+      };
+      restoreBodyText();
       phase.trainingDays.forEach((day) => {
-        if (py > PAGE.height - 180) return;
         const lines = wrapText(pdf, `· ${day}`, contentWidth);
+        if (py + lines.length * 13 > PAGE.height - 80) {
+          continuePhase("training days continued", restoreBodyText);
+        }
         lines.forEach((line) => {
           pdf.text(line, PAGE.margin, py);
           py += 13;
@@ -186,18 +205,22 @@ export function buildProgramPdf(args: ProgramPdfArgs): jsPDF {
       });
 
       py += 10;
+      // Conditioning header may itself overflow if training days filled the page.
+      if (py > PAGE.height - 120) {
+        continuePhase("conditioning continued", restoreBodyText);
+      }
       setText(pdf, PDF_THEME.accent);
       pdf.setFont("helvetica", "bold");
       pdf.setFontSize(9);
       pdf.text("CONDITIONING & RECOVERY", PAGE.margin, py);
       py += 14;
 
-      setText(pdf, PDF_THEME.ink);
-      pdf.setFont("helvetica", "normal");
-      pdf.setFontSize(10);
+      restoreBodyText();
       phase.conditioning.forEach((item) => {
-        if (py > PAGE.height - 80) return;
         const lines = wrapText(pdf, `· ${item}`, contentWidth);
+        if (py + lines.length * 13 > PAGE.height - 80) {
+          continuePhase("conditioning continued", restoreBodyText);
+        }
         lines.forEach((line) => {
           pdf.text(line, PAGE.margin, py);
           py += 13;
@@ -240,9 +263,22 @@ export function buildProgramPdf(args: ProgramPdfArgs): jsPDF {
     "Scale load and volume before chasing intensity.",
     "Sleep 7-9 hours; hydrate throughout the day."
   ];
+  const restoreSafetyText = () => {
+    setText(pdf, PDF_THEME.textMuted);
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(10);
+  };
   safety.forEach((item) => {
-    if (sy > PAGE.height - 120) return;
     const lines = wrapText(pdf, `· ${item}`, contentWidth);
+    if (sy + lines.length * 14 > PAGE.height - 100) {
+      drawFooter(pdf, pageNum, program.category);
+      pageNum += 1;
+      pdf.addPage();
+      fillPage(pdf, PDF_THEME.obsidian);
+      drawCoverHeader(pdf, "Safety · continued");
+      sy = 130;
+      restoreSafetyText();
+    }
     lines.forEach((line) => {
       pdf.text(line, PAGE.margin, sy);
       sy += 14;

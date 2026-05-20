@@ -49,7 +49,8 @@ export async function POST(request: NextRequest) {
   );
 
   if (upsertError) {
-    return NextResponse.json({ error: upsertError.message }, { status: 500 });
+    console.error("[coach/terms/accept] upsert failed", upsertError.message, upsertError.code);
+    return NextResponse.json({ error: "Failed to record acceptance" }, { status: 500 });
   }
 
   return NextResponse.json({ ok: true, termsVersion });

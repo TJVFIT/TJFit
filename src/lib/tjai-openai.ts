@@ -5,7 +5,9 @@
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 const MODEL_JSON = "gpt-4o-2024-08-06"; // structured outputs / json_object
 const MODEL_CHAT = "gpt-4o";            // chat / streaming
+const MODEL_MINI = "gpt-4o-mini";       // cheap extractions
 const MAX_RETRIES = 2;
+const OPENAI_TIMEOUT_MS = 30_000;
 
 export type OpenAIUsageSnapshot = {
   promptTokens: number;
@@ -13,17 +15,36 @@ export type OpenAIUsageSnapshot = {
   totalTokens: number;
 };
 
+/** Thrown for HTTP 4xx (except 408/429) — caller should not retry these. */
+class OpenAINonRetryableError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "OpenAINonRetryableError";
+  }
+}
+
+function isRetryableStatus(status: number): boolean {
+  // Retry on 5xx, 408 (timeout), 429 (rate limit). 4xx otherwise is a client
+  // error (bad request, auth, content policy) and retrying just wastes calls.
+  if (status >= 500) return true;
+  if (status === 408 || status === 429) return true;
+  return false;
+}
+
 export async function callOpenAI({
   system,
   user,
   maxTokens = 16000,
   jsonMode = false,
+  model,
   onUsage
 }: {
   system: string;
   user: string;
   maxTokens?: number;
   jsonMode?: boolean;
+  /** Override the default model (e.g. "gpt-4o-mini" for cheap JSON extractions). */
+  model?: string;
   /** Optional hook for observability (plan generation, small JSON extractions, etc.). */
   onUsage?: (usage: OpenAIUsageSnapshot) => void;
 }): Promise<string> {
@@ -33,9 +54,11 @@ export async function callOpenAI({
   let lastError: Error | null = null;
 
   for (let attempt = 1; attempt <= MAX_RETRIES + 1; attempt++) {
+    const ctrl = new AbortController();
+    const timeoutId = setTimeout(() => ctrl.abort(), OPENAI_TIMEOUT_MS);
     try {
       const body: Record<string, unknown> = {
-        model: jsonMode ? MODEL_JSON : MODEL_CHAT,
+        model: model ?? (jsonMode ? MODEL_JSON : MODEL_CHAT),
         max_tokens: maxTokens,
         temperature: jsonMode ? 0.3 : 0.7,
         messages: [
@@ -54,12 +77,17 @@ export async function callOpenAI({
           "Content-Type": "application/json",
           Authorization: `Bearer ${apiKey}`
         },
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
+        signal: ctrl.signal
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`OpenAI API error ${response.status}: ${errorText.slice(0, 500)}`);
+        const msg = `OpenAI API error ${response.status}: ${errorText.slice(0, 500)}`;
+        if (!isRetryableStatus(response.status)) {
+          throw new OpenAINonRetryableError(msg);
+        }
+        throw new Error(msg);
       }
 
       const data = (await response.json()) as {
@@ -82,10 +110,17 @@ export async function callOpenAI({
       return text;
     } catch (err) {
       lastError = err instanceof Error ? err : new Error(String(err));
+      // Don't retry 4xx (auth, content policy, bad request) — just wastes calls.
+      if (lastError instanceof OpenAINonRetryableError) {
+        console.error("TJAI OpenAI non-retryable:", lastError.message);
+        throw lastError;
+      }
       console.error(`TJAI OpenAI attempt ${attempt} failed:`, lastError.message);
       if (attempt <= MAX_RETRIES) {
         await new Promise((r) => setTimeout(r, attempt * 1000));
       }
+    } finally {
+      clearTimeout(timeoutId);
     }
   }
 
@@ -122,14 +157,25 @@ export async function streamOpenAI({
     ]
   };
 
-  const response = await fetch(OPENAI_API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`
-    },
-    body: JSON.stringify(body)
-  });
+  // Timeout only guards the initial fetch/headers handshake — once OpenAI
+  // starts streaming we let it run to completion (the route's maxDuration
+  // is the upper bound on total time).
+  const ctrl = new AbortController();
+  const timeoutId = setTimeout(() => ctrl.abort(), OPENAI_TIMEOUT_MS);
+  let response: Response;
+  try {
+    response = await fetch(OPENAI_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`
+      },
+      body: JSON.stringify(body),
+      signal: ctrl.signal
+    });
+  } finally {
+    clearTimeout(timeoutId);
+  }
 
   if (!response.ok) {
     const err = await response.text();

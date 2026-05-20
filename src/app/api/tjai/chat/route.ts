@@ -41,7 +41,10 @@ async function extractPreference(message: string): Promise<{ key: string | null;
       system: 'Extract user food/training preferences only. Return strict JSON: {"key":"...","value":"..."} or {"key":null}. No markdown.',
       user: message,
       maxTokens: 120,
-      jsonMode: true
+      jsonMode: true,
+      // Cheap utility extraction — gpt-4o-mini is ~95% cheaper than gpt-4o
+      // for a task this simple. The chat reply itself still uses gpt-4o.
+      model: "gpt-4o-mini"
     });
     const parsed = JSON.parse(raw) as { key?: string | null; value?: string | null };
     return {
@@ -82,7 +85,7 @@ export async function POST(request: NextRequest) {
     }
 
     const isAdminByEmail = Boolean(auth.user.email && isAdminEmail(auth.user.email));
-    const [{ data: sub }, { data: usage }, { data: purchase }, { data: profile }] = await Promise.all([
+    const [{ data: sub }, { data: rawUsage }, { data: purchase }, { data: profile }] = await Promise.all([
       admin.from("user_subscriptions").select("tier,status").eq("user_id", auth.user.id).maybeSingle(),
       admin.from("tjai_trial_usage").select("messages_used,trial_started_at,trial_ends_at").eq("user_id", auth.user.id).maybeSingle(),
       admin.from("tjai_plan_purchases").select("id").eq("user_id", auth.user.id).order("purchased_at", { ascending: false }).limit(1).maybeSingle(),
@@ -90,6 +93,32 @@ export async function POST(request: NextRequest) {
     ]);
     const isAdmin = isAdminByEmail || profile?.role === "admin";
     const tier = (sub?.tier ?? "core") as "core" | "pro" | "apex";
+
+    // Self-seed the trial row when missing. Without this, a core user whose
+    // dashboard never hit /api/tjai/trial-status (mobile, direct API, stale
+    // cache) is permanently 402'd despite having free credits. trial-status
+    // and consume_trial_message both treat row presence as the gate.
+    let usage = rawUsage;
+    if (!isAdmin && tier === "core" && !usage && !purchase?.id) {
+      const start = new Date();
+      const end = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+      const { data: seeded } = await admin
+        .from("tjai_trial_usage")
+        .upsert(
+          {
+            user_id: auth.user.id,
+            messages_used: 0,
+            trial_started_at: start.toISOString(),
+            trial_ends_at: end.toISOString(),
+            last_reset_at: start.toISOString()
+          },
+          { onConflict: "user_id" }
+        )
+        .select("messages_used,trial_started_at,trial_ends_at")
+        .single();
+      if (seeded) usage = seeded;
+    }
+
     const trialEndsAt = usage?.trial_ends_at ? new Date(usage.trial_ends_at).getTime() : 0;
     const { TJAI_TRIAL_MESSAGE_LIMIT } = await import("@/lib/tjai/trial-config");
     const remaining = isAdmin ? 999 : Math.max(0, trialEndsAt > Date.now() ? TJAI_TRIAL_MESSAGE_LIMIT - Number(usage?.messages_used ?? 0) : 0);
@@ -159,39 +188,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Atomic trial-message consume for core users without a one-time
-    // purchase. Pro / Apex / admin / purchasers are unlimited and skip.
-    // The RPC locks the row, re-checks the limit, and bumps the count
-    // in a single transaction — closes the DevTools-bypass gap where
-    // the previous client-side increment fetch could be skipped.
+    // Core-trial users get an atomic per-message RPC consume below, after
+    // OpenAI returns a usable response — that way failed OpenAI calls don't
+    // burn a trial credit. The earlier `remaining` check (above) is a cheap
+    // pre-gate; the RPC is the source of truth and re-checks under a lock.
     const isCoreTrial = !isAdmin && tier === "core" && !purchase?.id;
-    if (isCoreTrial) {
-      const { data: rpcRows, error: rpcError } = await admin.rpc("consume_trial_message", {
-        p_user_id: auth.user.id,
-        p_limit: TJAI_TRIAL_MESSAGE_LIMIT
-      });
-      if (rpcError) {
-        console.error("[TJAI chat] consume_trial_message RPC failed", rpcError);
-        return new Response(
-          JSON.stringify({ error: "Trial accounting failed.", code: "rpc_error" }),
-          { status: 500, headers: { "Content-Type": "application/json" } }
-        );
-      }
-      const consume = (Array.isArray(rpcRows) ? rpcRows[0] : rpcRows) as
-        | { messages_used?: number; ok?: boolean; reason?: string }
-        | null;
-      if (!consume?.ok) {
-        return new Response(
-          JSON.stringify({
-            error: "Trial limit reached.",
-            code: String(consume?.reason ?? "limit_reached"),
-            messagesUsed: Number(consume?.messages_used ?? 0),
-            messageLimit: TJAI_TRIAL_MESSAGE_LIMIT
-          }),
-          { status: 402, headers: { "Content-Type": "application/json" } }
-        );
-      }
-    }
 
     const [planRow, memorySnapshot, { data: historyRows }, { data: prefRows }, recentData, userSettings, longMemoryFacts] = await Promise.all([
       getLatestTjaiPlan(auth.supabase, auth.user.id),
@@ -271,6 +272,40 @@ export async function POST(request: NextRequest) {
 
     try {
       const upstream = await streamOpenAI({ system: systemPrompt, messages, maxTokens: 700 });
+
+      // OpenAI accepted the request (we have a 200 stream). Atomically consume
+      // a trial credit now — if we lost the race against another concurrent
+      // request, abort the upstream and return 402 without billing the user.
+      if (isCoreTrial) {
+        const { data: rpcRows, error: rpcError } = await admin.rpc("consume_trial_message", {
+          p_user_id: auth.user.id,
+          p_limit: TJAI_TRIAL_MESSAGE_LIMIT
+        });
+        if (rpcError) {
+          console.error("[TJAI chat] consume_trial_message RPC failed", rpcError);
+          void upstream.cancel();
+          return new Response(
+            JSON.stringify({ error: "Trial accounting failed.", code: "rpc_error" }),
+            { status: 500, headers: { "Content-Type": "application/json" } }
+          );
+        }
+        const consume = (Array.isArray(rpcRows) ? rpcRows[0] : rpcRows) as
+          | { messages_used?: number; ok?: boolean; reason?: string }
+          | null;
+        if (!consume?.ok) {
+          void upstream.cancel();
+          return new Response(
+            JSON.stringify({
+              error: "Trial limit reached.",
+              code: String(consume?.reason ?? "limit_reached"),
+              messagesUsed: Number(consume?.messages_used ?? 0),
+              messageLimit: TJAI_TRIAL_MESSAGE_LIMIT
+            }),
+            { status: 402, headers: { "Content-Type": "application/json" } }
+          );
+        }
+      }
+
       const encoder = new TextEncoder();
       const decoder = new TextDecoder();
       const reader = upstream.getReader();

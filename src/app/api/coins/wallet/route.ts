@@ -21,14 +21,16 @@ export async function GET() {
     return NextResponse.json({ error: "Server not configured" }, { status: 500 });
   }
 
-  await adminClient.from("tjfit_coin_wallets").upsert({ user_id: user.id }, { onConflict: "user_id" });
-
-  const [{ data: wallet }, { data: ledger }, { data: offers }, { data: codes }] = await Promise.all([
+  // Skip per-request upsert. The wallet is created on first earn/redeem;
+  // until then this endpoint just returns the safe default. Previously
+  // every GET (e.g. a polling client) wrote to the wallets table, which
+  // burned writes for no value.
+  const [walletResult, ledgerResult, offersResult, codesResult] = await Promise.all([
     adminClient
       .from("tjfit_coin_wallets")
       .select("balance,lifetime_earned,lifetime_spent")
       .eq("user_id", user.id)
-      .single(),
+      .maybeSingle(),
     adminClient
       .from("tjfit_coin_ledger")
       .select("id,delta,reason,metadata,created_at")
@@ -49,10 +51,10 @@ export async function GET() {
   ]);
 
   return NextResponse.json({
-    wallet: wallet ?? { balance: 0, lifetime_earned: 0, lifetime_spent: 0 },
-    ledger: ledger ?? [],
-    offers: offers ?? [],
-    codes: codes ?? []
+    wallet: walletResult.data ?? { balance: 0, lifetime_earned: 0, lifetime_spent: 0 },
+    ledger: ledgerResult.data ?? [],
+    offers: offersResult.data ?? [],
+    codes: codesResult.data ?? []
   });
   } catch (err) {
     console.error("Wallet route crash:", err);

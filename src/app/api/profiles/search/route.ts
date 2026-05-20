@@ -23,7 +23,8 @@ export async function GET(request: NextRequest) {
     if (isMissingSchemaMigrationError(error.message)) {
       return jsonSchemaNotReady("api/profiles/search:GET", error.message);
     }
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("[profiles/search] rpc failed", error.message, error.code);
+    return NextResponse.json({ error: "Search failed" }, { status: 500 });
   }
 
   return NextResponse.json({ results: data ?? [] });

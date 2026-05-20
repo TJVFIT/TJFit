@@ -201,7 +201,25 @@ export function buildBundlePdf(args: BundlePdfArgs): jsPDF {
   );
   y += 24;
 
+  // Defensive: if a bundle ever gains enough exercises to overflow this
+  // page (~12+ with notes), spill onto a continuation page rather than
+  // silently drawing past the footer. Today's bundle data fits comfortably
+  // but the guard prevents future regressions.
+  const continueTrainingPage = () => {
+    drawFooter(pdf, 4, bundle.name);
+    pdf.addPage();
+    fillPage(pdf, PDF_THEME.paper);
+    drawInteriorHeader(pdf, "Sample session", `${bundle.sampleTrainingDay.name} (continued)`);
+    y = 130;
+  };
   bundle.sampleTrainingDay.exercises.forEach((ex, i) => {
+    // Estimate this item's footprint before drawing.
+    const noteLineCount = ex.notes ? wrapText(pdf, ex.notes, contentWidth - 60).length : 0;
+    const itemHeight = 14 + noteLineCount * 12 + 16;
+    if (y + itemHeight > PAGE.height - 80) {
+      continueTrainingPage();
+    }
+
     setText(pdf, PDF_THEME.accent);
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(9);
@@ -306,7 +324,23 @@ export function buildBundlePdf(args: BundlePdfArgs): jsPDF {
   );
   y += 24;
 
+  // Same defensive page-break guard as the training-day list. Today's
+  // meal-day data fits the page; future expansion (e.g. snack-heavy day
+  // with longer item descriptions) would have silently overflowed.
+  const continueMealPage = () => {
+    drawFooter(pdf, 6, bundle.name);
+    pdf.addPage();
+    fillPage(pdf, PDF_THEME.paper);
+    drawInteriorHeader(pdf, "Daily Template", "Anchor meals by slot (continued)");
+    y = 130;
+  };
   bundle.sampleMealDay.forEach((meal) => {
+    const itemLineCount = wrapText(pdf, meal.items, contentWidth).length;
+    const itemHeight = 16 + itemLineCount * 15 + 18;
+    if (y + itemHeight > PAGE.height - 80) {
+      continueMealPage();
+    }
+
     setText(pdf, PDF_THEME.accent);
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(8);
