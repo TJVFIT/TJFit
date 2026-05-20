@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { programs } from "@/lib/content";
+import { BUNDLES } from "@/lib/bundles";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { searchNormalize } from "@/lib/turkish-chars";
 
@@ -16,18 +16,15 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ results: { programs: [], diets: [], coaches: [], blog: [], users: [] } });
   }
 
-  const staticPrograms = programs
-    .filter((item) => match(`${item.title} ${item.description} ${item.category}`, q))
+  const bundleHits = BUNDLES.filter((b) =>
+    match(`${b.name} ${b.hook} ${b.goalLabel} ${b.programTitle} ${b.dietTitle}`, q)
+  )
     .slice(0, 6)
-    .map((item) => ({ id: item.slug, title: item.title, href: `/programs/${item.slug}` }));
-  const staticDiets = programs
-    .filter((item) => item.category.toLowerCase().includes("nutrition") && match(`${item.title} ${item.description} ${item.category}`, q))
-    .slice(0, 6)
-    .map((item) => ({ id: item.slug, title: item.title, href: `/programs/${item.slug}` }));
+    .map((b) => ({ id: b.slug, title: b.name, href: `/bundles/${b.slug}` }));
 
   if (!admin) {
     return NextResponse.json({
-      results: { programs: staticPrograms.slice(0, 3), diets: staticDiets.slice(0, 3), coaches: [], blog: [], users: [] }
+      results: { programs: bundleHits.slice(0, 3), diets: [], coaches: [], blog: [], users: [] }
     });
   }
 
@@ -43,8 +40,8 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.json({
     results: {
-      programs: staticPrograms.slice(0, 3),
-      diets: staticDiets.slice(0, 3),
+      programs: bundleHits.slice(0, 3),
+      diets: [],
       coaches: (coaches ?? [])
         .filter((row) => match(`${row.display_name ?? ""} ${row.username ?? ""} ${(row.specialty_tags ?? []).join(" ")}`, q))
         .slice(0, 3)

@@ -425,8 +425,8 @@ export function ImmersiveHome({
                 </h2>
               </MotionReveal>
               <MotionReveal reducedMotion={reduce} delayMs={100}>
-                <Link href={`/${locale}/programs`} className="inline-flex items-center gap-2 text-sm font-semibold text-accent transition-opacity hover:opacity-80">
-                  View all programs <ArrowRight className="h-4 w-4" />
+                <Link href={`/${locale}/bundles`} className="inline-flex items-center gap-2 text-sm font-semibold text-accent transition-opacity hover:opacity-80">
+                  View all bundles <ArrowRight className="h-4 w-4" />
                 </Link>
               </MotionReveal>
             </div>
@@ -437,7 +437,7 @@ export function ImmersiveHome({
                   <TiltCard disabled={isTouch || reduce}>
                     <HomeProgramPreviewCard
                       program={p}
-                      href={`/${locale}/programs/${p.slug}`}
+                      href={`/${locale}/bundles`}
                       priceFormatted={p.is_free ? programUi.freePriceLabel : formatMoney(locale, p.price)}
                       fromLabel={p.is_free ? "" : copy.programs.from}
                       metaLine={p.metaLine}
@@ -594,8 +594,8 @@ export function ImmersiveHome({
                 </h2>
               </MotionReveal>
               <MotionReveal reducedMotion={reduce} delayMs={100}>
-                <Link href={`/${locale}/diets`} className="inline-flex items-center gap-2 text-sm font-semibold text-accent-violet transition-opacity hover:opacity-80">
-                  View all diets <ArrowRight className="h-4 w-4" />
+                <Link href={`/${locale}/bundles`} className="inline-flex items-center gap-2 text-sm font-semibold text-accent-violet transition-opacity hover:opacity-80">
+                  View all bundles <ArrowRight className="h-4 w-4" />
                 </Link>
               </MotionReveal>
             </div>
@@ -604,7 +604,7 @@ export function ImmersiveHome({
                 <MotionReveal reducedMotion={reduce} key={p.slug} delayMs={i * 80}>
                   <HomeProgramPreviewCard
                     program={p}
-                    href={`/${locale}/programs/${p.slug}`}
+                    href={`/${locale}/bundles`}
                     priceFormatted={formatMoney(locale, p.price)}
                     fromLabel={copy.programs.from}
                     reducedMotion={reduce}
@@ -702,10 +702,10 @@ export function ImmersiveHome({
                 {navChrome.joinLabel} — It&apos;s Free
               </Link>
               <Link
-                href={`/${locale}/programs`}
+                href={`/${locale}/bundles`}
                 className="inline-flex min-h-[56px] items-center justify-center rounded-full border border-white/20 bg-white/[0.05] px-10 py-4 text-base font-semibold text-white backdrop-blur-sm transition-[border-color,background] hover:border-white/30 hover:bg-white/[0.08]"
               >
-                Browse Programs
+                Browse Bundles
               </Link>
             </div>
             <p className="mt-8 text-[13px] text-dim">{copy.hero.trustLine}</p>

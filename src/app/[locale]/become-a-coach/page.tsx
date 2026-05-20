@@ -303,10 +303,10 @@ export default function BecomeCoachPage({ params }: { params: { locale: string }
         </div>
         <div className="mt-10 flex flex-wrap gap-3">
           <Link
-            href={`/${locale}/programs`}
+            href={`/${locale}/bundles`}
             className="rounded-full border border-cyan-400/30 bg-cyan-500/10 px-5 py-2.5 text-sm font-medium text-cyan-100 transition hover:border-cyan-400/50"
           >
-            Browse Programs
+            Browse Bundles
           </Link>
           <Link
             href={`/${locale}/coaches`}

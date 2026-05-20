@@ -6,7 +6,7 @@ import { getSiteUrl } from "@/lib/site-url";
 /** Public marketing routes (no auth-only shells). */
 const LOCALE_PATHS = [
   "",
-  "programs",
+  "bundles",
   "coaches",
   "community",
   "membership",

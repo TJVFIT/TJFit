@@ -410,7 +410,7 @@ export function LuxuryHome({
               {copy.hero.ctaPrimary}
             </Link>
             <Link
-              href={`/${locale}/programs`}
+              href={`/${locale}/bundles`}
               className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-[var(--color-border)] px-8 py-4 text-base font-semibold text-white transition-colors duration-150 hover:border-[rgba(255,255,255,0.12)] hover:bg-[rgba(255,255,255,0.04)] sm:min-h-[52px]"
               onClick={() => trackMarketingEvent("hero_cta_click", { cta: "programs", surface: "hero" })}
             >
@@ -619,7 +619,7 @@ export function LuxuryHome({
                 <Reveal key={`${p.slug}-${programFilter}`} delay={i * 0.04}>
                   <HomeProgramPreviewCard
                     program={p}
-                    href={`/${locale}/programs/${p.slug}`}
+                    href={`/${locale}/bundles`}
                     priceFormatted={formatMoney(locale, p.price)}
                     fromLabel={copy.programs.from}
                     tierLabel={tierLabel}
@@ -636,7 +636,7 @@ export function LuxuryHome({
 
           <div className="mt-8 flex justify-center">
             <Link
-              href={`/${locale}/programs`}
+              href={`/${locale}/bundles`}
               className="lux-btn-primary inline-flex min-h-[48px] items-center justify-center rounded-full px-8 py-3 text-sm font-bold text-[#09090B]"
               onClick={() => trackMarketingEvent("hero_cta_click", { cta: "programs_all", surface: "home_programs" })}
             >
@@ -662,7 +662,7 @@ export function LuxuryHome({
                 </Reveal>
                 <Reveal delay={0.05}>
                   <Link
-                    href={`/${locale}/diets`}
+                    href={`/${locale}/bundles`}
                     className="lux-btn-secondary inline-flex w-fit rounded-full px-5 py-2.5 text-sm font-medium text-bright"
                   >
                     {dietSectionCopy.cta}
@@ -698,7 +698,7 @@ export function LuxuryHome({
                   <Reveal key={`${p.slug}-${dietFilter}`} delay={i * 0.04}>
                     <HomeProgramPreviewCard
                       program={p}
-                      href={`/${locale}/programs/${p.slug}`}
+                      href={`/${locale}/bundles`}
                       priceFormatted={formatMoney(locale, p.price)}
                       fromLabel={copy.programs.from}
                       tierLabel={tierHome.signature}
@@ -712,7 +712,7 @@ export function LuxuryHome({
               <p className="mt-8 text-center text-xs text-[var(--color-text-muted)]">{programUi.trustDietsGrid}</p>
               <div className="mt-8 flex justify-center">
                 <Link
-                  href={`/${locale}/diets`}
+                  href={`/${locale}/bundles`}
                   className="text-sm font-semibold text-accent transition-colors duration-150 hover:text-white"
                   onClick={() => trackMarketingEvent("hero_cta_click", { cta: "diets_all", surface: "home_diets" })}
                 >

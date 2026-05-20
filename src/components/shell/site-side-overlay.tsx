@@ -177,12 +177,10 @@ function buildGroups(locale: Locale): NavGroup[] {
     {
       title: titles[0],
       items: [
-        { label: "Programs", href: `${base}/programs` },
-        { label: "Diets", href: `${base}/diets` },
+        { label: "Bundles", href: `${base}/bundles` },
         { label: "Coaches", href: `${base}/coaches` },
         { label: "Calculator", href: `${base}/calculator` },
-        { label: "Equipment", href: `${base}/store` },
-        { label: "Upload program", href: `${base}/programs/upload`, coachOnly: true }
+        { label: "Equipment", href: `${base}/store` }
       ]
     },
     {

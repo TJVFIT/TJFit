@@ -260,10 +260,10 @@ export function HeroSection({
               <ArrowRight className="h-4 w-4 shrink-0" />
             </MagneticLink>
             <Link
-              href={`/${locale}/programs`}
+              href={`/${locale}/bundles`}
               className="inline-flex min-h-[54px] min-w-[44px] flex-1 items-center justify-center gap-2 rounded-[14px] border border-white/[0.12] bg-white/[0.035] px-7 py-3.5 text-[15px] font-semibold text-white transition-[border-color,background-color,transform] duration-200 hover:-translate-y-0.5 hover:border-white/[0.2] hover:bg-white/[0.06] sm:flex-none"
             >
-              Browse programs
+              Browse bundles
             </Link>
           </div>
 

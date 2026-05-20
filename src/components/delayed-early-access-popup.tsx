@@ -99,7 +99,7 @@ export function DelayedEarlyAccessPopup({ locale }: Props) {
           {copy.cta}
         </Link>
         <Link
-          href={`/${activeLocale}/programs`}
+          href={`/${activeLocale}/bundles`}
           onClick={dismiss}
           className="inline-flex min-h-[48px] w-full touch-manipulation items-center justify-center rounded-full border border-white/[0.12] px-6 text-sm font-medium text-bright transition hover:border-white/[0.18] hover:bg-white/[0.04] sm:w-auto"
         >

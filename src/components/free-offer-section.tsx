@@ -115,7 +115,7 @@ export function FreeOfferSection({
 
   const renderCard = (p: Program, kind: "training" | "diet", cardDelayMs: number) => {
     const loc = localizeProgram(p, locale);
-    const hrefContent = `/${locale}/programs/${p.slug}`;
+    const hrefContent = `/${locale}/bundles`;
     const href = user ? hrefContent : signupWithRedirect(locale, hrefContent);
 
     return (

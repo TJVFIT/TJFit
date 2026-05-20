@@ -111,7 +111,7 @@ export default function LocaleNotFound() {
           {c.home}
         </Link>
         <Link
-          href={`/${locale}/programs`}
+          href={`/${locale}/bundles`}
           className="inline-flex min-h-[44px] animate-[tj-fade-up_380ms_ease-out_forwards] items-center justify-center rounded-full border border-white/15 px-6 py-2.5 text-sm font-semibold text-bright transition-colors hover:border-white/25 hover:text-white"
           style={{ animationDelay: "450ms", opacity: 0 }}
         >
@@ -141,11 +141,11 @@ export default function LocaleNotFound() {
       <div className="mt-7 animate-[tj-fade-up_380ms_ease-out_forwards]" style={{ animationDelay: "560ms", opacity: 0 }}>
         <p className="text-xs uppercase tracking-[0.14em] text-dim">{c.popular}</p>
         <div className="mt-2 flex flex-wrap items-center justify-center gap-3 text-sm text-muted">
-          <Link href={`/${locale}/programs`} className="hover:text-white">
+          <Link href={`/${locale}/bundles`} className="hover:text-white">
             {c.links.programs}
           </Link>
           <span>·</span>
-          <Link href={`/${locale}/diets`} className="hover:text-white">
+          <Link href={`/${locale}/bundles`} className="hover:text-white">
             {c.links.diets}
           </Link>
           <span>·</span>

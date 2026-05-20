@@ -218,7 +218,7 @@ export function StartFunnelClient({ locale }: { locale: Locale }) {
               ))}
             </ul>
             <Link
-              href={freeTab === "programs" ? `/${locale}/programs?free=1&filter=free` : `/${locale}/diets?free=1&filter=free`}
+              href={`/${locale}/bundles`}
               className="mt-5 inline-flex min-h-[46px] w-full items-center justify-center rounded-full bg-accent px-4 text-sm font-bold text-[#09090B]"
             >
               {freeTab === "programs" ? copy.browsePrograms : copy.browseDiets}

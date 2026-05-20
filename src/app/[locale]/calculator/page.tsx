@@ -122,8 +122,8 @@ export default function CalculatorPage({ params }: { params: { locale: string } 
               <Button href={`/${locale}/ai`} className="text-sm">
                 Build My TJAI Plan →
               </Button>
-              <Button href={`/${locale}/programs`} className="text-sm" variant="secondary">
-                Browse Programs →
+              <Button href={`/${locale}/bundles`} className="text-sm" variant="secondary">
+                Browse Bundles →
               </Button>
             </div>
           </div>

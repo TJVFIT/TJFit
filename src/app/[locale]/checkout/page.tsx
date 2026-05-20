@@ -209,7 +209,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
           locale: paddleCheckoutLocale(locale),
           successUrl:
             origin && programSlug
-              ? `${origin}/${locale}/programs/${encodeURIComponent(programSlug)}?success=1`
+              ? `${origin}/${locale}/bundles?success=1&slug=${encodeURIComponent(programSlug)}`
               : undefined
         }
       });

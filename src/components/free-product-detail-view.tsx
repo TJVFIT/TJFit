@@ -115,7 +115,7 @@ export function FreeProductUpgradeFooter({
         {ui.getFullAccess} →
       </Link>
       <Link
-        href={`/${locale}/programs`}
+        href={`/${locale}/bundles`}
         className="mt-4 block text-sm text-[var(--color-text-muted)] transition-colors duration-150 hover:text-white"
       >
         {ui.upgradeViewAllPrograms}

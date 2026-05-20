@@ -73,7 +73,7 @@ async function coachHasCurrentTerms(
   return data?.terms_version === expected;
 }
 
-type GuardKind = "admin" | "coach_area" | "upload" | "auth_user" | "coach_terms";
+type GuardKind = "admin" | "coach_area" | "auth_user" | "coach_terms";
 
 function matchHtmlGuard(pathname: string): { locale: string; kind: GuardKind } | null {
   if (pathname.startsWith("/api")) return null;
@@ -85,7 +85,6 @@ function matchHtmlGuard(pathname: string): { locale: string; kind: GuardKind } |
   if (sub === "/admin" || sub.startsWith("/admin/")) return { locale, kind: "admin" };
   if (sub === "/coach/terms") return { locale, kind: "coach_terms" };
   if (sub === "/coach-dashboard" || sub.startsWith("/coach-dashboard/")) return { locale, kind: "coach_area" };
-  if (sub === "/programs/upload" || sub.startsWith("/programs/upload/")) return { locale, kind: "upload" };
   if (sub === "/dashboard" || sub.startsWith("/dashboard/")) return { locale, kind: "auth_user" };
   if (sub === "/messages" || sub.startsWith("/messages/")) return { locale, kind: "auth_user" };
   if (sub === "/feed" || sub.startsWith("/feed/")) return { locale, kind: "auth_user" };
@@ -200,7 +199,7 @@ export async function middleware(request: NextRequest) {
       }
     }
 
-    if (kind === "coach_area" || kind === "upload") {
+    if (kind === "coach_area") {
       if (role !== "coach" && role !== "admin") {
         const redirectRes = NextResponse.redirect(
           new URL(`/${locale}/dashboard?notice=${URL_NOTICE.FORBIDDEN_COACH}`, request.url)

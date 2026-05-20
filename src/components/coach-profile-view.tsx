@@ -118,8 +118,8 @@ export function CoachProfileView({ locale, slug }: { locale: string; slug: strin
         <p className="text-xs uppercase tracking-[0.14em] text-faint">Most popular program by this coach</p>
         <h3 className="mt-2 text-lg font-semibold text-white">{coach.featured_program_id ? `Program ${coach.featured_program_id}` : "No featured program selected yet"}</h3>
         {coach.featured_program_id ? (
-          <Link href={`/${locale}/programs/${encodeURIComponent(coach.featured_program_id)}`} className="mt-3 inline-flex rounded-full bg-accent px-4 py-2 text-sm font-semibold text-[#09090B]">
-            View Program
+          <Link href={`/${locale}/bundles`} className="mt-3 inline-flex rounded-full bg-accent px-4 py-2 text-sm font-semibold text-[#09090B]">
+            View Bundles
           </Link>
         ) : null}
       </section>

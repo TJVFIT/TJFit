@@ -203,7 +203,7 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
               <a href={`/${locale}/coins#how-to-earn`} className="rounded-full border border-accent/35 bg-accent/10 px-4 py-2 text-sm font-semibold text-accent">
                 How to earn TJCOIN →
               </a>
-              <a href={`/${locale}/programs`} className="rounded-full border border-divider px-4 py-2 text-sm text-bright">
+              <a href={`/${locale}/bundles`} className="rounded-full border border-divider px-4 py-2 text-sm text-bright">
                 Start Earning →
               </a>
             </div>
