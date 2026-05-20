@@ -163,8 +163,10 @@ export function Logo({
       onClick={onNavigate}
       aria-label={alt}
       className={cn(
-        "inline-flex cursor-pointer items-center justify-center rounded-lg px-1.5 py-1",
-        "transition-opacity duration-200 ease-out hover:opacity-90",
+        "group/logo inline-flex cursor-pointer items-center justify-center rounded-lg px-1.5 py-1",
+        "transition-[transform,box-shadow] duration-200 ease-out",
+        "motion-safe:hover:scale-[1.03] motion-safe:hover:shadow-[0_0_22px_rgba(34,211,238,0.18)]",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/55 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         !suppressMinTouchTarget && "min-h-[44px] min-w-[44px]"
       )}
     >
