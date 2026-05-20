@@ -159,9 +159,16 @@ function BundleCard({
           className="relative aspect-[16/10] w-full overflow-hidden bg-[linear-gradient(135deg,rgba(34,211,238,0.18),rgba(14,165,233,0.06)_45%,rgba(8,8,11,0.9))]"
           aria-hidden
         >
-          <div
-            className="absolute inset-0 bg-cover bg-center opacity-70 transition-[opacity,transform] duration-500 group-hover:opacity-100 motion-safe:group-hover:scale-[1.04]"
-            style={{ backgroundImage: `url(${bundle.heroImage})` }}
+          {/* <img> instead of CSS background so the SVG's embedded
+              animations (cyan beam sweep + numeral breathe) actually fire. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={bundle.heroImage}
+            alt=""
+            aria-hidden
+            className="absolute inset-0 h-full w-full object-cover opacity-70 transition-[opacity,transform] duration-500 group-hover:opacity-100 motion-safe:group-hover:scale-[1.04]"
+            loading="lazy"
+            decoding="async"
           />
           {/* Subtle inner glow that intensifies on hover */}
           <div
