@@ -174,7 +174,7 @@ function ChallengesLivePanel({
             <button
               type="button"
               onClick={() => onJoin(item.id)}
-              className="rounded-full border border-cyan-400/35 bg-cyan-500/10 px-4 py-2 text-xs font-semibold text-cyan-100"
+              className="tj-cta-sheen rounded-full border border-cyan-400/35 bg-cyan-500/10 px-4 py-2 text-xs font-semibold text-cyan-100 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/55 hover:bg-cyan-500/15 hover:text-cyan-50 hover:shadow-[0_0_18px_rgba(34,211,238,0.18)]"
             >
               {item.joined ? "Joined" : "Join Challenge"}
             </button>
@@ -243,7 +243,7 @@ function GroupsPanel({
           <button
             type="button"
             onClick={() => onToggle(group.id, group.joined ? "leave" : "join")}
-            className="mt-4 rounded-full border border-cyan-400/35 bg-cyan-500/10 px-4 py-2 text-xs font-semibold text-cyan-100"
+            className="mt-4 tj-cta-sheen rounded-full border border-cyan-400/35 bg-cyan-500/10 px-4 py-2 text-xs font-semibold text-cyan-100 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/55 hover:bg-cyan-500/15 hover:text-cyan-50 hover:shadow-[0_0_18px_rgba(34,211,238,0.18)]"
           >
             {group.joined ? "Leave Group" : "Join Group"}
           </button>
