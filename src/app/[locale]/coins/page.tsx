@@ -103,10 +103,10 @@ export default function CoinsPage() {
           {earningMethods.map((m) => (
             <div
               key={m.action}
-              className="flex items-center justify-between rounded-xl border border-divider bg-surface-2 px-4 py-3"
+              className="group/earn flex items-center justify-between rounded-xl border border-divider bg-surface-2 px-4 py-3 transition-[border-color,box-shadow] duration-200 hover:border-cyan-300/30 hover:shadow-[0_0_18px_rgba(34,211,238,0.12)]"
             >
-              <span className="text-sm text-bright">{m.action}</span>
-              <span className="ml-3 shrink-0 rounded-full border border-yellow-400/30 bg-yellow-400/10 px-2.5 py-0.5 text-xs font-bold text-yellow-300">
+              <span className="text-sm text-bright transition-colors duration-200 group-hover/earn:text-cyan-50">{m.action}</span>
+              <span className="ml-3 shrink-0 rounded-full border border-cyan-300/35 bg-cyan-300/[0.1] px-2.5 py-0.5 text-xs font-bold text-cyan-100 transition-[border-color,background-color] duration-200 group-hover/earn:border-cyan-300/55 group-hover/earn:bg-cyan-300/[0.15]">
                 +{m.coins} ⚡
               </span>
             </div>
@@ -124,7 +124,7 @@ export default function CoinsPage() {
                     <p className="text-2xl font-extrabold text-accent">{offer.discount_percent}% OFF</p>
                     <p className="mt-2 text-sm text-muted">{offer.title}</p>
                   </div>
-                  <p className="text-base font-semibold text-yellow-300">{offer.coin_cost} ⚡</p>
+                  <p className="text-base font-semibold text-cyan-200">{offer.coin_cost} ⚡</p>
                 </div>
                 <p className="mt-4 text-xs text-dim">Code valid for 7 days after redemption.</p>
                 <Button
