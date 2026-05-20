@@ -34,7 +34,7 @@ export function CinematicHowItWorks() {
       <div className="relative z-[1] mx-auto max-w-6xl">
         <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-accent">How it works</p>
         <h2 className="mt-4 font-display text-[clamp(1.75rem,5vw,3.25rem)] font-extrabold tracking-[-0.02em] text-white">
-          From intake to execution
+          From intake to <span className="tj-title-shimmer">execution</span>
         </h2>
         <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">
           Three disciplined layers — no chaos, no novelty UI. Just a pipeline that respects physiology and your calendar.
@@ -45,15 +45,15 @@ export function CinematicHowItWorks() {
             <div key={s.n} className="relative flex flex-col">
               <article
                 className={cn(
-                  "glass-panel flex flex-1 flex-col rounded-2xl p-6 transition-[transform,box-shadow,border-color] duration-[250ms]",
+                  "group/step glass-panel flex flex-1 flex-col rounded-2xl p-6 transition-[transform,box-shadow,border-color] duration-[250ms]",
                   "tj-card-cinematic-hover"
                 )}
                 style={{ transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)" }}
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[rgba(34,211,238,0.2)] bg-[rgba(34,211,238,0.08)] text-[13px] font-bold text-accent">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[rgba(34,211,238,0.2)] bg-[rgba(34,211,238,0.08)] text-[13px] font-bold text-accent transition-[box-shadow,border-color] duration-300 group-hover/step:border-cyan-300/45 group-hover/step:shadow-[0_0_18px_rgba(34,211,238,0.32)]">
                   {s.n}
                 </div>
-                <div className="mt-4 flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(34,211,238,0.06)]">
+                <div className="mt-4 flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(34,211,238,0.06)] transition-[border-color,background-color] duration-300 group-hover/step:border-cyan-300/30 group-hover/step:bg-cyan-300/[0.1]">
                   <s.Icon className="h-5 w-5 text-accent" strokeWidth={1.5} />
                 </div>
                 <h3 className="mt-4 text-lg font-bold tracking-tight text-white">{s.title}</h3>
