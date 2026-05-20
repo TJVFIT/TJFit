@@ -171,7 +171,7 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
               key={entry.key}
               type="button"
               onClick={() => { setTab(entry.key); setActiveTabIdx(idx); }}
-              className={`relative rounded-full border px-3 py-2 text-xs font-semibold transition-colors duration-200 ${tab === entry.key ? "border-cyan-400/40 bg-cyan-400/10 text-accent" : "border-divider text-muted hover:border-white/10 hover:text-white"}`}
+              className={`relative rounded-full border px-3 py-2 text-xs font-semibold transition-[border-color,background-color,color,box-shadow] duration-200 ${tab === entry.key ? "tj-chip-active border-cyan-300/45 bg-cyan-300/[0.1] text-cyan-50" : "border-divider text-muted hover:border-cyan-300/35 hover:bg-cyan-300/[0.04] hover:text-cyan-100"}`}
             >
               {entry.label}
             </button>
@@ -183,7 +183,7 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
               key={p}
               type="button"
               onClick={() => setPeriod(p)}
-              className={`rounded-full border px-3 py-1.5 transition-colors duration-200 ${period === p ? "border-white/20 text-white" : "border-divider text-muted hover:border-white/10"}`}
+              className={`rounded-full border px-3 py-1.5 transition-[border-color,background-color,color] duration-200 ${period === p ? "border-cyan-300/40 bg-cyan-300/[0.06] text-cyan-50" : "border-divider text-muted hover:border-cyan-300/30 hover:text-cyan-100"}`}
             >
               {p === "week" ? "This Week" : "All Time"}
             </button>
