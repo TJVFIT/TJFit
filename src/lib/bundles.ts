@@ -63,7 +63,7 @@ export const BUNDLES: Bundle[] = [
     sessionsPerWeek: 5,
     save: "Free",
     isFree: true,
-    heroImage: "/bundles/fat-loss.webp",
+    heroImage: "/bundles/fat-loss.svg",
     description:
       "A 12-week resistance-led cut. Compound lifts hold muscle, conditioning blocks raise daily energy expenditure, and the diet keeps protein high through a controlled deficit.",
     phases: [
@@ -109,7 +109,7 @@ export const BUNDLES: Bundle[] = [
     sessionsPerWeek: 5,
     save: "Free",
     isFree: true,
-    heroImage: "/bundles/lean-bulk.webp",
+    heroImage: "/bundles/lean-bulk.svg",
     description:
       "Push-pull-legs hypertrophy split layered over a small surplus. Heavy compounds drive strength, accessory volume drives size, and the diet keeps the gain ratio clean.",
     phases: [
@@ -155,7 +155,7 @@ export const BUNDLES: Bundle[] = [
     sessionsPerWeek: 4,
     save: "Free",
     isFree: true,
-    heroImage: "/bundles/home-starter.webp",
+    heroImage: "/bundles/home-starter.svg",
     description:
       "The on-ramp. Four short bodyweight sessions a week, a calorie framework you can actually follow, and a progression model that makes month 3 feel different from month 1.",
     phases: [
@@ -201,7 +201,7 @@ export const BUNDLES: Bundle[] = [
     sessionsPerWeek: 5,
     save: "Free",
     isFree: true,
-    heroImage: "/bundles/definition.webp",
+    heroImage: "/bundles/definition.svg",
     description:
       "Volume-rich hypertrophy training married to an aggressive cut. For lifters who already have muscle and want to see it. High protein, structured cardio, weekly refeeds.",
     phases: [
@@ -249,7 +249,7 @@ export const BUNDLES: Bundle[] = [
     sessionsPerWeek: 5,
     save: "Free",
     isFree: true,
-    heroImage: "/bundles/recomp.webp",
+    heroImage: "/bundles/recomp.svg",
     description:
       "The hardest plan to do well. Maintenance calories, surgical macro timing, and progressive overload that turns body composition over the long arc.",
     phases: [
@@ -295,7 +295,7 @@ export const BUNDLES: Bundle[] = [
     sessionsPerWeek: 4,
     save: "Free",
     isFree: true,
-    heroImage: "/bundles/powerbuilding.webp",
+    heroImage: "/bundles/powerbuilding.svg",
     description:
       "Heavy main lifts (squat, bench, deadlift, OHP) paired with hypertrophy accessories. Linear strength progression on the big four, volume-driven size on everything else.",
     phases: [
@@ -341,7 +341,7 @@ export const BUNDLES: Bundle[] = [
     sessionsPerWeek: 4,
     save: "Free",
     isFree: true,
-    heroImage: "/bundles/calisthenics.webp",
+    heroImage: "/bundles/calisthenics.svg",
     description:
       "A bodyweight-only path from solid pull-ups to clean muscle-ups, handstands, and pistol squats. Skill work, strength work, and the nutrition to support both.",
     phases: [
@@ -387,7 +387,7 @@ export const BUNDLES: Bundle[] = [
     sessionsPerWeek: 5,
     save: "Free",
     isFree: true,
-    heroImage: "/bundles/athlete-conditioning.webp",
+    heroImage: "/bundles/athlete-conditioning.svg",
     description:
       "General physical preparation for sport. Mixed-modal conditioning, sprint work, strength maintenance, and the carb-forward fueling strategy to sustain it.",
     phases: [
@@ -431,7 +431,7 @@ export const BUNDLES: Bundle[] = [
     sessionsPerWeek: 3,
     save: "Free",
     isFree: true,
-    heroImage: "/bundles/beginner-foundations.webp",
+    heroImage: "/bundles/beginner-foundations.svg",
     description:
       "Three sessions a week, the six lifts that matter, and a nutrition framework you can sustain without weighing food. Built for someone who has never lifted seriously before.",
     phases: [
@@ -476,7 +476,7 @@ export const BUNDLES: Bundle[] = [
     sessionsPerWeek: 4,
     save: "Free",
     isFree: true,
-    heroImage: "/bundles/womens-sculpt.webp",
+    heroImage: "/bundles/womens-sculpt.svg",
     description:
       "Glute-focused lower days, balanced upper work, and a nutrition plan tuned to a woman's training week. Strength first, shape as the result.",
     phases: [
@@ -522,7 +522,7 @@ export const BUNDLES: Bundle[] = [
     sessionsPerWeek: 3,
     save: "Free",
     isFree: true,
-    heroImage: "/bundles/senior-strength.webp",
+    heroImage: "/bundles/senior-strength.svg",
     description:
       "Strength training built around joint longevity. Machines and dumbbells over barbells where it matters, mobility integrated into every session, and a protein-forward diet for the over-50 athlete.",
     phases: [
@@ -568,7 +568,7 @@ export const BUNDLES: Bundle[] = [
     sessionsPerWeek: 6,
     save: "Free",
     isFree: true,
-    heroImage: "/bundles/cutting-peak.webp",
+    heroImage: "/bundles/cutting-peak.svg",
     description:
       "The advanced cut. Engineered for lifters who already have muscle and want to peak. Structured refeeds, weekly check-ins, peak week protocol, and the discipline to match.",
     phases: [

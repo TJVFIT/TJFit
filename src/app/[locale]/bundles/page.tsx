@@ -66,7 +66,7 @@ function BundleCard({
         aria-hidden
       >
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+          className="absolute inset-0 bg-cover bg-center opacity-70 transition-opacity duration-500 group-hover:opacity-100"
           style={{ backgroundImage: `url(${bundle.heroImage})` }}
         />
         <div className="absolute inset-x-0 top-0 flex items-start justify-between p-4">

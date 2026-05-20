@@ -40,6 +40,14 @@ export default function BundleDetailPage({
         All bundles
       </Link>
 
+      <div
+        className="relative mt-6 aspect-[21/9] w-full overflow-hidden rounded-2xl border border-cyan-400/20 bg-cover bg-center shadow-[0_0_44px_rgba(34,211,238,0.08)]"
+        style={{ backgroundImage: `url(${bundle.heroImage})` }}
+        aria-hidden
+      >
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-[linear-gradient(180deg,rgba(8,8,11,0)_0%,rgba(8,8,11,0.85)_100%)]" />
+      </div>
+
       <div className="mt-8 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
         <div>
           <div className="flex flex-wrap items-center gap-2">
