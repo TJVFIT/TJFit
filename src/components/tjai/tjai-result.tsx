@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { jsPDF } from "jspdf";
@@ -269,7 +269,7 @@ export function TJAIResult({
   };
   const pieData = {
     labels: ["Protein", "Carbs", "Fat"],
-    datasets: [{ data: [metrics.protein * 4, metrics.carbs * 4, metrics.fat * 9], backgroundColor: ["#22D3EE", "#A78BFA", "rgba(255,255,255,0.35)"], borderWidth: 0 }]
+    datasets: [{ data: [metrics.protein * 4, metrics.carbs * 4, metrics.fat * 9], backgroundColor: ["#22D3EE", "#0EA5E9", "rgba(255,255,255,0.35)"], borderWidth: 0 }]
   };
   const decisionReasons = useMemo(() => buildTjaiDecisionReasons(answers, metrics), [answers, metrics]);
 
@@ -567,7 +567,7 @@ export function TJAIResult({
             {(
               [
                 ["Tier 1 — Essential", mutablePlan.diet.supplements?.tier1 ?? [], "#22D3EE", "t1"],
-                ["Tier 2 — Helpful", mutablePlan.diet.supplements?.tier2 ?? [], "#A78BFA", "t2"],
+                ["Tier 2 — Helpful", mutablePlan.diet.supplements?.tier2 ?? [], "#0EA5E9", "t2"],
                 ["Tier 3 — Optional", mutablePlan.diet.supplements?.tier3 ?? [], "#52525B", "t3"]
               ] as const
             ).map(([title, items, border, key]) => (

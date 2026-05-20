@@ -99,7 +99,7 @@ export default function ProPage({ params }: { params: { locale: string } }) {
           <span
             className="mb-5 inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.24em]"
             style={{
-              color: "#A78BFA",
+              color: "#0EA5E9",
               borderColor: "rgba(167,139,250,0.3)",
               background: "rgba(167,139,250,0.07)"
             }}

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { initializePaddle, type Paddle } from "@paddle/paddle-js";
@@ -218,7 +218,7 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
           style={{ background: "linear-gradient(165deg, rgba(167,139,250,0.07) 0%, rgba(17,18,21,0.9) 60%)", backdropFilter: "blur(24px)" }}
         >
           {/* Animated conic border */}
-          <div className="pointer-events-none absolute inset-0 rounded-2xl" style={{ padding: "1px", background: "conic-gradient(from var(--apex-angle, 0deg), #A78BFA, #22D3EE, #A78BFA)", WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", maskComposite: "exclude" }} aria-hidden />
+          <div className="pointer-events-none absolute inset-0 rounded-2xl" style={{ padding: "1px", background: "conic-gradient(from var(--apex-angle, 0deg), #0EA5E9, #22D3EE, #0EA5E9)", WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", maskComposite: "exclude" }} aria-hidden />
           <div className="mb-3 inline-flex rounded-full border border-violet-400/30 bg-violet-400/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-violet-300">
             {copy.cards.apex.badge}
           </div>

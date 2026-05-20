@@ -76,7 +76,7 @@ function Podium({ items, tab }: { items: LeaderboardItem[]; tab: TabKey }) {
         particleCount: 80,
         spread: 72,
         origin: { y: 0.52, x: 0.5 },
-        colors: ["#22D3EE", "#A78BFA", "#22D3EE"]
+        colors: ["#22D3EE", "#0EA5E9", "#22D3EE"]
       });
     }, 720);
     return () => window.clearTimeout(t);

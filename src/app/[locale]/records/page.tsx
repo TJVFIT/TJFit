@@ -181,7 +181,7 @@ export default function RecordsPage({ params }: { params: { locale: string } }) 
                   </div>
                 ) : null}
                 {pr.max_reps != null ? <div className="flex items-center gap-1.5"><Repeat className="h-3.5 w-3.5 text-accent" /><PRValue value={pr.max_reps} suffix=" reps" color="#22D3EE" /></div> : null}
-                {pr.max_duration_minutes != null ? <div className="flex items-center gap-1.5"><Timer className="h-3.5 w-3.5 text-accent-violet" /><PRValue value={pr.max_duration_minutes} suffix=" min" color="#A78BFA" /></div> : null}
+                {pr.max_duration_minutes != null ? <div className="flex items-center gap-1.5"><Timer className="h-3.5 w-3.5 text-accent-violet" /><PRValue value={pr.max_duration_minutes} suffix=" min" color="#0EA5E9" /></div> : null}
               </div>
               <p className="mt-3 text-xs text-faint">{copy.totalSets}: {pr.total_sets}</p>
             </div>

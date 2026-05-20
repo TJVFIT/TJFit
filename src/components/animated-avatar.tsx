@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 
@@ -39,7 +39,7 @@ export function AnimatedAvatar({ url, name, size = 40, className = "" }: Animate
       style={{
         width: size,
         height: size,
-        background: "linear-gradient(135deg, #22D3EE 0%, #A78BFA 100%)",
+        background: "linear-gradient(135deg, #22D3EE 0%, #0EA5E9 100%)",
         fontSize: Math.round(size * 0.38),
         userSelect: "none"
       }}

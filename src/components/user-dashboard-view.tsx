@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { Activity, Dumbbell, Flame, Plus, CheckCircle2 } from "lucide-react";
@@ -391,7 +391,7 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
                 <p className="text-lg font-semibold text-white">{programTitle}</p>
                 <div className="mt-5 h-1 w-full max-w-md overflow-hidden rounded-full bg-divider">
                   <div
-                    className="h-full origin-left rounded-full bg-gradient-to-r from-[#22D3EE] to-[#A78BFA] transition-transform duration-1000 ease-[cubic-bezier(0,0,0.2,1)] motion-reduce:transition-none"
+                    className="h-full origin-left rounded-full bg-gradient-to-r from-[#22D3EE] to-[#0EA5E9] transition-transform duration-1000 ease-[cubic-bezier(0,0,0.2,1)] motion-reduce:transition-none"
                     style={{ transform: `scaleX(${progressOn ? progressPct / 100 : 0})` }}
                   />
                 </div>

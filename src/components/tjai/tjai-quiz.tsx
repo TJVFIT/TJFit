@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 
@@ -535,7 +535,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
           </p>
           <div className="h-[2px] overflow-hidden rounded-full bg-divider">
             <div
-              className="tjai-progress-fill h-full bg-[linear-gradient(90deg,#22D3EE,#A78BFA)]"
+              className="tjai-progress-fill h-full bg-[linear-gradient(90deg,#22D3EE,#0EA5E9)]"
               style={{ width: `${progress}%`, marginLeft: direction === "rtl" ? "auto" : undefined }}
             />
           </div>
@@ -629,7 +629,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
                 className={cn(
                   "min-h-11 rounded-full px-5 text-sm font-bold text-[#09090B] transition-all disabled:cursor-not-allowed disabled:opacity-40",
                   safeIdx === total - 1
-                    ? "bg-[linear-gradient(135deg,#22D3EE,#A78BFA)] shadow-[0_0_24px_rgba(34,211,238,0.25)] hover:scale-[1.02] animate-[tjai-pulse_1.8s_ease-in-out_infinite]"
+                    ? "bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_24px_rgba(34,211,238,0.25)] hover:scale-[1.02] animate-[tjai-pulse_1.8s_ease-in-out_infinite]"
                     : "bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] hover:scale-[1.02]",
                   shake && "animate-[tjai-shake_300ms_ease]"
                 )}

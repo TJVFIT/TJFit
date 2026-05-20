@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState } from "react";
 import {
@@ -242,7 +242,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
       particleCount: 70,
       spread: 80,
       origin: { y: 0.6 },
-      colors: ["#22D3EE", "#A78BFA", "#22D3EE", "#22C55E"]
+      colors: ["#22D3EE", "#0EA5E9", "#22D3EE", "#22C55E"]
     });
     showToast("Milestone completed 🎉");
     await load();
@@ -312,8 +312,8 @@ export function ProgressView({ locale }: { locale: Locale }) {
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="fatGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#A78BFA" stopOpacity={0.25} />
-                    <stop offset="95%" stopColor="#A78BFA" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#0EA5E9" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#0EA5E9" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid stroke="rgba(255,255,255,0.05)" strokeDasharray="3 3" />
@@ -323,10 +323,10 @@ export function ProgressView({ locale }: { locale: Locale }) {
                 <Area
                   type="monotone"
                   dataKey="fat"
-                  stroke="#A78BFA"
+                  stroke="#0EA5E9"
                   strokeWidth={2}
                   fill="url(#fatGrad)"
-                  dot={{ r: 3, fill: "#A78BFA" }}
+                  dot={{ r: 3, fill: "#0EA5E9" }}
                   connectNulls
                   isAnimationActive
                   animationDuration={1200}

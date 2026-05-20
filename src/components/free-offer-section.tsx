@@ -45,7 +45,7 @@ function renderTitleWithFreeGradient(title: string) {
   return (
     <>
       {title.slice(0, idx)}
-      <span className="bg-gradient-to-br from-[#22D3EE] to-[#A78BFA] bg-clip-text text-transparent">
+      <span className="bg-gradient-to-br from-[#22D3EE] to-[#0EA5E9] bg-clip-text text-transparent">
         {title.slice(idx, idx + 4)}
       </span>
       {title.slice(idx + 4)}
@@ -141,7 +141,7 @@ export function FreeOfferSection({
             "hover:-translate-y-1.5 hover:before:opacity-100 motion-reduce:hover:before:opacity-0"
           )}
         >
-        <span className="absolute right-6 top-6 rounded-full border border-[rgba(167,139,250,0.3)] bg-[rgba(167,139,250,0.12)] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-accent-violet">
+        <span className="absolute right-6 top-6 rounded-full border border-[rgba(14,165,233,0.3)] bg-[rgba(14,165,233,0.12)] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-accent-violet">
           FREE
         </span>
         <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-dim">

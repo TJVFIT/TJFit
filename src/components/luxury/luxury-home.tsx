@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -385,7 +385,7 @@ export function LuxuryHome({
               <span className="mt-2 block text-balance sm:mt-3">
                 {headlineAccentWord && headlineAccentRest ? (
                   <>
-                    <span className="bg-gradient-to-br from-[#22D3EE] to-[#A78BFA] bg-clip-text text-transparent">
+                    <span className="bg-gradient-to-br from-[#22D3EE] to-[#0EA5E9] bg-clip-text text-transparent">
                       {headlineAccentWord}
                     </span>
                     <span>{headlineAccentRest}</span>
