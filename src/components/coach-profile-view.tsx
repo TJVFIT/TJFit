@@ -62,7 +62,9 @@ export function CoachProfileView({ locale, slug }: { locale: string; slug: strin
       <section className="rounded-2xl border border-divider bg-surface p-5">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-white">{coach.display_name || coach.username}</h1>
+            <h1 className="text-3xl font-bold text-white">
+              <span className="tj-title-shimmer">{coach.display_name || coach.username}</span>
+            </h1>
             <p className="mt-1 text-sm text-faint">@{coach.username}</p>
             <p className={`mt-3 inline-flex items-center rounded-full px-3 py-1 text-xs ${coach.accepting_clients === false ? "bg-red-500/10 text-red-300" : "bg-green-500/10 text-green-300"}`}>
               {coach.accepting_clients === false ? "🔴 Not Currently Accepting Clients" : "🟢 Accepting New Clients"}
@@ -85,9 +87,9 @@ export function CoachProfileView({ locale, slug }: { locale: string; slug: strin
           ["Avg Rating", data.stats.average_rating],
           ["Blog Posts", data.stats.blog_post_count]
         ].map(([label, value]) => (
-          <article key={String(label)} className="rounded-lg border border-divider bg-surface-2 p-3">
-            <p className="text-xl font-bold text-white">{value}</p>
-            <p className="text-[11px] uppercase tracking-[0.14em] text-faint">{label}</p>
+          <article key={String(label)} className="group/stat rounded-lg border border-divider bg-surface-2 p-3 transition-[border-color,box-shadow] duration-200 hover:border-cyan-300/30 hover:shadow-[0_0_18px_rgba(34,211,238,0.12)]">
+            <p className="text-xl font-bold text-white transition-colors duration-200 group-hover/stat:text-cyan-50">{value}</p>
+            <p className="text-[11px] uppercase tracking-[0.14em] text-faint transition-colors duration-200 group-hover/stat:text-cyan-200/80">{label}</p>
           </article>
         ))}
       </section>
