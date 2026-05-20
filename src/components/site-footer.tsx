@@ -149,9 +149,9 @@ export function SiteFooter({ locale }: { locale: Locale }) {
 
 function cnPill(active: boolean) {
   return [
-    "rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide transition-[border-color,color,background-color] duration-150",
+    "rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide transition-[border-color,color,background-color,box-shadow] duration-200",
     active
-      ? "border-[rgba(34,211,238,0.45)] bg-[rgba(34,211,238,0.12)] text-accent"
-      : "border-[rgba(255,255,255,0.08)] bg-[rgba(13,15,18,0.6)] text-dim hover:border-[rgba(34,211,238,0.35)] hover:text-muted",
+      ? "tj-chip-active border-[rgba(34,211,238,0.45)] bg-[rgba(34,211,238,0.12)] text-accent"
+      : "border-[rgba(255,255,255,0.08)] bg-[rgba(13,15,18,0.6)] text-dim hover:border-[rgba(34,211,238,0.35)] hover:bg-[rgba(34,211,238,0.06)] hover:text-cyan-100 hover:shadow-[0_0_14px_rgba(34,211,238,0.15)]",
   ].join(" ");
 }
