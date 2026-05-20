@@ -7,8 +7,8 @@ Premium multilingual online coaching platform built with `Next.js 14`, `Tailwind
 - Premium dark landing page
 - AI coach matching and smart coach discovery
 - Coach discovery and coach profile flows
-- Programs marketplace
-- Program detail pages with equipment recommendations
+- **Bundle catalog** — 12 free training + diet PDF bundles at `/bundles`, with per-bundle detail pages and auth-gated PDF downloads
+- TJAI plan generator and chat
 - Equipment store
 - Transformation engine and public transformation pages
 - Global transformation leaderboard
@@ -30,8 +30,8 @@ Premium multilingual online coaching platform built with `Next.js 14`, `Tailwind
 - `/en`
 - `/en/coaches`
 - `/en/coaches/[slug]`
-- `/en/programs`
-- `/en/programs/[slug]`
+- `/en/bundles` — the product catalog (12 free training + diet PDF bundles)
+- `/en/bundles/[slug]` — per-bundle detail (phases, sample workout, sample meal day, download CTA)
 - `/en/store`
 - `/en/transformations`
 - `/en/transformations/[slug]`
