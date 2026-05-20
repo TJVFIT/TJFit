@@ -4,6 +4,8 @@ import type { CSSProperties, Ref } from "react";
 import Link from "next/link";
 import { Activity, ArrowRight, ChevronDown, Dumbbell, Gauge, Timer, Utensils } from "lucide-react";
 
+import { useMagnetic, useMergedRef, useRipple } from "@/components/effects/use-magnetic";
+
 import { TJ_PALETTE } from "@/components/3d/palette";
 import { TJHeroStage } from "@/components/3d/hero-stage";
 import { useMagneticButton } from "@/hooks/useMagneticButton";
@@ -260,12 +262,7 @@ export function HeroSection({
               {ctaPrimary}
               <ArrowRight className="h-4 w-4 shrink-0" />
             </MagneticLink>
-            <Link
-              href={`/${locale}/bundles`}
-              className="inline-flex min-h-[54px] min-w-[44px] flex-1 items-center justify-center gap-2 rounded-[14px] border border-white/[0.12] bg-white/[0.035] px-7 py-3.5 text-[15px] font-semibold text-white transition-[border-color,background-color,transform] duration-200 hover:-translate-y-0.5 hover:border-white/[0.2] hover:bg-white/[0.06] sm:flex-none"
-            >
-              {copy.ctaBrowsePrograms}
-            </Link>
+            <HeroBundlesLink href={`/${locale}/bundles`} label={copy.ctaBrowsePrograms} />
           </div>
 
           <div className="mt-12 grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-3" style={lineIn(600)}>
@@ -293,5 +290,38 @@ export function HeroSection({
         <ChevronDown className="tj-scroll-cue h-5 w-5 motion-reduce:animate-none" strokeWidth={1.5} style={{ color: TJ_PALETTE.textMuted }} />
       </div>
     </section>
+  );
+}
+
+/**
+ * Secondary hero CTA — magnetic pull + ripple, with an arrow that slides
+ * right on hover. Standard anchor (no Link routing prefetch needed for the
+ * sibling /bundles route which is statically generated anyway).
+ */
+function HeroBundlesLink({ href, label }: { href: string; label: string }) {
+  const magnetic = useMagnetic<HTMLAnchorElement>({ strength: 6, max: 8 });
+  const ripple = useRipple<HTMLAnchorElement>();
+  const ref = useMergedRef<HTMLAnchorElement>(magnetic, ripple);
+  return (
+    <a
+      ref={ref}
+      href={href}
+      className="group/hero-cta relative inline-flex min-h-[54px] min-w-[44px] flex-1 items-center justify-center gap-2 overflow-hidden rounded-[14px] border border-white/[0.12] bg-white/[0.035] px-7 py-3.5 text-[15px] font-semibold text-white hover:border-cyan-300/35 hover:bg-cyan-300/[0.05] hover:shadow-[0_0_36px_rgba(34,211,238,0.18)] sm:flex-none"
+      style={
+        {
+          "--mag-x": "0px",
+          "--mag-y": "0px",
+          transform: "translate3d(var(--mag-x), var(--mag-y), 0)",
+          transition:
+            "transform 220ms cubic-bezier(0.2,1,0.3,1), border-color 200ms, background-color 200ms, box-shadow 220ms"
+        } as React.CSSProperties
+      }
+    >
+      <span className="relative">{label}</span>
+      <ArrowRight
+        className="relative h-4 w-4 shrink-0 transition-transform motion-safe:group-hover/hero-cta:translate-x-1"
+        aria-hidden
+      />
+    </a>
   );
 }
