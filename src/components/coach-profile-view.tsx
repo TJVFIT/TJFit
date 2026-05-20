@@ -66,7 +66,7 @@ export function CoachProfileView({ locale, slug }: { locale: string; slug: strin
               <span className="tj-title-shimmer">{coach.display_name || coach.username}</span>
             </h1>
             <p className="mt-1 text-sm text-faint">@{coach.username}</p>
-            <p className={`mt-3 inline-flex items-center rounded-full px-3 py-1 text-xs ${coach.accepting_clients === false ? "bg-red-500/10 text-red-300" : "bg-green-500/10 text-green-300"}`}>
+            <p className={`mt-3 inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium ${coach.accepting_clients === false ? "border-red-400/30 bg-red-500/10 text-red-300" : "tj-accepting-pulse border-emerald-400/35 bg-emerald-500/10 text-emerald-200"}`}>
               {coach.accepting_clients === false ? "🔴 Not Currently Accepting Clients" : "🟢 Accepting New Clients"}
             </p>
           </div>
