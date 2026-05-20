@@ -231,10 +231,10 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
                 return (
                   <div
                     key={item.userId}
-                    className={`flex items-center justify-between rounded-xl border bg-[#0D0E12] px-4 py-3 transition-all duration-200 ${rankClass} ${isMe ? "animate-pulse ring-1 ring-accent/40" : ""}`}
+                    className={`group/row flex items-center justify-between rounded-xl border bg-[#0D0E12] px-4 py-3 transition-[border-color,box-shadow,transform] duration-200 hover:shadow-[0_0_22px_rgba(34,211,238,0.12)] motion-safe:hover:-translate-y-0.5 ${rankClass} ${isMe ? "animate-pulse ring-1 ring-accent/40" : ""}`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#14161D] text-sm font-bold text-white">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#14161D] text-sm font-bold text-white transition-colors duration-200 group-hover/row:bg-[#191C24]">
                         {item.rank === 1 ? (
                           <Crown className="crown-glow-accent h-4 w-4" style={{ color: "#22D3EE", filter: "drop-shadow(0 0 8px rgba(34,211,238,0.5))" }} />
                         ) : item.rank === 2 ? (
@@ -246,7 +246,7 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
                         )}
                       </div>
                       <div>
-                        <p className="font-medium text-white">
+                        <p className="font-medium text-white transition-colors duration-200 group-hover/row:text-cyan-50">
                           {item.displayName} {item.isVerified ? <span className="text-accent">✓</span> : null}
                           {isMe ? <span className="ml-1.5 text-[10px] text-accent">(you)</span> : null}
                         </p>
