@@ -65,7 +65,7 @@ export function getProgramVisual(program: Pick<Program, "category" | "slug">): P
   // Default: performance / general
   return {
     gradient: "from-violet-500/28 via-indigo-500/20 to-cyan-500/24",
-    glow: "shadow-[0_0_44px_-12px_rgba(167,139,250,0.30)]",
+    glow: "shadow-[0_0_44px_-12px_rgba(14, 165, 233,0.30)]",
     ring: "border-violet-400/15",
     tag: "PERFORMANCE",
     accentColor: "#a78bfa"

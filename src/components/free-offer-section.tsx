@@ -189,7 +189,7 @@ export function FreeOfferSection({
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute -right-[80px] top-[30%] h-[350px] w-[350px] rounded-full bg-[radial-gradient(circle,rgba(167,139,250,0.04)_0%,transparent_70%)]"
+        className="pointer-events-none absolute -right-[80px] top-[30%] h-[350px] w-[350px] rounded-full bg-[radial-gradient(circle,rgba(14, 165, 233,0.04)_0%,transparent_70%)]"
         aria-hidden
       />
 

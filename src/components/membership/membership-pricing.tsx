@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { initializePaddle, type Paddle } from "@paddle/paddle-js";
@@ -214,8 +214,8 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
 
         {/* Apex — ME15 rotating border */}
         <article
-          className="apex-card group relative overflow-hidden rounded-2xl p-6 transition-[transform,box-shadow] duration-300 hover:-translate-y-2 hover:shadow-[0_40px_100px_rgba(167,139,250,0.22)]"
-          style={{ background: "linear-gradient(165deg, rgba(167,139,250,0.07) 0%, rgba(17,18,21,0.9) 60%)", backdropFilter: "blur(24px)" }}
+          className="apex-card group relative overflow-hidden rounded-2xl p-6 transition-[transform,box-shadow] duration-300 hover:-translate-y-2 hover:shadow-[0_40px_100px_rgba(14, 165, 233,0.22)]"
+          style={{ background: "linear-gradient(165deg, rgba(14, 165, 233,0.07) 0%, rgba(17,18,21,0.9) 60%)", backdropFilter: "blur(24px)" }}
         >
           {/* Animated conic border */}
           <div className="pointer-events-none absolute inset-0 rounded-2xl" style={{ padding: "1px", background: "conic-gradient(from var(--apex-angle, 0deg), #0EA5E9, #22D3EE, #0EA5E9)", WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", maskComposite: "exclude" }} aria-hidden />

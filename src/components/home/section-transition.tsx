@@ -13,7 +13,7 @@ export function SectionTransition({ variant = "soft", className }: SectionTransi
     variant === "glow"
       ? "linear-gradient(180deg, transparent 0%, rgba(34,211,238,0.04) 50%, transparent 100%)"
       : variant === "violet"
-        ? "linear-gradient(180deg, transparent 0%, rgba(167,139,250,0.05) 45%, transparent 100%)"
+        ? "linear-gradient(180deg, transparent 0%, rgba(14, 165, 233,0.05) 45%, transparent 100%)"
         : "linear-gradient(180deg, #0A0A0B 0%, rgba(17,18,21,0.85) 50%, #0A0A0B 100%)";
 
   return (

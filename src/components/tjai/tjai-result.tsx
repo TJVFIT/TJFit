@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { jsPDF } from "jspdf";
@@ -385,7 +385,7 @@ export function TJAIResult({
           </div>
         </article>
 
-        <div className="rounded-xl border border-[rgba(167,139,250,0.2)] bg-[rgba(167,139,250,0.06)] p-5">
+        <div className="rounded-xl border border-[rgba(14, 165, 233,0.2)] bg-[rgba(14, 165, 233,0.06)] p-5">
           <p className="text-sm font-semibold text-accent-violet">⚡ Plateau Alert</p>
           <p className="mt-1 text-sm text-bright">
             Based on your profile, most people with your metabolism plateau around Week {metrics.plateauWeek}. We already built your plateau breaker into that point.
@@ -602,7 +602,7 @@ export function TJAIResult({
         </div>
 
         {mutablePlan.diet.cheatMealStrategy ? (
-          <div className="rounded-xl border border-[rgba(167,139,250,0.15)] bg-[rgba(167,139,250,0.04)] p-5">
+          <div className="rounded-xl border border-[rgba(14, 165, 233,0.15)] bg-[rgba(14, 165, 233,0.04)] p-5">
             <button type="button" onClick={() => setCheatOpen((v) => !v)} className="text-left text-lg font-semibold text-white">
               Cheat Meal Strategy
             </button>

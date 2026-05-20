@@ -236,7 +236,7 @@ export function TJAIChat({
         className="pointer-events-none absolute inset-0 opacity-[0.5]"
         style={{
           background:
-            "radial-gradient(ellipse 80% 50% at 0% 0%, rgba(34,211,238,0.07), transparent 55%), radial-gradient(ellipse 60% 40% at 100% 100%, rgba(167,139,250,0.06), transparent 50%)"
+            "radial-gradient(ellipse 80% 50% at 0% 0%, rgba(34,211,238,0.07), transparent 55%), radial-gradient(ellipse 60% 40% at 100% 100%, rgba(14, 165, 233,0.06), transparent 50%)"
         }}
         aria-hidden
       />

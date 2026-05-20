@@ -372,7 +372,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
           className="pointer-events-none absolute inset-0 opacity-40"
           style={{
             background:
-              "radial-gradient(ellipse 70% 45% at 0% 0%, rgba(34,211,238,0.08), transparent 50%), radial-gradient(ellipse 50% 40% at 100% 100%, rgba(167,139,250,0.06), transparent 45%)"
+              "radial-gradient(ellipse 70% 45% at 0% 0%, rgba(34,211,238,0.08), transparent 50%), radial-gradient(ellipse 50% 40% at 100% 100%, rgba(14, 165, 233,0.06), transparent 45%)"
           }}
           aria-hidden
         />

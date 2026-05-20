@@ -798,7 +798,7 @@ strong, b {
     90deg,
     transparent,
     rgba(34, 211, 238, 0.22),
-    rgba(167, 139, 250, 0.12),
+    rgba(14, 165, 233, 0.12),
     transparent
   );
   pointer-events: none;
@@ -908,7 +908,7 @@ strong, b {
     90deg,
     transparent,
     rgba(34, 211, 238, 0.18),
-    rgba(167, 139, 250, 0.1),
+    rgba(14, 165, 233, 0.1),
     transparent
   );
 }
@@ -1275,7 +1275,7 @@ strong, b {
   height: 500px;
   max-width: 120vw;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(167, 139, 250, 0.07) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.07) 0%, transparent 70%);
   pointer-events: none;
   will-change: transform;
 }
@@ -1916,7 +1916,7 @@ html {
 
 .spotlight {
   /* M10 ? site-wide cursor wash (800px @ 6% peak) */
-  background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(34, 211, 238, 0.06) 0%, rgba(167, 139, 250, 0.02) 40%, transparent 70%);
+  background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(34, 211, 238, 0.06) 0%, rgba(14, 165, 233, 0.02) 40%, transparent 70%);
   position: fixed;
   inset: 0;
   min-height: 100vh;
@@ -2435,7 +2435,7 @@ textarea:focus-visible {
     105deg,
     transparent 38%,
     rgba(34, 211, 238, 0.14) 50%,
-    rgba(167, 139, 250, 0.06) 58%,
+    rgba(14, 165, 233, 0.06) 58%,
     transparent 72%
   );
   animation: tjHeroLightSweep 16s ease-in-out infinite;
@@ -2793,7 +2793,7 @@ textarea:focus-visible {
 
 .tj-hero-vein-glow {
   background: radial-gradient(ellipse 45% 50% at 72% 38%, rgba(34, 211, 238, 0.2) 0%, transparent 60%),
-    radial-gradient(ellipse 30% 40% at 68% 55%, rgba(167, 139, 250, 0.08) 0%, transparent 55%);
+    radial-gradient(ellipse 30% 40% at 68% 55%, rgba(14, 165, 233, 0.08) 0%, transparent 55%);
   animation: tjHeroVeinGlow 5.5s var(--tj-ease-premium) infinite;
 }
 
@@ -2819,7 +2819,7 @@ textarea:focus-visible {
     102deg,
     transparent 36%,
     rgba(34, 211, 238, 0.12) 50%,
-    rgba(167, 139, 250, 0.05) 58%,
+    rgba(14, 165, 233, 0.05) 58%,
     transparent 72%
   );
   animation: tjHeroLightSweepHero 7.5s var(--tj-ease-premium) infinite;
@@ -2961,7 +2961,7 @@ textarea:focus-visible {
     105deg,
     transparent 38%,
     rgba(34, 211, 238, 0.07) 50%,
-    rgba(167, 139, 250, 0.05) 56%,
+    rgba(14, 165, 233, 0.05) 56%,
     transparent 68%
   );
   animation: tjNexusShimmer 9s var(--tj-ease-premium) infinite;

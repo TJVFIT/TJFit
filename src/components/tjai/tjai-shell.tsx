@@ -241,7 +241,7 @@ export function TJAIShell({
                 {accessCopy.moderateCta}
               </button>
             </article>
-            <article className={`rounded-xl border p-5 ${recommendAggressive ? "border-accent-violet bg-[rgba(167,139,250,0.04)]" : "border-divider bg-surface"}`}>
+            <article className={`rounded-xl border p-5 ${recommendAggressive ? "border-accent-violet bg-[rgba(14, 165, 233,0.04)]" : "border-divider bg-surface"}`}>
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-accent-violet">{accessCopy.aggressiveTitle}</h3>
                 {recommendAggressive && <span className="rounded-full bg-accent-violet/20 px-2 py-0.5 text-[10px] font-bold text-accent-violet">RECOMMENDED</span>}
