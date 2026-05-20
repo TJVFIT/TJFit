@@ -209,7 +209,7 @@ function QuickLogWidget({ locale }: { locale: Locale }) {
                   type="button"
                   onClick={() => void submit()}
                   disabled={saving || !exercise.trim()}
-                  className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-accent px-5 text-sm font-bold text-black transition-opacity disabled:opacity-50"
+                  className="tj-cta-sheen inline-flex min-h-[44px] items-center justify-center rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] px-5 text-sm font-bold text-black shadow-[0_0_18px_rgba(34,211,238,0.22)] transition-[transform,box-shadow,opacity] duration-200 hover:scale-[1.02] hover:shadow-[0_0_28px_rgba(34,211,238,0.35)] disabled:opacity-50"
                 >
                   {saving ? "Logging…" : "Log workout"}
                 </button>
@@ -308,7 +308,7 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
         <p className="text-sm text-red-400">{loadError ?? t.loadError}</p>
         <button
           type="button"
-          className="mt-4 rounded-full border border-white/15 px-5 py-2 text-sm text-bright hover:border-white/25"
+          className="tj-cta-sheen mt-4 rounded-full border border-white/15 px-5 py-2 text-sm text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_18px_rgba(34,211,238,0.14)]"
           onClick={() => void load()}
         >
           {t.retry}
