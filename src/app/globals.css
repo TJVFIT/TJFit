@@ -3770,6 +3770,14 @@ button[aria-disabled="true"],
   opacity: 0;
   transform: translate3d(0, 12px, 0);
   animation: tjHeroRowIn 760ms var(--tj-ease-premium) forwards;
+  transition: border-color 200ms ease, background-color 200ms ease, box-shadow 200ms ease;
+}
+@media (hover: hover) {
+  .tj-hero-command-row:hover {
+    border-color: rgba(34, 211, 238, 0.22);
+    background-color: rgba(34, 211, 238, 0.04);
+    box-shadow: 0 0 22px -8px rgba(34, 211, 238, 0.22);
+  }
 }
 
 .tj-premium-primary-cta:active {
