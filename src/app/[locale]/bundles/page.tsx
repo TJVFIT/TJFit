@@ -3,17 +3,50 @@ import { ArrowRight, FileDown } from "lucide-react";
 
 import { BUNDLES } from "@/lib/bundles";
 import { requireLocaleParam } from "@/lib/require-locale";
+import { getSiteUrl } from "@/lib/site-url";
 
-export const metadata = {
-  title: "Program Bundles · TJFit",
-  description:
-    "Twelve 12-week training + diet bundles, delivered as branded PDF dossiers. Train smarter, eat sharper."
-};
+export function generateMetadata({ params }: { params: { locale: string } }) {
+  const url = `${getSiteUrl()}/${params.locale}/bundles`;
+  return {
+    title: "Program Bundles · TJFit",
+    description:
+      "Twelve 12-week training + diet bundles, delivered as branded PDF dossiers. Train smarter, eat sharper.",
+    alternates: { canonical: url },
+    openGraph: {
+      title: "Program Bundles · TJFit",
+      description:
+        "Twelve 12-week training + diet bundles, delivered as branded PDF dossiers.",
+      url,
+      type: "website"
+    }
+  };
+}
+
+function bundlesItemListJsonLd(locale: string) {
+  const site = getSiteUrl();
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "TJFit Program Bundles",
+    itemListOrder: "https://schema.org/ItemListOrderAscending",
+    numberOfItems: BUNDLES.length,
+    itemListElement: BUNDLES.map((b, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `${site}/${locale}/bundles/${b.slug}`,
+      name: b.name
+    }))
+  };
+}
 
 export default function BundlesPage({ params }: { params: { locale: string } }) {
   const locale = requireLocaleParam(params.locale);
   return (
     <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(bundlesItemListJsonLd(locale)) }}
+      />
       <div className="max-w-2xl">
         <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
           Bundles

@@ -2,19 +2,50 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, FileDown } from "lucide-react";
 
-import { getBundle, listBundleSlugs } from "@/lib/bundles";
+import { getBundle, listBundleSlugs, type Bundle } from "@/lib/bundles";
 import { requireLocaleParam } from "@/lib/require-locale";
+import { getSiteUrl } from "@/lib/site-url";
 
 export function generateStaticParams() {
   return listBundleSlugs().map((slug) => ({ slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
+export function generateMetadata({ params }: { params: { locale: string; slug: string } }) {
   const bundle = getBundle(params.slug);
   if (!bundle) return { title: "Bundle · TJFit" };
+  const url = `${getSiteUrl()}/${params.locale}/bundles/${bundle.slug}`;
   return {
     title: `${bundle.name} · TJFit`,
-    description: bundle.hook
+    description: bundle.hook,
+    alternates: { canonical: url },
+    openGraph: {
+      title: `${bundle.name} · TJFit`,
+      description: bundle.hook,
+      url,
+      type: "article"
+    }
+  };
+}
+
+function bundleJsonLd(bundle: Bundle, locale: string) {
+  const url = `${getSiteUrl()}/${locale}/bundles/${bundle.slug}`;
+  const image = `${getSiteUrl()}${bundle.heroImage}`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: bundle.name,
+    description: bundle.description,
+    image,
+    url,
+    brand: { "@type": "Brand", name: "TJFit" },
+    category: bundle.goalLabel,
+    offers: {
+      "@type": "Offer",
+      url,
+      priceCurrency: "USD",
+      price: "0.00",
+      availability: "https://schema.org/InStock"
+    }
   };
 }
 
@@ -32,6 +63,10 @@ export default function BundleDetailPage({
 
   return (
     <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(bundleJsonLd(bundle, locale)) }}
+      />
       <Link
         href={`/${locale}/bundles`}
         className="inline-flex min-h-[44px] items-center gap-1.5 py-2 text-xs font-semibold text-cyan-300 transition-colors hover:text-cyan-200"
