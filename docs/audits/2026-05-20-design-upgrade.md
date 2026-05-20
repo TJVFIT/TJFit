@@ -175,3 +175,45 @@ After the public-funnel pass settled, the loop turned to the surfaces every user
 ### Round-2 test + build snapshot
 
 Every single iteration above ran clean: typecheck ✓, lint ✓, 6 test files / 38 tests ✓. No new dependencies were added. No production build broke. No file lost backward compatibility.
+
+---
+
+## Round 3 — authenticated + global hover system (iters 63–76)
+
+Once chrome was unified, the loop pivoted to the authenticated app and to *every remaining flat interaction*. The headline outcomes: the brand is now correct in **every CSS variable**, the `.tj-cta-sheen` vocabulary now reaches the entire CTA surface area, and there is essentially no plain `hover:bg-white/N` left where it would carry meaning.
+
+### Brand integrity at the variable level
+- The `--color-accent-violet` token was a legacy slate-grey alias (`#94a3b8`). One CSS line redefines it to sky-500 (`#0ea5e9`) — cascades to **~18 surfaces** instantly: trophy icons (leaderboard + dynamic island), membership pricing checkmarks, the TJAI Plateau Alert callout, the Aggressive Plan comparison toggle, the macro adherence progress bar, the "FREE" pill, the records Timer PR icon, coach review upgrade hint, Apex border CTA, and the decorative background orbs on quiz + calculating.
+- The misleading `variant="violet"` prop on `<AmbientBackground>` + `<SectionTransition>` was renamed to `variant="sky"` (it had been sky-colored since the earlier violet sweeps — the prop name was the only thing still wrong). Two callers updated in lockstep.
+
+### CTA vocabulary now app-wide
+The diagonal cyan sheen + cyan→sky gradient + cyan glow + 1.02 hover scale now lives on **every primary CTA in the app** — not just the public funnel. The big sweep flipped 18 surfaces in one move (auth, TJAI quiz/result/chat, dashboard, settings, cookie consent, become-a-coach, support, suggestions, equipment, 404, share-card, meal swap, start-funnel, tjai-public-landing, tjai-typing-showcase, immersive-home, coach-profile). Five smaller commits filled in specific patches: bundle-detail Download/Share/Ask, BundleGrid card buttons, the home BundleTeaserCTA, the user dashboard Log-Workout + Retry, and the TJAI quiz Continue/Generate + Resume.
+
+### Secondary + hover vocabulary
+- **`<Button variant="secondary">`** moves from white-on-white hover to cyan-300/40 border + 5% cyan tint + cyan-50 text + 18px cyan halo. Cascades to every consumer.
+- **Five files** of ad-hoc secondary pills + four DM-thread chrome elements + five community/coach/admin/onboarding surfaces + seven TJAI/funnel/search surfaces (~25 buttons total) all got the same cyan-tint + halo treatment.
+- The **chat-thread incoming-message bubble border** now shifts to cyan-300/20 on hover.
+- The **TJAI "Aggressive Plan" recommendation panel** was on the slate-grey legacy alias; rebuilt with cyan-300/45 border + 28px cyan halo + cyan-100 RECOMMENDED badge with its own glow. The plan the system actively steers toward now looks like the steer.
+
+### Round-3 iteration log
+
+| #     | Commit    | What                                                            |
+| ----- | --------- | --------------------------------------------------------------- |
+| 76    | `b27119a` | Final TJAI + funnel + global-search hover sweep (7 surfaces)    |
+| 75    | `cd24808` | community + coach panel + admin + onboarding + home secondary   |
+| 74    | `4bd047e` | Button.secondary + 4 ad-hoc outline pills → cyan hover          |
+| 73    | `fabe23d` | DM chat-thread chrome + bubble border cyan-tint                 |
+| 72    | `cd32f70` | Retire slate alias on `--color-accent-violet` → sky-500         |
+| 71    | `699722d` | TJAI Aggressive Plan: cyan border + halo + RECOMMENDED badge    |
+| 70    | `b4dae56` | Sweep flat bg-accent CTAs → brand sheen across 18 surfaces      |
+| 69    | `ee70da2` | User dashboard Log-Workout + Retry → sheen vocab                |
+| 68    | `48a55e7` | TJAI chat composer Send button (both shells) → sheen            |
+| 67    | `6d13876` | TJAI result page plan-action CTAs (4 buttons) → sheen           |
+| 66    | `fe7b2ff` | TJAI quiz Continue/Generate + Resume → sheen + motion-safe fix  |
+| 65    | `9b2cf69` | Rename misleading `variant="violet"` prop → `variant="sky"`     |
+| 64    | `90e696c` | Home BundleTeaserCTA sheen + PlatformFeatureCard icon cyan      |
+| 63    | `b8552a2` | Audit doc — Round 2 (iters 40-62)                               |
+
+### Round-3 test + build snapshot
+
+Same as rounds 1 & 2: typecheck ✓, lint ✓, 6 test files / 38 tests ✓ on every commit. The branch is currently at 77 iterations / 50+ commits / ~3,000 lines net. No breaking changes. No new dependencies. Still safe to fast-forward to main after review.
