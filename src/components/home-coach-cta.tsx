@@ -110,7 +110,7 @@ export function HomeCoachCta({ locale }: { locale: Locale }) {
           <div className="lg:col-span-7">
             <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-accent">{copy.tag}</p>
             <h3 className="mt-4 font-display text-[clamp(1.75rem,4vw,2.75rem)] font-extrabold tracking-[-0.02em] text-white">
-              {copy.title}
+              <span className="tj-title-shimmer">{copy.title}</span>
             </h3>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">{copy.sub}</p>
             <ul className="mt-10 space-y-4">
@@ -125,7 +125,7 @@ export function HomeCoachCta({ locale }: { locale: Locale }) {
             </ul>
             <Link
               href={`/${locale}/become-a-coach`}
-              className="mt-10 inline-flex min-h-[50px] items-center justify-center rounded-[10px] border border-[rgba(255,255,255,0.14)] px-8 text-sm font-semibold text-white transition-[border-color,color,background-color,transform] duration-200 hover:border-[rgba(34,211,238,0.4)] hover:bg-[rgba(34,211,238,0.04)] hover:text-accent hover:-translate-y-px"
+              className="tj-cta-sheen mt-10 inline-flex min-h-[50px] items-center justify-center rounded-[10px] border border-[rgba(255,255,255,0.14)] px-8 text-sm font-semibold text-white transition-[border-color,color,background-color,box-shadow,transform] duration-200 hover:border-[rgba(34,211,238,0.4)] hover:bg-[rgba(34,211,238,0.04)] hover:text-cyan-50 hover:shadow-[0_0_22px_rgba(34,211,238,0.16)] hover:-translate-y-px"
             >
               {copy.cta}
             </Link>
