@@ -642,6 +642,16 @@ h1, h2, h3, h4, h5, h6,
   text-shadow: none;
 }
 
+/* Native form controls — brand cyan accent everywhere (checkboxes,
+   radios, range sliders, progress). The single accent-color property
+   handles all four in modern browsers. */
+input[type="checkbox"],
+input[type="radio"],
+input[type="range"],
+progress {
+  accent-color: var(--color-accent-cyan);
+}
+
 * {
   border-color: var(--tj-border);
 }
