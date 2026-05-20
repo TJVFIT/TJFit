@@ -156,7 +156,7 @@ export default function CoinsPage() {
                 key={item}
                 type="button"
                 onClick={() => setFilter(item)}
-                className={`rounded-full border px-3 py-1.5 ${filter === item ? "border-cyan-400/40 text-accent" : "border-divider text-muted"}`}
+                className={`rounded-full border px-3 py-1.5 transition-[border-color,background-color,color,box-shadow] duration-200 ${filter === item ? "tj-chip-active border-cyan-300/45 bg-cyan-300/[0.1] text-cyan-50" : "border-divider text-muted hover:border-cyan-300/30 hover:bg-cyan-300/[0.04] hover:text-cyan-100"}`}
               >
                 {item.toUpperCase()}
               </button>
