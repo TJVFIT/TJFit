@@ -257,10 +257,10 @@ export function ImmersiveHome({
   const features = [
     { icon: Brain, title: "TJAI — Your AI Coach", desc: "Adaptive intake, progress-aware memory, and AI-built 12-week transformation plans. Diet + training + supplements.", accent: "#22D3EE", span: 2 as const },
     { icon: Dumbbell, title: "20+ Expert Programs", desc: "12-week structured plans for home or gym. Fat loss, muscle gain — all levels.", accent: "#67E8F9", span: 1 as const },
-    { icon: Apple, title: "Full Diet Systems", desc: "Daily meal plans with macros, recipes, grocery lists. Halal, vegan, budget - covered.", accent: "#94A3B8", span: 1 as const },
+    { icon: Apple, title: "Full Diet Systems", desc: "Daily meal plans with macros, recipes, grocery lists. Halal, vegan, budget - covered.", accent: "#0EA5E9", span: 1 as const },
     { icon: Users, title: "Coach Marketplace", desc: "Book certified coaches. 1-on-1 guidance and personalized feedback.", accent: "#22D3EE", span: 1 as const },
-    { icon: Trophy, title: "Leaderboards", desc: "Earn TJCOIN, compete on weekly boards, unlock rewards for consistency.", accent: "#94A3B8", span: 1 as const },
-    { icon: Globe, title: "10 Languages", desc: "Training and nutrition flows support 10 locales from the first visit.", accent: "#94A3B8", span: 1 as const }
+    { icon: Trophy, title: "Leaderboards", desc: "Earn TJCOIN, compete on weekly boards, unlock rewards for consistency.", accent: "#67E8F9", span: 1 as const },
+    { icon: Globe, title: "10 Languages", desc: "Training and nutrition flows support 10 locales from the first visit.", accent: "#0EA5E9", span: 1 as const }
   ] as const;
 
   // TJAI section ref for reveal trigger
