@@ -708,7 +708,7 @@ export function TJAIResult({
                       ))}
                     </ul>
                     <p className="mt-2 text-xs text-muted">P {meal.protein}g · C {meal.carbs}g · F {meal.fat}g</p>
-                    <button type="button" onClick={() => chooseSwap(meal)} className="mt-3 rounded-full bg-accent px-3 py-1 text-xs font-semibold text-[#09090B]">
+                    <button type="button" onClick={() => chooseSwap(meal)} className="mt-3 tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-3 py-1 text-xs font-semibold text-[#09090B]">
                       Choose this meal
                     </button>
                   </article>

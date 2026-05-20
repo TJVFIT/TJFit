@@ -149,7 +149,7 @@ export function TJAIMealSwapTab({ locale }: { locale: string }) {
       <div className="rounded-2xl border border-divider bg-surface p-6">
         <h3 className="text-lg font-semibold text-white">{t.locked}</h3>
         <p className="mt-2 text-sm text-muted">{t.lockedSub}</p>
-        <a href={`/${locale}/membership?tier=pro`} className="mt-4 inline-flex rounded-full bg-accent px-4 py-2 text-sm font-semibold text-[#09090B]">
+        <a href={`/${locale}/membership?tier=pro`} className="mt-4 inline-flex tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2 text-sm font-semibold text-[#09090B]">
           {t.upgrade}
         </a>
       </div>
@@ -193,7 +193,7 @@ export function TJAIMealSwapTab({ locale }: { locale: string }) {
         ))}
       </div>
 
-      <button type="button" onClick={() => void doSwap()} disabled={!selected || loading || swapsRemaining <= 0} className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-[#09090B] disabled:opacity-50">
+      <button type="button" onClick={() => void doSwap()} disabled={!selected || loading || swapsRemaining <= 0} className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2 text-sm font-semibold text-[#09090B] disabled:opacity-50">
         {loading ? t.finding : t.findAlt}
       </button>
       <p className="text-xs text-faint">{swapsRemaining} {t.swapsRemaining}</p>

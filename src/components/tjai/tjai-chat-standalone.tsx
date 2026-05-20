@@ -525,7 +525,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
           <div className="w-full max-w-md rounded-2xl border border-divider bg-surface p-6">
             <h3 className="text-lg font-semibold text-white">{t.trialUsed}</h3>
             <p className="mt-2 text-sm text-muted">{t.trialSub}</p>
-            <a href={`/${locale}/membership`} className="mt-4 inline-flex rounded-full bg-accent px-4 py-2 text-sm font-semibold text-[#09090B]">
+            <a href={`/${locale}/membership`} className="mt-4 inline-flex tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2 text-sm font-semibold text-[#09090B]">
               {t.upgrade}
             </a>
             <button type="button" className="mt-3 block text-xs text-faint" onClick={() => setShowLimitOverlay(false)}>

@@ -138,7 +138,7 @@ function BundleTeaserCTA({ href }: { href: string }) {
     <a
       ref={ref}
       href={href}
-      className="group/cta tj-cta-sheen relative inline-flex min-h-[52px] shrink-0 items-center justify-center gap-2 rounded-full bg-accent px-7 py-3 text-sm font-bold text-background shadow-[0_4px_24px_rgba(34,211,238,0.35)] hover:shadow-[0_8px_44px_rgba(34,211,238,0.55)]"
+      className="group/cta tj-cta-sheen relative inline-flex min-h-[52px] shrink-0 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] px-7 py-3 text-sm font-bold text-background shadow-[0_4px_24px_rgba(34,211,238,0.35)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] hover:shadow-[0_8px_44px_rgba(34,211,238,0.55)]"
       style={
         {
           "--mag-x": "0px",
@@ -334,7 +334,7 @@ export function ImmersiveHome({
           </div>
           <Link
             href={`/${locale}/tjai`}
-            className="lux-btn-primary inline-flex min-h-[48px] shrink-0 items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-bold text-background shadow-[0_4px_24px_rgba(34,211,238,0.35)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02]"
+            className="lux-btn-primary inline-flex min-h-[48px] shrink-0 items-center justify-center gap-2 tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-6 py-3 text-sm font-bold text-background shadow-[0_4px_24px_rgba(34,211,238,0.35)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02]"
           >
             Try TJAI <ArrowRight className="h-4 w-4" />
           </Link>

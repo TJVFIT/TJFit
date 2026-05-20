@@ -179,7 +179,7 @@ export default function SupportPage({ params }: { params: { locale: string } }) 
           </label>
           {error ? <p className="text-xs text-red-400">{error}</p> : null}
           <button type="submit" disabled={loading}
-            className="w-full rounded-full bg-accent py-3 text-sm font-bold text-[#09090B] disabled:opacity-50">
+            className="w-full tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] py-3 text-sm font-bold text-[#09090B] disabled:opacity-50">
             {loading ? copy.sending : copy.cta}
           </button>
         </form>

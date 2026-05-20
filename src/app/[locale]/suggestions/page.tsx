@@ -104,7 +104,7 @@ export default function SuggestionsPage({ params }: { params: { locale: string }
         <button
           type="button"
           onClick={() => { if (!user) { window.location.href = `/${locale}/login?redirect=/${locale}/suggestions`; return; } setShowModal(true); }}
-          className="shrink-0 rounded-full bg-accent px-4 py-2.5 text-sm font-bold text-[#09090B]"
+          className="shrink-0 tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2.5 text-sm font-bold text-[#09090B]"
         >
           Submit an idea →
         </button>
@@ -172,7 +172,7 @@ export default function SuggestionsPage({ params }: { params: { locale: string }
               </select>
               {error ? <p className="text-xs text-red-400">{error}</p> : null}
               <div className="flex gap-3">
-                <button type="submit" disabled={submitting} className="flex-1 rounded-full bg-accent py-2.5 text-sm font-bold text-[#09090B] disabled:opacity-50">
+                <button type="submit" disabled={submitting} className="flex-1 tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] py-2.5 text-sm font-bold text-[#09090B] disabled:opacity-50">
                   {submitting ? "Submitting..." : "Submit Idea"}
                 </button>
                 <button type="button" onClick={() => setShowModal(false)} className="rounded-full border border-divider px-4 py-2.5 text-sm text-muted">

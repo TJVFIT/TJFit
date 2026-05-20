@@ -118,7 +118,7 @@ export function CoachProfileView({ locale, slug }: { locale: string; slug: strin
         <p className="text-xs uppercase tracking-[0.14em] text-faint">Most popular program by this coach</p>
         <h3 className="mt-2 text-lg font-semibold text-white">{coach.featured_program_id ? `Program ${coach.featured_program_id}` : "No featured program selected yet"}</h3>
         {coach.featured_program_id ? (
-          <Link href={`/${locale}/bundles`} className="mt-3 inline-flex rounded-full bg-accent px-4 py-2 text-sm font-semibold text-[#09090B]">
+          <Link href={`/${locale}/bundles`} className="mt-3 inline-flex tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2 text-sm font-semibold text-[#09090B]">
             View Bundles
           </Link>
         ) : null}

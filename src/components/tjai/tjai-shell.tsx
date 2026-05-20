@@ -237,7 +237,7 @@ export function TJAIShell({
               </div>
               <p className="mt-2 text-sm text-muted">{accessCopy.moderateBody}</p>
               <p className="mt-2 text-xs text-faint">{moderate.weeklyWeightChange} kg/week expected</p>
-              <button type="button" className="mt-4 w-full rounded-full bg-accent px-4 py-2.5 text-sm font-bold text-[#09090B]" onClick={() => void handleGenerate(normalizedDraft, "moderate")}>
+              <button type="button" className="mt-4 w-full tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2.5 text-sm font-bold text-[#09090B]" onClick={() => void handleGenerate(normalizedDraft, "moderate")}>
                 {accessCopy.moderateCta}
               </button>
             </article>
@@ -303,7 +303,7 @@ export function TJAIShell({
               <div className="mt-6 flex flex-col gap-3">
                 <button
                   type="button"
-                  className="w-full rounded-full bg-accent px-5 py-2.5 text-sm font-bold text-black transition-opacity hover:opacity-90"
+                  className="w-full tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 py-2.5 text-sm font-bold text-black transition-opacity hover:opacity-90"
                   onClick={() => {
                     if (pendingAnswers) void handleGenerate(pendingAnswers, pendingPace);
                   }}

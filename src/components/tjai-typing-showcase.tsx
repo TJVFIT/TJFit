@@ -159,7 +159,7 @@ export function TJAITypingShowcase({ locale }: { locale: Locale }) {
             <p className="mt-3 max-w-md text-base text-muted">{copy.sub}</p>
             <a
               href={`/${locale}/ai`}
-              className="mt-8 inline-flex min-h-[48px] items-center justify-center rounded-full bg-accent px-7 py-3 text-sm font-bold text-[#09090B] transition hover:bg-white"
+              className="mt-8 inline-flex min-h-[48px] items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-7 py-3 text-sm font-bold text-[#09090B] transition hover:bg-white"
             >
               {copy.cta}
             </a>

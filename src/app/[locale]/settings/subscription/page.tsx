@@ -37,7 +37,7 @@ function CancellationModal({ open, onClose }: { open: boolean; onClose: () => vo
             <li>75 TJCOIN/month</li>
           </ul>
           <div className="mt-4 flex gap-2">
-            <button className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-[#09090B]" onClick={onClose}>
+            <button className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2 text-sm font-semibold text-[#09090B]" onClick={onClose}>
               Keep My Subscription
             </button>
             <button className="rounded-full border border-divider px-4 py-2 text-sm text-bright" onClick={() => setStep(2)}>

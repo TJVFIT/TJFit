@@ -142,7 +142,7 @@ export default function LocaleNotFound() {
             placeholder={c.searchPlaceholder}
             className="min-h-[44px] w-full rounded-full border border-white/10 bg-white/[0.04] px-4 text-sm text-white outline-none ring-cyan-400/30 focus:border-cyan-400/35 focus:ring-2"
           />
-          <button className="rounded-full bg-accent px-5 text-sm font-semibold text-[#09090B]">Go</button>
+          <button className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 text-sm font-semibold text-[#09090B]">Go</button>
         </form>
       </div>
       <div className="mt-7 animate-[tj-fade-up_380ms_ease-out_forwards]" style={{ animationDelay: "560ms", opacity: 0 }}>

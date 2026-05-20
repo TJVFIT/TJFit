@@ -99,7 +99,7 @@ export function ShareCardGenerator({
         </button>
       </div>
       <div className="mt-4 flex gap-2">
-        <button type="button" onClick={download} className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-[#09090B]">
+        <button type="button" onClick={download} className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2 text-sm font-semibold text-[#09090B]">
           Download Card
         </button>
         <button type="button" onClick={() => void copyImage()} className="rounded-full border border-divider px-4 py-2 text-sm text-muted">
