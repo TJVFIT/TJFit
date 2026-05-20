@@ -326,8 +326,10 @@ function SignupForm({ params }: { params: { locale: string } }) {
                   key={g.key}
                   type="button"
                   onClick={() => setGoal(g.key)}
-                  className={`rounded-2xl border p-4 text-left transition ${
-                    goal === g.key ? "border-cyan-400/55 bg-cyan-500/10 text-white" : "border-white/10 text-bright hover:border-white/20"
+                  className={`rounded-2xl border p-4 text-left transition-[border-color,background-color,color,box-shadow] duration-200 ${
+                    goal === g.key
+                      ? "border-cyan-300/55 bg-cyan-300/[0.1] text-cyan-50 shadow-[0_0_22px_rgba(34,211,238,0.16)]"
+                      : "border-white/10 text-bright hover:border-cyan-300/40 hover:bg-cyan-300/[0.04] hover:text-cyan-100"
                   }`}
                 >
                   <p className="text-lg">{g.emoji}</p>
