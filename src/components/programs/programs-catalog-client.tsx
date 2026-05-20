@@ -118,7 +118,7 @@ function CatalogSkeletonGrid() {
           className="overflow-hidden rounded-xl border border-white/[0.06] bg-[#0E0F12]"
           aria-hidden
         >
-          <div className="aspect-[16/9] animate-pulse bg-gradient-to-br from-white/[0.08] via-cyan-300/[0.08] to-white/[0.03]" />
+          <div className="tj-skeleton aspect-[16/9]" />
           <div className="space-y-4 p-4">
             <div className="h-3 w-20 rounded-full bg-white/[0.08]" />
             <div className="h-5 w-4/5 rounded-full bg-white/[0.1]" />

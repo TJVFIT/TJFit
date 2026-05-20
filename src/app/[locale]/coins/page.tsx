@@ -116,7 +116,7 @@ export default function CoinsPage() {
 
       <section className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {loading
-          ? Array.from({ length: 6 }).map((_, idx) => <div key={idx} className="h-48 animate-pulse rounded-xl border border-divider bg-surface" />)
+          ? Array.from({ length: 6 }).map((_, idx) => <div key={idx} className="tj-skeleton h-48 rounded-xl border border-divider" />)
           : (data?.offers ?? []).map((offer) => (
               <article key={offer.key} className="rounded-xl border border-divider bg-surface p-5">
                 <div className="flex items-start justify-between gap-4">

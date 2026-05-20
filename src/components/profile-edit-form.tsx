@@ -212,10 +212,10 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
   if (loading) {
     return (
       <div className="mx-auto max-w-lg space-y-4 px-4 py-14 sm:px-6">
-        <div className="animate-pulse space-y-3">
-          <div className="h-4 w-24 rounded bg-white/10" />
-          <div className="h-10 w-full rounded-xl bg-white/10" />
-          <div className="h-64 w-full rounded-[28px] bg-white/5" />
+        <div className="space-y-3">
+          <div className="tj-skeleton h-4 w-24 rounded" />
+          <div className="tj-skeleton h-10 w-full rounded-xl" />
+          <div className="tj-skeleton h-64 w-full rounded-[28px]" />
         </div>
       </div>
     );

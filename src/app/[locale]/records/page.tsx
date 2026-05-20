@@ -9,7 +9,7 @@ import { useInView } from "@/hooks/useInView";
 
 const RecordsTrophyCanvas = dynamic(() => import("@/components/records/records-trophy-canvas"), {
   ssr: false,
-  loading: () => <div className="h-32 w-full animate-pulse rounded-2xl bg-surface/80" aria-hidden />
+  loading: () => <div className="tj-skeleton h-32 w-full rounded-2xl" aria-hidden />
 });
 
 type PR = {
@@ -151,7 +151,7 @@ export default function RecordsPage({ params }: { params: { locale: string } }) 
       {loading && (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-28 animate-pulse rounded-2xl bg-surface" />
+            <div key={i} className="tj-skeleton h-28 rounded-2xl" />
           ))}
         </div>
       )}

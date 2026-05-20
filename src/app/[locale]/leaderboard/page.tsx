@@ -195,7 +195,7 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
         {loading ? (
           <div className="space-y-3">
             {Array.from({ length: 8 }).map((_, idx) => (
-              <div key={idx} className="h-12 animate-pulse rounded-lg bg-[#0F1116]" />
+              <div key={idx} className="tj-skeleton h-12 rounded-lg" />
             ))}
           </div>
         ) : items.length === 0 ? (

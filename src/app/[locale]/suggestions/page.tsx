@@ -122,7 +122,7 @@ export default function SuggestionsPage({ params }: { params: { locale: string }
 
       <div className="mt-6 space-y-3">
         {loading ? (
-          Array.from({ length: 3 }).map((_, i) => <div key={i} className="h-24 animate-pulse rounded-2xl border border-divider bg-surface" />)
+          Array.from({ length: 3 }).map((_, i) => <div key={i} className="tj-skeleton h-24 rounded-2xl border border-divider" />)
         ) : items.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-divider bg-[#0D0F12] px-6 py-16 text-center">
             <Lightbulb className="mx-auto h-10 w-10 text-dim" />
