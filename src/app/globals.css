@@ -1893,10 +1893,20 @@ html {
   left: -75%;
   width: 50%;
   height: 200%;
-  background: linear-gradient(105deg, transparent 20%, rgba(255, 255, 255, 0.35) 50%, transparent 80%);
+  background: linear-gradient(
+    105deg,
+    rgba(255, 255, 255, 0) 20%,
+    rgba(255, 255, 255, 0.32) 45%,
+    rgba(165, 243, 252, 0.42) 55%,
+    rgba(255, 255, 255, 0) 80%
+  );
   transform: skewX(-20deg);
   transition: none;
   pointer-events: none;
+  mix-blend-mode: screen;
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary-shimmer:hover::after { animation: none; }
 }
 
 @media (hover: hover) {
