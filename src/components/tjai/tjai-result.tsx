@@ -20,12 +20,14 @@ import { ShareCardGenerator } from "@/components/tjai/share-card-generator";
 import { TJAIChat } from "@/components/tjai/tjai-chat";
 import { useInView } from "@/hooks/useInView";
 import { buildTjaiDecisionReasons } from "@/lib/tjai-explanations";
+import type { Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import type { QuizAnswers, TJAICopy, TJAIGroceryList, TJAIMeal, TJAIMealPrepTask, TJAIMetrics, TJAIPlan } from "@/lib/tjai-types";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Tooltip, Legend, Filler);
 
 type Props = {
+  locale: Locale;
   copy: TJAICopy;
   plan: TJAIPlan;
   answers: QuizAnswers;
@@ -39,6 +41,7 @@ type Props = {
 };
 
 export function TJAIResult({
+  locale,
   copy,
   plan,
   answers,
@@ -654,7 +657,7 @@ export function TJAIResult({
 
         <TJAIChat plan={mutablePlan} metrics={metrics} answers={answers} coreLimited={coreLimitedChat} onLimitReached={onChatLimitReached} />
         <ShareCardGenerator goal={String(answers.s2_goal ?? "Goal")} calories={metrics.calorieTarget} protein={metrics.protein} duration={metrics.timeToGoal} />
-        <CoachReviewRequest />
+        <CoachReviewRequest locale={locale} />
       </div>
 
       <div className="sticky bottom-0 mt-10 border-t border-divider bg-background/95 px-4 py-3 backdrop-blur">

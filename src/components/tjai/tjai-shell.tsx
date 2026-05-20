@@ -376,6 +376,7 @@ export function TJAIShell({
 
   return (
     <TJAIResult
+      locale={locale}
       copy={copy}
       plan={plan}
       answers={answers}
