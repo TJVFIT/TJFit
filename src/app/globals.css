@@ -185,6 +185,38 @@
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
     margin-top: 4px;
   }
+  /* Dropdown items — left cyan accent stripe slides in 0→3px on hover.
+     Layers under the existing hover:bg-cyan-300/10 Tailwind tint so the
+     row reads as "selected + edge-lit". */
+  .tj-topnav-sub {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .tj-topnav-sub::before {
+    content: "";
+    position: absolute;
+    inset-block: 6px;
+    inset-inline-start: 0;
+    width: 0;
+    border-radius: 2px;
+    background: linear-gradient(
+      180deg,
+      rgba(165, 243, 252, 0.95),
+      rgba(34, 211, 238, 1),
+      rgba(14, 165, 233, 0.85)
+    );
+    box-shadow: 0 0 8px rgba(34, 211, 238, 0.45);
+    transition: width 200ms cubic-bezier(0.2, 1, 0.3, 1);
+    pointer-events: none;
+  }
+  .tj-topnav-sub:hover::before,
+  .tj-topnav-sub:focus-visible::before {
+    width: 3px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tj-topnav-sub::before { transition: none; }
+  }
   .tj-topnav-content[data-state="closed"] {
     animation: tj-topnav-out 180ms ease-in forwards;
   }
