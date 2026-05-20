@@ -23,23 +23,23 @@ const COPY: Record<
     heading: "This page skipped leg day.",
     sub: "Looks like this URL didn't make it through the warm-up.",
     home: "Back to Home",
-    programs: "Browse Programs",
+    programs: "Browse Bundles",
     searchTitle: "Looking for something specific?",
     searchPlaceholder: "Search TJFit...",
     popular: "Popular pages:",
-    links: { programs: "Programs", diets: "Diets", ai: "TJAI", calculator: "Calculator", coaches: "Coaches", community: "Community" }
+    links: { programs: "Bundles", diets: "Bundles", ai: "TJAI", calculator: "Calculator", coaches: "Coaches", community: "Community" }
   },
   tr: {
     heading: "Bu sayfa bacak gununu atlamis.",
     sub: "Bu URL isinmayi gecememis gibi gorunuyor.",
     home: "Ana Sayfaya Don",
-    programs: "Programlari Kesfet",
+    programs: "Paketleri Kesfet",
     searchTitle: "Belirli bir sey mi ariyorsun?",
     searchPlaceholder: "TJFit'te ara...",
     popular: "Populer sayfalar:",
     links: {
-      programs: "Programlar",
-      diets: "Diyetler",
+      programs: "Paketler",
+      diets: "Paketler",
       ai: "TJAI",
       calculator: "Hesaplayici",
       coaches: "Koclar",
@@ -50,31 +50,31 @@ const COPY: Record<
     heading: "هذه الصفحة تخلّت عن يوم الأرجل.",
     sub: "يبدو أن هذا الرابط لم ينجح في الإحماء.",
     home: "العودة للرئيسية",
-    programs: "تصفح البرامج",
+    programs: "تصفح الحزم",
     searchTitle: "تبحث عن شيء محدد؟",
     searchPlaceholder: "ابحث في TJFit...",
     popular: "صفحات شائعة:",
-    links: { programs: "البرامج", diets: "الأنظمة الغذائية", ai: "TJAI", calculator: "الحاسبة", coaches: "المدربون", community: "المجتمع" }
+    links: { programs: "الحزم", diets: "الحزم", ai: "TJAI", calculator: "الحاسبة", coaches: "المدربون", community: "المجتمع" }
   },
   es: {
     heading: "Esta pagina se salto el dia de piernas.",
     sub: "Parece que esta URL no supero el calentamiento.",
     home: "Ir al inicio",
-    programs: "Ver programas",
+    programs: "Ver bundles",
     searchTitle: "¿Buscas algo en concreto?",
     searchPlaceholder: "Buscar en TJFit...",
     popular: "Paginas populares:",
-    links: { programs: "Programas", diets: "Dietas", ai: "TJAI", calculator: "Calculadora", coaches: "Coaches", community: "Comunidad" }
+    links: { programs: "Bundles", diets: "Bundles", ai: "TJAI", calculator: "Calculadora", coaches: "Coaches", community: "Comunidad" }
   },
   fr: {
     heading: "Cette page a saute le jour des jambes.",
     sub: "Cette URL n'a visiblement pas passe l'echauffement.",
     home: "Aller a l'accueil",
-    programs: "Parcourir les programmes",
+    programs: "Parcourir les packs",
     searchTitle: "Vous cherchez quelque chose de precis ?",
     searchPlaceholder: "Rechercher sur TJFit...",
     popular: "Pages populaires :",
-    links: { programs: "Programmes", diets: "Regimes", ai: "TJAI", calculator: "Calculateur", coaches: "Coachs", community: "Communaute" }
+    links: { programs: "Packs", diets: "Packs", ai: "TJAI", calculator: "Calculateur", coaches: "Coachs", community: "Communaute" }
   }
 };
 
@@ -143,10 +143,6 @@ export default function LocaleNotFound() {
         <div className="mt-2 flex flex-wrap items-center justify-center gap-3 text-sm text-muted">
           <Link href={`/${locale}/bundles`} className="hover:text-white">
             {c.links.programs}
-          </Link>
-          <span>·</span>
-          <Link href={`/${locale}/bundles`} className="hover:text-white">
-            {c.links.diets}
           </Link>
           <span>·</span>
           <Link href={`/${locale}/ai`} className="hover:text-white">
