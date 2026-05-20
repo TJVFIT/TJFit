@@ -138,7 +138,7 @@ export function HomeBlogsPreview({
             <Link
               key={post.id}
               href={hrefAll}
-              className="group flex h-full flex-col overflow-hidden rounded-xl border border-white/[0.07] bg-surface-elevated/40 transition hover:border-white/[0.11]"
+              className="group flex h-full flex-col overflow-hidden rounded-xl border border-white/[0.07] bg-surface-elevated/40 transition-[border-color,box-shadow,transform] duration-300 hover:border-cyan-300/30 hover:shadow-[0_18px_44px_rgba(0,0,0,0.4),0_0_28px_rgba(34,211,238,0.08)] motion-safe:hover:-translate-y-0.5"
             >
               {post.image_url ? (
                 <div className="relative aspect-[16/9] w-full overflow-hidden bg-black/40">
@@ -161,7 +161,7 @@ export function HomeBlogsPreview({
                     </span>
                   ) : null}
                 </div>
-                <h3 className="mt-2 line-clamp-2 text-lg font-semibold text-white group-hover:text-bright">{post.title}</h3>
+                <h3 className="mt-2 line-clamp-2 text-lg font-semibold text-white transition-colors duration-200 group-hover:text-cyan-50">{post.title}</h3>
                 <p className="mt-2 line-clamp-3 flex-1 text-sm leading-relaxed text-muted">{excerpt(post.content)}</p>
               </div>
             </Link>
