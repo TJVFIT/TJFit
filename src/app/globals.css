@@ -4007,6 +4007,32 @@ button[aria-disabled="true"],
   .tj-chip-active { animation: none; box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.22); }
 }
 
+/* Premium skeleton — base white/[0.04] with a slow cyan shimmer band that
+   travels left→right at 1.8s. Drop-in replacement for Tailwind animate-pulse
+   on loading surfaces where you want a brand-tier shimmer instead of a flat
+   opacity blink. Motion-reduce flattens to a static base. */
+@keyframes tj-skeleton-sweep {
+  0%   { background-position: -150% 0; }
+  100% { background-position: 150% 0; }
+}
+.tj-skeleton {
+  background-color: rgba(255, 255, 255, 0.04);
+  background-image: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(34, 211, 238, 0.08) 45%,
+    rgba(165, 243, 252, 0.14) 55%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  animation: tj-skeleton-sweep 1.8s linear infinite;
+  will-change: background-position;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tj-skeleton { animation: none; background-image: none; }
+}
+
 /* Premium CTA sheen — diagonal light strip sweeps across the button on hover.
    Apply with `.tj-cta-sheen` on a relative+overflow-hidden container; the
    ::before pseudo provides the strip and is gated by hover/motion. */
