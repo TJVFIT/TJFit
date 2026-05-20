@@ -33,25 +33,25 @@ export default function LegalHubPage({ params }: { params: { locale: string } })
               >
                 <a
                   href="#faq"
-                  className="rounded-full border border-divider px-3 py-1.5 text-xs text-muted transition-[border-color,color] duration-150 hover:border-[rgba(255,255,255,0.1)] hover:text-white"
+                  className="rounded-full border border-divider px-3 py-1.5 text-xs text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_16px_rgba(34,211,238,0.18)]"
                 >
                   {copy.navFaq}
                 </a>
                 <a
                   href="#user-terms"
-                  className="rounded-full border border-divider px-3 py-1.5 text-xs text-muted transition-[border-color,color] duration-150 hover:border-[rgba(255,255,255,0.1)] hover:text-white"
+                  className="rounded-full border border-divider px-3 py-1.5 text-xs text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_16px_rgba(34,211,238,0.18)]"
                 >
                   {copy.navUserTerms}
                 </a>
                 <a
                   href="#coach-terms"
-                  className="rounded-full border border-divider px-3 py-1.5 text-xs text-muted transition-[border-color,color] duration-150 hover:border-[rgba(255,255,255,0.1)] hover:text-white"
+                  className="rounded-full border border-divider px-3 py-1.5 text-xs text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_16px_rgba(34,211,238,0.18)]"
                 >
                   {copy.navCoachTerms}
                 </a>
                 <a
                   href="#privacy"
-                  className="rounded-full border border-divider px-3 py-1.5 text-xs text-muted transition-[border-color,color] duration-150 hover:border-[rgba(255,255,255,0.1)] hover:text-white"
+                  className="rounded-full border border-divider px-3 py-1.5 text-xs text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_16px_rgba(34,211,238,0.18)]"
                 >
                   {copy.navPrivacy}
                 </a>
