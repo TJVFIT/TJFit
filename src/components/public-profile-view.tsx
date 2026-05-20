@@ -172,7 +172,9 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
                   />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-white">{profile.display_name || profile.username}</h1>
+                  <h1 className="text-xl font-bold text-white">
+                    <span className="tj-title-shimmer">{profile.display_name || profile.username}</span>
+                  </h1>
                   <p className="text-sm text-faint">@{profile.username}</p>
                   <p className="mt-1 text-xs uppercase tracking-[0.14em] text-cyan-300">{roleLabel(profile.role)}</p>
                   {profile.bio ? <p className="mt-2 max-w-xl text-sm text-bright">{profile.bio}</p> : null}
@@ -181,7 +183,7 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
 
               <div className="flex flex-wrap gap-2">
                 {profile.self ? (
-                  <Link href={`/${locale}/profile/edit`} className="rounded-full border border-white/20 px-5 py-2 text-sm text-white">
+                  <Link href={`/${locale}/profile/edit`} className="rounded-full border border-white/20 px-5 py-2 text-sm text-white transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:bg-cyan-300/[0.05] hover:text-cyan-50 hover:shadow-[0_0_18px_rgba(34,211,238,0.14)]">
                     Edit Profile
                   </Link>
                 ) : user ? (
@@ -192,7 +194,7 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
                     onCountChange={(count) => setStats((prev) => (prev ? { ...prev, followers: count } : prev))}
                   />
                 ) : (
-                  <Link href={`/${locale}/login`} className="rounded-full border border-white/20 px-5 py-2 text-sm text-white">
+                  <Link href={`/${locale}/login`} className="rounded-full border border-white/20 px-5 py-2 text-sm text-white transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:bg-cyan-300/[0.05] hover:text-cyan-50 hover:shadow-[0_0_18px_rgba(34,211,238,0.14)]">
                     Sign in to Follow
                   </Link>
                 )}
