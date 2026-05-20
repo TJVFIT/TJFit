@@ -34,7 +34,7 @@ export default function BundleDetailPage({
     <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
       <Link
         href={`/${locale}/bundles`}
-        className="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan-300 transition-colors hover:text-cyan-200"
+        className="inline-flex min-h-[44px] items-center gap-1.5 py-2 text-xs font-semibold text-cyan-300 transition-colors hover:text-cyan-200"
       >
         <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
         All bundles
@@ -78,14 +78,14 @@ export default function BundleDetailPage({
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <a
               href={downloadHref}
-              className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-5 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] transition-[transform,filter,box-shadow] duration-150 hover:brightness-110 hover:shadow-[0_0_32px_rgba(34,211,238,0.32)] active:scale-[0.97]"
+              className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-5 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] transition-[transform,filter,box-shadow] duration-150 hover:brightness-110 hover:shadow-[0_0_32px_rgba(34,211,238,0.32)] active:scale-[0.97] sm:flex-none"
             >
               <FileDown className="h-4 w-4" aria-hidden />
               Download PDF
             </a>
             <Link
               href={`/${locale}/tjai`}
-              className="inline-flex items-center gap-1.5 rounded-full border border-cyan-300/25 px-4 py-2.5 text-sm font-semibold text-cyan-200 transition-colors hover:border-cyan-300/45 hover:text-cyan-100"
+              className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-1.5 rounded-full border border-cyan-300/25 px-4 py-2.5 text-sm font-semibold text-cyan-200 transition-colors hover:border-cyan-300/45 hover:text-cyan-100 sm:flex-none"
             >
               Ask TJAI which to pick
               <ArrowRight className="h-3.5 w-3.5" aria-hidden />
@@ -162,20 +162,20 @@ export default function BundleDetailPage({
           {bundle.sampleTrainingDay.exercises.map((ex, i) => (
             <li
               key={`${ex.name}-${i}`}
-              className="flex items-center justify-between gap-4 px-4 py-3"
+              className="flex items-start justify-between gap-3 px-4 py-3.5"
             >
               <div className="flex min-w-0 items-baseline gap-3">
-                <span className="text-[10px] font-bold tabular-nums text-cyan-300/80">
+                <span className="shrink-0 text-[10px] font-bold tabular-nums text-cyan-300/80">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-white">{ex.name}</p>
+                  <p className="text-sm font-semibold text-white">{ex.name}</p>
                   {ex.notes ? (
-                    <p className="mt-0.5 text-[11px] italic text-faint">{ex.notes}</p>
+                    <p className="mt-0.5 text-[11px] italic leading-snug text-faint">{ex.notes}</p>
                   ) : null}
                 </div>
               </div>
-              <span className="shrink-0 text-xs font-semibold text-cyan-100">{ex.sets}</span>
+              <span className="shrink-0 whitespace-nowrap text-xs font-semibold text-cyan-100">{ex.sets}</span>
             </li>
           ))}
         </ol>
@@ -248,7 +248,7 @@ export default function BundleDetailPage({
         </ul>
       </div>
 
-      <div className="mt-14 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-cyan-400/20 bg-[linear-gradient(180deg,rgba(34,211,238,0.06),rgba(34,211,238,0.01))] p-5 sm:p-7">
+      <div className="mt-14 flex flex-col items-stretch gap-4 rounded-2xl border border-cyan-400/20 bg-[linear-gradient(180deg,rgba(34,211,238,0.06),rgba(34,211,238,0.01))] p-5 sm:flex-row sm:items-center sm:justify-between sm:p-7">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
             Ready to start
@@ -259,7 +259,7 @@ export default function BundleDetailPage({
         </div>
         <a
           href={downloadHref}
-          className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-5 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] transition-[transform,filter,box-shadow] duration-150 hover:brightness-110 hover:shadow-[0_0_32px_rgba(34,211,238,0.32)] active:scale-[0.97]"
+          className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-5 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] transition-[transform,filter,box-shadow] duration-150 hover:brightness-110 hover:shadow-[0_0_32px_rgba(34,211,238,0.32)] active:scale-[0.97] sm:w-auto"
         >
           <FileDown className="h-4 w-4" aria-hidden />
           Download PDF
