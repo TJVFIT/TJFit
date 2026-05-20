@@ -341,3 +341,95 @@ What's left as **daylight followups** (need either user input or beyond-loop sco
 4. Coach dashboard + admin panels (have been touched but the data-dense surfaces could use more bespoke polish).
 
 The branch is at `claude/design-upgrade-2026-05-20`, 100 iterations, ~70 commits, ~3,800 lines net, **zero new dependencies**, every commit clean on typecheck/lint/38 tests. Safe to fast-forward to main after a human review.
+
+---
+
+## Round 6 — corner cases + brand at the variable level (iters 100–125)
+
+After the 100-iteration milestone audit shipped, this round did the "long tail" work — fishing out every remaining brand leak in CSS variables and Tailwind class names, propagating the chip / sheen / halo vocabulary to every surface that hadn't been touched, and fixing the dim-on-hover anti-pattern wherever it survived.
+
+### Three more shipped brand leaks found and fixed
+
+- **`.gradient-button` CSS class** (used on signup multi-step Continue + Finish Setup, every step): 3-stop gradient ended in `#94a3b8` slate-grey at the right edge. Cyan→darker-cyan→GREY shipping to prod. Replaced the slate stop with sky-500.
+- **`.apex-rotating-border` CSS class** (TJAI hub Apex tier badge animation): cycled `#94a3b8 → #22d3ee → #94a3b8`. Now `#0ea5e9 → #22d3ee → #0ea5e9`. Inner text color went from `#94a3b8` slate to `#67e8f9` cyan-300.
+- **3 PlatformFeatureCard accents** on the home feature grid (Full Diet Systems / Leaderboards / 10 Languages — half the cards): the vertical accent stripe color literal was `#94A3B8` slate. Repainted to cyan-300 / sky-500.
+- The `--glow-violet-text` CSS var (rgba slate alias) retired to sky-500 for consistency.
+- A literal Tailwind `from-violet-500 to-cyan-500` gradient on the `/membership` Apex tier button. Plus literal `border-violet-400/30 bg-violet-400/10 text-violet-300` on the Apex badge. Plus 7 other surfaces (admin-blog feature, community badge, luxury-home transformation badge, people-search badge, coach-profile gate, suggestion-cards Swap intent, program-card-visual library tokens). Swept to sky/cyan; `.tj-hero-orb-violet` CSS class renamed `.tj-hero-orb-sky`.
+
+**Verified: zero `violet-*` / `purple-*` / `indigo-*` / `fuchsia-*` Tailwind classes and zero `#94a3b8` / `rgba(148,163,184,…)` slate-grey literals remain in src/.**
+
+### Dim-on-hover anti-pattern eliminated
+
+- Top-bar Logo (iter 79), home page LogoShowcase (iter 115), `/membership` Apex CTA (iter 116), and a redundant `hover:opacity-90` layered onto the TJAI aggressive Generate CTA all replaced `hover:opacity-9X` patterns with: motion-safe scale + cyan halo expand + focus-visible cyan ring. Brand marks and primary CTAs *grow* toward the cursor instead of dimming.
+
+### Polish vocabulary now reaches every surface
+
+- **Global form chrome** — accent-color cyan on native checkbox/radio/range/progress (iter 106).
+- **Global focus-visible** — 2px solid outline at 75% alpha + 3px offset + stacked box-shadow halo (4px cyan/18% + 22px cyan/22%) + 140ms transitions, on links / buttons / role=button/tab/menuitem / tabindex=0 / summary (iter 107).
+- **`<ScrollToTop>`** floating button — cyan-300/20 → cyan-300/50 border + 24px cyan halo + motion-safe chevron lift on hover.
+- **`<DynamicIsland>` toast bubble** — cyan-300/20 border tint + 28px cyan halo stacked on the black drop shadow.
+- **`<FollowButton>`** — Follow / Following / Unfollow-preview tristate, all with cyan halos (red on the destructive Unfollow preview), smooth state transitions.
+- **`<Logo>`** small link — motion-safe scale + cyan halo + focus ring (no more dim).
+- **`<AuthPageFrame>`** card (login/signup/forgot/verify): cyan-300/12 border + 44px cyan halo on top of the black drop shadow.
+
+### Component-level polish
+
+- **TJAI streak banner** — cyan-300/20 border, diagonal cyan→black gradient bg, 24px cyan box-shadow, badge halos on hover, motion-safe emoji pulse.
+- **TJAI speaker (TTS)** — playing state lights up: cyan-300/55 border + 12% cyan fill + cyan-100 text + 14px cyan halo. Idle hover gets 12px cyan halo too.
+- **Dashboard 4-stat tile row** (Programs/Entries/Milestones/Streak) — cyan-300/35 border + 60px black + 28px cyan halo + motion-safe -0.5 lift + value cyan-100 + label cyan-200/80 on hover.
+- **Dashboard active-program "Continue →"** — border cyan-300/35 + 60px black + 36px cyan halo, inner Continue pill `.tj-cta-sheen` + cyan-300/55 border + cyan-50 text + 28px halo on group hover.
+- **TJAI compare toggle** — Moderate cyan→sky gradient vs Aggressive sky→deep-sky gradient (visually distinct tiers) + sheen, Continue gets the same secondary cyan hover.
+- **Coach profile** (`/coaches/[slug]`) — shimmer name h1 + 4 stat tiles cyan-halo hover.
+- **Public profile** (`/people/[username]`) — shimmer display-name h1 + Edit Profile / Sign in pills with cyan hover.
+- **Blog detail** (`/blog/[slug]`) — shimmer title + related-card cyan halo + cyan link hovers.
+- **Transformations detail** — shimmer "Username • Category" + cyan dashed Before/After placeholders.
+- **Search results** — cyan-300/40 border + cyan-50 text + 18px cyan halo on each result link.
+- **Press** — Official-asset download rows with cyan halo + arrow slide.
+- **Home blog preview cards** — cyan border + 28px cyan halo + motion-safe -0.5 lift + title shifts to cyan-50.
+- **Home coach grid** — cyan-300/35 border + 36px cyan halo + lift + name shift.
+- **Home become-a-coach mock dashboard** — bar chart grows on view (scaleY 0→1, 70ms staggered) + the 3 stat tiles got cyan-tinted borders + inset cyan halo.
+- **Home testimonials carousel** — shimmer title + cyan halo on prev/next chevrons.
+- **Home how-it-works** — shimmer "execution" word + step number+icon ring glow on hover.
+
+### Chip / tab family completed
+
+Every filter, tab, toggle, and pill in the app is now in one of two visual families:
+
+1. **`.tj-chip-active` family** — bundle filters, leaderboard category + period pills, coins ledger filter, community-hub tabs. Inherit the shared 2.8s cyan-300/45 + cyan-fill + cyan-50 pulse.
+2. **Gradient + sheen primary toggle family** — TJAI hub tab nav, TJAI compare toggle pair. Both with `.tj-cta-sheen` + 18px cyan halo.
+
+### Round-6 iteration log
+
+| #     | Commit    | What                                                            |
+| ----- | --------- | --------------------------------------------------------------- |
+| 125   | `84a345c` | Public profile: shimmer name + cyan hover on outline pills      |
+| 124   | `22fe3e4` | Coach profile: shimmer name + 4 stat tile cyan halos            |
+| 123   | `d1b2d9d` | Press: cyan halo + arrow slide on asset download rows           |
+| 122   | `ec2dfd9` | Search results: cyan hover on result links                      |
+| 121   | `6bbc0f0` | Transformations detail: shimmer + cyan dashed placeholders      |
+| 120   | `050bb4e` | Blog detail: shimmer + related-card cyan halo + cyan links      |
+| 119   | `af35741` | Home coach grid: cyan border + halo + lift + name shift         |
+| 118   | `77ea7ab` | AuthPageFrame card: cyan halo + cyan border                     |
+| 117   | `31774a0` | Home coach-cta mock dashboard tiles: cyan tint + inset halo     |
+| 116   | `8f482ec` | Apex membership CTA: removed dim-on-hover + sheen vocab         |
+| 115   | `3d600a8` | Home logo-showcase: scale + cyan halo + focus ring              |
+| 114   | `a5ced3f` | Dashboard active-program Continue: cyan halo + sheen pill       |
+| 113   | `ec67d6c` | Dashboard 4-stat tiles: cyan halo + lift + text shifts          |
+| 112   | `ec00081` | TJAI speaker: playing state lights up cyan                      |
+| 111   | `9c17c9a` | TJAI streak banner: cyan tint + gradient bg + badge halos       |
+| 110   | `f92e52e` | --glow-violet-text retired to sky-500                           |
+| 109   | `8d0f07b` | Apex rotating border + 3 PlatformFeatureCard slate accents      |
+| 108   | `869e1ac` | .gradient-button slate stop → sky + signup CTAs sheen           |
+| 107   | `a5ada26` | Global focus-visible ring upgrade                               |
+| 106   | `b62be8c` | Native form controls: brand cyan accent-color                   |
+| 105   | `bb2fe56` | Global search: focus-within ring + cyan icon + view-all sheen   |
+| 104   | `660f413` | Scroll-to-top: cyan halo + chevron lift + backdrop blur         |
+| 103   | `000d99c` | DynamicIsland toast: cyan tint + cyan halo                      |
+| 102   | `9bc3655` | FollowButton: cyan / red tristate halos + smooth transitions    |
+| 101   | `7a4d29e` | DM send button: brand gradient + sheen + cyan glow              |
+
+### Round-6 test + build snapshot
+
+Same protocol: typecheck ✓, lint ✓, 6 test files / 38 tests ✓ on every commit. Branch now at **125 iterations / ~85 commits / ~4,200 lines net.** Zero new dependencies, zero breaking changes, still safe to fast-forward to main after review.
+
+The chrome is done. Every interactive surface in the app has been touched at least twice across the six rounds. The brand vocabulary is complete: cyan / sky / blue / black / neutral, with consistent halos, sheens, shimmers, and pulses across the entire interaction surface.
