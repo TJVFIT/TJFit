@@ -84,12 +84,16 @@ export function SplineShowcase(_props: Props) {
       />
 
       <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-start">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-cyan-200/85">
+        <p
+          className="text-[11px] font-semibold uppercase tracking-[0.28em] text-cyan-200/85 motion-safe:animate-[tj-fade-up_520ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
+          style={{ animationDelay: "80ms" }}
+        >
           Touch the system
         </p>
         <h2
           id="spline-showcase-headline"
-          className="mt-5 max-w-3xl font-display text-4xl font-bold leading-[1.05] tracking-[-0.02em] text-white sm:text-5xl lg:text-[60px]"
+          className="mt-5 max-w-3xl font-display text-4xl font-bold leading-[1.05] tracking-[-0.02em] text-white sm:text-5xl lg:text-[60px] motion-safe:animate-[tj-fade-up_620ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
+          style={{ animationDelay: "180ms" }}
         >
           Move your cursor.
           <br />
@@ -97,7 +101,10 @@ export function SplineShowcase(_props: Props) {
             The system responds.
           </span>
         </h2>
-        <p className="mt-6 max-w-xl text-base leading-relaxed text-white/75 sm:text-lg">
+        <p
+          className="mt-6 max-w-xl text-base leading-relaxed text-white/75 sm:text-lg motion-safe:animate-[tj-fade-up_620ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
+          style={{ animationDelay: "320ms" }}
+        >
           TJAI reads your inputs the same way this 3D coach reads your cursor —
           every signal you give shapes the plan that comes back.
         </p>
