@@ -645,9 +645,9 @@ export function CommunityHub({
                   setActiveTab(tab.key);
                   router.replace(`/${locale}/community?tab=${tab.key}`, { scroll: false });
                 }}
-                className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
+                className={`rounded-full border px-4 py-2 text-sm font-medium transition-[border-color,background-color,color,box-shadow] duration-200 ${
                   activeTab === tab.key
-                    ? "border-cyan-400/35 bg-cyan-500/10 text-white shadow-[0_0_24px_-10px_rgba(34,211,238,0.2)]"
+                    ? "tj-chip-active border-cyan-300/45 bg-cyan-500/12 text-cyan-50 shadow-[0_0_24px_-10px_rgba(34,211,238,0.28)]"
                     : "border-white/10 bg-white/[0.04] text-muted hover:border-cyan-300/35 hover:bg-cyan-300/[0.04] hover:text-cyan-100"
                 }`}
               >
