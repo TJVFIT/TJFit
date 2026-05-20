@@ -60,12 +60,12 @@ function normalizeBlogPosts(raw: unknown): BlogPost[] {
 function BlogCardSkeleton() {
   return (
     <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-surface/30">
-      <div className="aspect-[16/9] animate-pulse bg-white/[0.06]" />
+      <div className="tj-skeleton aspect-[16/9]" />
       <div className="space-y-3 p-5">
-        <div className="h-3 w-24 animate-pulse rounded bg-white/[0.08]" />
-        <div className="h-5 w-full max-w-[280px] animate-pulse rounded bg-white/[0.1]" />
-        <div className="h-3 w-full animate-pulse rounded bg-white/[0.05]" />
-        <div className="h-3 w-4/5 animate-pulse rounded bg-white/[0.05]" />
+        <div className="tj-skeleton h-3 w-24 rounded" />
+        <div className="tj-skeleton h-5 w-full max-w-[280px] rounded" />
+        <div className="tj-skeleton h-3 w-full rounded" />
+        <div className="tj-skeleton h-3 w-4/5 rounded" />
       </div>
     </div>
   );

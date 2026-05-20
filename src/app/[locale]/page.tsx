@@ -16,14 +16,14 @@ const ImmersiveHome = dynamic(() => import("@/components/immersive-home").then((
 function HomeLuxurySkeleton() {
   return (
     <div className="min-h-[100dvh] bg-background px-4 pb-24 pt-24 sm:px-6 lg:px-8 lg:pt-28">
-      <div className="mx-auto max-w-6xl animate-pulse">
-        <div className="h-7 w-20 rounded-full bg-white/[0.08]" />
-        <div className="mt-10 h-10 max-w-md rounded-lg bg-white/[0.07]" />
-        <div className="mt-3 h-10 max-w-sm rounded-lg bg-white/[0.06]" />
-        <div className="mt-8 h-24 max-w-lg rounded-lg bg-white/[0.05]" />
+      <div className="mx-auto max-w-6xl">
+        <div className="tj-skeleton h-7 w-20 rounded-full" />
+        <div className="tj-skeleton mt-10 h-10 max-w-md rounded-lg" />
+        <div className="tj-skeleton mt-3 h-10 max-w-sm rounded-lg" />
+        <div className="tj-skeleton mt-8 h-24 max-w-lg rounded-lg" />
         <div className="mt-10 flex gap-4">
-          <div className="h-12 w-36 rounded-full bg-white/[0.08]" />
-          <div className="h-12 w-40 rounded-full bg-white/[0.06]" />
+          <div className="tj-skeleton h-12 w-36 rounded-full" />
+          <div className="tj-skeleton h-12 w-40 rounded-full" />
         </div>
       </div>
     </div>
