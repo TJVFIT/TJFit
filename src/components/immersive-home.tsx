@@ -307,6 +307,54 @@ export function ImmersiveHome({
         </div>
       </section>
 
+      {/* ══════════════ BUNDLES CATALOG TEASER ══════════════ */}
+      <section
+        className="reveal-section relative overflow-hidden border-t border-divider bg-background px-6 py-20 lg:px-12 lg:py-28"
+        aria-label="Bundle catalog"
+      >
+        {/* Ambient cyan glow anchored top-right */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(45% 60% at 78% 30%, rgba(34,211,238,0.10), transparent 70%)"
+          }}
+        />
+        <div className="relative mx-auto flex max-w-5xl flex-col items-start gap-8 md:flex-row md:items-center md:justify-between md:gap-10">
+          <div className="max-w-xl">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">Catalog</p>
+            <h2 className="mt-3 font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+              <span className="tj-title-shimmer">12 bundles. One way to train.</span>
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-[var(--color-text-secondary)] sm:text-base">
+              Each bundle pairs a 12-week training protocol with a matching diet
+              system, delivered as a branded PDF dossier. Free with sign-in.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-[0.18em]">
+              {["Cut", "Build", "Recomp", "Strength", "Conditioning", "Start"].map((g) => (
+                <span
+                  key={g}
+                  className="rounded-full border border-cyan-300/25 bg-cyan-300/[0.05] px-2.5 py-1 text-cyan-100/85"
+                >
+                  {g}
+                </span>
+              ))}
+            </div>
+          </div>
+          <Link
+            href={`/${locale}/bundles`}
+            className="group/cta inline-flex min-h-[52px] shrink-0 items-center justify-center gap-2 rounded-full bg-accent px-7 py-3 text-sm font-bold text-background shadow-[0_4px_24px_rgba(34,211,238,0.35)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] hover:shadow-[0_6px_32px_rgba(34,211,238,0.5)]"
+          >
+            Browse 12 bundles
+            <ArrowRight
+              className="h-4 w-4 transition-transform motion-safe:group-hover/cta:translate-x-1"
+              aria-hidden
+            />
+          </Link>
+        </div>
+      </section>
+
       {/* Editorial rail — no marquee, no shouty caps */}
       <div className="-mt-px border-y border-white/[0.06] bg-surface/35">
         <p className="mx-auto max-w-6xl px-6 py-4 text-center text-[10px] font-medium uppercase leading-loose tracking-[0.28em] text-dim lg:px-12">
