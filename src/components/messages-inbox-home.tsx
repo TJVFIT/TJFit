@@ -193,7 +193,7 @@ export function MessagesInboxHome({ locale }: { locale: Locale }) {
                     <button
                       key={item.id}
                       type="button"
-                      className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-bright hover:bg-white/5"
+                      className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-bright transition-[background-color,color] duration-150 hover:bg-cyan-300/[0.04] hover:text-cyan-100"
                       onClick={() => {
                         setUsernameInput(`@${item.username}`);
                         setSearchResults([]);

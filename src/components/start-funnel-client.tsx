@@ -248,7 +248,7 @@ export function StartFunnelClient({ locale }: { locale: Locale }) {
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
             <Link
               href={`/${locale}/membership?tier=pro`}
-              className="inline-flex min-h-[46px] items-center justify-center rounded-full border border-white/20 px-4 text-sm font-semibold text-white hover:bg-white/5"
+              className="inline-flex min-h-[46px] items-center justify-center rounded-full border border-white/20 px-4 text-sm font-semibold text-white transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:bg-cyan-300/[0.05] hover:text-cyan-50 hover:shadow-[0_0_16px_rgba(34,211,238,0.14)]"
             >
               {copy.getPro}
             </Link>

@@ -250,7 +250,7 @@ export function TJAIChat({
           </div>
           <a
             href={typeof window !== "undefined" ? `${window.location.pathname.replace(/\/$/, "")}/memory` : "./memory"}
-            className="shrink-0 rounded-md border border-white/10 px-3 py-1.5 text-[11px] uppercase tracking-wide text-white/60 hover:bg-white/5"
+            className="shrink-0 rounded-md border border-white/10 px-3 py-1.5 text-[11px] uppercase tracking-wide text-white/60 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/35 hover:bg-cyan-300/[0.05] hover:text-cyan-100 hover:shadow-[0_0_12px_rgba(34,211,238,0.1)]"
           >
             {copy.memory}
           </a>

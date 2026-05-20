@@ -56,7 +56,7 @@ export function PersonaPicker({ compact = false }: { compact?: boolean }) {
               disabled={saving}
               className={cn(
                 "px-3 py-1.5 transition",
-                active ? "bg-cyan-400 text-black" : "text-white/70 hover:bg-white/10",
+                active ? "bg-cyan-400 text-black" : "text-white/70 transition-[background-color,color] duration-200 hover:bg-cyan-300/[0.08] hover:text-cyan-100",
                 saving && "opacity-60"
               )}
               title={meta.tagline}

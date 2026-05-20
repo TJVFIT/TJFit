@@ -85,7 +85,7 @@ export function GlobalSearch({ locale, collapsed, onExpand }: { locale: string; 
                 <p className="mb-1 text-[10px] uppercase tracking-[0.14em] text-dim">{label}</p>
                 <div className="space-y-1">
                   {items.map((item) => (
-                    <Link key={item.id} href={`/${locale}${item.href}`} className="block rounded-md px-2 py-1.5 text-xs text-bright hover:bg-white/5">
+                    <Link key={item.id} href={`/${locale}${item.href}`} className="block rounded-md px-2 py-1.5 text-xs text-bright transition-[background-color,color] duration-150 hover:bg-cyan-300/[0.06] hover:text-cyan-100">
                       {item.title}
                     </Link>
                   ))}
