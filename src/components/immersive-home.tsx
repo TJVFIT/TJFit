@@ -46,28 +46,58 @@ function useReducedMotion() {
   return r;
 }
 
-// Count-up on scroll
+// Count-up on scroll — eases to target, glows on settle, jumps to value under reduced-motion.
 function CountUp({ target, suffix = "", label }: { target: number; suffix?: string; label: string }) {
   const ref = useRef<HTMLDivElement>(null);
+  const numRef = useRef<HTMLParagraphElement>(null);
   const inView = useInView(ref as React.RefObject<HTMLElement>, { threshold: 0.3, once: true });
   const [val, setVal] = useState(0);
+  const [settled, setSettled] = useState(false);
+
   useEffect(() => {
     if (!inView) return;
+    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setVal(target);
+      setSettled(true);
+      return;
+    }
     const dur = 1400;
     const start = performance.now();
     let raf = 0;
     const tick = (now: number) => {
       const t = Math.min(1, (now - start) / dur);
-      setVal(Math.round((1 - Math.pow(1 - t, 3)) * target));
-      if (t < 1) raf = requestAnimationFrame(tick);
-      else setVal(target);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setVal(Math.round(eased * target));
+      const el = numRef.current;
+      if (el) el.style.setProperty("--countup-glow", `${(eased * 0.55).toFixed(2)}`);
+      if (t < 1) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        setVal(target);
+        setSettled(true);
+      }
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [inView, target]);
+
   return (
-    <div ref={ref} className="flex flex-1 flex-col items-center justify-center px-4 py-10 text-center lg:min-h-[9rem] lg:py-8 lg:px-8">
-      <p className="font-display text-[clamp(1.65rem,3.8vw,2.65rem)] font-medium tabular-nums tracking-tight text-white">
+    <div
+      ref={ref}
+      className="flex flex-1 flex-col items-center justify-center px-4 py-10 text-center lg:min-h-[9rem] lg:py-8 lg:px-8"
+    >
+      <p
+        ref={numRef}
+        className={`font-display text-[clamp(1.65rem,3.8vw,2.65rem)] font-medium tabular-nums tracking-tight bg-gradient-to-r from-white via-cyan-100 to-white bg-clip-text text-transparent motion-safe:transition-transform motion-safe:duration-300 ${
+          settled ? "motion-safe:scale-100" : "motion-safe:scale-[0.96]"
+        }`}
+        style={
+          {
+            "--countup-glow": "0",
+            filter: "drop-shadow(0 0 calc(var(--countup-glow) * 14px) rgba(34, 211, 238, calc(var(--countup-glow) * 0.6)))"
+          } as React.CSSProperties
+        }
+      >
         {val}{suffix}
       </p>
       <p className="mt-3 max-w-[11rem] text-[10px] font-medium uppercase leading-relaxed tracking-[0.22em] text-faint">
