@@ -113,7 +113,7 @@ export function HomeTestimonials({ locale }: { locale: Locale }) {
         <header className="mb-10 max-w-2xl">
           <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-accent">{copy.label}</p>
           <h3 className="mt-4 font-display text-[clamp(1.75rem,5vw,3rem)] font-extrabold tracking-[-0.02em] text-white">
-            {copy.title}
+            <span className="tj-title-shimmer">{copy.title}</span>
           </h3>
           <p className="mt-3 text-sm leading-relaxed text-muted">{copy.sub}</p>
         </header>
@@ -122,7 +122,7 @@ export function HomeTestimonials({ locale }: { locale: Locale }) {
           <button
             type="button"
             onClick={() => go(-1)}
-            className="absolute start-0 top-1/2 z-[2] hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(13,15,18,0.85)] text-muted backdrop-blur-md transition-[border-color,color,transform] duration-200 hover:border-[rgba(34,211,238,0.35)] hover:text-accent md:flex"
+            className="absolute start-0 top-1/2 z-[2] hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(13,15,18,0.85)] text-muted backdrop-blur-md transition-[border-color,color,box-shadow,transform] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_18px_rgba(34,211,238,0.18)] md:flex"
             aria-label="Previous testimonial"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -130,7 +130,7 @@ export function HomeTestimonials({ locale }: { locale: Locale }) {
           <button
             type="button"
             onClick={() => go(1)}
-            className="absolute end-0 top-1/2 z-[2] hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(13,15,18,0.85)] text-muted backdrop-blur-md transition-[border-color,color,transform] duration-200 hover:border-[rgba(34,211,238,0.35)] hover:text-accent md:flex"
+            className="absolute end-0 top-1/2 z-[2] hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(13,15,18,0.85)] text-muted backdrop-blur-md transition-[border-color,color,box-shadow,transform] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_18px_rgba(34,211,238,0.18)] md:flex"
             aria-label="Next testimonial"
           >
             <ChevronRight className="h-5 w-5" />
