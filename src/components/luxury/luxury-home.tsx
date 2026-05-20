@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -55,7 +55,7 @@ const HomeBlogsPreview = dynamic(
   {
     loading: () => (
       <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-        <div className="h-48 animate-pulse rounded-xl bg-white/[0.03] ring-1 ring-white/[0.05]" />
+        <div className="h-48 tj-skeleton rounded-xl ring-1 ring-white/[0.05]" />
       </div>
     )
   }
@@ -434,7 +434,7 @@ export function LuxuryHome({
               {trustItems.map((t, i) => (
                 <span
                   key={`trust-${i}-${t}`}
-                  className="inline-flex max-w-full items-center rounded-full border border-white/[0.09] bg-white/[0.03] px-3.5 py-2 text-left text-[12px] font-medium leading-snug text-muted shadow-[0_0_0_1px_rgba(0,0,0,0.25)_inset] backdrop-blur-sm transition hover:border-white/[0.12] hover:bg-white/[0.05] sm:text-[13px]"
+                  className="inline-flex max-w-full items-center rounded-full border border-white/[0.09] px-3.5 py-2 text-left text-[12px] font-medium leading-snug text-muted shadow-[0_0_0_1px_rgba(0,0,0,0.25)_inset] backdrop-blur-sm transition hover:border-white/[0.12] hover:bg-white/[0.05] sm:text-[13px]"
                 >
                   {t}
                 </span>
@@ -490,7 +490,7 @@ export function LuxuryHome({
               {socialStats.map((s, i) => (
                 <div
                   key={`stat-${i}-${s.label}`}
-                  className="relative rounded-2xl border border-white/[0.05] bg-white/[0.02] px-5 py-6 shadow-[0_0_0_1px_rgba(0,0,0,0.2)_inset] transition duration-300 hover:border-cyan-500/15 hover:shadow-[0_0_40px_-20px_rgba(34,211,238,0.12)] sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:shadow-none sm:hover:shadow-none"
+                  className="relative rounded-2xl border border-white/[0.05] px-5 py-6 shadow-[0_0_0_1px_rgba(0,0,0,0.2)_inset] transition duration-300 hover:border-cyan-500/15 hover:shadow-[0_0_40px_-20px_rgba(34,211,238,0.12)] sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:shadow-none sm:hover:shadow-none"
                 >
                   <p className="font-display text-3xl font-semibold tabular-nums tracking-tight text-white sm:text-4xl">{s.value}</p>
                   <p className="mt-2.5 text-sm leading-snug text-faint">{s.label}</p>
@@ -777,12 +777,12 @@ export function LuxuryHome({
 
           {coaches.length === 0 ? (
             <Reveal className="mt-14" delay={0.06}>
-              <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-8 sm:p-12">
+              <div className="rounded-xl border border-white/[0.06] p-8 sm:p-12">
                 <h3 className="text-xl font-medium text-white">{copy.coaches.emptyTitle}</h3>
                 <p className="mt-4 max-w-xl text-sm leading-relaxed text-faint">{copy.coaches.emptyDesc}</p>
                 <div className="mt-8 flex flex-wrap gap-3">
                   <div
-                    className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.02] px-6 py-2.5 text-sm text-muted"
+                    className="inline-flex items-center gap-3 rounded-full border border-white/10 px-6 py-2.5 text-sm text-muted"
                     role="group"
                     aria-disabled="true"
                     aria-label={`${copy.coaches.applyComingSoonBadge}: ${copy.coaches.cta}`}
