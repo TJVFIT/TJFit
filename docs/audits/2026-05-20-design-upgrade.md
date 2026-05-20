@@ -217,3 +217,56 @@ The diagonal cyan sheen + cyan→sky gradient + cyan glow + 1.02 hover scale now
 ### Round-3 test + build snapshot
 
 Same as rounds 1 & 2: typecheck ✓, lint ✓, 6 test files / 38 tests ✓ on every commit. The branch is currently at 77 iterations / 50+ commits / ~3,000 lines net. No breaking changes. No new dependencies. Still safe to fast-forward to main after review.
+
+---
+
+## Round 4 — surface polish + final brand sweeps (iters 78–89)
+
+After the chrome and CTA systems were unified, this round handled the surfaces that only show up in specific moments: scrollbars, empty states, the home page wow-acts, the Logo, and the metric strip. Plus one last brand sweep eliminated a literal Tailwind violet that had been shipping in the Apex tier button.
+
+### Pixel-level micro-polish
+
+- **Global scrollbar** — Replaced dead-grey resting thumb with a soft cyan→sky gradient (22% / 18% alpha), and the snap-to-flat-cyan hover with a brighter cyan→sky gradient + 8px cyan halo + smooth transition. Every scroll context in the app inherits.
+- **`<Logo>`** — Hover state was `opacity-90` (dimming) which read as "going inactive when interactive." Now motion-safe 1.03 scale + 22px cyan halo + explicit `focus-visible` cyan-300/55 ring for keyboard nav. Lifts toward the cursor with a soft glow.
+- **Hero "Today's Plan" rows** — The three command-panel rows (Push Day / Lunch / Steps) gained a brand-tier hover: cyan-300/22 border, 4% cyan fill, 22px cyan halo, hover-only gated. Inspectable depth-of-detail.
+- **Hero metric blocks** — Three metric blocks under the CTAs (`HeroMetric`) light up on hover: cyan-300/30 top border, animated cyan-tinted glowing hairline (12px halo), cyan-50 value + cyan-200 label. Reads as live numbers.
+- **Empty state** — Shared `.tj-empty-state` (6 surfaces: coach students, people search, messages, dashboard, people-search-error, messages-error) upgraded from dashed-white outline to cyan-300/18 dashed border + soft vertical cyan→neutral gradient + centered radial cyan halo (60×70%, 8% alpha).
+
+### Home page wow-acts now share one arrival rhythm
+
+All three home page hero-tier moments now cascade their header text (eyebrow → headline → sub at 80/180/320 ms with `tj-fade-up`, motion-safe gated):
+
+- **SplineShowcase** — "Touch the system / Move your cursor / The system responds."
+- **Cinematic3DAct** — "Engineered intelligence / Your transformation, computed in real time / 25 signals…"
+- **CinematicHowItWorks** — "From intake to execution" (also gets `tj-title-shimmer` on the final word) + each step card lights its number circle (cyan-300/45 border + 18px cyan halo) and icon ring on hover.
+
+### Home transformation strip — paths draw on view
+
+The before/after Week 1 / Week 12 SVG trend curves were present-from-load. Now both paths animate `stroke-dashoffset` from 300 → 0 over 2.4s cubic-out, gated to fire only when `.reveal-section` enters viewport. Stagger: Week 1 at 120 ms, Week 12 at 520 ms — the transformation literally draws itself in front of the user.
+
+### Final brand sweep
+
+A literal Tailwind violet pair had survived three rounds of cleanup, shipping inside the `/membership` Apex tier button (`bg-gradient-to-r from-violet-500 to-cyan-500`) and badge (`border-violet-400/30 bg-violet-400/10 text-violet-300`). Plus 6 more surfaces with the same pattern (admin-blog feature pill, community-hub badge, luxury-home + people-search transformation badges, coach-profile gate hero, suggestion-cards "Swap" intent) and the program-card-visual library gradient tokens. All swept to sky/cyan. Legacy CSS class `.tj-hero-orb-violet` renamed to `.tj-hero-orb-sky`.
+
+**Codebase verified: zero literal Tailwind `violet-*` / `purple-*` / `indigo-*` / `fuchsia-*` remain.**
+
+### Round-4 iteration log
+
+| #     | Commit    | What                                                            |
+| ----- | --------- | --------------------------------------------------------------- |
+| 89    | `e218099` | Sweep last Tailwind violet (Apex button + 7 more surfaces)      |
+| 88    | `706c30e` | Home newsletter bar: shimmer title + gradient submit + sheen    |
+| 87    | `454936f` | Home become-a-coach: shimmer title + sheen CTA + cyan glow      |
+| 86    | `2e3a58e` | Home transformation: Week-1 / Week-12 SVG curves draw on view   |
+| 85    | `cfce369` | Home how-it-works: shimmer + step number/icon glow on hover     |
+| 84    | `3b75a49` | Cinematic3DAct header cascade fade-up                           |
+| 83    | `a8693d5` | SplineShowcase header cascade fade-up                           |
+| 82    | `b294669` | Empty-state cyan dashed border + soft cyan halo                 |
+| 81    | `a6e77fe` | Hero metric blocks: cyan hairline + glow on hover               |
+| 80    | `abbbdeb` | Hero "Today's Plan" rows: cyan hover-lift                       |
+| 79    | `a3284f3` | Logo: motion-safe scale + cyan halo + focus ring                |
+| 78    | `12c38f1` | Global scrollbar: cyan gradient + glow                          |
+
+### Round-4 test + build snapshot
+
+Same protocol: typecheck ✓, lint ✓, 6 test files / 38 tests ✓ on every commit. Branch is now at 89 iterations / 60+ commits / ~3,400 lines net. Still safe to fast-forward to main after review. No new dependencies, no breaking changes, no infrastructure adjustments.
