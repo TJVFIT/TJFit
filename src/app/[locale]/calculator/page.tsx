@@ -102,17 +102,17 @@ export default function CalculatorPage({ params }: { params: { locale: string } 
           <p className="mt-2 text-5xl font-extrabold text-accent">{result.calories} <span className="text-2xl font-semibold text-muted">kcal/day</span></p>
           <p className="text-sm text-muted">Your personalized daily calorie target</p>
           <div className="mt-4 grid gap-2 sm:grid-cols-3">
-            <div className="rounded-lg border border-divider bg-surface-2 p-3 text-center">
+            <div className="group/macro rounded-lg border border-divider bg-surface-2 p-3 text-center transition-[border-color,box-shadow] duration-200 hover:border-cyan-300/35 hover:shadow-[0_0_18px_rgba(34,211,238,0.14)]">
               <p className="text-xs text-faint">Protein</p>
-              <p className="mt-1 text-lg font-bold text-white">{result.protein}g</p>
+              <p className="mt-1 text-lg font-bold text-white transition-colors duration-200 group-hover/macro:text-cyan-50">{result.protein}g</p>
             </div>
-            <div className="rounded-lg border border-divider bg-surface-2 p-3 text-center">
+            <div className="group/macro rounded-lg border border-divider bg-surface-2 p-3 text-center transition-[border-color,box-shadow] duration-200 hover:border-cyan-300/35 hover:shadow-[0_0_18px_rgba(34,211,238,0.14)]">
               <p className="text-xs text-faint">Carbs</p>
-              <p className="mt-1 text-lg font-bold text-white">{result.carbs}g</p>
+              <p className="mt-1 text-lg font-bold text-white transition-colors duration-200 group-hover/macro:text-cyan-50">{result.carbs}g</p>
             </div>
-            <div className="rounded-lg border border-divider bg-surface-2 p-3 text-center">
+            <div className="group/macro rounded-lg border border-divider bg-surface-2 p-3 text-center transition-[border-color,box-shadow] duration-200 hover:border-cyan-300/35 hover:shadow-[0_0_18px_rgba(34,211,238,0.14)]">
               <p className="text-xs text-faint">Fat</p>
-              <p className="mt-1 text-lg font-bold text-white">{result.fat}g</p>
+              <p className="mt-1 text-lg font-bold text-white transition-colors duration-200 group-hover/macro:text-cyan-50">{result.fat}g</p>
             </div>
           </div>
           <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted">
