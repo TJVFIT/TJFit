@@ -3577,10 +3577,26 @@ a[href]:focus-visible,
 button:focus-visible,
 [role="button"]:focus-visible,
 [role="tab"]:focus-visible,
+[role="menuitem"]:focus-visible,
+[tabindex="0"]:focus-visible,
 summary:focus-visible {
-  outline: 2px solid rgb(34 211 238 / 0.6);
-  outline-offset: 4px;
+  outline: 2px solid rgb(34 211 238 / 0.75);
+  outline-offset: 3px;
   border-radius: 4px;
+  /* Soft outer halo — gives the ring brand presence without affecting layout. */
+  box-shadow:
+    0 0 0 4px rgb(34 211 238 / 0.18),
+    0 0 22px rgb(34 211 238 / 0.22);
+  transition: outline-offset 140ms ease, box-shadow 140ms ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  a[href]:focus-visible,
+  button:focus-visible,
+  [role="button"]:focus-visible,
+  [role="tab"]:focus-visible,
+  [role="menuitem"]:focus-visible,
+  [tabindex="0"]:focus-visible,
+  summary:focus-visible { transition: none; }
 }
 
 /* 44x44 minimum touch target — apply to icon buttons, chips, and small links */
