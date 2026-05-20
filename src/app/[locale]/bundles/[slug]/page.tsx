@@ -51,7 +51,10 @@ export default function BundleDetailPage({
       <div className="mt-8 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full border border-cyan-300/30 bg-cyan-300/[0.08] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-100">
+            <span
+              className="rounded-full border border-cyan-300/30 bg-cyan-300/[0.08] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-100"
+              aria-label={`Goal: ${bundle.goalLabel}`}
+            >
               {bundle.goalLabel}
             </span>
             <span
@@ -60,6 +63,7 @@ export default function BundleDetailPage({
                   ? "border border-white/15 bg-white/[0.04] text-white/85"
                   : "border border-cyan-300/30 bg-cyan-300/[0.08] text-cyan-50"
               }`}
+              aria-label={`Price: ${bundle.save}`}
             >
               {bundle.save}
             </span>
@@ -78,7 +82,7 @@ export default function BundleDetailPage({
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <a
               href={downloadHref}
-              className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-5 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] transition-[transform,filter,box-shadow] duration-150 hover:brightness-110 hover:shadow-[0_0_32px_rgba(34,211,238,0.32)] active:scale-[0.97] sm:flex-none"
+              className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-5 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] transition-[transform,filter,box-shadow] duration-150 hover:brightness-110 hover:shadow-[0_0_32px_rgba(34,211,238,0.32)] motion-safe:active:scale-[0.97] sm:flex-none"
             >
               <FileDown className="h-4 w-4" aria-hidden />
               Download PDF
@@ -259,7 +263,7 @@ export default function BundleDetailPage({
         </div>
         <a
           href={downloadHref}
-          className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-5 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] transition-[transform,filter,box-shadow] duration-150 hover:brightness-110 hover:shadow-[0_0_32px_rgba(34,211,238,0.32)] active:scale-[0.97] sm:w-auto"
+          className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-5 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] transition-[transform,filter,box-shadow] duration-150 hover:brightness-110 hover:shadow-[0_0_32px_rgba(34,211,238,0.32)] motion-safe:active:scale-[0.97] sm:w-auto"
         >
           <FileDown className="h-4 w-4" aria-hidden />
           Download PDF

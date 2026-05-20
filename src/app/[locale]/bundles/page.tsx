@@ -60,7 +60,7 @@ function BundleCard({
   const isFree = bundle.save.toLowerCase() === "free";
 
   return (
-    <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-cyan-400/20 bg-[linear-gradient(180deg,rgba(8,8,11,0.92),rgba(8,8,11,0.55))] shadow-[0_0_32px_rgba(34,211,238,0.06)] transition-[border-color,transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-cyan-300/45 hover:shadow-[0_0_48px_rgba(34,211,238,0.16)]">
+    <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-cyan-400/20 bg-[linear-gradient(180deg,rgba(8,8,11,0.92),rgba(8,8,11,0.55))] shadow-[0_0_32px_rgba(34,211,238,0.06)] transition-[border-color,transform,box-shadow] duration-200 hover:border-cyan-300/45 hover:shadow-[0_0_48px_rgba(34,211,238,0.16)] motion-safe:hover:-translate-y-0.5">
       <div
         className="relative aspect-[16/10] w-full overflow-hidden bg-[linear-gradient(135deg,rgba(34,211,238,0.18),rgba(14,165,233,0.06)_45%,rgba(8,8,11,0.9))]"
         aria-hidden
@@ -70,7 +70,10 @@ function BundleCard({
           style={{ backgroundImage: `url(${bundle.heroImage})` }}
         />
         <div className="absolute inset-x-0 top-0 flex items-start justify-between p-4">
-          <span className="rounded-full border border-cyan-300/30 bg-black/40 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-100 backdrop-blur">
+          <span
+            className="rounded-full border border-cyan-300/30 bg-black/40 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-100 backdrop-blur"
+            aria-label={`Goal: ${bundle.goalLabel}`}
+          >
             {bundle.goalLabel}
           </span>
           <span
@@ -79,6 +82,7 @@ function BundleCard({
                 ? "border border-white/20 bg-white/[0.08] text-white/85"
                 : "border border-cyan-300/40 bg-cyan-300/[0.12] text-cyan-50"
             }`}
+            aria-label={`Price: ${bundle.save}`}
           >
             {bundle.save}
           </span>
@@ -115,17 +119,19 @@ function BundleCard({
         <div className="mt-auto flex items-center gap-3 pt-5">
           <a
             href={downloadHref}
-            className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-4 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] transition-[transform,filter,box-shadow] duration-150 hover:brightness-110 hover:shadow-[0_0_32px_rgba(34,211,238,0.32)] active:scale-[0.97]"
+            aria-label={`Download ${bundle.name} PDF`}
+            className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-4 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] transition-[transform,filter,box-shadow] duration-150 hover:brightness-110 hover:shadow-[0_0_32px_rgba(34,211,238,0.32)] motion-safe:active:scale-[0.97]"
           >
             <FileDown className="h-4 w-4" aria-hidden />
             Download PDF
           </a>
           <Link
             href={detailHref}
+            aria-label={`Open ${bundle.name} details`}
             className="inline-flex min-h-[44px] items-center gap-1 rounded-full border border-cyan-300/20 px-3.5 py-2.5 text-xs font-semibold text-cyan-200 transition-colors hover:border-cyan-300/40 hover:text-cyan-100"
           >
             Details
-            <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden />
+            <ArrowRight className="h-3.5 w-3.5 transition-transform motion-safe:group-hover:translate-x-0.5" aria-hidden />
           </Link>
         </div>
 
