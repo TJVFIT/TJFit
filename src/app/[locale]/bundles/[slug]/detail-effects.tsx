@@ -1,10 +1,65 @@
 "use client";
 
 import { FileDown } from "lucide-react";
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 import { useParallax, useReveal, useTilt } from "@/components/effects/use-3d";
 import { useMagnetic, useMergedRef, useRipple } from "@/components/effects/use-magnetic";
+
+/**
+ * Fixed-top scroll progress indicator — 2px cyan beam that fills from 0%→100%
+ * as the user scrolls through the page. rAF-batched, direct-DOM width updates.
+ * Reduced-motion users see a static 0%-width bar (effectively invisible).
+ */
+export function ScrollProgressBar() {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const el = ref.current;
+    if (!el) return;
+
+    let raf = 0;
+    const update = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const doc = document.documentElement;
+        const total = doc.scrollHeight - window.innerHeight;
+        const pct = total > 0 ? (window.scrollY / total) * 100 : 0;
+        el.style.width = `${Math.max(0, Math.min(100, pct)).toFixed(2)}%`;
+      });
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
+  return (
+    <div
+      aria-hidden
+      className="fixed inset-x-0 top-0 z-40 h-[2px] bg-transparent"
+    >
+      <div
+        ref={ref}
+        className="h-full"
+        style={{
+          width: "0%",
+          background:
+            "linear-gradient(90deg, rgba(34,211,238,0.0) 0%, rgba(34,211,238,0.8) 30%, rgba(165,243,252,0.95) 60%, rgba(14,165,233,0.7) 100%)",
+          boxShadow:
+            "0 0 14px rgba(34,211,238,0.6), 0 0 36px rgba(34,211,238,0.3)"
+        }}
+      />
+    </div>
+  );
+}
 
 /**
  * Hero banner with scroll-linked parallax: the background image shifts up to
