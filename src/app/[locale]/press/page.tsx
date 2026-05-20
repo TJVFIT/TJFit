@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { AmbientOrbs } from "@/components/effects/ambient-orbs";
 import { PremiumPageShell } from "@/components/premium";
 import { programs } from "@/lib/content";
 import { requireLocaleParam } from "@/lib/require-locale";
@@ -9,9 +10,12 @@ export default function PressPage({ params }: { params: { locale: string } }) {
   const programCount = programs.length;
 
   return (
-    <PremiumPageShell className="max-w-6xl">
-      <section className="rounded-2xl border border-divider bg-surface p-6 sm:p-8">
-        <h1 className="text-3xl font-extrabold text-white sm:text-4xl">Press & Media</h1>
+    <PremiumPageShell className="relative max-w-6xl">
+      <AmbientOrbs />
+      <section className="relative rounded-2xl border border-divider bg-surface p-6 sm:p-8">
+        <h1 className="text-3xl font-extrabold sm:text-4xl">
+          <span className="tj-title-shimmer">Press & Media</span>
+        </h1>
         <p className="mt-2 text-sm text-muted">For press inquiries, partnership requests, and media resources.</p>
       </section>
 

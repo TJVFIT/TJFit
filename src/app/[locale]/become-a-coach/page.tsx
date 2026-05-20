@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AmbientOrbs } from "@/components/effects/ambient-orbs";
 import { BecomeCoachApplicationForm } from "@/components/become-coach-application-form";
 import { requireLocaleParam } from "@/lib/require-locale";
 import type { Locale } from "@/lib/i18n";
@@ -197,16 +198,13 @@ export default function BecomeCoachPage({ params }: { params: { locale: string }
     <div className="bg-background">
       {/* Hero */}
       <section className="relative overflow-hidden px-4 py-20 sm:px-6 lg:px-8">
-        <div
-          className="pointer-events-none absolute left-1/2 top-0 h-[32rem] w-[40rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.10)_0%,transparent_72%)]"
-          aria-hidden
-        />
+        <AmbientOrbs />
         <div className="relative mx-auto max-w-3xl text-center">
           <span className="inline-flex rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-300">
             {c.badge}
           </span>
-          <h1 className="mt-6 text-balance font-display text-4xl font-extrabold leading-tight tracking-[-0.02em] text-white sm:text-5xl">
-            {c.hero}
+          <h1 className="mt-6 text-balance font-display text-4xl font-extrabold leading-tight tracking-[-0.02em] sm:text-5xl">
+            <span className="tj-title-shimmer">{c.hero}</span>
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted sm:text-base">{c.heroSub}</p>
           <a
