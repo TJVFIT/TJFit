@@ -190,6 +190,33 @@
     background: #22d3ee;
     box-shadow: 0 0 12px rgba(34, 211, 238, 0.35);
   }
+  /* Hover preview bar — narrower, dimmer; sits under non-active links and
+     expands in on hover so users sense where the active indicator would land. */
+  .tj-topnav-link::after {
+    content: "";
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    height: 2px;
+    width: 0;
+    transform: translateX(-50%);
+    border-radius: 9999px;
+    background: rgba(34, 211, 238, 0.55);
+    transition: width 220ms cubic-bezier(0.2, 1, 0.3, 1);
+    pointer-events: none;
+  }
+  .tj-topnav-link:hover::after,
+  .tj-topnav-link:focus-visible::after {
+    width: 0.75rem;
+  }
+  /* When a link is already active (shows the full cyan bar), hide the hover
+     preview to avoid stacking. */
+  .tj-topnav-link:has(.tj-topnav-active-bar)::after {
+    display: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tj-topnav-link::after { transition: none; }
+  }
 }
 
 @keyframes tj-topnav-in {
