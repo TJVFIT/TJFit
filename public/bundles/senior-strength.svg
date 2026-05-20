@@ -1,4 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
+  <style>
+    @keyframes tj-bundle-beam { 0% { transform: translateX(-1100px); } 100% { transform: translateX(2200px); } }
+    @keyframes tj-bundle-numeral { 0%, 100% { opacity: 0.13; } 50% { opacity: 0.20; } }
+    .tj-beam { animation: tj-bundle-beam 9s linear 4.5s infinite; }
+    .tj-numeral { animation: tj-bundle-numeral 4.5s ease-in-out infinite; }
+    @media (prefers-reduced-motion: reduce) {
+      .tj-beam, .tj-numeral { animation: none; }
+      .tj-beam { display: none; }
+    }
+  </style>
   <defs>
     <linearGradient id="g" x1="0.017" y1="0.371" x2="0.983" y2="0.629">
       <stop offset="0" stop-color="#080809"/>
@@ -9,6 +19,13 @@
       <stop offset="0" stop-color="rgba(34,211,238,0.18)"/>
       <stop offset="1" stop-color="rgba(34,211,238,0)"/>
     </radialGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="rgba(34,211,238,0)"/>
+      <stop offset="0.4" stop-color="rgba(34,211,238,0.22)"/>
+      <stop offset="0.5" stop-color="rgba(165,243,252,0.42)"/>
+      <stop offset="0.6" stop-color="rgba(34,211,238,0.22)"/>
+      <stop offset="1" stop-color="rgba(34,211,238,0)"/>
+    </linearGradient>
     <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
       <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.035)" stroke-width="1"/>
     </pattern>
@@ -16,7 +33,10 @@
   <rect width="800" height="500" fill="url(#g)"/>
   <rect width="800" height="500" fill="url(#glow)"/>
   <rect width="800" height="500" fill="url(#grid)"/>
-  <text x="40" y="380" font-family="system-ui,-apple-system,sans-serif" font-weight="900" font-size="280" fill="rgba(34,211,238,0.13)" letter-spacing="-12">11</text>
+  <g class="tj-beam" transform="skewX(-12)">
+    <rect x="-50" y="0" width="200" height="500" fill="url(#beam)" />
+  </g>
+  <text class="tj-numeral" x="40" y="380" font-family="system-ui,-apple-system,sans-serif" font-weight="900" font-size="280" fill="rgba(34,211,238,0.13)" letter-spacing="-12">11</text>
   <text x="44" y="448" font-family="system-ui,-apple-system,sans-serif" font-weight="700" font-size="20" fill="rgba(255,255,255,0.72)" letter-spacing="6">LIFELONG</text>
   <text x="44" y="472" font-family="system-ui,-apple-system,sans-serif" font-weight="500" font-size="11" fill="rgba(165,243,252,0.55)" letter-spacing="3">TJFIT · BUNDLE</text>
 </svg>
