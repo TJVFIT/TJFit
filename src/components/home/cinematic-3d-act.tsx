@@ -67,12 +67,16 @@ export function Cinematic3DAct() {
       />
 
       <div className="relative z-10 mx-auto max-w-5xl">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-cyan-200/85">
+        <p
+          className="text-[11px] font-semibold uppercase tracking-[0.28em] text-cyan-200/85 motion-safe:animate-[tj-fade-up_520ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
+          style={{ animationDelay: "80ms" }}
+        >
           Engineered intelligence
         </p>
         <h2
           id="cinematic-3d-headline"
-          className="mt-5 max-w-3xl font-display text-4xl font-bold leading-[1.05] tracking-[-0.02em] text-white sm:text-5xl lg:text-[64px]"
+          className="mt-5 max-w-3xl font-display text-4xl font-bold leading-[1.05] tracking-[-0.02em] text-white sm:text-5xl lg:text-[64px] motion-safe:animate-[tj-fade-up_620ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
+          style={{ animationDelay: "180ms" }}
         >
           Your transformation,
           <br />
@@ -80,7 +84,10 @@ export function Cinematic3DAct() {
             computed in real time.
           </span>
         </h2>
-        <p className="mt-6 max-w-xl text-base leading-relaxed text-white/75 sm:text-lg">
+        <p
+          className="mt-6 max-w-xl text-base leading-relaxed text-white/75 sm:text-lg motion-safe:animate-[tj-fade-up_620ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
+          style={{ animationDelay: "320ms" }}
+        >
           25 signals. 12-week periodization. Adaptive macros. TJAI runs the math
           so every set, meal, and recovery beat lands at the moment your body can
           absorb it.
