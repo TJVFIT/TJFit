@@ -15,12 +15,13 @@ export function AuthPageFrame({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative flex min-h-[100dvh] flex-col items-center justify-center px-4 py-16 sm:px-6 lg:px-8">
       <AmbientBackground variant="both" intensity="low" />
+      {/* Two drifting brand-cyan orbs — same vocabulary as /bundles, /404, /coming-soon. */}
       <div
-        className="pointer-events-none fixed -left-[80px] -top-[120px] h-[400px] w-[400px] rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.05)_0%,transparent_70%)] blur-[40px]"
+        className="pointer-events-none fixed -left-[80px] -top-[120px] h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.10)_0%,rgba(34,211,238,0.02)_45%,transparent_70%)] blur-[60px] motion-safe:[animation:tj-orb-drift-a_38s_ease-in-out_infinite]"
         aria-hidden
       />
       <div
-        className="pointer-events-none fixed -bottom-[80px] -right-[80px] h-[350px] w-[350px] rounded-full bg-[radial-gradient(circle,rgba(167,139,250,0.04)_0%,transparent_70%)] blur-[40px]"
+        className="pointer-events-none fixed -bottom-[80px] -right-[80px] h-[400px] w-[400px] rounded-full bg-[radial-gradient(circle,rgba(14,165,233,0.08)_0%,rgba(14,165,233,0.02)_45%,transparent_70%)] blur-[70px] motion-safe:[animation:tj-orb-drift-b_46s_ease-in-out_infinite]"
         aria-hidden
       />
       <div
