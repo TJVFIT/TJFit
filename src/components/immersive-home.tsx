@@ -2,26 +2,23 @@
 
 import type { CSSProperties } from "react";
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Dumbbell, Brain, Users, Trophy, Apple, Globe,
   ArrowRight, Zap, Sparkles, Calendar, RefreshCw, Utensils
 } from "lucide-react";
 
-import { HomeProgramPreviewCard } from "@/components/program-card";
 import { HomeNewsletterBar } from "@/components/home-newsletter-bar";
 import { HomeTestimonials } from "@/components/home-testimonials";
 import { HomeCoachCta } from "@/components/home-coach-cta";
 import { useInView } from "@/hooks/useInView";
 import type { Program } from "@/lib/content";
-import { trackMarketingEvent } from "@/lib/analytics-events";
 import type { HomeLuxuryCopy } from "@/lib/home-luxury-copy";
 import { getNavChromeCopy } from "@/lib/launch-copy";
-import { getProgramUiCopy } from "@/lib/program-localization";
 import { getDirection, type Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
-import type { HomeCoachPreview, HomeProgramPreview } from "@/components/luxury/luxury-home";
+import type { HomeCoachPreview } from "@/components/luxury/luxury-home";
 import { HeroSection } from "@/components/home/hero-section";
 import { HomeAmbientBackdrop } from "@/components/home/home-ambient-backdrop";
 import { LogoShowcase } from "@/components/home/logo-showcase";
@@ -29,7 +26,6 @@ import { MotionReveal } from "@/components/home/motion-reveal";
 import { NexusChrome } from "@/components/home/nexus-chrome";
 import { ParallaxLayer } from "@/components/home/parallax-layer";
 import { PremiumFullBleedImage } from "@/components/home/premium-full-bleed-image";
-import { BundlesDepthFx } from "@/components/home/bundles-depth-fx";
 import { SectionTransition } from "@/components/home/section-transition";
 import { TjaiEngineChrome } from "@/components/home/tjai-engine-chrome";
 import { HeroTjaiBrainDeco } from "@/components/hero-tjai-brain-deco";
@@ -37,7 +33,6 @@ import { CinematicHowItWorks, CinematicTransformation } from "@/components/home/
 import { Cinematic3DAct } from "@/components/home/cinematic-3d-act";
 import { SplineShowcase } from "@/components/home/spline-showcase";
 import { useMagneticButton } from "@/hooks/useMagneticButton";
-import { useIsTouchDevice } from "@/hooks/use-is-touch-device";
 
 function useReducedMotion() {
   const [r, setR] = useState(false);
@@ -49,14 +44,6 @@ function useReducedMotion() {
     return () => mq.removeEventListener("change", a);
   }, []);
   return r;
-}
-
-function formatMoney(locale: Locale, value: number) {
-  const n = Number.isFinite(value) ? value : 0;
-  const eur = n * 0.029;
-  const loc = locale === "tr" ? "tr-TR" : locale === "ar" ? "ar-SA" : locale === "es" ? "es-ES" : locale === "fr" ? "fr-FR" : "en-GB";
-  try { return new Intl.NumberFormat(loc, { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(eur); }
-  catch { return `€${Math.round(eur)}`; }
 }
 
 // Count-up on scroll
@@ -86,32 +73,6 @@ function CountUp({ target, suffix = "", label }: { target: number; suffix?: stri
       <p className="mt-3 max-w-[11rem] text-[10px] font-medium uppercase leading-relaxed tracking-[0.22em] text-faint">
         {label}
       </p>
-    </div>
-  );
-}
-
-// Program card tilt wrapper component — avoids hook-in-callback violation
-function TiltCard({ children, disabled }: { children: React.ReactNode; disabled: boolean }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (disabled || !ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    ref.current.style.transform = `perspective(800px) rotateX(${-y * 4}deg) rotateY(${x * 4}deg) scale(1.015)`;
-  };
-  const handleMouseLeave = () => {
-    if (ref.current) ref.current.style.transform = "perspective(800px) rotateX(0deg) rotateY(0deg) scale(1)";
-  };
-  return (
-    <div
-      ref={ref}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{ transition: "transform 0.2s ease-out" }}
-      className="hover:border-cyan-400/40 hover:shadow-[0_0_30px_rgba(34,211,238,0.15)] transition-[border-color,box-shadow] duration-300 h-full"
-    >
-      {children}
     </div>
   );
 }
@@ -179,16 +140,14 @@ function PlatformFeatureCard({
 }
 
 export function ImmersiveHome({
-  locale, copy, programs, diets, coaches: _coaches, freePrograms: _freePrograms, programCount, dietCount
+  locale, copy, coaches: _coaches, freePrograms: _freePrograms
 }: {
-  locale: Locale; copy: HomeLuxuryCopy; programs: HomeProgramPreview[]; diets: HomeProgramPreview[];
-  coaches: HomeCoachPreview[]; freePrograms: Program[]; programCount: number; dietCount: number;
+  locale: Locale; copy: HomeLuxuryCopy;
+  coaches: HomeCoachPreview[]; freePrograms: Program[];
 }) {
   void _coaches; void _freePrograms;
   const reduce = useReducedMotion();
-  const isTouch = useIsTouchDevice();
   const direction = getDirection(locale);
-  const programUi = getProgramUiCopy(locale);
   const navChrome = getNavChromeCopy(locale);
 
   const [heroEntered, setHeroEntered] = useState(reduce);
@@ -196,7 +155,6 @@ export function ImmersiveHome({
   const [liveStats, setLiveStats] = useState({ activeToday: 0 });
 
   const heroSectionRef = useRef<HTMLElement | null>(null);
-  const programsSectionRef = useRef<HTMLDivElement>(null);
 
   // Hero enter
   useEffect(() => {
@@ -224,21 +182,6 @@ export function ImmersiveHome({
   }, []);
 
 
-  // Programs section parallax
-  const [parallaxY, setParallaxY] = useState(0);
-  useEffect(() => {
-    if (reduce || window.innerWidth < 768) return;
-    const fn = () => {
-      if (!programsSectionRef.current) return;
-      const rect = programsSectionRef.current.getBoundingClientRect();
-      const sectionCenter = rect.top + rect.height / 2;
-      const viewportCenter = window.innerHeight / 2;
-      setParallaxY((sectionCenter - viewportCenter) * 0.28 * 0.85);
-    };
-    window.addEventListener("scroll", fn, { passive: true });
-    return () => window.removeEventListener("scroll", fn);
-  }, [reduce]);
-
   const lineIn = (delay: number): CSSProperties => ({
     opacity: heroEntered ? 1 : 0,
     transform: heroEntered ? "translateY(0)" : "translateY(var(--tj-reveal-distance, 20px))",
@@ -246,9 +189,6 @@ export function ImmersiveHome({
       ? "none"
       : `opacity var(--tj-motion-hero, 1040ms) var(--tj-ease-premium, cubic-bezier(0.22,1,0.36,1)) ${delay}ms, transform var(--tj-motion-hero, 1040ms) var(--tj-ease-premium, cubic-bezier(0.22,1,0.36,1)) ${delay}ms`,
   });
-
-  const programSlice = useMemo(() => programs.slice(0, 4), [programs]);
-  const dietSlice = useMemo(() => diets.slice(0, 3), [diets]);
 
   const features = [
     { icon: Brain, title: "TJAI — Your AI Coach", desc: "Adaptive intake, progress-aware memory, and AI-built 12-week transformation plans. Diet + training + supplements.", accent: "#22D3EE", span: 2 as const },
@@ -266,8 +206,6 @@ export function ImmersiveHome({
   // Nexus section ref for node travel
   const nexusRef = useRef<HTMLElement | null>(null);
   const nexusInView = useInView(nexusRef as React.RefObject<HTMLElement>, { threshold: 0.15, once: true });
-
-  const programsBgInView = useInView(programsSectionRef as React.RefObject<HTMLElement>, { threshold: 0.06, once: true });
 
   const [nexusParallaxY, setNexusParallaxY] = useState(0);
   useEffect(() => {
@@ -385,78 +323,12 @@ export function ImmersiveHome({
       <section className="reveal-section border-y border-divider bg-background py-16 lg:py-20">
         <MotionReveal reducedMotion={reduce} className="mx-auto max-w-5xl px-6 lg:px-12">
           <div className="flex flex-col divide-y divide-[#1E2028] lg:flex-row lg:divide-x lg:divide-y-0">
-            <CountUp target={programCount} suffix="+" label="Expert Programs" />
-            <CountUp target={dietCount} suffix="+" label="Diet Systems" />
+            <CountUp target={12} label="Free Bundles" />
             <CountUp target={12} label="Weeks Per Plan" />
             <CountUp target={10} label="Languages" />
           </div>
         </MotionReveal>
       </section>
-
-      <SectionTransition variant="soft" />
-
-      {/* ══════════════ PROGRAMS — Parallax BG ══════════════ */}
-      <div id="programs" ref={programsSectionRef} className="reveal-section relative overflow-hidden border-t border-divider scroll-mt-20">
-        <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
-          <ParallaxLayer reduce={reduce} strength={9} className="absolute inset-0 h-full w-full">
-            <div className="absolute inset-0">
-              <PremiumFullBleedImage
-                src="/assets/hero/hero-programs-bg.png"
-                preset="programs"
-                active={programsBgInView || reduce}
-                reduce={reduce}
-                parallaxY={parallaxY}
-                peakOpacity={0.24}
-              />
-            </div>
-          </ParallaxLayer>
-          <BundlesDepthFx reduce={reduce} />
-        </div>
-
-        <section className="relative z-10 px-6 py-24 lg:px-12 lg:py-32">
-          <span className="ghost-text pointer-events-none start-1/2 top-20 z-0 -translate-x-1/2" aria-hidden>
-            PROGRAMS
-          </span>
-          <div className="relative z-[1] mx-auto max-w-6xl">
-            <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-              <MotionReveal reducedMotion={reduce}>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent">Transformation systems</p>
-                <h2 className="mt-3 font-display text-4xl font-semibold tracking-tight text-white lg:text-5xl">
-                  {programCount}+ complete<br /><span className="text-accent">programs</span>
-                </h2>
-              </MotionReveal>
-              <MotionReveal reducedMotion={reduce} delayMs={100}>
-                <Link href={`/${locale}/bundles`} className="inline-flex items-center gap-2 text-sm font-semibold text-accent transition-opacity hover:opacity-80">
-                  View all bundles <ArrowRight className="h-4 w-4" />
-                </Link>
-              </MotionReveal>
-            </div>
-            <div className="mb-10 h-px max-w-lg bg-gradient-to-r from-[#22D3EE]/20 via-[#1E2028] to-transparent" aria-hidden />
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {programSlice.map((p, i) => (
-                <MotionReveal reducedMotion={reduce} key={p.slug} delayMs={i * 80}>
-                  <TiltCard disabled={isTouch || reduce}>
-                    <HomeProgramPreviewCard
-                      program={p}
-                      href={`/${locale}/bundles`}
-                      priceFormatted={p.is_free ? programUi.freePriceLabel : formatMoney(locale, p.price)}
-                      fromLabel={p.is_free ? "" : copy.programs.from}
-                      metaLine={p.metaLine}
-                      tierLabel={p.tierLabel}
-                      reducedMotion={reduce}
-                      ctaLabel={p.is_free ? programUi.viewProgram : programUi.getFullAccess}
-                      trainingGoalBadge={p.goalBadge}
-                      trainingLocationBadge={p.locationBadge}
-                      freeBadgeLabel={p.is_free ? programUi.freeBadge : undefined}
-                      onNavigate={() => trackMarketingEvent("program_view", { slug: p.slug, surface: "immersive-home" })}
-                    />
-                  </TiltCard>
-                </MotionReveal>
-              ))}
-            </div>
-          </div>
-        </section>
-      </div>
 
       <SectionTransition variant="soft" />
 
@@ -579,45 +451,6 @@ export function ImmersiveHome({
           </MotionReveal>
         </div>
       </section>
-
-      {/* ══════════════ DIETS ══════════════ */}
-      {dietSlice.length > 0 && (
-        <section id="diets" className="reveal-section relative border-t border-divider bg-background px-6 py-24 lg:px-12 lg:py-32 scroll-mt-20">
-          <span className="ghost-text pointer-events-none start-1/2 top-16 z-0 -translate-x-1/2 text-accent-violet opacity-[0.04]" aria-hidden>
-            NUTRITION
-          </span>
-          <div className="relative z-[1] mx-auto max-w-6xl">
-            <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-              <MotionReveal reducedMotion={reduce}>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent-violet">Nutrition</p>
-                <h2 className="mt-3 font-display text-4xl font-semibold tracking-tight text-white lg:text-5xl">
-                  {dietCount}+ diet<br /><span className="text-accent-violet">systems</span>
-                </h2>
-              </MotionReveal>
-              <MotionReveal reducedMotion={reduce} delayMs={100}>
-                <Link href={`/${locale}/bundles`} className="inline-flex items-center gap-2 text-sm font-semibold text-accent-violet transition-opacity hover:opacity-80">
-                  View all bundles <ArrowRight className="h-4 w-4" />
-                </Link>
-              </MotionReveal>
-            </div>
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {dietSlice.map((p, i) => (
-                <MotionReveal reducedMotion={reduce} key={p.slug} delayMs={i * 80}>
-                  <HomeProgramPreviewCard
-                    program={p}
-                    href={`/${locale}/bundles`}
-                    priceFormatted={formatMoney(locale, p.price)}
-                    fromLabel={copy.programs.from}
-                    reducedMotion={reduce}
-                    ctaLabel={programUi.viewProgram}
-                    onNavigate={() => trackMarketingEvent("program_view", { slug: p.slug, surface: "immersive-diets" })}
-                  />
-                </MotionReveal>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* ══════════════ TESTIMONIALS ══════════════ */}
       <HomeTestimonials locale={locale} />
