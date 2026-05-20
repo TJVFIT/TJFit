@@ -8,6 +8,7 @@ import {
   ArrowRight, Zap, Sparkles, Calendar, RefreshCw, Utensils
 } from "lucide-react";
 
+import { useMagnetic, useMergedRef, useRipple } from "@/components/effects/use-magnetic";
 import { HomeNewsletterBar } from "@/components/home-newsletter-bar";
 import { HomeTestimonials } from "@/components/home-testimonials";
 import { HomeCoachCta } from "@/components/home-coach-cta";
@@ -121,6 +122,39 @@ function TjaiMagneticPrimary({
     <Link href={href} ref={ref} className={className}>
       {children}
     </Link>
+  );
+}
+
+/**
+ * Bundle catalog teaser CTA — magnetic pull + ripple, matches the
+ * Download PDF pill vocabulary. Used on the home page bundle teaser
+ * section so the home → bundles CTAs feel like one system.
+ */
+function BundleTeaserCTA({ href }: { href: string }) {
+  const magnetic = useMagnetic<HTMLAnchorElement>({ strength: 6, max: 9 });
+  const ripple = useRipple<HTMLAnchorElement>();
+  const ref = useMergedRef<HTMLAnchorElement>(magnetic, ripple);
+  return (
+    <a
+      ref={ref}
+      href={href}
+      className="group/cta relative inline-flex min-h-[52px] shrink-0 items-center justify-center gap-2 overflow-hidden rounded-full bg-accent px-7 py-3 text-sm font-bold text-background shadow-[0_4px_24px_rgba(34,211,238,0.35)] hover:shadow-[0_8px_44px_rgba(34,211,238,0.55)]"
+      style={
+        {
+          "--mag-x": "0px",
+          "--mag-y": "0px",
+          transform: "translate3d(var(--mag-x), var(--mag-y), 0)",
+          transition:
+            "transform 220ms cubic-bezier(0.2,1,0.3,1), box-shadow 240ms"
+        } as React.CSSProperties
+      }
+    >
+      <span className="relative">Browse 12 bundles</span>
+      <ArrowRight
+        className="relative h-4 w-4 transition-transform motion-safe:group-hover/cta:translate-x-1"
+        aria-hidden
+      />
+    </a>
   );
 }
 
@@ -342,16 +376,7 @@ export function ImmersiveHome({
               ))}
             </div>
           </div>
-          <Link
-            href={`/${locale}/bundles`}
-            className="group/cta inline-flex min-h-[52px] shrink-0 items-center justify-center gap-2 rounded-full bg-accent px-7 py-3 text-sm font-bold text-background shadow-[0_4px_24px_rgba(34,211,238,0.35)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] hover:shadow-[0_6px_32px_rgba(34,211,238,0.5)]"
-          >
-            Browse 12 bundles
-            <ArrowRight
-              className="h-4 w-4 transition-transform motion-safe:group-hover/cta:translate-x-1"
-              aria-hidden
-            />
-          </Link>
+          <BundleTeaserCTA href={`/${locale}/bundles`} />
         </div>
       </section>
 
