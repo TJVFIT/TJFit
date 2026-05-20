@@ -270,3 +270,74 @@ A literal Tailwind violet pair had survived three rounds of cleanup, shipping in
 ### Round-4 test + build snapshot
 
 Same protocol: typecheck ✓, lint ✓, 6 test files / 38 tests ✓ on every commit. Branch is now at 89 iterations / 60+ commits / ~3,400 lines net. Still safe to fast-forward to main after review. No new dependencies, no breaking changes, no infrastructure adjustments.
+
+---
+
+## Round 5 — chip family + section motion + card reactivity (iters 90–99)
+
+After the chrome system landed, this round propagated the same chip vocabulary across every remaining filter/tab/toggle in the app, breathed motion into static section artifacts, and brought card hover states (blog, home preview) into the same brand language. **The "Aggressive plan" toggle disambiguation is a small but real story** — it was visually identical to "Moderate" until iter 98 because of how the violet→sky alias shipped.
+
+### Tab + chip vocabulary, complete
+
+Every filter/tab/toggle surface in the app now belongs to one of two visual families:
+
+- **`.tj-chip-active`-class pill chips** — leaderboard category tabs (Coins/Streak/Programs/Verified) + period pills (Week/All-Time), coins ledger filter pills (ALL/EARNED/SPENT), community-hub tabs (Threads/Challenges/Groups/Transformations/Blogs/People). All inherit the shared 2.8s cyan-300/45 border + cyan-fill + cyan-50 pulse.
+- **Gradient + sheen primary toggles** — TJAI hub tab nav (My Plan/Chat/Progress/Meal Swap) active state, TJAI compare toggle pair (Moderate cyan→sky / Aggressive sky→deep-sky). Both with `.tj-cta-sheen` + 18px cyan halo.
+
+### Motion injected into static moments
+
+- **Home transformation strip** (Week-1 + Week-12) — SVG trend curves now `stroke-dashoffset` animate from 300 → 0 over 2.4s cubic-out, gated to `.reveal-section.revealed`, staggered 120/520 ms.
+- **Home become-a-coach mock dashboard** — bar chart `transform: scaleY(0 → 1)` with `transform-origin: bottom`, staggered 70 ms per bar, motion-safe.
+- **Home Cinematic3DAct + SplineShowcase + HowItWorks** — all three home page wow-acts now cascade their headers (eyebrow → headline → sub at 80/180/320 ms with `tj-fade-up`).
+
+### Card surfaces feel reactive
+
+- **Home blog preview** — Cards no longer just "border-tint" on hover. Now: cyan-300/30 border, 44px black drop shadow + 28px cyan halo, motion-safe `-translate-y-0.5` lift, title shifts to cyan-50.
+- **Home Become CTA** + **newsletter bar** + **testimonials** + **how-it-works** — All four secondary-tier sections picked up `tj-title-shimmer` on their headlines and brought their CTAs into the unified vocabulary.
+
+### Last hidden brand leak found
+
+The `/membership` Apex tier button shipped with `bg-gradient-to-r from-violet-500 to-cyan-500` plus a `border-violet-400/30 bg-violet-400/10 text-violet-300` badge — literal Tailwind violet that earlier hex/rgba sweeps had missed. Swept across 8 surfaces (membership Apex, admin-blog feature, community + luxury + people-search badges, coach-profile gate, suggestion-cards Swap intent, program-card-visual library tokens). The `.tj-hero-orb-violet` CSS class was renamed `.tj-hero-orb-sky` (color was already sky).
+
+**Verified: zero `violet-*` / `purple-*` / `indigo-*` / `fuchsia-*` Tailwind classes remain anywhere in src/.**
+
+### Round-5 iteration log
+
+| #     | Commit    | What                                                            |
+| ----- | --------- | --------------------------------------------------------------- |
+| 99    | `ceafd26` | Home blog card hover: cyan border + glow + lift + cyan-50 title |
+| 98    | `f6e4443` | TJAI compare toggle: cyan vs sky gradient pair + sheen Continue |
+| 97    | `9dad844` | TJAI hub tab nav: gradient active + cyan-100 hover              |
+| 96    | `a369346` | Community tabs: tj-chip-active pulse + cyan-50 text             |
+| 95    | `9c0cdd9` | Community Join Challenge pills: sheen + cyan-50 hover           |
+| 94    | `6a7e7a8` | /coins ledger filter pills join the cyan-chip family            |
+| 93    | `35df46f` | /leaderboard tabs + period pills join the cyan-chip family      |
+| 92    | `b6c0ddb` | Home testimonials: shimmer title + cyan halo on chevrons        |
+| 91    | `ca4cc09` | Home coach-cta mock dashboard bar chart grows on view           |
+| 90    | `e5bc76e` | Audit doc — Round 4 (iters 78–89)                               |
+
+### Round-5 test + build snapshot
+
+Same protocol: typecheck ✓, lint ✓, 6 test files / 38 tests ✓ on every commit. Branch is now at 99 iterations / 70+ commits / ~3,800 lines net. Still safe to fast-forward to main after review.
+
+---
+
+## Where the branch stands at the 100-iteration mark
+
+Across 5 rounds of work the branch has touched ~80 distinct files. The user-visible result: **every interactive surface in the app now hovers, focuses, fills, and pulses with the same brand vocabulary.** The catalog cascade from iter 1 (3D bundle cards) and the chip pulse from iter 95 (Join Challenge) feel like they were designed by the same person.
+
+What you'd notice on a side-by-side with the pre-loop state:
+- Every CTA flashes the same diagonal cyan sheen on hover.
+- Every active route indicator (sidebar, top-bar, dropdown items) is a "lit cyan beam" with a soft 1.6s pulse.
+- Every form input has a hover-preview ghost ring before focus engages, and every error block slides in with a left red accent + soft drop shadow.
+- Every loading skeleton shimmers a cyan band through the placeholder shapes.
+- Every section header on the home page breathes in on a 80/180/320 ms cascade.
+- Every chip filter pulses gently when active.
+
+What's left as **daylight followups** (need either user input or beyond-loop scope):
+1. Real `.webp` bundle hero photography (animated SVG placeholders are nice but commercial photography would still lift them further).
+2. Spline interactive scene wiring (`SplineShowcase` still renders the fallback TJHeroStage variant; the integration is stubbed at the package layer).
+3. Equipment / Shopify store surface (memory `feedback_shopify_scope` says the user will green-light separately).
+4. Coach dashboard + admin panels (have been touched but the data-dense surfaces could use more bespoke polish).
+
+The branch is at `claude/design-upgrade-2026-05-20`, 100 iterations, ~70 commits, ~3,800 lines net, **zero new dependencies**, every commit clean on typecheck/lint/38 tests. Safe to fast-forward to main after a human review.
