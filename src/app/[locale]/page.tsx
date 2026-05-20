@@ -87,10 +87,10 @@ export default function HomePage({ params }: { params: { locale: string } }) {
               The homepage could not be displayed. Please reload or try again later.
             </p>
             <a
-              href={`/${locale}/programs`}
+              href={`/${locale}/bundles`}
               className="mt-8 inline-flex rounded-full border border-white/[0.12] bg-white/[0.06] px-6 py-2.5 text-sm font-medium text-bright"
             >
-              Browse programs
+              Browse bundles
             </a>
           </div>
         </div>

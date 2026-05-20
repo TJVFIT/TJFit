@@ -52,7 +52,8 @@ function googleVerificationToken(): string | undefined {
 const googleVerification = googleVerificationToken();
 
 export const viewport: Viewport = {
-  viewportFit: "cover"
+  viewportFit: "cover",
+  themeColor: "#09090B"
 };
 
 const defaultTitle = "TJFit — Premium Fitness Transformation Platform";
@@ -64,8 +65,7 @@ export const metadata: Metadata = {
   title: { default: defaultTitle, template: "%s | TJFit" },
   description: defaultDescription,
   applicationName: "TJFit",
-  themeColor: "#09090B",
-  manifest: "/manifest.json",
+  manifest: "/manifest.webmanifest",
   icons: {
     icon: [{ url: BRAND.faviconIco, type: "image/x-icon" }],
     apple: [{ url: BRAND.appleTouchIcon, type: "image/png" }],

@@ -3,9 +3,10 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Simulates floating card depth over the programs plate — no extra image decode.
+ * Simulates floating card depth over the bundles plate — no extra image decode.
+ * (Previously named ProgramsDepthFx before the programs/diets demolition.)
  */
-export function ProgramsDepthFx({ reduce }: { reduce: boolean }) {
+export function BundlesDepthFx({ reduce }: { reduce: boolean }) {
   if (reduce) return null;
   return (
     <div className="pointer-events-none absolute inset-0 z-[4] overflow-hidden" aria-hidden>

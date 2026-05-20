@@ -371,7 +371,7 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
           <h2 className="mt-4 text-lg font-semibold text-[var(--color-text-secondary)]">{t.emptyHeading}</h2>
           <p className="tj-empty-state__text mt-2 max-w-[300px] text-sm text-[var(--color-text-muted)]">{t.emptySub}</p>
           <Link
-            href={`/${locale}/programs`}
+            href={`/${locale}/bundles`}
             className="lux-btn-primary mt-6 inline-flex min-h-[44px] items-center justify-center rounded-full px-8 py-2.5 text-sm font-bold text-[#09090B]"
           >
             {t.emptyCta}
@@ -383,7 +383,7 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
         <section className="space-y-3">
           <h2 className="text-[13px] font-medium uppercase tracking-widest text-dim">{t.activeProgram}</h2>
           <Link
-            href={`/${locale}/programs/${encodeURIComponent(summary.latestPaidProgramSlug!)}`}
+            href={`/${locale}/bundles`}
             className="group/ap flex flex-col gap-6 rounded-2xl border border-divider bg-surface p-8 transition-[border-color,box-shadow,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-[rgba(34,211,238,0.22)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.45)] motion-reduce:hover:transform-none [@media(hover:hover)]:hover:-translate-y-1"
           >
             <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">

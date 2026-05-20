@@ -102,6 +102,31 @@ if curl -fsSL -o /dev/null "$SITE/robots.txt"; then pass "robots.txt 2xx"; else 
 if curl -fsSL -o /dev/null "$SITE/sitemap.xml"; then pass "sitemap.xml 2xx"; else fail "sitemap.xml non-2xx"; fi
 echo
 
+# ── 4b. Bundles surface (the entire product catalog after restructure) ──
+echo "─── 4b. Bundles routing ───"
+if curl -fsSL -o /dev/null "$SITE/en/bundles"; then pass "/en/bundles index 2xx"; else fail "/en/bundles non-2xx"; fi
+if curl -fsSL -o /dev/null "$SITE/en/bundles/fat-loss"; then
+  pass "/en/bundles/fat-loss detail 2xx"
+else
+  fail "/en/bundles/fat-loss detail non-2xx (check generateStaticParams + getBundle)"
+fi
+# Download must require auth — anonymous request should be 401, NOT 200 or 500.
+DOWNLOAD_STATUS="$(curl -s -o /dev/null -w "%{http_code}" "$SITE/api/bundles/download/fat-loss" || echo ERR)"
+if [ "$DOWNLOAD_STATUS" = "401" ]; then
+  pass "/api/bundles/download/fat-loss → 401 (auth-gated as expected)"
+else
+  fail "/api/bundles/download/fat-loss → $DOWNLOAD_STATUS (expected 401; check requireAuth in route)"
+fi
+# Old surface must stay gone — confirm /programs returns 404 (not 200) so we
+# notice if someone accidentally restores the catalog later.
+PROGRAMS_STATUS="$(curl -s -o /dev/null -w "%{http_code}" "$SITE/en/programs" || echo ERR)"
+if [ "$PROGRAMS_STATUS" = "404" ]; then
+  pass "/en/programs → 404 (catalog stays demolished)"
+else
+  warn "/en/programs → $PROGRAMS_STATUS (expected 404 after bundle restructure — investigate)"
+fi
+echo
+
 # ── 5. Domain redirect (.com → .org) — informational ──
 echo "─── 5. tjfit.com redirect ───"
 COM_RESPONSE="$(curl -sI -o /dev/null -w "%{http_code} → %{redirect_url}" "https://tjfit.com" 2>&1 || echo "ERR")"

@@ -28,7 +28,7 @@ export default function manifest(): MetadataRoute.Manifest {
       { src: "/icon.png", sizes: "any", type: "image/png", purpose: "any" }
     ],
     shortcuts: [
-      { name: "Programs", short_name: "Programs", url: "/en/programs" },
+      { name: "Bundles", short_name: "Bundles", url: "/en/bundles" },
       { name: "TJAI", short_name: "TJAI", url: "/en/tjai" },
       { name: "TJFit Pro", short_name: "Pro", url: "/en/pro" }
     ],

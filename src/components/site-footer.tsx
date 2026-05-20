@@ -37,8 +37,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
     "text-dim transition-colors duration-150 hover:text-muted inline-block text-sm leading-relaxed";
 
   const platformLinks = [
-    { href: `/${locale}/programs`, label: copy.programs },
-    { href: `/${locale}/diets`, label: copy.diets },
+    { href: `/${locale}/bundles`, label: copy.programs },
     { href: `/${locale}/start`, label: copy.startFree },
     { href: `/${locale}/membership`, label: MEMBERSHIP[locale] ?? MEMBERSHIP.en },
   ];

@@ -30,11 +30,11 @@ const TOP_LABELS: Record<Locale, { home: string; train: string; tjai: string }> 
 };
 
 const TRAIN_LABELS: Record<Locale, Record<string, string>> = {
-  en: { programs: "Programs", diets: "Diets", coaches: "Coaches", equipment: "Equipment guide" },
-  tr: { programs: "Programlar", diets: "Diyetler", coaches: "Koclar", equipment: "Ekipman" },
-  ar: { programs: "البرامج", diets: "الأنظمة", coaches: "المدربون", equipment: "المعدات" },
-  es: { programs: "Programas", diets: "Dietas", coaches: "Coaches", equipment: "Equipo" },
-  fr: { programs: "Programmes", diets: "Régimes", coaches: "Coachs", equipment: "Équipement" }
+  en: { bundles: "Bundles", coaches: "Coaches", equipment: "Equipment guide" },
+  tr: { bundles: "Paketler", coaches: "Koclar", equipment: "Ekipman" },
+  ar: { bundles: "الحزم", coaches: "المدربون", equipment: "المعدات" },
+  es: { bundles: "Bundles", coaches: "Coaches", equipment: "Equipo" },
+  fr: { bundles: "Packs", coaches: "Coachs", equipment: "Équipement" }
 };
 
 const TJAI_LABELS: Record<Locale, Record<string, string>> = {
@@ -65,8 +65,7 @@ function trainItems(locale: Locale): SubItem[] {
   const l = TRAIN_LABELS[locale] ?? TRAIN_LABELS.en;
   const base = `/${locale}`;
   return [
-    { label: l.programs, href: `${base}/programs` },
-    { label: l.diets, href: `${base}/diets` },
+    { label: l.bundles, href: `${base}/bundles` },
     { label: l.coaches, href: `${base}/coaches` },
     { label: l.equipment, href: `${base}/store` }
   ];
@@ -117,8 +116,7 @@ export function SiteTopBar({ locale }: { locale: Locale }) {
 
   const homeActive = pathname === `/${locale}` || pathname === `/${locale}/`;
   const trainActive =
-    pathname.startsWith(`/${locale}/programs`) ||
-    pathname.startsWith(`/${locale}/diets`) ||
+    pathname.startsWith(`/${locale}/bundles`) ||
     pathname.startsWith(`/${locale}/coaches`) ||
     pathname.startsWith(`/${locale}/store`);
   const tjaiActive =
