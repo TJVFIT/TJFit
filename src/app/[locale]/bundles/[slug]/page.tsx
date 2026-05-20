@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, FileDown } from "lucide-react";
 
 import { getBundle, listBundleSlugs, type Bundle } from "@/lib/bundles";
+import { supportedLocales } from "@/lib/i18n";
 import { requireLocaleParam } from "@/lib/require-locale";
 import { getSiteUrl } from "@/lib/site-url";
 
@@ -13,11 +14,17 @@ export function generateStaticParams() {
 export function generateMetadata({ params }: { params: { locale: string; slug: string } }) {
   const bundle = getBundle(params.slug);
   if (!bundle) return { title: "Bundle · TJFit" };
-  const url = `${getSiteUrl()}/${params.locale}/bundles/${bundle.slug}`;
+  const site = getSiteUrl();
+  const url = `${site}/${params.locale}/bundles/${bundle.slug}`;
+  const languages: Record<string, string> = {};
+  for (const loc of supportedLocales) {
+    languages[loc] = `${site}/${loc}/bundles/${bundle.slug}`;
+  }
+  languages["x-default"] = `${site}/en/bundles/${bundle.slug}`;
   return {
     title: `${bundle.name} · TJFit`,
     description: bundle.hook,
-    alternates: { canonical: url },
+    alternates: { canonical: url, languages },
     openGraph: {
       title: `${bundle.name} · TJFit`,
       description: bundle.hook,

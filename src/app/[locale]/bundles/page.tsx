@@ -2,16 +2,21 @@ import Link from "next/link";
 import { ArrowRight, FileDown } from "lucide-react";
 
 import { BUNDLES } from "@/lib/bundles";
+import { supportedLocales } from "@/lib/i18n";
 import { requireLocaleParam } from "@/lib/require-locale";
 import { getSiteUrl } from "@/lib/site-url";
 
 export function generateMetadata({ params }: { params: { locale: string } }) {
-  const url = `${getSiteUrl()}/${params.locale}/bundles`;
+  const site = getSiteUrl();
+  const url = `${site}/${params.locale}/bundles`;
+  const languages: Record<string, string> = {};
+  for (const loc of supportedLocales) languages[loc] = `${site}/${loc}/bundles`;
+  languages["x-default"] = `${site}/en/bundles`;
   return {
     title: "Program Bundles · TJFit",
     description:
       "Twelve 12-week training + diet bundles, delivered as branded PDF dossiers. Train smarter, eat sharper.",
-    alternates: { canonical: url },
+    alternates: { canonical: url, languages },
     openGraph: {
       title: "Program Bundles · TJFit",
       description:
