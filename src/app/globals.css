@@ -131,16 +131,34 @@
     transform: scale(1);
   }
 
-  /* Active vertical bar — start side, RTL-aware via logical inset. */
+  /* Active vertical bar — start side, RTL-aware via logical inset.
+     Vertical cyan gradient + glow halo for a "lit beam" feel; the slow
+     1.6s pulse runs only when no reduced-motion preference is set. */
   .tj-sidebar-link[aria-current="page"]::after {
     content: "";
     position: absolute;
     inset-block: 6px;
     inset-inline-start: 0;
     width: 3px;
-    background: #22d3ee;
     border-radius: 2px;
+    background: linear-gradient(
+      180deg,
+      rgba(165, 243, 252, 0.95) 0%,
+      rgba(34, 211, 238, 1) 50%,
+      rgba(14, 165, 233, 0.85) 100%
+    );
+    box-shadow:
+      0 0 8px rgba(34, 211, 238, 0.55),
+      0 0 18px rgba(34, 211, 238, 0.28);
+    animation: tj-sidebar-active-pulse 1.6s ease-in-out infinite;
   }
+}
+@keyframes tj-sidebar-active-pulse {
+  0%, 100% { opacity: 0.85; }
+  50%      { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tj-sidebar-link[aria-current="page"]::after { animation: none; opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
