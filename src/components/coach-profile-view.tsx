@@ -106,11 +106,15 @@ export function CoachProfileView({ locale, slug }: { locale: string; slug: strin
 
       <section className="rounded-2xl border border-divider bg-surface p-5">
         <h2 className="text-lg font-semibold text-white">Certifications</h2>
-        <div className="mt-3 space-y-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           {(coach.certifications ?? []).map((cert) => (
-            <p key={cert} className="inline-flex items-center gap-2 text-sm text-bright">
-              <Check className="h-4 w-4 text-green-400" /> {cert}
-            </p>
+            <span
+              key={cert}
+              className="group/cert inline-flex items-center gap-1.5 rounded-full border border-cyan-300/20 bg-cyan-300/[0.04] px-3 py-1.5 text-xs text-bright transition-[border-color,background-color,box-shadow,color] duration-200 hover:border-cyan-300/45 hover:bg-cyan-300/[0.08] hover:text-cyan-50 hover:shadow-[0_0_16px_rgba(34,211,238,0.16)]"
+            >
+              <Check className="h-3.5 w-3.5 text-green-400 transition-transform duration-200 motion-safe:group-hover/cert:scale-110" />
+              {cert}
+            </span>
           ))}
           {(coach.certifications ?? []).length === 0 ? <p className="text-sm text-faint">No certifications listed.</p> : null}
         </div>
