@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { AmbientOrbs } from "@/components/effects/ambient-orbs";
 import { isLocale } from "@/lib/i18n";
 
 const SUBJECTS = ["Technical Issue", "Billing Question", "Program Help", "Account Problem", "Coach Inquiry", "Other"] as const;
@@ -109,10 +110,13 @@ export default function SupportPage({ params }: { params: { locale: string } }) 
   };
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
-      <span className="badge">{copy.badge}</span>
-      <h1 className="mt-4 font-display text-3xl font-semibold text-white sm:text-4xl">{copy.title}</h1>
-      <p className="mt-2 text-sm text-muted">{copy.sub}</p>
+    <div className="relative mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
+      <AmbientOrbs variant="compact" />
+      <span className="badge relative">{copy.badge}</span>
+      <h1 className="relative mt-4 font-display text-3xl font-semibold sm:text-4xl">
+        <span className="tj-title-shimmer">{copy.title}</span>
+      </h1>
+      <p className="relative mt-2 text-sm text-muted">{copy.sub}</p>
 
       {sent ? (
         <div className="mt-8 rounded-2xl border border-emerald-400/25 bg-emerald-500/10 p-6 text-sm text-emerald-300">
