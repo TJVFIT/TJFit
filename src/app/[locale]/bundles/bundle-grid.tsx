@@ -226,7 +226,7 @@ function BundleCard({
               ref={dlRef}
               href={downloadHref}
               aria-label={`Download ${bundle.name} PDF`}
-              className="relative inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 overflow-hidden rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-4 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] hover:brightness-110 hover:shadow-[0_0_32px_rgba(34,211,238,0.32)] motion-safe:active:scale-[0.97]"
+              className="tj-cta-sheen relative inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-4 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] hover:brightness-110 hover:shadow-[0_0_32px_rgba(34,211,238,0.32)] motion-safe:active:scale-[0.97]"
               style={
                 {
                   "--mag-x": "0px",
@@ -243,7 +243,7 @@ function BundleCard({
             <Link
               href={detailHref}
               aria-label={`Open ${bundle.name} details`}
-              className="inline-flex min-h-[44px] items-center gap-1 rounded-full border border-cyan-300/20 px-3.5 py-2.5 text-xs font-semibold text-cyan-200 transition-colors hover:border-cyan-300/40 hover:text-cyan-100"
+              className="tj-cta-sheen inline-flex min-h-[44px] items-center gap-1 rounded-full border border-cyan-300/20 px-3.5 py-2.5 text-xs font-semibold text-cyan-200 transition-colors hover:border-cyan-300/40 hover:text-cyan-100"
             >
               Details
               <ArrowRight
