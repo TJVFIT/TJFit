@@ -183,30 +183,31 @@ export default function BundleDetailPage({
             {bundle.dietTitle}
           </h2>
           <dl className="mt-6 grid gap-4 sm:grid-cols-3">
-            <div>
-              <dt className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
-                Style
-              </dt>
-              <dd className="mt-1.5 text-sm font-semibold text-white">
-                {bundle.nutrition.style}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
-                Protein target
-              </dt>
-              <dd className="mt-1.5 text-sm font-semibold text-white">
-                {bundle.nutrition.proteinTarget}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
-                Calorie bias
-              </dt>
-              <dd className="mt-1.5 text-sm font-semibold text-white">
-                {bundle.nutrition.calorieBias}
-              </dd>
-            </div>
+            {[
+              { label: "Style", value: bundle.nutrition.style },
+              { label: "Protein target", value: bundle.nutrition.proteinTarget },
+              { label: "Calorie bias", value: bundle.nutrition.calorieBias }
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                className="group/stat relative overflow-hidden rounded-xl border border-white/[0.06] bg-black/20 p-4 transition-[border-color,background-color,box-shadow] duration-300 hover:border-cyan-300/35 hover:bg-cyan-300/[0.04] hover:shadow-[0_0_28px_rgba(34,211,238,0.10)]"
+              >
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-60 transition-opacity duration-300 group-hover/stat:opacity-100"
+                  style={{
+                    background:
+                      "linear-gradient(90deg, transparent, rgba(34,211,238,0.55) 30%, rgba(165,243,252,0.9) 50%, rgba(34,211,238,0.55) 70%, transparent)"
+                  }}
+                />
+                <dt className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+                  {stat.label}
+                </dt>
+                <dd className="mt-2 text-sm font-semibold leading-snug text-white">
+                  {stat.value}
+                </dd>
+              </div>
+            ))}
           </dl>
           <p className="mt-6 text-sm leading-relaxed text-muted">
             {bundle.nutrition.notes}
