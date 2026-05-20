@@ -92,7 +92,7 @@ export function CinematicTransformation({ reduce }: { reduce: boolean }) {
 
           <div className="flex flex-col items-center justify-center gap-2 border-y border-[rgba(34,211,238,0.15)] bg-[#0D0F12] px-4 py-6 md:border-x md:border-y-0">
             <div className="h-16 w-px bg-gradient-to-b from-transparent via-[rgba(34,211,238,0.35)] to-transparent" />
-            <span className="rounded-full border border-[rgba(34,211,238,0.25)] bg-[rgba(34,211,238,0.08)] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-accent">
+            <span className="tj-chip-active rounded-full border border-cyan-300/35 bg-cyan-300/[0.1] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-50">
               12 weeks
             </span>
             <div className="h-16 w-px bg-gradient-to-b from-transparent via-[rgba(34,211,238,0.35)] to-transparent" />
