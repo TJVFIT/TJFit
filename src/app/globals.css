@@ -2262,6 +2262,25 @@ html {
   transform: translate3d(0, 0, 0) scale(1);
 }
 
+/* Bar grow effect — scaleY from 0 → 1 with transform-origin: bottom,
+   gated to fire when parent reveal-section enters viewport. Used on
+   the home become-a-coach mock dashboard bar chart. */
+@keyframes tj-bar-grow {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+.tj-mock-bar {
+  transform: scaleY(0);
+  transform-origin: bottom;
+}
+.reveal-section.revealed .tj-mock-bar {
+  animation: tj-bar-grow 880ms cubic-bezier(0.2, 1, 0.3, 1) forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tj-mock-bar { transform: scaleY(1); }
+  .reveal-section.revealed .tj-mock-bar { animation: none; }
+}
+
 /* Path stroke-draw effect — child paths gated to wait until the
    parent reveal-section is in view so they don't fire while
    below the fold. Used on the home transformation strip's

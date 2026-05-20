@@ -155,8 +155,8 @@ export function HomeCoachCta({ locale }: { locale: Locale }) {
                 {bars.map((h, i) => (
                   <div
                     key={i}
-                    className="w-5 rounded-t-sm bg-gradient-to-t from-[rgba(34,211,238,0.15)] to-[rgba(34,211,238,0.55)]"
-                    style={{ height: `${h}px` }}
+                    className="tj-mock-bar w-5 rounded-t-sm bg-gradient-to-t from-[rgba(34,211,238,0.15)] to-[rgba(34,211,238,0.55)]"
+                    style={{ height: `${h}px`, animationDelay: `${i * 70}ms` }}
                   />
                 ))}
               </div>
