@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { AmbientOrbs } from "@/components/effects/ambient-orbs";
+
 type Group = Array<{ id: string; title: string; href: string }>;
 type SearchResults = { programs: Group; diets: Group; coaches: Group; blog: Group; users: Group };
 
@@ -34,9 +36,12 @@ export default function SearchPage({ params }: { params: { locale: string } }) {
   ];
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10">
-      <h1 className="text-2xl font-bold text-white">Search results</h1>
-      <p className="mt-1 text-sm text-faint">Query: {q || "—"}</p>
+    <div className="relative mx-auto max-w-5xl px-4 py-10">
+      <AmbientOrbs variant="compact" />
+      <h1 className="relative text-2xl font-bold">
+        <span className="tj-title-shimmer">Search results</span>
+      </h1>
+      <p className="relative mt-1 text-sm text-faint">Query: {q || "—"}</p>
       <div className="mt-6 space-y-5">
         {groups.map(([label, items]) => (
           <section key={label} className="rounded-2xl border border-divider bg-surface p-4">
