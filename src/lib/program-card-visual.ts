@@ -23,22 +23,23 @@ export function getProgramVisual(program: Pick<Program, "category" | "slug">): P
   const isHome = slug.startsWith("home") || category.includes("home");
 
   if (category.includes("fat") || category.includes("cut") || category.includes("shred") || category.includes("lean")) {
+    // Fat loss: red-tier (warm urgency, but on-brand red instead of orange)
     return {
-      gradient: "from-orange-500/30 via-red-500/20 to-rose-600/25",
-      glow: "shadow-[0_0_40px_-12px_rgba(249,115,22,0.35)]",
-      ring: "border-orange-500/20",
+      gradient: "from-red-500/28 via-rose-500/20 to-cyan-500/22",
+      glow: "shadow-[0_0_40px_-12px_rgba(239,68,68,0.32)]",
+      ring: "border-red-400/22",
       tag: "FAT LOSS",
-      accentColor: "#f97316"
+      accentColor: "#ef4444"
     };
   }
 
   if (category.includes("muscle") || category.includes("mass") || category.includes("strength") || category.includes("bulk")) {
     return {
       gradient: "from-cyan-500/32 via-sky-500/22 to-blue-600/28",
-      glow: "shadow-[0_0_44px_-12px_rgba(99,102,241,0.38)]",
-      ring: "border-sky-400/20",
+      glow: "shadow-[0_0_44px_-12px_rgba(34,211,238,0.38)]",
+      ring: "border-cyan-400/22",
       tag: "MUSCLE",
-      accentColor: "#6366f1"
+      accentColor: "#22D3EE"
     };
   }
 
@@ -65,10 +66,10 @@ export function getProgramVisual(program: Pick<Program, "category" | "slug">): P
   // Default: performance / general
   return {
     gradient: "from-sky-500/28 via-blue-500/20 to-cyan-500/24",
-    glow: "shadow-[0_0_44px_-12px_rgba(14, 165, 233,0.30)]",
+    glow: "shadow-[0_0_44px_-12px_rgba(14,165,233,0.30)]",
     ring: "border-sky-400/15",
     tag: "PERFORMANCE",
-    accentColor: "#a78bfa"
+    accentColor: "#0EA5E9"
   };
 }
 
