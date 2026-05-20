@@ -71,7 +71,10 @@ export default function BundleDetailPage({
 
       <div className="mt-8 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
         <div>
-          <div className="flex flex-wrap items-center gap-2">
+          <div
+            className="flex flex-wrap items-center gap-2 motion-safe:animate-[tj-fade-up_520ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
+            style={{ animationDelay: "80ms" }}
+          >
             <span
               className="rounded-full border border-cyan-300/30 bg-cyan-300/[0.08] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-100"
               aria-label={`Goal: ${bundle.goalLabel}`}
@@ -90,17 +93,29 @@ export default function BundleDetailPage({
             </span>
           </div>
 
-          <h1 className="mt-4 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
-            {bundle.name}
+          <h1
+            className="mt-4 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl motion-safe:animate-[tj-fade-up_620ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
+            style={{ animationDelay: "180ms" }}
+          >
+            <span className="tj-title-shimmer">{bundle.name}</span>
           </h1>
-          <p className="mt-4 text-base leading-relaxed text-muted sm:text-lg">
+          <p
+            className="mt-4 text-base leading-relaxed text-muted sm:text-lg motion-safe:animate-[tj-fade-up_620ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
+            style={{ animationDelay: "280ms" }}
+          >
             {bundle.hook}
           </p>
-          <p className="mt-6 text-sm leading-relaxed text-bright/85 sm:text-base">
+          <p
+            className="mt-6 text-sm leading-relaxed text-bright/85 sm:text-base motion-safe:animate-[tj-fade-up_620ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
+            style={{ animationDelay: "380ms" }}
+          >
             {bundle.description}
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-3">
+          <div
+            className="mt-8 flex flex-wrap items-center gap-3 motion-safe:animate-[tj-fade-up_620ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
+            style={{ animationDelay: "480ms" }}
+          >
             <DownloadButton
               href={downloadHref}
               ariaLabel={`Download ${bundle.name} PDF`}
