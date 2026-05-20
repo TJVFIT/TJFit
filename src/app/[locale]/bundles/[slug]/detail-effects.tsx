@@ -231,6 +231,80 @@ function PhaseCard({
 }
 
 /**
+ * Tilted "At a glance" aside — pointer-tracked 3D rotation with a cyan
+ * cursor-following glare and a soft ambient ring that pulses behind the card.
+ */
+export function AtAGlance({
+  rows
+}: {
+  rows: Array<{ label: string; value: string }>;
+}) {
+  const tiltRef = useTilt<HTMLDivElement>({ maxX: 4, maxY: 5 });
+
+  return (
+    <aside className="relative" style={{ perspective: "1000px" }}>
+      {/* Ambient cyan halo behind the card — slow pulse */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -inset-4 hidden motion-safe:block"
+        style={{
+          background:
+            "radial-gradient(60% 60% at 50% 50%, rgba(34,211,238,0.10), transparent 70%)",
+          filter: "blur(28px)",
+          animation: "tj-chip-pulse 6s ease-in-out infinite"
+        }}
+      />
+      <div
+        ref={tiltRef}
+        className="relative rounded-2xl border border-cyan-400/20 bg-[linear-gradient(180deg,rgba(34,211,238,0.05),rgba(34,211,238,0.01))] p-5 transition-[border-color,box-shadow] duration-300 hover:border-cyan-300/40 hover:shadow-[0_0_44px_rgba(34,211,238,0.16)]"
+        style={
+          {
+            "--tilt-x": "0deg",
+            "--tilt-y": "0deg",
+            "--glare-x": "50%",
+            "--glare-y": "50%",
+            "--glare-opacity": "0",
+            transform:
+              "perspective(1000px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y))",
+            transformStyle: "preserve-3d",
+            transition:
+              "transform 260ms cubic-bezier(0.2,1,0.3,1), border-color 220ms, box-shadow 260ms"
+          } as React.CSSProperties
+        }
+      >
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 rounded-2xl mix-blend-screen"
+          style={{
+            background:
+              "radial-gradient(160px circle at var(--glare-x) var(--glare-y), rgba(34,211,238,0.18), transparent 70%)",
+            opacity: "var(--glare-opacity)",
+            transition: "opacity 220ms ease-out"
+          }}
+        />
+        <p className="relative text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/80">
+          At a glance
+        </p>
+        <dl className="relative mt-4 space-y-3 text-sm">
+          {rows.map((row, i) => {
+            const isLast = i === rows.length - 1;
+            return (
+              <div
+                key={row.label}
+                className={`flex items-baseline justify-between gap-3 ${isLast ? "" : "border-b border-white/[0.06] pb-3"}`}
+              >
+                <dt className="text-faint">{row.label}</dt>
+                <dd className="text-right font-semibold text-white">{row.value}</dd>
+              </div>
+            );
+          })}
+        </dl>
+      </div>
+    </aside>
+  );
+}
+
+/**
  * Magnetic + ripple Download PDF button. Two flavors:
  *   variant="primary"   — main hero CTA, wider with metric label
  *   variant="compact"   — same gradient, sized for inline use

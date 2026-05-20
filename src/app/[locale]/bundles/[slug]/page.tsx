@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
-import { DetailHero, DownloadButton, PhaseStrip, RevealSection, ScrollProgressBar } from "./detail-effects";
+import { AtAGlance, DetailHero, DownloadButton, PhaseStrip, RevealSection, ScrollProgressBar } from "./detail-effects";
 import { getBundle, listBundleSlugs } from "@/lib/bundles";
 import { bundleProductJsonLd } from "@/lib/bundle-jsonld";
 import { supportedLocales } from "@/lib/i18n";
@@ -119,35 +119,14 @@ export default function BundleDetailPage({
           </div>
         </div>
 
-        <aside className="rounded-2xl border border-cyan-400/20 bg-[linear-gradient(180deg,rgba(34,211,238,0.05),rgba(34,211,238,0.01))] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/80">
-            At a glance
-          </p>
-          <dl className="mt-4 space-y-3 text-sm">
-            <div className="flex items-baseline justify-between gap-3 border-b border-white/[0.06] pb-3">
-              <dt className="text-faint">Duration</dt>
-              <dd className="font-semibold text-white">{bundle.weeks} weeks</dd>
-            </div>
-            <div className="flex items-baseline justify-between gap-3 border-b border-white/[0.06] pb-3">
-              <dt className="text-faint">Sessions</dt>
-              <dd className="font-semibold text-white">
-                {bundle.sessionsPerWeek} per week
-              </dd>
-            </div>
-            <div className="flex items-baseline justify-between gap-3 border-b border-white/[0.06] pb-3">
-              <dt className="text-faint">Training</dt>
-              <dd className="text-right font-semibold text-white">
-                {bundle.programTitle}
-              </dd>
-            </div>
-            <div className="flex items-baseline justify-between gap-3">
-              <dt className="text-faint">Diet</dt>
-              <dd className="text-right font-semibold text-white">
-                {bundle.dietTitle}
-              </dd>
-            </div>
-          </dl>
-        </aside>
+        <AtAGlance
+          rows={[
+            { label: "Duration", value: `${bundle.weeks} weeks` },
+            { label: "Sessions", value: `${bundle.sessionsPerWeek} per week` },
+            { label: "Training", value: bundle.programTitle },
+            { label: "Diet", value: bundle.dietTitle }
+          ]}
+        />
       </div>
 
       <div className="mt-14">
