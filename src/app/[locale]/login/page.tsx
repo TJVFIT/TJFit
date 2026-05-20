@@ -115,7 +115,7 @@ function LoginForm({ params }: { params: { locale: string } }) {
               {copy.forgotPassword}
             </Link>
           </div>
-          {error ? <div className="tj-api-error-block">{error}</div> : null}
+          {error ? <div className="tj-api-error-block" role="alert" aria-live="polite">{error}</div> : null}
           <AsyncButton
             type="button"
             fullWidth

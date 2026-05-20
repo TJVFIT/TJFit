@@ -1658,14 +1658,35 @@ strong, b {
   vertical-align: middle;
 }
 
+@keyframes tj-api-error-in {
+  0%   { opacity: 0; transform: translateY(-4px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
 .tj-api-error-block {
+  position: relative;
   border-radius: 10px;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  background: rgba(239, 68, 68, 0.08);
-  padding: 12px 16px;
+  border: 1px solid rgba(239, 68, 68, 0.28);
+  background: linear-gradient(180deg, rgba(239, 68, 68, 0.10), rgba(239, 68, 68, 0.06));
+  padding: 12px 16px 12px 18px;
   font-size: 14px;
   line-height: 1.5;
   color: var(--color-error);
+  box-shadow:
+    0 0 0 1px rgba(239, 68, 68, 0.04) inset,
+    0 8px 22px -8px rgba(239, 68, 68, 0.32);
+  overflow: hidden;
+}
+.tj-api-error-block::before {
+  content: "";
+  position: absolute;
+  inset: 8px auto 8px 6px;
+  width: 2px;
+  border-radius: 1px;
+  background: linear-gradient(180deg, rgba(239, 68, 68, 0.85), rgba(239, 68, 68, 0.35));
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tj-api-error-block { animation: tj-api-error-in 260ms cubic-bezier(0.2, 1, 0.3, 1); }
 }
 
 /* Inline tags / chips ? distinct from lux-badge (eyebrow marketing) */

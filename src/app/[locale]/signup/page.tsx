@@ -360,7 +360,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
               , {BILLING_PROVIDER} {copy.billingSuffix}
             </span>
           </label>
-          {error ? <div className="tj-api-error-block">{error}</div> : null}
+          {error ? <div className="tj-api-error-block" role="alert" aria-live="polite">{error}</div> : null}
           <div className="flex gap-3">
             {step > 1 ? (
               <button
