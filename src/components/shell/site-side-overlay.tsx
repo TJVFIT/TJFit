@@ -279,15 +279,19 @@ export function SiteSideOverlay({ locale }: { locale: Locale }) {
         aria-controls="site-side-overlay"
         onClick={() => setOpen(true)}
         className={cn(
-          "fixed start-3 top-3 z-40 inline-flex h-10 w-10 items-center justify-center rounded-md",
+          "group/burger fixed start-3 top-3 z-40 inline-flex h-10 w-10 items-center justify-center rounded-md",
           "border border-white/[0.09] bg-[rgba(15,15,18,0.7)] text-white/85 backdrop-blur",
-          "transition-colors duration-150 hover:border-white/20 hover:bg-[rgba(20,20,24,0.85)] hover:text-white",
+          "transition-[border-color,background-color,color,box-shadow] duration-200",
+          "hover:border-cyan-300/40 hover:bg-[rgba(20,24,28,0.85)] hover:text-cyan-100 hover:shadow-[0_0_22px_rgba(34,211,238,0.18)]",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60",
           "sm:start-4 sm:top-3.5",
           open && "pointer-events-none opacity-0"
         )}
       >
-        <Menu className="h-[18px] w-[18px]" aria-hidden />
+        <Menu
+          className="h-[18px] w-[18px] transition-transform duration-200 motion-safe:group-hover/burger:rotate-90"
+          aria-hidden
+        />
       </button>
 
       <div
@@ -321,9 +325,12 @@ export function SiteSideOverlay({ locale }: { locale: Locale }) {
               type="button"
               onClick={close}
               aria-label={CLOSE_LABEL[locale] ?? CLOSE_LABEL.en}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/[0.08] text-white/70 transition-colors duration-150 hover:border-white/20 hover:bg-white/[0.04] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
+              className="group/closebtn inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/[0.08] text-white/70 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:bg-cyan-300/[0.04] hover:text-cyan-100 hover:shadow-[0_0_18px_rgba(34,211,238,0.16)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
             >
-              <X className="h-4 w-4" aria-hidden />
+              <X
+                className="h-4 w-4 transition-transform duration-200 motion-safe:group-hover/closebtn:rotate-90"
+                aria-hidden
+              />
             </button>
           </div>
 
