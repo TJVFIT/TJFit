@@ -513,10 +513,10 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
                 {(walletData?.offers ?? []).map((offer) => (
                   <div
                     key={offer.key}
-                    className="flex items-center justify-between gap-3 rounded-xl border border-white/[0.08] bg-white/[0.03] p-4"
+                    className="group/offer flex items-center justify-between gap-3 rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 transition-[border-color,box-shadow] duration-200 hover:border-cyan-300/30 hover:shadow-[0_0_22px_rgba(34,211,238,0.12)]"
                   >
                     <div className="min-w-0">
-                      <p className="font-medium text-white">{offer.title}</p>
+                      <p className="font-medium text-white transition-colors duration-200 group-hover/offer:text-cyan-50">{offer.title}</p>
                       <p className="text-sm text-faint">
                         {offer.discount_percent}% · {offer.coin_cost} coins
                       </p>
