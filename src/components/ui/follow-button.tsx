@@ -56,8 +56,8 @@ export function FollowButton({ targetUserId, initialFollowing, initialCount, onC
         onClick={toggle}
         className={
           following
-            ? `rounded-full px-5 py-2 text-sm font-semibold ${hovering ? "border border-red-400/35 bg-red-500/10 text-red-200" : "border border-cyan-400/35 bg-cyan-500/15 text-cyan-100"}`
-            : "rounded-full border border-white/20 bg-transparent px-5 py-2 text-sm font-semibold text-white"
+            ? `rounded-full px-5 py-2 text-sm font-semibold transition-[border-color,background-color,color,box-shadow] duration-200 ${hovering ? "border border-red-400/40 bg-red-500/12 text-red-200 shadow-[0_0_18px_rgba(239,68,68,0.14)]" : "border border-cyan-300/45 bg-cyan-500/12 text-cyan-100 shadow-[0_0_18px_rgba(34,211,238,0.16)]"}`
+            : "tj-cta-sheen rounded-full border border-white/20 bg-transparent px-5 py-2 text-sm font-semibold text-white transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/45 hover:bg-cyan-300/[0.06] hover:text-cyan-50 hover:shadow-[0_0_22px_rgba(34,211,238,0.18)]"
         }
       >
         {label}
