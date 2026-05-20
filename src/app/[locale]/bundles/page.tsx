@@ -88,9 +88,7 @@ export default function BundlesPage({ params }: { params: { locale: string } }) 
           Bundles
         </p>
         <h1 className="relative mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
-          <span className="bg-gradient-to-r from-white via-cyan-100 to-white bg-clip-text text-transparent">
-            12 bundles. One way to train.
-          </span>
+          <span className="tj-title-shimmer">12 bundles. One way to train.</span>
         </h1>
         <p className="relative mt-4 text-sm leading-relaxed text-muted sm:text-base">
           Each bundle pairs a 12-week training protocol with a matching diet
