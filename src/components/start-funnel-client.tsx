@@ -2,12 +2,11 @@
 
 import Link from "next/link";
 import { Brain, Calculator, Check, Dumbbell, Globe, LockKeyhole, Sparkles, Star } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import { PremiumPageShell } from "@/components/premium";
 import type { Locale } from "@/lib/i18n";
-import { programs } from "@/lib/content";
-import { localizeProgram } from "@/lib/program-localization";
+import { BUNDLES } from "@/lib/bundles";
 import { TJAI_SUBSCRIPTION_PRICES_USD } from "@/lib/tjai-pricing";
 
 const COPY: Record<
@@ -173,14 +172,7 @@ const COPY: Record<
 
 export function StartFunnelClient({ locale }: { locale: Locale }) {
   const copy = COPY[locale] ?? COPY.en;
-  const [freeTab, setFreeTab] = useState<"programs" | "diets">("programs");
-  const freeItems = useMemo(() => programs.filter((p) => p.is_free), []);
-  const freePrograms = useMemo(() => freeItems.filter((p) => !p.category.toLowerCase().includes("nutrition")), [freeItems]);
-  const freeDiets = useMemo(() => freeItems.filter((p) => p.category.toLowerCase().includes("nutrition")), [freeItems]);
-  const starterNames = useMemo(
-    () => (freeTab === "programs" ? freePrograms : freeDiets).slice(0, 2).map((p) => localizeProgram(p, locale).title),
-    [freeDiets, freePrograms, freeTab, locale]
-  );
+  const starterNames = useMemo(() => BUNDLES.slice(0, 3).map((b) => b.name), []);
 
   return (
     <PremiumPageShell className="max-w-6xl">
@@ -196,23 +188,7 @@ export function StartFunnelClient({ locale }: { locale: Locale }) {
             <Dumbbell className="h-10 w-10 text-accent" />
             <h2 className="mt-4 text-xl font-bold text-white">{copy.freePrograms}</h2>
             <p className="mt-2 text-sm text-muted">{copy.freeProgramsSub}</p>
-            <div className="mt-4 flex gap-2">
-              <button
-                type="button"
-                onClick={() => setFreeTab("programs")}
-                className={`rounded-full border px-3 py-1.5 text-xs ${freeTab === "programs" ? "border-accent bg-accent/20 text-accent" : "border-white/20 text-bright"}`}
-              >
-                {copy.freeProgramsTab}
-              </button>
-              <button
-                type="button"
-                onClick={() => setFreeTab("diets")}
-                className={`rounded-full border px-3 py-1.5 text-xs ${freeTab === "diets" ? "border-accent bg-accent/20 text-accent" : "border-white/20 text-bright"}`}
-              >
-                {copy.freeDietsTab}
-              </button>
-            </div>
-            <ul className="mt-4 space-y-2 text-sm text-bright">
+            <ul className="mt-5 space-y-2 text-sm text-bright">
               {starterNames.map((name) => (
                 <li key={name}>- {name}</li>
               ))}
@@ -221,7 +197,7 @@ export function StartFunnelClient({ locale }: { locale: Locale }) {
               href={`/${locale}/bundles`}
               className="mt-5 inline-flex min-h-[46px] w-full items-center justify-center rounded-full bg-accent px-4 text-sm font-bold text-[#09090B]"
             >
-              {freeTab === "programs" ? copy.browsePrograms : copy.browseDiets}
+              {copy.browsePrograms}
             </Link>
           </article>
 
