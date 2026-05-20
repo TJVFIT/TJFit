@@ -46,9 +46,9 @@ export default function MembershipPage({ params }: { params: { locale: string } 
           </span>
           <h1
             className="text-balance font-display font-extrabold leading-tight tracking-[-0.03em]"
-            style={{ fontSize: "clamp(32px, 5vw, 56px)", color: TJ_PALETTE.textPrimary }}
+            style={{ fontSize: "clamp(32px, 5vw, 56px)" }}
           >
-            {hero.title}
+            <span className="tj-title-shimmer">{hero.title}</span>
           </h1>
           <p className="mt-4 max-w-xl text-sm leading-relaxed sm:text-base" style={{ color: TJ_PALETTE.textMuted }}>
             {hero.sub}

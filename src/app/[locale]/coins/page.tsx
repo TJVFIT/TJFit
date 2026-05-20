@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Coins, History, ShoppingBag } from "lucide-react";
 
+import { AmbientOrbs } from "@/components/effects/ambient-orbs";
 import { PremiumPageShell } from "@/components/premium";
 import { Button } from "@/components/ui/Button";
 
@@ -72,12 +73,15 @@ export default function CoinsPage() {
   ];
 
   return (
-    <PremiumPageShell>
-      <section className="rounded-2xl border border-divider bg-surface p-6 sm:p-8">
+    <PremiumPageShell className="relative">
+      <AmbientOrbs />
+      <section className="relative rounded-2xl border border-divider bg-surface p-6 sm:p-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-xs uppercase tracking-[0.18em] text-dim">TJCOIN SHOP</p>
-            <h1 className="mt-2 text-3xl font-extrabold text-white">Spend Your TJCOIN</h1>
+            <h1 className="mt-2 text-3xl font-extrabold">
+              <span className="tj-title-shimmer">Spend Your TJCOIN</span>
+            </h1>
             <p className="mt-2 text-sm text-muted">Earn more coins by completing programs, posting blogs, and daily streaks.</p>
           </div>
           <div className="rounded-xl border border-cyan-400/25 bg-cyan-400/10 px-4 py-3 text-center">
