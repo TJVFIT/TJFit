@@ -12,6 +12,7 @@ import {
 } from "recharts";
 import { CheckCircle2, Scale, Dumbbell, Flag } from "lucide-react";
 import confetti from "canvas-confetti";
+import { AmbientOrbs } from "@/components/effects/ambient-orbs";
 import type { Locale } from "@/lib/i18n";
 import { getProgressCopy } from "@/lib/feature-copy";
 
@@ -261,12 +262,15 @@ export function ProgressView({ locale }: { locale: Locale }) {
   const showCharts = chartData.length >= 2;
 
   return (
-    <div className="mx-auto max-w-7xl space-y-10 px-4 py-16 sm:px-6 lg:px-8">
+    <div className="relative mx-auto max-w-7xl space-y-10 px-4 py-16 sm:px-6 lg:px-8">
+      <AmbientOrbs />
       <Toast messages={toasts} />
 
-      <div>
+      <div className="relative">
         <span className="badge">{t.title}</span>
-        <h1 className="mt-4 font-display text-3xl font-semibold text-white sm:text-4xl">{t.title}</h1>
+        <h1 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
+          <span className="tj-title-shimmer">{t.title}</span>
+        </h1>
         <p className="mt-3 max-w-2xl text-sm leading-7 text-muted">{t.subtitle}</p>
       </div>
 
