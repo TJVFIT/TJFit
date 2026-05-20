@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { ArrowRight, FileDown } from "lucide-react";
 
+import { useReveal, useTilt } from "@/components/effects/use-3d";
 import type { Bundle, BundleGoal } from "@/lib/bundles";
 
 type FilterKey = "all" | BundleGoal;
@@ -90,89 +91,6 @@ export function BundleGrid({
       ) : null}
     </>
   );
-}
-
-/**
- * Pointer-tracked 3D tilt + cursor-following glare. Direct-DOM updates (no
- * React re-render per pixel) and gated by motion-safe so OS reduced-motion
- * fully disables the effect.
- */
-function useTilt() {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (window.matchMedia("(hover: none)").matches) return;
-
-    let raf = 0;
-    const onMove = (e: PointerEvent) => {
-      if (!el) return;
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const rect = el.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width;
-        const y = (e.clientY - rect.top) / rect.height;
-        const tiltX = (0.5 - y) * 7;
-        const tiltY = (x - 0.5) * 9;
-        el.style.setProperty("--tilt-x", `${tiltX.toFixed(2)}deg`);
-        el.style.setProperty("--tilt-y", `${tiltY.toFixed(2)}deg`);
-        el.style.setProperty("--glare-x", `${(x * 100).toFixed(1)}%`);
-        el.style.setProperty("--glare-y", `${(y * 100).toFixed(1)}%`);
-        el.style.setProperty("--glare-opacity", "1");
-      });
-    };
-    const onLeave = () => {
-      cancelAnimationFrame(raf);
-      el.style.setProperty("--tilt-x", "0deg");
-      el.style.setProperty("--tilt-y", "0deg");
-      el.style.setProperty("--glare-opacity", "0");
-    };
-
-    el.addEventListener("pointermove", onMove);
-    el.addEventListener("pointerleave", onLeave);
-    return () => {
-      cancelAnimationFrame(raf);
-      el.removeEventListener("pointermove", onMove);
-      el.removeEventListener("pointerleave", onLeave);
-    };
-  }, []);
-
-  return ref;
-}
-
-/**
- * Fade + lift in when the card scrolls into view. Uses IntersectionObserver
- * once per card. Triggers when 18% visible — far enough that the user is
- * looking, close enough to feel responsive.
- */
-function useReveal() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [shown, setShown] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setShown(true);
-      return;
-    }
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) {
-          setShown(true);
-          io.disconnect();
-        }
-      },
-      { threshold: 0.18 }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  return { ref, shown };
 }
 
 function BundleCard({
