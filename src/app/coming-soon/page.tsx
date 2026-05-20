@@ -14,11 +14,11 @@ export default function ComingSoonPage() {
   return (
     <main className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-background px-6 py-16 text-center text-white">
       <div
-        className="pointer-events-none fixed -left-[80px] -top-[120px] h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.08)_0%,transparent_70%)] blur-[40px]"
+        className="pointer-events-none fixed -left-[80px] -top-[120px] h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.08)_0%,transparent_70%)] blur-[40px] motion-safe:[animation:tj-orb-drift-a_38s_ease-in-out_infinite]"
         aria-hidden
       />
       <div
-        className="pointer-events-none fixed -bottom-[80px] -right-[80px] h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.06)_0%,transparent_70%)] blur-[40px]"
+        className="pointer-events-none fixed -bottom-[80px] -right-[80px] h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.06)_0%,transparent_70%)] blur-[40px] motion-safe:[animation:tj-orb-drift-b_46s_ease-in-out_infinite]"
         aria-hidden
       />
 
@@ -28,7 +28,7 @@ export default function ComingSoonPage() {
         <span className="lux-badge mt-10 inline-flex">TJFit</span>
 
         <h1 className="mt-6 font-display text-[44px] font-bold leading-[1.05] tracking-[-0.02em] sm:text-[56px]">
-          Coming soon
+          <span className="tj-title-shimmer">Coming soon</span>
         </h1>
 
         <p className="mt-5 max-w-md text-balance text-base leading-relaxed text-muted sm:text-lg">
