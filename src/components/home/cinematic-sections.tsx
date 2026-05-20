@@ -80,6 +80,8 @@ export function CinematicTransformation({ reduce }: { reduce: boolean }) {
             <p className="mt-4 text-sm leading-relaxed text-muted">Baseline load, habit wiring, and honest volume — no hero weeks.</p>
             <svg className="mt-8 h-28 w-full text-white/10" viewBox="0 0 120 100" preserveAspectRatio="xMidYMid meet" aria-hidden>
               <path
+                className="tj-path-draw"
+                style={{ animationDelay: "120ms" }}
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="1.2"
@@ -107,7 +109,14 @@ export function CinematicTransformation({ reduce }: { reduce: boolean }) {
               preserveAspectRatio="xMidYMid meet"
               aria-hidden
             >
-              <path fill="none" stroke="currentColor" strokeWidth="1.4" d="M35 78 Q50 52 62 48 Q78 42 88 38 Q96 50 92 62 Q88 78 72 82" />
+              <path
+                className="tj-path-draw"
+                style={{ animationDelay: "520ms" }}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.4"
+                d="M35 78 Q50 52 62 48 Q78 42 88 38 Q96 50 92 62 Q88 78 72 82"
+              />
             </svg>
           </div>
         </div>

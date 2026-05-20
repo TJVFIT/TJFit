@@ -2262,6 +2262,26 @@ html {
   transform: translate3d(0, 0, 0) scale(1);
 }
 
+/* Path stroke-draw effect — child paths gated to wait until the
+   parent reveal-section is in view so they don't fire while
+   below the fold. Used on the home transformation strip's
+   week-1 / week-12 curves. */
+@keyframes tj-path-draw {
+  from { stroke-dashoffset: 300; }
+  to   { stroke-dashoffset: 0; }
+}
+.tj-path-draw {
+  stroke-dasharray: 300;
+  stroke-dashoffset: 300;
+}
+.reveal-section.revealed .tj-path-draw {
+  animation: tj-path-draw 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tj-path-draw { stroke-dashoffset: 0; }
+  .reveal-section.revealed .tj-path-draw { animation: none; }
+}
+
 /* ?? Blinking cursor (TJAI typing) ??????????????????????????????? */
 @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
 .cursor-blink { animation: blink 1s step-end infinite; }
