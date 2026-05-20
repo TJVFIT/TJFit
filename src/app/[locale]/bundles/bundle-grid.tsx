@@ -55,9 +55,9 @@ export function BundleGrid({
               role="tab"
               aria-selected={isActive}
               onClick={() => setActive(f.key)}
-              className={`inline-flex min-h-[36px] items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
+              className={`inline-flex min-h-[36px] items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-[color,border-color,background-color] motion-safe:transition-all ${
                 isActive
-                  ? "border-cyan-300/60 bg-cyan-300/[0.12] text-cyan-50"
+                  ? "tj-chip-active border-cyan-300/60 bg-cyan-300/[0.12] text-cyan-50"
                   : "border-white/[0.08] bg-white/[0.02] text-bright/80 hover:border-cyan-300/30 hover:text-cyan-100"
               }`}
             >

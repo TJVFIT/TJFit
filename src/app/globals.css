@@ -3802,3 +3802,21 @@ button[aria-disabled="true"],
     transform: none;
   }
 }
+
+/* Slow-drifting conic halo behind hero titles (motion-safe gated by Tailwind variant on the element). */
+@keyframes tj-halo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Active filter chip — soft cyan ring that pulses gently */
+@keyframes tj-chip-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.0), 0 0 24px -4px rgba(34, 211, 238, 0.22); }
+  50%      { box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.12), 0 0 36px -2px rgba(34, 211, 238, 0.38); }
+}
+.tj-chip-active {
+  animation: tj-chip-pulse 2.8s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tj-chip-active { animation: none; box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.22); }
+}

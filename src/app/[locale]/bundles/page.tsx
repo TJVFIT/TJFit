@@ -35,14 +35,28 @@ export default function BundlesPage({ params }: { params: { locale: string } }) 
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(bundlesItemListJsonLd(locale)) }}
       />
-      <div className="max-w-2xl">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
+      <div className="relative max-w-2xl">
+        {/* Slow-drifting conic-gradient halo behind the title — pure CSS, motion-safe gated via Tailwind variant */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -left-24 -top-24 hidden h-72 w-72 motion-safe:block"
+          style={{
+            background:
+              "conic-gradient(from 0deg, rgba(34,211,238,0.18), rgba(14,165,233,0.04) 30%, transparent 60%, rgba(34,211,238,0.14) 100%)",
+            filter: "blur(56px)",
+            opacity: 0.7,
+            animation: "tj-halo-spin 22s linear infinite"
+          }}
+        />
+        <p className="relative text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
           Bundles
         </p>
-        <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
-          12 bundles. One way to train.
+        <h1 className="relative mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+          <span className="bg-gradient-to-r from-white via-cyan-100 to-white bg-clip-text text-transparent">
+            12 bundles. One way to train.
+          </span>
         </h1>
-        <p className="mt-4 text-sm leading-relaxed text-muted sm:text-base">
+        <p className="relative mt-4 text-sm leading-relaxed text-muted sm:text-base">
           Each bundle pairs a 12-week training protocol with a matching diet
           system, delivered as a branded PDF dossier. Pick the goal — we built
           the rest.
