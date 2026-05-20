@@ -75,7 +75,7 @@ export function CinematicListingHeader({
           style={{ transitionDelay: inView ? "200ms" : "0ms" }}
         >
           <WordReveal text={headlineBefore} />
-          <span className="bg-gradient-to-r from-[#22D3EE] to-[#A78BFA] bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-[#A5F3FC] via-[#22D3EE] to-[#0EA5E9] bg-clip-text bg-[length:200%_100%] text-transparent motion-safe:animate-[tj-title-shimmer_9s_linear_infinite]">
             <WordReveal text={headlineGradient} delay={120} />
           </span>
         </h1>
