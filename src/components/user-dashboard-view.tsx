@@ -351,9 +351,9 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
           <div className="flex flex-col items-end gap-2">
             {/* F3 — Streak counter */}
             {summary.currentStreak > 0 && (
-              <div className="flex items-center gap-2 rounded-full border border-orange-500/30 bg-orange-500/10 px-4 py-1.5">
-                <Flame className="flame-flicker h-4 w-4 text-orange-400" />
-                <span className="text-sm font-bold text-orange-300">{summary.currentStreak} day streak</span>
+              <div className="flex items-center gap-2 rounded-full border border-cyan-300/35 bg-cyan-300/[0.1] px-4 py-1.5 shadow-[0_0_18px_rgba(34,211,238,0.16)]">
+                <Flame className="flame-flicker h-4 w-4 text-cyan-200" />
+                <span className="text-sm font-bold text-cyan-100">{summary.currentStreak} day streak</span>
               </div>
             )}
             <p className="text-sm text-dim">{formatDashboardDate(locale)}</p>
