@@ -37,9 +37,23 @@ function MagneticLink({
 
 function HeroMetric({ label, value, hint }: { label: string; value: string; hint: string }) {
   return (
-    <div className="border-t border-white/[0.08] pt-4">
-      <p className="font-display text-2xl font-semibold tracking-tight text-white">{value}</p>
-      <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-faint">{label}</p>
+    <div className="group/metric relative border-t border-white/[0.08] pt-4 transition-[border-color] duration-300 hover:border-cyan-300/30">
+      {/* Cyan glow that follows the top hairline only on hover. */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-0 transition-opacity duration-300 group-hover/metric:opacity-100"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent, rgba(34,211,238,0.7) 35%, rgba(165,243,252,0.9) 50%, rgba(34,211,238,0.7) 65%, transparent)",
+          boxShadow: "0 0 12px rgba(34,211,238,0.45)"
+        }}
+      />
+      <p className="font-display text-2xl font-semibold tracking-tight text-white transition-colors duration-200 group-hover/metric:text-cyan-50">
+        {value}
+      </p>
+      <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-faint transition-colors duration-200 group-hover/metric:text-cyan-200/80">
+        {label}
+      </p>
       <p className="mt-2 text-xs leading-relaxed text-muted">{hint}</p>
     </div>
   );
