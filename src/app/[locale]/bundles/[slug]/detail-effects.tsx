@@ -1,6 +1,6 @@
 "use client";
 
-import { FileDown } from "lucide-react";
+import { Check, FileDown, Share2 } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { useParallax, useReveal, useTilt } from "@/components/effects/use-3d";
@@ -346,6 +346,72 @@ export function DownloadButton({
       <FileDown className="relative h-4 w-4" aria-hidden />
       <span className="relative">Download PDF</span>
     </a>
+  );
+}
+
+/**
+ * Share button — Web Share API on supporting devices, copy-to-clipboard
+ * fallback elsewhere. Brief "Copied!" affordance shown on success.
+ */
+export function ShareButton({
+  title,
+  ariaLabel
+}: {
+  title: string;
+  ariaLabel?: string;
+}) {
+  const [state, setState] = useState<"idle" | "shared" | "copied">("idle");
+
+  const handleShare = async () => {
+    if (typeof window === "undefined") return;
+    const url = window.location.href;
+    try {
+      if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+        await navigator.share({ title, url });
+        setState("shared");
+      } else if (
+        typeof navigator !== "undefined" &&
+        navigator.clipboard &&
+        typeof navigator.clipboard.writeText === "function"
+      ) {
+        await navigator.clipboard.writeText(url);
+        setState("copied");
+      } else {
+        // Last-resort fallback: select an input and document.execCommand("copy").
+        const input = document.createElement("input");
+        input.value = url;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand("copy");
+        document.body.removeChild(input);
+        setState("copied");
+      }
+    } catch {
+      /* user dismissed share sheet or denied clipboard — no-op */
+      return;
+    }
+    window.setTimeout(() => setState("idle"), 1800);
+  };
+
+  const label = state === "copied" ? "Link copied!" : state === "shared" ? "Shared" : "Share";
+  return (
+    <button
+      type="button"
+      onClick={handleShare}
+      aria-label={ariaLabel ?? `Share ${title}`}
+      className={`inline-flex min-h-[48px] items-center justify-center gap-1.5 rounded-full border px-4 py-2.5 text-sm font-semibold transition-[border-color,color,box-shadow] motion-safe:active:scale-[0.97] ${
+        state === "idle"
+          ? "border-white/15 text-bright hover:border-cyan-300/35 hover:text-cyan-100 hover:shadow-[0_0_24px_rgba(34,211,238,0.16)]"
+          : "border-cyan-300/45 text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.22)]"
+      }`}
+    >
+      {state === "idle" ? (
+        <Share2 className="h-3.5 w-3.5" aria-hidden />
+      ) : (
+        <Check className="h-3.5 w-3.5" aria-hidden />
+      )}
+      {label}
+    </button>
   );
 }
 

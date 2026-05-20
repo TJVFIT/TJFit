@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
-import { AtAGlance, DetailHero, DownloadButton, PhaseStrip, RevealSection, ScrollProgressBar } from "./detail-effects";
+import { AtAGlance, DetailHero, DownloadButton, PhaseStrip, RevealSection, ScrollProgressBar, ShareButton } from "./detail-effects";
 import { getBundle, listBundleSlugs } from "@/lib/bundles";
 import { bundleProductJsonLd } from "@/lib/bundle-jsonld";
 import { supportedLocales } from "@/lib/i18n";
@@ -116,6 +116,7 @@ export default function BundleDetailPage({
                 aria-hidden
               />
             </Link>
+            <ShareButton title={bundle.name} ariaLabel={`Share ${bundle.name}`} />
           </div>
         </div>
 
