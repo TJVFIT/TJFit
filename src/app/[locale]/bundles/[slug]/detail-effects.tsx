@@ -100,26 +100,49 @@ export function DetailHero({ image }: { image: string }) {
 
 /**
  * Animated phase strip: 3 cards with pointer 3D tilt, staggered scroll
- * reveal, and a vertical connecting hairline that fills as cards enter view.
- * The connector lives behind the cards so it feels like one continuous arc
- * binding the three phases together.
+ * reveal, a connecting hairline that DRAWS IN left→right when the strip
+ * enters view, and a cyan tracer dot that travels along the line once.
  */
 export function PhaseStrip({
   phases
 }: {
   phases: Array<{ name: string; focus: string }>;
 }) {
+  const reveal = useReveal<HTMLDivElement>({ threshold: 0.25 });
+
   return (
-    <div className="relative mt-6 grid gap-4 sm:grid-cols-3">
-      {/* Connector — visible on sm+ where cards sit side-by-side */}
+    <div ref={reveal.ref} className="relative mt-6 grid gap-4 sm:grid-cols-3">
+      {/* Hairline connector — drawn left→right via scaleX once revealed */}
       <div
         aria-hidden
-        className="pointer-events-none absolute left-0 right-0 top-1/2 hidden h-px -translate-y-1/2 sm:block"
+        className="pointer-events-none absolute left-0 right-0 top-1/2 hidden h-px -translate-y-1/2 origin-left sm:block"
         style={{
           background:
-            "linear-gradient(90deg, transparent, rgba(34,211,238,0.18) 12%, rgba(34,211,238,0.32) 50%, rgba(34,211,238,0.18) 88%, transparent)"
+            "linear-gradient(90deg, transparent, rgba(34,211,238,0.18) 12%, rgba(34,211,238,0.32) 50%, rgba(34,211,238,0.18) 88%, transparent)",
+          transform: reveal.shown ? "scaleX(1)" : "scaleX(0)",
+          transition: "transform 1100ms cubic-bezier(0.2, 1, 0.3, 1) 100ms"
         }}
       />
+      {/* Cyan tracer dot — travels along the connector left→right once on reveal */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-1/2 hidden h-px -translate-y-1/2 sm:block"
+      >
+        <div
+          className="absolute top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full"
+          style={{
+            left: reveal.shown ? "calc(100% - 10px)" : "0px",
+            background:
+              "radial-gradient(circle, rgba(165,243,252,1) 0%, rgba(34,211,238,0.9) 50%, transparent 70%)",
+            boxShadow:
+              "0 0 18px rgba(34,211,238,0.9), 0 0 36px rgba(34,211,238,0.5)",
+            opacity: reveal.shown ? 0 : 1,
+            transition: reveal.shown
+              ? "left 1400ms cubic-bezier(0.2, 1, 0.3, 1) 200ms, opacity 700ms ease-out 1500ms"
+              : "none"
+          }}
+        />
+      </div>
       {phases.map((phase, i) => (
         <PhaseCard key={phase.name} phase={phase} index={i} />
       ))}
