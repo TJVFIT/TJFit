@@ -251,12 +251,12 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
           {FEATURE_ROWS.map(({ Icon, title, body }) => (
             <article
               key={title}
-              className="group rounded-2xl border border-divider bg-surface p-5 transition-[border-color,background-color,transform] duration-200 hover:-translate-y-1 hover:border-cyan-300/25 hover:bg-surface-2"
+              className="group rounded-2xl border border-divider bg-surface p-5 transition-[border-color,background-color,box-shadow,transform] duration-300 motion-safe:hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-surface-2 hover:shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5),0_0_28px_rgba(34,211,238,0.12)]"
             >
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03] text-cyan-200">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-300/20 bg-cyan-300/[0.06] text-cyan-200 transition-[border-color,background-color,box-shadow] duration-300 group-hover:border-cyan-300/45 group-hover:bg-cyan-300/[0.12] group-hover:shadow-[0_0_18px_rgba(34,211,238,0.22)]">
                 <Icon className="h-5 w-5" strokeWidth={1.6} />
               </span>
-              <p className="mt-4 text-lg font-semibold text-white">{title}</p>
+              <p className="mt-4 text-lg font-semibold text-white transition-colors duration-200 group-hover:text-cyan-50">{title}</p>
               <p className="mt-2 text-sm leading-relaxed text-muted">{body}</p>
             </article>
           ))}
