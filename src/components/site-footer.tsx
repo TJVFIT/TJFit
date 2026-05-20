@@ -33,8 +33,9 @@ export function SiteFooter({ locale }: { locale: Locale }) {
   const copy = getFooterCopy(locale);
   const heads = COL_HEAD[locale] ?? COL_HEAD.en;
 
+  // Small cyan accent dot before label that slides in from -3px on hover.
   const linkClass =
-    "text-dim transition-colors duration-150 hover:text-muted inline-block text-sm leading-relaxed";
+    "group/foot-link relative inline-block pl-0 text-sm leading-relaxed text-dim transition-[color,padding-left] duration-200 hover:pl-3 hover:text-cyan-100 before:absolute before:left-0 before:top-1/2 before:h-1.5 before:w-1.5 before:-translate-x-2 before:-translate-y-1/2 before:rounded-full before:bg-cyan-300 before:opacity-0 before:shadow-[0_0_8px_rgba(34,211,238,0.6)] before:transition-[opacity,transform] before:duration-200 before:content-[''] hover:before:translate-x-0 hover:before:opacity-100 motion-reduce:hover:pl-0 motion-reduce:hover:before:translate-x-0";
 
   const platformLinks = [
     { href: `/${locale}/bundles`, label: copy.programs },
