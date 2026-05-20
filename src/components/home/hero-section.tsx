@@ -8,6 +8,7 @@ import { TJ_PALETTE } from "@/components/3d/palette";
 import { TJHeroStage } from "@/components/3d/hero-stage";
 import { useMagneticButton } from "@/hooks/useMagneticButton";
 import { trackMarketingEvent } from "@/lib/analytics-events";
+import type { HomeLuxuryCopy } from "@/lib/home-luxury-copy";
 import type { Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -64,35 +65,32 @@ function HeroSignal({
   );
 }
 
-function HeroCommandPanel({ reduce }: { reduce: boolean }) {
-  const rows = [
-    { icon: Dumbbell, title: "Training block", value: "Upper strength", meta: "Week 04 / Day 02" },
-    { icon: Utensils, title: "Macro target", value: "2,420 kcal", meta: "Protein 186g" },
-    { icon: Gauge, title: "Recovery", value: "Load -8%", meta: "Auto adjusted" }
-  ];
-
+function HeroCommandPanel({ reduce, copy }: { reduce: boolean; copy: HomeLuxuryCopy["hero"] }) {
+  const rowIcons = [Dumbbell, Utensils, Gauge] as const;
   return (
     <div className="tj-hero-command-panel relative mx-auto w-full max-w-[23.75rem] overflow-hidden rounded-[22px] border border-white/[0.08] bg-[rgba(13,15,18,0.58)] p-3.5 shadow-[0_30px_90px_rgba(0,0,0,0.34),inset_0_1px_0_rgba(255,255,255,0.07)] backdrop-blur-xl">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_12%,rgba(34,211,238,0.12),transparent_34%)]" aria-hidden />
       <div className="relative flex items-center justify-between border-b border-white/[0.07] pb-4">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-faint">Today</p>
-          <p className="mt-1 font-display text-xl font-semibold tracking-tight text-white">Adaptive plan</p>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-faint">{copy.commandToday}</p>
+          <p className="mt-1 font-display text-xl font-semibold tracking-tight text-white">{copy.commandPlan}</p>
         </div>
         <span className="rounded-[10px] border border-accent/25 bg-accent/10 px-3 py-1.5 text-[11px] font-bold text-accent-muted">
-          Live
+          {copy.commandLive}
         </span>
       </div>
 
       <div className="relative mt-4 space-y-3">
-        {rows.map((row, index) => (
+        {copy.commandRows.map((row, index) => {
+          const Icon = rowIcons[index] ?? Dumbbell;
+          return (
           <div
             key={row.title}
             className="tj-hero-command-row flex items-center gap-3 rounded-[15px] border border-white/[0.06] bg-white/[0.035] p-2.5"
             style={{ animationDelay: reduce ? undefined : `${index * 120}ms` }}
           >
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] border border-white/[0.08] bg-background">
-              <row.icon className="h-[18px] w-[18px] text-accent-muted" strokeWidth={1.6} />
+              <Icon className="h-[18px] w-[18px] text-accent-muted" strokeWidth={1.6} />
             </span>
             <span className="min-w-0 flex-1">
               <span className="block text-[13px] font-semibold text-white">{row.title}</span>
@@ -100,12 +98,13 @@ function HeroCommandPanel({ reduce }: { reduce: boolean }) {
             </span>
             <span className="text-right font-display text-sm font-semibold text-bright">{row.value}</span>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="relative mt-4 grid grid-cols-[1fr_auto] items-end gap-4 rounded-[18px] border border-white/[0.06] bg-surface-2 p-4">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-faint">Consistency</p>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-faint">{copy.commandConsistency}</p>
           <p className="mt-2 font-display text-3xl font-semibold tracking-tight text-white">84%</p>
         </div>
         <div className="flex h-20 items-end gap-1.5">
@@ -135,6 +134,7 @@ export type HeroSectionProps = {
   heroGradientTagline: string;
   heroSub: string;
   ctaPrimary: string;
+  copy: HomeLuxuryCopy["hero"];
   sectionRef: Ref<HTMLElement>;
 };
 
@@ -151,6 +151,7 @@ export function HeroSection({
   heroGradientTagline,
   heroSub,
   ctaPrimary,
+  copy,
   sectionRef
 }: HeroSectionProps) {
   const headlineLine = [heroHeadline, heroHeadlineLine2, heroGradientTagline].filter(Boolean).join(" ");
@@ -192,9 +193,9 @@ export function HeroSection({
       >
         <div className="tj-hero-kinetic-frame pointer-events-none absolute inset-[8%] hidden lg:block" aria-hidden />
         <TJHeroStage variant="neural" pointerReactive={!reduce} speed={reduce ? 0 : 0.78} intensity={0.95} />
-        <HeroSignal icon={Activity} label="model" value="Adaptive split" className="absolute right-[7%] top-[19%]" />
-        <HeroSignal icon={Timer} label="cycle" value="12 weeks" className="absolute bottom-[24%] right-[10%]" />
-        <HeroSignal icon={Gauge} label="output" value="Plan + macros" className="absolute bottom-[13%] left-[12%]" />
+        <HeroSignal icon={Activity} label={copy.signals.model} value={copy.signals.modelValue} className="absolute right-[7%] top-[19%]" />
+        <HeroSignal icon={Timer} label={copy.signals.cycle} value={copy.signals.cycleValue} className="absolute bottom-[24%] right-[10%]" />
+        <HeroSignal icon={Gauge} label={copy.signals.output} value={copy.signals.outputValue} className="absolute bottom-[13%] left-[12%]" />
       </div>
 
       <div
@@ -216,7 +217,7 @@ export function HeroSection({
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-40 motion-reduce:hidden" />
                 <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
               </span>
-              {liveStats.activeToday > 0 ? `${liveStats.activeToday} training now` : "Fitness operating system"}
+              {liveStats.activeToday > 0 ? `${liveStats.activeToday} ${copy.liveTrainingSuffix}` : copy.fallbackBadge}
             </span>
           </div>
 
@@ -263,19 +264,19 @@ export function HeroSection({
               href={`/${locale}/bundles`}
               className="inline-flex min-h-[54px] min-w-[44px] flex-1 items-center justify-center gap-2 rounded-[14px] border border-white/[0.12] bg-white/[0.035] px-7 py-3.5 text-[15px] font-semibold text-white transition-[border-color,background-color,transform] duration-200 hover:-translate-y-0.5 hover:border-white/[0.2] hover:bg-white/[0.06] sm:flex-none"
             >
-              Browse bundles
+              {copy.ctaBrowsePrograms}
             </Link>
           </div>
 
           <div className="mt-12 grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-3" style={lineIn(600)}>
-            <HeroMetric value="12" label="weeks" hint="Structured blocks with progression and checkpoints." />
-            <HeroMetric value="25" label="signals" hint="TJAI intake reads goals, schedule, equipment, and constraints." />
-            <HeroMetric value="5" label="languages" hint="Training and nutrition in the language you actually use." />
+            {copy.metrics.map((metric) => (
+              <HeroMetric key={metric.label} value={metric.value} label={metric.label} hint={metric.hint} />
+            ))}
           </div>
         </div>
 
         <div className="relative hidden xl:block" style={lineIn(260)} aria-hidden>
-          <HeroCommandPanel reduce={reduce} />
+          <HeroCommandPanel reduce={reduce} copy={copy} />
         </div>
       </div>
 
@@ -287,7 +288,7 @@ export function HeroSection({
         aria-hidden
       >
         <span className="text-[10px] uppercase tracking-[0.32em]" style={{ color: TJ_PALETTE.textSubtle }}>
-          Scroll
+          {copy.scroll}
         </span>
         <ChevronDown className="tj-scroll-cue h-5 w-5 motion-reduce:animate-none" strokeWidth={1.5} style={{ color: TJ_PALETTE.textMuted }} />
       </div>

@@ -26,6 +26,16 @@ export type HomeLuxuryCopy = {
     trustLine?: string;
     /** Short gradient line under the main headline (brand punch) */
     heroGradientTagline: string;
+    liveTrainingSuffix: string;
+    fallbackBadge: string;
+    commandToday: string;
+    commandPlan: string;
+    commandLive: string;
+    commandConsistency: string;
+    commandRows: { title: string; value: string; meta: string }[];
+    signals: { model: string; modelValue: string; cycle: string; cycleValue: string; output: string; outputValue: string };
+    metrics: { value: string; label: string; hint: string }[];
+    scroll: string;
   };
   /** Free value / lead magnet section */
   leadMagnet: {
@@ -123,11 +133,29 @@ const en: HomeLuxuryCopy = {
     sub: "Elite 12-week programs, realistic nutrition systems, and TJAI that anchors to your real data — a transformation you can sustain.",
     ctaPrimary: "Start your transformation",
     ctaSecondary: "View Programs",
-    ctaBrowsePrograms: "Browse programs",
+    ctaBrowsePrograms: "Browse bundles",
     trust: ["Clear plans", "Vetted coaches", "5 languages"],
     trustLine: "Free to start · No card · 20+ flagship programs",
     ctaNote: "",
-    heroGradientTagline: "AI precision · Human intent · Measurable weeks"
+    heroGradientTagline: "AI precision · Human intent · Measurable weeks",
+    liveTrainingSuffix: "training now",
+    fallbackBadge: "Fitness operating system",
+    commandToday: "Today",
+    commandPlan: "Adaptive plan",
+    commandLive: "Live",
+    commandConsistency: "Consistency",
+    commandRows: [
+      { title: "Training block", value: "Upper strength", meta: "Week 04 / Day 02" },
+      { title: "Macro target", value: "2,420 kcal", meta: "Protein 186g" },
+      { title: "Recovery", value: "Load -8%", meta: "Auto adjusted" }
+    ],
+    signals: { model: "model", modelValue: "Adaptive split", cycle: "cycle", cycleValue: "12 weeks", output: "output", outputValue: "Plan + macros" },
+    metrics: [
+      { value: "12", label: "weeks", hint: "Structured blocks with progression and checkpoints." },
+      { value: "25", label: "signals", hint: "TJAI intake reads goals, schedule, equipment, and constraints." },
+      { value: "10", label: "languages", hint: "Training and nutrition in the language you actually use." }
+    ],
+    scroll: "Scroll"
   },
   leadMagnet: {
     badge: "Free guide",
@@ -260,7 +288,25 @@ const tr: HomeLuxuryCopy = {
     ctaBrowsePrograms: "Programları keşfet",
     trust: ["Net planlar", "Seçilmiş koçlar", "10 dil"],
     ctaNote: "Yol haritası e-postada · Hesap isteğe bağlı · Karmaşa yok",
-    heroGradientTagline: "Yapay zekâ keskinliği · İnsan seviyesinde koçluk · Ölçülebilir haftalar"
+    heroGradientTagline: "Yapay zekâ keskinliği · İnsan seviyesinde koçluk · Ölçülebilir haftalar",
+    liveTrainingSuffix: "şu anda antrenmanda",
+    fallbackBadge: "Fitness işletim sistemi",
+    commandToday: "Bugün",
+    commandPlan: "Uyarlanabilir plan",
+    commandLive: "Canlı",
+    commandConsistency: "Süreklilik",
+    commandRows: [
+      { title: "Antrenman bloğu", value: "Üst vücut güç", meta: "Hafta 04 / Gün 02" },
+      { title: "Macro hedefi", value: "2.420 kcal", meta: "Protein 186g" },
+      { title: "Toparlanma", value: "Yük -8%", meta: "Otomatik ayarlandı" }
+    ],
+    signals: { model: "model", modelValue: "Uyarlanabilir split", cycle: "döngü", cycleValue: "12 hafta", output: "çıktı", outputValue: "Plan + macros" },
+    metrics: [
+      { value: "12", label: "hafta", hint: "İlerleme ve kontrol noktaları olan yapılandırılmış bloklar." },
+      { value: "25", label: "sinyal", hint: "TJAI hedefleri, programı, ekipmanı ve sınırları okur." },
+      { value: "10", label: "dil", hint: "Antrenman ve beslenme gerçekten kullandığınız dilde." }
+    ],
+    scroll: "Kaydır"
   },
   leadMagnet: {
     badge: "Ücretsiz rehber",
@@ -375,7 +421,25 @@ const ar: HomeLuxuryCopy = {
     ctaBrowsePrograms: "البرامج",
     trust: ["خطط واضحة", "مدربون مختارون", "5 languages"],
     ctaNote: "خارطة بالبريد · الحساب اختياري · بلا فوضى",
-    heroGradientTagline: "دقة الذكاء الاصطناعي · نية بشرية · أسابيع قابلة للقياس"
+    heroGradientTagline: "دقة الذكاء الاصطناعي · نية بشرية · أسابيع قابلة للقياس",
+    liveTrainingSuffix: "يتدربون الآن",
+    fallbackBadge: "نظام تشغيل اللياقة",
+    commandToday: "اليوم",
+    commandPlan: "خطة متكيفة",
+    commandLive: "مباشر",
+    commandConsistency: "الالتزام",
+    commandRows: [
+      { title: "كتلة التدريب", value: "قوة الجزء العلوي", meta: "الأسبوع 04 / اليوم 02" },
+      { title: "هدف macros", value: "2,420 kcal", meta: "Protein 186g" },
+      { title: "الاستشفاء", value: "الحمل -8%", meta: "تم الضبط تلقائياً" }
+    ],
+    signals: { model: "النموذج", modelValue: "تقسيم متكيف", cycle: "الدورة", cycleValue: "12 أسبوعاً", output: "المخرجات", outputValue: "خطة + macros" },
+    metrics: [
+      { value: "12", label: "أسبوعاً", hint: "كتل منظمة مع تقدم ونقاط مراجعة." },
+      { value: "25", label: "إشارة", hint: "TJAI يقرأ الأهداف والجدول والمعدات والقيود." },
+      { value: "10", label: "لغات", hint: "التدريب والتغذية باللغة التي تستخدمها فعلاً." }
+    ],
+    scroll: "مرر"
   },
   leadMagnet: {
     badge: "دليل مجاني",
@@ -490,7 +554,25 @@ const es: HomeLuxuryCopy = {
     ctaBrowsePrograms: "Explorar programas",
     trust: ["Planes claros", "Coaches seleccionados", "10 idiomas"],
     ctaNote: "Guía por email · Cuenta opcional · Sin ruido",
-    heroGradientTagline: "Precisión de IA · Intención humana · Semanas medibles"
+    heroGradientTagline: "Precisión de IA · Intención humana · Semanas medibles",
+    liveTrainingSuffix: "entrenando ahora",
+    fallbackBadge: "Sistema operativo fitness",
+    commandToday: "Hoy",
+    commandPlan: "Plan adaptativo",
+    commandLive: "En vivo",
+    commandConsistency: "Constancia",
+    commandRows: [
+      { title: "Bloque de entrenamiento", value: "Fuerza superior", meta: "Semana 04 / Día 02" },
+      { title: "Objetivo de macros", value: "2,420 kcal", meta: "Protein 186g" },
+      { title: "Recuperación", value: "Carga -8%", meta: "Ajuste automático" }
+    ],
+    signals: { model: "modelo", modelValue: "Split adaptativo", cycle: "ciclo", cycleValue: "12 semanas", output: "salida", outputValue: "Plan + macros" },
+    metrics: [
+      { value: "12", label: "semanas", hint: "Bloques estructurados con progresión y puntos de control." },
+      { value: "25", label: "señales", hint: "TJAI lee objetivos, agenda, equipo y restricciones." },
+      { value: "10", label: "idiomas", hint: "Entrenamiento y nutrición en el idioma que realmente usas." }
+    ],
+    scroll: "Desplazar"
   },
   leadMagnet: {
     badge: "Guía gratis",
@@ -605,7 +687,25 @@ const fr: HomeLuxuryCopy = {
     ctaBrowsePrograms: "Parcourir les programmes",
     trust: ["Plans clairs", "Coachs sélectionnés", "10 langues"],
     ctaNote: "Feuille de route par e-mail · Compte optionnel · Sans surcharge",
-    heroGradientTagline: "Précision IA · Intention humaine · Semaines mesurables"
+    heroGradientTagline: "Précision IA · Intention humaine · Semaines mesurables",
+    liveTrainingSuffix: "s'entraînent maintenant",
+    fallbackBadge: "Système d'exploitation fitness",
+    commandToday: "Aujourd'hui",
+    commandPlan: "Plan adaptatif",
+    commandLive: "Live",
+    commandConsistency: "Régularité",
+    commandRows: [
+      { title: "Bloc training", value: "Force haut du corps", meta: "Semaine 04 / Jour 02" },
+      { title: "Objectif macros", value: "2,420 kcal", meta: "Protein 186g" },
+      { title: "Récupération", value: "Charge -8%", meta: "Ajusté automatiquement" }
+    ],
+    signals: { model: "modèle", modelValue: "Split adaptatif", cycle: "cycle", cycleValue: "12 semaines", output: "sortie", outputValue: "Plan + macros" },
+    metrics: [
+      { value: "12", label: "semaines", hint: "Blocs structurés avec progression et points de contrôle." },
+      { value: "25", label: "signaux", hint: "TJAI lit objectifs, planning, équipement et contraintes." },
+      { value: "10", label: "langues", hint: "Training et nutrition dans la langue que vous utilisez vraiment." }
+    ],
+    scroll: "Défiler"
   },
   leadMagnet: {
     badge: "Guide gratuit",
