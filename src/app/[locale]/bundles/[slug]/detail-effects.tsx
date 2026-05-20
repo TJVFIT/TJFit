@@ -332,7 +332,7 @@ export function DownloadButton({
       ref={ref}
       href={href}
       aria-label={ariaLabel}
-      className={`relative inline-flex min-h-[48px] ${full ? "w-full" : ""} items-center justify-center gap-2 overflow-hidden rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-5 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] hover:brightness-110 hover:shadow-[0_0_36px_rgba(34,211,238,0.36)] motion-safe:active:scale-[0.97] ${full ? "sm:w-auto" : ""} ${className}`}
+      className={`tj-cta-sheen relative inline-flex min-h-[48px] ${full ? "w-full" : ""} items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-5 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] hover:brightness-110 hover:shadow-[0_0_36px_rgba(34,211,238,0.36)] motion-safe:active:scale-[0.97] ${full ? "sm:w-auto" : ""} ${className}`}
       style={
         {
           "--mag-x": "0px",
@@ -399,7 +399,7 @@ export function ShareButton({
       type="button"
       onClick={handleShare}
       aria-label={ariaLabel ?? `Share ${title}`}
-      className={`inline-flex min-h-[48px] items-center justify-center gap-1.5 rounded-full border px-4 py-2.5 text-sm font-semibold transition-[border-color,color,box-shadow] motion-safe:active:scale-[0.97] ${
+      className={`tj-cta-sheen inline-flex min-h-[48px] items-center justify-center gap-1.5 rounded-full border px-4 py-2.5 text-sm font-semibold transition-[border-color,color,box-shadow] motion-safe:active:scale-[0.97] ${
         state === "idle"
           ? "border-white/15 text-bright hover:border-cyan-300/35 hover:text-cyan-100 hover:shadow-[0_0_24px_rgba(34,211,238,0.16)]"
           : "border-cyan-300/45 text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.22)]"
