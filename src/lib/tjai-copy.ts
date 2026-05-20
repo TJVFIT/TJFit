@@ -63,7 +63,18 @@ export const tjaiCopy: Record<Locale, TJAICopy> = {
         weekly: "Weekly change",
         timeToGoal: "Time to goal"
       },
-      labels: { warmup: "Warmup", cooldown: "Cooldown", duration: "Duration" }
+      labels: { warmup: "Warmup", cooldown: "Cooldown", duration: "Duration" },
+      mealPrep: {
+        title: "Your Sunday Meal Prep Plan",
+        summaryPrefix: "Prep once. Eat all week. Total time:",
+        totalTimeFallback: "~120 min",
+        equipmentPrefix: "You will need:"
+      },
+      alternatives: {
+        title: "Choose an alternative meal",
+        subtitle: "Same calories and macros as your original",
+        loading: "Loading alternatives..."
+      }
     },
     sections: SECTION_TITLES.en
   },
@@ -120,7 +131,18 @@ export const tjaiCopy: Record<Locale, TJAICopy> = {
         weekly: "Haftalik degisim",
         timeToGoal: "Hedef suresi"
       },
-      labels: { warmup: "Isinma", cooldown: "Soguma", duration: "Sure" }
+      labels: { warmup: "Isinma", cooldown: "Soguma", duration: "Sure" },
+      mealPrep: {
+        title: "Pazar meal prep planiniz",
+        summaryPrefix: "Bir kez hazirlayin. Tum hafta uygulayin. Toplam sure:",
+        totalTimeFallback: "~120 dk",
+        equipmentPrefix: "Ihtiyaciniz olacak:"
+      },
+      alternatives: {
+        title: "Alternatif ogun secin",
+        subtitle: "Orijinal ogununuzle ayni kalori ve macros",
+        loading: "Alternatifler yukleniyor..."
+      }
     },
     sections: SECTION_TITLES.tr
   },
@@ -177,7 +199,18 @@ export const tjaiCopy: Record<Locale, TJAICopy> = {
         weekly: "التغير الاسبوعي",
         timeToGoal: "الوقت للهدف"
       },
-      labels: { warmup: "الاحماء", cooldown: "التهدئة", duration: "المدة" }
+      labels: { warmup: "الاحماء", cooldown: "التهدئة", duration: "المدة" },
+      mealPrep: {
+        title: "خطة تحضير وجبات يوم الأحد",
+        summaryPrefix: "حضّر مرة واحدة. تناول طوال الأسبوع. الوقت الإجمالي:",
+        totalTimeFallback: "~120 دقيقة",
+        equipmentPrefix: "ستحتاج إلى:"
+      },
+      alternatives: {
+        title: "اختر وجبة بديلة",
+        subtitle: "بنفس السعرات وmacros مثل وجبتك الأصلية",
+        loading: "جار تحميل البدائل..."
+      }
     },
     sections: SECTION_TITLES.ar
   },
@@ -234,7 +267,18 @@ export const tjaiCopy: Record<Locale, TJAICopy> = {
         weekly: "Cambio semanal",
         timeToGoal: "Tiempo al objetivo"
       },
-      labels: { warmup: "Calentamiento", cooldown: "Enfriamiento", duration: "Duracion" }
+      labels: { warmup: "Calentamiento", cooldown: "Enfriamiento", duration: "Duracion" },
+      mealPrep: {
+        title: "Tu plan de meal prep del domingo",
+        summaryPrefix: "Prepara una vez. Come toda la semana. Tiempo total:",
+        totalTimeFallback: "~120 min",
+        equipmentPrefix: "Necesitaras:"
+      },
+      alternatives: {
+        title: "Elige una comida alternativa",
+        subtitle: "Mismas calorias y macros que tu opcion original",
+        loading: "Cargando alternativas..."
+      }
     },
     sections: SECTION_TITLES.es
   },
@@ -291,7 +335,18 @@ export const tjaiCopy: Record<Locale, TJAICopy> = {
         weekly: "Changement hebdo",
         timeToGoal: "Temps vers objectif"
       },
-      labels: { warmup: "Echauffement", cooldown: "Retour au calme", duration: "Duree" }
+      labels: { warmup: "Echauffement", cooldown: "Retour au calme", duration: "Duree" },
+      mealPrep: {
+        title: "Votre plan meal prep du dimanche",
+        summaryPrefix: "Preparez une fois. Mangez toute la semaine. Temps total :",
+        totalTimeFallback: "~120 min",
+        equipmentPrefix: "Vous aurez besoin de :"
+      },
+      alternatives: {
+        title: "Choisissez un repas alternatif",
+        subtitle: "Memes calories et macros que votre option originale",
+        loading: "Chargement des alternatives..."
+      }
     },
     sections: SECTION_TITLES.fr
   }

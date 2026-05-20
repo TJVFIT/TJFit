@@ -328,6 +328,17 @@ export type TJAICopy = {
       cooldown: string;
       duration: string;
     };
+    mealPrep: {
+      title: string;
+      summaryPrefix: string;
+      totalTimeFallback: string;
+      equipmentPrefix: string;
+    };
+    alternatives: {
+      title: string;
+      subtitle: string;
+      loading: string;
+    };
   };
   sections: string[];
 };
