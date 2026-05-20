@@ -357,13 +357,30 @@ export function TJAIShell({
             </article>
           </div>
           <div className="mt-4 flex gap-2">
-            <button className={`rounded-full px-4 py-2 text-sm ${selectedPlanMode === "moderate" ? "bg-accent text-[#09090B]" : "border border-divider text-muted"}`} onClick={() => { setPlan(comparePlans.moderate); setMetrics(compareMetrics.moderate); setSelectedPlanMode("moderate"); }}>
+            <button
+              className={`rounded-full px-4 py-2 text-sm font-semibold transition-[background-color,border-color,color,box-shadow] duration-200 ${
+                selectedPlanMode === "moderate"
+                  ? "tj-cta-sheen bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] text-[#09090B] shadow-[0_0_18px_rgba(34,211,238,0.22)]"
+                  : "border border-divider text-muted hover:border-cyan-300/40 hover:text-cyan-100"
+              }`}
+              onClick={() => { setPlan(comparePlans.moderate); setMetrics(compareMetrics.moderate); setSelectedPlanMode("moderate"); }}
+            >
               View Moderate Plan
             </button>
-            <button className={`rounded-full px-4 py-2 text-sm ${selectedPlanMode === "aggressive" ? "bg-accent-violet text-[#09090B]" : "border border-divider text-muted"}`} onClick={() => { setPlan(comparePlans.aggressive); setMetrics(compareMetrics.aggressive); setSelectedPlanMode("aggressive"); }}>
+            <button
+              className={`rounded-full px-4 py-2 text-sm font-semibold transition-[background-color,border-color,color,box-shadow] duration-200 ${
+                selectedPlanMode === "aggressive"
+                  ? "tj-cta-sheen bg-[linear-gradient(135deg,#0EA5E9,#0284C7)] text-[#09090B] shadow-[0_0_18px_rgba(14,165,233,0.28)]"
+                  : "border border-divider text-muted hover:border-cyan-300/40 hover:text-cyan-100"
+              }`}
+              onClick={() => { setPlan(comparePlans.aggressive); setMetrics(compareMetrics.aggressive); setSelectedPlanMode("aggressive"); }}
+            >
               View Aggressive Plan
             </button>
-            <button className="rounded-full border border-divider px-4 py-2 text-sm text-muted" onClick={() => setPhase("result")}>
+            <button
+              className="rounded-full border border-divider px-4 py-2 text-sm text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_14px_rgba(34,211,238,0.12)]"
+              onClick={() => setPhase("result")}
+            >
               Continue
             </button>
           </div>
