@@ -241,14 +241,14 @@ export function TJAIShell({
                 {accessCopy.moderateCta}
               </button>
             </article>
-            <article className={`rounded-xl border p-5 ${recommendAggressive ? "border-accent-violet bg-[rgba(14, 165, 233,0.04)]" : "border-divider bg-surface"}`}>
+            <article className={`rounded-xl border p-5 transition-[border-color,box-shadow] duration-200 ${recommendAggressive ? "border-cyan-300/45 bg-[rgba(14,165,233,0.05)] shadow-[0_0_28px_rgba(34,211,238,0.12)]" : "border-divider bg-surface"}`}>
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-accent-violet">{accessCopy.aggressiveTitle}</h3>
-                {recommendAggressive && <span className="rounded-full bg-accent-violet/20 px-2 py-0.5 text-[10px] font-bold text-accent-violet">RECOMMENDED</span>}
+                <h3 className="text-lg font-semibold text-cyan-50">{accessCopy.aggressiveTitle}</h3>
+                {recommendAggressive && <span className="rounded-full border border-cyan-300/40 bg-cyan-300/[0.14] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-cyan-100 shadow-[0_0_12px_rgba(34,211,238,0.22)]">RECOMMENDED</span>}
               </div>
               <p className="mt-2 text-sm text-muted">{accessCopy.aggressiveBody}</p>
               <p className="mt-2 text-xs text-faint">{aggressive.weeklyWeightChange} kg/week expected</p>
-              <button type="button" className="mt-4 w-full rounded-full border border-accent-violet px-4 py-2.5 text-sm font-semibold text-bright" onClick={() => void handleGenerate(normalizedDraft, "aggressive")}>
+              <button type="button" className="tj-cta-sheen mt-4 w-full rounded-full border border-cyan-300/45 px-4 py-2.5 text-sm font-semibold text-cyan-50 transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/70 hover:text-cyan-100 hover:shadow-[0_0_22px_rgba(34,211,238,0.18)]" onClick={() => void handleGenerate(normalizedDraft, "aggressive")}>
                 {accessCopy.aggressiveCta}
               </button>
             </article>
