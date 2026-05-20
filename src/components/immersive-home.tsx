@@ -640,7 +640,7 @@ export function ImmersiveHome({
               </Link>
               <Link
                 href={`/${locale}/bundles`}
-                className="inline-flex min-h-[56px] items-center justify-center rounded-full border border-white/20 bg-white/[0.05] px-10 py-4 text-base font-semibold text-white backdrop-blur-sm transition-[border-color,background] hover:border-white/30 hover:bg-white/[0.08]"
+                className="tj-cta-sheen inline-flex min-h-[56px] items-center justify-center rounded-full border border-white/20 bg-white/[0.05] px-10 py-4 text-base font-semibold text-white backdrop-blur-sm transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:bg-cyan-300/[0.05] hover:text-cyan-50 hover:shadow-[0_0_22px_rgba(34,211,238,0.16)]"
               >
                 Browse Bundles
               </Link>

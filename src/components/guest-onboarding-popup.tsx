@@ -64,7 +64,7 @@ export function GuestOnboardingPopup({ locale }: { locale: Locale }) {
           </button>
           <button
             onClick={chooseViewWebsite}
-            className="rounded-full border border-white/15 px-5 py-2.5 text-sm text-white hover:bg-white/5"
+            className="rounded-full border border-white/15 px-5 py-2.5 text-sm text-white transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:bg-cyan-300/[0.05] hover:text-cyan-50 hover:shadow-[0_0_16px_rgba(34,211,238,0.14)]"
           >
             {copy.viewWebsite}
           </button>

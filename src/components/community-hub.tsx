@@ -648,7 +648,7 @@ export function CommunityHub({
                 className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
                   activeTab === tab.key
                     ? "border-cyan-400/35 bg-cyan-500/10 text-white shadow-[0_0_24px_-10px_rgba(34,211,238,0.2)]"
-                    : "border-white/10 bg-white/[0.04] text-muted hover:border-white/15 hover:text-bright"
+                    : "border-white/10 bg-white/[0.04] text-muted hover:border-cyan-300/35 hover:bg-cyan-300/[0.04] hover:text-cyan-100"
                 }`}
               >
                 {tab.label}
@@ -778,7 +778,7 @@ export function CommunityHub({
                           type="button"
                           onClick={() => translateBlog(post.id)}
                           disabled={translateLoadingId === post.id}
-                          className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-bright transition hover:bg-white/10 disabled:opacity-60"
+                          className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-bright transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:bg-cyan-300/[0.05] hover:text-cyan-100 hover:shadow-[0_0_14px_rgba(34,211,238,0.12)] disabled:opacity-60"
                         >
                           {translateLoadingId === post.id ? copy.translating : copy.translate}
                         </button>
@@ -792,7 +792,7 @@ export function CommunityHub({
                                 return next;
                               })
                             }
-                            className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-bright transition hover:bg-white/10"
+                            className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-bright transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:bg-cyan-300/[0.05] hover:text-cyan-100 hover:shadow-[0_0_14px_rgba(34,211,238,0.12)]"
                           >
                             {copy.showOriginal}
                           </button>
