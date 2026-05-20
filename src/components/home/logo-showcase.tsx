@@ -32,7 +32,9 @@ export function LogoShowcase({ locale, reduce }: LogoShowcaseProps) {
           <Link
             href={`/${locale}`}
             className={cn(
-              "relative inline-block transition-opacity duration-300 hover:opacity-90",
+              "group/logoshowcase relative inline-block rounded-2xl transition-[transform,filter] duration-300 ease-out",
+              "motion-safe:hover:scale-[1.03]",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/55 focus-visible:ring-offset-4 focus-visible:ring-offset-background",
               !reduce && "tj-logo-breath"
             )}
             aria-label="TJFit home"
@@ -42,7 +44,7 @@ export function LogoShowcase({ locale, reduce }: LogoShowcaseProps) {
               alt="TJFit"
               width={420}
               height={344}
-              className="h-auto w-[min(72vw,320px)] object-contain drop-shadow-[0_0_40px_rgba(34,211,238,0.18)]"
+              className="h-auto w-[min(72vw,320px)] object-contain drop-shadow-[0_0_40px_rgba(34,211,238,0.18)] transition-[filter] duration-300 motion-safe:group-hover/logoshowcase:drop-shadow-[0_0_56px_rgba(34,211,238,0.32)]"
               sizes="320px"
             />
           </Link>
