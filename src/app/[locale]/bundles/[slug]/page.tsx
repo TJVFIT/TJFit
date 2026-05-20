@@ -154,7 +154,7 @@ export default function BundleDetailPage({
             {bundle.sampleTrainingDay.exercises.map((ex, i) => (
               <li
                 key={`${ex.name}-${i}`}
-                className="flex items-start justify-between gap-3 px-4 py-3.5 transition-colors hover:bg-white/[0.02]"
+                className="tj-list-row flex items-start justify-between gap-3 px-4 py-3.5 transition-colors hover:bg-white/[0.02]"
               >
                 <div className="flex min-w-0 items-baseline gap-3">
                   <span className="shrink-0 text-[10px] font-bold tabular-nums text-cyan-300/80">
@@ -229,7 +229,7 @@ export default function BundleDetailPage({
             {bundle.sampleMealDay.map((meal, i) => (
               <li
                 key={`${meal.meal}-${i}`}
-                className="px-4 py-4 transition-colors hover:bg-white/[0.02]"
+                className="tj-list-row px-4 py-4 transition-colors hover:bg-white/[0.02]"
               >
                 <div className="flex items-baseline justify-between gap-3">
                   <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
