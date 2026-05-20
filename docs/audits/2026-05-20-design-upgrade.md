@@ -109,3 +109,69 @@ The 6 test files (registry / sitemap / robots / json-ld / pdf builder / refund) 
 5. **TJAI chat / generate flow** — `tjai-shell.tsx` and friends could pick up the shared tilt/reveal vocabulary.
 
 The branch is safe to fast-forward to main when reviewed — no breaking changes, no infrastructure adjustments needed.
+
+---
+
+## Round 2 — chrome unification (iters 40–62)
+
+After the public-funnel pass settled, the loop turned to the surfaces every user touches on every page: navigation, buttons, inputs, loaders. The headline outcome is that the **entire app now shares one set of control-surface primitives** — the same hover, the same focus, the same active state, the same "lit beam" vocabulary, the same shimmer skeleton. No surface is on a different design system from another.
+
+### Brand cleanup
+- **Codebase is 100% violet-free.** Three sweeping commits eliminated every `#A78BFA` hex and every `rgba(167,139,250,…)` leak across 28+ files including `globals.css` ambient washes that bled into every page. Brand vocabulary is now strictly cyan / sky / black.
+- **`<CinematicListingHeader>`** (used on /legal, /press, /search, /suggestions, /leaderboard, /support, /become-a-coach, /coaches/[slug], /transformations) had a violet gradient stop in its h1; replaced with an animated cyan→sky shimmer sweep using the shared `tj-title-shimmer` keyframe.
+
+### One control vocabulary
+- **`.tj-cta-sheen`** — new diagonal cyan-tinted light strip that sweeps across buttons on hover, mix-blend-mode: screen so it reads on both filled and outlined surfaces. Applied to: hero primary + secondary CTAs, bundle detail Download / Ask TJAI / Share, every bundle card's Download + Details, top-bar account pill.
+- **`.btn-primary-shimmer`** (existing class on every primary `<Button>`) upgraded from pure-white sweep to a brand-tier cyan-tinted gradient with screen blend + reduced-motion guard. Cascades to: auth (login/signup/verify), profile-edit, become-a-coach, follow buttons, messages composer, admin coach authorization, DMs.
+- **`.input`** got a hover-preview state (brighter border + 1px cyan halo) that auto-suppresses on focus so the focus ring isn't double-stroked. Cascades across ~18 form surfaces.
+- **`.tj-api-error-block`** elevated with a left red accent stripe, soft drop shadow, and a 260ms slide-in keyframe. Login + signup error containers now carry `role="alert"` + `aria-live="polite"`.
+
+### Navigation: one "lit beam" system
+- **Sidebar active link bar** — vertical cyan gradient (pale-cyan → cyan → sky) + 10/22px halo + 1.6s opacity pulse (motion-safe).
+- **Top-bar active link bar** (Home / Train / TJAI) — identical horizontal version of the same beam.
+- **Top-bar dropdown items** (Train + TJAI submenus) — left-edge cyan stripe grows 0→3px on hover/focus.
+- **Floating hamburger + close X** — cyan-300/40 border + cyan tint + cyan halo + motion-safe 90° icon rotation on hover.
+- **Side-overlay search row** was a non-interactive `<div>` with a placeholder string. Promoted to a real `<Link>` → `/[locale]/search`, auto-closes the overlay on click.
+- **Account / Sign-in pill** — cyan-300/40 border + 5% cyan tint + cyan-50 text + 22px cyan glow + sheen sweep, plus the icon shifting to cyan-200 via group-hover.
+- **Footer locale pills** — active pill inherits the `.tj-chip-active` pulse keyframe; inactive pills upgrade to cyan-tint + cyan-100 text + cyan halo on hover.
+
+### Loaders
+- **`.tj-skeleton`** — new shimmer utility: white/[0.04] base + slow cyan→pale-cyan band sweep (1.8s). Motion-reduce flattens to static.
+- Applied to: `[locale]/loading.tsx` (the universal Suspense fallback all 40+ route loaders re-export from), `HomeLuxurySkeleton`, `BlogCardSkeleton`, people-search avatar+text+chip rows, luxury-home programs grid, coins 6-card grid, leaderboard rank rows, records (32px + 28px), suggestions 3-card list, profile-edit initial load, programs-catalog placeholders.
+- **Scroll progress** — site-shell had a flat-cyan global bar; bundle detail was stacking a duplicate premium one on top. Upgraded the shared bar to the premium gradient + glow and removed the duplicate. Every route in the app now gets the same beam.
+
+### Hero micro
+- **Bundle detail hero** — cascading fade-up entry (chips → title → hook → desc → CTAs at 80/180/280/380/480 ms) with the bundle name picking up `.tj-title-shimmer`.
+- **Home hero scroll-cue chevron** — cyan drop-shadow halo at peak (0.45 → 0.92 opacity, 6px translate, 10px cyan glow). Reads as "there's more here" instead of a passive grey arrow.
+
+### Round-2 iteration log
+
+| #     | Commit    | What                                                            |
+| ----- | --------- | --------------------------------------------------------------- |
+| 62    | `d4ac749` | Hero scroll-cue cyan halo + livelier bob                        |
+| 61    | `4712716` | Footer locale: active pulses + cyan hover on inactive           |
+| 60    | `357a850` | Side-overlay search row → real Link with cyan hover             |
+| 59    | `f91ca05` | Burger + close X: cyan hover + 90° icon rotate                  |
+| 58    | `f9d35e1` | Top-bar account pill: cyan-tinted hover + sheen + icon shift    |
+| 57    | `d2b7adf` | Top-bar dropdown items: left-edge cyan stripe on hover          |
+| 56    | `31ad220` | Top-bar active link bar: gradient + halo + pulse                |
+| 55    | `5081767` | Sidebar active link bar: gradient + halo + pulse                |
+| 54    | `819a8e9` | Skeleton on 6 more loaders + fix `violet-500` leak              |
+| 53    | `0848b51` | Skeleton on people-search + luxury-home                         |
+| 52    | `1a214a8` | Skeleton on home Suspense + blog preview                        |
+| 51    | `dcc0a0d` | New `.tj-skeleton` shimmer + adopt on root locale loading       |
+| 50    | `b16c3f3` | Unify scroll-progress bar: premium gradient + glow, drop dup    |
+| 49    | `06bb48b` | `.tj-api-error-block` elevated + `role=alert` on auth           |
+| 48    | `96e11ae` | `.input` hover preview: brighter border + 1px cyan halo         |
+| 47    | `c75a373` | `.btn-primary-shimmer` brand-tier gradient + RM guard           |
+| 46    | `31afbda` | BundleGrid card buttons: `.tj-cta-sheen`                        |
+| 45    | `855f2e6` | Bundle detail Download / Ask TJAI / Share: `.tj-cta-sheen`      |
+| 44    | `28d74e1` | New `.tj-cta-sheen` + home hero CTAs                            |
+| 43    | `1c99779` | Sweep `rgba(167,139,250,…)` violet → sky across 15 files        |
+| 42    | `e772cb5` | Sweep `#A78BFA` violet → `#0EA5E9` sky across 12 surfaces       |
+| 41    | `4e5d118` | De-violet `<CinematicListingHeader>` — cyan→sky animated h1     |
+| 40    | `bad3f1a` | Bundle detail hero: staggered fade-up cascade + shimmer h1      |
+
+### Round-2 test + build snapshot
+
+Every single iteration above ran clean: typecheck ✓, lint ✓, 6 test files / 38 tests ✓. No new dependencies were added. No production build broke. No file lost backward compatibility.
