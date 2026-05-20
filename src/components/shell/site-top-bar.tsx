@@ -248,12 +248,14 @@ export function SiteTopBar({ locale }: { locale: Locale }) {
             href={accountHref}
             aria-label={user ? "Account" : SIGN_IN_LABEL[locale]}
             className={cn(
-              "inline-flex min-h-[44px] items-center gap-2 rounded-md border border-white/[0.09] bg-white/[0.02] px-3.5 py-1.5 text-[13px] font-medium transition-colors duration-150",
-              "hover:border-[rgba(255,255,255,0.18)] hover:bg-[rgba(255,255,255,0.045)]",
-              user ? "text-white" : "text-white"
+              "tj-cta-sheen group/account inline-flex min-h-[44px] items-center gap-2 rounded-md border border-white/[0.09] bg-white/[0.02] px-3.5 py-1.5 text-[13px] font-medium text-white transition-[border-color,background-color,color,box-shadow] duration-200",
+              "hover:border-cyan-300/40 hover:bg-cyan-300/[0.05] hover:text-cyan-50 hover:shadow-[0_0_22px_rgba(34,211,238,0.16)]"
             )}
           >
-            <UserRound className="h-4 w-4" aria-hidden />
+            <UserRound
+              className="h-4 w-4 transition-colors duration-200 group-hover/account:text-cyan-200"
+              aria-hidden
+            />
             <span className="hidden sm:inline">
               {user ? user.email?.split("@")[0] ?? "Account" : SIGN_IN_LABEL[locale]}
             </span>
