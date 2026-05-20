@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ShoppingBag } from "lucide-react";
 
 import { useAuth } from "@/components/auth-provider";
+import { AmbientOrbs } from "@/components/effects/ambient-orbs";
 import { isLocale } from "@/lib/i18n";
 
 const CATEGORIES = [
@@ -37,15 +38,18 @@ export default function EquipmentPage({ params }: { params: { locale: string } }
   };
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
-      <div className="text-center">
+    <div className="relative mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
+      <AmbientOrbs />
+      <div className="relative text-center">
         <div className="mx-auto mb-6 inline-flex h-16 w-16 items-center justify-center rounded-full border border-cyan-400/25 bg-cyan-500/10">
           <ShoppingBag className="h-8 w-8 text-accent" />
         </div>
         <span className="inline-flex animate-pulse rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-300">
           Launching Soon
         </span>
-        <h1 className="mt-4 text-4xl font-extrabold text-white sm:text-5xl">TJFit Equipment Store</h1>
+        <h1 className="mt-4 text-4xl font-extrabold sm:text-5xl">
+          <span className="tj-title-shimmer">TJFit Equipment Store</span>
+        </h1>
         <p className="mt-3 text-lg text-muted">Everything you need to train smarter — curated by our coaches.</p>
       </div>
 

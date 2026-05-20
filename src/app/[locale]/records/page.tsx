@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { Trophy, Dumbbell, Timer, Repeat } from "lucide-react";
+import { AmbientOrbs } from "@/components/effects/ambient-orbs";
 import { requireLocaleParam } from "@/lib/require-locale";
 import { useInView } from "@/hooks/useInView";
 
@@ -130,15 +131,18 @@ export default function RecordsPage({ params }: { params: { locale: string } }) 
   }, [copy.loadError]);
   const filtered = search.trim() ? prs.filter((p) => p.exercise.toLowerCase().includes(search.toLowerCase())) : prs;
   return (
-    <div className="mx-auto max-w-5xl space-y-8 px-4 py-16 sm:px-6 lg:px-8">
-      <div className="overflow-hidden rounded-2xl border border-divider/80 bg-gradient-to-b from-[#111215] to-[#0A0A0B] p-4 sm:p-6">
+    <div className="relative mx-auto max-w-5xl space-y-8 px-4 py-16 sm:px-6 lg:px-8">
+      <AmbientOrbs />
+      <div className="relative overflow-hidden rounded-2xl border border-divider/80 bg-gradient-to-b from-[#111215] to-[#0A0A0B] p-4 sm:p-6">
         <div className="h-36 w-full max-w-md mx-auto sm:h-40">
           <RecordsTrophyCanvas />
         </div>
       </div>
-      <div>
+      <div className="relative">
         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-dim">{copy.eyebrow}</p>
-        <h1 className="mt-3 font-display text-3xl font-semibold text-white sm:text-4xl">{copy.title}</h1>
+        <h1 className="mt-3 font-display text-3xl font-semibold sm:text-4xl">
+          <span className="tj-title-shimmer">{copy.title}</span>
+        </h1>
         <p className="mt-3 max-w-2xl text-sm leading-7 text-muted">{copy.sub}</p>
       </div>
       {!loading && prs.length > 0 && (
