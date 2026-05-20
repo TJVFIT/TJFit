@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Lightbulb, ChevronUp } from "lucide-react";
 
 import { useAuth } from "@/components/auth-provider";
+import { AmbientOrbs } from "@/components/effects/ambient-orbs";
 import { isLocale } from "@/lib/i18n";
 
 type Suggestion = {
@@ -88,12 +89,15 @@ export default function SuggestionsPage({ params }: { params: { locale: string }
   ];
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
-      <div className="flex items-start justify-between gap-4">
+    <div className="relative mx-auto max-w-4xl px-4 py-12 sm:px-6">
+      <AmbientOrbs variant="compact" />
+      <div className="relative flex items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
             <Lightbulb className="h-7 w-7 text-accent" />
-            <h1 className="text-3xl font-extrabold text-white">Share Your Ideas</h1>
+            <h1 className="text-3xl font-extrabold">
+              <span className="tj-title-shimmer">Share Your Ideas</span>
+            </h1>
           </div>
           <p className="mt-2 text-sm text-muted">Help us build the best fitness platform in the world.</p>
         </div>

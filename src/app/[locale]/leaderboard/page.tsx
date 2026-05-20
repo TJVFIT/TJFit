@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Crown, Trophy } from "lucide-react";
 import confetti from "canvas-confetti";
 
+import { AmbientOrbs } from "@/components/effects/ambient-orbs";
 import { PremiumPageShell } from "@/components/premium";
 import { useInView } from "@/hooks/useInView";
 
@@ -155,10 +156,13 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
   }, [tab, period]);
 
   return (
-    <PremiumPageShell>
-      <section className="rounded-2xl border border-divider bg-surface p-6 sm:p-8">
+    <PremiumPageShell className="relative">
+      <AmbientOrbs />
+      <section className="relative rounded-2xl border border-divider bg-surface p-6 sm:p-8">
         <p className="text-xs uppercase tracking-[0.18em] text-dim">Leaderboard</p>
-        <h1 className="mt-2 text-3xl font-extrabold text-white">TJFit Leaderboards</h1>
+        <h1 className="mt-2 text-3xl font-extrabold">
+          <span className="tj-title-shimmer">TJFit Leaderboards</span>
+        </h1>
         <p className="mt-2 text-sm text-muted">The most active members of the TJFit community.</p>
 
         <div className="relative mt-5 flex flex-wrap gap-2">
