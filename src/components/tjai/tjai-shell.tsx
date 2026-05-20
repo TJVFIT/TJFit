@@ -303,7 +303,7 @@ export function TJAIShell({
               <div className="mt-6 flex flex-col gap-3">
                 <button
                   type="button"
-                  className="w-full tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 py-2.5 text-sm font-bold text-black transition-opacity hover:opacity-90"
+                  className="w-full tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 py-2.5 text-sm font-bold text-black"
                   onClick={() => {
                     if (pendingAnswers) void handleGenerate(pendingAnswers, pendingPace);
                   }}
