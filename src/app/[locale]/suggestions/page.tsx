@@ -113,7 +113,7 @@ export default function SuggestionsPage({ params }: { params: { locale: string }
       <div className="mt-6 flex flex-wrap gap-2">
         {FILTERS.map((f) => (
           <button key={f.key} type="button" onClick={() => setFilter(f.key)}
-            className={`rounded-full border px-4 py-1.5 text-sm transition ${filter === f.key ? "border-accent bg-[rgba(34,211,238,0.1)] text-white" : "border-divider text-muted hover:text-white"}`}
+            className={`rounded-full border px-4 py-1.5 text-sm transition-[border-color,background-color,color,box-shadow] duration-200 ${filter === f.key ? "tj-chip-active border-cyan-300/45 bg-cyan-300/[0.1] text-cyan-50" : "border-divider text-muted hover:border-cyan-300/30 hover:bg-cyan-300/[0.04] hover:text-cyan-100"}`}
           >
             {f.label}
           </button>
@@ -131,9 +131,9 @@ export default function SuggestionsPage({ params }: { params: { locale: string }
           </div>
         ) : (
           items.map((item) => (
-            <article key={item.id} className="flex gap-4 rounded-2xl border border-divider bg-surface p-4">
+            <article key={item.id} className="group/sug flex gap-4 rounded-2xl border border-divider bg-surface p-4 transition-[border-color,box-shadow] duration-200 hover:border-cyan-300/25 hover:shadow-[0_0_24px_rgba(34,211,238,0.1)]">
               <button type="button" onClick={() => void vote(item.id)}
-                className="flex shrink-0 flex-col items-center gap-1 rounded-xl border border-divider bg-[#0D0F12] px-3 py-2 text-sm text-bright hover:border-accent hover:text-white"
+                className="flex shrink-0 flex-col items-center gap-1 rounded-xl border border-divider bg-[#0D0F12] px-3 py-2 text-sm text-bright transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/45 hover:bg-cyan-300/[0.06] hover:text-cyan-100 hover:shadow-[0_0_16px_rgba(34,211,238,0.18)]"
               >
                 <ChevronUp className="h-4 w-4" />
                 <span className="font-semibold">{item.vote_count}</span>
