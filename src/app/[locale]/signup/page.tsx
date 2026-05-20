@@ -366,7 +366,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
               <button
                 type="button"
                 onClick={() => setStep((s) => Math.max(1, s - 1))}
-                className="min-h-[48px] flex-1 rounded-full border border-white/15 px-5 py-3 text-sm text-bright"
+                className="min-h-[48px] flex-1 rounded-full border border-white/15 px-5 py-3 text-sm text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_18px_rgba(34,211,238,0.14)]"
               >
                 Back
               </button>
@@ -386,7 +386,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
                   setError(null);
                   setStep((s) => Math.min(4, s + 1));
                 }}
-                className="gradient-button min-h-[48px] flex-1 rounded-full px-5 py-3 text-base font-semibold text-[#09090B]"
+                className="tj-cta-sheen gradient-button min-h-[48px] flex-1 rounded-full px-5 py-3 text-base font-semibold text-[#09090B]"
               >
                 Continue
               </button>
@@ -396,7 +396,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
                 fullWidth
                 loading={loading}
                 loadingText={copy.creatingAccount}
-                className="gradient-button flex min-h-[48px] w-full touch-manipulation items-center justify-center gap-2 rounded-full px-5 py-3 text-base font-semibold text-[#09090B] transition hover:brightness-105"
+                className="tj-cta-sheen gradient-button flex min-h-[48px] w-full touch-manipulation items-center justify-center gap-2 rounded-full px-5 py-3 text-base font-semibold text-[#09090B] transition hover:brightness-105"
                 onClick={() => submitSignup()}
               >
                 Finish Setup

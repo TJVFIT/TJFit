@@ -1129,12 +1129,13 @@ strong, b {
 }
 
 .gradient-button {
-  background: linear-gradient(135deg, #22d3ee 0%, #06b6d4 52%, #94a3b8 100%);
+  background: linear-gradient(135deg, #22d3ee 0%, #06b6d4 52%, #0ea5e9 100%);
   box-shadow: 0 0 32px -10px rgba(34, 211, 238, 0.4);
+  transition: box-shadow 220ms ease, transform 200ms ease;
 }
 
 .gradient-button:hover {
-  box-shadow: 0 0 40px -8px rgba(34, 211, 238, 0.5);
+  box-shadow: 0 0 44px -8px rgba(34, 211, 238, 0.55);
 }
 
 .section-title {
