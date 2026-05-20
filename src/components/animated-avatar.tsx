@@ -11,7 +11,7 @@ type AnimatedAvatarProps = {
 
 /**
  * ME14 — Shows profile image if available, otherwise a gradient avatar
- * with the user's initial letter on a cyan→violet gradient background.
+ * with the user's initial letter on a cyan→sky gradient background.
  */
 export function AnimatedAvatar({ url, name, size = 40, className = "" }: AnimatedAvatarProps) {
   const initial = (name?.trim()?.[0] ?? "?").toUpperCase();
