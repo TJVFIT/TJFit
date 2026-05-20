@@ -35,13 +35,19 @@ export function ScrollProgressBar() {
 
   return (
     <div
-      className="pointer-events-none fixed left-0 top-0 z-[100] h-0.5 w-full lg:left-16 lg:w-[calc(100%-4rem)]"
+      className="pointer-events-none fixed left-0 top-0 z-[100] h-[2px] w-full lg:left-16 lg:w-[calc(100%-4rem)]"
       aria-hidden
     >
       <div
         ref={barRef}
-        className="tj-scroll-progress-inner h-full w-full origin-left scale-x-0 bg-accent"
-        style={{ willChange: "transform" }}
+        className="tj-scroll-progress-inner h-full w-full origin-left scale-x-0"
+        style={{
+          willChange: "transform",
+          background:
+            "linear-gradient(90deg, rgba(34,211,238,0) 0%, rgba(34,211,238,0.8) 30%, rgba(165,243,252,0.95) 60%, rgba(14,165,233,0.7) 100%)",
+          boxShadow:
+            "0 0 14px rgba(34,211,238,0.55), 0 0 36px rgba(34,211,238,0.28)"
+        }}
       />
     </div>
   );

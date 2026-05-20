@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
-import { AtAGlance, DetailHero, DownloadButton, PhaseStrip, RevealSection, ScrollProgressBar, ShareButton } from "./detail-effects";
+import { AtAGlance, DetailHero, DownloadButton, PhaseStrip, RevealSection, ShareButton } from "./detail-effects";
 import { getBundle, listBundleSlugs } from "@/lib/bundles";
 import { bundleProductJsonLd } from "@/lib/bundle-jsonld";
 import { supportedLocales } from "@/lib/i18n";
@@ -55,7 +55,6 @@ export default function BundleDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(bundleProductJsonLd(bundle, locale)) }}
       />
-      <ScrollProgressBar />
       <Link
         href={`/${locale}/bundles`}
         className="group/back inline-flex min-h-[44px] items-center gap-1.5 py-2 text-xs font-semibold text-cyan-300 transition-colors hover:text-cyan-200"
