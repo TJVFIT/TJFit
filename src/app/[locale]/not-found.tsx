@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { AmbientOrbs } from "@/components/effects/ambient-orbs";
 import { ParticleField } from "@/components/particle-field";
 import { isLocale, type Locale } from "@/lib/i18n";
 
@@ -89,38 +90,7 @@ export default function LocaleNotFound() {
   return (
     <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-background px-6 text-center">
       <ParticleField className="pointer-events-none absolute inset-0 opacity-20" />
-
-      {/* Two ambient cyan orbs behind the content — same vocabulary as /bundles */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute hidden motion-safe:block"
-        style={{
-          top: "10%",
-          left: "-15%",
-          width: "600px",
-          height: "600px",
-          borderRadius: "50%",
-          background:
-            "radial-gradient(circle, rgba(34,211,238,0.14) 0%, rgba(34,211,238,0.04) 35%, transparent 70%)",
-          filter: "blur(80px)",
-          animation: "tj-orb-drift-a 38s ease-in-out infinite"
-        }}
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute hidden motion-safe:block"
-        style={{
-          top: "30%",
-          right: "-15%",
-          width: "700px",
-          height: "700px",
-          borderRadius: "50%",
-          background:
-            "radial-gradient(circle, rgba(14,165,233,0.10) 0%, rgba(14,165,233,0.03) 40%, transparent 70%)",
-          filter: "blur(90px)",
-          animation: "tj-orb-drift-b 46s ease-in-out infinite"
-        }}
-      />
+      <AmbientOrbs />
 
       <LogoMark />
       <p

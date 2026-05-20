@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { AmbientOrbs } from "@/components/effects/ambient-orbs";
 import { Button } from "@/components/ui/Button";
 
 type Goal = "lose" | "maintain" | "gain";
@@ -43,40 +44,7 @@ export default function CalculatorPage({ params }: { params: { locale: string } 
 
   return (
     <main className="relative mx-auto max-w-4xl px-4 py-12 sm:px-6">
-      {/* Ambient cyan orbs — same vocabulary as /bundles, /404, /coming-soon, /auth */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
-      >
-        <div
-          className="absolute hidden motion-safe:block"
-          style={{
-            top: "5%",
-            left: "-15%",
-            width: "520px",
-            height: "520px",
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(34,211,238,0.12) 0%, rgba(34,211,238,0.03) 40%, transparent 70%)",
-            filter: "blur(80px)",
-            animation: "tj-orb-drift-a 38s ease-in-out infinite"
-          }}
-        />
-        <div
-          className="absolute hidden motion-safe:block"
-          style={{
-            top: "35%",
-            right: "-15%",
-            width: "600px",
-            height: "600px",
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(14,165,233,0.10) 0%, rgba(14,165,233,0.03) 45%, transparent 70%)",
-            filter: "blur(90px)",
-            animation: "tj-orb-drift-b 46s ease-in-out infinite"
-          }}
-        />
-      </div>
+      <AmbientOrbs variant="compact" />
 
       <h1 className="relative text-3xl font-extrabold sm:text-4xl">
         <span className="tj-title-shimmer">Free TDEE Calculator</span>

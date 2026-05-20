@@ -1,5 +1,6 @@
 import { BundleGrid } from "./bundle-grid";
 
+import { AmbientOrbs } from "@/components/effects/ambient-orbs";
 import { BUNDLES } from "@/lib/bundles";
 import { bundlesItemListJsonLd } from "@/lib/bundle-jsonld";
 import { supportedLocales } from "@/lib/i18n";
@@ -36,41 +37,7 @@ export default function BundlesPage({ params }: { params: { locale: string } }) 
         dangerouslySetInnerHTML={{ __html: JSON.stringify(bundlesItemListJsonLd(locale)) }}
       />
 
-      {/* Ambient cyan orb backdrop — sits behind the whole catalog, drifts on
-          a long loop, motion-safe gated. Pure CSS keyframes, no canvas. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
-      >
-        <div
-          className="absolute hidden motion-safe:block"
-          style={{
-            top: "8%",
-            left: "-10%",
-            width: "560px",
-            height: "560px",
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(34,211,238,0.16) 0%, rgba(34,211,238,0.04) 35%, transparent 70%)",
-            filter: "blur(80px)",
-            animation: "tj-orb-drift-a 38s ease-in-out infinite"
-          }}
-        />
-        <div
-          className="absolute hidden motion-safe:block"
-          style={{
-            top: "40%",
-            right: "-10%",
-            width: "640px",
-            height: "640px",
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(14,165,233,0.12) 0%, rgba(14,165,233,0.03) 40%, transparent 70%)",
-            filter: "blur(90px)",
-            animation: "tj-orb-drift-b 46s ease-in-out infinite"
-          }}
-        />
-      </div>
+      <AmbientOrbs />
       <div className="relative max-w-2xl">
         {/* Slow-drifting conic-gradient halo behind the title — pure CSS, motion-safe gated via Tailwind variant */}
         <div
