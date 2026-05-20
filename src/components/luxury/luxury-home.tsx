@@ -807,7 +807,7 @@ export function LuxuryHome({
                 <Reveal key={c.slug} delay={i * 0.04}>
                   <Link
                     href={`/${locale}/coaches/${c.slug}`}
-                    className="group block h-full w-full min-w-0 overflow-hidden rounded-xl border border-white/[0.08] bg-surface-elevated/40 shadow-[0_0_0_1px_rgba(0,0,0,0.25)_inset] transition duration-300 hover:border-cyan-400/15 hover:shadow-[0_24px_56px_-28px_rgba(0,0,0,0.65),0_0_40px_-24px_rgba(34,211,238,0.08)]"
+                    className="group block h-full w-full min-w-0 overflow-hidden rounded-xl border border-white/[0.08] bg-surface-elevated/40 shadow-[0_0_0_1px_rgba(0,0,0,0.25)_inset] transition-[border-color,box-shadow,transform] duration-300 hover:border-cyan-300/35 hover:shadow-[0_24px_56px_-20px_rgba(0,0,0,0.65),0_0_36px_rgba(34,211,238,0.14)] motion-safe:hover:-translate-y-0.5"
                     onClick={() =>
                       trackMarketingEvent("coach_profile_view", { slug: c.slug, surface: "home" })
                     }
@@ -817,7 +817,7 @@ export function LuxuryHome({
                       <span className="inline-block rounded-full border border-white/[0.08] bg-black/20 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-cyan-200/80">
                         {c.specialty}
                       </span>
-                      <p className="mt-4 font-display text-lg font-semibold text-white">{c.name}</p>
+                      <p className="mt-4 font-display text-lg font-semibold text-white transition-colors duration-200 group-hover:text-cyan-50">{c.name}</p>
                       <p className="mt-3 text-sm text-faint sm:text-xs">
                         ★{" "}
                         {typeof c.rating === "number" && Number.isFinite(c.rating) ? c.rating.toFixed(1) : "—"}
