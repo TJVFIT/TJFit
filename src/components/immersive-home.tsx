@@ -29,7 +29,7 @@ import { MotionReveal } from "@/components/home/motion-reveal";
 import { NexusChrome } from "@/components/home/nexus-chrome";
 import { ParallaxLayer } from "@/components/home/parallax-layer";
 import { PremiumFullBleedImage } from "@/components/home/premium-full-bleed-image";
-import { ProgramsDepthFx } from "@/components/home/programs-depth-fx";
+import { BundlesDepthFx } from "@/components/home/bundles-depth-fx";
 import { SectionTransition } from "@/components/home/section-transition";
 import { TjaiEngineChrome } from "@/components/home/tjai-engine-chrome";
 import { HeroTjaiBrainDeco } from "@/components/hero-tjai-brain-deco";
@@ -409,7 +409,7 @@ export function ImmersiveHome({
               />
             </div>
           </ParallaxLayer>
-          <ProgramsDepthFx reduce={reduce} />
+          <BundlesDepthFx reduce={reduce} />
         </div>
 
         <section className="relative z-10 px-6 py-24 lg:px-12 lg:py-32">
