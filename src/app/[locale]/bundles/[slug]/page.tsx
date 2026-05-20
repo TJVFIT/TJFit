@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowRight, FileDown } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
-import { DetailHero, PhaseStrip, RevealSection } from "./detail-effects";
+import { DetailHero, DownloadButton, PhaseStrip, RevealSection } from "./detail-effects";
 import { getBundle, listBundleSlugs } from "@/lib/bundles";
 import { bundleProductJsonLd } from "@/lib/bundle-jsonld";
 import { supportedLocales } from "@/lib/i18n";
@@ -97,13 +97,11 @@ export default function BundleDetailPage({
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <a
+            <DownloadButton
               href={downloadHref}
-              className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-5 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] transition-[transform,filter,box-shadow] duration-150 hover:brightness-110 hover:shadow-[0_0_32px_rgba(34,211,238,0.32)] motion-safe:active:scale-[0.97] sm:flex-none"
-            >
-              <FileDown className="h-4 w-4" aria-hidden />
-              Download PDF
-            </a>
+              ariaLabel={`Download ${bundle.name} PDF`}
+              className="flex-1 sm:flex-none"
+            />
             <Link
               href={`/${locale}/tjai`}
               className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-1.5 rounded-full border border-cyan-300/25 px-4 py-2.5 text-sm font-semibold text-cyan-200 transition-colors hover:border-cyan-300/45 hover:text-cyan-100 sm:flex-none"
@@ -274,13 +272,7 @@ export default function BundleDetailPage({
               Download the dossier and run it today.
             </p>
           </div>
-          <a
-            href={downloadHref}
-            className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-5 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] transition-[transform,filter,box-shadow] duration-150 hover:brightness-110 hover:shadow-[0_0_32px_rgba(34,211,238,0.32)] motion-safe:active:scale-[0.97] sm:w-auto"
-          >
-            <FileDown className="h-4 w-4" aria-hidden />
-            Download PDF
-          </a>
+          <DownloadButton href={downloadHref} ariaLabel="Download bundle PDF" full />
         </div>
       </RevealSection>
     </section>
