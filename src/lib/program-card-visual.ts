@@ -34,9 +34,9 @@ export function getProgramVisual(program: Pick<Program, "category" | "slug">): P
 
   if (category.includes("muscle") || category.includes("mass") || category.includes("strength") || category.includes("bulk")) {
     return {
-      gradient: "from-cyan-500/32 via-indigo-500/22 to-violet-600/28",
+      gradient: "from-cyan-500/32 via-sky-500/22 to-blue-600/28",
       glow: "shadow-[0_0_44px_-12px_rgba(99,102,241,0.38)]",
-      ring: "border-indigo-400/20",
+      ring: "border-sky-400/20",
       tag: "MUSCLE",
       accentColor: "#6366f1"
     };
@@ -64,9 +64,9 @@ export function getProgramVisual(program: Pick<Program, "category" | "slug">): P
 
   // Default: performance / general
   return {
-    gradient: "from-violet-500/28 via-indigo-500/20 to-cyan-500/24",
+    gradient: "from-sky-500/28 via-blue-500/20 to-cyan-500/24",
     glow: "shadow-[0_0_44px_-12px_rgba(14, 165, 233,0.30)]",
-    ring: "border-violet-400/15",
+    ring: "border-sky-400/15",
     tag: "PERFORMANCE",
     accentColor: "#a78bfa"
   };

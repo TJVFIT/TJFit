@@ -81,7 +81,7 @@ export function AdminBlogPanel() {
               <button type="button" onClick={() => void moderate(post.id, "reject")} className="rounded-full border border-red-300/35 px-3 py-1 text-xs text-red-200">
                 Reject
               </button>
-              <button type="button" onClick={() => void moderate(post.id, "feature")} className="rounded-full border border-violet-300/35 px-3 py-1 text-xs text-violet-200">
+              <button type="button" onClick={() => void moderate(post.id, "feature")} className="rounded-full border border-sky-300/40 px-3 py-1 text-xs text-sky-200">
                 Feature
               </button>
             </div>

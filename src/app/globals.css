@@ -1364,12 +1364,12 @@ strong, b {
 
 @media (prefers-reduced-motion: reduce) {
   .tj-hero-orb-cyan,
-  .tj-hero-orb-violet {
+  .tj-hero-orb-sky {
     animation: none !important;
   }
 }
 
-.tj-hero-orb-violet {
+.tj-hero-orb-sky {
   width: 500px;
   height: 500px;
   max-width: 120vw;
@@ -1379,7 +1379,7 @@ strong, b {
   will-change: transform;
 }
 
-.tj-hero-orb-violet--float {
+.tj-hero-orb-sky--float {
   animation: tj-float-slow-rtl 15s ease-in-out infinite reverse;
 }
 

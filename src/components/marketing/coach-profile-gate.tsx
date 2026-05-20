@@ -23,7 +23,7 @@ export function CoachProfileGate({
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
       <div className="overflow-hidden rounded-[32px] border border-white/[0.1] bg-gradient-to-b from-white/[0.06] to-white/[0.02] shadow-[0_32px_80px_-40px_rgba(0,0,0,0.85)]">
-        <div className="aspect-[21/9] bg-gradient-to-br from-cyan-500/15 via-zinc-900/50 to-violet-600/10" aria-hidden />
+        <div className="aspect-[21/9] bg-gradient-to-br from-cyan-500/15 via-zinc-900/50 to-sky-600/12" aria-hidden />
         <div className="px-8 py-10 sm:px-12 sm:py-12">
           <span className="lux-badge inline-flex">{copy.badge}</span>
           <h1 className="mt-8 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">{copy.title}</h1>

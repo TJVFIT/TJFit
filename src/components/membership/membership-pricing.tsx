@@ -219,7 +219,7 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
         >
           {/* Animated conic border */}
           <div className="pointer-events-none absolute inset-0 rounded-2xl" style={{ padding: "1px", background: "conic-gradient(from var(--apex-angle, 0deg), #0EA5E9, #22D3EE, #0EA5E9)", WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", maskComposite: "exclude" }} aria-hidden />
-          <div className="mb-3 inline-flex rounded-full border border-violet-400/30 bg-violet-400/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-violet-300">
+          <div className="mb-3 inline-flex rounded-full border border-sky-400/30 bg-sky-400/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-sky-300">
             {copy.cards.apex.badge}
           </div>
           <h3 className="text-xl font-bold text-white">{copy.cards.apex.name}</h3>
@@ -227,7 +227,7 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
             $<span className="tabular-nums">{apexPriceDisplay}</span>{" "}
             <span className="text-sm font-medium text-muted">{mode === "monthly" ? copy.perMonthSuffix : copy.perYearSuffix}</span>
           </p>
-          <Button className="mt-4 w-full bg-gradient-to-r from-violet-500 to-cyan-500 font-bold text-white hover:opacity-90" disabled={working !== null} onClick={() => void checkout("apex")}>
+          <Button className="mt-4 w-full bg-gradient-to-r from-cyan-400 to-sky-500 font-bold text-white hover:opacity-90" disabled={working !== null} onClick={() => void checkout("apex")}>
             {working === "apex" ? "..." : copy.cards.apex.cta}
           </Button>
           <ul className="mt-4 space-y-2 text-sm text-muted">

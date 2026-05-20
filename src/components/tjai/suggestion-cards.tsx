@@ -13,7 +13,7 @@ type Suggestion = {
 const KIND_META: Record<string, { label: string; color: string }> = {
   deload: { label: "Deload", color: "text-amber-300" },
   progression: { label: "Progress", color: "text-cyan-300" },
-  swap: { label: "Swap", color: "text-violet-300" },
+  swap: { label: "Swap", color: "text-sky-300" },
   volume_change: { label: "Volume", color: "text-cyan-300" },
   frequency_change: { label: "Frequency", color: "text-cyan-300" },
   recovery_week: { label: "Recovery", color: "text-amber-300" },

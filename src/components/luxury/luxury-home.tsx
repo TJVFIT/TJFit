@@ -356,7 +356,7 @@ export function LuxuryHome({
             transform: reduce ? "none" : `translateY(${parallaxY * 0.85}px)`
           }}
         >
-          <div className="tj-hero-orb-violet tj-hero-orb-violet--float" aria-hidden />
+          <div className="tj-hero-orb-sky tj-hero-orb-sky--float" aria-hidden />
         </div>
         <div
           className="pointer-events-none absolute inset-0 z-[3] bg-[radial-gradient(ellipse_72%_58%_at_50%_42%,transparent_0%,rgba(9,9,11,0.45)_58%,#09090B_100%)]"
@@ -787,7 +787,7 @@ export function LuxuryHome({
                     aria-disabled="true"
                     aria-label={`${copy.coaches.applyComingSoonBadge}: ${copy.coaches.cta}`}
                   >
-                    <span className="rounded border border-violet-400/25 bg-violet-400/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-violet-200/90">
+                    <span className="rounded border border-sky-400/30 bg-sky-400/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-sky-200/90">
                       {copy.coaches.applyComingSoonBadge}
                     </span>
                     <span>{copy.coaches.cta}</span>
