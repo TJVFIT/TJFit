@@ -167,7 +167,7 @@ export default function SupportPage({ params }: { params: { locale: string } }) 
           <label className="block">
             <span className="sr-only">{copy.message}</span>
             <textarea
-              className="min-h-[120px] w-full rounded-xl border border-divider bg-surface p-3 text-sm text-white outline-none placeholder:text-dim focus:border-accent"
+              className="min-h-[120px] w-full rounded-xl border border-divider bg-surface p-3 text-sm text-white outline-none placeholder:text-dim transition-[border-color,box-shadow] duration-200 focus:border-cyan-300/55 focus:shadow-[0_0_0_3px_rgba(34,211,238,0.18)]"
               name="message"
               placeholder={copy.message}
               aria-label={copy.message}
@@ -186,7 +186,7 @@ export default function SupportPage({ params }: { params: { locale: string } }) 
       )}
 
       <div className="mt-6 text-center">
-        <Link href={`/${locale}/legal`} className="text-sm text-faint hover:text-bright">
+        <Link href={`/${locale}/legal`} className="text-sm text-faint transition-colors duration-200 hover:text-cyan-100">
           {copy.faqLink}
         </Link>
       </div>
