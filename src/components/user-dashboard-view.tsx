@@ -116,7 +116,7 @@ function StatCard({ value, label, delay, active }: { value: number; label: strin
   const count = useCountUp(value, 1200, active);
   return (
     <div
-      className="rounded-[14px] border border-divider bg-surface p-6 text-center transition-[border-color,box-shadow,opacity,transform] duration-500 ease-out [@media(hover:hover)]:hover:border-[rgba(34,211,238,0.2)] [@media(hover:hover)]:hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)]"
+      className="group/stat rounded-[14px] border border-divider bg-surface p-6 text-center transition-[border-color,box-shadow,opacity,transform] duration-500 ease-out [@media(hover:hover)]:hover:border-cyan-300/35 [@media(hover:hover)]:hover:shadow-[0_12px_40px_rgba(0,0,0,0.35),0_0_28px_rgba(34,211,238,0.14)] [@media(hover:hover)]:motion-safe:hover:-translate-y-0.5"
       style={{
         transitionDelay: `${delay}ms`,
         opacity: active ? 1 : 0,
@@ -124,8 +124,8 @@ function StatCard({ value, label, delay, active }: { value: number; label: strin
         perspective: "800px"
       }}
     >
-      <p className="font-display text-[40px] font-extrabold leading-none text-accent stat-number-glow">{count}</p>
-      <p className="mt-2 text-[13px] font-medium uppercase tracking-widest text-dim">{label}</p>
+      <p className="font-display text-[40px] font-extrabold leading-none text-accent stat-number-glow transition-colors duration-200 group-hover/stat:text-cyan-100">{count}</p>
+      <p className="mt-2 text-[13px] font-medium uppercase tracking-widest text-dim transition-colors duration-200 group-hover/stat:text-cyan-200/80">{label}</p>
     </div>
   );
 }
