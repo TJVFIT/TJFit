@@ -219,7 +219,7 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
 
             return (
               <li key={id || uname}>
-                <article className="group overflow-hidden rounded-[24px] border border-white/[0.08] bg-gradient-to-br from-white/[0.07] via-white/[0.02] to-transparent p-4 shadow-[0_0_40px_-24px_rgba(34,211,238,0.35)] transition hover:border-cyan-400/20 sm:p-5">
+                <article className="group overflow-hidden rounded-[24px] border border-white/[0.08] bg-gradient-to-br from-white/[0.07] via-white/[0.02] to-transparent p-4 shadow-[0_0_40px_-24px_rgba(34,211,238,0.35)] transition-[border-color,box-shadow,transform] duration-300 hover:border-cyan-300/35 hover:shadow-[0_18px_44px_-16px_rgba(0,0,0,0.5),0_0_36px_rgba(34,211,238,0.14)] motion-safe:hover:-translate-y-0.5 sm:p-5">
                   <div className="flex flex-col gap-5 sm:flex-row sm:items-stretch sm:gap-6">
                     <div className="flex min-w-0 flex-1 gap-4">
                       <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-background shadow-inner ring-1 ring-white/5">
@@ -234,7 +234,7 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
 
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <h2 className="truncate font-display text-lg font-semibold text-white">{displayName}</h2>
+                          <h2 className="truncate font-display text-lg font-semibold text-white transition-colors duration-200 group-hover:text-cyan-50">{displayName}</h2>
                           {r.is_private ? (
                             <span className="shrink-0 rounded border border-sky-400/30 bg-sky-400/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-sky-200/85">
                               {s.privateProfile}
