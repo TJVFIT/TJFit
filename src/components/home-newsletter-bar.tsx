@@ -113,7 +113,9 @@ export function HomeNewsletterBar({ locale }: { locale: Locale }) {
       </span>
       <div className="relative z-[1] mx-auto flex max-w-6xl flex-col gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-16">
         <div className="min-w-0 flex-1 text-center lg:text-start">
-          <h3 className="font-display text-2xl font-extrabold tracking-tight text-white sm:text-3xl">{copy.title}</h3>
+          <h3 className="font-display text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
+            <span className="tj-title-shimmer">{copy.title}</span>
+          </h3>
           <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-muted lg:mx-0">{copy.sub}</p>
         </div>
         <form onSubmit={onSubmit} className="w-full shrink-0 lg:max-w-md">
@@ -129,7 +131,7 @@ export function HomeNewsletterBar({ locale }: { locale: Locale }) {
             <button
               type="submit"
               disabled={busy || done}
-              className="min-h-[48px] shrink-0 rounded-[10px] bg-accent px-6 text-sm font-extrabold text-[#09090B] shadow-[0_12px_40px_rgba(34,211,238,0.22)] transition-[filter,transform] duration-200 hover:brightness-110 hover:-translate-y-0.5 disabled:opacity-60 sm:px-8"
+              className="tj-cta-sheen min-h-[48px] shrink-0 rounded-[10px] bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] px-6 text-sm font-extrabold text-[#09090B] shadow-[0_12px_40px_rgba(34,211,238,0.22)] transition-[filter,transform,box-shadow] duration-200 hover:brightness-110 hover:shadow-[0_16px_48px_rgba(34,211,238,0.34)] hover:-translate-y-0.5 disabled:opacity-60 sm:px-8"
             >
               {busy ? "…" : copy.cta}
             </button>
