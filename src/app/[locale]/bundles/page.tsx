@@ -99,11 +99,29 @@ export default function BundlesPage({ params }: { params: { locale: string } }) 
 
       <BundleGrid bundles={BUNDLES} locale={locale} />
 
-      <div className="mt-14 rounded-2xl border border-divider bg-surface/40 p-6 sm:p-8">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
+      <div className="relative mt-14 overflow-hidden rounded-2xl border border-divider bg-surface/40 p-6 transition-[border-color,box-shadow] duration-300 hover:border-cyan-300/30 hover:shadow-[0_0_40px_rgba(34,211,238,0.10)] sm:p-8">
+        {/* Top hairline — drawn cyan accent that signals "this is brand-tier content" */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-px"
+          style={{
+            background:
+              "linear-gradient(90deg, transparent, rgba(34,211,238,0.45) 30%, rgba(165,243,252,0.75) 50%, rgba(34,211,238,0.45) 70%, transparent)"
+          }}
+        />
+        {/* Top-right corner glow — same vocabulary as the cards */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute right-0 top-0 h-40 w-64"
+          style={{
+            background:
+              "radial-gradient(60% 70% at 80% 20%, rgba(34,211,238,0.12), transparent 70%)"
+          }}
+        />
+        <p className="relative text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
           For coaches & affiliates
         </p>
-        <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted sm:text-base">
+        <p className="relative mt-3 max-w-3xl text-sm leading-relaxed text-muted sm:text-base">
           Each PDF dossier is generated from the same blueprint that powers
           TJAI. Print it, mail it, white-label sections in your own coaching
           workflow — your TJFit purchase grants you a personal-use license.
