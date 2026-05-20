@@ -138,7 +138,7 @@ function BundleTeaserCTA({ href }: { href: string }) {
     <a
       ref={ref}
       href={href}
-      className="group/cta relative inline-flex min-h-[52px] shrink-0 items-center justify-center gap-2 overflow-hidden rounded-full bg-accent px-7 py-3 text-sm font-bold text-background shadow-[0_4px_24px_rgba(34,211,238,0.35)] hover:shadow-[0_8px_44px_rgba(34,211,238,0.55)]"
+      className="group/cta tj-cta-sheen relative inline-flex min-h-[52px] shrink-0 items-center justify-center gap-2 rounded-full bg-accent px-7 py-3 text-sm font-bold text-background shadow-[0_4px_24px_rgba(34,211,238,0.35)] hover:shadow-[0_8px_44px_rgba(34,211,238,0.55)]"
       style={
         {
           "--mag-x": "0px",
@@ -193,7 +193,7 @@ function PlatformFeatureCard({
           span === 2 && "md:mb-0"
         )}
       >
-        <Icon className="h-[18px] w-[18px] text-muted transition-colors group-hover:text-white" strokeWidth={1.5} />
+        <Icon className="h-[18px] w-[18px] text-muted transition-colors duration-200 group-hover:text-cyan-100" strokeWidth={1.5} />
       </div>
       <div className="min-w-0 flex-1">
         <h3 className="font-display text-lg font-medium tracking-tight text-white">{title}</h3>
