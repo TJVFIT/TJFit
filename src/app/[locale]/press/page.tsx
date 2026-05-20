@@ -31,10 +31,10 @@ export default function PressPage({ params }: { params: { locale: string } }) {
             <a
               key={label}
               href={href}
-              className="inline-flex min-h-[44px] items-center justify-between rounded-xl border border-divider bg-[#0D1015] px-4 py-2 text-sm text-bright hover:border-white/20"
+              className="group/dl inline-flex min-h-[44px] items-center justify-between rounded-xl border border-divider bg-[#0D1015] px-4 py-2 text-sm text-bright transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:bg-cyan-300/[0.04] hover:text-cyan-50 hover:shadow-[0_0_18px_rgba(34,211,238,0.14)]"
             >
               <span>{label}</span>
-              <span className="text-cyan-300">Download</span>
+              <span className="text-cyan-300 transition-[transform,color] duration-200 motion-safe:group-hover/dl:translate-x-0.5 group-hover/dl:text-cyan-100">Download →</span>
             </a>
           ))}
         </div>
