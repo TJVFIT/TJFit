@@ -334,10 +334,19 @@ export function SiteSideOverlay({ locale }: { locale: Locale }) {
             </button>
           </div>
 
-          <div className="relative z-[1] mx-6 mt-6 flex items-center gap-3 rounded-md border border-white/[0.07] bg-white/[0.02] px-3.5 py-2.5 sm:mx-8">
-            <Search className="h-4 w-4 text-white/40" aria-hidden />
-            <span className="text-sm text-white/55">{SEARCH_LABEL[locale] ?? SEARCH_LABEL.en}</span>
-          </div>
+          <Link
+            href={`/${locale}/search`}
+            onClick={close}
+            className="group/sidesearch relative z-[1] mx-6 mt-6 flex items-center gap-3 rounded-md border border-white/[0.07] bg-white/[0.02] px-3.5 py-2.5 transition-[border-color,background-color,box-shadow] duration-200 hover:border-cyan-300/40 hover:bg-cyan-300/[0.04] hover:shadow-[0_0_22px_rgba(34,211,238,0.14)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 sm:mx-8"
+          >
+            <Search
+              className="h-4 w-4 text-white/40 transition-colors duration-200 group-hover/sidesearch:text-cyan-200"
+              aria-hidden
+            />
+            <span className="text-sm text-white/55 transition-colors duration-200 group-hover/sidesearch:text-cyan-50">
+              {SEARCH_LABEL[locale] ?? SEARCH_LABEL.en}
+            </span>
+          </Link>
 
           <div
             className={cn(
