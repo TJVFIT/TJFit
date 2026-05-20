@@ -51,13 +51,22 @@ export default function BundlesPage({ params }: { params: { locale: string } }) 
             animation: "tj-halo-spin 22s linear infinite"
           }}
         />
-        <p className="relative text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
+        <p
+          className="relative text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80 motion-safe:animate-[tj-fade-up_520ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
+          style={{ animationDelay: "80ms" }}
+        >
           Bundles
         </p>
-        <h1 className="relative mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+        <h1
+          className="relative mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl motion-safe:animate-[tj-fade-up_620ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
+          style={{ animationDelay: "180ms" }}
+        >
           <span className="tj-title-shimmer">12 bundles. One way to train.</span>
         </h1>
-        <p className="relative mt-4 text-sm leading-relaxed text-muted sm:text-base">
+        <p
+          className="relative mt-4 text-sm leading-relaxed text-muted sm:text-base motion-safe:animate-[tj-fade-up_620ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
+          style={{ animationDelay: "320ms" }}
+        >
           Each bundle pairs a 12-week training protocol with a matching diet
           system, delivered as a branded PDF dossier. Pick the goal — we built
           the rest.
