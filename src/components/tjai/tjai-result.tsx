@@ -401,13 +401,13 @@ export function TJAIResult({
         <div ref={dietRef} className={cn("reveal-up space-y-4", inDiet && "is-in")}>
           <h2 className="text-2xl font-bold">{copy.result.yourDiet}</h2>
           <div className="flex flex-wrap gap-2">
-            <button onClick={() => void generateGrocery()} className="rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] px-4 py-2 text-sm font-bold text-[#09090B]">
+            <button onClick={() => void generateGrocery()} className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] px-4 py-2 text-sm font-bold text-[#09090B] shadow-[0_0_18px_rgba(34,211,238,0.22)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] hover:shadow-[0_0_28px_rgba(34,211,238,0.35)]">
               {loadingGrocery ? "Building your grocery list..." : "Generate Grocery List"}
             </button>
-            <button onClick={() => void generateMealPrep()} className="rounded-full border border-divider px-4 py-2 text-sm text-muted">
+            <button onClick={() => void generateMealPrep()} className="tj-cta-sheen rounded-full border border-divider px-4 py-2 text-sm text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_18px_rgba(34,211,238,0.14)]">
               {loadingMealPrep ? "Generating..." : "Generate Meal Prep Guide"}
             </button>
-            <button onClick={() => void exportPdf()} className="rounded-full border border-divider px-4 py-2 text-sm text-muted">
+            <button onClick={() => void exportPdf()} className="tj-cta-sheen rounded-full border border-divider px-4 py-2 text-sm text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_18px_rgba(34,211,238,0.14)]">
               {loadingPdf ? "Generating PDF..." : "Download My Plan (PDF)"}
             </button>
           </div>
@@ -670,7 +670,7 @@ export function TJAIResult({
               type="button"
               onClick={handleSave}
               disabled={isSaving}
-              className="min-h-11 rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] px-5 text-sm font-bold text-[#09090B] disabled:opacity-50"
+              className="tj-cta-sheen min-h-11 rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] px-5 text-sm font-bold text-[#09090B] shadow-[0_0_18px_rgba(34,211,238,0.22)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] hover:shadow-[0_0_28px_rgba(34,211,238,0.35)] disabled:opacity-50"
             >
               {isSaving ? copy.result.saving : copy.result.saveToDashboard}
             </button>
