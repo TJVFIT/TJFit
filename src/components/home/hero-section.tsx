@@ -252,7 +252,7 @@ export function HeroSection({
             <MagneticLink
               href={`/${locale}/start`}
               onClick={() => trackMarketingEvent("hero_cta_click", { cta: "start", surface: "immersive-hero" })}
-              className="tj-premium-primary-cta inline-flex min-h-[54px] min-w-[44px] flex-1 items-center justify-center gap-2 rounded-[14px] px-7 py-3.5 text-[15px] font-extrabold transition-[transform,filter,box-shadow] duration-200 hover:brightness-110 sm:flex-none"
+              className="tj-premium-primary-cta tj-cta-sheen inline-flex min-h-[54px] min-w-[44px] flex-1 items-center justify-center gap-2 rounded-[14px] px-7 py-3.5 text-[15px] font-extrabold transition-[transform,filter,box-shadow] duration-200 hover:brightness-110 sm:flex-none"
               style={{
                 background: `linear-gradient(180deg, ${TJ_PALETTE.accentHi}, ${TJ_PALETTE.accent})`,
                 color: TJ_PALETTE.obsidian,
@@ -306,7 +306,7 @@ function HeroBundlesLink({ href, label }: { href: string; label: string }) {
     <a
       ref={ref}
       href={href}
-      className="group/hero-cta relative inline-flex min-h-[54px] min-w-[44px] flex-1 items-center justify-center gap-2 overflow-hidden rounded-[14px] border border-white/[0.12] bg-white/[0.035] px-7 py-3.5 text-[15px] font-semibold text-white hover:border-cyan-300/35 hover:bg-cyan-300/[0.05] hover:shadow-[0_0_36px_rgba(34,211,238,0.18)] sm:flex-none"
+      className="group/hero-cta tj-cta-sheen relative inline-flex min-h-[54px] min-w-[44px] flex-1 items-center justify-center gap-2 rounded-[14px] border border-white/[0.12] bg-white/[0.035] px-7 py-3.5 text-[15px] font-semibold text-white hover:border-cyan-300/35 hover:bg-cyan-300/[0.05] hover:shadow-[0_0_36px_rgba(34,211,238,0.18)] sm:flex-none"
       style={
         {
           "--mag-x": "0px",
