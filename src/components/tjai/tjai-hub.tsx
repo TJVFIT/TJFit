@@ -167,10 +167,10 @@ export function TJAIHub({ locale }: { locale: Locale }) {
                     setTabInUrl(item.key);
                   }}
                   className={cn(
-                    "inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm transition-colors duration-150",
+                    "inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm transition-[background-color,color,box-shadow] duration-200",
                     tab === item.key
-                      ? "bg-accent font-bold text-[#09090B]"
-                      : "bg-transparent text-muted hover:bg-[rgba(255,255,255,0.04)] hover:text-white"
+                      ? "bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] font-bold text-[#09090B] shadow-[0_0_18px_rgba(34,211,238,0.22)]"
+                      : "bg-transparent text-muted hover:bg-cyan-300/[0.06] hover:text-cyan-100"
                   )}
                 >
                   {(() => {
