@@ -1161,6 +1161,19 @@ strong, b {
     box-shadow 220ms var(--tj-ease-premium);
 }
 
+/* Hover-only preview: lifts the border to a brighter neutral and adds a
+   1px cyan halo so users feel the field is interactive before clicking.
+   Hides itself the moment focus engages so the real focus ring isn't
+   double-stroked. */
+@media (hover: hover) {
+  .input:hover:not(:focus-visible):not(:focus):not(:disabled) {
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow:
+      0 0 0 1px rgba(34, 211, 238, 0.08),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
+  }
+}
+
 /* Scroll reveal (use with useInView applying .is-in) */
 .reveal-fade {
   opacity: 0;
