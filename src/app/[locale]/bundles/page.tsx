@@ -1,6 +1,7 @@
 import { BundleGrid } from "./bundle-grid";
 
 import { BUNDLES } from "@/lib/bundles";
+import { bundlesItemListJsonLd } from "@/lib/bundle-jsonld";
 import { supportedLocales } from "@/lib/i18n";
 import { requireLocaleParam } from "@/lib/require-locale";
 import { getSiteUrl } from "@/lib/site-url";
@@ -23,23 +24,6 @@ export function generateMetadata({ params }: { params: { locale: string } }) {
       url,
       type: "website"
     }
-  };
-}
-
-function bundlesItemListJsonLd(locale: string) {
-  const site = getSiteUrl();
-  return {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    name: "TJFit Program Bundles",
-    itemListOrder: "https://schema.org/ItemListOrderAscending",
-    numberOfItems: BUNDLES.length,
-    itemListElement: BUNDLES.map((b, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      url: `${site}/${locale}/bundles/${b.slug}`,
-      name: b.name
-    }))
   };
 }
 

@@ -2,7 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, FileDown } from "lucide-react";
 
-import { getBundle, listBundleSlugs, type Bundle } from "@/lib/bundles";
+import { getBundle, listBundleSlugs } from "@/lib/bundles";
+import { bundleProductJsonLd } from "@/lib/bundle-jsonld";
 import { supportedLocales } from "@/lib/i18n";
 import { requireLocaleParam } from "@/lib/require-locale";
 import { getSiteUrl } from "@/lib/site-url";
@@ -34,27 +35,6 @@ export function generateMetadata({ params }: { params: { locale: string; slug: s
   };
 }
 
-function bundleJsonLd(bundle: Bundle, locale: string) {
-  const url = `${getSiteUrl()}/${locale}/bundles/${bundle.slug}`;
-  const image = `${getSiteUrl()}${bundle.heroImage}`;
-  return {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: bundle.name,
-    description: bundle.description,
-    image,
-    url,
-    brand: { "@type": "Brand", name: "TJFit" },
-    category: bundle.goalLabel,
-    offers: {
-      "@type": "Offer",
-      url,
-      priceCurrency: "USD",
-      price: "0.00",
-      availability: "https://schema.org/InStock"
-    }
-  };
-}
 
 export default function BundleDetailPage({
   params
@@ -72,7 +52,7 @@ export default function BundleDetailPage({
     <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(bundleJsonLd(bundle, locale)) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(bundleProductJsonLd(bundle, locale)) }}
       />
       <Link
         href={`/${locale}/bundles`}
