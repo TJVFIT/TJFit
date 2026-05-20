@@ -55,9 +55,9 @@ export default function EquipmentPage({ params }: { params: { locale: string } }
 
       <div className="mt-12 grid gap-6 sm:grid-cols-2">
         {CATEGORIES.map((cat) => (
-          <article key={cat.title} className="rounded-2xl border border-divider bg-surface p-6">
+          <article key={cat.title} className="group/cat rounded-2xl border border-divider bg-surface p-6 transition-[border-color,box-shadow,transform] duration-300 hover:border-cyan-300/35 hover:shadow-[0_20px_44px_-16px_rgba(0,0,0,0.5),0_0_28px_rgba(34,211,238,0.12)] motion-safe:hover:-translate-y-0.5">
             <p className="text-3xl">{cat.icon}</p>
-            <h3 className="mt-3 text-lg font-semibold text-white">{cat.title}</h3>
+            <h3 className="mt-3 text-lg font-semibold text-white transition-colors duration-200 group-hover/cat:text-cyan-50">{cat.title}</h3>
             <p className="mt-2 text-sm leading-[1.7] text-muted">{cat.desc}</p>
           </article>
         ))}
