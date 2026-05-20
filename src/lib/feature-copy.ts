@@ -14,6 +14,7 @@ type ProgressCopy = {
   bodyFatPlaceholder: string;
   exercisePlaceholder: string;
   milestonePlaceholder: string;
+  milestoneTargetPlaceholder: string;
   done: string;
 };
 
@@ -71,6 +72,7 @@ const progressCopy: Record<Locale, ProgressCopy> = {
     bodyFatPlaceholder: "Body fat (%)",
     exercisePlaceholder: "Exercise",
     milestonePlaceholder: "Milestone",
+    milestoneTargetPlaceholder: 'Target (e.g. "Bench 100kg")',
     done: "Done"
   },
   tr: {
@@ -87,6 +89,7 @@ const progressCopy: Record<Locale, ProgressCopy> = {
     bodyFatPlaceholder: "Yag orani (%)",
     exercisePlaceholder: "Egzersiz",
     milestonePlaceholder: "Hedef",
+    milestoneTargetPlaceholder: 'Hedef degeri (orn. "Bench 100kg")',
     done: "Tamamlandi"
   },
   ar: {
@@ -103,6 +106,7 @@ const progressCopy: Record<Locale, ProgressCopy> = {
     bodyFatPlaceholder: "نسبة الدهون (%)",
     exercisePlaceholder: "التمرين",
     milestonePlaceholder: "الهدف",
+    milestoneTargetPlaceholder: 'القيمة المستهدفة (مثال: "Bench 100kg")',
     done: "تم"
   },
   es: {
@@ -119,6 +123,7 @@ const progressCopy: Record<Locale, ProgressCopy> = {
     bodyFatPlaceholder: "Grasa corporal (%)",
     exercisePlaceholder: "Ejercicio",
     milestonePlaceholder: "Meta",
+    milestoneTargetPlaceholder: 'Objetivo medible (ej. "Bench 100kg")',
     done: "Hecho"
   },
   fr: {
@@ -135,6 +140,7 @@ const progressCopy: Record<Locale, ProgressCopy> = {
     bodyFatPlaceholder: "Graisse corporelle (%)",
     exercisePlaceholder: "Exercice",
     milestonePlaceholder: "Objectif",
+    milestoneTargetPlaceholder: 'Cible mesuree (ex. "Bench 100kg")',
     done: "Termine"
   }
 };
