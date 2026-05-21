@@ -48,6 +48,8 @@ const COPY = {
     newChat: "New Chat",
     fallbackConversation: "New chat",
     chatFailed: "I could not respond right now. Please try again.",
+    errorGeneric: "TJAI is having trouble. Please try again.",
+    errorTimeout: "TJAI request timed out. Please try again.",
     voiceUnsupported: "Voice not supported in this browser",
     voiceInput: "Voice input",
     voiceUnsupportedInline: "Voice input is not supported in this browser.",
@@ -60,7 +62,74 @@ const COPY = {
     trialUsed: "You've reached your TJAI chat preview limit",
     trialSub: "Upgrade to Pro or Apex for unlimited coaching conversations.",
     upgrade: "Upgrade membership",
-    close: "Close"
+    close: "Close",
+    starter: "Starter",
+    copyLabel: "Copy",
+    refine: "Refine",
+    tryLabel: "Try",
+    followUps: {
+      simplify: "Simplify",
+      deeper: "More detail",
+      nextStep: "Next step",
+      protein: "Protein",
+      timeCrunch: "35 min",
+      deload: "Deload"
+    },
+    quickPrompts: [
+      "Swap chicken for fish",
+      "Deload this week",
+      "Cut 200 kcal",
+      "Add a 20-min finisher"
+    ],
+    composerEmptyHint: "Or type any fitness question below after choosing a starter."
+  },
+  tr: {
+    suggested: [
+      "Planımı açıkla",
+      "Antrenmandan önce ne yenir",
+      "Bir antrenmanı kaçırdım",
+      "Bir öğünü değiştir",
+      "Diz ağrısı — güvenli seçenekler",
+      "Plateau'yu kır"
+    ],
+    newChat: "Yeni sohbet",
+    fallbackConversation: "Yeni sohbet",
+    chatFailed: "Şu anda yanıt veremedim. Lütfen tekrar dene.",
+    errorGeneric: "TJAI'de bir sorun var. Lütfen tekrar dene.",
+    errorTimeout: "TJAI isteği zaman aşımına uğradı. Lütfen tekrar dene.",
+    voiceUnsupported: "Bu tarayıcıda sesli giriş desteklenmiyor",
+    voiceInput: "Sesli giriş",
+    voiceUnsupportedInline: "Bu tarayıcıda sesli giriş desteklenmiyor.",
+    askPlaceholder: "TJAI'ye sor...",
+    listening: "Dinleniyor...",
+    voice: "Ses",
+    coreRemaining: "mesaj kaldı",
+    proUnlocked: "Sınırsız TJAI sohbeti",
+    apexUnlimited: "Sınırsız sohbet",
+    trialUsed: "TJAI sohbet önizleme sınırına ulaştın",
+    trialSub: "Sınırsız koçluk sohbetleri için Pro veya Apex'e yükselt.",
+    upgrade: "Üyeliği yükselt",
+    close: "Kapat",
+    starter: "Başlangıç",
+    copyLabel: "Kopyala",
+    refine: "Netleştir",
+    tryLabel: "Dene",
+    followUps: {
+      simplify: "Sadeleştir",
+      deeper: "Daha fazla detay",
+      nextStep: "Sonraki adım",
+      protein: "Protein",
+      timeCrunch: "35 dk",
+      deload: "Deload"
+    },
+    quickPrompts: [
+      "Tavuğu balıkla değiştir",
+      "Bu hafta deload yap",
+      "200 kcal azalt",
+      "20 dakikalık bitirici ekle"
+    ],
+    composerEmptyHint:
+      "Veya bir başlangıç seçtikten sonra aşağıya herhangi bir fitness sorusu yaz."
   },
   ar: {
     suggested: [
@@ -68,12 +137,14 @@ const COPY = {
       "ماذا آكل قبل التمرين",
       "فاتتني حصة تدريب",
       "بدّل وجبة",
-      "ألم في الركبة",
+      "ألم في الركبة — خيارات آمنة",
       "تجاوز الثبات"
     ],
     newChat: "محادثة جديدة",
     fallbackConversation: "محادثة جديدة",
     chatFailed: "تعذر الرد الآن. حاول مرة أخرى.",
+    errorGeneric: "يواجه TJAI مشكلة. حاول مرة أخرى.",
+    errorTimeout: "انتهت مهلة طلب TJAI. حاول مرة أخرى.",
     voiceUnsupported: "الإدخال الصوتي غير مدعوم في هذا المتصفح",
     voiceInput: "إدخال صوتي",
     voiceUnsupportedInline: "الإدخال الصوتي غير مدعوم في هذا المتصفح.",
@@ -84,9 +155,125 @@ const COPY = {
     proUnlocked: "دردشة TJAI غير محدودة",
     apexUnlimited: "دردشة غير محدودة",
     trialUsed: "لقد وصلت إلى حد معاينة دردشة TJAI",
-    trialSub: "قم بالترقية إلى Pro أو Apex لمحادثات TJAI غير المحدودة.",
+    trialSub: "قم بالترقية إلى Pro أو Apex لمحادثات تدريب غير محدودة.",
     upgrade: "ترقية العضوية",
-    close: "إغلاق"
+    close: "إغلاق",
+    starter: "بداية",
+    copyLabel: "نسخ",
+    refine: "حسّن",
+    tryLabel: "جرّب",
+    followUps: {
+      simplify: "بسّط",
+      deeper: "تفاصيل أكثر",
+      nextStep: "الخطوة التالية",
+      protein: "بروتين",
+      timeCrunch: "35 دقيقة",
+      deload: "تخفيف الحمل"
+    },
+    quickPrompts: [
+      "بدّل الدجاج بالسمك",
+      "خفّف الحمل هذا الأسبوع",
+      "قلّل 200 سعرة",
+      "أضف تمريناً ختامياً 20 دقيقة"
+    ],
+    composerEmptyHint: "أو اكتب أي سؤال عن اللياقة أدناه بعد اختيار بداية."
+  },
+  es: {
+    suggested: [
+      "Explica mi plan",
+      "Qué comer antes de entrenar",
+      "Me perdí un entrenamiento",
+      "Cambiar una comida",
+      "Dolor de rodilla — opciones seguras",
+      "Romper un estancamiento"
+    ],
+    newChat: "Nuevo chat",
+    fallbackConversation: "Nuevo chat",
+    chatFailed: "No pude responder ahora mismo. Inténtalo de nuevo.",
+    errorGeneric: "TJAI tiene problemas. Inténtalo de nuevo.",
+    errorTimeout: "La solicitud de TJAI agotó el tiempo. Inténtalo de nuevo.",
+    voiceUnsupported: "La entrada de voz no es compatible con este navegador",
+    voiceInput: "Entrada de voz",
+    voiceUnsupportedInline: "La entrada de voz no es compatible con este navegador.",
+    askPlaceholder: "Pregunta a TJAI...",
+    listening: "Escuchando...",
+    voice: "Voz",
+    coreRemaining: "mensajes restantes",
+    proUnlocked: "Chat TJAI ilimitado",
+    apexUnlimited: "Chat ilimitado",
+    trialUsed: "Has alcanzado el límite de vista previa del chat TJAI",
+    trialSub: "Mejora a Pro o Apex para conversaciones de coaching ilimitadas.",
+    upgrade: "Mejorar membresía",
+    close: "Cerrar",
+    starter: "Inicio",
+    copyLabel: "Copiar",
+    refine: "Refinar",
+    tryLabel: "Prueba",
+    followUps: {
+      simplify: "Simplificar",
+      deeper: "Más detalle",
+      nextStep: "Siguiente paso",
+      protein: "Proteína",
+      timeCrunch: "35 min",
+      deload: "Deload"
+    },
+    quickPrompts: [
+      "Cambia pollo por pescado",
+      "Haz deload esta semana",
+      "Recorta 200 kcal",
+      "Añade un finisher de 20 min"
+    ],
+    composerEmptyHint:
+      "O escribe cualquier pregunta de fitness abajo tras elegir un inicio."
+  },
+  fr: {
+    suggested: [
+      "Explique mon plan",
+      "Quoi manger avant l'entraînement",
+      "J'ai manqué une séance",
+      "Remplacer un repas",
+      "Douleur au genou — options sûres",
+      "Casser un plateau"
+    ],
+    newChat: "Nouveau chat",
+    fallbackConversation: "Nouveau chat",
+    chatFailed: "Je n'ai pas pu répondre pour l'instant. Réessaie.",
+    errorGeneric: "TJAI rencontre un problème. Réessaie.",
+    errorTimeout: "La requête TJAI a expiré. Réessaie.",
+    voiceUnsupported: "La saisie vocale n'est pas prise en charge dans ce navigateur",
+    voiceInput: "Saisie vocale",
+    voiceUnsupportedInline:
+      "La saisie vocale n'est pas prise en charge dans ce navigateur.",
+    askPlaceholder: "Demande à TJAI...",
+    listening: "Écoute...",
+    voice: "Voix",
+    coreRemaining: "messages restants",
+    proUnlocked: "Chat TJAI illimité",
+    apexUnlimited: "Chat illimité",
+    trialUsed: "Tu as atteint la limite d'aperçu du chat TJAI",
+    trialSub: "Passe à Pro ou Apex pour des conversations de coaching illimitées.",
+    upgrade: "Améliorer l'abonnement",
+    close: "Fermer",
+    starter: "Démarrage",
+    copyLabel: "Copier",
+    refine: "Affiner",
+    tryLabel: "Essaie",
+    followUps: {
+      simplify: "Simplifier",
+      deeper: "Plus de détail",
+      nextStep: "Étape suivante",
+      protein: "Protéines",
+      timeCrunch: "35 min",
+      deload: "Deload"
+    },
+    quickPrompts: [
+      "Remplace le poulet par du poisson",
+      "Fais un deload cette semaine",
+      "Réduis de 200 kcal",
+      "Ajoute un finisher de 20 min"
+    ],
+    composerEmptyHint:
+      "Ou tape n'importe quelle question fitness ci-dessous après avoir choisi un démarrage."
   }
 } as const;
 
@@ -109,7 +296,7 @@ function voiceLang(locale: Locale) {
 
 export function TJAIChatStandalone({ locale }: { locale: Locale }) {
   const routingLocale = useRoutingLocale(locale);
-  const t = locale === "ar" ? COPY.ar : COPY.en;
+  const t = COPY[locale] ?? COPY.en;
   const island = useDynamicIsland();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -240,7 +427,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
           return;
         }
         if (!response.ok) {
-          setApiError("TJAI is having trouble. Please try again.");
+          setApiError(t.errorGeneric);
           throw new Error(String(data?.error ?? "Chat request failed"));
         }
         if (typeof data?.conversationId === "string" && data.conversationId) {
@@ -292,7 +479,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
       }
     } catch (error) {
       if (error instanceof Error && error.name === "AbortError") {
-        setApiError("TJAI request timed out. Please try again.");
+        setApiError(t.errorTimeout);
       }
       setMessages((prev) => prev.map((m) => (m.id === assistantId ? { ...m, content: t.chatFailed } : m)));
     } finally {
@@ -386,7 +573,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
                   onClick={() => void sendMessage(STARTER_PROMPTS[index] ?? item)}
                   className="rounded-xl border border-white/[0.06] bg-surface/90 px-4 py-3 text-start text-sm text-white/95 shadow-sm transition-all duration-200 hover:border-accent/35 hover:bg-[rgba(34,211,238,0.05)] active:scale-[0.99]"
                 >
-                  <span className="block text-[11px] font-semibold uppercase tracking-[0.12em] text-dim">Starter</span>
+                  <span className="block text-[11px] font-semibold uppercase tracking-[0.12em] text-dim">{t.starter}</span>
                   <span className="mt-1 block font-medium text-bright">{item}</span>
                 </button>
               ))}
@@ -409,7 +596,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
                   onClick={() => navigator.clipboard.writeText(message.content)}
                   className="absolute end-2 top-2 hidden rounded-md border border-white/[0.08] bg-[#0E1014]/90 px-1.5 py-0.5 text-[10px] text-muted backdrop-blur group-hover:inline-flex"
                 >
-                  Copy
+                  {t.copyLabel}
                 </button>
               ) : null}
               {message.role === "assistant" ? (
@@ -437,37 +624,25 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
           {apiError ? <p className="mb-2 text-xs text-red-300">{apiError}</p> : null}
           {showFollowUps ? (
             <div className="mb-3 flex flex-wrap gap-2">
-              <span className="w-full text-[10px] font-semibold uppercase tracking-[0.14em] text-dim">Refine</span>
+              <span className="w-full text-[10px] font-semibold uppercase tracking-[0.14em] text-dim">{t.refine}</span>
               {(
-                [
-                  { k: "simplify", label: "Simplify" },
-                  { k: "deeper", label: "More detail" },
-                  { k: "nextStep", label: "Next step" },
-                  { k: "protein", label: "Protein" },
-                  { k: "timeCrunch", label: "35 min" },
-                  { k: "deload", label: "Deload" }
-                ] as const
-              ).map(({ k, label }) => (
+                ["simplify", "deeper", "nextStep", "protein", "timeCrunch", "deload"] as const
+              ).map((k) => (
                 <button
                   key={k}
                   type="button"
                   onClick={() => void sendMessage(COACH_FOLLOW_UP_PROMPTS[k])}
                   className="rounded-full border border-white/[0.08] bg-[#15171c] px-3 py-1.5 text-xs font-medium text-bright transition-all hover:border-accent/40 hover:text-white active:scale-[0.98]"
                 >
-                  {label}
+                  {t.followUps[k]}
                 </button>
               ))}
             </div>
           ) : null}
           {messages.length > 0 && !showFollowUps ? (
             <div className="mb-3 flex flex-wrap gap-2">
-              <span className="w-full text-[10px] font-semibold uppercase tracking-[0.14em] text-dim">Try</span>
-              {[
-                "Swap chicken for fish",
-                "Deload this week",
-                "Cut 200 kcal",
-                "Add a 20-min finisher"
-              ].map((q) => (
+              <span className="w-full text-[10px] font-semibold uppercase tracking-[0.14em] text-dim">{t.tryLabel}</span>
+              {t.quickPrompts.map((q) => (
                 <button
                   key={q}
                   type="button"
@@ -514,7 +689,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
             </button>
           </form>
           ) : (
-            <p className="text-xs text-faint">Or type any fitness question below after choosing a starter.</p>
+            <p className="text-xs text-faint">{t.composerEmptyHint}</p>
           )}
           <p className="mt-2 text-xs text-faint">{tier === "core" ? `${remaining} ${t.coreRemaining}` : tier === "pro" ? t.proUnlocked : t.apexUnlimited}</p>
         </div>

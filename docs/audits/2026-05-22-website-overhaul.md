@@ -35,13 +35,13 @@ iteration — not micro-polish.
   `tjai-chat-copy.ts` with followUps chips, composer hint, fallback/connection/
   api-error messages, upgrade-prompt copy, and trial-counter functions across
   all 5 locales. Build green, live on main.
+- **Iter 4** — finished `tjai-chat-standalone.tsx` i18n. Its `COPY` only had
+  en+ar; added tr/es/fr (full, accented) + new keys (starter, copyLabel,
+  refine, tryLabel, followUps, quickPrompts, composerEmptyHint, errorGeneric,
+  errorTimeout). Fixed the `t` selector to `COPY[locale]`. Build green, live.
 
 ## QUEUE (next up)
 
-- `tjai-chat-standalone.tsx` — its `COPY` object only has `en` + `ar`
-  (`const t = locale === "ar" ? COPY.ar : COPY.en`), so tr/es/fr users get
-  English. Add tr/es/fr; also lift its hardcoded "Refine"/"Try" chips +
-  quick-prompt strings.
 - Translate the bundle *content* catalogue in `src/lib/bundles.ts` (12 bundles:
   name, hook, goalLabel, descriptions, phases, nutrition, sample days) — large,
   may span several iterations.
