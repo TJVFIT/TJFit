@@ -43,7 +43,7 @@ export default function BundlesPage({ params }: { params: { locale: string } }) 
         {/* Slow-drifting conic-gradient halo behind the title — pure CSS, motion-safe gated via Tailwind variant */}
         <div
           aria-hidden
-          className="pointer-events-none absolute -left-24 -top-24 hidden h-72 w-72 motion-safe:block"
+          className="pointer-events-none absolute -left-24 -top-24 hidden h-72 w-72 motion-safe:block rtl:left-auto rtl:-right-24"
           style={{
             background:
               "conic-gradient(from 0deg, rgba(34,211,238,0.18), rgba(14,165,233,0.04) 30%, transparent 60%, rgba(34,211,238,0.14) 100%)",
@@ -87,7 +87,7 @@ export default function BundlesPage({ params }: { params: { locale: string } }) 
         {/* Top-right corner glow — same vocabulary as the cards */}
         <div
           aria-hidden
-          className="pointer-events-none absolute right-0 top-0 h-40 w-64"
+          className="pointer-events-none absolute right-0 top-0 h-40 w-64 rtl:right-auto rtl:left-0"
           style={{
             background:
               "radial-gradient(60% 70% at 80% 20%, rgba(34,211,238,0.12), transparent 70%)"

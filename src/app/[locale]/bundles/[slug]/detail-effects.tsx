@@ -71,7 +71,7 @@ export function PhaseStrip({
       {/* Hairline connector — drawn left→right via scaleX once revealed */}
       <div
         aria-hidden
-        className="pointer-events-none absolute left-0 right-0 top-1/2 hidden h-px -translate-y-1/2 origin-left sm:block"
+        className="pointer-events-none absolute left-0 right-0 top-1/2 hidden h-px -translate-y-1/2 origin-left rtl:origin-right sm:block"
         style={{
           background:
             "linear-gradient(90deg, transparent, rgba(34,211,238,0.18) 12%, rgba(34,211,238,0.32) 50%, rgba(34,211,238,0.18) 88%, transparent)",
@@ -87,14 +87,16 @@ export function PhaseStrip({
         <div
           className="absolute top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full"
           style={{
-            left: reveal.shown ? "calc(100% - 10px)" : "0px",
+            // Logical inset so the tracer travels start→end — left→right in
+            // LTR, right→left in RTL — without needing the locale here.
+            insetInlineStart: reveal.shown ? "calc(100% - 10px)" : "0px",
             background:
               "radial-gradient(circle, rgba(165,243,252,1) 0%, rgba(34,211,238,0.9) 50%, transparent 70%)",
             boxShadow:
               "0 0 18px rgba(34,211,238,0.9), 0 0 36px rgba(34,211,238,0.5)",
             opacity: reveal.shown ? 0 : 1,
             transition: reveal.shown
-              ? "left 1400ms cubic-bezier(0.2, 1, 0.3, 1) 200ms, opacity 700ms ease-out 1500ms"
+              ? "inset-inline-start 1400ms cubic-bezier(0.2, 1, 0.3, 1) 200ms, opacity 700ms ease-out 1500ms"
               : "none"
           }}
         />

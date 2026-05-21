@@ -251,7 +251,7 @@ function BundleCard({
             >
               {copy.details}
               <ArrowRight
-                className="h-3.5 w-3.5 transition-transform motion-safe:group-hover:translate-x-0.5"
+                className="h-3.5 w-3.5 transition-transform rtl:rotate-180 motion-safe:group-hover:translate-x-0.5 rtl:motion-safe:group-hover:-translate-x-0.5"
                 aria-hidden
               />
             </Link>

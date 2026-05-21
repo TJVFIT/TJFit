@@ -63,7 +63,7 @@ export default function BundleDetailPage({
         className="group/back inline-flex min-h-[44px] items-center gap-1.5 py-2 text-xs font-semibold text-cyan-300 transition-colors hover:text-cyan-200"
       >
         <ArrowLeft
-          className="h-3.5 w-3.5 transition-transform motion-safe:group-hover/back:-translate-x-1"
+          className="h-3.5 w-3.5 transition-transform rtl:rotate-180 motion-safe:group-hover/back:-translate-x-1 rtl:motion-safe:group-hover/back:translate-x-1"
           aria-hidden
         />
         {d.backToAll}
@@ -130,7 +130,7 @@ export default function BundleDetailPage({
             >
               {d.askTjai}
               <ArrowRight
-                className="h-3.5 w-3.5 transition-transform motion-safe:group-hover/tjai:translate-x-1"
+                className="h-3.5 w-3.5 transition-transform rtl:rotate-180 motion-safe:group-hover/tjai:translate-x-1 rtl:motion-safe:group-hover/tjai:-translate-x-1"
                 aria-hidden
               />
             </Link>

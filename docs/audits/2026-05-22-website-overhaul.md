@@ -43,15 +43,21 @@ iteration — not micro-polish.
   in `detail-effects.tsx`: slides up once past the hero, tucks away near the
   footer CTA, mobile-only, motion-safe gated, localized Download label.
   Build green, live on main.
+- **Iter 6** — RTL correctness pass on the bundles experience. Fixed the
+  listing title halo + coach-box corner glow offsets, mirrored the 3
+  directional arrows (listing Details, detail back, detail Ask-TJAI) via
+  `rtl:rotate-180` + flipped hover nudges, and made the PhaseStrip connector
+  draw + tracer dot travel start→end (`rtl:origin-right` + logical
+  `insetInlineStart`). Build green, live on main.
 
 ## QUEUE (next up)
 
 - Translate the bundle *content* catalogue in `src/lib/bundles.ts` (12 bundles:
   name, hook, goalLabel, descriptions, phases, nutrition, sample days) — large,
-  may span several iterations.
-- Bundle detail page: week-by-week accordion.
-- RTL pass on `/bundles` (mirror the title halo offset + card arrow for `ar`).
+  needs a localization layer (cf. `program-localization.ts`); multi-iteration.
+- Bundle detail page: week-by-week accordion (needs week data added first).
 - Homepage hero copy + layout refresh.
+- Localize the homepage error-boundary fallback copy (`[locale]/page.tsx`).
 
 ## BACKLOG (drive-by notes, unfixed)
 
