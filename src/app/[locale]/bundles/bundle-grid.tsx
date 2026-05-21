@@ -8,6 +8,7 @@ import { useReveal, useTilt } from "@/components/effects/use-3d";
 import { useMagnetic, useMergedRef, useRipple } from "@/components/effects/use-magnetic";
 import type { Bundle, BundleGoal } from "@/lib/bundles";
 import { getBundlesCopy, type BundlesCopy } from "@/lib/bundles-copy";
+import { localizeBundleCard } from "@/lib/bundle-localization";
 
 type FilterKey = "all" | BundleGoal;
 
@@ -108,6 +109,7 @@ function BundleCard({
   const detailHref = `/${locale}/bundles/${bundle.slug}`;
   const downloadHref = `/api/bundles/download/${bundle.slug}`;
   const isFree = bundle.save.toLowerCase() === "free";
+  const card = localizeBundleCard(bundle, locale);
   const tiltRef = useTilt();
   const reveal = useReveal();
   const dlMagnetic = useMagnetic<HTMLAnchorElement>({ strength: 6, max: 8 });
@@ -184,9 +186,9 @@ function BundleCard({
           <div className="absolute inset-x-0 top-0 z-[2] flex items-start justify-between p-4">
             <span
               className="rounded-full border border-cyan-300/30 bg-black/40 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-100 backdrop-blur"
-              aria-label={copy.goalAria(bundle.goalLabel)}
+              aria-label={copy.goalAria(card.goalLabel)}
             >
-              {bundle.goalLabel}
+              {card.goalLabel}
             </span>
             <span
               className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] backdrop-blur ${
@@ -203,8 +205,8 @@ function BundleCard({
         </div>
 
         <div className="relative z-[2] flex flex-1 flex-col p-5">
-          <h2 className="text-lg font-bold leading-tight text-white">{bundle.name}</h2>
-          <p className="mt-2 text-sm leading-relaxed text-bright/85">{bundle.hook}</p>
+          <h2 className="text-lg font-bold leading-tight text-white">{card.name}</h2>
+          <p className="mt-2 text-sm leading-relaxed text-bright/85">{card.hook}</p>
 
           <dl className="mt-4 grid grid-cols-2 gap-2 text-[11px]">
             <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-2.5 py-2">
@@ -229,7 +231,7 @@ function BundleCard({
             <a
               ref={dlRef}
               href={downloadHref}
-              aria-label={copy.downloadAria(bundle.name)}
+              aria-label={copy.downloadAria(card.name)}
               className="tj-cta-sheen relative inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-4 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] hover:brightness-110 hover:shadow-[0_0_32px_rgba(34,211,238,0.32)] motion-safe:active:scale-[0.97]"
               style={
                 {
@@ -246,7 +248,7 @@ function BundleCard({
             </a>
             <Link
               href={detailHref}
-              aria-label={copy.detailsAria(bundle.name)}
+              aria-label={copy.detailsAria(card.name)}
               className="tj-cta-sheen inline-flex min-h-[44px] items-center gap-1 rounded-full border border-cyan-300/20 px-3.5 py-2.5 text-xs font-semibold text-cyan-200 transition-colors hover:border-cyan-300/40 hover:text-cyan-100"
             >
               {copy.details}

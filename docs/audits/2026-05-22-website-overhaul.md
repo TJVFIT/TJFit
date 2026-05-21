@@ -49,12 +49,18 @@ iteration — not micro-polish.
   `rtl:rotate-180` + flipped hover nudges, and made the PhaseStrip connector
   draw + tracer dot travel start→end (`rtl:origin-right` + logical
   `insetInlineStart`). Build green, live on main.
+- **Iter 7** — localized bundle card content. New `bundle-localization.ts`
+  (`localizeBundleCard`) with translated name + hook + goalLabel for all 12
+  bundles in tr/ar/es/fr; wired the grid card + detail hero + detail
+  `generateMetadata`. The /bundles listing cards are now fully localized.
+  Build green, live on main.
 
 ## QUEUE (next up)
 
-- Translate the bundle *content* catalogue in `src/lib/bundles.ts` (12 bundles:
-  name, hook, goalLabel, descriptions, phases, nutrition, sample days) — large,
-  needs a localization layer (cf. `program-localization.ts`); multi-iteration.
+- Translate the bundle *long-form* catalogue in `src/lib/bundles.ts` —
+  description, phases, nutrition, sampleTrainingDay, sampleMealDay. Extend
+  `bundle-localization.ts`; large, multi-iteration (exercise + meal names).
+- Localize programTitle + dietTitle (shown on the card + detail At-a-glance).
 - Bundle detail page: week-by-week accordion (needs week data added first).
 - Homepage hero copy + layout refresh.
 - Localize the homepage error-boundary fallback copy (`[locale]/page.tsx`).

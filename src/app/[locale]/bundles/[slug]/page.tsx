@@ -6,6 +6,7 @@ import { AtAGlance, DetailHero, DownloadButton, PhaseStrip, RevealSection, Share
 import { getBundle, listBundleSlugs } from "@/lib/bundles";
 import { bundleProductJsonLd } from "@/lib/bundle-jsonld";
 import { getBundlesCopy } from "@/lib/bundles-copy";
+import { localizeBundleCard } from "@/lib/bundle-localization";
 import { supportedLocales } from "@/lib/i18n";
 import { requireLocaleParam } from "@/lib/require-locale";
 import { getSiteUrl } from "@/lib/site-url";
@@ -19,18 +20,19 @@ export function generateMetadata({ params }: { params: { locale: string; slug: s
   if (!bundle) return { title: getBundlesCopy(params.locale).detail.metaFallbackTitle };
   const site = getSiteUrl();
   const url = `${site}/${params.locale}/bundles/${bundle.slug}`;
+  const card = localizeBundleCard(bundle, params.locale);
   const languages: Record<string, string> = {};
   for (const loc of supportedLocales) {
     languages[loc] = `${site}/${loc}/bundles/${bundle.slug}`;
   }
   languages["x-default"] = `${site}/en/bundles/${bundle.slug}`;
   return {
-    title: `${bundle.name} · TJFit`,
-    description: bundle.hook,
+    title: `${card.name} · TJFit`,
+    description: card.hook,
     alternates: { canonical: url, languages },
     openGraph: {
-      title: `${bundle.name} · TJFit`,
-      description: bundle.hook,
+      title: `${card.name} · TJFit`,
+      description: card.hook,
       url,
       type: "article"
     }
@@ -49,6 +51,7 @@ export default function BundleDetailPage({
 
   const copy = getBundlesCopy(locale);
   const d = copy.detail;
+  const card = localizeBundleCard(bundle, locale);
   const downloadHref = `/api/bundles/download/${bundle.slug}`;
   const isFree = bundle.save.toLowerCase() === "free";
 
@@ -79,9 +82,9 @@ export default function BundleDetailPage({
           >
             <span
               className="rounded-full border border-cyan-300/30 bg-cyan-300/[0.08] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-100"
-              aria-label={copy.goalAria(bundle.goalLabel)}
+              aria-label={copy.goalAria(card.goalLabel)}
             >
-              {bundle.goalLabel}
+              {card.goalLabel}
             </span>
             <span
               className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] ${
@@ -99,13 +102,13 @@ export default function BundleDetailPage({
             className="mt-4 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl motion-safe:animate-[tj-fade-up_620ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
             style={{ animationDelay: "180ms" }}
           >
-            <span className="tj-title-shimmer">{bundle.name}</span>
+            <span className="tj-title-shimmer">{card.name}</span>
           </h1>
           <p
             className="mt-4 text-base leading-relaxed text-muted sm:text-lg motion-safe:animate-[tj-fade-up_620ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
             style={{ animationDelay: "280ms" }}
           >
-            {bundle.hook}
+            {card.hook}
           </p>
           <p
             className="mt-6 text-sm leading-relaxed text-bright/85 sm:text-base motion-safe:animate-[tj-fade-up_620ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
@@ -121,7 +124,7 @@ export default function BundleDetailPage({
             <DownloadButton
               href={downloadHref}
               label={copy.download}
-              ariaLabel={copy.downloadAria(bundle.name)}
+              ariaLabel={copy.downloadAria(card.name)}
               className="flex-1 sm:flex-none"
             />
             <Link
@@ -135,8 +138,8 @@ export default function BundleDetailPage({
               />
             </Link>
             <ShareButton
-              title={bundle.name}
-              ariaLabel={d.shareAria(bundle.name)}
+              title={card.name}
+              ariaLabel={d.shareAria(card.name)}
               labels={{ idle: d.shareIdle, shared: d.shareShared, copied: d.shareCopied }}
             />
           </div>
@@ -289,10 +292,10 @@ export default function BundleDetailPage({
       </RevealSection>
 
       <StickyBuyBar
-        name={bundle.name}
+        name={card.name}
         href={downloadHref}
         label={copy.download}
-        ariaLabel={copy.downloadAria(bundle.name)}
+        ariaLabel={copy.downloadAria(card.name)}
       />
     </section>
   );
