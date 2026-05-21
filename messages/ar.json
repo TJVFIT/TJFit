@@ -44,5 +44,19 @@
     "successBanner": "Payment successful. Your premium PDF is downloading now.",
     "downloadLink": "Download your PDF →",
     "dismiss": "Dismiss"
+  },
+  "bundles": {
+    "card": {
+      "weeks": "{count} أسبوع",
+      "levels": {
+        "beginner": "مبتدئ",
+        "intermediate": "متوسط",
+        "advanced": "متقدم"
+      },
+      "locations": {
+        "gym": "النادي",
+        "home": "المنزل"
+      }
+    }
   }
 }

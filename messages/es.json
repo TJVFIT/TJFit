@@ -44,5 +44,19 @@
     "successBanner": "Payment successful. Your premium PDF is downloading now.",
     "downloadLink": "Download your PDF →",
     "dismiss": "Dismiss"
+  },
+  "bundles": {
+    "card": {
+      "weeks": "{count} semanas",
+      "levels": {
+        "beginner": "Principiante",
+        "intermediate": "Intermedio",
+        "advanced": "Avanzado"
+      },
+      "locations": {
+        "gym": "Gimnasio",
+        "home": "Casa"
+      }
+    }
   }
 }

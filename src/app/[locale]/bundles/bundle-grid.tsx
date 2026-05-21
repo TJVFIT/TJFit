@@ -7,6 +7,8 @@ import { ArrowRight, FileDown } from "lucide-react";
 import { useReveal, useTilt } from "@/components/effects/use-3d";
 import { useMagnetic, useMergedRef, useRipple } from "@/components/effects/use-magnetic";
 import type { Bundle, BundleGoal } from "@/lib/bundles";
+import type { SupportedLocale } from "@/lib/i18n";
+import { t } from "@/lib/messages";
 
 type FilterKey = "all" | BundleGoal;
 
@@ -25,7 +27,7 @@ export function BundleGrid({
   locale
 }: {
   bundles: Bundle[];
-  locale: string;
+  locale: SupportedLocale;
 }) {
   const [active, setActive] = useState<FilterKey>("all");
   const filtered = useMemo(
@@ -100,7 +102,7 @@ function BundleCard({
   index
 }: {
   bundle: Bundle;
-  locale: string;
+  locale: SupportedLocale;
   index: number;
 }) {
   const detailHref = `/${locale}/bundles/${bundle.slug}`;
@@ -204,18 +206,15 @@ function BundleCard({
           <h2 className="text-lg font-bold leading-tight text-white">{bundle.name}</h2>
           <p className="mt-2 text-sm leading-relaxed text-bright/85">{bundle.hook}</p>
 
-          <dl className="mt-4 grid grid-cols-2 gap-2 text-[11px]">
-            <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-2.5 py-2">
-              <dt className="text-faint">Duration</dt>
-              <dd className="mt-0.5 font-semibold text-white">{bundle.weeks} weeks</dd>
-            </div>
-            <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-2.5 py-2">
-              <dt className="text-faint">Sessions</dt>
-              <dd className="mt-0.5 font-semibold text-white">
-                {bundle.sessionsPerWeek}×/wk
-              </dd>
-            </div>
-          </dl>
+          <p className="mt-4 text-xs font-semibold text-cyan-100">
+            <span className="tabular-nums">
+              {t(locale, "bundles.card.weeks", { count: bundle.weeks })}
+            </span>
+            <span className="mx-1.5 text-faint">·</span>
+            {t(locale, `bundles.card.levels.${bundle.level}`)}
+            <span className="mx-1.5 text-faint">·</span>
+            {t(locale, `bundles.card.locations.${bundle.location}`)}
+          </p>
 
           <p className="mt-4 text-xs text-muted">
             {bundle.programTitle} <span className="text-faint">+</span> {bundle.dietTitle}

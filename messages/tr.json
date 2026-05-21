@@ -44,5 +44,19 @@
     "successBanner": "Payment successful. Your premium PDF is downloading now.",
     "downloadLink": "Download your PDF →",
     "dismiss": "Dismiss"
+  },
+  "bundles": {
+    "card": {
+      "weeks": "{count} hafta",
+      "levels": {
+        "beginner": "Başlangıç",
+        "intermediate": "Orta seviye",
+        "advanced": "İleri seviye"
+      },
+      "locations": {
+        "gym": "Spor salonu",
+        "home": "Ev"
+      }
+    }
   }
 }

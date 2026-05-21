@@ -14,6 +14,9 @@ export type BundleGoal =
   | "conditioning"
   | "foundation";
 
+export type BundleLevel = "beginner" | "intermediate" | "advanced";
+export type BundleLocation = "gym" | "home";
+
 export type Bundle = {
   slug: string;
   name: string;
@@ -24,6 +27,8 @@ export type Bundle = {
   dietTitle: string;
   weeks: number;
   sessionsPerWeek: number;
+  level: BundleLevel;
+  location: BundleLocation;
   /** Display chip — currently always "Free" until owner sets pricing. */
   save: string;
   /** Free bundles bypass purchase gating on download. */
@@ -61,6 +66,8 @@ export const BUNDLES: Bundle[] = [
     dietTitle: "Clean Cutting Diet",
     weeks: 12,
     sessionsPerWeek: 5,
+    level: "intermediate",
+    location: "gym",
     save: "Free",
     isFree: true,
     heroImage: "/bundles/fat-loss.svg",
@@ -107,6 +114,8 @@ export const BUNDLES: Bundle[] = [
     dietTitle: "Lean Bulk Diet",
     weeks: 12,
     sessionsPerWeek: 5,
+    level: "intermediate",
+    location: "gym",
     save: "Free",
     isFree: true,
     heroImage: "/bundles/lean-bulk.svg",
@@ -153,6 +162,8 @@ export const BUNDLES: Bundle[] = [
     dietTitle: "Clean Cut Starter",
     weeks: 12,
     sessionsPerWeek: 4,
+    level: "beginner",
+    location: "home",
     save: "Free",
     isFree: true,
     heroImage: "/bundles/home-starter.svg",
@@ -199,6 +210,8 @@ export const BUNDLES: Bundle[] = [
     dietTitle: "Hard Cut Athlete Diet",
     weeks: 12,
     sessionsPerWeek: 5,
+    level: "advanced",
+    location: "gym",
     save: "Free",
     isFree: true,
     heroImage: "/bundles/definition.svg",
@@ -247,6 +260,8 @@ export const BUNDLES: Bundle[] = [
     dietTitle: "Recomp Macro System",
     weeks: 12,
     sessionsPerWeek: 5,
+    level: "intermediate",
+    location: "gym",
     save: "Free",
     isFree: true,
     heroImage: "/bundles/recomp.svg",
@@ -293,6 +308,8 @@ export const BUNDLES: Bundle[] = [
     dietTitle: "Strength Athlete Diet",
     weeks: 12,
     sessionsPerWeek: 4,
+    level: "advanced",
+    location: "gym",
     save: "Free",
     isFree: true,
     heroImage: "/bundles/powerbuilding.svg",
@@ -339,6 +356,8 @@ export const BUNDLES: Bundle[] = [
     dietTitle: "Athlete Maintenance Diet",
     weeks: 12,
     sessionsPerWeek: 4,
+    level: "intermediate",
+    location: "home",
     save: "Free",
     isFree: true,
     heroImage: "/bundles/calisthenics.svg",
@@ -385,6 +404,8 @@ export const BUNDLES: Bundle[] = [
     dietTitle: "Performance Fueling Diet",
     weeks: 12,
     sessionsPerWeek: 5,
+    level: "intermediate",
+    location: "gym",
     save: "Free",
     isFree: true,
     heroImage: "/bundles/athlete-conditioning.svg",
@@ -429,6 +450,8 @@ export const BUNDLES: Bundle[] = [
     dietTitle: "Beginner Nutrition System",
     weeks: 12,
     sessionsPerWeek: 3,
+    level: "beginner",
+    location: "gym",
     save: "Free",
     isFree: true,
     heroImage: "/bundles/beginner-foundations.svg",
@@ -474,6 +497,8 @@ export const BUNDLES: Bundle[] = [
     dietTitle: "Women's Performance Diet",
     weeks: 12,
     sessionsPerWeek: 4,
+    level: "intermediate",
+    location: "gym",
     save: "Free",
     isFree: true,
     heroImage: "/bundles/womens-sculpt.svg",
@@ -520,6 +545,8 @@ export const BUNDLES: Bundle[] = [
     dietTitle: "Longevity Nutrition System",
     weeks: 12,
     sessionsPerWeek: 3,
+    level: "beginner",
+    location: "gym",
     save: "Free",
     isFree: true,
     heroImage: "/bundles/senior-strength.svg",
@@ -566,6 +593,8 @@ export const BUNDLES: Bundle[] = [
     dietTitle: "Contest Prep Macro System",
     weeks: 12,
     sessionsPerWeek: 6,
+    level: "advanced",
+    location: "gym",
     save: "Free",
     isFree: true,
     heroImage: "/bundles/cutting-peak.svg",
