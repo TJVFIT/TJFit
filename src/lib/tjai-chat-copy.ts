@@ -1,6 +1,38 @@
 import type { Locale } from "@/lib/i18n";
 
-export type TJAIChatCopy = { suggestions: { label: string; prompt: string }[]; emptyPrompt: string; askTitle: string; askBody: string; memory: string; tapToAsk: string; refine: string; send: string };
+export type TJAIChatCopy = {
+  suggestions: { label: string; prompt: string }[];
+  emptyPrompt: string;
+  askTitle: string;
+  askBody: string;
+  memory: string;
+  tapToAsk: string;
+  refine: string;
+  send: string;
+  followUps: {
+    simplify: string;
+    deeper: string;
+    nextStep: string;
+    protein: string;
+    timeCrunch: string;
+    deload: string;
+  };
+  composerHint: string;
+  fallbackReply: string;
+  connectionLost: string;
+  apiErrorRetry: string;
+  upgrade: {
+    limitTitleHit: string;
+    limitTitleExpired: string;
+    limitBody: string;
+    limitCta: string;
+    manualTitle: string;
+    manualBody: string;
+    manualCta: string;
+  };
+  trialLeft: (n: number) => string;
+  trialRemaining: (n: number, limit: number) => string;
+};
 
 const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
   en: {
@@ -18,7 +50,32 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
     memory: "Memory",
     tapToAsk: "Tap to ask",
     refine: "Refine",
-    send: "Send"
+    send: "Send",
+    followUps: {
+      simplify: "Simplify",
+      deeper: "More detail",
+      nextStep: "Next step",
+      protein: "Protein",
+      timeCrunch: "35 min",
+      deload: "Deload"
+    },
+    composerHint: "Enter to send · Shift + Enter for newline",
+    fallbackReply: "TJAI couldn't pick that up — mind asking again?",
+    connectionLost: "Lost the connection mid-thought — try again?",
+    apiErrorRetry: "Briefly lost connection. Send it again.",
+    upgrade: {
+      limitTitleHit: "You hit your free messages",
+      limitTitleExpired: "Your free trial has ended",
+      limitBody:
+        "TJAI is still here when you upgrade — unlimited coaching, voice replies, and adaptive weekly plans.",
+      limitCta: "Upgrade now",
+      manualTitle: "Get unlimited TJAI",
+      manualBody:
+        "Pro removes the message cap and unlocks voice, swaps, weekly adaptive plans, and coach handoff.",
+      manualCta: "See plans"
+    },
+    trialLeft: (n) => `${n} preview message${n === 1 ? "" : "s"} left — unlock unlimited`,
+    trialRemaining: (n, limit) => `${n} of ${limit} preview messages — go unlimited`
   },
   tr: {
     suggestions: [
@@ -35,7 +92,32 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
     memory: "Hafiza",
     tapToAsk: "Sormak icin dokun",
     refine: "Netlestir",
-    send: "Gonder"
+    send: "Gonder",
+    followUps: {
+      simplify: "Sadeleştir",
+      deeper: "Daha fazla detay",
+      nextStep: "Sonraki adım",
+      protein: "Protein",
+      timeCrunch: "35 dk",
+      deload: "Deload"
+    },
+    composerHint: "Göndermek için Enter · Yeni satır için Shift + Enter",
+    fallbackReply: "TJAI bunu tam alamadı — tekrar sorar mısın?",
+    connectionLost: "Bağlantı düşünürken koptu — tekrar dener misin?",
+    apiErrorRetry: "Bağlantı kısa süre koptu. Tekrar gönder.",
+    upgrade: {
+      limitTitleHit: "Ücretsiz mesajların bitti",
+      limitTitleExpired: "Ücretsiz denemen sona erdi",
+      limitBody:
+        "Yükselttiğinde TJAI hâlâ burada — sınırsız koçluk, sesli yanıtlar ve uyarlanan haftalık planlar.",
+      limitCta: "Şimdi yükselt",
+      manualTitle: "Sınırsız TJAI'yi al",
+      manualBody:
+        "Pro, mesaj sınırını kaldırır; ses, öğün değişimi, haftalık uyarlanan planlar ve koça aktarımı açar.",
+      manualCta: "Planları gör"
+    },
+    trialLeft: (n) => `${n} önizleme mesajı kaldı — sınırsıza geç`,
+    trialRemaining: (n, limit) => `${n}/${limit} önizleme mesajı — sınırsıza geç`
   },
   ar: {
     suggestions: [
@@ -52,7 +134,32 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
     memory: "الذاكرة",
     tapToAsk: "اضغط للسؤال",
     refine: "حسّن السؤال",
-    send: "إرسال"
+    send: "إرسال",
+    followUps: {
+      simplify: "بسّط",
+      deeper: "تفاصيل أكثر",
+      nextStep: "الخطوة التالية",
+      protein: "بروتين",
+      timeCrunch: "35 دقيقة",
+      deload: "تخفيف الحمل"
+    },
+    composerHint: "Enter للإرسال · Shift + Enter لسطر جديد",
+    fallbackReply: "لم يلتقط TJAI ذلك — هل تسأل مرة أخرى؟",
+    connectionLost: "انقطع الاتصال في منتصف الفكرة — حاول مرة أخرى؟",
+    apiErrorRetry: "انقطع الاتصال للحظة. أرسلها مرة أخرى.",
+    upgrade: {
+      limitTitleHit: "انتهت رسائلك المجانية",
+      limitTitleExpired: "انتهت فترتك التجريبية المجانية",
+      limitBody:
+        "TJAI لا يزال معك عند الترقية — تدريب غير محدود، وردود صوتية، وخطط أسبوعية متكيّفة.",
+      limitCta: "ترقَّ الآن",
+      manualTitle: "احصل على TJAI غير المحدود",
+      manualBody:
+        "تزيل خطة Pro حد الرسائل وتفتح الصوت وتبديل الوجبات والخطط الأسبوعية المتكيّفة والتحويل إلى مدرب.",
+      manualCta: "اعرض الخطط"
+    },
+    trialLeft: (n) => `بقيت ${n} رسالة معاينة — افتح بلا حدود`,
+    trialRemaining: (n, limit) => `${n}/${limit} رسالة معاينة — انتقل لبلا حدود`
   },
   es: {
     suggestions: [
@@ -69,7 +176,32 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
     memory: "Memoria",
     tapToAsk: "Toca para preguntar",
     refine: "Refinar",
-    send: "Enviar"
+    send: "Enviar",
+    followUps: {
+      simplify: "Simplificar",
+      deeper: "Más detalle",
+      nextStep: "Siguiente paso",
+      protein: "Proteína",
+      timeCrunch: "35 min",
+      deload: "Deload"
+    },
+    composerHint: "Enter para enviar · Shift + Enter para salto de línea",
+    fallbackReply: "TJAI no captó eso — ¿lo preguntas de nuevo?",
+    connectionLost: "Se perdió la conexión a mitad de la idea — ¿lo intentas de nuevo?",
+    apiErrorRetry: "Se perdió la conexión un momento. Envíalo de nuevo.",
+    upgrade: {
+      limitTitleHit: "Alcanzaste tus mensajes gratis",
+      limitTitleExpired: "Tu prueba gratuita ha terminado",
+      limitBody:
+        "TJAI sigue aquí cuando mejoras tu plan — coaching ilimitado, respuestas de voz y planes semanales adaptativos.",
+      limitCta: "Mejorar ahora",
+      manualTitle: "Consigue TJAI ilimitado",
+      manualBody:
+        "Pro elimina el límite de mensajes y desbloquea voz, cambios de comidas, planes semanales adaptativos y traspaso a un coach.",
+      manualCta: "Ver planes"
+    },
+    trialLeft: (n) => `Queda ${n} mensaje de vista previa — desbloquea ilimitado`,
+    trialRemaining: (n, limit) => `${n}/${limit} mensajes de vista previa — hazlo ilimitado`
   },
   fr: {
     suggestions: [
@@ -86,7 +218,32 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
     memory: "Memoire",
     tapToAsk: "Appuyer pour demander",
     refine: "Affiner",
-    send: "Envoyer"
+    send: "Envoyer",
+    followUps: {
+      simplify: "Simplifier",
+      deeper: "Plus de détail",
+      nextStep: "Étape suivante",
+      protein: "Protéines",
+      timeCrunch: "35 min",
+      deload: "Deload"
+    },
+    composerHint: "Entrée pour envoyer · Maj + Entrée pour un saut de ligne",
+    fallbackReply: "TJAI n'a pas bien saisi — peux-tu redemander ?",
+    connectionLost: "Connexion perdue en pleine réflexion — réessayer ?",
+    apiErrorRetry: "Connexion brièvement perdue. Renvoie-le.",
+    upgrade: {
+      limitTitleHit: "Tu as atteint tes messages gratuits",
+      limitTitleExpired: "Ton essai gratuit est terminé",
+      limitBody:
+        "TJAI reste là quand tu passes à la version supérieure — coaching illimité, réponses vocales et plans hebdomadaires adaptatifs.",
+      limitCta: "Mettre à niveau",
+      manualTitle: "Obtiens TJAI illimité",
+      manualBody:
+        "Pro supprime la limite de messages et débloque la voix, les échanges de repas, les plans hebdomadaires adaptatifs et le relais vers un coach.",
+      manualCta: "Voir les offres"
+    },
+    trialLeft: (n) => `Il reste ${n} message d'aperçu — débloque l'illimité`,
+    trialRemaining: (n, limit) => `${n}/${limit} messages d'aperçu — passe à l'illimité`
   }
 };
 

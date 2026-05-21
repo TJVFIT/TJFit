@@ -151,10 +151,13 @@ export function TJAIChat({
           setHistory((prev) => prev.slice(0, -2));
           showUpgradePrompt({
             reason: "limit_reached",
-            title: data.code === "expired" ? "Your free trial has ended" : "You hit your free messages",
-            body: "TJAI is still here when you upgrade — unlimited coaching, voice replies, and adaptive weekly plans.",
+            title:
+              data.code === "expired"
+                ? copy.upgrade.limitTitleExpired
+                : copy.upgrade.limitTitleHit,
+            body: copy.upgrade.limitBody,
             ctaHref: "/membership",
-            ctaLabel: "Upgrade now"
+            ctaLabel: copy.upgrade.limitCta
           });
           onLimitReached?.();
           return;
@@ -165,7 +168,7 @@ export function TJAIChat({
           const updated = [...prev];
           updated[updated.length - 1] = {
             role: "assistant",
-            content: assistantText || "TJAI couldn't pick that up — mind asking again?"
+            content: assistantText || copy.fallbackReply
           };
           return updated;
         });
@@ -211,11 +214,11 @@ export function TJAIChat({
         const updated = [...prev];
         updated[updated.length - 1] = {
           role: "assistant",
-          content: "Lost the connection mid-thought — try again?"
+          content: copy.connectionLost
         };
         return updated;
       });
-      setApiError("Briefly lost connection. Send it again.");
+      setApiError(copy.apiErrorRetry);
     } finally {
       setLoading(false);
       setThinking(false);
@@ -263,10 +266,10 @@ export function TJAIChat({
               onClick={() =>
                 showUpgradePrompt({
                   reason: "manual",
-                  title: "Get unlimited TJAI",
-                  body: "Pro removes the message cap and unlocks voice, swaps, weekly adaptive plans, and coach handoff.",
+                  title: copy.upgrade.manualTitle,
+                  body: copy.upgrade.manualBody,
                   ctaHref: "/membership",
-                  ctaLabel: "See plans"
+                  ctaLabel: copy.upgrade.manualCta
                 })
               }
               className={cn(
@@ -275,11 +278,11 @@ export function TJAIChat({
                   ? "text-cyan-200 underline-offset-4 hover:underline"
                   : "text-white/60 hover:text-cyan-200"
               )}
-              title="Free preview usage"
+              title={copy.askTitle}
             >
               {trialRemaining <= 1
-                ? `${trialRemaining} preview message left — unlock unlimited`
-                : `${trialRemaining} of ${trialLimit} preview messages — go unlimited`}
+                ? copy.trialLeft(trialRemaining)
+                : copy.trialRemaining(trialRemaining, trialLimit)}
             </button>
           ) : null}
         </div>
@@ -362,22 +365,15 @@ export function TJAIChat({
           <div className="relative mt-4 flex flex-wrap gap-2">
             <span className="w-full text-[10px] font-semibold uppercase tracking-[0.14em] text-dim">{copy.refine}</span>
             {(
-              [
-                { k: "simplify", label: "Simplify" },
-                { k: "deeper", label: "More detail" },
-                { k: "nextStep", label: "Next step" },
-                { k: "protein", label: "Protein" },
-                { k: "timeCrunch", label: "35 min" },
-                { k: "deload", label: "Deload" }
-              ] as const
-            ).map(({ k, label }) => (
+              ["simplify", "deeper", "nextStep", "protein", "timeCrunch", "deload"] as const
+            ).map((k) => (
               <button
                 key={k}
                 type="button"
                 onClick={() => void ask(COACH_FOLLOW_UP_PROMPTS[k])}
                 className="rounded-full border border-white/[0.08] bg-[#15171c] px-3 py-1.5 text-xs font-medium text-bright transition-all hover:border-accent/40 hover:text-white active:scale-[0.98]"
               >
-                {label}
+                {copy.followUps[k]}
               </button>
             ))}
           </div>
@@ -418,7 +414,7 @@ export function TJAIChat({
           </button>
         </form>
         <p className="mt-2 text-center text-[10px] uppercase tracking-[0.18em] text-dim">
-          Enter to send · Shift + Enter for newline
+          {copy.composerHint}
         </p>
       </div>
     </section>

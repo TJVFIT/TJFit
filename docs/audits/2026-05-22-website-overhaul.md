@@ -31,17 +31,25 @@ iteration — not micro-polish.
   `bundles-copy.ts` with a `detail` block (~26 strings/fns × 5 locales);
   wired `[slug]/page.tsx` + `detail-effects.tsx` (DownloadButton/ShareButton/
   AtAGlance now take label props). Build green, live on main.
+- **Iter 3** — finished TJAI chatbot i18n in `tjai-chat.tsx`. Extended
+  `tjai-chat-copy.ts` with followUps chips, composer hint, fallback/connection/
+  api-error messages, upgrade-prompt copy, and trial-counter functions across
+  all 5 locales. Build green, live on main.
 
 ## QUEUE (next up)
 
+- `tjai-chat-standalone.tsx` — its `COPY` object only has `en` + `ar`
+  (`const t = locale === "ar" ? COPY.ar : COPY.en`), so tr/es/fr users get
+  English. Add tr/es/fr; also lift its hardcoded "Refine"/"Try" chips +
+  quick-prompt strings.
 - Translate the bundle *content* catalogue in `src/lib/bundles.ts` (12 bundles:
   name, hook, goalLabel, descriptions, phases, nutrition, sample days) — large,
   may span several iterations.
 - Bundle detail page: sticky mobile purchase bar, week-by-week accordion.
 - RTL pass on `/bundles` (mirror the title halo offset + card arrow for `ar`).
-- Better TJAI chatbot UX (streaming affordance, message states, empty state).
 - Homepage hero copy + layout refresh.
 
 ## BACKLOG (drive-by notes, unfixed)
 
-- (none yet)
+- `tjai-chat-copy.ts` — existing tr/es/fr suggestion-prompt strings are
+  accent-stripped ("ozeti", "Resume", "entrainement"). Restore diacritics.
