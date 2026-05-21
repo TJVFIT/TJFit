@@ -17,7 +17,10 @@ export async function GET(request: NextRequest) {
     .eq("role", "coach")
     .order("id", { ascending: true })
     .limit(120);
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error("[coaches] list failed", error.message, error.code);
+    return NextResponse.json({ error: "Failed to load coaches" }, { status: 500 });
+  }
   const rows = (baseRows ?? []).map((row) => ({
     ...row,
     specialty_tags: row.specialty_tags ?? [],

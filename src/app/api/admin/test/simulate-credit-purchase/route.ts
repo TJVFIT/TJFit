@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { isAdminEmail } from "@/lib/auth-utils";
 import { handleSale } from "@/app/api/webhooks/gumroad/handlers/sale";
-import { requireAuth } from "@/lib/require-auth";
-import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { requireAdmin } from "@/lib/require-admin";
 
 // v5 round 2 Task 4 — simulate a Gumroad credit-pack sale.
 //
@@ -24,32 +22,16 @@ import { getSupabaseServerClient } from "@/lib/supabase-server";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
-  if (!auth.ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const admin = getSupabaseServerClient();
-  if (!admin) return NextResponse.json({ error: "Server not configured" }, { status: 500 });
-
-  const isAdminByEmail = Boolean(auth.user.email && isAdminEmail(auth.user.email));
-  let isAdminByRole = false;
-  if (!isAdminByEmail) {
-    const { data: profile } = await admin
-      .from("profiles")
-      .select("role")
-      .eq("id", auth.user.id)
-      .maybeSingle();
-    isAdminByRole = profile?.role === "admin";
-  }
-  if (!isAdminByEmail && !isAdminByRole) {
-    return NextResponse.json({ error: "Admin only" }, { status: 403 });
-  }
+  const adminResult = await requireAdmin();
+  if (!adminResult.ok) return adminResult.response;
+  const admin = adminResult.supabase;
 
   const body = (await request.json().catch(() => null)) as
     | { gumroadProductId?: string; packId?: string; email?: string; fullName?: string; priceCents?: number }
     | null;
 
   let gumroadProductId = body?.gumroadProductId?.trim();
-  const email = body?.email?.trim() ?? auth.user.email ?? "test@tjfit.org";
+  const email = body?.email?.trim() ?? "test@tjfit.org";
   const fullName = body?.fullName?.trim() ?? "Test Buyer";
   const priceCents = body?.priceCents ?? 800;
 

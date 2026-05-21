@@ -4,9 +4,12 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { isAdminEmail } from "@/lib/auth-utils";
 import { getCoachTermsVersion } from "@/lib/coach-terms-version";
+import { locales as ROUTING_LOCALES } from "@/lib/i18n";
 import { URL_NOTICE } from "@/lib/url-notice";
 
-const LOCALES = new Set(["en", "tr", "ar", "es", "fr"]);
+// Sourced from @/lib/i18n so adding a new routing locale doesn't silently
+// break launch-gate bypass or HTML auth guards in the middleware.
+const LOCALES = new Set<string>(ROUTING_LOCALES);
 
 const LAUNCH_GATE_BYPASS_SEGMENTS = new Set([
   "login",

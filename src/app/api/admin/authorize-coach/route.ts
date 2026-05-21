@@ -53,8 +53,9 @@ export async function POST(request: NextRequest) {
         .eq("id", existingProfile.id);
 
       if (updateError) {
+        console.error("[admin/authorize-coach] promote failed", updateError.message, updateError.code);
         return NextResponse.json(
-          { error: updateError.message ?? "Failed to promote existing user to coach." },
+          { error: "Failed to promote existing user to coach." },
           { status: 500 }
         );
       }
@@ -83,10 +84,8 @@ export async function POST(request: NextRequest) {
     });
 
     if (createError) {
-      return NextResponse.json(
-        { error: createError.message ?? "Failed to create coach account." },
-        { status: 400 }
-      );
+      console.error("[admin/authorize-coach] createUser failed", createError.message);
+      return NextResponse.json({ error: "Failed to create coach account." }, { status: 400 });
     }
 
     if (!userData?.user?.id) {
@@ -96,15 +95,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { error: profileError } = await supabase.from("profiles").insert({
-      id: userData.user.id,
-      email: normalizedEmail,
-      role: "coach"
-    });
+    // The `handle_new_auth_user_profile` trigger on auth.users already
+    // inserts a profiles row with role='user' (migration 20260330000500).
+    // Previously this route did INSERT here, which hit a duplicate-key error
+    // and left the new coach stuck as a plain user. UPDATE the role instead.
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .update({ role: "coach", email: normalizedEmail })
+      .eq("id", userData.user.id);
 
     if (profileError) {
+      console.error(
+        "[admin/authorize-coach] profile role update failed",
+        profileError.message,
+        profileError.code
+      );
       return NextResponse.json(
-        { error: profileError.message ?? "Coach created but profile failed." },
+        { error: "Coach created but profile role update failed." },
         { status: 500 }
       );
     }
@@ -114,11 +121,7 @@ export async function POST(request: NextRequest) {
       message: "Coach authorized. They can now log in with this email and password."
     });
   } catch (e) {
-    return NextResponse.json(
-      {
-        error: e instanceof Error ? e.message : "Unable to authorize coach."
-      },
-      { status: 500 }
-    );
+    console.error("[admin/authorize-coach] crash", e);
+    return NextResponse.json({ error: "Unable to authorize coach." }, { status: 500 });
   }
 }

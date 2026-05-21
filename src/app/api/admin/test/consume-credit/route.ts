@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { isAdminEmail } from "@/lib/auth-utils";
-import { requireAuth } from "@/lib/require-auth";
-import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { requireAdmin } from "@/lib/require-admin";
 
 // v5 round 2 Task 4 — drives the consume_tjai_credit RPC for the
 // current admin user (or for a target user if `targetUserId` is
@@ -13,31 +11,16 @@ import { getSupabaseServerClient } from "@/lib/supabase-server";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
-  if (!auth.ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const admin = getSupabaseServerClient();
-  if (!admin) return NextResponse.json({ error: "Server not configured" }, { status: 500 });
-
-  const isAdminByEmail = Boolean(auth.user.email && isAdminEmail(auth.user.email));
-  let isAdminByRole = false;
-  if (!isAdminByEmail) {
-    const { data: profile } = await admin
-      .from("profiles")
-      .select("role")
-      .eq("id", auth.user.id)
-      .maybeSingle();
-    isAdminByRole = profile?.role === "admin";
-  }
-  if (!isAdminByEmail && !isAdminByRole) {
-    return NextResponse.json({ error: "Admin only" }, { status: 403 });
-  }
+  const adminResult = await requireAdmin();
+  if (!adminResult.ok) return adminResult.response;
+  const admin = adminResult.supabase;
+  const callerUserId = adminResult.userId;
 
   const body = (await request.json().catch(() => null)) as
     | { targetUserId?: string; reason?: string }
     | null;
 
-  const userId = body?.targetUserId?.trim() || auth.user.id;
+  const userId = body?.targetUserId?.trim() || callerUserId;
   const reason = body?.reason?.trim() || "test";
 
   // Snapshot before
@@ -55,7 +38,8 @@ export async function POST(request: NextRequest) {
     p_metadata: { source: "admin_test_endpoint" }
   });
   if (rpcErr) {
-    return NextResponse.json({ error: rpcErr.message, code: rpcErr.code }, { status: 500 });
+    console.error("[admin/test/consume-credit] rpc failed", rpcErr.message, rpcErr.code);
+    return NextResponse.json({ error: "RPC failed", code: rpcErr.code }, { status: 500 });
   }
   const result = (Array.isArray(rpcRows) ? rpcRows[0] : rpcRows) as
     | { balance_after?: number; ok?: boolean; reason?: string }

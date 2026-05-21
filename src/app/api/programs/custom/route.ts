@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import {
   buildProgramTranslations,
   extractPdfText,
@@ -8,12 +9,15 @@ import {
   type CustomProgramRow
 } from "@/lib/custom-programs";
 import { Locale, locales } from "@/lib/i18n";
+import { rateLimit } from "@/lib/rate-limit";
 import { readRequestJson } from "@/lib/read-request-json";
 import { requireCoachOrAdmin } from "@/lib/require-coach-or-admin";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 const BUCKET_NAME = "program-assets";
+const PDF_MAX_BYTES = 20 * 1024 * 1024; // 20MB — must match the bucket's fileSizeLimit.
+const TITLE_MAX = 200;
 
 function getRequestedLocale(request: NextRequest): Locale {
   const value = request.nextUrl.searchParams.get("locale") ?? "en";
@@ -41,7 +45,8 @@ export async function GET(request: NextRequest) {
       .order("created_at", { ascending: false });
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      console.error("[programs/custom] mine list failed", error.message, error.code);
+      return NextResponse.json({ error: "Failed to load programs" }, { status: 500 });
     }
 
     const rows = (data ?? []) as CustomProgramRow[];
@@ -57,7 +62,8 @@ export async function GET(request: NextRequest) {
     .order("created_at", { ascending: false });
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("[programs/custom] public list failed", error.message, error.code);
+    return NextResponse.json({ error: "Failed to load programs" }, { status: 500 });
   }
 
   const rows = (data ?? []) as CustomProgramRow[];
@@ -70,8 +76,20 @@ export async function POST(request: NextRequest) {
   const auth = await requireCoachOrAdmin();
   if (!auth.ok) return auth.response;
 
+  // PDF extraction + translation are heavy (LLM calls + storage IO). Cap at
+  // 6/hour/uploader so an automated client can't burn LLM budget by spamming
+  // bad uploads. Coaches are also bounded to 3 ACTIVE programs separately.
+  const limiter = await rateLimit({
+    key: `programs-custom-upload:${auth.userId}`,
+    limit: 6,
+    windowMs: 60 * 60 * 1000
+  });
+  if (!limiter.success) {
+    return NextResponse.json({ error: "Too many uploads. Try again in an hour." }, { status: 429 });
+  }
+
   const formData = await request.formData();
-  const title = String(formData.get("title") ?? "").trim();
+  const title = String(formData.get("title") ?? "").trim().slice(0, TITLE_MAX);
   const kindRaw = String(formData.get("kind") ?? "").trim().toLowerCase();
   const file = formData.get("pdf");
   const kind = kindRaw === "diet" ? "diet" : kindRaw === "program" ? "program" : null;
@@ -82,6 +100,12 @@ export async function POST(request: NextRequest) {
   if (file.type !== "application/pdf") {
     return NextResponse.json({ error: "Only PDF files are allowed." }, { status: 400 });
   }
+  // Fail fast on oversized uploads before we read the whole file into memory.
+  // The Supabase bucket enforces this too, but checking first avoids the
+  // wasted buffer allocation + extractPdfText cost on garbage payloads.
+  if (file.size > PDF_MAX_BYTES) {
+    return NextResponse.json({ error: "PDF too large. Max 20MB." }, { status: 413 });
+  }
 
   if (auth.role === "coach") {
     const { count, error: countError } = await auth.supabase
@@ -90,7 +114,8 @@ export async function POST(request: NextRequest) {
       .eq("uploaded_by", auth.userId)
       .eq("active", true);
     if (countError) {
-      return NextResponse.json({ error: countError.message }, { status: 500 });
+      console.error("[programs/custom] count failed", countError.message, countError.code);
+      return NextResponse.json({ error: "Failed to verify upload limit" }, { status: 500 });
     }
     if ((count ?? 0) >= 3) {
       return NextResponse.json(
@@ -130,7 +155,8 @@ export async function POST(request: NextRequest) {
     .upload(filePath, buffer, { contentType: "application/pdf", upsert: false });
 
   if (uploadError) {
-    return NextResponse.json({ error: uploadError.message }, { status: 500 });
+    console.error("[programs/custom] storage upload failed", uploadError.message);
+    return NextResponse.json({ error: "Failed to upload PDF" }, { status: 500 });
   }
 
   const translations = await buildProgramTranslations({
@@ -164,7 +190,8 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("[programs/custom] insert failed", error.message, error.code);
+    return NextResponse.json({ error: "Failed to save program" }, { status: 500 });
   }
 
   return NextResponse.json({
@@ -191,7 +218,8 @@ export async function DELETE(request: NextRequest) {
     .maybeSingle();
 
   if (existingError) {
-    return NextResponse.json({ error: existingError.message }, { status: 500 });
+    console.error("[programs/custom] lookup failed", existingError.message, existingError.code);
+    return NextResponse.json({ error: "Failed to look up program" }, { status: 500 });
   }
   if (!existing) {
     return NextResponse.json({ error: "Program not found." }, { status: 404 });
@@ -207,7 +235,8 @@ export async function DELETE(request: NextRequest) {
     .eq("id", existing.id);
 
   if (updateError) {
-    return NextResponse.json({ error: updateError.message }, { status: 500 });
+    console.error("[programs/custom] deactivate failed", updateError.message, updateError.code);
+    return NextResponse.json({ error: "Failed to delete program" }, { status: 500 });
   }
 
   if (existing.pdf_path) {

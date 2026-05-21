@@ -86,6 +86,12 @@ export async function POST(request: Request) {
 
   const text = typeof body?.text === "string" ? body.text : "";
   if (!text.trim()) return NextResponse.json({ error: "text required" }, { status: 400 });
+  // ElevenLabs charges per character — a 100KB submission would cost ~$2/call.
+  // Cap at 2000 chars (long enough for a typical chat reply, short enough to
+  // bound credit burn even if every call uses the maximum).
+  if (text.length > 2000) {
+    return NextResponse.json({ error: "Text too long. Max 2000 characters." }, { status: 413 });
+  }
 
   let persona = isTjaiPersona(body?.persona) ? body!.persona : null;
   if (!persona) {
@@ -107,9 +113,9 @@ export async function POST(request: Request) {
       }
     });
   } catch (err) {
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : "TTS failed" },
-      { status: 502 }
-    );
+    // Don't leak ElevenLabs error text (could include API key state, voice
+    // IDs, model names). Log server-side; return generic to client.
+    console.error("[tjai/tts] synthesis failed", err);
+    return NextResponse.json({ error: "TTS failed" }, { status: 502 });
   }
 }

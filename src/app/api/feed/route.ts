@@ -13,6 +13,16 @@ type FeedItem = {
 };
 
 const PAGE_SIZE = 20;
+// Hard cap on the follow set we mix into the feed. PostgREST IN clauses are
+// bounded; users following thousands of people would generate impractical
+// queries. We sort newest-follows-first via `created_at` order below so the
+// cap stays meaningful even for power users.
+const MAX_FOLLOWED = 500;
+// Streak milestone events were previously derived from `profiles.updated_at`,
+// which ticks on any profile edit (bio, avatar). Without a recency guard,
+// editing your bio surfaces as "hit a 7-day streak" in your followers' feeds
+// whenever your streak happens to be 7/30/100 right now.
+const STREAK_RECENCY_MS = 24 * 60 * 60 * 1000;
 
 export async function GET(request: NextRequest) {
   const auth = await requireAuth();
@@ -22,7 +32,12 @@ export async function GET(request: NextRequest) {
 
   const cursor = request.nextUrl.searchParams.get("cursor");
 
-  const { data: follows } = await admin.from("user_follows").select("following_id").eq("follower_id", auth.user.id);
+  const { data: follows } = await admin
+    .from("user_follows")
+    .select("following_id,created_at")
+    .eq("follower_id", auth.user.id)
+    .order("created_at", { ascending: false })
+    .limit(MAX_FOLLOWED);
   const followedIds = (follows ?? []).map((row) => row.following_id);
   if (followedIds.length === 0) {
     return NextResponse.json({ items: [], next_cursor: null });
@@ -95,7 +110,14 @@ export async function GET(request: NextRequest) {
       meta: { post_id: row.id, title: row.title }
     });
   }
+  const streakCutoff = Date.now() - STREAK_RECENCY_MS;
   for (const row of streaks.data ?? []) {
+    // Skip stale milestone signals — profile updates from days/weeks ago
+    // shouldn't pop into the feed as fresh streak hits. With a streak-event
+    // log we could be precise; for now this 24h window mirrors "today's
+    // milestones" reasonably well.
+    const updatedAtMs = row.updated_at ? new Date(row.updated_at).getTime() : 0;
+    if (!updatedAtMs || updatedAtMs < streakCutoff) continue;
     items.push({
       id: `streak:${row.id}:${row.updated_at}`,
       user_id: row.id,

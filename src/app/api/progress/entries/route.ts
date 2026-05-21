@@ -17,7 +17,8 @@ export async function GET() {
     .limit(200);
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("[progress/entries] read failed", error.message, error.code);
+    return NextResponse.json({ error: "Failed to load entries" }, { status: 500 });
   }
 
   return NextResponse.json({ entries: data ?? [] });
@@ -28,7 +29,7 @@ export async function POST(request: NextRequest) {
   if (!auth.ok) return auth.response;
 
   const limiter = await rateLimit({
-    key: request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? request.ip ?? auth.user.id,
+    key: `progress-entry:${auth.user.id}`,
     limit: 30,
     windowMs: 60_000
   });
@@ -39,15 +40,28 @@ export async function POST(request: NextRequest) {
   const parsed = await readRequestJson(request);
   if (!parsed.ok) return parsed.response;
   const body = parsed.value as Record<string, unknown>;
+
+  // Defensive bounds — previously every numeric field accepted any value
+  // (including Infinity, negative) and notes was unbounded.
+  const boundedNumber = (v: unknown, max: number): number | null => {
+    if (v === null || v === undefined || v === "") return null;
+    const n = Number(v);
+    return Number.isFinite(n) && n >= 0 && n <= max ? n : null;
+  };
+  const dateStr =
+    typeof body.entry_date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(body.entry_date)
+      ? body.entry_date
+      : new Date().toISOString().slice(0, 10);
+
   const payload = {
     user_id: auth.user.id,
-    entry_date: body.entry_date ?? new Date().toISOString().slice(0, 10),
-    weight_kg: body.weight_kg ?? null,
-    body_fat_percent: body.body_fat_percent ?? null,
-    waist_cm: body.waist_cm ?? null,
-    chest_cm: body.chest_cm ?? null,
-    hips_cm: body.hips_cm ?? null,
-    notes: typeof body.notes === "string" ? body.notes.trim() : null
+    entry_date: dateStr,
+    weight_kg: boundedNumber(body.weight_kg, 700),
+    body_fat_percent: boundedNumber(body.body_fat_percent, 100),
+    waist_cm: boundedNumber(body.waist_cm, 300),
+    chest_cm: boundedNumber(body.chest_cm, 300),
+    hips_cm: boundedNumber(body.hips_cm, 300),
+    notes: typeof body.notes === "string" ? body.notes.trim().slice(0, 2000) : null
   };
 
   const { data, error } = await auth.supabase
@@ -57,7 +71,8 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    console.error("[progress/entries] insert failed", error.message, error.code);
+    return NextResponse.json({ error: "Failed to save entry" }, { status: 400 });
   }
 
   // Fire-and-forget: populate outcome_weight_change in tjai_plan_analytics

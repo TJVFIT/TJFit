@@ -38,7 +38,8 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    console.error("[chat/calls/start] insert failed", error.message, error.code);
+    return NextResponse.json({ error: "Failed to start call" }, { status: 500 });
   }
 
   return NextResponse.json({ call_session: data }, { status: 201 });

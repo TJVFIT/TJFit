@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { requireAuth } from "@/lib/require-auth";
+import { isMissingSchemaMigrationError } from "@/lib/supabase-rpc-errors";
 import {
   gatherSignals,
   generateSuggestion,
@@ -32,13 +33,14 @@ export async function GET() {
     .maybeSingle();
 
   if (error) {
-    if (error.message.toLowerCase().includes("tjai_weekly_check_ins") && error.message.toLowerCase().includes("relation")) {
+    if (isMissingSchemaMigrationError(error.message)) {
       return NextResponse.json(
         { error: "Weekly check-in storage is not migrated yet.", week_start: weekStart, check_in: null },
         { status: 503 }
       );
     }
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("[tjai/weekly-check-in] read failed", error.message, error.code);
+    return NextResponse.json({ error: "Failed to load check-in" }, { status: 500 });
   }
 
   return NextResponse.json({ week_start: weekStart, check_in: data ?? null });
@@ -82,10 +84,11 @@ export async function POST(request: NextRequest) {
     .maybeSingle();
 
   if (error) {
-    if (error.message.toLowerCase().includes("tjai_weekly_check_ins") && error.message.toLowerCase().includes("relation")) {
+    if (isMissingSchemaMigrationError(error.message)) {
       return NextResponse.json({ error: "Weekly check-in storage is not migrated yet." }, { status: 503 });
     }
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("[tjai/weekly-check-in] upsert failed", error.message, error.code);
+    return NextResponse.json({ error: "Failed to save check-in" }, { status: 500 });
   }
 
   let newBadges: import("@/lib/tjai/badges").BadgeMeta[] = [];

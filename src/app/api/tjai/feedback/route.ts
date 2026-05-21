@@ -48,9 +48,9 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (error) {
-    console.error("[TJAI feedback] insert failed", error);
+    console.error("[TJAI feedback] insert failed", error.message, error.code);
     return NextResponse.json(
-      { error: "Failed to save feedback", code: error.code ?? "db_error", details: error.message },
+      { error: "Failed to save feedback", code: error.code ?? "db_error" },
       { status: 500 }
     );
   }

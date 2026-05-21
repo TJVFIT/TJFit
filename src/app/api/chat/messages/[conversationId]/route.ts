@@ -4,6 +4,13 @@ import { readRequestJson } from "@/lib/read-request-json";
 import { requireAuth } from "@/lib/require-auth";
 import { rateLimit } from "@/lib/rate-limit";
 
+// E2E ciphertext bound. Generous for chat (a 64KB base64 blob is ~48KB of
+// plaintext — much more than any normal message). Prevents a malicious peer
+// from bloating the conversation with megabyte-sized payloads that DoS the
+// other participant's client when loading history.
+const CIPHERTEXT_MAX_BYTES = 64 * 1024;
+const NONCE_MAX_BYTES = 256;
+
 function isValidMessageType(value: unknown) {
   return value === "text" || value === "image" || value === "file" || value === "link" || value === "call_event";
 }
@@ -12,23 +19,18 @@ export async function GET(_: NextRequest, { params }: { params: { conversationId
   const auth = await requireAuth();
   if (!auth.ok) return auth.response;
 
-  const { data: membership } = await auth.supabase
-    .from("conversation_participants")
-    .select("conversation_id")
-    .eq("conversation_id", params.conversationId)
-    .eq("user_id", auth.user.id)
-    .single();
-
-  if (!membership) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-
+  // Merged what was two sequential SELECTs against conversation_participants
+  // (membership check + key fetch) into one round-trip.
   const { data: participant } = await auth.supabase
     .from("conversation_participants")
-    .select("encrypted_conversation_key")
+    .select("conversation_id, encrypted_conversation_key")
     .eq("conversation_id", params.conversationId)
     .eq("user_id", auth.user.id)
-    .single();
+    .maybeSingle();
+
+  if (!participant) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
   const url = new URL(_.url);
   const limitRaw = Number(url.searchParams.get("limit") ?? 50);
@@ -46,11 +48,12 @@ export async function GET(_: NextRequest, { params }: { params: { conversationId
   const { data: messages, error } = await query;
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("[chat/messages] read failed", error.message, error.code);
+    return NextResponse.json({ error: "Failed to load messages" }, { status: 500 });
   }
 
   return NextResponse.json({
-    encrypted_conversation_key: participant?.encrypted_conversation_key ?? null,
+    encrypted_conversation_key: participant.encrypted_conversation_key ?? null,
     messages: (messages ?? []).slice().reverse(),
     has_more: Array.isArray(messages) ? messages.length === limit : false
   });
@@ -60,8 +63,10 @@ export async function POST(request: NextRequest, { params }: { params: { convers
   const auth = await requireAuth();
   if (!auth.ok) return auth.response;
 
+  // Key by user_id rather than IP — chat is auth-gated and a malicious peer
+  // can't share an IP with their target. request.ip was deprecated in Next 14.
   const limiter = await rateLimit({
-    key: request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? request.ip ?? auth.user.id,
+    key: `chat-message:${auth.user.id}`,
     limit: 80,
     windowMs: 60_000
   });
@@ -74,6 +79,12 @@ export async function POST(request: NextRequest, { params }: { params: { convers
   const body = parsed.value as Record<string, unknown>;
   if (typeof body.ciphertext !== "string" || typeof body.nonce !== "string") {
     return NextResponse.json({ error: "ciphertext and nonce are required." }, { status: 400 });
+  }
+  if (body.ciphertext.length > CIPHERTEXT_MAX_BYTES) {
+    return NextResponse.json({ error: "Message too large." }, { status: 413 });
+  }
+  if (body.nonce.length > NONCE_MAX_BYTES) {
+    return NextResponse.json({ error: "Invalid nonce." }, { status: 400 });
   }
   if (!isValidMessageType(body.message_type ?? "text")) {
     return NextResponse.json({ error: "Invalid message type." }, { status: 400 });
@@ -108,7 +119,10 @@ export async function POST(request: NextRequest, { params }: { params: { convers
     if (mapped) {
       return NextResponse.json({ error: mapped.error, code: mapped.code }, { status: mapped.status });
     }
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    // Unmapped DB error — don't leak raw text (table/column hints, constraint
+    // names). Log server-side instead. 500 since we couldn't categorize it.
+    console.error("[chat/messages] unmapped insert error", error.message, error.code);
+    return NextResponse.json({ error: "Failed to send message" }, { status: 500 });
   }
 
   return NextResponse.json({ message: data }, { status: 201 });

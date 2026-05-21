@@ -17,7 +17,10 @@ export async function GET(request: NextRequest) {
 
   const result = await settleEndedChallenges();
   if (!result.ok) {
-    return NextResponse.json({ error: result.error }, { status: 500 });
+    console.error("[cron] settleEndedChallenges failed", result.error);
+    // Don't leak internal error text to the public endpoint even though it's
+    // CRON_SECRET-gated — the log catches it for ops, the response stays opaque.
+    return NextResponse.json({ error: "Cron task failed" }, { status: 500 });
   }
 
   return NextResponse.json({

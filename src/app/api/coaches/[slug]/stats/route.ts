@@ -30,9 +30,12 @@ export async function GET(_request: NextRequest, { params }: { params: { slug: s
     featured_program_id: coachExtras?.featured_program_id ?? null
   };
 
-  const [{ count: studentCount }, { count: reviewCount }, { data: ratings }, { count: blogPostCount }, { data: blogViews }, { count: programCount }] =
+  const [{ data: studentRows }, { count: reviewCount }, { data: ratings }, { count: blogPostCount }, { data: blogViews }, { count: programCount }] =
     await Promise.all([
-      admin.from("program_orders").select("user_id", { head: true, count: "exact" }).eq("status", "paid").eq("coach_id", coach.id),
+      // Student count was previously total ROWS (count:exact), which counts
+      // each order — a single student buying 3 programs appeared as 3
+      // students. Pull user_ids and dedupe instead.
+      admin.from("program_orders").select("user_id").eq("status", "paid").eq("coach_id", coach.id),
       admin.from("program_reviews").select("id", { head: true, count: "exact" }).eq("user_id", coach.id).eq("is_hidden", false),
       admin.from("program_reviews").select("rating").eq("user_id", coach.id).eq("is_hidden", false),
       admin.from("community_blog_posts").select("id", { head: true, count: "exact" }).eq("author_id", coach.id).eq("status", "published"),
@@ -40,6 +43,7 @@ export async function GET(_request: NextRequest, { params }: { params: { slug: s
       admin.from("program_orders").select("program_slug", { head: true, count: "exact" }).eq("coach_id", coach.id)
     ]);
 
+  const studentCount = new Set((studentRows ?? []).map((row) => String(row.user_id))).size;
   const avgRating =
     ratings && ratings.length > 0 ? ratings.reduce((acc, item) => acc + Number(item.rating ?? 0), 0) / ratings.length : 0;
   const totalViews = (blogViews ?? []).reduce((acc, item) => acc + Number(item.views ?? 0), 0);
@@ -47,7 +51,7 @@ export async function GET(_request: NextRequest, { params }: { params: { slug: s
   return NextResponse.json({
     coach,
     stats: {
-      student_count: Number(studentCount ?? 0),
+      student_count: studentCount,
       program_count: Number(programCount ?? 0),
       average_rating: Number(avgRating.toFixed(1)),
       review_count: Number(reviewCount ?? 0),

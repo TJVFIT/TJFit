@@ -14,7 +14,8 @@ export async function GET(_: Request, { params }: { params: { conversationId: st
     if (isMissingSchemaMigrationError(error.message)) {
       return jsonSchemaNotReady("api/chat/conversations/peer:GET", error.message);
     }
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("[chat/conversations/peer] rpc failed", error.message, error.code);
+    return NextResponse.json({ error: "Failed to load peer" }, { status: 500 });
   }
 
   if (!data) {

@@ -2,29 +2,36 @@ import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 // Anthropic API model IDs.
 //
-// Defaults are pinned to officially documented, generally-available model
-// IDs from Anthropic's public model list. They are conservative on purpose
-// — the tiering still works (opus = highest, sonnet = mid, haiku = cheap)
-// without shipping un-verified strings to production.
-//
-// Override via env when you have access to a newer release and have
-// verified the exact ID in your Anthropic console:
+// Pinned to the current Claude 4.x family (May 2026). IDs from 4.6 onward
+// are dateless but still pinned snapshots, not evergreen pointers — when a
+// new release lands, override via env without code changes:
 //   ANTHROPIC_MODEL_OPUS=claude-opus-4-...
 //   ANTHROPIC_MODEL_SONNET=claude-sonnet-4-...
 //   ANTHROPIC_MODEL_HAIKU=claude-haiku-4-...
 export const CLAUDE_MODELS = {
-  opus: process.env.ANTHROPIC_MODEL_OPUS ?? "claude-3-opus-20240229",
-  sonnet: process.env.ANTHROPIC_MODEL_SONNET ?? "claude-3-5-sonnet-20241022",
-  haiku: process.env.ANTHROPIC_MODEL_HAIKU ?? "claude-3-5-haiku-20241022"
+  opus: process.env.ANTHROPIC_MODEL_OPUS ?? "claude-opus-4-7",
+  sonnet: process.env.ANTHROPIC_MODEL_SONNET ?? "claude-sonnet-4-6",
+  haiku: process.env.ANTHROPIC_MODEL_HAIKU ?? "claude-haiku-4-5"
 } as const;
 
 // Pricing keyed by model FAMILY rather than full ID, so dated/aliased model
 // strings still match. Per-million-token USD list prices.
+// Cache ratios (write = 1.25× input, read = 0.1× input) are Anthropic-wide.
+// Opus prices dropped from $15/$75 (Opus 3) to $5/$25 with the 4.x family.
 const FAMILY_PRICING: Record<"opus" | "sonnet" | "haiku", { input: number; output: number; cacheWrite: number; cacheRead: number }> = {
-  opus: { input: 15, output: 75, cacheWrite: 18.75, cacheRead: 1.5 },
+  opus: { input: 5, output: 25, cacheWrite: 6.25, cacheRead: 0.5 },
   sonnet: { input: 3, output: 15, cacheWrite: 3.75, cacheRead: 0.3 },
   haiku: { input: 1, output: 5, cacheWrite: 1.25, cacheRead: 0.1 }
 };
+
+const ANTHROPIC_TIMEOUT_MS = 60_000;
+const MAX_RETRIES = 2;
+
+function isRetryableStatus(status: number): boolean {
+  if (status >= 500) return true;
+  if (status === 408 || status === 429) return true;
+  return false;
+}
 
 function modelFamily(model: string): "opus" | "sonnet" | "haiku" {
   if (model.includes("opus")) return "opus";
@@ -134,25 +141,71 @@ export async function callClaude({
     ? [{ type: "text", text: system, cache_control: { type: "ephemeral" } }]
     : [{ type: "text", text: system }];
 
-  try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01"
-      },
-      body: JSON.stringify({
-        model,
-        max_tokens: maxTokens,
-        system: systemBlocks,
-        messages: [{ role: "user", content: user }]
-      })
-    });
+  let lastErr: Error | null = null;
+  for (let attempt = 1; attempt <= MAX_RETRIES + 1; attempt++) {
+    const ctrl = new AbortController();
+    const timeoutId = setTimeout(() => ctrl.abort(), ANTHROPIC_TIMEOUT_MS);
+    try {
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": apiKey,
+          "anthropic-version": "2023-06-01"
+        },
+        body: JSON.stringify({
+          model,
+          max_tokens: maxTokens,
+          system: systemBlocks,
+          messages: [{ role: "user", content: user }]
+        }),
+        signal: ctrl.signal
+      });
 
-    if (!response.ok) {
-      const raw = await response.text();
-      const err = `Claude error: ${raw.slice(0, 400)}`;
+      if (!response.ok) {
+        const raw = await response.text();
+        const errMsg = `Claude error ${response.status}: ${raw.slice(0, 400)}`;
+        if (isRetryableStatus(response.status) && attempt <= MAX_RETRIES) {
+          lastErr = new Error(errMsg);
+          await new Promise((r) => setTimeout(r, attempt * 1000));
+          continue;
+        }
+        void logCall({
+          user_id: userId,
+          route,
+          task,
+          model,
+          usage: {},
+          latency_ms: Date.now() - t0,
+          ok: false,
+          error: errMsg
+        });
+        throw new Error(errMsg);
+      }
+
+      const data = (await response.json()) as { content?: Array<{ text?: string }>; usage?: AnthropicUsage };
+      const text = data?.content?.[0]?.text ?? "";
+
+      void logCall({
+        user_id: userId,
+        route,
+        task,
+        model,
+        usage: data?.usage ?? {},
+        latency_ms: Date.now() - t0,
+        ok: true
+      });
+
+      return text;
+    } catch (err) {
+      lastErr = err instanceof Error ? err : new Error(String(err));
+      // Re-throw fatal non-retryable errors (already-logged Claude HTTP errors).
+      if (lastErr.message.startsWith("Claude error ")) throw lastErr;
+      // Retry on AbortError (timeout) and network errors.
+      if (attempt <= MAX_RETRIES) {
+        await new Promise((r) => setTimeout(r, attempt * 1000));
+        continue;
+      }
       void logCall({
         user_id: userId,
         route,
@@ -161,39 +214,15 @@ export async function callClaude({
         usage: {},
         latency_ms: Date.now() - t0,
         ok: false,
-        error: err
+        error: lastErr.message
       });
-      throw new Error(err);
+      throw lastErr;
+    } finally {
+      clearTimeout(timeoutId);
     }
-
-    const data = (await response.json()) as { content?: Array<{ text?: string }>; usage?: AnthropicUsage };
-    const text = data?.content?.[0]?.text ?? "";
-
-    void logCall({
-      user_id: userId,
-      route,
-      task,
-      model,
-      usage: data?.usage ?? {},
-      latency_ms: Date.now() - t0,
-      ok: true
-    });
-
-    return text;
-  } catch (err) {
-    if (err instanceof Error && err.message.startsWith("Claude error:")) throw err;
-    void logCall({
-      user_id: userId,
-      route,
-      task,
-      model,
-      usage: {},
-      latency_ms: Date.now() - t0,
-      ok: false,
-      error: err instanceof Error ? err.message : String(err)
-    });
-    throw err;
   }
+  // Unreachable — loop above either returns or throws.
+  throw lastErr ?? new Error("Claude call failed");
 }
 
 export function extractJsonBlock(text: string): string | null {

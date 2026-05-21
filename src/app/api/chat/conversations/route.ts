@@ -1,8 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { mapSupabaseMessagingError } from "@/lib/messaging-errors";
+import { rateLimit } from "@/lib/rate-limit";
 import { readRequestJson } from "@/lib/read-request-json";
 import { requireAuth } from "@/lib/require-auth";
 import { isMissingSchemaMigrationError, jsonSchemaNotReady } from "@/lib/supabase-rpc-errors";
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+// Encrypted conversation-key wrap blobs are short; cap at 4KB to refuse
+// obvious garbage submissions before paying for two DB writes.
+const WRAPPED_KEY_MAX = 4096;
 
 export async function GET() {
   const auth = await requireAuth();
@@ -14,7 +21,8 @@ export async function GET() {
     if (isMissingSchemaMigrationError(error.message)) {
       return jsonSchemaNotReady("api/chat/conversations:GET", error.message);
     }
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("[chat/conversations] list rpc failed", error.message, error.code);
+    return NextResponse.json({ error: "Failed to list conversations" }, { status: 500 });
   }
 
   const rows = (data ?? []) as Array<{
@@ -52,6 +60,17 @@ export async function POST(request: NextRequest) {
   const auth = await requireAuth();
   if (!auth.ok) return auth.response;
 
+  // Throttle conversation creation per user — each call writes to multiple
+  // tables and runs an RPC. 30/min is generous for legitimate UI.
+  const limiter = await rateLimit({
+    key: `chat-conv-create:${auth.user.id}`,
+    limit: 30,
+    windowMs: 60_000
+  });
+  if (!limiter.success) {
+    return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+  }
+
   const parsed = await readRequestJson(request);
   if (!parsed.ok) return parsed.response;
   const body = parsed.value as Record<string, unknown>;
@@ -62,6 +81,19 @@ export async function POST(request: NextRequest) {
 
   if (!participantId || !myWrappedKey || !participantWrappedKey) {
     return NextResponse.json({ error: "Missing participant or wrapped keys." }, { status: 400 });
+  }
+  // Validate UUID shape before string-interpolating into the .or() filter
+  // below. PostgREST will reject non-UUID values against uuid columns, but a
+  // local check is cheaper and defends against any future change in how the
+  // value flows.
+  if (!UUID_RE.test(participantId)) {
+    return NextResponse.json({ error: "Invalid participant id." }, { status: 400 });
+  }
+  if (participantId === auth.user.id) {
+    return NextResponse.json({ error: "Cannot start a conversation with yourself." }, { status: 400 });
+  }
+  if (myWrappedKey.length > WRAPPED_KEY_MAX || participantWrappedKey.length > WRAPPED_KEY_MAX) {
+    return NextResponse.json({ error: "Wrapped key too large." }, { status: 400 });
   }
 
   const { data: link } = await auth.supabase
@@ -83,7 +115,8 @@ export async function POST(request: NextRequest) {
       if (mapped) {
         return NextResponse.json({ error: mapped.error, code: mapped.code }, { status: mapped.status });
       }
-      return NextResponse.json({ error: msg }, { status: 400 });
+      console.error("[chat/conversations] assert_can_message_peer failed", msg);
+      return NextResponse.json({ error: "Unable to start conversation." }, { status: 400 });
     }
 
     const { data: existingConversation } = await auth.supabase
@@ -107,10 +140,23 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (createError || !createdConversation?.id) {
-        return NextResponse.json(
-          { error: createError?.message ?? "Unable to create conversation." },
-          { status: 500 }
-        );
+        // 23505 = concurrent creator beat us to it (new unique partial index
+        // on coach_student_link_id where conversation_type='coach_student').
+        // Re-select to pick up the row the other request inserted, then
+        // continue — both clients end up with the same conversation_id.
+        if (createError?.code === "23505") {
+          const { data: dupeWinner } = await auth.supabase
+            .from("conversations")
+            .select("id")
+            .eq("coach_student_link_id", link.id)
+            .eq("conversation_type", "coach_student")
+            .maybeSingle();
+          if (dupeWinner?.id) {
+            return NextResponse.json({ conversation_id: dupeWinner.id });
+          }
+        }
+        console.error("[chat/conversations] insert failed", createError?.message, createError?.code);
+        return NextResponse.json({ error: "Unable to create conversation." }, { status: 500 });
       }
 
       conversationId = createdConversation.id;
@@ -125,7 +171,12 @@ export async function POST(request: NextRequest) {
 
       const { error: participantError } = await auth.supabase.from("conversation_participants").insert(participants);
       if (participantError) {
-        return NextResponse.json({ error: participantError.message }, { status: 500 });
+        console.error(
+          "[chat/conversations] participant insert failed",
+          participantError.message,
+          participantError.code
+        );
+        return NextResponse.json({ error: "Unable to add participants." }, { status: 500 });
       }
     }
 
@@ -148,7 +199,8 @@ export async function POST(request: NextRequest) {
     if (low.includes("not allowed") || low.includes("messaging")) {
       return NextResponse.json({ error: "Messaging is not allowed with this user.", code: "MESSAGING_BLOCKED" }, { status: 403 });
     }
-    return NextResponse.json({ error: msg }, { status: 400 });
+    console.error("[chat/conversations] create_direct_conversation rpc failed", msg);
+    return NextResponse.json({ error: "Unable to start conversation." }, { status: 400 });
   }
 
   return NextResponse.json({ conversation_id: rpcId as string });

@@ -21,19 +21,13 @@ export async function GET() {
       .order("email");
 
     if (error) {
-      return NextResponse.json(
-        { error: error.message ?? "Failed to fetch coaches." },
-        { status: 500 }
-      );
+      console.error("[admin/coaches] list failed", error.message, error.code);
+      return NextResponse.json({ error: "Failed to fetch coaches." }, { status: 500 });
     }
 
     return NextResponse.json({ coaches: data ?? [] });
   } catch (e) {
-    return NextResponse.json(
-      {
-        error: e instanceof Error ? e.message : "Unable to fetch coaches."
-      },
-      { status: 500 }
-    );
+    console.error("[admin/coaches] crash", e);
+    return NextResponse.json({ error: "Unable to fetch coaches." }, { status: 500 });
   }
 }

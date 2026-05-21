@@ -15,7 +15,8 @@ export async function GET() {
     .limit(300);
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("[progress/workouts] read failed", error.message, error.code);
+    return NextResponse.json({ error: "Failed to load workouts" }, { status: 500 });
   }
 
   return NextResponse.json({ workouts: data ?? [] });
@@ -25,8 +26,10 @@ export async function POST(request: NextRequest) {
   const auth = await requireAuth();
   if (!auth.ok) return auth.response;
 
+  // Key by user_id — auth-gated, IP-keying was meaningless and request.ip is
+  // deprecated in Next 14.
   const limiter = await rateLimit({
-    key: request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? request.ip ?? auth.user.id,
+    key: `progress-workout:${auth.user.id}`,
     limit: 40,
     windowMs: 60_000
   });
@@ -41,15 +44,29 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Exercise is required." }, { status: 400 });
   }
 
+  // Bound user input: notes was unbounded (1MB+ entries could DoS storage),
+  // numeric fields could be Infinity / NaN, and exercise was already trimmed.
+  // The DB still enforces column types but defensive caps stop obviously
+  // malformed payloads at the edge.
+  const boundedNumber = (v: unknown, max: number): number | null => {
+    if (v === null || v === undefined || v === "") return null;
+    const n = Number(v);
+    return Number.isFinite(n) && n >= 0 && n <= max ? n : null;
+  };
+  const dateStr =
+    typeof body.workout_date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(body.workout_date)
+      ? body.workout_date
+      : new Date().toISOString().slice(0, 10);
+
   const payload = {
     user_id: auth.user.id,
-    workout_date: body.workout_date ?? new Date().toISOString().slice(0, 10),
-    exercise: body.exercise.trim(),
-    sets: body.sets ?? null,
-    reps: body.reps ?? null,
-    weight_kg: body.weight_kg ?? null,
-    duration_minutes: body.duration_minutes ?? null,
-    notes: typeof body.notes === "string" ? body.notes.trim() : null
+    workout_date: dateStr,
+    exercise: body.exercise.trim().slice(0, 200),
+    sets: boundedNumber(body.sets, 100),
+    reps: boundedNumber(body.reps, 1000),
+    weight_kg: boundedNumber(body.weight_kg, 2000),
+    duration_minutes: boundedNumber(body.duration_minutes, 1440),
+    notes: typeof body.notes === "string" ? body.notes.trim().slice(0, 2000) : null
   };
 
   const { data, error } = await auth.supabase
@@ -59,7 +76,8 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    console.error("[progress/workouts] insert failed", error.message, error.code);
+    return NextResponse.json({ error: "Failed to save workout" }, { status: 400 });
   }
 
   let newBadges: import("@/lib/tjai/badges").BadgeMeta[] = [];

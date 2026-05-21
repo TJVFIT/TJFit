@@ -57,18 +57,36 @@ export async function POST(request: NextRequest) {
   if (!targetUserId) return NextResponse.json({ error: "target_user_id required" }, { status: 400 });
   if (targetUserId === auth.user.id) return NextResponse.json({ error: "Cannot follow yourself" }, { status: 400 });
 
-  const { error } = await admin
+  // Detect whether this is a new follow vs a redundant click so we only
+  // send the "X started following you" notification once per relationship.
+  // Repeated follow clicks were spamming the target's notification inbox.
+  const { data: existing } = await admin
     .from("user_follows")
-    .upsert({ follower_id: auth.user.id, following_id: targetUserId }, { onConflict: "follower_id,following_id" });
-  if (error) return NextResponse.json({ error: "Failed to follow user" }, { status: 500 });
+    .select("follower_id")
+    .eq("follower_id", auth.user.id)
+    .eq("following_id", targetUserId)
+    .maybeSingle();
+
+  if (!existing) {
+    const { error } = await admin
+      .from("user_follows")
+      .insert({ follower_id: auth.user.id, following_id: targetUserId });
+    // 23505 = unique violation: concurrent request beat us to it. Treat as
+    // already-followed (skip the notification to avoid races sending twice).
+    if (error && error.code !== "23505") {
+      return NextResponse.json({ error: "Failed to follow user" }, { status: 500 });
+    }
+  }
 
   const [{ data: me }, count] = await Promise.all([
     admin.from("profiles").select("username,display_name").eq("id", auth.user.id).maybeSingle(),
     followerCount(admin, targetUserId)
   ]);
 
-  const actorName = String(me?.display_name || me?.username || "Someone");
-  await enqueuePendingNotification(targetUserId, "success", `${actorName} started following you`);
+  if (!existing) {
+    const actorName = String(me?.display_name || me?.username || "Someone");
+    await enqueuePendingNotification(targetUserId, "success", `${actorName} started following you`);
+  }
 
   return NextResponse.json({ following: true, follower_count: count });
 }

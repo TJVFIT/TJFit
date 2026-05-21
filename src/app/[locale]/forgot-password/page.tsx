@@ -79,7 +79,14 @@ export default function ForgotPasswordPage({ params }: { params: { locale: strin
       if (!supabase) { setError(copy.error); return; }
       const redirectTo = `${window.location.origin}/${locale}/reset-password`;
       const { error: err } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo });
-      if (err) { setError(err.message || copy.error); return; }
+      if (err) {
+        // Don't leak Supabase error text (rate-limit details, account hints).
+        // Supabase already returns success even for unknown emails, so a
+        // generic message here is the safe default.
+        console.error("[forgot-password] reset request failed", err);
+        setError(copy.error);
+        return;
+      }
       setSent(true);
     } catch {
       setError(copy.error);

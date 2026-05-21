@@ -98,6 +98,31 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Server not configured" }, { status: 500 });
   }
 
+  // Idempotency: dedupe on event_id. Paddle redelivers on any non-2xx; without
+  // this guard, subscription.renewed would resend emails and any side effects
+  // we add later could double-fire.
+  if (eventId) {
+    const { error: dedupErr } = await admin
+      .from("paddle_webhook_events")
+      .insert({ event_type: eventType ?? "unknown", event_id: eventId });
+    if (dedupErr) {
+      if (dedupErr.code === "23505") {
+        paddleLogDebug("webhook", "duplicate event_id, skipping", {
+          eventId: redactPaddleId(eventId, 16),
+          eventType: eventType ?? "(none)"
+        });
+        return NextResponse.json({ received: true, duplicate: true });
+      }
+      paddleLogError("webhook", "failed to record event_id", {
+        eventId: redactPaddleId(eventId, 16),
+        code: dedupErr.code,
+        message: dedupErr.message
+      });
+      // Return 500 so Paddle retries — better to retry than silently lose dedup
+      return NextResponse.json({ error: "Failed to record event" }, { status: 500 });
+    }
+  }
+
   if (eventType === "transaction.completed") {
     const orderId = extractTjfitOrderId(payload);
     if (!orderId) {
