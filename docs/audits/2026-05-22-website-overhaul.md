@@ -39,13 +39,17 @@ iteration — not micro-polish.
   en+ar; added tr/es/fr (full, accented) + new keys (starter, copyLabel,
   refine, tryLabel, followUps, quickPrompts, composerEmptyHint, errorGeneric,
   errorTimeout). Fixed the `t` selector to `COPY[locale]`. Build green, live.
+- **Iter 5** — bundle detail sticky mobile purchase bar. New `StickyBuyBar`
+  in `detail-effects.tsx`: slides up once past the hero, tucks away near the
+  footer CTA, mobile-only, motion-safe gated, localized Download label.
+  Build green, live on main.
 
 ## QUEUE (next up)
 
 - Translate the bundle *content* catalogue in `src/lib/bundles.ts` (12 bundles:
   name, hook, goalLabel, descriptions, phases, nutrition, sample days) — large,
   may span several iterations.
-- Bundle detail page: sticky mobile purchase bar, week-by-week accordion.
+- Bundle detail page: week-by-week accordion.
 - RTL pass on `/bundles` (mirror the title halo offset + card arrow for `ar`).
 - Homepage hero copy + layout refresh.
 

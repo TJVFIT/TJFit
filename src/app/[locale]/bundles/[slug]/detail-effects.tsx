@@ -368,6 +368,70 @@ export function ShareButton({
 }
 
 /**
+ * Sticky mobile purchase bar. On the long bundle detail page the hero
+ * Download CTA scrolls away while the visitor reads phases / sample day /
+ * nutrition — this keeps the action one tap away. Slides up once the user
+ * has scrolled past the hero, and tucks away near the footer so it never
+ * fights the in-page "Ready to start" CTA. Mobile only (md:hidden); the
+ * slide is motion-safe gated (reduced-motion users get an instant snap).
+ */
+export function StickyBuyBar({
+  name,
+  href,
+  label,
+  ariaLabel
+}: {
+  name: string;
+  href: string;
+  label: string;
+  ariaLabel: string;
+}) {
+  const [shown, setShown] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight;
+      const nearFooter = window.innerHeight + y > docHeight - 280;
+      setShown(y > 560 && !nearFooter);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+
+  return (
+    <div
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-cyan-400/20 bg-[#0A0A0B]/92 backdrop-blur-md ease-[cubic-bezier(0.2,1,0.3,1)] motion-safe:transition-[transform,opacity] motion-safe:duration-300 md:hidden"
+      style={{
+        paddingBottom: "max(0.625rem, env(safe-area-inset-bottom))",
+        transform: shown ? "translateY(0)" : "translateY(110%)",
+        opacity: shown ? 1 : 0,
+        pointerEvents: shown ? "auto" : "none"
+      }}
+      aria-hidden={!shown}
+    >
+      <div className="flex items-center gap-3 px-4 pt-2.5">
+        <p className="min-w-0 flex-1 truncate text-sm font-semibold text-white">{name}</p>
+        <a
+          href={href}
+          aria-label={ariaLabel}
+          tabIndex={shown ? 0 : -1}
+          className="tj-cta-sheen inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.26)] hover:brightness-110 motion-safe:active:scale-[0.97]"
+        >
+          <FileDown className="h-4 w-4" aria-hidden />
+          {label}
+        </a>
+      </div>
+    </div>
+  );
+}
+
+/**
  * Generic reveal wrapper — used to fade-up sections (nutrition, sample,
  * footer CTA) as the user scrolls.
  */

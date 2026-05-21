@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
-import { AtAGlance, DetailHero, DownloadButton, PhaseStrip, RevealSection, ShareButton } from "./detail-effects";
+import { AtAGlance, DetailHero, DownloadButton, PhaseStrip, RevealSection, ShareButton, StickyBuyBar } from "./detail-effects";
 import { getBundle, listBundleSlugs } from "@/lib/bundles";
 import { bundleProductJsonLd } from "@/lib/bundle-jsonld";
 import { getBundlesCopy } from "@/lib/bundles-copy";
@@ -287,6 +287,13 @@ export default function BundleDetailPage({
           />
         </div>
       </RevealSection>
+
+      <StickyBuyBar
+        name={bundle.name}
+        href={downloadHref}
+        label={copy.download}
+        ariaLabel={copy.downloadAria(bundle.name)}
+      />
     </section>
   );
 }
