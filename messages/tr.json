@@ -44,5 +44,40 @@
     "successBanner": "Payment successful. Your premium PDF is downloading now.",
     "downloadLink": "Download your PDF →",
     "dismiss": "Dismiss"
+  },
+  "bundles": {
+    "catalog": {
+      "metaTitle": "Program Paketleri · TJFit",
+      "metaDescription": "Markalı PDF dosyaları olarak sunulan on iki adet 12 haftalık antrenman ve beslenme paketi. Daha akıllı antrenman yap, daha iyi beslen.",
+      "metaOpenGraphDescription": "Markalı PDF dosyaları olarak sunulan on iki adet 12 haftalık antrenman ve beslenme paketi.",
+      "eyebrow": "Paketler",
+      "title": "12 paket. Tek antrenman odağı.",
+      "description": "Her paket, 12 haftalık bir antrenman protokolünü ona uygun bir beslenme sistemiyle eşleştirir ve markalı PDF dosyası olarak sunar. Hedefini seç; gerisini biz kurduk.",
+      "coachesEyebrow": "Koçlar ve iş ortakları için",
+      "coachesDescription": "Her PDF dosyası, TJAI'yi çalıştıran aynı yapıdan üretilir. Yazdır, gönder, kendi koçluk akışında bölümleri markana uyarlayabilirsin; TJFit satın alımın sana kişisel kullanım lisansı verir.",
+      "filterAria": "Paketleri hedefe göre filtrele",
+      "noMatches": "Bu filtreyle eşleşen paket henüz yok.",
+      "goalAria": "Hedef: {goal}",
+      "priceAria": "Fiyat: {price}",
+      "duration": "Süre",
+      "weeks": "{count} hafta",
+      "sessions": "Seans",
+      "sessionsPerWeek": "Haftada {count}",
+      "downloadPdf": "PDF indir",
+      "downloadAria": "{name} PDF dosyasını indir",
+      "details": "Detaylar",
+      "detailsAria": "{name} detaylarını aç",
+      "freeFootnote": "Girişle ücretsiz · markalı dosya · A4 baskıya hazır",
+      "signInFootnote": "Giriş gerekli · markalı dosya · A4 baskıya hazır",
+      "filters": {
+        "all": "Tümü",
+        "fatLoss": "Yağ kaybı",
+        "muscleGain": "Kas yap",
+        "recomp": "Dönüşüm",
+        "strength": "Güç",
+        "conditioning": "Kondisyon",
+        "foundation": "Başla"
+      }
+    }
   }
 }

@@ -44,5 +44,40 @@
     "successBanner": "Payment successful. Your premium PDF is downloading now.",
     "downloadLink": "Download your PDF →",
     "dismiss": "Dismiss"
+  },
+  "bundles": {
+    "catalog": {
+      "metaTitle": "Program Bundles · TJFit",
+      "metaDescription": "Twelve 12-week training + diet bundles, delivered as branded PDF dossiers. Train smarter, eat sharper.",
+      "metaOpenGraphDescription": "Twelve 12-week training + diet bundles, delivered as branded PDF dossiers.",
+      "eyebrow": "Bundles",
+      "title": "12 bundles. One way to train.",
+      "description": "Each bundle pairs a 12-week training protocol with a matching diet system, delivered as a branded PDF dossier. Pick the goal — we built the rest.",
+      "coachesEyebrow": "For coaches & affiliates",
+      "coachesDescription": "Each PDF dossier is generated from the same blueprint that powers TJAI. Print it, mail it, white-label sections in your own coaching workflow — your TJFit purchase grants you a personal-use license.",
+      "filterAria": "Filter bundles by goal",
+      "noMatches": "No bundles match this filter yet.",
+      "goalAria": "Goal: {goal}",
+      "priceAria": "Price: {price}",
+      "duration": "Duration",
+      "weeks": "{count} weeks",
+      "sessions": "Sessions",
+      "sessionsPerWeek": "{count}×/wk",
+      "downloadPdf": "Download PDF",
+      "downloadAria": "Download {name} PDF",
+      "details": "Details",
+      "detailsAria": "Open {name} details",
+      "freeFootnote": "Free with sign-in · branded dossier · A4 print-ready",
+      "signInFootnote": "Sign in required · branded dossier · A4 print-ready",
+      "filters": {
+        "all": "All",
+        "fatLoss": "Cut",
+        "muscleGain": "Build",
+        "recomp": "Recomp",
+        "strength": "Strength",
+        "conditioning": "Conditioning",
+        "foundation": "Start"
+      }
+    }
   }
 }

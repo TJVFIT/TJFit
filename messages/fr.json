@@ -44,5 +44,40 @@
     "successBanner": "Payment successful. Your premium PDF is downloading now.",
     "downloadLink": "Download your PDF →",
     "dismiss": "Dismiss"
+  },
+  "bundles": {
+    "catalog": {
+      "metaTitle": "Packs de programmes · TJFit",
+      "metaDescription": "Douze packs entraînement et nutrition de 12 semaines, livrés sous forme de dossiers PDF aux couleurs de TJFit. Entraînez-vous mieux et mangez avec précision.",
+      "metaOpenGraphDescription": "Douze packs entraînement et nutrition de 12 semaines, livrés sous forme de dossiers PDF aux couleurs de TJFit.",
+      "eyebrow": "Packs",
+      "title": "12 packs. Une façon de s’entraîner.",
+      "description": "Chaque pack associe un protocole d’entraînement de 12 semaines à un système nutritionnel adapté, puis vous est livré sous forme de dossier PDF aux couleurs de TJFit. Choisissez l’objectif ; nous avons construit le reste.",
+      "coachesEyebrow": "Pour les coachs et affiliés",
+      "coachesDescription": "Chaque dossier PDF est généré à partir de la même base que TJAI. Imprimez-le, envoyez-le ou adaptez certaines sections à votre propre suivi ; votre achat TJFit vous accorde une licence d’usage personnel.",
+      "filterAria": "Filtrer les packs par objectif",
+      "noMatches": "Aucun pack ne correspond encore à ce filtre.",
+      "goalAria": "Objectif : {goal}",
+      "priceAria": "Prix : {price}",
+      "duration": "Durée",
+      "weeks": "{count} semaines",
+      "sessions": "Séances",
+      "sessionsPerWeek": "{count}/sem.",
+      "downloadPdf": "Télécharger le PDF",
+      "downloadAria": "Télécharger le PDF de {name}",
+      "details": "Détails",
+      "detailsAria": "Ouvrir les détails de {name}",
+      "freeFootnote": "Gratuit après connexion · dossier de marque · prêt à imprimer en A4",
+      "signInFootnote": "Connexion requise · dossier de marque · prêt à imprimer en A4",
+      "filters": {
+        "all": "Tous",
+        "fatLoss": "Sèche",
+        "muscleGain": "Prise de muscle",
+        "recomp": "Recomposition",
+        "strength": "Force",
+        "conditioning": "Conditionnement",
+        "foundation": "Débuter"
+      }
+    }
   }
 }

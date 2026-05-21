@@ -44,5 +44,40 @@
     "successBanner": "Payment successful. Your premium PDF is downloading now.",
     "downloadLink": "Download your PDF →",
     "dismiss": "Dismiss"
+  },
+  "bundles": {
+    "catalog": {
+      "metaTitle": "حزم البرامج · TJFit",
+      "metaDescription": "اثنتا عشرة حزمة تدريب وتغذية لمدة 12 أسبوعًا، مقدمة كملفات PDF تحمل هوية TJFit. تدرب بذكاء وتناول طعامك بدقة.",
+      "metaOpenGraphDescription": "اثنتا عشرة حزمة تدريب وتغذية لمدة 12 أسبوعًا، مقدمة كملفات PDF تحمل هوية TJFit.",
+      "eyebrow": "الحزم",
+      "title": "12 حزمة. طريق واحد للتدريب.",
+      "description": "تجمع كل حزمة بين بروتوكول تدريب لمدة 12 أسبوعًا ونظام تغذية مناسب له، وتصل إليك كملف PDF يحمل هوية TJFit. اختر هدفك وقد بنينا الباقي.",
+      "coachesEyebrow": "للمدربين والشركاء",
+      "coachesDescription": "يتم إنشاء كل ملف PDF من نفس البنية التي تشغل TJAI. اطبعه أو أرسله أو خصص بعض أقسامه ضمن سير عملك التدريبي؛ يمنحك شراء TJFit ترخيصًا للاستخدام الشخصي.",
+      "filterAria": "تصفية الحزم حسب الهدف",
+      "noMatches": "لا توجد حزم تطابق هذا الفلتر بعد.",
+      "goalAria": "الهدف: {goal}",
+      "priceAria": "السعر: {price}",
+      "duration": "المدة",
+      "weeks": "{count} أسبوع",
+      "sessions": "الجلسات",
+      "sessionsPerWeek": "{count} في الأسبوع",
+      "downloadPdf": "تنزيل PDF",
+      "downloadAria": "تنزيل ملف PDF لحزمة {name}",
+      "details": "التفاصيل",
+      "detailsAria": "فتح تفاصيل {name}",
+      "freeFootnote": "مجاني بعد تسجيل الدخول · ملف بهوية TJFit · جاهز للطباعة على A4",
+      "signInFootnote": "يتطلب تسجيل الدخول · ملف بهوية TJFit · جاهز للطباعة على A4",
+      "filters": {
+        "all": "الكل",
+        "fatLoss": "خفض الدهون",
+        "muscleGain": "بناء العضلات",
+        "recomp": "إعادة التكوين",
+        "strength": "القوة",
+        "conditioning": "اللياقة",
+        "foundation": "البداية"
+      }
+    }
   }
 }

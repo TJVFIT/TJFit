@@ -44,5 +44,40 @@
     "successBanner": "Payment successful. Your premium PDF is downloading now.",
     "downloadLink": "Download your PDF →",
     "dismiss": "Dismiss"
+  },
+  "bundles": {
+    "catalog": {
+      "metaTitle": "Paquetes de programas · TJFit",
+      "metaDescription": "Doce paquetes de entrenamiento y dieta de 12 semanas, entregados como dossiers PDF con la marca TJFit. Entrena mejor y come con más precisión.",
+      "metaOpenGraphDescription": "Doce paquetes de entrenamiento y dieta de 12 semanas, entregados como dossiers PDF con la marca TJFit.",
+      "eyebrow": "Paquetes",
+      "title": "12 paquetes. Una forma de entrenar.",
+      "description": "Cada paquete combina un protocolo de entrenamiento de 12 semanas con un sistema de dieta a juego y se entrega como dossier PDF con la marca TJFit. Elige tu objetivo; nosotros construimos el resto.",
+      "coachesEyebrow": "Para coaches y afiliados",
+      "coachesDescription": "Cada dossier PDF se genera con la misma base que impulsa TJAI. Imprímelo, envíalo o adapta secciones a tu propio flujo de coaching; tu compra de TJFit te concede una licencia de uso personal.",
+      "filterAria": "Filtrar paquetes por objetivo",
+      "noMatches": "Todavía no hay paquetes que coincidan con este filtro.",
+      "goalAria": "Objetivo: {goal}",
+      "priceAria": "Precio: {price}",
+      "duration": "Duración",
+      "weeks": "{count} semanas",
+      "sessions": "Sesiones",
+      "sessionsPerWeek": "{count}/sem",
+      "downloadPdf": "Descargar PDF",
+      "downloadAria": "Descargar el PDF de {name}",
+      "details": "Detalles",
+      "detailsAria": "Abrir los detalles de {name}",
+      "freeFootnote": "Gratis al iniciar sesión · dossier con marca · listo para imprimir en A4",
+      "signInFootnote": "Inicio de sesión requerido · dossier con marca · listo para imprimir en A4",
+      "filters": {
+        "all": "Todos",
+        "fatLoss": "Definir",
+        "muscleGain": "Ganar masa",
+        "recomp": "Recomposición",
+        "strength": "Fuerza",
+        "conditioning": "Acondicionamiento",
+        "foundation": "Empezar"
+      }
+    }
   }
 }
