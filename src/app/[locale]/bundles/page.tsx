@@ -3,6 +3,7 @@ import { BundleGrid } from "./bundle-grid";
 import { AmbientOrbs } from "@/components/effects/ambient-orbs";
 import { BUNDLES } from "@/lib/bundles";
 import { bundlesItemListJsonLd } from "@/lib/bundle-jsonld";
+import { getBundlesCopy } from "@/lib/bundles-copy";
 import { supportedLocales } from "@/lib/i18n";
 import { requireLocaleParam } from "@/lib/require-locale";
 import { getSiteUrl } from "@/lib/site-url";
@@ -10,18 +11,17 @@ import { getSiteUrl } from "@/lib/site-url";
 export function generateMetadata({ params }: { params: { locale: string } }) {
   const site = getSiteUrl();
   const url = `${site}/${params.locale}/bundles`;
+  const copy = getBundlesCopy(params.locale);
   const languages: Record<string, string> = {};
   for (const loc of supportedLocales) languages[loc] = `${site}/${loc}/bundles`;
   languages["x-default"] = `${site}/en/bundles`;
   return {
-    title: "Program Bundles · TJFit",
-    description:
-      "Twelve 12-week training + diet bundles, delivered as branded PDF dossiers. Train smarter, eat sharper.",
+    title: copy.metaTitle,
+    description: copy.metaDescription,
     alternates: { canonical: url, languages },
     openGraph: {
-      title: "Program Bundles · TJFit",
-      description:
-        "Twelve 12-week training + diet bundles, delivered as branded PDF dossiers.",
+      title: copy.metaTitle,
+      description: copy.metaDescription,
       url,
       type: "website"
     }
@@ -30,6 +30,7 @@ export function generateMetadata({ params }: { params: { locale: string } }) {
 
 export default function BundlesPage({ params }: { params: { locale: string } }) {
   const locale = requireLocaleParam(params.locale);
+  const copy = getBundlesCopy(locale);
   return (
     <section className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       <script
@@ -55,21 +56,19 @@ export default function BundlesPage({ params }: { params: { locale: string } }) 
           className="relative text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80 motion-safe:animate-[tj-fade-up_520ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
           style={{ animationDelay: "80ms" }}
         >
-          Bundles
+          {copy.eyebrow}
         </p>
         <h1
           className="relative mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl motion-safe:animate-[tj-fade-up_620ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
           style={{ animationDelay: "180ms" }}
         >
-          <span className="tj-title-shimmer">12 bundles. One way to train.</span>
+          <span className="tj-title-shimmer">{copy.title(BUNDLES.length)}</span>
         </h1>
         <p
           className="relative mt-4 text-sm leading-relaxed text-muted sm:text-base motion-safe:animate-[tj-fade-up_620ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
           style={{ animationDelay: "320ms" }}
         >
-          Each bundle pairs a 12-week training protocol with a matching diet
-          system, delivered as a branded PDF dossier. Pick the goal — we built
-          the rest.
+          {copy.lead}
         </p>
       </div>
 
@@ -95,12 +94,10 @@ export default function BundlesPage({ params }: { params: { locale: string } }) 
           }}
         />
         <p className="relative text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
-          For coaches & affiliates
+          {copy.coachEyebrow}
         </p>
         <p className="relative mt-3 max-w-3xl text-sm leading-relaxed text-muted sm:text-base">
-          Each PDF dossier is generated from the same blueprint that powers
-          TJAI. Print it, mail it, white-label sections in your own coaching
-          workflow — your TJFit purchase grants you a personal-use license.
+          {copy.coachBody}
         </p>
       </div>
     </section>

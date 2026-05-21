@@ -7,17 +7,18 @@ import { ArrowRight, FileDown } from "lucide-react";
 import { useReveal, useTilt } from "@/components/effects/use-3d";
 import { useMagnetic, useMergedRef, useRipple } from "@/components/effects/use-magnetic";
 import type { Bundle, BundleGoal } from "@/lib/bundles";
+import { getBundlesCopy, type BundlesCopy } from "@/lib/bundles-copy";
 
 type FilterKey = "all" | BundleGoal;
 
-const FILTERS: Array<{ key: FilterKey; label: string }> = [
-  { key: "all", label: "All" },
-  { key: "fat-loss", label: "Cut" },
-  { key: "muscle-gain", label: "Build" },
-  { key: "recomp", label: "Recomp" },
-  { key: "strength", label: "Strength" },
-  { key: "conditioning", label: "Conditioning" },
-  { key: "foundation", label: "Start" }
+const FILTER_KEYS: FilterKey[] = [
+  "all",
+  "fat-loss",
+  "muscle-gain",
+  "recomp",
+  "strength",
+  "conditioning",
+  "foundation"
 ];
 
 export function BundleGrid({
@@ -28,6 +29,7 @@ export function BundleGrid({
   locale: string;
 }) {
   const [active, setActive] = useState<FilterKey>("all");
+  const copy = useMemo(() => getBundlesCopy(locale), [locale]);
   const filtered = useMemo(
     () => (active === "all" ? bundles : bundles.filter((b) => b.goal === active)),
     [active, bundles]
@@ -43,26 +45,26 @@ export function BundleGrid({
       <div
         className="mt-10 flex flex-wrap gap-2"
         role="tablist"
-        aria-label="Filter bundles by goal"
+        aria-label={copy.filterAria}
       >
-        {FILTERS.map((f) => {
-          const count = counts[f.key] ?? 0;
-          if (f.key !== "all" && count === 0) return null;
-          const isActive = active === f.key;
+        {FILTER_KEYS.map((key) => {
+          const count = counts[key] ?? 0;
+          if (key !== "all" && count === 0) return null;
+          const isActive = active === key;
           return (
             <button
-              key={f.key}
+              key={key}
               type="button"
               role="tab"
               aria-selected={isActive}
-              onClick={() => setActive(f.key)}
+              onClick={() => setActive(key)}
               className={`inline-flex min-h-[36px] items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-[color,border-color,background-color] motion-safe:transition-all ${
                 isActive
                   ? "tj-chip-active border-cyan-300/60 bg-cyan-300/[0.12] text-cyan-50"
                   : "border-white/[0.08] bg-white/[0.02] text-bright/80 hover:border-cyan-300/30 hover:text-cyan-100"
               }`}
             >
-              {f.label}
+              {copy.filterLabels[key]}
               <span
                 className={`tabular-nums text-[10px] ${
                   isActive ? "text-cyan-200/80" : "text-faint"
@@ -81,14 +83,12 @@ export function BundleGrid({
         aria-live="polite"
       >
         {filtered.map((bundle, i) => (
-          <BundleCard key={bundle.slug} bundle={bundle} locale={locale} index={i} />
+          <BundleCard key={bundle.slug} bundle={bundle} locale={locale} index={i} copy={copy} />
         ))}
       </div>
 
       {filtered.length === 0 ? (
-        <p className="mt-8 text-sm text-muted">
-          No bundles match this filter yet.
-        </p>
+        <p className="mt-8 text-sm text-muted">{copy.emptyFilter}</p>
       ) : null}
     </>
   );
@@ -97,11 +97,13 @@ export function BundleGrid({
 function BundleCard({
   bundle,
   locale,
-  index
+  index,
+  copy
 }: {
   bundle: Bundle;
   locale: string;
   index: number;
+  copy: BundlesCopy;
 }) {
   const detailHref = `/${locale}/bundles/${bundle.slug}`;
   const downloadHref = `/api/bundles/download/${bundle.slug}`;
@@ -182,7 +184,7 @@ function BundleCard({
           <div className="absolute inset-x-0 top-0 z-[2] flex items-start justify-between p-4">
             <span
               className="rounded-full border border-cyan-300/30 bg-black/40 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-100 backdrop-blur"
-              aria-label={`Goal: ${bundle.goalLabel}`}
+              aria-label={copy.goalAria(bundle.goalLabel)}
             >
               {bundle.goalLabel}
             </span>
@@ -192,7 +194,7 @@ function BundleCard({
                   ? "border border-white/20 bg-white/[0.08] text-white/85"
                   : "border border-cyan-300/40 bg-cyan-300/[0.12] text-cyan-50"
               }`}
-              aria-label={`Price: ${bundle.save}`}
+              aria-label={copy.priceAria(bundle.save)}
             >
               {bundle.save}
             </span>
@@ -206,13 +208,15 @@ function BundleCard({
 
           <dl className="mt-4 grid grid-cols-2 gap-2 text-[11px]">
             <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-2.5 py-2">
-              <dt className="text-faint">Duration</dt>
-              <dd className="mt-0.5 font-semibold text-white">{bundle.weeks} weeks</dd>
+              <dt className="text-faint">{copy.duration}</dt>
+              <dd className="mt-0.5 font-semibold text-white tabular-nums">
+                {copy.weeksValue(bundle.weeks)}
+              </dd>
             </div>
             <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-2.5 py-2">
-              <dt className="text-faint">Sessions</dt>
-              <dd className="mt-0.5 font-semibold text-white">
-                {bundle.sessionsPerWeek}×/wk
+              <dt className="text-faint">{copy.sessions}</dt>
+              <dd className="mt-0.5 font-semibold text-white tabular-nums">
+                {copy.sessionsValue(bundle.sessionsPerWeek)}
               </dd>
             </div>
           </dl>
@@ -225,7 +229,7 @@ function BundleCard({
             <a
               ref={dlRef}
               href={downloadHref}
-              aria-label={`Download ${bundle.name} PDF`}
+              aria-label={copy.downloadAria(bundle.name)}
               className="tj-cta-sheen relative inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-4 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] hover:brightness-110 hover:shadow-[0_0_32px_rgba(34,211,238,0.32)] motion-safe:active:scale-[0.97]"
               style={
                 {
@@ -238,14 +242,14 @@ function BundleCard({
               }
             >
               <FileDown className="relative h-4 w-4" aria-hidden />
-              <span className="relative">Download PDF</span>
+              <span className="relative">{copy.download}</span>
             </a>
             <Link
               href={detailHref}
-              aria-label={`Open ${bundle.name} details`}
+              aria-label={copy.detailsAria(bundle.name)}
               className="tj-cta-sheen inline-flex min-h-[44px] items-center gap-1 rounded-full border border-cyan-300/20 px-3.5 py-2.5 text-xs font-semibold text-cyan-200 transition-colors hover:border-cyan-300/40 hover:text-cyan-100"
             >
-              Details
+              {copy.details}
               <ArrowRight
                 className="h-3.5 w-3.5 transition-transform motion-safe:group-hover:translate-x-0.5"
                 aria-hidden
@@ -254,9 +258,7 @@ function BundleCard({
           </div>
 
           <p className="mt-3 text-[10px] text-faint">
-            {isFree
-              ? "Free with sign-in · branded dossier · A4 print-ready"
-              : "Sign in required · branded dossier · A4 print-ready"}
+            {isFree ? copy.footnoteFree : copy.footnotePaid}
           </p>
         </div>
       </article>
