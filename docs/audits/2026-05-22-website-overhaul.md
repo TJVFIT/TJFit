@@ -26,14 +26,17 @@ iteration — not micro-polish.
 - **Iter 1** — i18n the `/bundles` listing page. New `src/lib/bundles-copy.ts`
   (`getBundlesCopy`) with all page + grid chrome strings in en/tr/ar/es/fr;
   wired `bundles/page.tsx` (incl. localized `generateMetadata`) and
-  `bundle-grid.tsx`. Build green.
+  `bundle-grid.tsx`. Build green, live on main.
+- **Iter 2** — i18n the `/bundles/[slug]` detail page. Extended
+  `bundles-copy.ts` with a `detail` block (~26 strings/fns × 5 locales);
+  wired `[slug]/page.tsx` + `detail-effects.tsx` (DownloadButton/ShareButton/
+  AtAGlance now take label props). Build green, live on main.
 
 ## QUEUE (next up)
 
 - Translate the bundle *content* catalogue in `src/lib/bundles.ts` (12 bundles:
   name, hook, goalLabel, descriptions, phases, nutrition, sample days) — large,
   may span several iterations.
-- i18n the `/bundles/[slug]` detail page chrome.
 - Bundle detail page: sticky mobile purchase bar, week-by-week accordion.
 - RTL pass on `/bundles` (mirror the title halo offset + card arrow for `ar`).
 - Better TJAI chatbot UX (streaming affordance, message states, empty state).

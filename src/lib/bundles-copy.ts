@@ -12,6 +12,34 @@ import type { BundleGoal } from "@/lib/bundles";
 
 type FilterKey = "all" | BundleGoal;
 
+export type BundleDetailCopy = {
+  metaFallbackTitle: string;
+  backToAll: string;
+  askTjai: string;
+  shareAria: (name: string) => string;
+  atAGlance: string;
+  rowTraining: string;
+  rowDiet: string;
+  sessionsValueLong: (n: number) => string;
+  trainingFrameworkEyebrow: string;
+  trainingFrameworkTitle: string;
+  sampleSessionEyebrow: string;
+  sampleSessionNote: string;
+  nutritionEyebrow: string;
+  nutritionStyle: string;
+  nutritionProtein: string;
+  nutritionCalorie: string;
+  sampleDayEyebrow: string;
+  sampleDayTitle: string;
+  sampleDayNote: string;
+  readyEyebrow: string;
+  readyTitle: string;
+  downloadDossierAria: string;
+  shareIdle: string;
+  shareShared: string;
+  shareCopied: string;
+};
+
 export type BundlesCopy = {
   metaTitle: string;
   metaDescription: string;
@@ -35,6 +63,7 @@ export type BundlesCopy = {
   priceAria: (save: string) => string;
   downloadAria: (name: string) => string;
   detailsAria: (name: string) => string;
+  detail: BundleDetailCopy;
 };
 
 const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
@@ -70,7 +99,36 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     goalAria: (label) => `Goal: ${label}`,
     priceAria: (save) => `Price: ${save}`,
     downloadAria: (name) => `Download ${name} PDF`,
-    detailsAria: (name) => `Open ${name} details`
+    detailsAria: (name) => `Open ${name} details`,
+    detail: {
+      metaFallbackTitle: "Bundle · TJFit",
+      backToAll: "All bundles",
+      askTjai: "Ask TJAI which to pick",
+      shareAria: (name) => `Share ${name}`,
+      atAGlance: "At a glance",
+      rowTraining: "Training",
+      rowDiet: "Diet",
+      sessionsValueLong: (n) => `${n} per week`,
+      trainingFrameworkEyebrow: "Training framework",
+      trainingFrameworkTitle: "Three phases, twelve weeks.",
+      sampleSessionEyebrow: "Sample session",
+      sampleSessionNote:
+        "A representative session from the program. Loads scale to your level.",
+      nutritionEyebrow: "Nutrition framework",
+      nutritionStyle: "Style",
+      nutritionProtein: "Protein target",
+      nutritionCalorie: "Calorie bias",
+      sampleDayEyebrow: "Sample day of eating",
+      sampleDayTitle: "What a real day looks like",
+      sampleDayNote:
+        "Adjust portions to hit your targets. A template, not a prescription.",
+      readyEyebrow: "Ready to start",
+      readyTitle: "Download the dossier and run it today.",
+      downloadDossierAria: "Download bundle PDF",
+      shareIdle: "Share",
+      shareShared: "Shared",
+      shareCopied: "Link copied!"
+    }
   },
   tr: {
     metaTitle: "Program Paketleri · TJFit",
@@ -104,7 +162,36 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     goalAria: (label) => `Hedef: ${label}`,
     priceAria: (save) => `Fiyat: ${save}`,
     downloadAria: (name) => `${name} PDF dosyasını indir`,
-    detailsAria: (name) => `${name} detaylarını aç`
+    detailsAria: (name) => `${name} detaylarını aç`,
+    detail: {
+      metaFallbackTitle: "Paket · TJFit",
+      backToAll: "Tüm paketler",
+      askTjai: "Hangisini seçeceğini TJAI'ye sor",
+      shareAria: (name) => `${name} paketini paylaş`,
+      atAGlance: "Bir bakışta",
+      rowTraining: "Antrenman",
+      rowDiet: "Diyet",
+      sessionsValueLong: (n) => `Haftada ${n}`,
+      trainingFrameworkEyebrow: "Antrenman çerçevesi",
+      trainingFrameworkTitle: "Üç faz, on iki hafta.",
+      sampleSessionEyebrow: "Örnek seans",
+      sampleSessionNote:
+        "Programdan temsili bir seans. Yükler seviyene göre ölçeklenir.",
+      nutritionEyebrow: "Beslenme çerçevesi",
+      nutritionStyle: "Tarz",
+      nutritionProtein: "Protein hedefi",
+      nutritionCalorie: "Kalori eğilimi",
+      sampleDayEyebrow: "Örnek beslenme günü",
+      sampleDayTitle: "Gerçek bir gün nasıl görünür",
+      sampleDayNote:
+        "Porsiyonları hedeflerine göre ayarla. Bir reçete değil, bir şablon.",
+      readyEyebrow: "Başlamaya hazır",
+      readyTitle: "Dosyayı indir ve bugün uygulamaya başla.",
+      downloadDossierAria: "Paket PDF'sini indir",
+      shareIdle: "Paylaş",
+      shareShared: "Paylaşıldı",
+      shareCopied: "Bağlantı kopyalandı!"
+    }
   },
   ar: {
     metaTitle: "حزم البرامج · TJFit",
@@ -138,7 +225,36 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     goalAria: (label) => `الهدف: ${label}`,
     priceAria: (save) => `السعر: ${save}`,
     downloadAria: (name) => `تنزيل ملف ${name} بصيغة PDF`,
-    detailsAria: (name) => `فتح تفاصيل ${name}`
+    detailsAria: (name) => `فتح تفاصيل ${name}`,
+    detail: {
+      metaFallbackTitle: "حزمة · TJFit",
+      backToAll: "كل الحزم",
+      askTjai: "اسأل TJAI أيها تختار",
+      shareAria: (name) => `مشاركة ${name}`,
+      atAGlance: "لمحة سريعة",
+      rowTraining: "التدريب",
+      rowDiet: "النظام الغذائي",
+      sessionsValueLong: (n) => `${n} في الأسبوع`,
+      trainingFrameworkEyebrow: "إطار التدريب",
+      trainingFrameworkTitle: "ثلاث مراحل، اثنا عشر أسبوعاً.",
+      sampleSessionEyebrow: "جلسة نموذجية",
+      sampleSessionNote:
+        "جلسة تمثيلية من البرنامج. تتكيّف الأحمال مع مستواك.",
+      nutritionEyebrow: "إطار التغذية",
+      nutritionStyle: "النمط",
+      nutritionProtein: "هدف البروتين",
+      nutritionCalorie: "ميل السعرات",
+      sampleDayEyebrow: "يوم نموذجي من الطعام",
+      sampleDayTitle: "كيف يبدو يوم حقيقي",
+      sampleDayNote:
+        "اضبط الحصص لتحقيق أهدافك. قالب، وليس وصفة.",
+      readyEyebrow: "جاهز للبدء",
+      readyTitle: "نزّل الملف وابدأ تطبيقه اليوم.",
+      downloadDossierAria: "تنزيل ملف الحزمة بصيغة PDF",
+      shareIdle: "مشاركة",
+      shareShared: "تمت المشاركة",
+      shareCopied: "تم نسخ الرابط!"
+    }
   },
   es: {
     metaTitle: "Paquetes de programas · TJFit",
@@ -172,7 +288,36 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     goalAria: (label) => `Objetivo: ${label}`,
     priceAria: (save) => `Precio: ${save}`,
     downloadAria: (name) => `Descargar el PDF de ${name}`,
-    detailsAria: (name) => `Abrir los detalles de ${name}`
+    detailsAria: (name) => `Abrir los detalles de ${name}`,
+    detail: {
+      metaFallbackTitle: "Paquete · TJFit",
+      backToAll: "Todos los paquetes",
+      askTjai: "Pregunta a TJAI cuál elegir",
+      shareAria: (name) => `Compartir ${name}`,
+      atAGlance: "De un vistazo",
+      rowTraining: "Entrenamiento",
+      rowDiet: "Dieta",
+      sessionsValueLong: (n) => `${n} por semana`,
+      trainingFrameworkEyebrow: "Marco de entrenamiento",
+      trainingFrameworkTitle: "Tres fases, doce semanas.",
+      sampleSessionEyebrow: "Sesión de ejemplo",
+      sampleSessionNote:
+        "Una sesión representativa del programa. Las cargas se ajustan a tu nivel.",
+      nutritionEyebrow: "Marco de nutrición",
+      nutritionStyle: "Estilo",
+      nutritionProtein: "Objetivo de proteína",
+      nutritionCalorie: "Sesgo calórico",
+      sampleDayEyebrow: "Día de comidas de ejemplo",
+      sampleDayTitle: "Cómo es un día real",
+      sampleDayNote:
+        "Ajusta las porciones para alcanzar tus objetivos. Una plantilla, no una receta.",
+      readyEyebrow: "Listo para empezar",
+      readyTitle: "Descarga el dossier y empiézalo hoy.",
+      downloadDossierAria: "Descargar el PDF del paquete",
+      shareIdle: "Compartir",
+      shareShared: "Compartido",
+      shareCopied: "¡Enlace copiado!"
+    }
   },
   fr: {
     metaTitle: "Packs de programmes · TJFit",
@@ -206,7 +351,36 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     goalAria: (label) => `Objectif : ${label}`,
     priceAria: (save) => `Prix : ${save}`,
     downloadAria: (name) => `Télécharger le PDF de ${name}`,
-    detailsAria: (name) => `Ouvrir les détails de ${name}`
+    detailsAria: (name) => `Ouvrir les détails de ${name}`,
+    detail: {
+      metaFallbackTitle: "Pack · TJFit",
+      backToAll: "Tous les packs",
+      askTjai: "Demande à TJAI lequel choisir",
+      shareAria: (name) => `Partager ${name}`,
+      atAGlance: "En un coup d'œil",
+      rowTraining: "Entraînement",
+      rowDiet: "Diète",
+      sessionsValueLong: (n) => `${n} par semaine`,
+      trainingFrameworkEyebrow: "Cadre d'entraînement",
+      trainingFrameworkTitle: "Trois phases, douze semaines.",
+      sampleSessionEyebrow: "Séance type",
+      sampleSessionNote:
+        "Une séance représentative du programme. Les charges s'adaptent à ton niveau.",
+      nutritionEyebrow: "Cadre nutritionnel",
+      nutritionStyle: "Style",
+      nutritionProtein: "Objectif protéines",
+      nutritionCalorie: "Tendance calorique",
+      sampleDayEyebrow: "Journée de repas type",
+      sampleDayTitle: "À quoi ressemble une vraie journée",
+      sampleDayNote:
+        "Ajuste les portions pour atteindre tes objectifs. Un modèle, pas une prescription.",
+      readyEyebrow: "Prêt à commencer",
+      readyTitle: "Télécharge le dossier et lance-le dès aujourd'hui.",
+      downloadDossierAria: "Télécharger le PDF du pack",
+      shareIdle: "Partager",
+      shareShared: "Partagé",
+      shareCopied: "Lien copié !"
+    }
   }
 };
 

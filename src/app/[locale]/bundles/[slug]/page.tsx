@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { AtAGlance, DetailHero, DownloadButton, PhaseStrip, RevealSection, ShareButton } from "./detail-effects";
 import { getBundle, listBundleSlugs } from "@/lib/bundles";
 import { bundleProductJsonLd } from "@/lib/bundle-jsonld";
+import { getBundlesCopy } from "@/lib/bundles-copy";
 import { supportedLocales } from "@/lib/i18n";
 import { requireLocaleParam } from "@/lib/require-locale";
 import { getSiteUrl } from "@/lib/site-url";
@@ -15,7 +16,7 @@ export function generateStaticParams() {
 
 export function generateMetadata({ params }: { params: { locale: string; slug: string } }) {
   const bundle = getBundle(params.slug);
-  if (!bundle) return { title: "Bundle · TJFit" };
+  if (!bundle) return { title: getBundlesCopy(params.locale).detail.metaFallbackTitle };
   const site = getSiteUrl();
   const url = `${site}/${params.locale}/bundles/${bundle.slug}`;
   const languages: Record<string, string> = {};
@@ -46,6 +47,8 @@ export default function BundleDetailPage({
   const bundle = getBundle(params.slug);
   if (!bundle) notFound();
 
+  const copy = getBundlesCopy(locale);
+  const d = copy.detail;
   const downloadHref = `/api/bundles/download/${bundle.slug}`;
   const isFree = bundle.save.toLowerCase() === "free";
 
@@ -63,7 +66,7 @@ export default function BundleDetailPage({
           className="h-3.5 w-3.5 transition-transform motion-safe:group-hover/back:-translate-x-1"
           aria-hidden
         />
-        All bundles
+        {d.backToAll}
       </Link>
 
       <DetailHero image={bundle.heroImage} />
@@ -76,7 +79,7 @@ export default function BundleDetailPage({
           >
             <span
               className="rounded-full border border-cyan-300/30 bg-cyan-300/[0.08] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-100"
-              aria-label={`Goal: ${bundle.goalLabel}`}
+              aria-label={copy.goalAria(bundle.goalLabel)}
             >
               {bundle.goalLabel}
             </span>
@@ -86,7 +89,7 @@ export default function BundleDetailPage({
                   ? "border border-white/15 bg-white/[0.04] text-white/85"
                   : "border border-cyan-300/30 bg-cyan-300/[0.08] text-cyan-50"
               }`}
-              aria-label={`Price: ${bundle.save}`}
+              aria-label={copy.priceAria(bundle.save)}
             >
               {bundle.save}
             </span>
@@ -117,39 +120,45 @@ export default function BundleDetailPage({
           >
             <DownloadButton
               href={downloadHref}
-              ariaLabel={`Download ${bundle.name} PDF`}
+              label={copy.download}
+              ariaLabel={copy.downloadAria(bundle.name)}
               className="flex-1 sm:flex-none"
             />
             <Link
               href={`/${locale}/tjai`}
               className="group/tjai tj-cta-sheen inline-flex min-h-[48px] flex-1 items-center justify-center gap-1.5 rounded-full border border-cyan-300/25 px-4 py-2.5 text-sm font-semibold text-cyan-200 transition-[border-color,color,box-shadow] hover:border-cyan-300/55 hover:text-cyan-100 hover:shadow-[0_0_24px_rgba(34,211,238,0.18)] sm:flex-none"
             >
-              Ask TJAI which to pick
+              {d.askTjai}
               <ArrowRight
                 className="h-3.5 w-3.5 transition-transform motion-safe:group-hover/tjai:translate-x-1"
                 aria-hidden
               />
             </Link>
-            <ShareButton title={bundle.name} ariaLabel={`Share ${bundle.name}`} />
+            <ShareButton
+              title={bundle.name}
+              ariaLabel={d.shareAria(bundle.name)}
+              labels={{ idle: d.shareIdle, shared: d.shareShared, copied: d.shareCopied }}
+            />
           </div>
         </div>
 
         <AtAGlance
+          title={d.atAGlance}
           rows={[
-            { label: "Duration", value: `${bundle.weeks} weeks` },
-            { label: "Sessions", value: `${bundle.sessionsPerWeek} per week` },
-            { label: "Training", value: bundle.programTitle },
-            { label: "Diet", value: bundle.dietTitle }
+            { label: copy.duration, value: copy.weeksValue(bundle.weeks) },
+            { label: copy.sessions, value: d.sessionsValueLong(bundle.sessionsPerWeek) },
+            { label: d.rowTraining, value: bundle.programTitle },
+            { label: d.rowDiet, value: bundle.dietTitle }
           ]}
         />
       </div>
 
       <div className="mt-14">
         <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
-          Training framework
+          {d.trainingFrameworkEyebrow}
         </p>
         <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
-          Three phases, twelve weeks.
+          {d.trainingFrameworkTitle}
         </h2>
         <PhaseStrip phases={bundle.phases} />
       </div>
@@ -157,14 +166,12 @@ export default function BundleDetailPage({
       <RevealSection>
         <div className="mt-14 rounded-2xl border border-divider bg-surface/40 p-5 sm:p-7">
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
-            Sample session
+            {d.sampleSessionEyebrow}
           </p>
           <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
             {bundle.sampleTrainingDay.name}
           </h2>
-          <p className="mt-3 text-sm text-muted">
-            A representative session from the program. Loads scale to your level.
-          </p>
+          <p className="mt-3 text-sm text-muted">{d.sampleSessionNote}</p>
           <ol className="mt-6 divide-y divide-white/[0.06] rounded-xl border border-white/[0.06] bg-black/20">
             {bundle.sampleTrainingDay.exercises.map((ex, i) => (
               <li
@@ -192,16 +199,16 @@ export default function BundleDetailPage({
       <RevealSection delay={80}>
         <div className="mt-14 rounded-2xl border border-divider bg-surface/40 p-5 sm:p-7">
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
-            Nutrition framework
+            {d.nutritionEyebrow}
           </p>
           <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
             {bundle.dietTitle}
           </h2>
           <dl className="mt-6 grid gap-4 sm:grid-cols-3">
             {[
-              { label: "Style", value: bundle.nutrition.style },
-              { label: "Protein target", value: bundle.nutrition.proteinTarget },
-              { label: "Calorie bias", value: bundle.nutrition.calorieBias }
+              { label: d.nutritionStyle, value: bundle.nutrition.style },
+              { label: d.nutritionProtein, value: bundle.nutrition.proteinTarget },
+              { label: d.nutritionCalorie, value: bundle.nutrition.calorieBias }
             ].map((stat) => (
               <div
                 key={stat.label}
@@ -233,14 +240,12 @@ export default function BundleDetailPage({
       <RevealSection delay={120}>
         <div className="mt-14 rounded-2xl border border-divider bg-surface/40 p-5 sm:p-7">
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
-            Sample day of eating
+            {d.sampleDayEyebrow}
           </p>
           <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
-            What a real day looks like
+            {d.sampleDayTitle}
           </h2>
-          <p className="mt-3 text-sm text-muted">
-            Adjust portions to hit your targets. A template, not a prescription.
-          </p>
+          <p className="mt-3 text-sm text-muted">{d.sampleDayNote}</p>
           <ul className="mt-6 divide-y divide-white/[0.06] rounded-xl border border-white/[0.06] bg-black/20">
             {bundle.sampleMealDay.map((meal, i) => (
               <li
@@ -268,13 +273,18 @@ export default function BundleDetailPage({
         <div className="mt-14 flex flex-col items-stretch gap-4 rounded-2xl border border-cyan-400/20 bg-[linear-gradient(180deg,rgba(34,211,238,0.06),rgba(34,211,238,0.01))] p-5 sm:flex-row sm:items-center sm:justify-between sm:p-7">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
-              Ready to start
+              {d.readyEyebrow}
             </p>
             <p className="mt-1 text-base font-semibold text-white sm:text-lg">
-              Download the dossier and run it today.
+              {d.readyTitle}
             </p>
           </div>
-          <DownloadButton href={downloadHref} ariaLabel="Download bundle PDF" full />
+          <DownloadButton
+            href={downloadHref}
+            label={copy.download}
+            ariaLabel={d.downloadDossierAria}
+            full
+          />
         </div>
       </RevealSection>
     </section>
