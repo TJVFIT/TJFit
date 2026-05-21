@@ -44,5 +44,41 @@
     "successBanner": "Payment successful. Your premium PDF is downloading now.",
     "downloadLink": "Download your PDF →",
     "dismiss": "Dismiss"
+  },
+  "bundles": {
+    "detail": {
+      "fallbackMetaTitle": "Paket · TJFit",
+      "allBundles": "Tüm paketler",
+      "goalAria": "Hedef: {goal}",
+      "priceAria": "Fiyat: {price}",
+      "downloadPdf": "PDF indir",
+      "downloadAria": "{name} PDF dosyasını indir",
+      "downloadBundleAria": "Paket PDF dosyasını indir",
+      "askTjai": "Seçim için TJAI'ye sor",
+      "share": "Paylaş",
+      "shared": "Paylaşıldı",
+      "shareAria": "{name} paylaş",
+      "linkCopied": "Bağlantı kopyalandı!",
+      "atAGlance": "Bir bakışta",
+      "duration": "Süre",
+      "weeks": "{count} hafta",
+      "sessions": "Seans",
+      "sessionsPerWeek": "Haftada {count}",
+      "training": "Antrenman",
+      "diet": "Beslenme",
+      "trainingFramework": "Antrenman yapısı",
+      "trainingFrameworkTitle": "Üç faz, on iki hafta.",
+      "sampleSession": "Örnek seans",
+      "sampleSessionDescription": "Programdan temsilî bir seans. Yükler seviyene göre ölçeklenir.",
+      "nutritionFramework": "Beslenme yapısı",
+      "style": "Tarz",
+      "proteinTarget": "Protein hedefi",
+      "calorieBias": "Kalori odağı",
+      "sampleEatingDay": "Örnek beslenme günü",
+      "sampleEatingTitle": "Gerçek bir gün nasıl görünür",
+      "sampleEatingDescription": "Hedeflerine ulaşmak için porsiyonları ayarla. Bu bir şablondur, reçete değildir.",
+      "ready": "Başlamaya hazır",
+      "readyDescription": "Dosyayı indir ve bugün uygula."
+    }
   }
 }

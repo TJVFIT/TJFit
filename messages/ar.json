@@ -44,5 +44,41 @@
     "successBanner": "Payment successful. Your premium PDF is downloading now.",
     "downloadLink": "Download your PDF →",
     "dismiss": "Dismiss"
+  },
+  "bundles": {
+    "detail": {
+      "fallbackMetaTitle": "حزمة · TJFit",
+      "allBundles": "كل الحزم",
+      "goalAria": "الهدف: {goal}",
+      "priceAria": "السعر: {price}",
+      "downloadPdf": "تنزيل PDF",
+      "downloadAria": "تنزيل ملف PDF لحزمة {name}",
+      "downloadBundleAria": "تنزيل ملف PDF للحزمة",
+      "askTjai": "اسأل TJAI أي حزمة تختار",
+      "share": "مشاركة",
+      "shared": "تمت المشاركة",
+      "shareAria": "مشاركة {name}",
+      "linkCopied": "تم نسخ الرابط!",
+      "atAGlance": "نظرة سريعة",
+      "duration": "المدة",
+      "weeks": "{count} أسبوع",
+      "sessions": "الجلسات",
+      "sessionsPerWeek": "{count} في الأسبوع",
+      "training": "التدريب",
+      "diet": "التغذية",
+      "trainingFramework": "إطار التدريب",
+      "trainingFrameworkTitle": "ثلاث مراحل، اثنا عشر أسبوعًا.",
+      "sampleSession": "جلسة نموذجية",
+      "sampleSessionDescription": "جلسة تمثل البرنامج. يتم ضبط الأوزان حسب مستواك.",
+      "nutritionFramework": "إطار التغذية",
+      "style": "الأسلوب",
+      "proteinTarget": "هدف البروتين",
+      "calorieBias": "اتجاه السعرات",
+      "sampleEatingDay": "يوم غذائي نموذجي",
+      "sampleEatingTitle": "كيف يبدو يوم حقيقي",
+      "sampleEatingDescription": "اضبط الحصص لتحقيق أهدافك. هذا قالب وليس وصفة إلزامية.",
+      "ready": "جاهز للبدء",
+      "readyDescription": "نزّل الملف وابدأ به اليوم."
+    }
   }
 }

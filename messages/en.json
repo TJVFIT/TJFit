@@ -44,5 +44,41 @@
     "successBanner": "Payment successful. Your premium PDF is downloading now.",
     "downloadLink": "Download your PDF →",
     "dismiss": "Dismiss"
+  },
+  "bundles": {
+    "detail": {
+      "fallbackMetaTitle": "Bundle · TJFit",
+      "allBundles": "All bundles",
+      "goalAria": "Goal: {goal}",
+      "priceAria": "Price: {price}",
+      "downloadPdf": "Download PDF",
+      "downloadAria": "Download {name} PDF",
+      "downloadBundleAria": "Download bundle PDF",
+      "askTjai": "Ask TJAI which to pick",
+      "share": "Share",
+      "shared": "Shared",
+      "shareAria": "Share {name}",
+      "linkCopied": "Link copied!",
+      "atAGlance": "At a glance",
+      "duration": "Duration",
+      "weeks": "{count} weeks",
+      "sessions": "Sessions",
+      "sessionsPerWeek": "{count} per week",
+      "training": "Training",
+      "diet": "Diet",
+      "trainingFramework": "Training framework",
+      "trainingFrameworkTitle": "Three phases, twelve weeks.",
+      "sampleSession": "Sample session",
+      "sampleSessionDescription": "A representative session from the program. Loads scale to your level.",
+      "nutritionFramework": "Nutrition framework",
+      "style": "Style",
+      "proteinTarget": "Protein target",
+      "calorieBias": "Calorie bias",
+      "sampleEatingDay": "Sample day of eating",
+      "sampleEatingTitle": "What a real day looks like",
+      "sampleEatingDescription": "Adjust portions to hit your targets. A template, not a prescription.",
+      "ready": "Ready to start",
+      "readyDescription": "Download the dossier and run it today."
+    }
   }
 }

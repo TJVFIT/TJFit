@@ -44,5 +44,41 @@
     "successBanner": "Payment successful. Your premium PDF is downloading now.",
     "downloadLink": "Download your PDF →",
     "dismiss": "Dismiss"
+  },
+  "bundles": {
+    "detail": {
+      "fallbackMetaTitle": "Pack · TJFit",
+      "allBundles": "Tous les packs",
+      "goalAria": "Objectif : {goal}",
+      "priceAria": "Prix : {price}",
+      "downloadPdf": "Télécharger le PDF",
+      "downloadAria": "Télécharger le PDF de {name}",
+      "downloadBundleAria": "Télécharger le PDF du pack",
+      "askTjai": "Demander à TJAI lequel choisir",
+      "share": "Partager",
+      "shared": "Partagé",
+      "shareAria": "Partager {name}",
+      "linkCopied": "Lien copié !",
+      "atAGlance": "En bref",
+      "duration": "Durée",
+      "weeks": "{count} semaines",
+      "sessions": "Séances",
+      "sessionsPerWeek": "{count} par semaine",
+      "training": "Entraînement",
+      "diet": "Nutrition",
+      "trainingFramework": "Cadre d’entraînement",
+      "trainingFrameworkTitle": "Trois phases, douze semaines.",
+      "sampleSession": "Séance exemple",
+      "sampleSessionDescription": "Une séance représentative du programme. Les charges s’adaptent à votre niveau.",
+      "nutritionFramework": "Cadre nutritionnel",
+      "style": "Style",
+      "proteinTarget": "Objectif protéines",
+      "calorieBias": "Orientation calorique",
+      "sampleEatingDay": "Journée alimentaire exemple",
+      "sampleEatingTitle": "À quoi ressemble une vraie journée",
+      "sampleEatingDescription": "Ajustez les portions pour atteindre vos objectifs. C’est un modèle, pas une prescription.",
+      "ready": "Prêt à commencer",
+      "readyDescription": "Téléchargez le dossier et lancez-vous aujourd’hui."
+    }
   }
 }

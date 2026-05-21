@@ -44,5 +44,41 @@
     "successBanner": "Payment successful. Your premium PDF is downloading now.",
     "downloadLink": "Download your PDF →",
     "dismiss": "Dismiss"
+  },
+  "bundles": {
+    "detail": {
+      "fallbackMetaTitle": "Paquete · TJFit",
+      "allBundles": "Todos los paquetes",
+      "goalAria": "Objetivo: {goal}",
+      "priceAria": "Precio: {price}",
+      "downloadPdf": "Descargar PDF",
+      "downloadAria": "Descargar el PDF de {name}",
+      "downloadBundleAria": "Descargar el PDF del paquete",
+      "askTjai": "Pregunta a TJAI cuál elegir",
+      "share": "Compartir",
+      "shared": "Compartido",
+      "shareAria": "Compartir {name}",
+      "linkCopied": "¡Enlace copiado!",
+      "atAGlance": "De un vistazo",
+      "duration": "Duración",
+      "weeks": "{count} semanas",
+      "sessions": "Sesiones",
+      "sessionsPerWeek": "{count} por semana",
+      "training": "Entrenamiento",
+      "diet": "Dieta",
+      "trainingFramework": "Marco de entrenamiento",
+      "trainingFrameworkTitle": "Tres fases, doce semanas.",
+      "sampleSession": "Sesión de muestra",
+      "sampleSessionDescription": "Una sesión representativa del programa. Las cargas se ajustan a tu nivel.",
+      "nutritionFramework": "Marco de nutrición",
+      "style": "Estilo",
+      "proteinTarget": "Objetivo de proteína",
+      "calorieBias": "Enfoque calórico",
+      "sampleEatingDay": "Día de comidas de muestra",
+      "sampleEatingTitle": "Así se ve un día real",
+      "sampleEatingDescription": "Ajusta las porciones para alcanzar tus objetivos. Es una plantilla, no una prescripción.",
+      "ready": "Listo para empezar",
+      "readyDescription": "Descarga el dossier y empieza hoy."
+    }
   }
 }

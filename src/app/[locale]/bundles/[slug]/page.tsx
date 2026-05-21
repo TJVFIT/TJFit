@@ -6,6 +6,7 @@ import { AtAGlance, DetailHero, DownloadButton, PhaseStrip, RevealSection, Share
 import { getBundle, listBundleSlugs } from "@/lib/bundles";
 import { bundleProductJsonLd } from "@/lib/bundle-jsonld";
 import { supportedLocales } from "@/lib/i18n";
+import { t } from "@/lib/messages";
 import { requireLocaleParam } from "@/lib/require-locale";
 import { getSiteUrl } from "@/lib/site-url";
 
@@ -14,10 +15,11 @@ export function generateStaticParams() {
 }
 
 export function generateMetadata({ params }: { params: { locale: string; slug: string } }) {
+  const locale = requireLocaleParam(params.locale);
   const bundle = getBundle(params.slug);
-  if (!bundle) return { title: "Bundle · TJFit" };
+  if (!bundle) return { title: t(locale, "bundles.detail.fallbackMetaTitle") };
   const site = getSiteUrl();
-  const url = `${site}/${params.locale}/bundles/${bundle.slug}`;
+  const url = `${site}/${locale}/bundles/${bundle.slug}`;
   const languages: Record<string, string> = {};
   for (const loc of supportedLocales) {
     languages[loc] = `${site}/${loc}/bundles/${bundle.slug}`;
@@ -63,7 +65,7 @@ export default function BundleDetailPage({
           className="h-3.5 w-3.5 transition-transform motion-safe:group-hover/back:-translate-x-1"
           aria-hidden
         />
-        All bundles
+        {t(locale, "bundles.detail.allBundles")}
       </Link>
 
       <DetailHero image={bundle.heroImage} />
@@ -76,7 +78,7 @@ export default function BundleDetailPage({
           >
             <span
               className="rounded-full border border-cyan-300/30 bg-cyan-300/[0.08] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-100"
-              aria-label={`Goal: ${bundle.goalLabel}`}
+              aria-label={t(locale, "bundles.detail.goalAria", { goal: bundle.goalLabel })}
             >
               {bundle.goalLabel}
             </span>
@@ -86,7 +88,7 @@ export default function BundleDetailPage({
                   ? "border border-white/15 bg-white/[0.04] text-white/85"
                   : "border border-cyan-300/30 bg-cyan-300/[0.08] text-cyan-50"
               }`}
-              aria-label={`Price: ${bundle.save}`}
+              aria-label={t(locale, "bundles.detail.priceAria", { price: bundle.save })}
             >
               {bundle.save}
             </span>
@@ -117,39 +119,55 @@ export default function BundleDetailPage({
           >
             <DownloadButton
               href={downloadHref}
-              ariaLabel={`Download ${bundle.name} PDF`}
+              ariaLabel={t(locale, "bundles.detail.downloadAria", { name: bundle.name })}
+              label={t(locale, "bundles.detail.downloadPdf")}
               className="flex-1 sm:flex-none"
             />
             <Link
               href={`/${locale}/tjai`}
               className="group/tjai tj-cta-sheen inline-flex min-h-[48px] flex-1 items-center justify-center gap-1.5 rounded-full border border-cyan-300/25 px-4 py-2.5 text-sm font-semibold text-cyan-200 transition-[border-color,color,box-shadow] hover:border-cyan-300/55 hover:text-cyan-100 hover:shadow-[0_0_24px_rgba(34,211,238,0.18)] sm:flex-none"
             >
-              Ask TJAI which to pick
+              {t(locale, "bundles.detail.askTjai")}
               <ArrowRight
                 className="h-3.5 w-3.5 transition-transform motion-safe:group-hover/tjai:translate-x-1"
                 aria-hidden
               />
             </Link>
-            <ShareButton title={bundle.name} ariaLabel={`Share ${bundle.name}`} />
+            <ShareButton
+              title={bundle.name}
+              ariaLabel={t(locale, "bundles.detail.shareAria", { name: bundle.name })}
+              copiedLabel={t(locale, "bundles.detail.linkCopied")}
+              sharedLabel={t(locale, "bundles.detail.shared")}
+              shareLabel={t(locale, "bundles.detail.share")}
+            />
           </div>
         </div>
 
         <AtAGlance
+          title={t(locale, "bundles.detail.atAGlance")}
           rows={[
-            { label: "Duration", value: `${bundle.weeks} weeks` },
-            { label: "Sessions", value: `${bundle.sessionsPerWeek} per week` },
-            { label: "Training", value: bundle.programTitle },
-            { label: "Diet", value: bundle.dietTitle }
+            {
+              label: t(locale, "bundles.detail.duration"),
+              value: t(locale, "bundles.detail.weeks", { count: bundle.weeks })
+            },
+            {
+              label: t(locale, "bundles.detail.sessions"),
+              value: t(locale, "bundles.detail.sessionsPerWeek", {
+                count: bundle.sessionsPerWeek
+              })
+            },
+            { label: t(locale, "bundles.detail.training"), value: bundle.programTitle },
+            { label: t(locale, "bundles.detail.diet"), value: bundle.dietTitle }
           ]}
         />
       </div>
 
       <div className="mt-14">
         <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
-          Training framework
+          {t(locale, "bundles.detail.trainingFramework")}
         </p>
         <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
-          Three phases, twelve weeks.
+          {t(locale, "bundles.detail.trainingFrameworkTitle")}
         </h2>
         <PhaseStrip phases={bundle.phases} />
       </div>
@@ -157,13 +175,13 @@ export default function BundleDetailPage({
       <RevealSection>
         <div className="mt-14 rounded-2xl border border-divider bg-surface/40 p-5 sm:p-7">
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
-            Sample session
+            {t(locale, "bundles.detail.sampleSession")}
           </p>
           <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
             {bundle.sampleTrainingDay.name}
           </h2>
           <p className="mt-3 text-sm text-muted">
-            A representative session from the program. Loads scale to your level.
+            {t(locale, "bundles.detail.sampleSessionDescription")}
           </p>
           <ol className="mt-6 divide-y divide-white/[0.06] rounded-xl border border-white/[0.06] bg-black/20">
             {bundle.sampleTrainingDay.exercises.map((ex, i) => (
@@ -192,16 +210,22 @@ export default function BundleDetailPage({
       <RevealSection delay={80}>
         <div className="mt-14 rounded-2xl border border-divider bg-surface/40 p-5 sm:p-7">
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
-            Nutrition framework
+            {t(locale, "bundles.detail.nutritionFramework")}
           </p>
           <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
             {bundle.dietTitle}
           </h2>
           <dl className="mt-6 grid gap-4 sm:grid-cols-3">
             {[
-              { label: "Style", value: bundle.nutrition.style },
-              { label: "Protein target", value: bundle.nutrition.proteinTarget },
-              { label: "Calorie bias", value: bundle.nutrition.calorieBias }
+              { label: t(locale, "bundles.detail.style"), value: bundle.nutrition.style },
+              {
+                label: t(locale, "bundles.detail.proteinTarget"),
+                value: bundle.nutrition.proteinTarget
+              },
+              {
+                label: t(locale, "bundles.detail.calorieBias"),
+                value: bundle.nutrition.calorieBias
+              }
             ].map((stat) => (
               <div
                 key={stat.label}
@@ -233,13 +257,13 @@ export default function BundleDetailPage({
       <RevealSection delay={120}>
         <div className="mt-14 rounded-2xl border border-divider bg-surface/40 p-5 sm:p-7">
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
-            Sample day of eating
+            {t(locale, "bundles.detail.sampleEatingDay")}
           </p>
           <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
-            What a real day looks like
+            {t(locale, "bundles.detail.sampleEatingTitle")}
           </h2>
           <p className="mt-3 text-sm text-muted">
-            Adjust portions to hit your targets. A template, not a prescription.
+            {t(locale, "bundles.detail.sampleEatingDescription")}
           </p>
           <ul className="mt-6 divide-y divide-white/[0.06] rounded-xl border border-white/[0.06] bg-black/20">
             {bundle.sampleMealDay.map((meal, i) => (
@@ -268,13 +292,18 @@ export default function BundleDetailPage({
         <div className="mt-14 flex flex-col items-stretch gap-4 rounded-2xl border border-cyan-400/20 bg-[linear-gradient(180deg,rgba(34,211,238,0.06),rgba(34,211,238,0.01))] p-5 sm:flex-row sm:items-center sm:justify-between sm:p-7">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
-              Ready to start
+              {t(locale, "bundles.detail.ready")}
             </p>
             <p className="mt-1 text-base font-semibold text-white sm:text-lg">
-              Download the dossier and run it today.
+              {t(locale, "bundles.detail.readyDescription")}
             </p>
           </div>
-          <DownloadButton href={downloadHref} ariaLabel="Download bundle PDF" full />
+          <DownloadButton
+            href={downloadHref}
+            ariaLabel={t(locale, "bundles.detail.downloadBundleAria")}
+            label={t(locale, "bundles.detail.downloadPdf")}
+            full
+          />
         </div>
       </RevealSection>
     </section>

@@ -180,9 +180,11 @@ function PhaseCard({
  * cursor-following glare and a soft ambient ring that pulses behind the card.
  */
 export function AtAGlance({
-  rows
+  rows,
+  title
 }: {
   rows: Array<{ label: string; value: string }>;
+  title: string;
 }) {
   const tiltRef = useTilt<HTMLDivElement>({ maxX: 4, maxY: 5 });
 
@@ -228,7 +230,7 @@ export function AtAGlance({
           }}
         />
         <p className="relative text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/80">
-          At a glance
+          {title}
         </p>
         <dl className="relative mt-4 space-y-3 text-sm">
           {rows.map((row, i) => {
@@ -261,12 +263,14 @@ export function DownloadButton({
   href,
   ariaLabel,
   className = "",
-  full = false
+  full = false,
+  label
 }: {
   href: string;
   ariaLabel?: string;
   className?: string;
   full?: boolean;
+  label: string;
 }) {
   const magnetic = useMagnetic<HTMLAnchorElement>({ strength: 6, max: 9 });
   const ripple = useRipple<HTMLAnchorElement>();
@@ -289,7 +293,7 @@ export function DownloadButton({
       }
     >
       <FileDown className="relative h-4 w-4" aria-hidden />
-      <span className="relative">Download PDF</span>
+      <span className="relative">{label}</span>
     </a>
   );
 }
@@ -300,10 +304,16 @@ export function DownloadButton({
  */
 export function ShareButton({
   title,
-  ariaLabel
+  ariaLabel,
+  copiedLabel,
+  sharedLabel,
+  shareLabel
 }: {
   title: string;
   ariaLabel?: string;
+  copiedLabel: string;
+  sharedLabel: string;
+  shareLabel: string;
 }) {
   const [state, setState] = useState<"idle" | "shared" | "copied">("idle");
 
@@ -338,7 +348,7 @@ export function ShareButton({
     window.setTimeout(() => setState("idle"), 1800);
   };
 
-  const label = state === "copied" ? "Link copied!" : state === "shared" ? "Shared" : "Share";
+  const label = state === "copied" ? copiedLabel : state === "shared" ? sharedLabel : shareLabel;
   return (
     <button
       type="button"
