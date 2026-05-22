@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
-import { AtAGlance, DetailHero, DownloadButton, PhaseStrip, RevealSection, ShareButton, StickyBuyBar } from "./detail-effects";
+import { AtAGlance, DetailHero, DetailSectionNav, DownloadButton, PhaseStrip, RevealSection, ShareButton, StickyBuyBar } from "./detail-effects";
 import { BUNDLES, getBundle, listBundleSlugs } from "@/lib/bundles";
 import { bundleProductJsonLd } from "@/lib/bundle-jsonld";
 import { getBundlesCopy } from "@/lib/bundles-copy";
@@ -60,6 +60,14 @@ export default function BundleDetailPage({
     ...BUNDLES.filter((x) => x.slug !== bundle.slug && x.goal === bundle.goal),
     ...BUNDLES.filter((x) => x.slug !== bundle.slug && x.goal !== bundle.goal)
   ].slice(0, 3);
+
+  const navItems = [
+    { id: "training", label: d.trainingFrameworkEyebrow },
+    { id: "sample-session", label: d.sampleSessionEyebrow },
+    { id: "nutrition", label: d.nutritionEyebrow },
+    { id: "sample-day", label: d.sampleDayEyebrow },
+    ...(related.length > 0 ? [{ id: "more", label: d.moreBundlesTitle }] : [])
+  ];
 
   return (
     <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
@@ -162,7 +170,7 @@ export default function BundleDetailPage({
         />
       </div>
 
-      <div className="mt-14">
+      <div id="training" className="mt-14 scroll-mt-24">
         <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
           {d.trainingFrameworkEyebrow}
         </p>
@@ -173,7 +181,7 @@ export default function BundleDetailPage({
       </div>
 
       <RevealSection>
-        <div className="mt-14 rounded-2xl border border-divider bg-surface/40 p-5 sm:p-7">
+        <div id="sample-session" className="mt-14 scroll-mt-24 rounded-2xl border border-divider bg-surface/40 p-5 sm:p-7">
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
             {d.sampleSessionEyebrow}
           </p>
@@ -206,7 +214,7 @@ export default function BundleDetailPage({
       </RevealSection>
 
       <RevealSection delay={80}>
-        <div className="mt-14 rounded-2xl border border-divider bg-surface/40 p-5 sm:p-7">
+        <div id="nutrition" className="mt-14 scroll-mt-24 rounded-2xl border border-divider bg-surface/40 p-5 sm:p-7">
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
             {d.nutritionEyebrow}
           </p>
@@ -247,7 +255,7 @@ export default function BundleDetailPage({
       </RevealSection>
 
       <RevealSection delay={120}>
-        <div className="mt-14 rounded-2xl border border-divider bg-surface/40 p-5 sm:p-7">
+        <div id="sample-day" className="mt-14 scroll-mt-24 rounded-2xl border border-divider bg-surface/40 p-5 sm:p-7">
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
             {d.sampleDayEyebrow}
           </p>
@@ -299,7 +307,7 @@ export default function BundleDetailPage({
 
       {related.length > 0 ? (
         <RevealSection delay={200}>
-          <div className="mt-14">
+          <div id="more" className="mt-14 scroll-mt-24">
             <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
               {d.moreBundlesTitle}
             </p>
@@ -332,6 +340,8 @@ export default function BundleDetailPage({
           </div>
         </RevealSection>
       ) : null}
+
+      <DetailSectionNav items={navItems} />
 
       <StickyBuyBar
         name={card.name}

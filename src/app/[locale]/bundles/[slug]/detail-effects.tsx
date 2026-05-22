@@ -434,6 +434,74 @@ export function StickyBuyBar({
 }
 
 /**
+ * Scroll-spy section rail for the long bundle detail page. A fixed vertical
+ * rail (xl+ only — it lives in the margin beside the centered content) of
+ * dot+label anchors; the section currently in view is highlighted. Uses one
+ * IntersectionObserver, no per-frame scroll work. RTL-aware (flips to the
+ * right margin). Labels are passed in already-localized.
+ */
+export function DetailSectionNav({
+  items
+}: {
+  items: { id: string; label: string }[];
+}) {
+  const [active, setActive] = useState(items[0]?.id ?? "");
+  const visible = useRef<Set<string>>(new Set());
+
+  useEffect(() => {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) visible.current.add(e.target.id);
+          else visible.current.delete(e.target.id);
+        }
+        const firstVisible = items.find((it) => visible.current.has(it.id));
+        if (firstVisible) setActive(firstVisible.id);
+      },
+      { rootMargin: "-25% 0px -60% 0px", threshold: 0 }
+    );
+    for (const it of items) {
+      const el = document.getElementById(it.id);
+      if (el) io.observe(el);
+    }
+    return () => io.disconnect();
+  }, [items]);
+
+  return (
+    <nav
+      aria-label="On this page"
+      className="pointer-events-none fixed start-5 top-1/2 z-30 hidden -translate-y-1/2 xl:block"
+    >
+      <ul className="pointer-events-auto flex flex-col gap-3.5">
+        {items.map((it) => {
+          const isActive = active === it.id;
+          return (
+            <li key={it.id}>
+              <a href={`#${it.id}`} className="group/nav flex items-center gap-2.5">
+                <span
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    isActive
+                      ? "w-7 bg-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.55)]"
+                      : "w-3 bg-white/20 group-hover/nav:bg-cyan-300/50"
+                  }`}
+                />
+                <span
+                  className={`text-[10px] font-semibold uppercase tracking-[0.14em] transition-colors duration-200 ${
+                    isActive ? "text-cyan-100" : "text-dim group-hover/nav:text-cyan-200/80"
+                  }`}
+                >
+                  {it.label}
+                </span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  );
+}
+
+/**
  * Generic reveal wrapper — used to fade-up sections (nutrition, sample,
  * footer CTA) as the user scrolls.
  */

@@ -92,11 +92,16 @@ iteration — not micro-polish.
   (36 phases each); phase names keep their "(Weeks X-Y)" span localized.
   `localizeBundle` merges phases; detail PhaseStrip wired to `card.phases`.
   Build green, live on main.
+- **Iter 16** — bundle detail scroll-spy section nav. New `DetailSectionNav`
+  in `detail-effects.tsx`: a fixed xl+ vertical dot-rail that highlights the
+  in-view section via one IntersectionObserver. Sections got `id` +
+  `scroll-mt-24` anchors; labels reuse the already-localized detail eyebrows.
+  RTL-aware (`start-5`). Build green, live on main.
 
 ## QUEUE (next up)
 
-- Translate `sampleTrainingDay` + `sampleMealDay` — exercise + meal tables.
-  Largest remaining bundle chunk; decide whether exercise names stay English.
+- Translate `sampleTrainingDay` + `sampleMealDay` — exercise + meal tables
+  (~930 strings, multi-iteration). Decide whether exercise names stay English.
 - Localize the homepage error-boundary fallback copy (`[locale]/page.tsx`).
 - Audit other top routes (programs, diets, dashboard) for hardcoded English.
 
