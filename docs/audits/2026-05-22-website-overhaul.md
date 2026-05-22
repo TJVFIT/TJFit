@@ -103,6 +103,12 @@ iteration — not micro-polish.
   Reload + Browse-bundles actions) with self-contained inline copy in all 5
   locales — kept inline so the fallback survives a lib-import failure.
   Build green, live on main.
+- **Iter 18** — diacritic-correctness pass on degraded i18n copy. The
+  app-wide `[locale]/error.tsx` boundary (the component all 46 route
+  error.tsx files re-export) and `tjai-chat-copy.ts` shipped accent-stripped
+  tr/ar/es/fr strings ("olustu", "salio", "notifiee", "ozeti", "Resume").
+  Restored proper diacritics + Spanish ¿/¡ punctuation throughout. Build
+  green, live on main.
 
 ## DECISIONS
 

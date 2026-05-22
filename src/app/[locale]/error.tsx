@@ -14,28 +14,28 @@ const COPY: Record<Locale, { heading: string; sub: string; refresh: string; back
     back: "Back to TJFit"
   },
   tr: {
-    heading: "Bir sorun olustu",
-    sub: "Ekibimiz bilgilendirildi. Lutfen tekrar deneyin.",
-    refresh: "Sayfayi Yenile",
-    back: "TJFit'e Don"
+    heading: "Bir sorun oluştu",
+    sub: "Ekibimiz bilgilendirildi. Lütfen tekrar deneyin.",
+    refresh: "Sayfayı Yenile",
+    back: "TJFit'e Dön"
   },
   ar: {
-    heading: "حدث خطا ما",
-    sub: "تم ابلاغ فريقنا. يرجى المحاولة مرة اخرى.",
+    heading: "حدث خطأ ما",
+    sub: "تم إبلاغ فريقنا. يرجى المحاولة مرة أخرى.",
     refresh: "تحديث الصفحة",
-    back: "العودة الى TJFit"
+    back: "العودة إلى TJFit"
   },
   es: {
-    heading: "Algo salio mal",
-    sub: "Nuestro equipo fue notificado. Intentalo otra vez.",
-    refresh: "Actualizar pagina",
+    heading: "Algo salió mal",
+    sub: "Nuestro equipo fue notificado. Inténtalo otra vez.",
+    refresh: "Actualizar página",
     back: "Volver a TJFit"
   },
   fr: {
     heading: "Une erreur est survenue",
-    sub: "Notre equipe a ete notifiee. Veuillez reessayer.",
-    refresh: "Rafraichir la page",
-    back: "Retour a TJFit"
+    sub: "Notre équipe a été notifiée. Veuillez réessayer.",
+    refresh: "Rafraîchir la page",
+    back: "Retour à TJFit"
   }
 };
 

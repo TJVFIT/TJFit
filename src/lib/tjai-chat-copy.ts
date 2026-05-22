@@ -79,20 +79,20 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
   },
   tr: {
     suggestions: [
-      { label: "Plan ozeti", prompt: "TJAI planimin genel ozetini ve ana prensiplerini anlatir misin?" },
-      { label: "Antrenman oncesi", prompt: "Antrenmandan once ne yemeliyim ve ne zaman yemeliyim?" },
-      { label: "Seansi kacirdim", prompt: "Dunku antrenmani kacirdim. Telafi mi etmeliyim yoksa atlamali miyim?" },
-      { label: "Ogun degisimi", prompt: "Ogunlerimden biri icin alternatif onerebilir misin? Hangisi oldugunu soyleyecegim." },
-      { label: "Diz dostu secenekler", prompt: "Diz agrisi yasiyorum. Hangi egzersizlerden kacinmaliyim ve guvenli alternatifler neler?" },
-      { label: "Plateau kir", prompt: "2 haftadir ayni kilodayim. Bunu kirabilmek icin ne degistirmeliyim?" }
+      { label: "Plan özeti", prompt: "TJAI planımın genel özetini ve ana prensiplerini anlatır mısın?" },
+      { label: "Antrenman öncesi", prompt: "Antrenmandan önce ne yemeliyim ve ne zaman yemeliyim?" },
+      { label: "Seansı kaçırdım", prompt: "Dünkü antrenmanı kaçırdım. Telafi mi etmeliyim yoksa atlamalı mıyım?" },
+      { label: "Öğün değişimi", prompt: "Öğünlerimden biri için alternatif önerebilir misin? Hangisi olduğunu söyleyeceğim." },
+      { label: "Diz dostu seçenekler", prompt: "Diz ağrısı yaşıyorum. Hangi egzersizlerden kaçınmalıyım ve güvenli alternatifler neler?" },
+      { label: "Plateau kır", prompt: "2 haftadır aynı kilodayım. Bunu kırabilmek için ne değiştirmeliyim?" }
     ],
-    emptyPrompt: "Ogunler, seanslar veya planin hakkinda sor...",
+    emptyPrompt: "Öğünler, seanslar veya planın hakkında sor...",
     askTitle: "TJAI'ye sor",
-    askBody: "Kocun planini ve kayitli seanslarini bilir. Daha keskin cevaplar icin net sorular sor.",
-    memory: "Hafiza",
-    tapToAsk: "Sormak icin dokun",
-    refine: "Netlestir",
-    send: "Gonder",
+    askBody: "Koçun planını ve kayıtlı seanslarını bilir. Daha keskin cevaplar için net sorular sor.",
+    memory: "Hafıza",
+    tapToAsk: "Sormak için dokun",
+    refine: "Netleştir",
+    send: "Gönder",
     followUps: {
       simplify: "Sadeleştir",
       deeper: "Daha fazla detay",
@@ -164,15 +164,15 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
   es: {
     suggestions: [
       { label: "Resumen del plan", prompt: "Dame un resumen de mi plan TJAI y explica los principios principales." },
-      { label: "Antes de entrenar", prompt: "Que deberia comer antes de entrenar y cuando deberia hacerlo?" },
-      { label: "Sesion perdida", prompt: "Me perdi el entrenamiento de ayer. Deberia recuperarlo o saltarlo?" },
-      { label: "Cambio de comida", prompt: "Puedes sugerir una alternativa para una de mis comidas? Te dire cual." },
-      { label: "Opciones para rodilla", prompt: "Tengo dolor de rodilla. Que ejercicios debo evitar y que alternativas son seguras?" },
-      { label: "Romper estancamiento", prompt: "Llevo 2 semanas con el mismo peso. Que cambios hago para avanzar?" }
+      { label: "Antes de entrenar", prompt: "¿Qué debería comer antes de entrenar y cuándo debería hacerlo?" },
+      { label: "Sesión perdida", prompt: "Me perdí el entrenamiento de ayer. ¿Debería recuperarlo o saltarlo?" },
+      { label: "Cambio de comida", prompt: "¿Puedes sugerir una alternativa para una de mis comidas? Te diré cuál." },
+      { label: "Opciones para rodilla", prompt: "Tengo dolor de rodilla. ¿Qué ejercicios debo evitar y qué alternativas son seguras?" },
+      { label: "Romper estancamiento", prompt: "Llevo 2 semanas con el mismo peso. ¿Qué cambios hago para avanzar?" }
     ],
     emptyPrompt: "Pregunta sobre comidas, sesiones o tu plan...",
     askTitle: "Pregunta a TJAI",
-    askBody: "Tu coach conoce tu plan y tus sesiones registradas. Pregunta con detalles para respuestas mas precisas.",
+    askBody: "Tu coach conoce tu plan y tus sesiones registradas. Pregunta con detalles para respuestas más precisas.",
     memory: "Memoria",
     tapToAsk: "Toca para preguntar",
     refine: "Refinar",
@@ -205,17 +205,17 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
   },
   fr: {
     suggestions: [
-      { label: "Resume du plan", prompt: "Peux-tu me donner un resume de mon plan TJAI et expliquer les principes principaux ?" },
-      { label: "Avant entrainement", prompt: "Que dois-je manger avant mon entrainement, et quand ?" },
-      { label: "Seance manquee", prompt: "J'ai manque l'entrainement d'hier. Dois-je le rattraper ou le sauter ?" },
+      { label: "Résumé du plan", prompt: "Peux-tu me donner un résumé de mon plan TJAI et expliquer les principes principaux ?" },
+      { label: "Avant entraînement", prompt: "Que dois-je manger avant mon entraînement, et quand ?" },
+      { label: "Séance manquée", prompt: "J'ai manqué l'entraînement d'hier. Dois-je le rattraper ou le sauter ?" },
       { label: "Remplacer un repas", prompt: "Peux-tu proposer une alternative pour l'un de mes repas ? Je te dirai lequel." },
-      { label: "Options genou", prompt: "J'ai mal au genou. Quels exercices eviter et quelles alternatives sont sures ?" },
-      { label: "Casser un plateau", prompt: "Je stagne au meme poids depuis 2 semaines. Quels changements faire ?" }
+      { label: "Options genou", prompt: "J'ai mal au genou. Quels exercices éviter et quelles alternatives sont sûres ?" },
+      { label: "Casser un plateau", prompt: "Je stagne au même poids depuis 2 semaines. Quels changements faire ?" }
     ],
-    emptyPrompt: "Pose une question sur tes repas, seances ou ton plan...",
-    askTitle: "Demander a TJAI",
-    askBody: "Ton coach connait ton plan et tes seances enregistrees. Donne des details pour des reponses plus nettes.",
-    memory: "Memoire",
+    emptyPrompt: "Pose une question sur tes repas, séances ou ton plan...",
+    askTitle: "Demander à TJAI",
+    askBody: "Ton coach connaît ton plan et tes séances enregistrées. Donne des détails pour des réponses plus nettes.",
+    memory: "Mémoire",
     tapToAsk: "Appuyer pour demander",
     refine: "Affiner",
     send: "Envoyer",
