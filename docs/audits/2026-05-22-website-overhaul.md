@@ -77,6 +77,11 @@ iteration — not micro-polish.
   heading + body) and the 6 `features` cards × 5 locales; split the
   `immersive-home` features array into icon/accent `featureMeta` + localized
   title/desc. The homepage body is now fully localized. Build green, live.
+- **Iter 13** — bundle grid filter UX. The grid is now keyed by the active
+  filter so switching a goal remounts the cards and replays their staggered
+  reveal cascade (filtering feels alive). The bare empty-filter `<p>` became
+  a proper `tj-empty-state` card — icon + message + a sheen "All" reset
+  chip. Build green, live on main.
 
 ## QUEUE (next up)
 

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { ArrowRight, FileDown } from "lucide-react";
+import { ArrowRight, FileDown, PackageOpen } from "lucide-react";
 
 import { useReveal, useTilt } from "@/components/effects/use-3d";
 import { useMagnetic, useMergedRef, useRipple } from "@/components/effects/use-magnetic";
@@ -78,7 +78,11 @@ export function BundleGrid({
         })}
       </div>
 
+      {/* Keyed by `active` so switching a filter remounts the cards and
+          replays their staggered reveal cascade — filtering feels alive
+          instead of hard-swapping. */}
       <div
+        key={active}
         className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
         role="tabpanel"
         aria-live="polite"
@@ -89,7 +93,17 @@ export function BundleGrid({
       </div>
 
       {filtered.length === 0 ? (
-        <p className="mt-8 text-sm text-muted">{copy.emptyFilter}</p>
+        <div className="tj-empty-state mt-8 flex flex-col items-center rounded-2xl px-6 py-16 text-center">
+          <PackageOpen className="h-10 w-10 text-dim" strokeWidth={1.5} aria-hidden />
+          <p className="mt-4 text-sm text-muted">{copy.emptyFilter}</p>
+          <button
+            type="button"
+            onClick={() => setActive("all")}
+            className="tj-cta-sheen mt-5 inline-flex min-h-[40px] items-center justify-center rounded-full border border-cyan-300/45 bg-cyan-300/[0.08] px-5 text-xs font-semibold text-cyan-50 transition-[border-color,background-color,box-shadow] duration-200 hover:border-cyan-300/65 hover:bg-cyan-300/[0.14] hover:shadow-[0_0_22px_rgba(34,211,238,0.2)]"
+          >
+            {copy.filterLabels.all}
+          </button>
+        </div>
       ) : null}
     </>
   );
