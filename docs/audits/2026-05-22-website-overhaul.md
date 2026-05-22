@@ -142,7 +142,12 @@ iteration — not micro-polish.
   purpose — ~440 niche exercise/food terms × 4 locales, high error-risk,
   low ROI (gym terminology reads broadly in English). Not a gap.
 
-## STATUS — loop paused after iter 23 (2026-05-22 ~04:50)
+- **Iter 24** — restored tr/fr diacritics in `tjai-hub.tsx` (the TJAI
+  section hub): tab labels "Planım"/"Öğün Değiştir"/"İlerleme", the hub
+  subtitle ("hafızasına"/"koçunuz", "mémoire"), and the tier labels
+  "Çekirdek"/"Básico". Build green, live on main.
+
+## STATUS — autonomous loop, quiet branch (2026-05-22)
 
 23 iterations shipped live to main. The high-value, cleanly-bounded overhaul
 work is done: the bundles experience, homepage, TJAI chatbot, coach profile,

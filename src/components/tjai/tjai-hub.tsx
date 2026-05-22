@@ -24,7 +24,7 @@ const TAB_ICONS: Record<TabKey, typeof FileText> = {
 
 const TAB_LABELS: Record<Locale, Record<TabKey, string>> = {
   en: { "my-plan": "My Plan", chat: "Chat", "meal-swap": "Meal Swap", progress: "Progress" },
-  tr: { "my-plan": "Planim", chat: "Sohbet", "meal-swap": "Ogun Degistir", progress: "Ilerleme" },
+  tr: { "my-plan": "Planım", chat: "Sohbet", "meal-swap": "Öğün Değiştir", progress: "İlerleme" },
   ar: { "my-plan": "خطتي", chat: "الدردشة", "meal-swap": "تبديل الوجبة", progress: "التقدم" },
   es: { "my-plan": "Mi Plan", chat: "Chat", "meal-swap": "Cambiar Comida", progress: "Progreso" },
   fr: { "my-plan": "Mon Plan", chat: "Chat", "meal-swap": "Changer le Repas", progress: "Progression" }
@@ -32,10 +32,10 @@ const TAB_LABELS: Record<Locale, Record<TabKey, string>> = {
 
 const HUB_SUBTITLE: Record<Locale, string> = {
   en: "Your adaptive fitness coach with plan memory",
-  tr: "Plan hafizasina sahip uyarlanabilir fitness kocunuz",
+  tr: "Plan hafızasına sahip uyarlanabilir fitness koçunuz",
   ar: "مدرب لياقة متكيّف مع ذاكرة للخطة",
   es: "Tu coach fitness adaptativo con memoria de plan",
-  fr: "Votre coach fitness adaptatif avec memoire de plan"
+  fr: "Votre coach fitness adaptatif avec mémoire de plan"
 };
 
 function normalizeTab(raw: string | null): TabKey {
@@ -47,8 +47,8 @@ function tierLabel(locale: Locale, tier: string) {
   if (tier === "apex") return "Apex";
   if (tier === "pro") return "Pro";
   if (locale === "ar") return "أساسي";
-  if (locale === "tr") return "Cekirdek";
-  if (locale === "es") return "Basico";
+  if (locale === "tr") return "Çekirdek";
+  if (locale === "es") return "Básico";
   if (locale === "fr") return "Essentiel";
   return "Core";
 }
