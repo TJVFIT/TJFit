@@ -17,6 +17,8 @@ import type { Program } from "@/lib/content";
 import type { HomeLuxuryCopy } from "@/lib/home-luxury-copy";
 import { getNavChromeCopy } from "@/lib/launch-copy";
 import { getDirection, type Locale } from "@/lib/i18n";
+import { getBundlesCopy } from "@/lib/bundles-copy";
+import { BUNDLES } from "@/lib/bundles";
 import { cn } from "@/lib/utils";
 
 import type { HomeCoachPreview } from "@/components/luxury/luxury-home";
@@ -130,7 +132,7 @@ function TjaiMagneticPrimary({
  * Download PDF pill vocabulary. Used on the home page bundle teaser
  * section so the home → bundles CTAs feel like one system.
  */
-function BundleTeaserCTA({ href }: { href: string }) {
+function BundleTeaserCTA({ href, label }: { href: string; label: string }) {
   const magnetic = useMagnetic<HTMLAnchorElement>({ strength: 6, max: 9 });
   const ripple = useRipple<HTMLAnchorElement>();
   const ref = useMergedRef<HTMLAnchorElement>(magnetic, ripple);
@@ -149,9 +151,9 @@ function BundleTeaserCTA({ href }: { href: string }) {
         } as React.CSSProperties
       }
     >
-      <span className="relative">Browse 12 bundles</span>
+      <span className="relative">{label}</span>
       <ArrowRight
-        className="relative h-4 w-4 transition-transform motion-safe:group-hover/cta:translate-x-1"
+        className="relative h-4 w-4 transition-transform rtl:rotate-180 motion-safe:group-hover/cta:translate-x-1 rtl:motion-safe:group-hover/cta:-translate-x-1"
         aria-hidden
       />
     </a>
@@ -253,6 +255,8 @@ export function ImmersiveHome({
       ? "none"
       : `opacity var(--tj-motion-hero, 1040ms) var(--tj-ease-premium, cubic-bezier(0.22,1,0.36,1)) ${delay}ms, transform var(--tj-motion-hero, 1040ms) var(--tj-ease-premium, cubic-bezier(0.22,1,0.36,1)) ${delay}ms`,
   });
+
+  const bundlesCopy = getBundlesCopy(locale);
 
   const features = [
     { icon: Brain, title: "TJAI — Your AI Coach", desc: "Adaptive intake, progress-aware memory, and AI-built 12-week transformation plans. Diet + training + supplements.", accent: "#22D3EE", span: 2 as const },
@@ -357,26 +361,25 @@ export function ImmersiveHome({
         />
         <div className="relative mx-auto flex max-w-5xl flex-col items-start gap-8 md:flex-row md:items-center md:justify-between md:gap-10">
           <div className="max-w-xl">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">Catalog</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">{bundlesCopy.homeTeaser.eyebrow}</p>
             <h2 className="mt-3 font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-              <span className="tj-title-shimmer">12 bundles. One way to train.</span>
+              <span className="tj-title-shimmer">{bundlesCopy.title(BUNDLES.length)}</span>
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-[var(--color-text-secondary)] sm:text-base">
-              Each bundle pairs a 12-week training protocol with a matching diet
-              system, delivered as a branded PDF dossier. Free with sign-in.
+              {bundlesCopy.homeTeaser.body}
             </p>
             <div className="mt-5 flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-[0.18em]">
-              {["Cut", "Build", "Recomp", "Strength", "Conditioning", "Start"].map((g) => (
+              {(["fat-loss", "muscle-gain", "recomp", "strength", "conditioning", "foundation"] as const).map((key) => (
                 <span
-                  key={g}
+                  key={key}
                   className="rounded-full border border-cyan-300/25 bg-cyan-300/[0.05] px-2.5 py-1 text-cyan-100/85"
                 >
-                  {g}
+                  {bundlesCopy.filterLabels[key]}
                 </span>
               ))}
             </div>
           </div>
-          <BundleTeaserCTA href={`/${locale}/bundles`} />
+          <BundleTeaserCTA href={`/${locale}/bundles`} label={bundlesCopy.homeTeaser.cta(BUNDLES.length)} />
         </div>
       </section>
 

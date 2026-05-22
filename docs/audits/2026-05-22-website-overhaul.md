@@ -58,14 +58,21 @@ iteration — not micro-polish.
   wired the card subline, detail description, At-a-glance Training/Diet rows,
   and the nutrition-section heading. Bundle prose is now fully localized;
   only the structured data tables remain English. Build green, live on main.
+- **Iter 9** — i18n the homepage Bundles Catalog Teaser section. Added a
+  `homeTeaser` block to `bundles-copy.ts` (eyebrow/body/cta × 5 locales),
+  reused `title` + `filterLabels` for the heading + goal pills, wired the
+  `immersive-home` section + `BundleTeaserCTA` (now takes a label, count
+  driven by `BUNDLES.length`, arrow RTL-mirrored). Build green, live.
 
 ## QUEUE (next up)
 
+- i18n the rest of the homepage body — `immersive-home` is mostly hardcoded
+  English: the 6-card features grid, the TJAI overview section, the platform-
+  spec section, the editorial rail, the stats CountUp labels. Extend
+  `home-luxury-copy.ts`; multi-iteration.
 - Translate the bundle *structured data* in `src/lib/bundles.ts` — phases,
-  nutrition, sampleTrainingDay, sampleMealDay. Large, multi-iteration
-  (exercise + meal names); decide whether gym terminology stays English.
+  nutrition, sampleTrainingDay, sampleMealDay. Large, multi-iteration.
 - Bundle detail page: week-by-week accordion (needs week data added first).
-- Homepage hero copy + layout refresh.
 - Localize the homepage error-boundary fallback copy (`[locale]/page.tsx`).
 
 ## BACKLOG (drive-by notes, unfixed)

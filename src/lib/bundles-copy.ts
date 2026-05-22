@@ -64,6 +64,12 @@ export type BundlesCopy = {
   downloadAria: (name: string) => string;
   detailsAria: (name: string) => string;
   detail: BundleDetailCopy;
+  /** Copy for the bundles-catalog teaser section on the homepage. */
+  homeTeaser: {
+    eyebrow: string;
+    body: string;
+    cta: (count: number) => string;
+  };
 };
 
 const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
@@ -128,6 +134,11 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
       shareIdle: "Share",
       shareShared: "Shared",
       shareCopied: "Link copied!"
+    },
+    homeTeaser: {
+      eyebrow: "Catalog",
+      body: "Each bundle pairs a 12-week training protocol with a matching diet system, delivered as a branded PDF dossier. Free with sign-in.",
+      cta: (count) => `Browse ${count} bundles`
     }
   },
   tr: {
@@ -191,6 +202,11 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
       shareIdle: "Paylaş",
       shareShared: "Paylaşıldı",
       shareCopied: "Bağlantı kopyalandı!"
+    },
+    homeTeaser: {
+      eyebrow: "Katalog",
+      body: "Her paket, 12 haftalık bir antrenman protokolünü uyumlu bir diyet sistemiyle eşleştirir ve markalı bir PDF dosyası olarak sunulur. Girişle ücretsiz.",
+      cta: (count) => `${count} paketi incele`
     }
   },
   ar: {
@@ -254,6 +270,11 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
       shareIdle: "مشاركة",
       shareShared: "تمت المشاركة",
       shareCopied: "تم نسخ الرابط!"
+    },
+    homeTeaser: {
+      eyebrow: "الكتالوج",
+      body: "تجمع كل حزمة بروتوكول تدريب لمدة 12 أسبوعاً مع نظام غذائي متوافق، وتُسلَّم كملف PDF يحمل العلامة. مجاني مع تسجيل الدخول.",
+      cta: (count) => `تصفّح ${count} حزمة`
     }
   },
   es: {
@@ -317,6 +338,11 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
       shareIdle: "Compartir",
       shareShared: "Compartido",
       shareCopied: "¡Enlace copiado!"
+    },
+    homeTeaser: {
+      eyebrow: "Catálogo",
+      body: "Cada paquete combina un protocolo de entrenamiento de 12 semanas con un sistema de dieta a juego, entregado como un dossier PDF de marca. Gratis con inicio de sesión.",
+      cta: (count) => `Ver ${count} paquetes`
     }
   },
   fr: {
@@ -380,6 +406,11 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
       shareIdle: "Partager",
       shareShared: "Partagé",
       shareCopied: "Lien copié !"
+    },
+    homeTeaser: {
+      eyebrow: "Catalogue",
+      body: "Chaque pack associe un protocole d'entraînement de 12 semaines à un système de diète assorti, livré en dossier PDF de marque. Gratuit avec connexion.",
+      cta: (count) => `Voir les ${count} packs`
     }
   }
 };
