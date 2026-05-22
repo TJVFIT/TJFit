@@ -72,16 +72,19 @@ iteration — not micro-polish.
   `home-sections-copy.ts` (`getHomeSectionsCopy`) with the TJAI overview
   section (heading/body/cta), the 5 editorial-rail phrases, and the 3 stats
   labels × 5 locales; wired `immersive-home`. Build green, live on main.
+- **Iter 12** — i18n the homepage features grid + platform-spec header.
+  Extended `home-sections-copy.ts` with `platformSpec` (eyebrow + two-tone
+  heading + body) and the 6 `features` cards × 5 locales; split the
+  `immersive-home` features array into icon/accent `featureMeta` + localized
+  title/desc. The homepage body is now fully localized. Build green, live.
 
 ## QUEUE (next up)
 
-- i18n the homepage features grid + platform-spec section in `immersive-home`
-  (6 hardcoded feature cards + "The stack" header). Extend
-  `home-sections-copy.ts`.
 - Translate the bundle *structured data* in `src/lib/bundles.ts` — phases,
   nutrition, sampleTrainingDay, sampleMealDay. Large, multi-iteration.
 - Bundle detail page: week-by-week accordion (needs week data added first).
 - Localize the homepage error-boundary fallback copy (`[locale]/page.tsx`).
+- Audit other top routes (programs, diets, dashboard) for hardcoded English.
 
 ## BACKLOG (drive-by notes, unfixed)
 

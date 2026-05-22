@@ -260,14 +260,21 @@ export function ImmersiveHome({
   const bundlesCopy = getBundlesCopy(locale);
   const sectionsCopy = getHomeSectionsCopy(locale);
 
-  const features = [
-    { icon: Brain, title: "TJAI — Your AI Coach", desc: "Adaptive intake, progress-aware memory, and AI-built 12-week transformation plans. Diet + training + supplements.", accent: "#22D3EE", span: 2 as const },
-    { icon: Dumbbell, title: "20+ Expert Programs", desc: "12-week structured plans for home or gym. Fat loss, muscle gain — all levels.", accent: "#67E8F9", span: 1 as const },
-    { icon: Apple, title: "Full Diet Systems", desc: "Daily meal plans with macros, recipes, grocery lists. Halal, vegan, budget - covered.", accent: "#0EA5E9", span: 1 as const },
-    { icon: Users, title: "Coach Marketplace", desc: "Book certified coaches. 1-on-1 guidance and personalized feedback.", accent: "#22D3EE", span: 1 as const },
-    { icon: Trophy, title: "Leaderboards", desc: "Earn TJCOIN, compete on weekly boards, unlock rewards for consistency.", accent: "#67E8F9", span: 1 as const },
-    { icon: Globe, title: "10 Languages", desc: "Training and nutrition flows support 10 locales from the first visit.", accent: "#0EA5E9", span: 1 as const }
-  ] as const;
+  // Icon/accent/layout meta stays here; the title + desc come from the
+  // localized home-sections copy (order must match).
+  const featureMeta = [
+    { icon: Brain, accent: "#22D3EE", span: 2 as const },
+    { icon: Dumbbell, accent: "#67E8F9", span: 1 as const },
+    { icon: Apple, accent: "#0EA5E9", span: 1 as const },
+    { icon: Users, accent: "#22D3EE", span: 1 as const },
+    { icon: Trophy, accent: "#67E8F9", span: 1 as const },
+    { icon: Globe, accent: "#0EA5E9", span: 1 as const }
+  ];
+  const features = featureMeta.map((m, i) => ({
+    ...m,
+    title: sectionsCopy.features[i]?.title ?? "",
+    desc: sectionsCopy.features[i]?.desc ?? ""
+  }));
 
   // TJAI section ref for reveal trigger
   const tjaiRef = useRef<HTMLElement | null>(null);
@@ -395,13 +402,13 @@ export function ImmersiveHome({
       <section className="reveal-section border-t border-divider px-6 py-24 lg:px-12 lg:py-32">
         <div className="mx-auto max-w-6xl">
           <MotionReveal reducedMotion={reduce} className="max-w-2xl">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-dim">The stack</p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-dim">{sectionsCopy.platformSpec.eyebrow}</p>
             <h2 className="mt-5 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-[2.65rem] lg:leading-[1.12]">
-              Built like training software,
-              <span className="text-faint"> not a toy app.</span>
+              {sectionsCopy.platformSpec.headingLead}
+              <span className="text-faint">{sectionsCopy.platformSpec.headingTail}</span>
             </h2>
             <p className="mt-5 text-sm leading-relaxed text-muted">
-              Structured plans, real nutrition systems, AI that respects constraints, and human coaches when you want them — one surface, one visual language.
+              {sectionsCopy.platformSpec.body}
             </p>
           </MotionReveal>
 
