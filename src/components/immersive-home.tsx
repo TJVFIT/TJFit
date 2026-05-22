@@ -18,6 +18,7 @@ import type { HomeLuxuryCopy } from "@/lib/home-luxury-copy";
 import { getNavChromeCopy } from "@/lib/launch-copy";
 import { getDirection, type Locale } from "@/lib/i18n";
 import { getBundlesCopy } from "@/lib/bundles-copy";
+import { getHomeSectionsCopy } from "@/lib/home-sections-copy";
 import { BUNDLES } from "@/lib/bundles";
 import { cn } from "@/lib/utils";
 
@@ -257,6 +258,7 @@ export function ImmersiveHome({
   });
 
   const bundlesCopy = getBundlesCopy(locale);
+  const sectionsCopy = getHomeSectionsCopy(locale);
 
   const features = [
     { icon: Brain, title: "TJAI — Your AI Coach", desc: "Adaptive intake, progress-aware memory, and AI-built 12-week transformation plans. Diet + training + supplements.", accent: "#22D3EE", span: 2 as const },
@@ -329,18 +331,17 @@ export function ImmersiveHome({
           <div className="max-w-xl">
             <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">TJAI</p>
             <h2 className="mt-3 font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-              Your AI coach, built for your body.
+              {sectionsCopy.tjai.heading}
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-[var(--color-text-secondary)] sm:text-base">
-              Answer 25 questions — TJAI generates a full 12-week training plan, diet, and supplement stack
-              tuned to your goals, equipment and time. Preview it free; unlock the full plan when you&rsquo;re ready.
+              {sectionsCopy.tjai.body}
             </p>
           </div>
           <Link
             href={`/${locale}/tjai`}
             className="lux-btn-primary inline-flex min-h-[48px] shrink-0 items-center justify-center gap-2 tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-6 py-3 text-sm font-bold text-background shadow-[0_4px_24px_rgba(34,211,238,0.35)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02]"
           >
-            Try TJAI <ArrowRight className="h-4 w-4" />
+            {sectionsCopy.tjai.cta} <ArrowRight className="h-4 w-4 rtl:rotate-180" />
           </Link>
         </div>
       </section>
@@ -386,13 +387,7 @@ export function ImmersiveHome({
       {/* Editorial rail — no marquee, no shouty caps */}
       <div className="-mt-px border-y border-white/[0.06] bg-surface/35">
         <p className="mx-auto max-w-6xl px-6 py-4 text-center text-[10px] font-medium uppercase leading-loose tracking-[0.28em] text-dim lg:px-12">
-          {[
-            "12-week periodization",
-            "Macro-aware meals",
-            "TJAI · GPT-4o",
-            "Coach marketplace",
-            "10 languages",
-          ].join("      ·      ")}
+          {sectionsCopy.editorialRail.join("      ·      ")}
         </p>
       </div>
 
@@ -429,9 +424,9 @@ export function ImmersiveHome({
       <section className="reveal-section border-y border-divider bg-background py-16 lg:py-20">
         <MotionReveal reducedMotion={reduce} className="mx-auto max-w-5xl px-6 lg:px-12">
           <div className="flex flex-col divide-y divide-[#1E2028] lg:flex-row lg:divide-x lg:divide-y-0">
-            <CountUp target={12} label="Free Bundles" />
-            <CountUp target={12} label="Weeks Per Plan" />
-            <CountUp target={10} label="Languages" />
+            <CountUp target={BUNDLES.length} label={sectionsCopy.stats.bundles} />
+            <CountUp target={12} label={sectionsCopy.stats.weeks} />
+            <CountUp target={10} label={sectionsCopy.stats.languages} />
           </div>
         </MotionReveal>
       </section>
