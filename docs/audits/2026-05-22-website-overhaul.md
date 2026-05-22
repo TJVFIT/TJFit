@@ -109,6 +109,11 @@ iteration — not micro-polish.
   tr/ar/es/fr strings ("olustu", "salio", "notifiee", "ozeti", "Resume").
   Restored proper diacritics + Spanish ¿/¡ punctuation throughout. Build
   green, live on main.
+- **Iter 19** — restored fr + es diacritics in the core `i18n.ts`
+  dictionary's chrome sections (nav, hero, steps, cta, common, launchingSoon,
+  comingSoon). The site-wide nav showed "Regimes"/"Communaute" (fr) and
+  "Suscripcion"/"Iniciar sesion" (es) on every page; now "Régimes",
+  "Communauté", "Suscripción", "Iniciar sesión", etc. Build green, live.
 
 ## DECISIONS
 

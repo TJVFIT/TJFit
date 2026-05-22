@@ -618,23 +618,23 @@ export const dictionaries: Record<Locale, Dictionary> = {
       community: "Comunidad",
       challenges: "Retos",
       live: "En vivo",
-      membership: "Suscripcion",
+      membership: "Suscripción",
       becomeCoach: "Ser coach",
       dashboard: "Panel",
       admin: "Admin",
       feedback: "Soporte",
-      login: "Iniciar sesion",
-      loginAsCoach: "Iniciar sesion como coach",
+      login: "Iniciar sesión",
+      loginAsCoach: "Iniciar sesión como coach",
       progress: "Progreso",
       messages: "Mensajes",
       profile: "Perfil",
-      logout: "Cerrar sesion"
+      logout: "Cerrar sesión"
     },
     hero: {
       badge: "Plataforma global de coaching online",
       title: "Coaching de clase mundial. Desde casa.",
       subtitle:
-        "Encuentra coaches certificados para fitness, rendimiento, nutricion, fisioterapia y rehabilitacion en ingles, turco, arabe, espanol y frances.",
+        "Encuentra coaches certificados para fitness, rendimiento, nutrición, fisioterapia y rehabilitación en inglés, turco, árabe, español y francés.",
       primaryCta: "Buscar coach",
       secondaryCta: "Ser coach"
     },
@@ -642,8 +642,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
     cta: {
       title: "Empieza hoy.",
       subtitle:
-        "Crece mas rapido con experiencias premium, expertos confiables y reservas simples.",
-      button: "Reserva tu primera sesion"
+        "Crece más rápido con experiencias premium, expertos confiables y reservas simples.",
+      button: "Reserva tu primera sesión"
     },
     common: {
       featuredCoaches: "Coaches destacados",
@@ -653,15 +653,15 @@ export const dictionaries: Record<Locale, Dictionary> = {
       socialProof: "Actividad en vivo"
     },
     launchingSoon: {
-      badge: "Proximamente",
-      title: "Proximamente",
-      subtitle: "Coaching online premium para fitness, rendimiento, nutricion y recuperacion. Disponible en ingles, turco, arabe, espanol y frances.",
-      cta: "Iniciar sesion como coach"
+      badge: "Próximamente",
+      title: "Próximamente",
+      subtitle: "Coaching online premium para fitness, rendimiento, nutrición y recuperación. Disponible en inglés, turco, árabe, español y francés.",
+      cta: "Iniciar sesión como coach"
     },
     comingSoon: {
-      title: "Proximamente",
-      subtitle: "Nuestra tienda de equipamiento esta en camino.",
-      storeDescription: "Herramientas de entrenamiento y recuperacion, bandas de resistencia, mancuernas y mas. Conectado con nuestra futura tienda dropshipping."
+      title: "Próximamente",
+      subtitle: "Nuestra tienda de equipamiento está en camino.",
+      storeDescription: "Herramientas de entrenamiento y recuperación, bandas de resistencia, mancuernas y más. Conectado con nuestra futura tienda dropshipping."
     },
     becomeCoachPage: {
       description:
@@ -762,11 +762,11 @@ export const dictionaries: Record<Locale, Dictionary> = {
       home: "Accueil",
       coaches: "Trouver un coach",
       programs: "Programmes",
-      diets: "Regimes",
+      diets: "Régimes",
       store: "Boutique",
       transformations: "Transformations",
-      community: "Communaute",
-      challenges: "Defis",
+      community: "Communauté",
+      challenges: "Défis",
       live: "Live",
       membership: "Abonnement",
       becomeCoach: "Devenir coach",
@@ -778,13 +778,13 @@ export const dictionaries: Record<Locale, Dictionary> = {
       progress: "Progression",
       messages: "Messages",
       profile: "Profil",
-      logout: "Se deconnecter"
+      logout: "Se déconnecter"
     },
     hero: {
       badge: "Plateforme mondiale de coaching en ligne",
       title: "Coaching de niveau mondial. Depuis chez vous.",
       subtitle:
-        "Trouvez des coachs certifies en fitness, performance, nutrition, physiotherapie et rehabilitation en anglais, turc, arabe, espagnol et francais.",
+        "Trouvez des coachs certifiés en fitness, performance, nutrition, physiothérapie et réhabilitation en anglais, turc, arabe, espagnol et français.",
       primaryCta: "Trouver un coach",
       secondaryCta: "Devenir coach"
     },
@@ -792,26 +792,26 @@ export const dictionaries: Record<Locale, Dictionary> = {
     cta: {
       title: "Commencez aujourd'hui.",
       subtitle:
-        "Avancez plus vite avec une experience premium, des experts fiables et une reservation simple.",
-      button: "Reserver votre premiere session"
+        "Avancez plus vite avec une expérience premium, des experts fiables et une réservation simple.",
+      button: "Réservez votre première session"
     },
     common: {
       featuredCoaches: "Coachs en vedette",
       marketplace: "Marketplace de programmes",
-      equipment: "Boutique d'equipement",
-      testimonials: "Temoignages",
-      socialProof: "Activite en direct"
+      equipment: "Boutique d'équipement",
+      testimonials: "Témoignages",
+      socialProof: "Activité en direct"
     },
     launchingSoon: {
-      badge: "Bientot",
-      title: "Bientot disponible",
-      subtitle: "Coaching en ligne premium pour fitness, performance, nutrition et recuperation. Disponible en anglais, turc, arabe, espagnol et francais.",
+      badge: "Bientôt",
+      title: "Bientôt disponible",
+      subtitle: "Coaching en ligne premium pour fitness, performance, nutrition et récupération. Disponible en anglais, turc, arabe, espagnol et français.",
       cta: "Se connecter en tant que coach"
     },
     comingSoon: {
-      title: "Bientot",
-      subtitle: "Notre boutique d'equipement arrive.",
-      storeDescription: "Outils d'entrainement et de recuperation, bandes de resistance, haltères et plus. Connecte a notre future boutique dropshipping."
+      title: "Bientôt",
+      subtitle: "Notre boutique d'équipement arrive.",
+      storeDescription: "Outils d'entraînement et de récupération, bandes de résistance, haltères et plus. Connecté à notre future boutique dropshipping."
     },
     becomeCoachPage: {
       description:
