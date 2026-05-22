@@ -114,6 +114,11 @@ iteration — not micro-polish.
   comingSoon). The site-wide nav showed "Regimes"/"Communaute" (fr) and
   "Suscripcion"/"Iniciar sesion" (es) on every page; now "Régimes",
   "Communauté", "Suscripción", "Iniciar sesión", etc. Build green, live.
+- **Iter 20** — finished the `i18n.ts` diacritic pass: the deeper fr + es
+  sections (becomeCoachPage, becomeCoach, admin, dashboard, feedback).
+  ~60 strings re-accented — "Únete"/"diseñado"/"imán"/"¿Cuántos años?",
+  "marché"/"conçu"/"Système"/"expérience"/"séances"/"élèves", etc. The core
+  dictionary is now fully diacritic-correct in all 5 locales. Build green, live.
 
 ## DECISIONS
 
