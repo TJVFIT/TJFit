@@ -97,13 +97,23 @@ iteration — not micro-polish.
   in-view section via one IntersectionObserver. Sections got `id` +
   `scroll-mt-24` anchors; labels reuse the already-localized detail eyebrows.
   RTL-aware (`start-5`). Build green, live on main.
+- **Iter 17** — localized + redesigned the homepage crash fallback. The
+  `ClientErrorBoundary` fallback in `[locale]/page.tsx` was a bare English
+  sentence + link; now a branded `tj-empty-state` card (icon, title, body,
+  Reload + Browse-bundles actions) with self-contained inline copy in all 5
+  locales — kept inline so the fallback survives a lib-import failure.
+  Build green, live on main.
+
+## DECISIONS
+
+- Bundle `sampleTrainingDay` / `sampleMealDay` tables stay English on
+  purpose — ~440 niche exercise/food terms × 4 locales, high error-risk,
+  low ROI (gym terminology reads broadly in English). Not a gap.
 
 ## QUEUE (next up)
 
-- Translate `sampleTrainingDay` + `sampleMealDay` — exercise + meal tables
-  (~930 strings, multi-iteration). Decide whether exercise names stay English.
-- Localize the homepage error-boundary fallback copy (`[locale]/page.tsx`).
 - Audit other top routes (programs, diets, dashboard) for hardcoded English.
+- Localize remaining route-level `error.tsx` boundaries if bare/English.
 
 ## BACKLOG (drive-by notes, unfixed)
 

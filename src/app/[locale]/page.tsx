@@ -13,6 +13,44 @@ const ImmersiveHome = dynamic(() => import("@/components/immersive-home").then((
   loading: () => <HomeLuxurySkeleton />
 });
 
+/**
+ * Self-contained copy for the homepage crash fallback. Kept inline (no copy
+ * module import) so the fallback still renders even if a lib import is what
+ * failed.
+ */
+const FALLBACK_COPY: Record<Locale, { title: string; body: string; retry: string; browse: string }> = {
+  en: {
+    title: "Something went wrong",
+    body: "The homepage could not be displayed. Please reload or try again later.",
+    retry: "Reload",
+    browse: "Browse bundles"
+  },
+  tr: {
+    title: "Bir şeyler ters gitti",
+    body: "Ana sayfa görüntülenemedi. Lütfen sayfayı yenile veya daha sonra tekrar dene.",
+    retry: "Yenile",
+    browse: "Paketleri incele"
+  },
+  ar: {
+    title: "حدث خطأ ما",
+    body: "تعذّر عرض الصفحة الرئيسية. يرجى إعادة التحميل أو المحاولة لاحقاً.",
+    retry: "إعادة التحميل",
+    browse: "تصفّح الحزم"
+  },
+  es: {
+    title: "Algo salió mal",
+    body: "No se pudo mostrar la página de inicio. Recárgala o inténtalo más tarde.",
+    retry: "Recargar",
+    browse: "Ver paquetes"
+  },
+  fr: {
+    title: "Un problème est survenu",
+    body: "La page d'accueil n'a pas pu s'afficher. Recharge la page ou réessaie plus tard.",
+    retry: "Recharger",
+    browse: "Voir les packs"
+  }
+};
+
 function HomeLuxurySkeleton() {
   return (
     <div className="min-h-[100dvh] bg-background px-4 pb-24 pt-24 sm:px-6 lg:px-8 lg:pt-28">
@@ -50,17 +88,34 @@ export default function HomePage({ params }: { params: { locale: string } }) {
     <ClientErrorBoundary
       sentryScope="home-luxury"
       fallback={
-        <div className="min-h-[100dvh] bg-background px-4 py-24 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-lg text-center">
-            <p className="text-sm text-muted">
-              The homepage could not be displayed. Please reload or try again later.
-            </p>
-            <a
-              href={`/${locale}/bundles`}
-              className="mt-8 inline-flex rounded-full border border-white/[0.12] bg-white/[0.06] px-6 py-2.5 text-sm font-medium text-bright"
+        <div className="flex min-h-[100dvh] items-center justify-center bg-background px-4 py-24 sm:px-6 lg:px-8">
+          <div className="tj-empty-state mx-auto flex max-w-md flex-col items-center rounded-2xl px-8 py-12 text-center">
+            <span
+              aria-hidden
+              className="flex h-14 w-14 items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-300/[0.07] text-2xl"
             >
-              Browse bundles
-            </a>
+              ⚠
+            </span>
+            <h1 className="mt-5 font-display text-xl font-semibold text-white">
+              {FALLBACK_COPY[locale].title}
+            </h1>
+            <p className="mt-2 text-sm leading-relaxed text-muted">
+              {FALLBACK_COPY[locale].body}
+            </p>
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+              <a
+                href={`/${locale}`}
+                className="tj-cta-sheen inline-flex min-h-[44px] items-center justify-center rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] px-6 text-sm font-bold text-[#09090B] shadow-[0_0_20px_rgba(34,211,238,0.25)]"
+              >
+                {FALLBACK_COPY[locale].retry}
+              </a>
+              <a
+                href={`/${locale}/bundles`}
+                className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-white/[0.14] bg-white/[0.05] px-6 text-sm font-medium text-bright transition-colors hover:border-cyan-300/35 hover:text-cyan-100"
+              >
+                {FALLBACK_COPY[locale].browse}
+              </a>
+            </div>
           </div>
         </div>
       }
