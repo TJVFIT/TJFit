@@ -8,7 +8,7 @@ import { useReveal, useTilt } from "@/components/effects/use-3d";
 import { useMagnetic, useMergedRef, useRipple } from "@/components/effects/use-magnetic";
 import type { Bundle, BundleGoal } from "@/lib/bundles";
 import { getBundlesCopy, type BundlesCopy } from "@/lib/bundles-copy";
-import { localizeBundleCard } from "@/lib/bundle-localization";
+import { localizeBundle } from "@/lib/bundle-localization";
 
 type FilterKey = "all" | BundleGoal;
 
@@ -109,7 +109,7 @@ function BundleCard({
   const detailHref = `/${locale}/bundles/${bundle.slug}`;
   const downloadHref = `/api/bundles/download/${bundle.slug}`;
   const isFree = bundle.save.toLowerCase() === "free";
-  const card = localizeBundleCard(bundle, locale);
+  const card = localizeBundle(bundle, locale);
   const tiltRef = useTilt();
   const reveal = useReveal();
   const dlMagnetic = useMagnetic<HTMLAnchorElement>({ strength: 6, max: 8 });
@@ -224,7 +224,7 @@ function BundleCard({
           </dl>
 
           <p className="mt-4 text-xs text-muted">
-            {bundle.programTitle} <span className="text-faint">+</span> {bundle.dietTitle}
+            {card.programTitle} <span className="text-faint">+</span> {card.dietTitle}
           </p>
 
           <div className="mt-auto flex items-center gap-3 pt-5">

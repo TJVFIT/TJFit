@@ -50,17 +50,20 @@ iteration — not micro-polish.
   draw + tracer dot travel start→end (`rtl:origin-right` + logical
   `insetInlineStart`). Build green, live on main.
 - **Iter 7** — localized bundle card content. New `bundle-localization.ts`
-  (`localizeBundleCard`) with translated name + hook + goalLabel for all 12
-  bundles in tr/ar/es/fr; wired the grid card + detail hero + detail
-  `generateMetadata`. The /bundles listing cards are now fully localized.
+  with translated name + hook + goalLabel for all 12 bundles in tr/ar/es/fr.
   Build green, live on main.
+- **Iter 8** — localized the rest of the bundle prose. Extended
+  `bundle-localization.ts` to a unified `localizeBundle` carrying
+  programTitle + dietTitle + description for all 12 bundles × 4 locales;
+  wired the card subline, detail description, At-a-glance Training/Diet rows,
+  and the nutrition-section heading. Bundle prose is now fully localized;
+  only the structured data tables remain English. Build green, live on main.
 
 ## QUEUE (next up)
 
-- Translate the bundle *long-form* catalogue in `src/lib/bundles.ts` —
-  description, phases, nutrition, sampleTrainingDay, sampleMealDay. Extend
-  `bundle-localization.ts`; large, multi-iteration (exercise + meal names).
-- Localize programTitle + dietTitle (shown on the card + detail At-a-glance).
+- Translate the bundle *structured data* in `src/lib/bundles.ts` — phases,
+  nutrition, sampleTrainingDay, sampleMealDay. Large, multi-iteration
+  (exercise + meal names); decide whether gym terminology stays English.
 - Bundle detail page: week-by-week accordion (needs week data added first).
 - Homepage hero copy + layout refresh.
 - Localize the homepage error-boundary fallback copy (`[locale]/page.tsx`).

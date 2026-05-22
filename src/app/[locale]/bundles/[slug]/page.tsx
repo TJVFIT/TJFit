@@ -6,7 +6,7 @@ import { AtAGlance, DetailHero, DownloadButton, PhaseStrip, RevealSection, Share
 import { getBundle, listBundleSlugs } from "@/lib/bundles";
 import { bundleProductJsonLd } from "@/lib/bundle-jsonld";
 import { getBundlesCopy } from "@/lib/bundles-copy";
-import { localizeBundleCard } from "@/lib/bundle-localization";
+import { localizeBundle } from "@/lib/bundle-localization";
 import { supportedLocales } from "@/lib/i18n";
 import { requireLocaleParam } from "@/lib/require-locale";
 import { getSiteUrl } from "@/lib/site-url";
@@ -20,7 +20,7 @@ export function generateMetadata({ params }: { params: { locale: string; slug: s
   if (!bundle) return { title: getBundlesCopy(params.locale).detail.metaFallbackTitle };
   const site = getSiteUrl();
   const url = `${site}/${params.locale}/bundles/${bundle.slug}`;
-  const card = localizeBundleCard(bundle, params.locale);
+  const card = localizeBundle(bundle, params.locale);
   const languages: Record<string, string> = {};
   for (const loc of supportedLocales) {
     languages[loc] = `${site}/${loc}/bundles/${bundle.slug}`;
@@ -51,7 +51,7 @@ export default function BundleDetailPage({
 
   const copy = getBundlesCopy(locale);
   const d = copy.detail;
-  const card = localizeBundleCard(bundle, locale);
+  const card = localizeBundle(bundle, locale);
   const downloadHref = `/api/bundles/download/${bundle.slug}`;
   const isFree = bundle.save.toLowerCase() === "free";
 
@@ -114,7 +114,7 @@ export default function BundleDetailPage({
             className="mt-6 text-sm leading-relaxed text-bright/85 sm:text-base motion-safe:animate-[tj-fade-up_620ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
             style={{ animationDelay: "380ms" }}
           >
-            {bundle.description}
+            {card.description}
           </p>
 
           <div
@@ -150,8 +150,8 @@ export default function BundleDetailPage({
           rows={[
             { label: copy.duration, value: copy.weeksValue(bundle.weeks) },
             { label: copy.sessions, value: d.sessionsValueLong(bundle.sessionsPerWeek) },
-            { label: d.rowTraining, value: bundle.programTitle },
-            { label: d.rowDiet, value: bundle.dietTitle }
+            { label: d.rowTraining, value: card.programTitle },
+            { label: d.rowDiet, value: card.dietTitle }
           ]}
         />
       </div>
@@ -205,7 +205,7 @@ export default function BundleDetailPage({
             {d.nutritionEyebrow}
           </p>
           <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
-            {bundle.dietTitle}
+            {card.dietTitle}
           </h2>
           <dl className="mt-6 grid gap-4 sm:grid-cols-3">
             {[
