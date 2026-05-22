@@ -38,6 +38,7 @@ export type BundleDetailCopy = {
   shareIdle: string;
   shareShared: string;
   shareCopied: string;
+  moreBundlesTitle: string;
 };
 
 export type BundlesCopy = {
@@ -133,7 +134,8 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
       downloadDossierAria: "Download bundle PDF",
       shareIdle: "Share",
       shareShared: "Shared",
-      shareCopied: "Link copied!"
+      shareCopied: "Link copied!",
+      moreBundlesTitle: "More bundles"
     },
     homeTeaser: {
       eyebrow: "Catalog",
@@ -201,7 +203,8 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
       downloadDossierAria: "Paket PDF'sini indir",
       shareIdle: "Paylaş",
       shareShared: "Paylaşıldı",
-      shareCopied: "Bağlantı kopyalandı!"
+      shareCopied: "Bağlantı kopyalandı!",
+      moreBundlesTitle: "Daha fazla paket"
     },
     homeTeaser: {
       eyebrow: "Katalog",
@@ -269,7 +272,8 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
       downloadDossierAria: "تنزيل ملف الحزمة بصيغة PDF",
       shareIdle: "مشاركة",
       shareShared: "تمت المشاركة",
-      shareCopied: "تم نسخ الرابط!"
+      shareCopied: "تم نسخ الرابط!",
+      moreBundlesTitle: "حزم أخرى"
     },
     homeTeaser: {
       eyebrow: "الكتالوج",
@@ -337,7 +341,8 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
       downloadDossierAria: "Descargar el PDF del paquete",
       shareIdle: "Compartir",
       shareShared: "Compartido",
-      shareCopied: "¡Enlace copiado!"
+      shareCopied: "¡Enlace copiado!",
+      moreBundlesTitle: "Más paquetes"
     },
     homeTeaser: {
       eyebrow: "Catálogo",
@@ -405,7 +410,8 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
       downloadDossierAria: "Télécharger le PDF du pack",
       shareIdle: "Partager",
       shareShared: "Partagé",
-      shareCopied: "Lien copié !"
+      shareCopied: "Lien copié !",
+      moreBundlesTitle: "Plus de packs"
     },
     homeTeaser: {
       eyebrow: "Catalogue",

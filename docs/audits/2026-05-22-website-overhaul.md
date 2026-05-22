@@ -63,6 +63,11 @@ iteration — not micro-polish.
   reused `title` + `filterLabels` for the heading + goal pills, wired the
   `immersive-home` section + `BundleTeaserCTA` (now takes a label, count
   driven by `BUNDLES.length`, arrow RTL-mirrored). Build green, live.
+- **Iter 10** — related-bundles strip on the detail page. New "More bundles"
+  section after the footer CTA: same-goal-first, capped at 3, compact link
+  cards (goalLabel + localized name + Details arrow). Localized via
+  `detail.moreBundlesTitle` (5 locales) + reuse of `localizeBundle`;
+  RTL-safe, motion-safe hover lift. Build green, live on main.
 
 ## QUEUE (next up)
 

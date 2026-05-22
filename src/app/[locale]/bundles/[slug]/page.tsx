@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 import { AtAGlance, DetailHero, DownloadButton, PhaseStrip, RevealSection, ShareButton, StickyBuyBar } from "./detail-effects";
-import { getBundle, listBundleSlugs } from "@/lib/bundles";
+import { BUNDLES, getBundle, listBundleSlugs } from "@/lib/bundles";
 import { bundleProductJsonLd } from "@/lib/bundle-jsonld";
 import { getBundlesCopy } from "@/lib/bundles-copy";
 import { localizeBundle } from "@/lib/bundle-localization";
@@ -54,6 +54,12 @@ export default function BundleDetailPage({
   const card = localizeBundle(bundle, locale);
   const downloadHref = `/api/bundles/download/${bundle.slug}`;
   const isFree = bundle.save.toLowerCase() === "free";
+
+  // Related bundles — same goal first, then fill with others, capped at 3.
+  const related = [
+    ...BUNDLES.filter((x) => x.slug !== bundle.slug && x.goal === bundle.goal),
+    ...BUNDLES.filter((x) => x.slug !== bundle.slug && x.goal !== bundle.goal)
+  ].slice(0, 3);
 
   return (
     <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
@@ -290,6 +296,42 @@ export default function BundleDetailPage({
           />
         </div>
       </RevealSection>
+
+      {related.length > 0 ? (
+        <RevealSection delay={200}>
+          <div className="mt-14">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
+              {d.moreBundlesTitle}
+            </p>
+            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+              {related.map((rb) => {
+                const rc = localizeBundle(rb, locale);
+                return (
+                  <Link
+                    key={rb.slug}
+                    href={`/${locale}/bundles/${rb.slug}`}
+                    className="group/rel flex flex-col rounded-xl border border-white/[0.07] bg-surface/40 p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-cyan-300/35 hover:shadow-[0_0_24px_rgba(34,211,238,0.12)] motion-safe:hover:-translate-y-0.5"
+                  >
+                    <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-cyan-200/70">
+                      {rc.goalLabel}
+                    </span>
+                    <span className="mt-1.5 text-sm font-semibold leading-snug text-white transition-colors duration-200 group-hover/rel:text-cyan-50">
+                      {rc.name}
+                    </span>
+                    <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-cyan-300">
+                      {copy.details}
+                      <ArrowRight
+                        className="h-3.5 w-3.5 transition-transform rtl:rotate-180 motion-safe:group-hover/rel:translate-x-0.5 rtl:motion-safe:group-hover/rel:-translate-x-0.5"
+                        aria-hidden
+                      />
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </RevealSection>
+      ) : null}
 
       <StickyBuyBar
         name={card.name}
