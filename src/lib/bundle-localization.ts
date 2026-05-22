@@ -19,6 +19,8 @@ export type BundleNutrition = {
   notes: string;
 };
 
+export type BundlePhase = { name: string; focus: string };
+
 export type BundleCopy = {
   name: string;
   hook: string;
@@ -27,12 +29,13 @@ export type BundleCopy = {
   dietTitle: string;
   description: string;
   nutrition: BundleNutrition;
+  phases: BundlePhase[];
 };
 
 type NonEnLocale = "tr" | "ar" | "es" | "fr";
 
-/** Prose fields only — the `nutrition` block lives in its own map below. */
-type BundleProseCopy = Omit<BundleCopy, "nutrition">;
+/** Prose fields only — `nutrition` + `phases` live in their own maps below. */
+type BundleProseCopy = Omit<BundleCopy, "nutrition" | "phases">;
 
 const BUNDLE_COPY: Record<NonEnLocale, Record<string, BundleProseCopy>> = {
   tr: {
@@ -781,10 +784,265 @@ const BUNDLE_NUTRITION: Record<NonEnLocale, Record<string, BundleNutrition>> = {
 };
 
 /**
+ * Localized three-phase outline per bundle slug. Phase names keep their
+ * "(Weeks X-Y)" span (the word translated, the week range localized).
+ */
+const BUNDLE_PHASES: Record<NonEnLocale, Record<string, BundlePhase[]>> = {
+  tr: {
+    "fat-loss": [
+      { name: "Hazırlık (1.-4. Hafta)", focus: "Güç temeli, ölçülü açık, temel kondisyon" },
+      { name: "Sıyrılma (5.-8. Hafta)", focus: "Daha yoğun çalışma, daha keskin açık, kardiyo bloğu" },
+      { name: "Rötuş (9.-12. Hafta)", focus: "Refeed haftaları, zirve kondisyon, tanım bitişi" }
+    ],
+    "lean-bulk": [
+      { name: "Temel (1.-4. Hafta)", focus: "Hacim biriktirme, teknik inceltme" },
+      { name: "İnşa (5.-8. Hafta)", focus: "Yoğunlaştırma, progresif aşırı yükleme" },
+      { name: "Zirve (9.-12. Hafta)", focus: "Ağır güç haftaları, top-set çalışması" }
+    ],
+    "home-starter": [
+      { name: "Alışkanlık (1.-4. Hafta)", focus: "Hareket kalitesi, kalori farkındalığı" },
+      { name: "İnşa (5.-8. Hafta)", focus: "Tempo ilerlemeleri, kondisyon aralıkları" },
+      { name: "İtiş (9.-12. Hafta)", focus: "Yoğunluk devreleri, tek taraflı çalışma" }
+    ],
+    definition: [
+      { name: "Biriktirme (1.-4. Hafta)", focus: "Yüksek tekrar hacmi, kas-zihin bağlantısı odağı" },
+      { name: "Tanımlama (5.-8. Hafta)", focus: "Drop setler, süper setler, kondisyon rampası" },
+      { name: "Zirve (9.-12. Hafta)", focus: "Refeed döngüsü, zirve haftası" }
+    ],
+    recomp: [
+      { name: "Kalibrasyon (1.-4. Hafta)", focus: "Gerçek idameyi bul, proteini ayarla" },
+      { name: "İtki (5.-8. Hafta)", focus: "İdamede progresif aşırı yükleme" },
+      { name: "Doğrulama (9.-12. Hafta)", focus: "Mini-kesim + yalın sıfırlama" }
+    ],
+    powerbuilding: [
+      { name: "Hacim (1.-4. Hafta)", focus: "Daha yüksek tekrar aralıkları, yardımcı temel" },
+      { name: "Yoğunluk (5.-8. Hafta)", focus: "5×5 ana çalışma, yardımcı inceltme" },
+      { name: "Zirve (9.-12. Hafta)", focus: "Üçlüler, ikililer, üst düzey güç" }
+    ],
+    calisthenics: [
+      { name: "Temel (1.-4. Hafta)", focus: "Barfiks hacmi, duvarda amuda kalkış tutuşları" },
+      { name: "Beceri (5.-8. Hafta)", focus: "Patlayıcı çekişler, desteksiz beceriler" },
+      { name: "Ustalık (9.-12. Hafta)", focus: "Muscle-up ilerlemeleri, tek bacak squat çalışması" }
+    ],
+    "athlete-conditioning": [
+      { name: "Aerobik Temel (1.-4. Hafta)", focus: "Bölge 2 hacmi, güç koruma" },
+      { name: "Eşik (5.-8. Hafta)", focus: "Tempo aralıkları, karma devreler" },
+      { name: "Zirve (9.-12. Hafta)", focus: "VO2 maks çalışması, yarış temposu eforları" }
+    ],
+    "beginner-foundations": [
+      { name: "Öğren (1.-4. Hafta)", focus: "Hareket kalıpları, hafif yükler, teknik" },
+      { name: "Uygula (5.-8. Hafta)", focus: "Doğrusal ilerleme, hacme giriş" },
+      { name: "Doğrula (9.-12. Hafta)", focus: "Daha ağır setler, deload, yeniden test" }
+    ],
+    "womens-sculpt": [
+      { name: "Etkinleştir (1.-4. Hafta)", focus: "Kas-zihin, kalça hazırlama, temel hacim" },
+      { name: "İnşa (5.-8. Hafta)", focus: "Ağır kalça menteşesi ve squatlar, üst vücut hipertrofisi" },
+      { name: "Tanımla (9.-12. Hafta)", focus: "Yoğunluk blokları, kondisyon eklentisi" }
+    ],
+    "senior-strength": [
+      { name: "Hareketlendir (1.-4. Hafta)", focus: "Hareket açıklığı, temel kaldırışlar" },
+      { name: "Güçlendir (5.-8. Hafta)", focus: "Progresif yük, eklem dostu varyasyonlar" },
+      { name: "Sürdür (9.-12. Hafta)", focus: "Koruma şablonu, uzun vadeli plan" }
+    ],
+    "cutting-peak": [
+      { name: "Giriş (1.-4. Hafta)", focus: "Diyet molası, temel kaldırışlar, kardiyo başlangıcı" },
+      { name: "Sıyrılma (5.-8. Hafta)", focus: "Agresif açık, refeed döngüsü, antrenman yoğunluğu" },
+      { name: "Zirve (9.-12. Hafta)", focus: "Karbonhidrat tüketimi, su atımı, zirve haftası protokolü" }
+    ]
+  },
+  ar: {
+    "fat-loss": [
+      { name: "التهيئة (الأسابيع 1-4)", focus: "قاعدة قوة، عجز معتدل، لياقة أساسية" },
+      { name: "التجريد (الأسابيع 5-8)", focus: "عمل أكثف، عجز أحدّ، كتلة كارديو" },
+      { name: "الصقل (الأسابيع 9-12)", focus: "أسابيع إعادة تغذية، ذروة لياقة، لمسة تحديد أخيرة" }
+    ],
+    "lean-bulk": [
+      { name: "الأساس (الأسابيع 1-4)", focus: "تراكم الحجم، صقل التقنية" },
+      { name: "البناء (الأسابيع 5-8)", focus: "تكثيف، حمل تصاعدي" },
+      { name: "الذروة (الأسابيع 9-12)", focus: "أسابيع قوة ثقيلة، عمل المجموعات القصوى" }
+    ],
+    "home-starter": [
+      { name: "العادة (الأسابيع 1-4)", focus: "جودة الحركة، الوعي بالسعرات" },
+      { name: "البناء (الأسابيع 5-8)", focus: "تدرّجات إيقاع، فترات لياقة" },
+      { name: "الدفع (الأسابيع 9-12)", focus: "دوائر كثافة، عمل أحادي الجانب" }
+    ],
+    definition: [
+      { name: "التراكم (الأسابيع 1-4)", focus: "حجم بتكرارات عالية، تركيز على الاتصال بين العقل والعضلة" },
+      { name: "التحديد (الأسابيع 5-8)", focus: "مجموعات هابطة، مجموعات مركّبة، تصاعد لياقة" },
+      { name: "الذروة (الأسابيع 9-12)", focus: "تدوير إعادة التغذية، أسبوع الذروة" }
+    ],
+    recomp: [
+      { name: "المعايرة (الأسابيع 1-4)", focus: "حدّد سعرات الثبات الحقيقية، اضبط البروتين" },
+      { name: "الدفع (الأسابيع 5-8)", focus: "حمل تصاعدي عند الثبات" },
+      { name: "التأكيد (الأسابيع 9-12)", focus: "تنشيف مصغّر + إعادة ضبط رشيقة" }
+    ],
+    powerbuilding: [
+      { name: "الحجم (الأسابيع 1-4)", focus: "نطاقات تكرار أعلى، قاعدة تمارين مساعدة" },
+      { name: "الشدّة (الأسابيع 5-8)", focus: "عمل رئيسي 5×5، صقل التمارين المساعدة" },
+      { name: "الذروة (الأسابيع 9-12)", focus: "ثلاثيات، ثنائيات، قوة قصوى" }
+    ],
+    calisthenics: [
+      { name: "الأساس (الأسابيع 1-4)", focus: "حجم العقلات، ثبات الوقوف على اليدين على الحائط" },
+      { name: "المهارة (الأسابيع 5-8)", focus: "سحبات متفجّرة، مهارات حرة" },
+      { name: "الإتقان (الأسابيع 9-12)", focus: "تدرّجات المسل أب، عمل سكوات المسدس" }
+    ],
+    "athlete-conditioning": [
+      { name: "القاعدة الهوائية (الأسابيع 1-4)", focus: "حجم المنطقة 2، الحفاظ على القوة" },
+      { name: "العتبة (الأسابيع 5-8)", focus: "فترات إيقاع، دوائر مختلطة" },
+      { name: "الذروة (الأسابيع 9-12)", focus: "عمل أقصى استهلاك للأكسجين، جهود بوتيرة السباق" }
+    ],
+    "beginner-foundations": [
+      { name: "التعلّم (الأسابيع 1-4)", focus: "أنماط الحركة، أحمال خفيفة، التقنية" },
+      { name: "التطبيق (الأسابيع 5-8)", focus: "تقدّم خطّي، مقدّمة للحجم" },
+      { name: "التأكيد (الأسابيع 9-12)", focus: "مجموعات أثقل، تخفيف حمل، إعادة اختبار" }
+    ],
+    "womens-sculpt": [
+      { name: "التنشيط (الأسابيع 1-4)", focus: "اتصال العقل بالعضلة، تهيئة المؤخرة، حجم أساسي" },
+      { name: "البناء (الأسابيع 5-8)", focus: "حركات مفصلية وسكوات ثقيلة، تضخيم علوي" },
+      { name: "التحديد (الأسابيع 9-12)", focus: "كتل كثافة، إضافة لياقة" }
+    ],
+    "senior-strength": [
+      { name: "التحريك (الأسابيع 1-4)", focus: "مدى الحركة، رفعات أساسية" },
+      { name: "التقوية (الأسابيع 5-8)", focus: "حمل تصاعدي، بدائل لطيفة على المفاصل" },
+      { name: "الاستدامة (الأسابيع 9-12)", focus: "قالب الحفاظ، خطة طويلة المدى" }
+    ],
+    "cutting-peak": [
+      { name: "التمهيد (الأسابيع 1-4)", focus: "استراحة حمية، رفعات أساسية، بداية كارديو" },
+      { name: "التجريد (الأسابيع 5-8)", focus: "عجز قوي، تدوير إعادة التغذية، شدّة تدريب" },
+      { name: "الذروة (الأسابيع 9-12)", focus: "استنزاف الكربوهيدرات، خفض الماء، بروتوكول أسبوع الذروة" }
+    ]
+  },
+  es: {
+    "fat-loss": [
+      { name: "Preparar (Semanas 1-4)", focus: "Base de fuerza, déficit moderado, acondicionamiento básico" },
+      { name: "Despojar (Semanas 5-8)", focus: "Trabajo más denso, déficit más marcado, bloque de cardio" },
+      { name: "Pulir (Semanas 9-12)", focus: "Semanas de recarga, acondicionamiento pico, acabado de definición" }
+    ],
+    "lean-bulk": [
+      { name: "Base (Semanas 1-4)", focus: "Acumulación de volumen, refinamiento técnico" },
+      { name: "Construir (Semanas 5-8)", focus: "Intensificación, sobrecarga progresiva" },
+      { name: "Pico (Semanas 9-12)", focus: "Semanas de fuerza pesada, trabajo de series tope" }
+    ],
+    "home-starter": [
+      { name: "Hábito (Semanas 1-4)", focus: "Calidad de movimiento, conciencia calórica" },
+      { name: "Construir (Semanas 5-8)", focus: "Progresiones de tempo, intervalos de acondicionamiento" },
+      { name: "Empujar (Semanas 9-12)", focus: "Circuitos de densidad, trabajo unilateral" }
+    ],
+    definition: [
+      { name: "Acumular (Semanas 1-4)", focus: "Volumen de altas repeticiones, enfoque en conexión mente-músculo" },
+      { name: "Definir (Semanas 5-8)", focus: "Series descendentes, superseries, rampa de acondicionamiento" },
+      { name: "Pico (Semanas 9-12)", focus: "Ciclado de recargas, semana pico" }
+    ],
+    recomp: [
+      { name: "Calibrar (Semanas 1-4)", focus: "Encuentra el mantenimiento real, ajusta la proteína" },
+      { name: "Impulsar (Semanas 5-8)", focus: "Sobrecarga progresiva en mantenimiento" },
+      { name: "Confirmar (Semanas 9-12)", focus: "Mini-corte + reinicio magro" }
+    ],
+    powerbuilding: [
+      { name: "Volumen (Semanas 1-4)", focus: "Rangos de repeticiones más altos, base de accesorios" },
+      { name: "Intensidad (Semanas 5-8)", focus: "Trabajo principal 5×5, refinamiento de accesorios" },
+      { name: "Pico (Semanas 9-12)", focus: "Triples, dobles, fuerza máxima" }
+    ],
+    calisthenics: [
+      { name: "Fundamento (Semanas 1-4)", focus: "Volumen de dominadas, sostenes de pino en pared" },
+      { name: "Habilidad (Semanas 5-8)", focus: "Tracciones explosivas, habilidades sin apoyo" },
+      { name: "Maestría (Semanas 9-12)", focus: "Progresiones de muscle-up, trabajo de sentadilla a una pierna" }
+    ],
+    "athlete-conditioning": [
+      { name: "Base Aeróbica (Semanas 1-4)", focus: "Volumen en Zona 2, mantenimiento de fuerza" },
+      { name: "Umbral (Semanas 5-8)", focus: "Intervalos de tempo, circuitos mixtos" },
+      { name: "Pico (Semanas 9-12)", focus: "Trabajo de VO2 máx, esfuerzos a ritmo de carrera" }
+    ],
+    "beginner-foundations": [
+      { name: "Aprender (Semanas 1-4)", focus: "Patrones de movimiento, cargas ligeras, técnica" },
+      { name: "Aplicar (Semanas 5-8)", focus: "Progresión lineal, introducción al volumen" },
+      { name: "Confirmar (Semanas 9-12)", focus: "Series más pesadas, descarga, reevaluación" }
+    ],
+    "womens-sculpt": [
+      { name: "Activar (Semanas 1-4)", focus: "Conexión mente-músculo, activación de glúteos, volumen base" },
+      { name: "Construir (Semanas 5-8)", focus: "Hip thrust y sentadillas pesadas, hipertrofia superior" },
+      { name: "Definir (Semanas 9-12)", focus: "Bloques de densidad, complemento de acondicionamiento" }
+    ],
+    "senior-strength": [
+      { name: "Movilizar (Semanas 1-4)", focus: "Rango de movimiento, levantamientos fundamentales" },
+      { name: "Fortalecer (Semanas 5-8)", focus: "Carga progresiva, variantes amables con las articulaciones" },
+      { name: "Sostener (Semanas 9-12)", focus: "Plantilla de mantenimiento, plan a largo plazo" }
+    ],
+    "cutting-peak": [
+      { name: "Entrada (Semanas 1-4)", focus: "Descanso de dieta, levantamientos de referencia, inicio de cardio" },
+      { name: "Despojar (Semanas 5-8)", focus: "Déficit agresivo, ciclado de recargas, intensidad de entrenamiento" },
+      { name: "Pico (Semanas 9-12)", focus: "Depleción de carbohidratos, cortes de agua, protocolo de semana pico" }
+    ]
+  },
+  fr: {
+    "fat-loss": [
+      { name: "Amorçage (Semaines 1-4)", focus: "Base de force, déficit modéré, conditionnement de base" },
+      { name: "Affûtage (Semaines 5-8)", focus: "Travail plus dense, déficit plus marqué, bloc de cardio" },
+      { name: "Finition (Semaines 9-12)", focus: "Semaines de recharge, conditionnement de pointe, finition de définition" }
+    ],
+    "lean-bulk": [
+      { name: "Base (Semaines 1-4)", focus: "Accumulation de volume, affinage technique" },
+      { name: "Construction (Semaines 5-8)", focus: "Intensification, surcharge progressive" },
+      { name: "Pic (Semaines 9-12)", focus: "Semaines de force lourde, travail en séries lourdes" }
+    ],
+    "home-starter": [
+      { name: "Habitude (Semaines 1-4)", focus: "Qualité du mouvement, conscience calorique" },
+      { name: "Construction (Semaines 5-8)", focus: "Progressions de tempo, intervalles de conditionnement" },
+      { name: "Poussée (Semaines 9-12)", focus: "Circuits de densité, travail unilatéral" }
+    ],
+    definition: [
+      { name: "Accumulation (Semaines 1-4)", focus: "Volume à hautes répétitions, focus connexion esprit-muscle" },
+      { name: "Définition (Semaines 5-8)", focus: "Séries dégressives, supersets, montée en conditionnement" },
+      { name: "Pic (Semaines 9-12)", focus: "Cyclage des recharges, semaine de pic" }
+    ],
+    recomp: [
+      { name: "Calibrage (Semaines 1-4)", focus: "Trouve le vrai maintien, règle les protéines" },
+      { name: "Impulsion (Semaines 5-8)", focus: "Surcharge progressive au maintien" },
+      { name: "Confirmation (Semaines 9-12)", focus: "Mini-sèche + remise à zéro sèche" }
+    ],
+    powerbuilding: [
+      { name: "Volume (Semaines 1-4)", focus: "Plages de répétitions plus hautes, base d'accessoires" },
+      { name: "Intensité (Semaines 5-8)", focus: "Travail principal 5×5, affinage des accessoires" },
+      { name: "Pic (Semaines 9-12)", focus: "Triples, doubles, force maximale" }
+    ],
+    calisthenics: [
+      { name: "Fondation (Semaines 1-4)", focus: "Volume de tractions, maintiens en équilibre au mur" },
+      { name: "Technique (Semaines 5-8)", focus: "Tractions explosives, figures en autonomie" },
+      { name: "Maîtrise (Semaines 9-12)", focus: "Progressions de muscle-up, travail du squat sur une jambe" }
+    ],
+    "athlete-conditioning": [
+      { name: "Base Aérobie (Semaines 1-4)", focus: "Volume en Zone 2, maintien de la force" },
+      { name: "Seuil (Semaines 5-8)", focus: "Intervalles de tempo, circuits mixtes" },
+      { name: "Pic (Semaines 9-12)", focus: "Travail VO2 max, efforts à allure de course" }
+    ],
+    "beginner-foundations": [
+      { name: "Apprentissage (Semaines 1-4)", focus: "Schémas de mouvement, charges légères, technique" },
+      { name: "Application (Semaines 5-8)", focus: "Progression linéaire, introduction au volume" },
+      { name: "Confirmation (Semaines 9-12)", focus: "Séries plus lourdes, délestage, nouveau test" }
+    ],
+    "womens-sculpt": [
+      { name: "Activation (Semaines 1-4)", focus: "Connexion esprit-muscle, préactivation des fessiers, volume de base" },
+      { name: "Construction (Semaines 5-8)", focus: "Charnières et squats lourds, hypertrophie du haut" },
+      { name: "Définition (Semaines 9-12)", focus: "Blocs de densité, ajout de conditionnement" }
+    ],
+    "senior-strength": [
+      { name: "Mobilisation (Semaines 1-4)", focus: "Amplitude de mouvement, mouvements fondamentaux" },
+      { name: "Renforcement (Semaines 5-8)", focus: "Charge progressive, variantes douces pour les articulations" },
+      { name: "Maintien (Semaines 9-12)", focus: "Modèle d'entretien, plan à long terme" }
+    ],
+    "cutting-peak": [
+      { name: "Entrée en matière (Semaines 1-4)", focus: "Pause diète, mouvements de référence, début du cardio" },
+      { name: "Affûtage (Semaines 5-8)", focus: "Déficit agressif, cyclage des recharges, intensité d'entraînement" },
+      { name: "Pic (Semaines 9-12)", focus: "Déplétion en glucides, coupe d'eau, protocole de semaine de pic" }
+    ]
+  }
+};
+
+/**
  * Returns the prose copy (name, hook, goalLabel, programTitle, dietTitle,
- * description, nutrition) for a bundle in the given locale. English passes
- * through from the bundle itself; any locale or slug without an override
- * also falls back to English so nothing breaks.
+ * description, nutrition, phases) for a bundle in the given locale. English
+ * passes through from the bundle itself; any locale or slug without an
+ * override also falls back to English so nothing breaks.
  */
 export function localizeBundle(bundle: Bundle, locale: string): BundleCopy {
   const fallback: BundleCopy = {
@@ -794,11 +1052,16 @@ export function localizeBundle(bundle: Bundle, locale: string): BundleCopy {
     programTitle: bundle.programTitle,
     dietTitle: bundle.dietTitle,
     description: bundle.description,
-    nutrition: bundle.nutrition
+    nutrition: bundle.nutrition,
+    phases: bundle.phases
   };
   const loc = resolveCopyLocale(locale);
   if (loc === "en") return fallback;
   const prose = BUNDLE_COPY[loc][bundle.slug];
   if (!prose) return fallback;
-  return { ...prose, nutrition: BUNDLE_NUTRITION[loc][bundle.slug] ?? bundle.nutrition };
+  return {
+    ...prose,
+    nutrition: BUNDLE_NUTRITION[loc][bundle.slug] ?? bundle.nutrition,
+    phases: BUNDLE_PHASES[loc][bundle.slug] ?? bundle.phases
+  };
 }

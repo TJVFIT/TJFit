@@ -87,12 +87,16 @@ iteration — not micro-polish.
   proteinTarget / calorieBias / notes) for all 12 bundles × 4 locales;
   `localizeBundle` now merges it. Detail-page Nutrition Framework section
   fully localized. Build green, live on main.
+- **Iter 15** — localized the bundle `phases` (PhaseStrip). Added a
+  `BUNDLE_PHASES` overlay — 3 phases × {name, focus} per bundle × 4 locales
+  (36 phases each); phase names keep their "(Weeks X-Y)" span localized.
+  `localizeBundle` merges phases; detail PhaseStrip wired to `card.phases`.
+  Build green, live on main.
 
 ## QUEUE (next up)
 
-- Translate the bundle `phases` (PhaseStrip) — stylized one-word phase
-  names; translate carefully. Then `sampleTrainingDay` + `sampleMealDay`.
-- Bundle detail page: week-by-week accordion (needs week data added first).
+- Translate `sampleTrainingDay` + `sampleMealDay` — exercise + meal tables.
+  Largest remaining bundle chunk; decide whether exercise names stay English.
 - Localize the homepage error-boundary fallback copy (`[locale]/page.tsx`).
 - Audit other top routes (programs, diets, dashboard) for hardcoded English.
 

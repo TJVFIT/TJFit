@@ -169,7 +169,7 @@ export default function BundleDetailPage({
         <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
           {d.trainingFrameworkTitle}
         </h2>
-        <PhaseStrip phases={bundle.phases} />
+        <PhaseStrip phases={card.phases} />
       </div>
 
       <RevealSection>
