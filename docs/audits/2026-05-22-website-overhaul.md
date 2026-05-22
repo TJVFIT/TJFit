@@ -124,6 +124,10 @@ iteration — not micro-polish.
   of the thread) and snaps back to the newest message. Reuses the existing
   stick-to-bottom scroll tracking; localized aria via new `jumpToLatest`
   copy key (5 locales). Build green, live on main.
+- **Iter 22** — i18n the coach profile page. `CoachProfileView`
+  (`/coaches/[slug]`) was fully hardcoded English; added an inline `COPY`
+  map (loading/not-found, accepting pill, 4 stat labels, About, certs,
+  featured-program block, View Bundles) in all 5 locales. Build green, live.
 
 ## DECISIONS
 
