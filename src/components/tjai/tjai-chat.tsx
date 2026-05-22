@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { ChevronDown } from "lucide-react";
+
 import { BadgeUnlockToast } from "@/components/tjai/badge-unlock-toast";
 import { CoachMessageBody, CoachThinkingPulse } from "@/components/tjai/coach-message-body";
 import { PersonaPicker } from "@/components/tjai/persona-picker";
@@ -46,6 +48,7 @@ export function TJAIChat({
   const [ttsAutoplay, setTtsAutoplay] = useState(false);
   const [trialRemaining, setTrialRemaining] = useState<number | null>(null);
   const [trialLimit, setTrialLimit] = useState<number | null>(null);
+  const [atBottom, setAtBottom] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const composerRef = useRef<HTMLTextAreaElement>(null);
   const threadRef = useRef<HTMLDivElement>(null);
@@ -79,7 +82,9 @@ export function TJAIChat({
     if (!el) return;
     const handler = () => {
       const distance = el.scrollHeight - el.scrollTop - el.clientHeight;
-      stickToBottomRef.current = distance < 80;
+      const next = distance < 80;
+      stickToBottomRef.current = next;
+      setAtBottom((prev) => (prev === next ? prev : next));
     };
     el.addEventListener("scroll", handler, { passive: true });
     return () => el.removeEventListener("scroll", handler);
@@ -317,9 +322,10 @@ export function TJAIChat({
           </div>
         ) : null}
 
+        <div className="relative mt-5">
         <div
           ref={threadRef}
-          className="mt-5 max-h-[min(420px,52vh)] space-y-3 overflow-y-auto pe-1"
+          className="max-h-[min(420px,52vh)] space-y-3 overflow-y-auto pe-1"
           aria-live="polite"
           aria-relevant="additions"
         >
@@ -359,6 +365,21 @@ export function TJAIChat({
             </div>
           ))}
           <div ref={messagesEndRef} />
+        </div>
+          {!atBottom && history.length > 0 ? (
+            <button
+              type="button"
+              onClick={() => {
+                stickToBottomRef.current = true;
+                setAtBottom(true);
+                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+              }}
+              aria-label={copy.jumpToLatest}
+              className="absolute bottom-2 end-3 z-[5] inline-flex h-9 w-9 items-center justify-center rounded-full border border-cyan-300/40 bg-[#0E1014]/95 text-cyan-100 shadow-[0_0_18px_rgba(34,211,238,0.25)] backdrop-blur transition-[transform,border-color,box-shadow] duration-200 hover:scale-105 hover:border-cyan-300/60 hover:shadow-[0_0_26px_rgba(34,211,238,0.4)] motion-safe:animate-[tj-fade-up_220ms_ease-out]"
+            >
+              <ChevronDown className="h-4 w-4" aria-hidden />
+            </button>
+          ) : null}
         </div>
 
         {showFollowUps ? (

@@ -119,6 +119,11 @@ iteration — not micro-polish.
   ~60 strings re-accented — "Únete"/"diseñado"/"imán"/"¿Cuántos años?",
   "marché"/"conçu"/"Système"/"expérience"/"séances"/"élèves", etc. The core
   dictionary is now fully diacritic-correct in all 5 locales. Build green, live.
+- **Iter 21** — TJAI chat "jump to latest" button. When the user scrolls up
+  in a long conversation a floating cyan chevron button appears (bottom-end
+  of the thread) and snaps back to the newest message. Reuses the existing
+  stick-to-bottom scroll tracking; localized aria via new `jumpToLatest`
+  copy key (5 locales). Build green, live on main.
 
 ## DECISIONS
 

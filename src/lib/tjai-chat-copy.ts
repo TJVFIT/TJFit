@@ -9,6 +9,7 @@ export type TJAIChatCopy = {
   tapToAsk: string;
   refine: string;
   send: string;
+  jumpToLatest: string;
   followUps: {
     simplify: string;
     deeper: string;
@@ -51,6 +52,7 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
     tapToAsk: "Tap to ask",
     refine: "Refine",
     send: "Send",
+    jumpToLatest: "Jump to latest",
     followUps: {
       simplify: "Simplify",
       deeper: "More detail",
@@ -93,6 +95,7 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
     tapToAsk: "Sormak için dokun",
     refine: "Netleştir",
     send: "Gönder",
+    jumpToLatest: "En sona git",
     followUps: {
       simplify: "Sadeleştir",
       deeper: "Daha fazla detay",
@@ -135,6 +138,7 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
     tapToAsk: "اضغط للسؤال",
     refine: "حسّن السؤال",
     send: "إرسال",
+    jumpToLatest: "الانتقال إلى الأحدث",
     followUps: {
       simplify: "بسّط",
       deeper: "تفاصيل أكثر",
@@ -177,6 +181,7 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
     tapToAsk: "Toca para preguntar",
     refine: "Refinar",
     send: "Enviar",
+    jumpToLatest: "Ir a lo más reciente",
     followUps: {
       simplify: "Simplificar",
       deeper: "Más detalle",
@@ -219,6 +224,7 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
     tapToAsk: "Appuyer pour demander",
     refine: "Affiner",
     send: "Envoyer",
+    jumpToLatest: "Aller au plus récent",
     followUps: {
       simplify: "Simplifier",
       deeper: "Plus de détail",
