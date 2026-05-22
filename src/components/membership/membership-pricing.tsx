@@ -155,17 +155,19 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
       <div id="tjai-one-time" className="mt-6 rounded-2xl border border-divider bg-surface p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.14em] text-accent">Standalone TJAI</p>
-            <h2 className="mt-2 text-2xl font-extrabold text-white">${TJAI_ONE_TIME_PRICE_USD} one time</h2>
+            <p className="text-sm font-semibold uppercase tracking-[0.14em] text-accent">{copy.standalone.eyebrow}</p>
+            <h2 className="mt-2 text-2xl font-extrabold text-white tabular-nums">
+              ${TJAI_ONE_TIME_PRICE_USD} <span className="text-base font-semibold text-muted">{copy.standalone.oneTimeSuffix}</span>
+            </h2>
             <p className="mt-2 text-sm text-muted">
-              One adaptive TJAI assessment, one personalized plan, and PDF export. Subscriptions are optional add-ons for ongoing coaching.
+              {copy.standalone.body}
             </p>
           </div>
           <a
             href={`/${locale}/tjai`}
             className="inline-flex min-h-[46px] items-center justify-center rounded-full border border-accent px-5 text-sm font-semibold text-accent hover:bg-[rgba(34,211,238,0.06)]"
           >
-            Unlock TJAI
+            {copy.standalone.cta}
           </a>
         </div>
       </div>
@@ -244,7 +246,7 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
           <table className="min-w-full text-sm">
             <thead>
               <tr className="border-b border-divider text-dim">
-                <th className="py-2 text-left">Feature</th>
+                <th className="py-2 text-left">{copy.tableFeatureHeader}</th>
                 <th className="py-2 text-center">{copy.cards.core.name}</th>
                 <th className="py-2 text-center">{copy.cards.pro.name}</th>
                 <th className="py-2 text-center">{copy.cards.apex.name}</th>

@@ -128,6 +128,13 @@ iteration — not micro-polish.
   (`/coaches/[slug]`) was fully hardcoded English; added an inline `COPY`
   map (loading/not-found, accepting pill, 4 stat labels, About, certs,
   featured-program block, View Bundles) in all 5 locales. Build green, live.
+- **Iter 23** — finished `MembershipPricing` i18n (renders on `/membership`
+  + `/pro`). Added a `standalone` block (Standalone-TJAI eyebrow / one-time
+  suffix / body / Unlock-TJAI CTA) + `tableFeatureHeader` to
+  `membership-tier-copy.ts`, and restored the accent-stripped tr/es/fr
+  strings throughout that file ("seç", "üretimi", "üyelik değeri",
+  "generación", "membresía", "génération complète", "fonctionnalités").
+  Build green, live on main.
 
 ## DECISIONS
 

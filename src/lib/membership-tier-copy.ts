@@ -14,8 +14,10 @@ export type MembershipTierCopy = {
     apex: { name: string; badge: string; cta: string; features: string[] };
   };
   tableTitle: string;
+  tableFeatureHeader: string;
   tableRows: Array<{ feature: string; core: boolean; pro: boolean; apex: boolean }>;
   checkoutError: string;
+  standalone: { eyebrow: string; oneTimeSuffix: string; body: string; cta: string };
 };
 
 const copy: Record<Locale, MembershipTierCopy> = {
@@ -48,6 +50,7 @@ const copy: Record<Locale, MembershipTierCopy> = {
       }
     },
     tableTitle: "Feature comparison",
+    tableFeatureHeader: "Feature",
     tableRows: [
       { feature: "Community access", core: true, pro: true, apex: true },
       { feature: "TJCOIN earning", core: true, pro: true, apex: true },
@@ -58,48 +61,61 @@ const copy: Record<Locale, MembershipTierCopy> = {
       { feature: "Plan regeneration", core: false, pro: false, apex: true },
       { feature: "Monthly bonus TJCOIN", core: false, pro: true, apex: true }
     ],
-    checkoutError: "Subscription checkout is not configured yet."
+    checkoutError: "Subscription checkout is not configured yet.",
+    standalone: {
+      eyebrow: "Standalone TJAI",
+      oneTimeSuffix: "one time",
+      body: "One adaptive TJAI assessment, one personalized plan, and PDF export. Subscriptions are optional add-ons for ongoing coaching.",
+      cta: "Unlock TJAI"
+    }
   },
   tr: {
-    title: "TJFit seviyeni sec",
-    sub: "Tek seferlik TJAI plan uretimi ayri bir $10 kilididir. Pro ve Apex surekli koçluk ve premium uyelik degeri ekler.",
-    monthly: "Aylik",
-    annual: "Yillik",
+    title: "TJFit seviyeni seç",
+    sub: "Tek seferlik TJAI plan üretimi ayrı bir $10 kilididir. Pro ve Apex sürekli koçluk ve premium üyelik değeri ekler.",
+    monthly: "Aylık",
+    annual: "Yıllık",
     saveBadge: "%17 Tasarruf",
     perMonthSuffix: "/ay",
-    perYearSuffix: "/yil",
+    perYearSuffix: "/yıl",
     cards: {
       core: {
         name: "Core",
-        priceFree: "Ucretsiz",
-        cta: "Mevcut ucretsiz seviye",
-        features: ["2 ucretsiz program", "2 ucretsiz diyet baslangic", "Topluluk + mesajlasma", "TJCOIN + siralamalar", "TDEE hesaplayici", "TJAI quiz + metrik onizleme"]
+        priceFree: "Ücretsiz",
+        cta: "Mevcut ücretsiz seviye",
+        features: ["2 ücretsiz program", "2 ücretsiz diyet başlangıcı", "Topluluk + mesajlaşma", "TJCOIN + sıralamalar", "TDEE hesaplayıcı", "TJAI quiz + metrik önizleme"]
       },
       pro: {
         name: "Pro",
-        badge: "En Populer",
+        badge: "En Popüler",
         cta: "Pro Al",
-        features: ["Core'daki her sey", "Sinirsiz TJAI sohbeti", "Aylik indirim kodu", "Yeni ozelliklere erken erisim", "Gunluk meal-of-the-day emaili (erken erisim)", "Aylik +30 TJCOIN"]
+        features: ["Core'daki her şey", "Sınırsız TJAI sohbeti", "Aylık indirim kodu", "Yeni özelliklere erken erişim", "Günlük meal-of-the-day e-postası (erken erişim)", "Aylık +30 TJCOIN"]
       },
       apex: {
         name: "Apex",
-        badge: "En Iyi Deger",
+        badge: "En İyi Değer",
         cta: "Apex Al",
-        features: ["Pro'daki her sey", "Gelişmis ogun degişimleri", "Tam plan yenileme", "Oncelikli uyarlanabilir guncellemeler", "Premium ilerleme adaptasyonu", "Aylik +75 TJCOIN + Apex rozeti"]
+        features: ["Pro'daki her şey", "Gelişmiş öğün değişimleri", "Tam plan yenileme", "Öncelikli uyarlanabilir güncellemeler", "Premium ilerleme adaptasyonu", "Aylık +75 TJCOIN + Apex rozeti"]
       }
     },
-    tableTitle: "Ozellik karsilastirmasi",
+    tableTitle: "Özellik karşılaştırması",
+    tableFeatureHeader: "Özellik",
     tableRows: [
-      { feature: "Topluluk erisimi", core: true, pro: true, apex: true },
-      { feature: "TJCOIN kazanimi", core: true, pro: true, apex: true },
-      { feature: "Sinirsiz TJAI sohbeti", core: false, pro: true, apex: true },
-      { feature: "Aylik indirim kodu", core: false, pro: true, apex: true },
-      { feature: "Gunluk meal emaili", core: false, pro: true, apex: true },
-      { feature: "Gelişmis ogun degişimi", core: false, pro: false, apex: true },
+      { feature: "Topluluk erişimi", core: true, pro: true, apex: true },
+      { feature: "TJCOIN kazanımı", core: true, pro: true, apex: true },
+      { feature: "Sınırsız TJAI sohbeti", core: false, pro: true, apex: true },
+      { feature: "Aylık indirim kodu", core: false, pro: true, apex: true },
+      { feature: "Günlük meal e-postası", core: false, pro: true, apex: true },
+      { feature: "Gelişmiş öğün değişimi", core: false, pro: false, apex: true },
       { feature: "Plan yenileme", core: false, pro: false, apex: true },
-      { feature: "Aylik bonus TJCOIN", core: false, pro: true, apex: true }
+      { feature: "Aylık bonus TJCOIN", core: false, pro: true, apex: true }
     ],
-    checkoutError: "Abonelik odemesi henuz ayarlanmadi."
+    checkoutError: "Abonelik ödemesi henüz ayarlanmadı.",
+    standalone: {
+      eyebrow: "Tek Başına TJAI",
+      oneTimeSuffix: "tek seferlik",
+      body: "Bir adaptif TJAI değerlendirmesi, bir kişiselleştirilmiş plan ve PDF dışa aktarımı. Abonelikler sürekli koçluk için isteğe bağlı eklentilerdir.",
+      cta: "TJAI'yi aç"
+    }
   },
   ar: {
     title: "اختر مستوى TJFit",
@@ -114,7 +130,7 @@ const copy: Record<Locale, MembershipTierCopy> = {
         name: "Core",
         priceFree: "مجاني",
         cta: "الخطة المجانية الحالية",
-        features: ["برنامجان مجانيان", "خطان غذائيتان مجانيتان", "المجتمع + الرسائل", "TJCOIN + المتصدرون", "حاسبة TDEE", "اختبار TJAI + عرض المقاييس"]
+        features: ["برنامجان مجانيان", "خطتان غذائيتان مجانيتان", "المجتمع + الرسائل", "TJCOIN + المتصدرون", "حاسبة TDEE", "اختبار TJAI + عرض المقاييس"]
       },
       pro: {
         name: "Pro",
@@ -130,6 +146,7 @@ const copy: Record<Locale, MembershipTierCopy> = {
       }
     },
     tableTitle: "مقارنة المزايا",
+    tableFeatureHeader: "الميزة",
     tableRows: [
       { feature: "الوصول للمجتمع", core: true, pro: true, apex: true },
       { feature: "كسب TJCOIN", core: true, pro: true, apex: true },
@@ -140,55 +157,68 @@ const copy: Record<Locale, MembershipTierCopy> = {
       { feature: "إعادة توليد الخطة", core: false, pro: false, apex: true },
       { feature: "TJCOIN شهري إضافي", core: false, pro: true, apex: true }
     ],
-    checkoutError: "الدفع للاشتراك غير مهيأ بعد."
+    checkoutError: "الدفع للاشتراك غير مهيأ بعد.",
+    standalone: {
+      eyebrow: "TJAI المستقل",
+      oneTimeSuffix: "دفعة واحدة",
+      body: "تقييم TJAI تكيفي واحد، وخطة مخصصة واحدة، وتصدير PDF. الاشتراكات إضافات اختيارية للتدريب المستمر.",
+      cta: "افتح TJAI"
+    }
   },
   es: {
     title: "Elige tu nivel TJFit",
-    sub: "La generacion completa de TJAI es un desbloqueo separado de $10. Pro y Apex agregan valor continuo de coaching y membresia.",
+    sub: "La generación completa de TJAI es un desbloqueo separado de $10. Pro y Apex agregan valor continuo de coaching y membresía.",
     monthly: "Mensual",
     annual: "Anual",
     saveBadge: "Ahorra 17%",
     perMonthSuffix: "/mes",
-    perYearSuffix: "/ano",
+    perYearSuffix: "/año",
     cards: {
       core: {
         name: "Core",
         priceFree: "Gratis",
         cta: "Plan gratis actual",
-        features: ["2 programas gratis", "2 dietas iniciales gratis", "Comunidad + mensajes", "TJCOIN + rankings", "Calculadora TDEE", "Quiz TJAI + vista de metricas"]
+        features: ["2 programas gratis", "2 dietas iniciales gratis", "Comunidad + mensajes", "TJCOIN + rankings", "Calculadora TDEE", "Quiz TJAI + vista de métricas"]
       },
       pro: {
         name: "Pro",
-        badge: "Mas popular",
+        badge: "Más popular",
         cta: "Obtener Pro",
-        features: ["Todo en Core", "Chat TJAI ilimitado", "Codigo de descuento mensual", "Acceso anticipado a nuevas funciones", "Email diario de meal of the day (early access)", "+30 TJCOIN mensual"]
+        features: ["Todo en Core", "Chat TJAI ilimitado", "Código de descuento mensual", "Acceso anticipado a nuevas funciones", "Email diario de meal of the day (acceso anticipado)", "+30 TJCOIN mensual"]
       },
       apex: {
         name: "Apex",
         badge: "Mejor valor",
         cta: "Obtener Apex",
-        features: ["Todo en Pro", "Meal swaps avanzados", "Regeneracion completa del plan", "Actualizaciones adaptativas prioritarias", "Adaptacion premium del progreso", "+75 TJCOIN mensual + badge Apex"]
+        features: ["Todo en Pro", "Meal swaps avanzados", "Regeneración completa del plan", "Actualizaciones adaptativas prioritarias", "Adaptación premium del progreso", "+75 TJCOIN mensual + insignia Apex"]
       }
     },
-    tableTitle: "Comparacion de funciones",
+    tableTitle: "Comparación de funciones",
+    tableFeatureHeader: "Función",
     tableRows: [
       { feature: "Acceso comunidad", core: true, pro: true, apex: true },
       { feature: "Ganar TJCOIN", core: true, pro: true, apex: true },
       { feature: "Chat TJAI ilimitado", core: false, pro: true, apex: true },
-      { feature: "Codigo mensual", core: false, pro: true, apex: true },
+      { feature: "Código mensual", core: false, pro: true, apex: true },
       { feature: "Email diario de comida", core: false, pro: true, apex: true },
       { feature: "Meal swaps avanzados", core: false, pro: false, apex: true },
-      { feature: "Regeneracion del plan", core: false, pro: false, apex: true },
+      { feature: "Regeneración del plan", core: false, pro: false, apex: true },
       { feature: "Bonus mensual TJCOIN", core: false, pro: true, apex: true }
     ],
-    checkoutError: "El checkout de suscripcion aun no esta configurado."
+    checkoutError: "El checkout de suscripción aún no está configurado.",
+    standalone: {
+      eyebrow: "TJAI independiente",
+      oneTimeSuffix: "pago único",
+      body: "Una evaluación TJAI adaptativa, un plan personalizado y exportación a PDF. Las suscripciones son complementos opcionales para coaching continuo.",
+      cta: "Desbloquear TJAI"
+    }
   },
   fr: {
     title: "Choisissez votre niveau TJFit",
-    sub: "La generation complete TJAI est un unlock separe a $10. Pro et Apex ajoutent ensuite la valeur de coaching continu.",
+    sub: "La génération complète TJAI est un déblocage séparé à $10. Pro et Apex ajoutent ensuite la valeur de coaching continu.",
     monthly: "Mensuel",
     annual: "Annuel",
-    saveBadge: "Economisez 17%",
+    saveBadge: "Économisez 17%",
     perMonthSuffix: "/mois",
     perYearSuffix: "/an",
     cards: {
@@ -196,37 +226,43 @@ const copy: Record<Locale, MembershipTierCopy> = {
         name: "Core",
         priceFree: "Gratuit",
         cta: "Niveau gratuit actuel",
-        features: ["2 programmes gratuits", "2 plans dietes gratuits", "Communaute + messages", "TJCOIN + classements", "Calculateur TDEE", "Quiz TJAI + apercu metriques"]
+        features: ["2 programmes gratuits", "2 plans diète gratuits", "Communauté + messages", "TJCOIN + classements", "Calculateur TDEE", "Quiz TJAI + aperçu métriques"]
       },
       pro: {
         name: "Pro",
         badge: "Le plus populaire",
         cta: "Prendre Pro",
-        features: ["Tout Core", "Chat TJAI illimite", "Code promo mensuel", "Acces anticipe aux nouvelles fonctions", "Email quotidien meal of the day (early access)", "+30 TJCOIN par mois"]
+        features: ["Tout Core", "Chat TJAI illimité", "Code promo mensuel", "Accès anticipé aux nouvelles fonctions", "Email quotidien meal of the day (accès anticipé)", "+30 TJCOIN par mois"]
       },
       apex: {
         name: "Apex",
         badge: "Meilleure valeur",
         cta: "Prendre Apex",
-        features: ["Tout Pro", "Meal swaps avances", "Regeneration complete du plan", "Mises a jour adaptatives prioritaires", "Adaptation premium du progres", "+75 TJCOIN par mois + badge Apex"]
+        features: ["Tout Pro", "Meal swaps avancés", "Régénération complète du plan", "Mises à jour adaptatives prioritaires", "Adaptation premium du progrès", "+75 TJCOIN par mois + badge Apex"]
       }
     },
-    tableTitle: "Comparaison des fonctionnalites",
+    tableTitle: "Comparaison des fonctionnalités",
+    tableFeatureHeader: "Fonctionnalité",
     tableRows: [
-      { feature: "Acces communaute", core: true, pro: true, apex: true },
+      { feature: "Accès communauté", core: true, pro: true, apex: true },
       { feature: "Gains TJCOIN", core: true, pro: true, apex: true },
-      { feature: "Chat TJAI illimite", core: false, pro: true, apex: true },
+      { feature: "Chat TJAI illimité", core: false, pro: true, apex: true },
       { feature: "Code promo mensuel", core: false, pro: true, apex: true },
       { feature: "Email repas du jour", core: false, pro: true, apex: true },
-      { feature: "Meal swaps avances", core: false, pro: false, apex: true },
-      { feature: "Regeneration du plan", core: false, pro: false, apex: true },
+      { feature: "Meal swaps avancés", core: false, pro: false, apex: true },
+      { feature: "Régénération du plan", core: false, pro: false, apex: true },
       { feature: "Bonus mensuel TJCOIN", core: false, pro: true, apex: true }
     ],
-    checkoutError: "Le paiement abonnement n'est pas configure."
+    checkoutError: "Le paiement de l'abonnement n'est pas configuré.",
+    standalone: {
+      eyebrow: "TJAI autonome",
+      oneTimeSuffix: "paiement unique",
+      body: "Une évaluation TJAI adaptative, un plan personnalisé et un export PDF. Les abonnements sont des options pour un coaching continu.",
+      cta: "Débloquer TJAI"
+    }
   }
 };
 
 export function getMembershipTierCopy(locale: Locale) {
   return copy[locale];
 }
-
