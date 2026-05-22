@@ -215,9 +215,9 @@ export default function BundleDetailPage({
           </h2>
           <dl className="mt-6 grid gap-4 sm:grid-cols-3">
             {[
-              { label: d.nutritionStyle, value: bundle.nutrition.style },
-              { label: d.nutritionProtein, value: bundle.nutrition.proteinTarget },
-              { label: d.nutritionCalorie, value: bundle.nutrition.calorieBias }
+              { label: d.nutritionStyle, value: card.nutrition.style },
+              { label: d.nutritionProtein, value: card.nutrition.proteinTarget },
+              { label: d.nutritionCalorie, value: card.nutrition.calorieBias }
             ].map((stat) => (
               <div
                 key={stat.label}
@@ -241,7 +241,7 @@ export default function BundleDetailPage({
             ))}
           </dl>
           <p className="mt-6 text-sm leading-relaxed text-muted">
-            {bundle.nutrition.notes}
+            {card.nutrition.notes}
           </p>
         </div>
       </RevealSection>

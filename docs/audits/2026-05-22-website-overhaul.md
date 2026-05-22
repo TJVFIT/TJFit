@@ -82,11 +82,16 @@ iteration — not micro-polish.
   reveal cascade (filtering feels alive). The bare empty-filter `<p>` became
   a proper `tj-empty-state` card — icon + message + a sheen "All" reset
   chip. Build green, live on main.
+- **Iter 14** — localized the bundle `nutrition` blocks. Extended
+  `bundle-localization.ts` with a `BUNDLE_NUTRITION` overlay (style /
+  proteinTarget / calorieBias / notes) for all 12 bundles × 4 locales;
+  `localizeBundle` now merges it. Detail-page Nutrition Framework section
+  fully localized. Build green, live on main.
 
 ## QUEUE (next up)
 
-- Translate the bundle *structured data* in `src/lib/bundles.ts` — phases,
-  nutrition, sampleTrainingDay, sampleMealDay. Large, multi-iteration.
+- Translate the bundle `phases` (PhaseStrip) — stylized one-word phase
+  names; translate carefully. Then `sampleTrainingDay` + `sampleMealDay`.
 - Bundle detail page: week-by-week accordion (needs week data added first).
 - Localize the homepage error-boundary fallback copy (`[locale]/page.tsx`).
 - Audit other top routes (programs, diets, dashboard) for hardcoded English.

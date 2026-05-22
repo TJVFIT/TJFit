@@ -12,6 +12,13 @@ import type { Bundle } from "@/lib/bundles";
  * sampleMealDay) is still English and tracked as a separate queued task.
  */
 
+export type BundleNutrition = {
+  style: string;
+  proteinTarget: string;
+  calorieBias: string;
+  notes: string;
+};
+
 export type BundleCopy = {
   name: string;
   hook: string;
@@ -19,11 +26,15 @@ export type BundleCopy = {
   programTitle: string;
   dietTitle: string;
   description: string;
+  nutrition: BundleNutrition;
 };
 
 type NonEnLocale = "tr" | "ar" | "es" | "fr";
 
-const BUNDLE_COPY: Record<NonEnLocale, Record<string, BundleCopy>> = {
+/** Prose fields only — the `nutrition` block lives in its own map below. */
+type BundleProseCopy = Omit<BundleCopy, "nutrition">;
+
+const BUNDLE_COPY: Record<NonEnLocale, Record<string, BundleProseCopy>> = {
   tr: {
     "fat-loss": {
       name: "Yağ Yakım Paketi",
@@ -467,10 +478,313 @@ const BUNDLE_COPY: Record<NonEnLocale, Record<string, BundleCopy>> = {
 };
 
 /**
+ * Localized `nutrition` block per bundle slug. Kept as a separate map so the
+ * prose overlay above stays untouched. English comes from `bundles.ts`.
+ */
+const BUNDLE_NUTRITION: Record<NonEnLocale, Record<string, BundleNutrition>> = {
+  tr: {
+    "fat-loss": {
+      style: "Temiz kesim · önce tam gıda",
+      proteinTarget: "1.0 g / lb vücut ağırlığı",
+      calorieBias: "İdameden -%15",
+      notes: "İki refeed haftası dahil. Karbonhidratlar antrenman günlerine göre döngülenir."
+    },
+    "lean-bulk": {
+      style: "Temiz hacim · %80/20 tam gıda",
+      proteinTarget: "1.0 g / lb vücut ağırlığı",
+      calorieBias: "İdamenin +%10 üzeri",
+      notes: "Yavaş kazanç hedefi: haftada 0.5-1 lb. Her 4 haftada yeniden temel al."
+    },
+    "home-starter": {
+      style: "Yeni başlayana uygun kesim",
+      proteinTarget: "0.8 g / lb vücut ağırlığı",
+      calorieBias: "İdameden -%10",
+      notes: "Tabak temelli porsiyon — ilk 4 hafta tartım gerekmez."
+    },
+    definition: {
+      style: "Sıkı kesim · makro takipli",
+      proteinTarget: "1.2 g / lb vücut ağırlığı",
+      calorieBias: "İdameden -%20",
+      notes: "Haftalık refeed günü. Karbonhidratlar antrenman çevresinde öne yüklenir."
+    },
+    recomp: {
+      style: "İdame · yüksek protein",
+      proteinTarget: "1.1 g / lb vücut ağırlığı",
+      calorieBias: "İdamede",
+      notes: "Karbonhidrat döngüsü: antrenman günlerinde yüksek, dinlenme günlerinde orta."
+    },
+    powerbuilding: {
+      style: "Güç odaklı · hafif fazlalık",
+      proteinTarget: "1.0 g / lb vücut ağırlığı",
+      calorieBias: "İdamenin +%5 üzeri",
+      notes: "Antrenman öncesi karbonhidratlar önceliklidir. Kreatin önerilir."
+    },
+    calisthenics: {
+      style: "Yalın performans",
+      proteinTarget: "0.9 g / lb vücut ağırlığı",
+      calorieBias: "İdamede",
+      notes: "Antrenman öncesi hafif öğün tercih edilir. Vücut ağırlığı önemlidir."
+    },
+    "athlete-conditioning": {
+      style: "Karbonhidrat ağırlıklı · sporcu",
+      proteinTarget: "0.9 g / lb vücut ağırlığı",
+      calorieBias: "İdamede veya hafif üzerinde",
+      notes: "Karbonhidratlar antrenman yüküyle ölçeklenir. Hidrasyon planı dahildir."
+    },
+    "beginner-foundations": {
+      style: "Önce alışkanlık beslenmesi",
+      proteinTarget: "0.8 g / lb vücut ağırlığı",
+      calorieBias: "İdamede",
+      notes: "Takip gerekmez. Tabak temelli porsiyon rehberi."
+    },
+    "womens-sculpt": {
+      style: "Kadınlar için yalın performans",
+      proteinTarget: "0.9 g / lb vücut ağırlığı",
+      calorieBias: "İdamede · antrenman günlerinde hafif fazlalık",
+      notes: "Demir ve kalsiyum vurgulanır. Döngüye duyarlı notlar dahildir."
+    },
+    "senior-strength": {
+      style: "Uzun ömür · protein ağırlıklı",
+      proteinTarget: "1.0 g / lb vücut ağırlığı",
+      calorieBias: "İdamede",
+      notes: "Protein 4 öğüne yayılır. D vitamini ve omega-3 vurgulanır."
+    },
+    "cutting-peak": {
+      style: "Yarışma hazırlığı · takipli",
+      proteinTarget: "1.3 g / lb vücut ağırlığı",
+      calorieBias: "İdameden -%25",
+      notes: "Haftalık refeed'ler. Zirve haftası protokolü ayrıntılı. Yeni başlayanlar için değil."
+    }
+  },
+  ar: {
+    "fat-loss": {
+      style: "تنشيف نظيف · الأطعمة الكاملة أولاً",
+      proteinTarget: "1.0 غ لكل رطل من وزن الجسم",
+      calorieBias: "-15% من سعرات الثبات",
+      notes: "أسبوعا إعادة تغذية مضمّنان. تُدوّر الكربوهيدرات حول أيام التدريب."
+    },
+    "lean-bulk": {
+      style: "تضخيم نظيف · 80/20 أطعمة كاملة",
+      proteinTarget: "1.0 غ لكل رطل من وزن الجسم",
+      calorieBias: "+10% فوق سعرات الثبات",
+      notes: "هدف اكتساب بطيء: 0.5-1 رطل أسبوعياً. أعد ضبط الأساس كل 4 أسابيع."
+    },
+    "home-starter": {
+      style: "تنشيف مناسب للمبتدئين",
+      proteinTarget: "0.8 غ لكل رطل من وزن الجسم",
+      calorieBias: "-10% من سعرات الثبات",
+      notes: "تقسيم الحصص حسب الطبق — لا حاجة للوزن في أول 4 أسابيع."
+    },
+    definition: {
+      style: "تنشيف صارم · بتتبّع الماكروز",
+      proteinTarget: "1.2 غ لكل رطل من وزن الجسم",
+      calorieBias: "-20% من سعرات الثبات",
+      notes: "يوم إعادة تغذية أسبوعي. تُقدّم الكربوهيدرات حول التدريب."
+    },
+    recomp: {
+      style: "ثبات · بروتين عالٍ",
+      proteinTarget: "1.1 غ لكل رطل من وزن الجسم",
+      calorieBias: "عند الثبات",
+      notes: "تدوير الكربوهيدرات: مرتفع في أيام الرفع، معتدل في أيام الراحة."
+    },
+    powerbuilding: {
+      style: "موجّه للقوة · فائض طفيف",
+      proteinTarget: "1.0 غ لكل رطل من وزن الجسم",
+      calorieBias: "+5% فوق سعرات الثبات",
+      notes: "تُعطى الأولوية لكربوهيدرات ما قبل التمرين. يُنصح بالكرياتين."
+    },
+    calisthenics: {
+      style: "أداء رشيق",
+      proteinTarget: "0.9 غ لكل رطل من وزن الجسم",
+      calorieBias: "عند الثبات",
+      notes: "يُفضّل وجبة خفيفة قبل التدريب. وزن الجسم مهم."
+    },
+    "athlete-conditioning": {
+      style: "غني بالكربوهيدرات · للرياضيين",
+      proteinTarget: "0.9 غ لكل رطل من وزن الجسم",
+      calorieBias: "عند الثبات أو أعلى قليلاً",
+      notes: "تتدرّج الكربوهيدرات مع حمل التدريب. خطة الترطيب مضمّنة."
+    },
+    "beginner-foundations": {
+      style: "تغذية تبدأ بالعادة",
+      proteinTarget: "0.8 غ لكل رطل من وزن الجسم",
+      calorieBias: "عند الثبات",
+      notes: "لا حاجة للتتبّع. دليل حصص حسب الطبق."
+    },
+    "womens-sculpt": {
+      style: "أداء رشيق للنساء",
+      proteinTarget: "0.9 غ لكل رطل من وزن الجسم",
+      calorieBias: "عند الثبات · فائض طفيف في أيام الرفع",
+      notes: "تركيز على الحديد والكالسيوم. ملاحظات واعية بالدورة الشهرية مضمّنة."
+    },
+    "senior-strength": {
+      style: "طول العمر · غني بالبروتين",
+      proteinTarget: "1.0 غ لكل رطل من وزن الجسم",
+      calorieBias: "عند الثبات",
+      notes: "البروتين موزّع على 4 وجبات. تركيز على فيتامين د وأوميغا-3."
+    },
+    "cutting-peak": {
+      style: "تحضير للمسابقات · بالتتبّع",
+      proteinTarget: "1.3 غ لكل رطل من وزن الجسم",
+      calorieBias: "-25% من سعرات الثبات",
+      notes: "وجبات إعادة تغذية أسبوعية. بروتوكول أسبوع الذروة مفصّل. ليس للمبتدئين."
+    }
+  },
+  es: {
+    "fat-loss": {
+      style: "Definición limpia · alimentos integrales primero",
+      proteinTarget: "1.0 g por lb de peso corporal",
+      calorieBias: "-15% del mantenimiento",
+      notes: "Dos semanas de recarga incluidas. Carbohidratos ciclados en torno a los días de entrenamiento."
+    },
+    "lean-bulk": {
+      style: "Volumen limpio · 80/20 alimentos integrales",
+      proteinTarget: "1.0 g por lb de peso corporal",
+      calorieBias: "+10% por encima del mantenimiento",
+      notes: "Objetivo de ganancia lenta: 0.5-1 lb por semana. Recalibra cada 4 semanas."
+    },
+    "home-starter": {
+      style: "Definición apta para principiantes",
+      proteinTarget: "0.8 g por lb de peso corporal",
+      calorieBias: "-10% del mantenimiento",
+      notes: "Porciones basadas en el plato — sin pesar durante las primeras 4 semanas."
+    },
+    definition: {
+      style: "Definición estricta · con macros monitoreadas",
+      proteinTarget: "1.2 g por lb de peso corporal",
+      calorieBias: "-20% del mantenimiento",
+      notes: "Día de recarga semanal. Carbohidratos concentrados en torno al entrenamiento."
+    },
+    recomp: {
+      style: "Mantenimiento · alta proteína",
+      proteinTarget: "1.1 g por lb de peso corporal",
+      calorieBias: "En mantenimiento",
+      notes: "Ciclado de carbohidratos: alto en días de entrenamiento, moderado en días de descanso."
+    },
+    powerbuilding: {
+      style: "Impulsado por la fuerza · ligero superávit",
+      proteinTarget: "1.0 g por lb de peso corporal",
+      calorieBias: "+5% por encima del mantenimiento",
+      notes: "Carbohidratos pre-entreno priorizados. Se recomienda creatina."
+    },
+    calisthenics: {
+      style: "Rendimiento magro",
+      proteinTarget: "0.9 g por lb de peso corporal",
+      calorieBias: "En mantenimiento",
+      notes: "Se prefiere una comida ligera antes de entrenar. El peso corporal importa."
+    },
+    "athlete-conditioning": {
+      style: "Rico en carbohidratos · atleta",
+      proteinTarget: "0.9 g por lb de peso corporal",
+      calorieBias: "En mantenimiento o ligeramente por encima",
+      notes: "Los carbohidratos escalan con la carga de entrenamiento. Plan de hidratación incluido."
+    },
+    "beginner-foundations": {
+      style: "Nutrición centrada en el hábito",
+      proteinTarget: "0.8 g por lb de peso corporal",
+      calorieBias: "En mantenimiento",
+      notes: "Sin seguimiento requerido. Guía de porciones basada en el plato."
+    },
+    "womens-sculpt": {
+      style: "Rendimiento magro para mujeres",
+      proteinTarget: "0.9 g por lb de peso corporal",
+      calorieBias: "En mantenimiento · ligero superávit en días de entrenamiento",
+      notes: "Se enfatizan el hierro y el calcio. Notas conscientes del ciclo incluidas."
+    },
+    "senior-strength": {
+      style: "Longevidad · rica en proteína",
+      proteinTarget: "1.0 g por lb de peso corporal",
+      calorieBias: "En mantenimiento",
+      notes: "Proteína repartida en 4 comidas. Se enfatizan la vitamina D y el omega-3."
+    },
+    "cutting-peak": {
+      style: "Preparación para competición · monitoreada",
+      proteinTarget: "1.3 g por lb de peso corporal",
+      calorieBias: "-25% del mantenimiento",
+      notes: "Recargas semanales. Protocolo de semana pico detallado. No apto para principiantes."
+    }
+  },
+  fr: {
+    "fat-loss": {
+      style: "Sèche propre · aliments bruts d'abord",
+      proteinTarget: "1.0 g par lb de poids de corps",
+      calorieBias: "-15% du maintien",
+      notes: "Deux semaines de recharge intégrées. Glucides cyclés autour des jours d'entraînement."
+    },
+    "lean-bulk": {
+      style: "Prise de masse propre · 80/20 aliments bruts",
+      proteinTarget: "1.0 g par lb de poids de corps",
+      calorieBias: "+10% au-dessus du maintien",
+      notes: "Objectif de gain lent : 0,5-1 lb par semaine. Recalibre toutes les 4 semaines."
+    },
+    "home-starter": {
+      style: "Sèche adaptée aux débutants",
+      proteinTarget: "0.8 g par lb de poids de corps",
+      calorieBias: "-10% du maintien",
+      notes: "Portions basées sur l'assiette — aucune pesée requise les 4 premières semaines."
+    },
+    definition: {
+      style: "Sèche stricte · macros suivies",
+      proteinTarget: "1.2 g par lb de poids de corps",
+      calorieBias: "-20% du maintien",
+      notes: "Jour de recharge hebdomadaire. Glucides concentrés autour de l'entraînement."
+    },
+    recomp: {
+      style: "Maintien · protéines élevées",
+      proteinTarget: "1.1 g par lb de poids de corps",
+      calorieBias: "Au maintien",
+      notes: "Cyclage des glucides : élevé les jours de levée, modéré les jours de repos."
+    },
+    powerbuilding: {
+      style: "Axé force · léger surplus",
+      proteinTarget: "1.0 g par lb de poids de corps",
+      calorieBias: "+5% au-dessus du maintien",
+      notes: "Glucides pré-entraînement priorisés. Créatine recommandée."
+    },
+    calisthenics: {
+      style: "Performance sèche",
+      proteinTarget: "0.9 g par lb de poids de corps",
+      calorieBias: "Au maintien",
+      notes: "Repas léger avant l'entraînement recommandé. Le poids de corps compte."
+    },
+    "athlete-conditioning": {
+      style: "Riche en glucides · athlète",
+      proteinTarget: "0.9 g par lb de poids de corps",
+      calorieBias: "Au maintien ou légèrement au-dessus",
+      notes: "Les glucides s'ajustent à la charge d'entraînement. Plan d'hydratation inclus."
+    },
+    "beginner-foundations": {
+      style: "Nutrition axée sur l'habitude",
+      proteinTarget: "0.8 g par lb de poids de corps",
+      calorieBias: "Au maintien",
+      notes: "Aucun suivi requis. Guide de portions basé sur l'assiette."
+    },
+    "womens-sculpt": {
+      style: "Performance sèche au féminin",
+      proteinTarget: "0.9 g par lb de poids de corps",
+      calorieBias: "Au maintien · léger surplus les jours de levée",
+      notes: "Fer et calcium mis en avant. Notes adaptées au cycle incluses."
+    },
+    "senior-strength": {
+      style: "Longévité · riche en protéines",
+      proteinTarget: "1.0 g par lb de poids de corps",
+      calorieBias: "Au maintien",
+      notes: "Protéines réparties sur 4 repas. Vitamine D et oméga-3 mis en avant."
+    },
+    "cutting-peak": {
+      style: "Prépa compétition · suivie",
+      proteinTarget: "1.3 g par lb de poids de corps",
+      calorieBias: "-25% du maintien",
+      notes: "Recharges hebdomadaires. Protocole de semaine de pic détaillé. Pas pour les débutants."
+    }
+  }
+};
+
+/**
  * Returns the prose copy (name, hook, goalLabel, programTitle, dietTitle,
- * description) for a bundle in the given locale. English passes through from
- * the bundle itself; any locale or slug without an override also falls back
- * to English so nothing breaks.
+ * description, nutrition) for a bundle in the given locale. English passes
+ * through from the bundle itself; any locale or slug without an override
+ * also falls back to English so nothing breaks.
  */
 export function localizeBundle(bundle: Bundle, locale: string): BundleCopy {
   const fallback: BundleCopy = {
@@ -479,9 +793,12 @@ export function localizeBundle(bundle: Bundle, locale: string): BundleCopy {
     goalLabel: bundle.goalLabel,
     programTitle: bundle.programTitle,
     dietTitle: bundle.dietTitle,
-    description: bundle.description
+    description: bundle.description,
+    nutrition: bundle.nutrition
   };
   const loc = resolveCopyLocale(locale);
   if (loc === "en") return fallback;
-  return BUNDLE_COPY[loc][bundle.slug] ?? fallback;
+  const prose = BUNDLE_COPY[loc][bundle.slug];
+  if (!prose) return fallback;
+  return { ...prose, nutrition: BUNDLE_NUTRITION[loc][bundle.slug] ?? bundle.nutrition };
 }
