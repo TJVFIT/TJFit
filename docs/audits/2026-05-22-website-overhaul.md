@@ -142,10 +142,27 @@ iteration — not micro-polish.
   purpose — ~440 niche exercise/food terms × 4 locales, high error-risk,
   low ROI (gym terminology reads broadly in English). Not a gap.
 
-## QUEUE (next up)
+## STATUS — loop paused after iter 23 (2026-05-22 ~04:50)
 
-- Audit other top routes (programs, diets, dashboard) for hardcoded English.
-- Localize remaining route-level `error.tsx` boundaries if bare/English.
+23 iterations shipped live to main. The high-value, cleanly-bounded overhaul
+work is done: the bundles experience, homepage, TJAI chatbot, coach profile,
+and membership/pricing are fully multilingual (en/tr/ar/es/fr) with correct
+diacritics; nav + error boundary localized; plus UX additions (sticky buy
+bar, related-bundles strip, filter animation, scroll-spy rail, jump-to-latest,
+RTL pass). Pausing here rather than rushing the larger remaining items
+unsupervised — they deserve a focused pass.
+
+## QUEUE (next up — for a focused session)
+
+- **i18n `tjai-result.tsx`** — the TJAI plan result view (~20 hardcoded
+  chrome strings: "Why TJAI chose this", "Your Transformation Forecast",
+  "Macro Split", "Key Milestones", grocery/meal-prep buttons, recipe
+  toggles…). It receives a `copy: TJAICopy` prop — the clean fix extends the
+  `TJAICopy` type + its 5-locale source and wires ~20 sites. Big, careful.
+- Translate the bundle `sampleTrainingDay` / `sampleMealDay` tables — only
+  if desired (decision above leaves them English).
+- Audit remaining secondary routes (blog, feed, settings) for hardcoded
+  English / accent-stripped copy.
 
 ## BACKLOG (drive-by notes, unfixed)
 
