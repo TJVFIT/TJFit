@@ -172,7 +172,7 @@ function PhaseCard({
           {String(index + 1).padStart(2, "0")}
         </span>
 
-        <p className="relative text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+        <p className="relative text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-cyan-200/80">
           {phase.name}
         </p>
         <p className="relative mt-3 text-sm leading-relaxed text-bright/85">
@@ -237,7 +237,7 @@ export function AtAGlance({
             transition: "opacity 220ms ease-out"
           }}
         />
-        <p className="relative text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/80">
+        <p className="relative text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-cyan-200/80">
           {title}
         </p>
         <dl className="relative mt-4 space-y-3 text-sm">
@@ -567,7 +567,7 @@ function WeeklyTemplateCard({
       >
         <div className="flex items-baseline justify-between gap-3">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+            <p className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-cyan-200/80">
               {weekLabel} · {day.day}
             </p>
             <p className="mt-1 font-display text-lg font-bold text-white">{day.sessionName}</p>
@@ -642,7 +642,7 @@ function ProgressionCard({
       >
         {String(index + 1).padStart(2, "0")}
       </span>
-      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+      <p className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-cyan-200/80">
         {phase.phase} · {phase.weeks}
       </p>
       <div className="mt-4 space-y-3">
@@ -682,7 +682,7 @@ export function PrepPanel({
       <PrepCard title={labels.warmup} items={warmup} icon="warm" />
       <PrepCard title={labels.cooldown} items={cooldown} icon="cool" />
       <div className="lg:col-span-2">
-        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+        <p className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-cyan-200/80">
           {labels.equipment}
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -717,7 +717,7 @@ function PrepCard({
         ) : (
           <Clock className="h-4 w-4 text-cyan-300" aria-hidden />
         )}
-        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+        <p className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-cyan-200/80">
           {title}
         </p>
       </div>
@@ -791,7 +791,7 @@ function RecipeCard({
         aria-expanded={open}
       >
         <div className="min-w-0">
-          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+          <p className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-cyan-200/80">
             {copy.mealTypeLabels[recipe.mealType]} · {recipe.time}
           </p>
           <p className="mt-1.5 font-display text-base font-bold text-white">{recipe.name}</p>
@@ -821,7 +821,7 @@ function RecipeCard({
       >
         <div className="overflow-hidden">
           <div className="border-t border-white/[0.06] px-5 py-4">
-            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+            <p className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-cyan-200/80">
               {copy.ingredients}
             </p>
             <ul className="mt-2 space-y-1.5">
@@ -831,7 +831,7 @@ function RecipeCard({
                 </li>
               ))}
             </ul>
-            <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+            <p className="mt-4 text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-cyan-200/80">
               {copy.steps}
             </p>
             <ol className="mt-2 space-y-2">
@@ -876,7 +876,7 @@ export function GroceryList({ groups }: { groups: BundleGroceryCategory[] }) {
         >
           <div className="flex items-center gap-2">
             <ShoppingCart className="h-4 w-4 text-cyan-300" aria-hidden />
-            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+            <p className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-cyan-200/80">
               {group.category}
             </p>
           </div>

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Manrope, Outfit } from "next/font/google";
+import { JetBrains_Mono, Manrope, Outfit } from "next/font/google";
 
 import { AuthProvider } from "@/components/auth-provider";
 import { TrackingScripts } from "@/components/marketing/tracking-scripts";
@@ -23,6 +23,16 @@ const manrope = Manrope({
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",
   variable: "--font-sans",
+  preload: true
+});
+
+// Technical mono — JetBrains Mono: numerals, eyebrows, set/rep notation.
+// Used on bundle pages to give programs a lab-instrument feel.
+const jetbrains = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  display: "swap",
+  variable: "--font-mono",
   preload: true
 });
 
@@ -96,7 +106,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${manrope.variable} ${outfit.variable}`}>
+    <html lang="en" className={`${manrope.variable} ${outfit.variable} ${jetbrains.variable}`}>
       <body className="tj-grain font-sans antialiased">
         <BrandOrganizationJsonLd />
         <TrackingScripts />

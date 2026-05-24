@@ -97,7 +97,8 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-sans)", "DM Sans", "ui-sans-serif", "system-ui", "sans-serif"],
-        display: ["var(--font-display)", "Sora", "ui-sans-serif", "system-ui", "sans-serif"]
+        display: ["var(--font-display)", "Sora", "ui-sans-serif", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "JetBrains Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"]
       },
       boxShadow: {
         glass: "0 20px 80px rgba(0, 0, 0, 0.45)",

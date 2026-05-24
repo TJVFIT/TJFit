@@ -17,6 +17,7 @@ import {
   StickyBuyBar,
   WeeklyTemplate
 } from "./detail-effects";
+import { BundleFigurePair } from "@/components/bundles/bundle-figures";
 import { BUNDLES, getBundle, listBundleSlugs } from "@/lib/bundles";
 import { bundleProductJsonLd } from "@/lib/bundle-jsonld";
 import { getBundlesCopy } from "@/lib/bundles-copy";
@@ -79,11 +80,9 @@ export default function BundleDetailPage({
     { id: "training", label: d.trainingFrameworkEyebrow },
     { id: "weekly-template", label: d.weeklyTemplateEyebrow },
     { id: "progression", label: d.progressionEyebrow },
-    { id: "sample-session", label: d.sampleSessionEyebrow },
     { id: "nutrition", label: d.nutritionEyebrow },
     { id: "recipes", label: d.recipesEyebrow },
     { id: "grocery", label: d.groceryEyebrow },
-    { id: "sample-day", label: d.sampleDayEyebrow },
     ...(related.length > 0 ? [{ id: "more", label: d.moreBundlesTitle }] : [])
   ].filter((item) => {
     if (item.id === "weekly-template") return Boolean(bundle.weeklyTemplate?.length);
@@ -110,7 +109,14 @@ export default function BundleDetailPage({
         {d.backToAll}
       </Link>
 
-      <DetailHero image={bundle.heroImage} />
+      <div className="relative">
+        <DetailHero image={bundle.heroImage} />
+        <BundleFigurePair
+          slug={bundle.slug}
+          className="pointer-events-none absolute bottom-3 end-4 z-[2] hidden items-end gap-3 motion-safe:animate-[tj-fade-up_700ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0 sm:flex"
+          size={72}
+        />
+      </div>
 
       <div className="mt-8 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
         <div>
@@ -195,7 +201,7 @@ export default function BundleDetailPage({
       </div>
 
       <div id="training" className="mt-14 scroll-mt-24">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
+        <p className="text-[11px] font-mono font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
           {d.trainingFrameworkEyebrow}
         </p>
         <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
@@ -207,7 +213,7 @@ export default function BundleDetailPage({
       {bundle.weeklyTemplate?.length ? (
         <RevealSection>
           <div id="weekly-template" className="mt-14 scroll-mt-24">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
+            <p className="text-[11px] font-mono font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
               {d.weeklyTemplateEyebrow}
             </p>
             <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
@@ -222,7 +228,7 @@ export default function BundleDetailPage({
       {bundle.progression?.length ? (
         <RevealSection delay={60}>
           <div id="progression" className="mt-14 scroll-mt-24">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
+            <p className="text-[11px] font-mono font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
               {d.progressionEyebrow}
             </p>
             <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
@@ -239,7 +245,7 @@ export default function BundleDetailPage({
       {bundle.warmup?.length || bundle.cooldown?.length || bundle.equipment?.length ? (
         <RevealSection delay={100}>
           <div className="mt-14">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
+            <p className="text-[11px] font-mono font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
               {d.equipmentEyebrow}
             </p>
             <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
@@ -255,42 +261,9 @@ export default function BundleDetailPage({
         </RevealSection>
       ) : null}
 
-      <RevealSection>
-        <div id="sample-session" className="mt-14 scroll-mt-24 rounded-2xl border border-divider bg-surface/40 p-5 sm:p-7">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
-            {d.sampleSessionEyebrow}
-          </p>
-          <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
-            {bundle.sampleTrainingDay.name}
-          </h2>
-          <p className="mt-3 text-sm text-muted">{d.sampleSessionNote}</p>
-          <ol className="mt-6 divide-y divide-white/[0.06] rounded-xl border border-white/[0.06] bg-black/20">
-            {bundle.sampleTrainingDay.exercises.map((ex, i) => (
-              <li
-                key={`${ex.name}-${i}`}
-                className="tj-list-row flex items-start justify-between gap-3 px-4 py-3.5 transition-colors hover:bg-white/[0.02]"
-              >
-                <div className="flex min-w-0 items-baseline gap-3">
-                  <span className="shrink-0 text-[10px] font-bold tabular-nums text-cyan-300/80">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-white">{ex.name}</p>
-                    {ex.notes ? (
-                      <p className="mt-0.5 text-[11px] italic leading-snug text-faint">{ex.notes}</p>
-                    ) : null}
-                  </div>
-                </div>
-                <span className="shrink-0 whitespace-nowrap text-xs font-semibold text-cyan-100">{ex.sets}</span>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </RevealSection>
-
       <RevealSection delay={80}>
         <div id="nutrition" className="mt-14 scroll-mt-24 rounded-2xl border border-divider bg-surface/40 p-5 sm:p-7">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
+          <p className="text-[11px] font-mono font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
             {d.nutritionEyebrow}
           </p>
           <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
@@ -314,7 +287,7 @@ export default function BundleDetailPage({
                       "linear-gradient(90deg, transparent, rgba(34,211,238,0.55) 30%, rgba(165,243,252,0.9) 50%, rgba(34,211,238,0.55) 70%, transparent)"
                   }}
                 />
-                <dt className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+                <dt className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-cyan-200/80">
                   {stat.label}
                 </dt>
                 <dd className="mt-2 text-sm font-semibold leading-snug text-white">
@@ -332,7 +305,7 @@ export default function BundleDetailPage({
       {bundle.recipes?.length ? (
         <RevealSection delay={100}>
           <div id="recipes" className="mt-14 scroll-mt-24">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
+            <p className="text-[11px] font-mono font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
               {d.recipesEyebrow}
             </p>
             <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
@@ -359,7 +332,7 @@ export default function BundleDetailPage({
       {bundle.groceryList?.length ? (
         <RevealSection delay={100}>
           <div id="grocery" className="mt-14 scroll-mt-24">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
+            <p className="text-[11px] font-mono font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
               {d.groceryEyebrow}
             </p>
             <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
@@ -371,42 +344,10 @@ export default function BundleDetailPage({
         </RevealSection>
       ) : null}
 
-      <RevealSection delay={120}>
-        <div id="sample-day" className="mt-14 scroll-mt-24 rounded-2xl border border-divider bg-surface/40 p-5 sm:p-7">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
-            {d.sampleDayEyebrow}
-          </p>
-          <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
-            {d.sampleDayTitle}
-          </h2>
-          <p className="mt-3 text-sm text-muted">{d.sampleDayNote}</p>
-          <ul className="mt-6 divide-y divide-white/[0.06] rounded-xl border border-white/[0.06] bg-black/20">
-            {bundle.sampleMealDay.map((meal, i) => (
-              <li
-                key={`${meal.meal}-${i}`}
-                className="tj-list-row px-4 py-4 transition-colors hover:bg-white/[0.02]"
-              >
-                <div className="flex items-baseline justify-between gap-3">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
-                    {meal.meal}
-                  </p>
-                  {meal.macros ? (
-                    <p className="text-[11px] font-semibold text-cyan-100">{meal.macros}</p>
-                  ) : null}
-                </div>
-                <p className="mt-1.5 text-sm leading-relaxed text-bright/85">
-                  {meal.items}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </RevealSection>
-
       <RevealSection delay={160}>
         <div className="mt-14 flex flex-col items-stretch gap-4 rounded-2xl border border-cyan-400/20 bg-[linear-gradient(180deg,rgba(34,211,238,0.06),rgba(34,211,238,0.01))] p-5 sm:flex-row sm:items-center sm:justify-between sm:p-7">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
+            <p className="text-[11px] font-mono font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
               {d.readyEyebrow}
             </p>
             <p className="mt-1 text-base font-semibold text-white sm:text-lg">
@@ -425,7 +366,7 @@ export default function BundleDetailPage({
       {related.length > 0 ? (
         <RevealSection delay={200}>
           <div id="more" className="mt-14 scroll-mt-24">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
+            <p className="text-[11px] font-mono font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
               {d.moreBundlesTitle}
             </p>
             <div className="mt-5 grid gap-3 sm:grid-cols-3">
