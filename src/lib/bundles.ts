@@ -14,6 +14,40 @@ export type BundleGoal =
   | "conditioning"
   | "foundation";
 
+export type BundleExercise = { name: string; sets: string; notes?: string };
+export type BundleTrainingDay = { name: string; exercises: BundleExercise[] };
+
+export type BundleWeeklyTemplateDay = {
+  day: string;
+  sessionName: string;
+  focus: string;
+  exercises: BundleExercise[];
+};
+
+export type BundleProgressionPhase = {
+  phase: string;
+  weeks: string;
+  loadingScheme: string;
+  intensityCue: string;
+};
+
+export type BundleRecipe = {
+  name: string;
+  mealType: "breakfast" | "lunch" | "dinner" | "snack" | "shake";
+  kcal: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  time: string;
+  ingredients: string[];
+  steps: string[];
+};
+
+export type BundleGroceryCategory = {
+  category: string;
+  items: Array<{ item: string; quantity: string }>;
+};
+
 export type Bundle = {
   slug: string;
   name: string;
@@ -42,12 +76,23 @@ export type Bundle = {
     notes: string;
   };
   /** Bundle-specific sample training session — rendered in the PDF + detail page. */
-  sampleTrainingDay: {
-    name: string;
-    exercises: Array<{ name: string; sets: string; notes?: string }>;
-  };
+  sampleTrainingDay: BundleTrainingDay;
   /** Bundle-specific sample meal day — rendered in the PDF + detail page. */
   sampleMealDay: Array<{ meal: string; items: string; macros?: string }>;
+  /** Full weekly training template — one entry per training day. */
+  weeklyTemplate?: BundleWeeklyTemplateDay[];
+  /** Phase-by-phase loading schemes that drive the 12-week progression. */
+  progression?: BundleProgressionPhase[];
+  /** Warm-up routine prescribed before every session. */
+  warmup?: string[];
+  /** Cool-down routine prescribed after every session. */
+  cooldown?: string[];
+  /** Minimum equipment list. */
+  equipment?: string[];
+  /** Branded recipe library — drives the detail page + PDF. */
+  recipes?: BundleRecipe[];
+  /** Weekly grocery list, categorized. */
+  groceryList?: BundleGroceryCategory[];
 };
 
 export const BUNDLES: Bundle[] = [
@@ -607,9 +652,23 @@ export const BUNDLES: Bundle[] = [
   }
 ];
 
+import { BUNDLE_CONTENT } from "@/lib/bundle-content";
+
+function enrich(b: Bundle): Bundle {
+  const content = BUNDLE_CONTENT[b.slug];
+  if (!content) return b;
+  return { ...b, ...content };
+}
+
 /** Lookup a bundle by slug. Returns undefined if not found. */
 export function getBundle(slug: string): Bundle | undefined {
-  return BUNDLES.find((b) => b.slug === slug);
+  const base = BUNDLES.find((b) => b.slug === slug);
+  return base ? enrich(base) : undefined;
+}
+
+/** All bundles, enriched with their rich content layer. */
+export function listBundles(): Bundle[] {
+  return BUNDLES.map(enrich);
 }
 
 /** All bundle slugs — used for generateStaticParams on detail pages. */

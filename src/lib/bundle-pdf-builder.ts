@@ -371,7 +371,234 @@ export function buildBundlePdf(args: BundlePdfArgs): jsPDF {
 
   drawFooter(pdf, 6, bundle.name);
 
-  // ─── Page 7: Progression & How To Use ─────────────────────────────
+  // ─── New rich content sections (weekly template, progression, equipment, recipes, grocery)
+  let nextPage = 7;
+  const newSection = (title: string, eyebrow: string) => {
+    pdf.addPage();
+    fillPage(pdf, PDF_THEME.paper);
+    drawInteriorHeader(pdf, title, eyebrow);
+    y = 130;
+  };
+  const closeSection = () => {
+    drawFooter(pdf, nextPage, bundle.name);
+    nextPage += 1;
+  };
+
+  // Weekly training template
+  if (bundle.weeklyTemplate?.length) {
+    newSection("Weekly template", `${bundle.sessionsPerWeek}× per week · repeat across 12 weeks`);
+    bundle.weeklyTemplate.forEach((day) => {
+      // Estimate footprint
+      const exCount = day.exercises.length;
+      const blockHeight = 70 + exCount * 14;
+      if (y + blockHeight > PAGE.height - 80) {
+        closeSection();
+        newSection("Weekly template", `${bundle.sessionsPerWeek}× per week (continued)`);
+      }
+      setText(pdf, PDF_THEME.accent);
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8);
+      pdf.text(`${day.day.toUpperCase()} · ${day.sessionName.toUpperCase()}`, PAGE.margin, y);
+      y += 14;
+      setText(pdf, PDF_THEME.textMuted);
+      pdf.setFont("helvetica", "italic");
+      pdf.setFontSize(9);
+      pdf.text(day.focus, PAGE.margin, y);
+      y += 16;
+      day.exercises.forEach((ex) => {
+        setText(pdf, PDF_THEME.ink);
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(10);
+        pdf.text(`· ${ex.name}`, PAGE.margin + 4, y);
+        setText(pdf, PDF_THEME.textMuted);
+        pdf.setFont("helvetica", "bold");
+        pdf.text(ex.sets, PAGE.width - PAGE.margin, y, { align: "right" });
+        y += 13;
+      });
+      y += 12;
+    });
+    closeSection();
+  }
+
+  // Progression phases
+  if (bundle.progression?.length) {
+    newSection("Progression", "How loads evolve across the 12 weeks");
+    bundle.progression.forEach((p) => {
+      drawAccentBar(pdf, PAGE.margin, y, 28, 3);
+      y += 14;
+      setText(pdf, PDF_THEME.ink);
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(13);
+      pdf.text(`${p.phase} · Weeks ${p.weeks}`, PAGE.margin, y);
+      y += 18;
+
+      setText(pdf, PDF_THEME.accent);
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(7);
+      pdf.text("LOADING", PAGE.margin, y);
+      y += 12;
+      setText(pdf, PDF_THEME.ink);
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(10);
+      wrapText(pdf, p.loadingScheme, contentWidth).forEach((line) => {
+        pdf.text(line, PAGE.margin, y);
+        y += 13;
+      });
+      y += 4;
+
+      setText(pdf, PDF_THEME.accent);
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(7);
+      pdf.text("INTENSITY CUE", PAGE.margin, y);
+      y += 12;
+      setText(pdf, PDF_THEME.ink);
+      pdf.setFont("helvetica", "italic");
+      pdf.setFontSize(10);
+      wrapText(pdf, p.intensityCue, contentWidth).forEach((line) => {
+        pdf.text(line, PAGE.margin, y);
+        y += 13;
+      });
+      y += 16;
+    });
+    closeSection();
+  }
+
+  // Warmup / Cooldown / Equipment
+  if (bundle.warmup?.length || bundle.cooldown?.length || bundle.equipment?.length) {
+    newSection("Prep & equipment", "Warm-up, cool-down, and what you need");
+
+    const drawList = (heading: string, items: string[]) => {
+      if (!items?.length) return;
+      setText(pdf, PDF_THEME.accent);
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8);
+      pdf.text(heading, PAGE.margin, y);
+      y += 14;
+      setText(pdf, PDF_THEME.ink);
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(10);
+      items.forEach((line) => {
+        wrapText(pdf, `· ${line}`, contentWidth).forEach((l) => {
+          pdf.text(l, PAGE.margin, y);
+          y += 13;
+        });
+      });
+      y += 12;
+    };
+
+    if (bundle.warmup?.length) drawList("WARM-UP", bundle.warmup);
+    if (bundle.cooldown?.length) drawList("COOL-DOWN", bundle.cooldown);
+    if (bundle.equipment?.length) drawList("EQUIPMENT", bundle.equipment);
+
+    closeSection();
+  }
+
+  // Recipes — one page per recipe to keep them readable
+  if (bundle.recipes?.length) {
+    bundle.recipes.forEach((recipe) => {
+      newSection("Recipe", recipe.name);
+
+      setText(pdf, PDF_THEME.accent);
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8);
+      pdf.text(`${recipe.mealType.toUpperCase()} · ${recipe.time}`, PAGE.margin, y);
+      y += 20;
+
+      // Macro strip
+      const macros: Array<[string, string]> = [
+        ["KCAL", String(recipe.kcal)],
+        ["PROTEIN", `${recipe.protein}g`],
+        ["CARBS", `${recipe.carbs}g`],
+        ["FAT", `${recipe.fat}g`]
+      ];
+      const macW = contentWidth / macros.length;
+      macros.forEach(([label, value], i) => {
+        const x = PAGE.margin + macW * i;
+        setText(pdf, PDF_THEME.accent);
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(7);
+        pdf.text(label, x, y);
+        setText(pdf, PDF_THEME.ink);
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(13);
+        pdf.text(value, x, y + 16);
+      });
+      y += 40;
+
+      setDraw(pdf, PDF_THEME.hairline);
+      pdf.setLineWidth(0.3);
+      pdf.line(PAGE.margin, y, PAGE.width - PAGE.margin, y);
+      y += 24;
+
+      setText(pdf, PDF_THEME.accent);
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8);
+      pdf.text("INGREDIENTS", PAGE.margin, y);
+      y += 14;
+      setText(pdf, PDF_THEME.ink);
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(10);
+      recipe.ingredients.forEach((ing) => {
+        wrapText(pdf, `· ${ing}`, contentWidth).forEach((line) => {
+          pdf.text(line, PAGE.margin, y);
+          y += 13;
+        });
+      });
+      y += 12;
+
+      setText(pdf, PDF_THEME.accent);
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8);
+      pdf.text("METHOD", PAGE.margin, y);
+      y += 14;
+      setText(pdf, PDF_THEME.ink);
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(10);
+      recipe.steps.forEach((step, i) => {
+        const prefix = String(i + 1).padStart(2, "0");
+        wrapText(pdf, `${prefix}  ${step}`, contentWidth).forEach((line) => {
+          pdf.text(line, PAGE.margin, y);
+          y += 13;
+        });
+        y += 4;
+      });
+
+      closeSection();
+    });
+  }
+
+  // Grocery list — categorized
+  if (bundle.groceryList?.length) {
+    newSection("Grocery list", "One week of meals · scale to bodyweight");
+    bundle.groceryList.forEach((group) => {
+      const blockHeight = 24 + group.items.length * 13;
+      if (y + blockHeight > PAGE.height - 80) {
+        closeSection();
+        newSection("Grocery list", "Continued");
+      }
+      setText(pdf, PDF_THEME.accent);
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8);
+      pdf.text(group.category.toUpperCase(), PAGE.margin, y);
+      y += 14;
+      setText(pdf, PDF_THEME.ink);
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(10);
+      group.items.forEach((it) => {
+        pdf.text(`☐  ${it.item}`, PAGE.margin + 4, y);
+        setText(pdf, PDF_THEME.textMuted);
+        pdf.setFont("helvetica", "bold");
+        pdf.text(it.quantity, PAGE.width - PAGE.margin, y, { align: "right" });
+        setText(pdf, PDF_THEME.ink);
+        pdf.setFont("helvetica", "normal");
+        y += 13;
+      });
+      y += 10;
+    });
+    closeSection();
+  }
+
+  // ─── Page N: Progression & How To Use (kept) ───────────────────────
   pdf.addPage();
   fillPage(pdf, PDF_THEME.paper);
   drawInteriorHeader(pdf, "Progression", "How to actually use this");
@@ -403,9 +630,10 @@ export function buildBundlePdf(args: BundlePdfArgs): jsPDF {
     y = Math.max(y + 26, stepY + 16);
   });
 
-  drawFooter(pdf, 7, bundle.name);
+  drawFooter(pdf, nextPage, bundle.name);
+  nextPage += 1;
 
-  // ─── Page 8: Recovery & License ────────────────────────────────────
+  // ─── Recovery & License ────────────────────────────────────────────
   pdf.addPage();
   fillPage(pdf, PDF_THEME.paper);
   drawInteriorHeader(pdf, "Recovery", "Sleep, stress, and the part most people skip");
@@ -455,7 +683,7 @@ export function buildBundlePdf(args: BundlePdfArgs): jsPDF {
     y += 13;
   });
 
-  drawFooter(pdf, 8, bundle.name);
+  drawFooter(pdf, nextPage, bundle.name);
 
   return pdf;
 }

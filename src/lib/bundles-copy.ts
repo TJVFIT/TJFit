@@ -39,6 +39,32 @@ export type BundleDetailCopy = {
   shareShared: string;
   shareCopied: string;
   moreBundlesTitle: string;
+  /* Newly-added rich-content sections */
+  weeklyTemplateEyebrow: string;
+  weeklyTemplateTitle: string;
+  weeklyTemplateNote: string;
+  progressionEyebrow: string;
+  progressionTitle: string;
+  progressionLoading: string;
+  progressionIntensity: string;
+  warmupTitle: string;
+  cooldownTitle: string;
+  equipmentEyebrow: string;
+  equipmentTitle: string;
+  recipesEyebrow: string;
+  recipesTitle: string;
+  recipesNote: string;
+  recipeIngredients: string;
+  recipeSteps: string;
+  recipeKcal: string;
+  recipeProtein: string;
+  recipeCarbs: string;
+  recipeFat: string;
+  recipeTime: string;
+  mealTypeLabels: Record<"breakfast" | "lunch" | "dinner" | "snack" | "shake", string>;
+  groceryEyebrow: string;
+  groceryTitle: string;
+  groceryNote: string;
 };
 
 export type BundlesCopy = {
@@ -135,7 +161,38 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
       shareIdle: "Share",
       shareShared: "Shared",
       shareCopied: "Link copied!",
-      moreBundlesTitle: "More bundles"
+      moreBundlesTitle: "More bundles",
+      weeklyTemplateEyebrow: "Weekly template",
+      weeklyTemplateTitle: "Your training week, mapped",
+      weeklyTemplateNote: "One row per training day. Repeat across the 12 weeks; the loading scheme below evolves.",
+      progressionEyebrow: "Progression",
+      progressionTitle: "How loads evolve over 12 weeks",
+      progressionLoading: "Loading",
+      progressionIntensity: "Intensity cue",
+      warmupTitle: "Warm-up",
+      cooldownTitle: "Cool-down",
+      equipmentEyebrow: "Equipment",
+      equipmentTitle: "What you'll need",
+      recipesEyebrow: "Recipe library",
+      recipesTitle: "Six meals that match this diet",
+      recipesNote: "Picked to hit the macros above without spending all day in the kitchen.",
+      recipeIngredients: "Ingredients",
+      recipeSteps: "Method",
+      recipeKcal: "kcal",
+      recipeProtein: "P",
+      recipeCarbs: "C",
+      recipeFat: "F",
+      recipeTime: "Time",
+      mealTypeLabels: {
+        breakfast: "Breakfast",
+        lunch: "Lunch",
+        dinner: "Dinner",
+        snack: "Snack",
+        shake: "Shake"
+      },
+      groceryEyebrow: "Weekly grocery list",
+      groceryTitle: "One trip, one cart",
+      groceryNote: "Built to cover the recipes above for a single training week. Scale 0.75-1.25× to your bodyweight."
     },
     homeTeaser: {
       eyebrow: "Catalog",
@@ -204,7 +261,38 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
       shareIdle: "Paylaş",
       shareShared: "Paylaşıldı",
       shareCopied: "Bağlantı kopyalandı!",
-      moreBundlesTitle: "Daha fazla paket"
+      moreBundlesTitle: "Daha fazla paket",
+      weeklyTemplateEyebrow: "Haftalık şablon",
+      weeklyTemplateTitle: "Antrenman haftan, eksiksiz",
+      weeklyTemplateNote: "Her antrenman günü için bir satır. 12 hafta boyunca tekrarla; aşağıdaki yükleme şeması ilerler.",
+      progressionEyebrow: "İlerleme",
+      progressionTitle: "Yükler 12 hafta boyunca nasıl değişir",
+      progressionLoading: "Yükleme",
+      progressionIntensity: "Yoğunluk ipucu",
+      warmupTitle: "Isınma",
+      cooldownTitle: "Soğuma",
+      equipmentEyebrow: "Ekipman",
+      equipmentTitle: "İhtiyacın olacaklar",
+      recipesEyebrow: "Tarif kütüphanesi",
+      recipesTitle: "Bu diyete uyan altı öğün",
+      recipesNote: "Mutfakta tüm gününü harcamadan yukarıdaki makroları tutturmak için seçildi.",
+      recipeIngredients: "Malzemeler",
+      recipeSteps: "Yapılışı",
+      recipeKcal: "kcal",
+      recipeProtein: "P",
+      recipeCarbs: "K",
+      recipeFat: "Y",
+      recipeTime: "Süre",
+      mealTypeLabels: {
+        breakfast: "Kahvaltı",
+        lunch: "Öğle",
+        dinner: "Akşam",
+        snack: "Ara öğün",
+        shake: "Shake"
+      },
+      groceryEyebrow: "Haftalık market listesi",
+      groceryTitle: "Tek alışveriş, tek sepet",
+      groceryNote: "Bir antrenman haftası için yukarıdaki tarifleri karşılayacak şekilde hazırlandı. Vücut ağırlığına göre 0,75-1,25× ölçekle."
     },
     homeTeaser: {
       eyebrow: "Katalog",
@@ -273,7 +361,38 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
       shareIdle: "مشاركة",
       shareShared: "تمت المشاركة",
       shareCopied: "تم نسخ الرابط!",
-      moreBundlesTitle: "حزم أخرى"
+      moreBundlesTitle: "حزم أخرى",
+      weeklyTemplateEyebrow: "القالب الأسبوعي",
+      weeklyTemplateTitle: "أسبوع تدريبك، مرسوماً",
+      weeklyTemplateNote: "صف لكل يوم تدريب. كرّر خلال 12 أسبوعاً؛ يتطوّر مخطط الأحمال أدناه.",
+      progressionEyebrow: "التقدّم",
+      progressionTitle: "كيف تتطوّر الأحمال على مدى 12 أسبوعاً",
+      progressionLoading: "التحميل",
+      progressionIntensity: "ملاحظة الشدة",
+      warmupTitle: "الإحماء",
+      cooldownTitle: "التهدئة",
+      equipmentEyebrow: "المعدات",
+      equipmentTitle: "ما ستحتاج إليه",
+      recipesEyebrow: "مكتبة الوصفات",
+      recipesTitle: "ست وجبات تناسب هذا النظام",
+      recipesNote: "اخترناها لتحقيق الماكروز أعلاه دون قضاء يومك في المطبخ.",
+      recipeIngredients: "المكوّنات",
+      recipeSteps: "الطريقة",
+      recipeKcal: "سعرة",
+      recipeProtein: "ب",
+      recipeCarbs: "ك",
+      recipeFat: "د",
+      recipeTime: "الوقت",
+      mealTypeLabels: {
+        breakfast: "فطور",
+        lunch: "غداء",
+        dinner: "عشاء",
+        snack: "وجبة خفيفة",
+        shake: "شيك"
+      },
+      groceryEyebrow: "قائمة التسوق الأسبوعية",
+      groceryTitle: "زيارة واحدة، عربة واحدة",
+      groceryNote: "مُعَدّة لتغطية الوصفات أعلاه لأسبوع تدريب واحد. عدّل 0.75-1.25× حسب وزن جسمك."
     },
     homeTeaser: {
       eyebrow: "الكتالوج",
@@ -342,7 +461,38 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
       shareIdle: "Compartir",
       shareShared: "Compartido",
       shareCopied: "¡Enlace copiado!",
-      moreBundlesTitle: "Más paquetes"
+      moreBundlesTitle: "Más paquetes",
+      weeklyTemplateEyebrow: "Plantilla semanal",
+      weeklyTemplateTitle: "Tu semana de entrenamiento, mapeada",
+      weeklyTemplateNote: "Una fila por día de entrenamiento. Repítela durante 12 semanas; el esquema de cargas abajo evoluciona.",
+      progressionEyebrow: "Progresión",
+      progressionTitle: "Cómo evolucionan las cargas en 12 semanas",
+      progressionLoading: "Carga",
+      progressionIntensity: "Indicación de intensidad",
+      warmupTitle: "Calentamiento",
+      cooldownTitle: "Enfriamiento",
+      equipmentEyebrow: "Equipo",
+      equipmentTitle: "Lo que necesitarás",
+      recipesEyebrow: "Biblioteca de recetas",
+      recipesTitle: "Seis comidas alineadas con esta dieta",
+      recipesNote: "Elegidas para alcanzar los macros de arriba sin pasar todo el día en la cocina.",
+      recipeIngredients: "Ingredientes",
+      recipeSteps: "Preparación",
+      recipeKcal: "kcal",
+      recipeProtein: "P",
+      recipeCarbs: "C",
+      recipeFat: "G",
+      recipeTime: "Tiempo",
+      mealTypeLabels: {
+        breakfast: "Desayuno",
+        lunch: "Almuerzo",
+        dinner: "Cena",
+        snack: "Snack",
+        shake: "Batido"
+      },
+      groceryEyebrow: "Lista de compras semanal",
+      groceryTitle: "Una sola compra",
+      groceryNote: "Cubre las recetas anteriores para una semana de entrenamiento. Escala 0,75-1,25× según tu peso corporal."
     },
     homeTeaser: {
       eyebrow: "Catálogo",
@@ -411,7 +561,38 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
       shareIdle: "Partager",
       shareShared: "Partagé",
       shareCopied: "Lien copié !",
-      moreBundlesTitle: "Plus de packs"
+      moreBundlesTitle: "Plus de packs",
+      weeklyTemplateEyebrow: "Modèle hebdomadaire",
+      weeklyTemplateTitle: "Ta semaine d'entraînement, cartographiée",
+      weeklyTemplateNote: "Une ligne par jour d'entraînement. À répéter sur 12 semaines ; le schéma de charges ci-dessous évolue.",
+      progressionEyebrow: "Progression",
+      progressionTitle: "Comment les charges évoluent sur 12 semaines",
+      progressionLoading: "Charge",
+      progressionIntensity: "Indice d'intensité",
+      warmupTitle: "Échauffement",
+      cooldownTitle: "Retour au calme",
+      equipmentEyebrow: "Équipement",
+      equipmentTitle: "Ce dont tu auras besoin",
+      recipesEyebrow: "Bibliothèque de recettes",
+      recipesTitle: "Six repas alignés à cette diète",
+      recipesNote: "Choisis pour atteindre les macros ci-dessus sans passer ta journée en cuisine.",
+      recipeIngredients: "Ingrédients",
+      recipeSteps: "Préparation",
+      recipeKcal: "kcal",
+      recipeProtein: "P",
+      recipeCarbs: "G",
+      recipeFat: "L",
+      recipeTime: "Temps",
+      mealTypeLabels: {
+        breakfast: "Petit-déjeuner",
+        lunch: "Déjeuner",
+        dinner: "Dîner",
+        snack: "Collation",
+        shake: "Shake"
+      },
+      groceryEyebrow: "Liste de courses hebdo",
+      groceryTitle: "Une seule course",
+      groceryNote: "Couvre les recettes ci-dessus pour une semaine d'entraînement. Adapte 0,75-1,25× selon ton poids de corps."
     },
     homeTeaser: {
       eyebrow: "Catalogue",

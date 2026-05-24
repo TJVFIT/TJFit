@@ -1,10 +1,16 @@
 "use client";
 
-import { Check, FileDown, Share2 } from "lucide-react";
+import { Check, ChevronDown, Clock, Dumbbell, FileDown, Flame, ShoppingCart, Share2 } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { useParallax, useReveal, useTilt } from "@/components/effects/use-3d";
 import { useMagnetic, useMergedRef, useRipple } from "@/components/effects/use-magnetic";
+import type {
+  BundleGroceryCategory,
+  BundleProgressionPhase,
+  BundleRecipe,
+  BundleWeeklyTemplateDay
+} from "@/lib/bundles";
 
 /**
  * Hero banner with scroll-linked parallax: the background image shifts up to
@@ -498,6 +504,422 @@ export function DetailSectionNav({
         })}
       </ul>
     </nav>
+  );
+}
+
+/**
+ * Weekly training template — one card per session day with an exercise list.
+ * Each card uses the same glass/cyan-glow treatment as PhaseCard.
+ */
+export function WeeklyTemplate({
+  days,
+  weekLabel
+}: {
+  days: BundleWeeklyTemplateDay[];
+  weekLabel: string;
+}) {
+  return (
+    <div className="mt-6 grid gap-4 md:grid-cols-2">
+      {days.map((day, i) => (
+        <WeeklyTemplateCard key={`${day.day}-${i}`} day={day} index={i} weekLabel={weekLabel} />
+      ))}
+    </div>
+  );
+}
+
+function WeeklyTemplateCard({
+  day,
+  index,
+  weekLabel
+}: {
+  day: BundleWeeklyTemplateDay;
+  index: number;
+  weekLabel: string;
+}) {
+  const reveal = useReveal<HTMLDivElement>();
+  const tiltRef = useTilt<HTMLDivElement>({ maxX: 3, maxY: 4 });
+  const delay = `${index * 80}ms`;
+
+  return (
+    <div
+      ref={reveal.ref}
+      style={{
+        opacity: reveal.shown ? 1 : 0,
+        transform: reveal.shown ? "translateY(0)" : "translateY(14px)",
+        transition: `opacity 540ms cubic-bezier(0.2,1,0.3,1) ${delay}, transform 540ms cubic-bezier(0.2,1,0.3,1) ${delay}`,
+        perspective: "1000px"
+      }}
+    >
+      <div
+        ref={tiltRef}
+        className="relative h-full overflow-hidden rounded-2xl border border-divider bg-surface/40 p-5 transition-[border-color,box-shadow] duration-300 hover:border-cyan-300/40 hover:shadow-[0_0_36px_rgba(34,211,238,0.12)]"
+        style={
+          {
+            "--tilt-x": "0deg",
+            "--tilt-y": "0deg",
+            transform:
+              "perspective(1000px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y))",
+            transformStyle: "preserve-3d",
+            transition:
+              "transform 240ms cubic-bezier(0.2,1,0.3,1), border-color 200ms, box-shadow 240ms"
+          } as React.CSSProperties
+        }
+      >
+        <div className="flex items-baseline justify-between gap-3">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+              {weekLabel} · {day.day}
+            </p>
+            <p className="mt-1 font-display text-lg font-bold text-white">{day.sessionName}</p>
+          </div>
+          <Dumbbell className="h-4 w-4 text-cyan-300/60" aria-hidden />
+        </div>
+        <p className="mt-2 text-xs italic text-faint">{day.focus}</p>
+        <ul className="mt-4 divide-y divide-white/[0.06] rounded-xl border border-white/[0.06] bg-black/20">
+          {day.exercises.map((ex, i) => (
+            <li key={`${ex.name}-${i}`} className="flex items-start justify-between gap-3 px-3 py-2.5">
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-white">{ex.name}</p>
+                {ex.notes ? (
+                  <p className="mt-0.5 text-[10px] italic text-faint">{ex.notes}</p>
+                ) : null}
+              </div>
+              <span className="shrink-0 whitespace-nowrap text-[11px] font-semibold text-cyan-100">
+                {ex.sets}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Progression timeline — one panel per phase showing loading + intensity cues.
+ */
+export function ProgressionTimeline({
+  phases,
+  labels
+}: {
+  phases: BundleProgressionPhase[];
+  labels: { loading: string; intensity: string };
+}) {
+  return (
+    <div className="mt-6 grid gap-4 md:grid-cols-3">
+      {phases.map((p, i) => (
+        <ProgressionCard key={p.phase} phase={p} index={i} labels={labels} />
+      ))}
+    </div>
+  );
+}
+
+function ProgressionCard({
+  phase,
+  index,
+  labels
+}: {
+  phase: BundleProgressionPhase;
+  index: number;
+  labels: { loading: string; intensity: string };
+}) {
+  const reveal = useReveal<HTMLDivElement>();
+  const delay = `${index * 110}ms`;
+
+  return (
+    <div
+      ref={reveal.ref}
+      style={{
+        opacity: reveal.shown ? 1 : 0,
+        transform: reveal.shown ? "translateY(0)" : "translateY(14px)",
+        transition: `opacity 600ms cubic-bezier(0.2,1,0.3,1) ${delay}, transform 600ms cubic-bezier(0.2,1,0.3,1) ${delay}`
+      }}
+      className="relative overflow-hidden rounded-2xl border border-cyan-400/15 bg-[linear-gradient(180deg,rgba(34,211,238,0.05),rgba(34,211,238,0.01))] p-5 transition-[border-color,box-shadow] duration-300 hover:border-cyan-300/35 hover:shadow-[0_0_32px_rgba(34,211,238,0.10)]"
+    >
+      <span
+        aria-hidden
+        className="pointer-events-none absolute right-3 top-2 font-display text-5xl font-extrabold leading-none tracking-tight text-cyan-200/[0.06]"
+      >
+        {String(index + 1).padStart(2, "0")}
+      </span>
+      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+        {phase.phase} · {phase.weeks}
+      </p>
+      <div className="mt-4 space-y-3">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-faint">
+            {labels.loading}
+          </p>
+          <p className="mt-1 text-sm leading-snug text-bright/90">{phase.loadingScheme}</p>
+        </div>
+        <div className="border-t border-white/[0.06] pt-3">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-faint">
+            {labels.intensity}
+          </p>
+          <p className="mt-1 text-sm leading-snug text-cyan-100">{phase.intensityCue}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Two-column warm-up / cool-down panel with chip-style equipment list below.
+ */
+export function PrepPanel({
+  warmup,
+  cooldown,
+  equipment,
+  labels
+}: {
+  warmup: string[];
+  cooldown: string[];
+  equipment: string[];
+  labels: { warmup: string; cooldown: string; equipment: string };
+}) {
+  return (
+    <div className="mt-6 grid gap-4 lg:grid-cols-2">
+      <PrepCard title={labels.warmup} items={warmup} icon="warm" />
+      <PrepCard title={labels.cooldown} items={cooldown} icon="cool" />
+      <div className="lg:col-span-2">
+        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+          {labels.equipment}
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {equipment.map((e) => (
+            <span
+              key={e}
+              className="rounded-full border border-cyan-300/20 bg-cyan-300/[0.05] px-3 py-1.5 text-xs font-semibold text-cyan-100"
+            >
+              {e}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PrepCard({
+  title,
+  items,
+  icon
+}: {
+  title: string;
+  items: string[];
+  icon: "warm" | "cool";
+}) {
+  return (
+    <div className="rounded-2xl border border-divider bg-surface/40 p-5">
+      <div className="flex items-center gap-2">
+        {icon === "warm" ? (
+          <Flame className="h-4 w-4 text-cyan-300" aria-hidden />
+        ) : (
+          <Clock className="h-4 w-4 text-cyan-300" aria-hidden />
+        )}
+        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+          {title}
+        </p>
+      </div>
+      <ul className="mt-4 space-y-2.5">
+        {items.map((line, i) => (
+          <li key={i} className="flex items-start gap-2 text-sm leading-relaxed text-bright/90">
+            <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-300/70" aria-hidden />
+            {line}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/**
+ * Recipe grid — cards expand on click to reveal ingredients + method.
+ */
+export function RecipeGrid({
+  recipes,
+  copy
+}: {
+  recipes: BundleRecipe[];
+  copy: {
+    ingredients: string;
+    steps: string;
+    time: string;
+    kcal: string;
+    protein: string;
+    carbs: string;
+    fat: string;
+    mealTypeLabels: Record<BundleRecipe["mealType"], string>;
+  };
+}) {
+  return (
+    <div className="mt-6 grid gap-4 md:grid-cols-2">
+      {recipes.map((r, i) => (
+        <RecipeCard key={`${r.name}-${i}`} recipe={r} index={i} copy={copy} />
+      ))}
+    </div>
+  );
+}
+
+function RecipeCard({
+  recipe,
+  index,
+  copy
+}: {
+  recipe: BundleRecipe;
+  index: number;
+  copy: Parameters<typeof RecipeGrid>[0]["copy"];
+}) {
+  const [open, setOpen] = useState(false);
+  const reveal = useReveal<HTMLDivElement>();
+  const delay = `${index * 70}ms`;
+
+  return (
+    <div
+      ref={reveal.ref}
+      style={{
+        opacity: reveal.shown ? 1 : 0,
+        transform: reveal.shown ? "translateY(0)" : "translateY(12px)",
+        transition: `opacity 520ms cubic-bezier(0.2,1,0.3,1) ${delay}, transform 520ms cubic-bezier(0.2,1,0.3,1) ${delay}`
+      }}
+      className="overflow-hidden rounded-2xl border border-divider bg-surface/40 transition-[border-color,box-shadow] duration-300 hover:border-cyan-300/40 hover:shadow-[0_0_36px_rgba(34,211,238,0.12)]"
+    >
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-start justify-between gap-3 px-5 py-4 text-left"
+        aria-expanded={open}
+      >
+        <div className="min-w-0">
+          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+            {copy.mealTypeLabels[recipe.mealType]} · {recipe.time}
+          </p>
+          <p className="mt-1.5 font-display text-base font-bold text-white">{recipe.name}</p>
+          <div className="mt-3 flex flex-wrap gap-1.5 text-[10px] font-semibold">
+            <span className="rounded-full bg-cyan-300/10 px-2 py-1 text-cyan-100">
+              {recipe.kcal} {copy.kcal}
+            </span>
+            <span className="rounded-full bg-white/[0.05] px-2 py-1 text-white/85">
+              {copy.protein} {recipe.protein}g
+            </span>
+            <span className="rounded-full bg-white/[0.05] px-2 py-1 text-white/85">
+              {copy.carbs} {recipe.carbs}g
+            </span>
+            <span className="rounded-full bg-white/[0.05] px-2 py-1 text-white/85">
+              {copy.fat} {recipe.fat}g
+            </span>
+          </div>
+        </div>
+        <ChevronDown
+          className={`h-4 w-4 shrink-0 text-cyan-300/70 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+          aria-hidden
+        />
+      </button>
+      <div
+        className="grid transition-[grid-template-rows] duration-400 ease-out"
+        style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
+      >
+        <div className="overflow-hidden">
+          <div className="border-t border-white/[0.06] px-5 py-4">
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+              {copy.ingredients}
+            </p>
+            <ul className="mt-2 space-y-1.5">
+              {recipe.ingredients.map((ing, i) => (
+                <li key={i} className="text-sm leading-snug text-bright/85">
+                  · {ing}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+              {copy.steps}
+            </p>
+            <ol className="mt-2 space-y-2">
+              {recipe.steps.map((s, i) => (
+                <li key={i} className="flex gap-2.5 text-sm leading-snug text-bright/85">
+                  <span className="shrink-0 font-bold tabular-nums text-cyan-300/80">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span>{s}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Grocery list — categorized checklist with a print-friendly layout.
+ * Click to toggle a line off; state is local and resets on reload.
+ */
+export function GroceryList({ groups }: { groups: BundleGroceryCategory[] }) {
+  const [checked, setChecked] = useState<Set<string>>(new Set());
+
+  const toggle = (key: string) => {
+    setChecked((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
+
+  return (
+    <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {groups.map((group) => (
+        <div
+          key={group.category}
+          className="rounded-2xl border border-divider bg-surface/40 p-5"
+        >
+          <div className="flex items-center gap-2">
+            <ShoppingCart className="h-4 w-4 text-cyan-300" aria-hidden />
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+              {group.category}
+            </p>
+          </div>
+          <ul className="mt-3 space-y-1.5">
+            {group.items.map((it) => {
+              const key = `${group.category}|${it.item}`;
+              const isChecked = checked.has(key);
+              return (
+                <li key={key}>
+                  <button
+                    type="button"
+                    onClick={() => toggle(key)}
+                    className="flex w-full items-start gap-2.5 rounded-lg px-1 py-1 text-left transition-colors hover:bg-white/[0.03]"
+                    aria-pressed={isChecked}
+                  >
+                    <span
+                      className={`mt-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${
+                        isChecked
+                          ? "border-cyan-300 bg-cyan-300/20"
+                          : "border-white/20"
+                      }`}
+                      aria-hidden
+                    >
+                      {isChecked ? <Check className="h-3 w-3 text-cyan-200" /> : null}
+                    </span>
+                    <span
+                      className={`flex-1 text-sm leading-snug transition-colors ${
+                        isChecked ? "text-faint line-through" : "text-bright/90"
+                      }`}
+                    >
+                      {it.item}
+                    </span>
+                    <span className="shrink-0 text-[11px] font-semibold text-cyan-100/80">
+                      {it.quantity}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ))}
+    </div>
   );
 }
 

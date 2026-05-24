@@ -2,7 +2,21 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
-import { AtAGlance, DetailHero, DetailSectionNav, DownloadButton, PhaseStrip, RevealSection, ShareButton, StickyBuyBar } from "./detail-effects";
+import {
+  AtAGlance,
+  DetailHero,
+  DetailSectionNav,
+  DownloadButton,
+  GroceryList,
+  PhaseStrip,
+  PrepPanel,
+  ProgressionTimeline,
+  RecipeGrid,
+  RevealSection,
+  ShareButton,
+  StickyBuyBar,
+  WeeklyTemplate
+} from "./detail-effects";
 import { BUNDLES, getBundle, listBundleSlugs } from "@/lib/bundles";
 import { bundleProductJsonLd } from "@/lib/bundle-jsonld";
 import { getBundlesCopy } from "@/lib/bundles-copy";
@@ -63,11 +77,21 @@ export default function BundleDetailPage({
 
   const navItems = [
     { id: "training", label: d.trainingFrameworkEyebrow },
+    { id: "weekly-template", label: d.weeklyTemplateEyebrow },
+    { id: "progression", label: d.progressionEyebrow },
     { id: "sample-session", label: d.sampleSessionEyebrow },
     { id: "nutrition", label: d.nutritionEyebrow },
+    { id: "recipes", label: d.recipesEyebrow },
+    { id: "grocery", label: d.groceryEyebrow },
     { id: "sample-day", label: d.sampleDayEyebrow },
     ...(related.length > 0 ? [{ id: "more", label: d.moreBundlesTitle }] : [])
-  ];
+  ].filter((item) => {
+    if (item.id === "weekly-template") return Boolean(bundle.weeklyTemplate?.length);
+    if (item.id === "progression") return Boolean(bundle.progression?.length);
+    if (item.id === "recipes") return Boolean(bundle.recipes?.length);
+    if (item.id === "grocery") return Boolean(bundle.groceryList?.length);
+    return true;
+  });
 
   return (
     <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
@@ -180,6 +204,57 @@ export default function BundleDetailPage({
         <PhaseStrip phases={card.phases} />
       </div>
 
+      {bundle.weeklyTemplate?.length ? (
+        <RevealSection>
+          <div id="weekly-template" className="mt-14 scroll-mt-24">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
+              {d.weeklyTemplateEyebrow}
+            </p>
+            <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
+              {d.weeklyTemplateTitle}
+            </h2>
+            <p className="mt-3 text-sm text-muted">{d.weeklyTemplateNote}</p>
+            <WeeklyTemplate days={bundle.weeklyTemplate} weekLabel={copy.weeksValue(1).replace(/\s.*$/, "")} />
+          </div>
+        </RevealSection>
+      ) : null}
+
+      {bundle.progression?.length ? (
+        <RevealSection delay={60}>
+          <div id="progression" className="mt-14 scroll-mt-24">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
+              {d.progressionEyebrow}
+            </p>
+            <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
+              {d.progressionTitle}
+            </h2>
+            <ProgressionTimeline
+              phases={bundle.progression}
+              labels={{ loading: d.progressionLoading, intensity: d.progressionIntensity }}
+            />
+          </div>
+        </RevealSection>
+      ) : null}
+
+      {bundle.warmup?.length || bundle.cooldown?.length || bundle.equipment?.length ? (
+        <RevealSection delay={100}>
+          <div className="mt-14">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
+              {d.equipmentEyebrow}
+            </p>
+            <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
+              {d.equipmentTitle}
+            </h2>
+            <PrepPanel
+              warmup={bundle.warmup ?? []}
+              cooldown={bundle.cooldown ?? []}
+              equipment={bundle.equipment ?? []}
+              labels={{ warmup: d.warmupTitle, cooldown: d.cooldownTitle, equipment: d.equipmentEyebrow }}
+            />
+          </div>
+        </RevealSection>
+      ) : null}
+
       <RevealSection>
         <div id="sample-session" className="mt-14 scroll-mt-24 rounded-2xl border border-divider bg-surface/40 p-5 sm:p-7">
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
@@ -253,6 +328,48 @@ export default function BundleDetailPage({
           </p>
         </div>
       </RevealSection>
+
+      {bundle.recipes?.length ? (
+        <RevealSection delay={100}>
+          <div id="recipes" className="mt-14 scroll-mt-24">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
+              {d.recipesEyebrow}
+            </p>
+            <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
+              {d.recipesTitle}
+            </h2>
+            <p className="mt-3 text-sm text-muted">{d.recipesNote}</p>
+            <RecipeGrid
+              recipes={bundle.recipes}
+              copy={{
+                ingredients: d.recipeIngredients,
+                steps: d.recipeSteps,
+                time: d.recipeTime,
+                kcal: d.recipeKcal,
+                protein: d.recipeProtein,
+                carbs: d.recipeCarbs,
+                fat: d.recipeFat,
+                mealTypeLabels: d.mealTypeLabels
+              }}
+            />
+          </div>
+        </RevealSection>
+      ) : null}
+
+      {bundle.groceryList?.length ? (
+        <RevealSection delay={100}>
+          <div id="grocery" className="mt-14 scroll-mt-24">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
+              {d.groceryEyebrow}
+            </p>
+            <h2 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
+              {d.groceryTitle}
+            </h2>
+            <p className="mt-3 text-sm text-muted">{d.groceryNote}</p>
+            <GroceryList groups={bundle.groceryList} />
+          </div>
+        </RevealSection>
+      ) : null}
 
       <RevealSection delay={120}>
         <div id="sample-day" className="mt-14 scroll-mt-24 rounded-2xl border border-divider bg-surface/40 p-5 sm:p-7">
