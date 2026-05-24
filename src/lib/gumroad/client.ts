@@ -16,6 +16,36 @@
 
 const GUMROAD_BASE_URL = "https://api.gumroad.com/v2";
 
+/**
+ * Resolve the hosted Gumroad checkout URL for a TJFit program slug.
+ * Mapping comes from env: `GUMROAD_PRODUCT_<SLUG_IN_SCREAMING_SNAKE>=<short_url>`.
+ * Falls back to `GUMROAD_DEFAULT_PRODUCT_URL` if set.
+ *
+ * The returned URL has order tracking + email pre-fill appended so the
+ * Gumroad webhook can correlate the sale back to the originating order.
+ */
+export function getGumroadCheckoutUrl(opts: {
+  programSlug: string;
+  orderId: string;
+  email?: string;
+  userId?: string;
+}): string | null {
+  const envKey = `GUMROAD_PRODUCT_${opts.programSlug.toUpperCase().replace(/-/g, "_")}`;
+  const base =
+    process.env[envKey]?.trim() || process.env.GUMROAD_DEFAULT_PRODUCT_URL?.trim();
+  if (!base) return null;
+
+  // Gumroad accepts arbitrary query params, surfaced back in `url_params`
+  // on the sale webhook payload — we use them for idempotent fulfillment.
+  const url = new URL(base);
+  url.searchParams.set("wanted", "true");
+  url.searchParams.set("tjfit_order_id", opts.orderId);
+  url.searchParams.set("tjfit_program_slug", opts.programSlug);
+  if (opts.userId) url.searchParams.set("tjfit_user_id", opts.userId);
+  if (opts.email) url.searchParams.set("email", opts.email);
+  return url.toString();
+}
+
 class GumroadConfigError extends Error {}
 class GumroadAPIError extends Error {
   constructor(

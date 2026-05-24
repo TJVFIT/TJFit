@@ -1,15 +1,17 @@
 /**
  * `program_orders.provider` values for checkout.
- *
- * Live production payments are **Paddle Billing only**. Legacy rows may still use `live` (pre-normalization).
+ * Live production payments are Gumroad-only. Legacy `paddle` / `live` rows are
+ * tolerated by `isLegacyCheckoutStored` so existing receipts still resolve.
  */
 
-/** Written to the database for new Paddle checkouts. */
-export const STORED_CHECKOUT_PROVIDER_PADDLE = "paddle";
+export const STORED_CHECKOUT_PROVIDER_GUMROAD = "gumroad";
 
-const LEGACY_LIVE_ALIAS = "live";
+const LEGACY_PADDLE_ALIASES = ["paddle", "live"];
 
-export function isPaddleLiveCheckoutStored(provider: string): boolean {
-  const p = provider.trim().toLowerCase();
-  return p === STORED_CHECKOUT_PROVIDER_PADDLE || p === LEGACY_LIVE_ALIAS;
+export function isGumroadCheckoutStored(provider: string): boolean {
+  return provider.trim().toLowerCase() === STORED_CHECKOUT_PROVIDER_GUMROAD;
+}
+
+export function isLegacyCheckoutStored(provider: string): boolean {
+  return LEGACY_PADDLE_ALIASES.includes(provider.trim().toLowerCase());
 }

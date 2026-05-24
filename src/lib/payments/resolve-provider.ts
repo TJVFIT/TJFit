@@ -4,11 +4,9 @@ import type { PaymentProviderId, ResolvedPaymentBackend } from "@/lib/payments/t
  * Server-only: which checkout backend is active.
  *
  * PAYMENT_PROVIDER:
- * - `paddle` or `live` (alias) → Paddle Billing when PADDLE_* env is set on the server.
+ * - `gumroad` (default when env unset) → Gumroad hosted checkout.
  * - `test` → simulated completion (requires ALLOW_TEST_CHECKOUT=true).
  * - `none` / `off` → checkout disabled.
- *
- * If PAYMENT_PROVIDER is unset: test mode when ALLOW_TEST_CHECKOUT=true, else disabled.
  */
 export function resolvePaymentBackend(): ResolvedPaymentBackend {
   const allowTestCheckout = process.env.ALLOW_TEST_CHECKOUT === "true";
@@ -19,8 +17,8 @@ export function resolvePaymentBackend(): ResolvedPaymentBackend {
   if (override === "test" && allowTestCheckout) {
     return { providerId: "test", allowTestCheckout };
   }
-  if (override === "paddle" || override === "live") {
-    return { providerId: "paddle", allowTestCheckout };
+  if (override === "gumroad" || override === "") {
+    return { providerId: "gumroad", allowTestCheckout };
   }
   if (allowTestCheckout) {
     return { providerId: "test", allowTestCheckout };

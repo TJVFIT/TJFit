@@ -46,7 +46,7 @@ export default async function ProgramPage({
 
   const [{ data: logs }, { data: groceryRows }] = await Promise.all([
     supabase
-      .from("workout_logs")
+      .from("bundle_workout_logs")
       .select("week, day, exercise, set_index, reps, weight, completed")
       .eq("user_id", user.id)
       .eq("bundle_slug", bundle.slug),

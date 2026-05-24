@@ -1,19 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { paddleCreateTransaction } from "@/lib/paddle-api";
-import { isPaddleServerConfigured, parsePaddlePriceMap } from "@/lib/paddle-config";
-import { getPaddlePriceIdForSlug } from "@/lib/paddle-prices";
-import { paddleLogDebug, redactPaddleId } from "@/lib/paddle-safe-log";
-import { isPaddleLiveCheckoutStored } from "@/lib/payments/stored-provider";
+import { getGumroadCheckoutUrl } from "@/lib/gumroad/client";
+import {
+  isGumroadCheckoutStored,
+  isLegacyCheckoutStored
+} from "@/lib/payments/stored-provider";
 import { readRequestJson } from "@/lib/read-request-json";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
-const TJFIT_ORDER_CUSTOM_KEY = "tjfit_order_id";
-
 /**
- * Creates a Paddle Billing transaction and returns `transactionId` for Paddle.js
- * `Paddle.Checkout.open({ transactionId })`.
+ * Resolves the hosted Gumroad checkout URL for a pending order.
+ * Browser then redirects via window.location.href = url. Fulfillment is
+ * handled by the Gumroad webhook (`src/app/api/webhooks/gumroad/route.ts`).
  */
 export async function POST(request: NextRequest) {
   const supabase = createServerSupabaseClient();
@@ -41,7 +40,7 @@ export async function POST(request: NextRequest) {
 
   const { data: order } = await adminClient
     .from("program_orders")
-    .select("id,user_id,status,provider,program_slug,discount_percent,discount_code")
+    .select("id,user_id,status,provider,program_slug")
     .eq("id", orderId)
     .eq("user_id", user.id)
     .maybeSingle();
@@ -56,87 +55,34 @@ export async function POST(request: NextRequest) {
 
   if (order.provider === "test") {
     return NextResponse.json(
-      {
-        error:
-          "This order uses test checkout. Complete it with the simulated flow — Paddle is not used for test orders."
-      },
+      { error: "This order uses test checkout. Complete it with the simulated flow." },
       { status: 400 }
     );
   }
 
-  if (!isPaddleLiveCheckoutStored(order.provider)) {
+  if (!isGumroadCheckoutStored(order.provider) && !isLegacyCheckoutStored(order.provider)) {
     return NextResponse.json(
-      { error: "This order cannot be paid with Paddle (unrecognized provider)." },
+      { error: "This order cannot be paid (unrecognized provider)." },
       { status: 400 }
     );
   }
 
-  if (!isPaddleServerConfigured()) {
+  const url = getGumroadCheckoutUrl({
+    programSlug: order.program_slug,
+    orderId: order.id,
+    email: user.email ?? undefined,
+    userId: user.id
+  });
+
+  if (!url) {
     return NextResponse.json(
       {
-        code: "PADDLE_NOT_CONFIGURED",
-        error: "Set PADDLE_API_KEY and map catalog prices via PADDLE_PRICE_MAP or PADDLE_DEFAULT_PRICE_ID."
+        code: "GUMROAD_NOT_CONFIGURED",
+        error: `No Gumroad product URL configured for slug "${order.program_slug}". Set GUMROAD_PRODUCT_${order.program_slug.toUpperCase().replace(/-/g, "_")} or GUMROAD_DEFAULT_PRODUCT_URL.`
       },
       { status: 503 }
     );
   }
 
-  const map = parsePaddlePriceMap();
-  const priceId = getPaddlePriceIdForSlug(order.program_slug);
-  const priceSource = map[order.program_slug]
-    ? "PADDLE_PRICE_MAP"
-    : process.env.PADDLE_DEFAULT_PRICE_ID?.trim()
-      ? "PADDLE_DEFAULT_PRICE_ID"
-      : "(none)";
-
-  if (!priceId) {
-    paddleLogDebug("prepare-session", "no price id for slug", {
-      programSlug: order.program_slug,
-      mapEntryCount: Object.keys(map).length,
-      hasDefault: Boolean(process.env.PADDLE_DEFAULT_PRICE_ID?.trim())
-    });
-    return NextResponse.json(
-      {
-        error: `No Paddle price configured for slug "${order.program_slug}". Add it to PADDLE_PRICE_MAP or set PADDLE_DEFAULT_PRICE_ID.`
-      },
-      { status: 400 }
-    );
-  }
-
-  const discountPercent = Number(order.discount_percent ?? 0);
-  const paddleDiscountId =
-    discountPercent > 0 ? process.env.PADDLE_WALLET_DISCOUNT_ID?.trim() || null : null;
-
-  paddleLogDebug("prepare-session", "creating Paddle transaction", {
-    orderId: redactPaddleId(order.id, 12),
-    programSlug: order.program_slug,
-    priceSource,
-    priceId: redactPaddleId(priceId, 16),
-    discountPercent,
-    hasPaddleDiscountId: Boolean(paddleDiscountId)
-  });
-
-  const created = await paddleCreateTransaction({
-    items: [{ priceId, quantity: 1 }],
-    customData: {
-      [TJFIT_ORDER_CUSTOM_KEY]: order.id,
-      tjfit_user_id: user.id,
-      tjfit_program_slug: order.program_slug
-    },
-    discountId: paddleDiscountId
-  });
-
-  if ("error" in created) {
-    return NextResponse.json({ error: created.error }, { status: 502 });
-  }
-
-  paddleLogDebug("prepare-session", "transaction ready for checkout.open", {
-    orderId: redactPaddleId(order.id, 12),
-    transactionId: redactPaddleId(created.id, 18)
-  });
-
-  return NextResponse.json({
-    transactionId: created.id,
-    customerEmail: user.email ?? undefined
-  });
+  return NextResponse.json({ url, customerEmail: user.email ?? undefined });
 }

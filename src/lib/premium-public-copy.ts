@@ -339,18 +339,18 @@ const checkout: Record<Locale, CheckoutCopy> = {
     discountStore: "Redeem offers",
     redeem: "Redeem",
     footnote:
-      "Checkout uses Paddle for cards, PayPal, and other methods you enable in your Paddle dashboard. Test mode completes instantly for development.",
+      "Checkout uses Gumroad for cards, PayPal, and other methods you enable in your Gumroad dashboard. Test mode completes instantly for development.",
     pendingTitle: "Order secured",
     pendingBody:
-      "Your order is saved. Open Paddle checkout below to pay — you are not charged until you complete the payment step.",
+      "Your order is saved. Open Gumroad checkout below to pay — you are not charged until you complete the payment step.",
     amountDue: "Amount due",
     gatewayPayCta: "Open secure checkout",
     paddleOpening: "Opening checkout…",
-    paddleInitError: "Add NEXT_PUBLIC_PADDLE_CLIENT_TOKEN to your site environment (Paddle seller dashboard → Developer tools).",
+    paddleInitError: "Add NEXT_PUBLIC_GUMROAD_DEFAULT_PRODUCT_URL to your site environment (Gumroad seller dashboard → Developer tools).",
     paddleWebhookWait: "Payment is processing. Your wallet may take a few seconds to update — you can refresh this page.",
     errorPrefix: "Something went wrong.",
     successPurchase: "Purchase completed.",
-    securePaymentTrust: "Secure payment via Paddle. Instant access after payment."
+    securePaymentTrust: "Secure payment via Gumroad. Instant access after payment."
   },
   tr: {
     badge: "Odeme",
@@ -373,18 +373,18 @@ const checkout: Record<Locale, CheckoutCopy> = {
     discountStore: "Teklifleri kullan",
     redeem: "Kullan",
     footnote:
-      "Odeme Paddle uzerinden yapilir; Paddle panelinde actiginiz yontemler gorunur. Test modu gelistirme icin aninda tamamlar.",
+      "Odeme Gumroad uzerinden yapilir; Gumroad panelinde actiginiz yontemler gorunur. Test modu gelistirme icin aninda tamamlar.",
     pendingTitle: "Siparis kaydedildi",
     pendingBody:
       "Siparisiniz saklandi. Asagidaki guvenli odeme adimini acin — odeme tamamlanana kadar tahsilat yapilmaz.",
     amountDue: "Odenecek tutar",
     gatewayPayCta: "Guvenli odemeyi ac",
     paddleOpening: "Odeme aciliyor…",
-    paddleInitError: "NEXT_PUBLIC_PADDLE_CLIENT_TOKEN ortam degiskenini ekleyin (Paddle gelistirici araclari).",
+    paddleInitError: "NEXT_PUBLIC_GUMROAD_DEFAULT_PRODUCT_URL ortam degiskenini ekleyin (Gumroad gelistirici araclari).",
     paddleWebhookWait: "Odeme isleniyor. Cuzdan birkaç saniye gecikebilir; sayfayi yenileyebilirsiniz.",
     errorPrefix: "Bir sorun olustu.",
     successPurchase: "Satin alma tamamlandi.",
-    securePaymentTrust: "Guvenli odeme Paddle ile. Odeme sonrasi aninda erisim."
+    securePaymentTrust: "Guvenli odeme Gumroad ile. Odeme sonrasi aninda erisim."
   },
   ar: {
     badge: "الدفع",
@@ -407,18 +407,18 @@ const checkout: Record<Locale, CheckoutCopy> = {
     discountStore: "استبدال العروض",
     redeem: "استبدال",
     footnote:
-      "الدفع عبر Paddle؛ تظهر الطرق التي تفعّلها في لوحة Paddle. وضع الاختبار يكمل فوراً للتطوير.",
+      "الدفع عبر Gumroad؛ تظهر الطرق التي تفعّلها في لوحة Gumroad. وضع الاختبار يكمل فوراً للتطوير.",
     pendingTitle: "تم حفظ الطلب",
     pendingBody:
       "طلبك محفوظ. افتح نافذة الدفع الآمنة أدناه — لا يُخصم المبلغ حتى تكمل الدفع.",
     amountDue: "المبلغ المستحق",
     gatewayPayCta: "افتح الدفع الآمن",
     paddleOpening: "جاري فتح الدفع…",
-    paddleInitError: "أضف NEXT_PUBLIC_PADDLE_CLIENT_TOKEN إلى إعدادات الموقع (أدوات المطوّر في Paddle).",
+    paddleInitError: "أضف NEXT_PUBLIC_GUMROAD_DEFAULT_PRODUCT_URL إلى إعدادات الموقع (أدوات المطوّر في Gumroad).",
     paddleWebhookWait: "جاري معالجة الدفع. قد يتأخر تحديث المحفظة ثوانٍ — يمكنك تحديث الصفحة.",
     errorPrefix: "حدث خطأ.",
     successPurchase: "اكتملت عملية الشراء.",
-    securePaymentTrust: "دفع آمن عبر Paddle. وصول فوري بعد الدفع."
+    securePaymentTrust: "دفع آمن عبر Gumroad. وصول فوري بعد الدفع."
   },
   es: {
     badge: "Pago",
@@ -441,18 +441,18 @@ const checkout: Record<Locale, CheckoutCopy> = {
     discountStore: "Canjear ofertas",
     redeem: "Canjear",
     footnote:
-      "El pago es con Paddle; veras los metodos que actives en el panel de Paddle. El modo test completa al instante.",
+      "El pago es con Gumroad; veras los metodos que actives en el panel de Gumroad. El modo test completa al instante.",
     pendingTitle: "Pedido guardado",
     pendingBody:
       "Tu pedido esta guardado. Abre el checkout seguro abajo — no se cobra hasta que completes el pago.",
     amountDue: "Importe a pagar",
     gatewayPayCta: "Abrir pago seguro",
     paddleOpening: "Abriendo checkout…",
-    paddleInitError: "Anade NEXT_PUBLIC_PADDLE_CLIENT_TOKEN al entorno del sitio (herramientas para desarrolladores de Paddle).",
+    paddleInitError: "Anade NEXT_PUBLIC_GUMROAD_DEFAULT_PRODUCT_URL al entorno del sitio (herramientas para desarrolladores de Gumroad).",
     paddleWebhookWait: "Procesando el pago. La cartera puede tardar unos segundos; puedes actualizar la pagina.",
     errorPrefix: "Algo salio mal.",
     successPurchase: "Compra completada.",
-    securePaymentTrust: "Pago seguro con Paddle. Acceso instantaneo tras pagar."
+    securePaymentTrust: "Pago seguro con Gumroad. Acceso instantaneo tras pagar."
   },
   fr: {
     badge: "Paiement",
@@ -475,7 +475,7 @@ const checkout: Record<Locale, CheckoutCopy> = {
     discountStore: "Echanger des offres",
     redeem: "Echanger",
     footnote:
-      "Paiement via Paddle ; les methodes affichees correspondent a votre tableau de bord Paddle. Le mode test termine instantanement.",
+      "Paiement via Gumroad ; les methodes affichees correspondent a votre tableau de bord Gumroad. Le mode test termine instantanement.",
     pendingTitle: "Commande enregistree",
     pendingBody:
       "Votre commande est sauvegardee. Ouvrez le paiement securise ci-dessous — rien n'est debite tant que vous n'avez pas termine.",
@@ -483,12 +483,12 @@ const checkout: Record<Locale, CheckoutCopy> = {
     gatewayPayCta: "Ouvrir le paiement securise",
     paddleOpening: "Ouverture du paiement…",
     paddleInitError:
-      "Ajoutez NEXT_PUBLIC_PADDLE_CLIENT_TOKEN a l'environnement du site (outils developpeur Paddle).",
+      "Ajoutez NEXT_PUBLIC_GUMROAD_DEFAULT_PRODUCT_URL a l'environnement du site (outils developpeur Gumroad).",
     paddleWebhookWait:
       "Paiement en cours. Le portefeuille peut mettre quelques secondes a se mettre a jour — actualisez la page.",
     errorPrefix: "Une erreur s'est produite.",
     successPurchase: "Achat termine.",
-    securePaymentTrust: "Paiement securise via Paddle. Acces immediat apres paiement."
+    securePaymentTrust: "Paiement securise via Gumroad. Acces immediat apres paiement."
   }
 };
 

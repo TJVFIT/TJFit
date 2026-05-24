@@ -7,11 +7,11 @@
 //
 // Tier 1 is the only tier wired live in this commit. Tier 2 and Tier 3
 // values are defined but the consuming UI (catalog cards, /pro page,
-// Paddle checkout product mapping) only reads from Tier 1 until the
-// owner flips the per-tier Paddle product IDs in env.
+// Gumroad checkout product mapping) only reads from Tier 1 until the
+// owner flips the per-tier Gumroad product IDs in env.
 //
 // To activate a tier:
-//   1. Create matching Paddle products + price IDs in your Paddle dashboard
+//   1. Create matching Gumroad products + price IDs in your Gumroad dashboard
 //   2. Set the env vars (see `tierActiveFlag` below)
 //   3. Tier resolution then routes by request country header / user profile
 

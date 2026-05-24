@@ -6,7 +6,7 @@
  * - CHECKOUT_PROMO_PAIRS — comma-separated CODE:PERCENT (no JSON; reliable on Vercel), e.g. JOSEPH1407:99
  * - CHECKOUT_PROMO_CODE + CHECKOUT_PROMO_PERCENT — single code, e.g. JOSEPH1407 and 99
  *
- * Codes are matched case-insensitively. prepare-session needs PADDLE_WALLET_DISCOUNT_ID (dsc_…) matching that % in Paddle.
+ * Codes are matched case-insensitively. prepare-session needs PADDLE_WALLET_DISCOUNT_ID (dsc_…) matching that % in Gumroad.
  */
 
 function parsePercent(value: unknown): number | null {

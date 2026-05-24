@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 // Gumroad webhook endpoint (master upgrade prompt v2, Phase 2.3).
 //
 // Per founder direction: Gumroad is the primary merchant of record
-// after Paddle/Stripe rejections. This route receives lifecycle
+// after Gumroad/Stripe rejections. This route receives lifecycle
 // events and routes them to the right handlers.
 //
 // Subscribe to (in Gumroad dashboard): sale, refund, cancellation,

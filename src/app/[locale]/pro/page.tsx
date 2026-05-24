@@ -123,7 +123,7 @@ export default function ProPage({ params }: { params: { locale: string } }) {
           before they see what each subscription costs. */}
       <TjaiUsageTierTable locale={locale} />
 
-      {/* Existing Pro/Apex comparison + Paddle checkout. Reused as-is so the
+      {/* Existing Pro/Apex comparison + Gumroad checkout. Reused as-is so the
           /membership route keeps working in parallel during the transition. */}
       <MembershipPricing locale={locale} />
     </PremiumPageShell>

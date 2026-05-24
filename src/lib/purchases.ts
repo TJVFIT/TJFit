@@ -2,7 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 /**
  * Purchase / entitlement checks backed by `program_orders` (paid status).
- * Fulfillment runs via Paddle webhook → `fulfillProgramOrderPaid` (no separate `purchases` table).
+ * Fulfillment runs via Gumroad webhook → `fulfillProgramOrderPaid` (no separate `purchases` table).
  */
 
 export async function hasPurchasedProgram(

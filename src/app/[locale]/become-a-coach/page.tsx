@@ -52,7 +52,7 @@ const COPY: Record<Locale, {
     faqTitle: "Frequently Asked Questions",
     faqs: [
       { q: "What % does TJFit take?", a: "TJFit takes a platform fee. You keep the majority. Exact % shared upon approval." },
-      { q: "Who handles payments?", a: "TJFit via Paddle. Earnings paid monthly to your bank account." },
+      { q: "Who handles payments?", a: "TJFit via Gumroad. Earnings paid monthly to your bank account." },
       { q: "Can I publish in multiple languages?", a: "Yes — any of our 5 supported languages." }
     ]
   },
@@ -85,7 +85,7 @@ const COPY: Record<Locale, {
     faqTitle: "Sıkça Sorulan Sorular",
     faqs: [
       { q: "TJFit ne kadar kesinti yapar?", a: "TJFit platform ücreti alır. Büyük çoğunluğu siz alırsınız. Kesin oran onay sonrası paylaşılır." },
-      { q: "Ödemeleri kim yönetir?", a: "TJFit, Paddle aracılığıyla. Kazançlar aylık banka hesabınıza yatırılır." },
+      { q: "Ödemeleri kim yönetir?", a: "TJFit, Gumroad aracılığıyla. Kazançlar aylık banka hesabınıza yatırılır." },
       { q: "Birden fazla dilde yayınlayabilir miyim?", a: "Evet — desteklenen 5 dilden herhangi birinde." }
     ]
   },
@@ -118,7 +118,7 @@ const COPY: Record<Locale, {
     faqTitle: "أسئلة متكررة",
     faqs: [
       { q: "ما نسبة رسوم TJFit؟", a: "TJFit تأخذ رسوم منصة. الأغلبية لك. النسبة الدقيقة تُشارك عند الموافقة." },
-      { q: "من يتولى المدفوعات؟", a: "TJFit عبر Paddle. الأرباح تُدفع شهرياً." },
+      { q: "من يتولى المدفوعات؟", a: "TJFit عبر Gumroad. الأرباح تُدفع شهرياً." },
       { q: "هل يمكنني النشر بعدة لغات؟", a: "نعم — أي من اللغات الخمس المدعومة." }
     ]
   },
@@ -151,7 +151,7 @@ const COPY: Record<Locale, {
     faqTitle: "Preguntas Frecuentes",
     faqs: [
       { q: "¿Qué % toma TJFit?", a: "TJFit cobra una tarifa de plataforma. Tú te quedas la mayoría. El % exacto se comparte tras la aprobación." },
-      { q: "¿Quién gestiona los pagos?", a: "TJFit a través de Paddle. Ganancias pagadas mensualmente." },
+      { q: "¿Quién gestiona los pagos?", a: "TJFit a través de Gumroad. Ganancias pagadas mensualmente." },
       { q: "¿Puedo publicar en varios idiomas?", a: "Sí, en cualquiera de los 5 idiomas admitidos." }
     ]
   },
@@ -184,7 +184,7 @@ const COPY: Record<Locale, {
     faqTitle: "Questions Fréquentes",
     faqs: [
       { q: "Quel % prend TJFit ?", a: "TJFit prend des frais de plateforme. Vous gardez la majorité. Le % exact est partagé après approbation." },
-      { q: "Qui gère les paiements ?", a: "TJFit via Paddle. Les gains sont versés mensuellement." },
+      { q: "Qui gère les paiements ?", a: "TJFit via Gumroad. Les gains sont versés mensuellement." },
       { q: "Puis-je publier en plusieurs langues ?", a: "Oui — dans l'une de nos 5 langues prises en charge." }
     ]
   }

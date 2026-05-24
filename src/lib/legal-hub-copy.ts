@@ -63,7 +63,7 @@ const faqEn: { id: string; q: string; a: string }[] = [
   {
     id: "payments",
     q: "What payment methods are accepted?",
-    a: "All major credit and debit cards, via our secure payment partner Paddle."
+    a: "All major credit and debit cards, via our secure payment partner Gumroad."
   },
   {
     id: "privacy-data",
@@ -121,7 +121,7 @@ const faqTr: { id: string; q: string; a: string }[] = [
   {
     id: "payments",
     q: "Hangi odeme yontemleri kabul edilir?",
-    a: "Guvenli odeme ortagimiz Paddle uzerinden tum major kredi ve banka kartlari."
+    a: "Guvenli odeme ortagimiz Gumroad uzerinden tum major kredi ve banka kartlari."
   },
   {
     id: "privacy-data",
@@ -155,7 +155,7 @@ function faqFor(locale: Locale) {
 }
 
 const privacyEn = [
-  "1. Data we collect: name, email, fitness preferences, and program usage. We do not collect payment card numbers (handled by Paddle).",
+  "1. Data we collect: name, email, fitness preferences, and program usage. We do not collect payment card numbers (handled by Gumroad).",
   "2. How we use your data: to provide and improve the TJFit platform; to send account-related notifications. We do not sell your data.",
   "3. Data storage: data is stored securely via Supabase on encrypted servers.",
   "4. Your rights: you can request data export or deletion at any time. Contact: support@tjfit.org.",
@@ -163,7 +163,7 @@ const privacyEn = [
 ];
 
 const privacyTr = [
-  "1. Toplanan veriler: ad, e-posta, fitness tercihleri ve program kullanimi. Odeme karti numaralari toplanmaz (Paddle isler).",
+  "1. Toplanan veriler: ad, e-posta, fitness tercihleri ve program kullanimi. Odeme karti numaralari toplanmaz (Gumroad isler).",
   "2. Kullanim: TJFit'i sunmak ve gelistirmek; hesap bildirimleri. Verilerinizi satmayiz.",
   "3. Saklama: veriler Supabase uzerinde sifreli sunucularda guvenle tutulur.",
   "4. Haklariniz: dilediginiz zaman veri aktarimi veya silme talep edebilirsiniz. Iletisim: support@tjfit.org.",
@@ -171,7 +171,7 @@ const privacyTr = [
 ];
 
 const privacyAr = [
-  "1. البيانات: الاسم والبريد وتفضيلات اللياقة واستخدام البرامج. لا نجمع أرقام البطاقات (تتولى Paddle ذلك).",
+  "1. البيانات: الاسم والبريد وتفضيلات اللياقة واستخدام البرامج. لا نجمع أرقام البطاقات (تتولى Gumroad ذلك).",
   "2. الاستخدام: لتقديم TJFit وتحسينه وإشعارات الحساب. لا نبيع بياناتك.",
   "3. التخزين: عبر Supabase على خوادم مشفرة.",
   "4. الحقوق: يمكنك طلب تصدير أو حذف البيانات. support@tjfit.org",
@@ -179,7 +179,7 @@ const privacyAr = [
 ];
 
 const privacyEs = [
-  "1. Datos: nombre, email, preferencias de fitness y uso de programas. No recopilamos datos de tarjeta (Paddle).",
+  "1. Datos: nombre, email, preferencias de fitness y uso de programas. No recopilamos datos de tarjeta (Gumroad).",
   "2. Uso: operar y mejorar TJFit; notificaciones de cuenta. No vendemos datos.",
   "3. Almacenamiento: Supabase en servidores cifrados.",
   "4. Derechos: exportacion o borrado bajo solicitud. support@tjfit.org",
@@ -187,7 +187,7 @@ const privacyEs = [
 ];
 
 const privacyFr = [
-  "1. Donnees : nom, email, preferences fitness, usage des programmes. Pas de numeros de carte (Paddle).",
+  "1. Donnees : nom, email, preferences fitness, usage des programmes. Pas de numeros de carte (Gumroad).",
   "2. Usage : fournir et ameliorer TJFit ; notifications de compte. Pas de revente de donnees.",
   "3. Stockage : Supabase sur serveurs chiffres.",
   "4. Droits : export ou suppression sur demande. support@tjfit.org",
@@ -305,7 +305,7 @@ const userTermsBody: Record<Locale, string[]> = {
     "1. Eligibility — You must be 16 years or older to use TJFit.",
     "2. Account responsibility — You are responsible for maintaining the security of your account. Do not share your login credentials.",
     "3. Acceptable use — You may not use TJFit to harass other users, distribute harmful content, or attempt to access other users' data.",
-    "4. Purchases — Payments are processed by Paddle, our Merchant of Record. You are entitled to a full refund if requested within 14 days of purchase. Refund requests are handled directly by Paddle in accordance with their refund policy at paddle.net.",
+    "4. Purchases — Payments are processed by Gumroad, our Merchant of Record. You are entitled to a full refund if requested within 14 days of purchase. Refund requests are handled directly by Gumroad in accordance with their refund policy at gumroad.com/refunds.",
     "5. Content — TJFit programs and diet plans are for informational purposes. Consult a medical professional before starting any fitness program.",
     "6. Termination — TJFit reserves the right to suspend accounts that violate these terms."
   ],
@@ -314,7 +314,7 @@ const userTermsBody: Record<Locale, string[]> = {
     "1. Uygunluk — TJFit 16 yas ve uzeri icindir.",
     "2. Hesap — Guvenlik sizin sorumlulugunuzdur; giris bilgilerini paylasmayin.",
     "3. Kullanim — Taciz, zararli icerik veya baskalarinin verilerine yetkisiz erisim yasaktir.",
-    "4. Satinalmalar — Odemeler, Kayitli Satici olarak Paddle tarafindan islenir. Satin alma tarihinden itibaren 14 gun icerisinde yapilan iade talepleri Paddle tarafindan paddle.net uzerinden karsilanir.",
+    "4. Satinalmalar — Odemeler, Kayitli Satici olarak Gumroad tarafindan islenir. Satin alma tarihinden itibaren 14 gun icerisinde yapilan iade talepleri Gumroad tarafindan gumroad.com/refunds uzerinden karsilanir.",
     "5. Icerik — Programlar bilgilendiricidir; baslamadan once doktorunuza danisin.",
     "6. Sonlandirma — Ihlalde hesap askiya alinabilir."
   ],
@@ -323,7 +323,7 @@ const userTermsBody: Record<Locale, string[]> = {
     "1. الأهلية — يجب أن يكون عمرك 16 عامًا فأكثر.",
     "2. الحساب — أنت مسؤول عن أمان حسابك.",
     "3. الاستخدام المقبول — ممنوع المضايقة أو المحتوى الضار أو الوصول غير المصرح به لبيانات الآخرين.",
-    "4. المشتريات — تُعالَج المدفوعات عبر Paddle بصفتها التاجر الرسمي. يحق لك استرداد كامل المبلغ إذا طلبت ذلك خلال 14 يومًا من تاريخ الشراء عبر paddle.net.",
+    "4. المشتريات — تُعالَج المدفوعات عبر Gumroad بصفتها التاجر الرسمي. يحق لك استرداد كامل المبلغ إذا طلبت ذلك خلال 14 يومًا من تاريخ الشراء عبر gumroad.com/refunds.",
     "5. المحتوى — لأغراض معلوماتية؛ استشر مختصًا صحيًا قبل البدء.",
     "6. الإيقاف — يجوز تعليق الحسابات المخالفة."
   ],
@@ -332,7 +332,7 @@ const userTermsBody: Record<Locale, string[]> = {
     "1. Elegibilidad — debes tener 16 años o más.",
     "2. Cuenta — eres responsable de la seguridad de tu cuenta.",
     "3. Uso aceptable — no acosar, no contenido dañino ni acceso no autorizado a datos ajenos.",
-    "4. Compras — Los pagos son procesados por Paddle como Merchant of Record. Tienes derecho a un reembolso completo si lo solicitas dentro de los 14 días de la compra a través de paddle.net.",
+    "4. Compras — Los pagos son procesados por Gumroad como Merchant of Record. Tienes derecho a un reembolso completo si lo solicitas dentro de los 14 días de la compra a través de gumroad.com/refunds.",
     "5. Contenido — informativo; consulta a un profesional de salud antes de empezar.",
     "6. Terminacion — TJFit puede suspender cuentas que incumplan."
   ],
@@ -341,7 +341,7 @@ const userTermsBody: Record<Locale, string[]> = {
     "1. Eligibilite — 16 ans minimum.",
     "2. Compte — vous assurez la securite de votre compte.",
     "3. Usage — pas de harcelement, contenu nuisible ou acces non autorise aux donnees d'autrui.",
-    "4. Achats — Les paiements sont traités par Paddle en tant que Merchant of Record. Vous avez droit à un remboursement complet si vous en faites la demande dans les 14 jours suivant l'achat via paddle.net.",
+    "4. Achats — Les paiements sont traités par Gumroad en tant que Merchant of Record. Vous avez droit à un remboursement complet si vous en faites la demande dans les 14 jours suivant l'achat via gumroad.com/refunds.",
     "5. Contenu — a titre informatif ; consultez un professionnel de sante avant de commencer.",
     "6. Resiliation — suspension possible en cas de violation."
   ]

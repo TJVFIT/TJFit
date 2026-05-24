@@ -16,7 +16,6 @@
     "brand:assets": "node scripts/generate-brand-assets.mjs"
   },
   "dependencies": {
-    "@paddle/paddle-js": "1.6.2",
     "@radix-ui/react-navigation-menu": "^1.2.14",
     "@react-three/drei": "^9.122.0",
     "@react-three/fiber": "^8.18.0",

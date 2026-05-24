@@ -1,11 +1,11 @@
 /**
  * Checkout provider resolution (env) and `program_orders.provider` storage.
  *
- * - `paddle` — Paddle Billing (live). Env: PAYMENT_PROVIDER=paddle or live (alias).
- * - `test` — Simulated paid completion when ALLOW_TEST_CHECKOUT=true.
+ * - `gumroad` — Gumroad hosted checkout (Merchant of Record). Default live.
+ * - `test`    — Simulated paid completion when ALLOW_TEST_CHECKOUT=true.
  */
 
-export type PaymentProviderId = "paddle" | "test";
+export type PaymentProviderId = "gumroad" | "test";
 
 export type ResolvedPaymentBackend = {
   /** Active provider for new orders, or null if checkout must be disabled. */
@@ -16,12 +16,11 @@ export type ResolvedPaymentBackend = {
 
 /**
  * What the browser should do after `POST /api/checkout/create-order` succeeds.
- * `await_gateway` is the Paddle overlay handoff (name kept for minimal UI churn).
  */
 export type CheckoutClientFlow =
   | { action: "complete_simulated"; orderId: string }
   | {
-      action: "await_gateway";
+      action: "redirect_gumroad";
       orderId: string;
-      amount: { value: number; currency: string };
+      url: string;
     };

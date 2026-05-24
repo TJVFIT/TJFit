@@ -13,7 +13,7 @@ import crypto from "node:crypto";
 // re-parsed object will not produce a byte-equivalent string and the
 // signature check will fail.
 
-export const MAX_AGE_SEC = 300; // 5 minutes — match Paddle equivalent.
+export const MAX_AGE_SEC = 300; // 5 minutes — match Gumroad equivalent.
 
 export function verifyGumroadWebhookSignature(
   rawBody: string,
@@ -35,7 +35,7 @@ export function verifyGumroadWebhookSignature(
 /**
  * Best-effort replay-window check on Gumroad webhook payloads.
  *
- * IMPORTANT CAVEAT: Unlike Paddle, Gumroad does NOT include a signed
+ * IMPORTANT CAVEAT: Unlike Gumroad, Gumroad does NOT include a signed
  * timestamp in the signature scheme. This check uses a timestamp from
  * INSIDE the body (`sale_timestamp` for sale events, `timestamp` /
  * `created_at` for others) — these fields ARE covered by the body

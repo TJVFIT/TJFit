@@ -1,7 +1,10 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { TJFIT_COINS_PER_PROGRAM_PURCHASE } from "@/lib/tjfit-coin";
-import { isPaddleLiveCheckoutStored } from "@/lib/payments/stored-provider";
+import {
+  isGumroadCheckoutStored,
+  isLegacyCheckoutStored
+} from "@/lib/payments/stored-provider";
 import { TJCOIN_REWARDS } from "@/lib/tjcoin-events";
 
 export type FulfillOrderResult =
@@ -10,14 +13,14 @@ export type FulfillOrderResult =
 
 /**
  * Marks a program order paid, credits TJFITcoin atomically via SQL function,
- * and consumes a wallet discount code if present. Safe under Paddle webhook
+ * and consumes a wallet discount code if present. Safe under Gumroad webhook
  * redelivery: ledger uniqueness and the order status transition both guard
  * against double-effects.
  */
 export async function fulfillProgramOrderPaid(
   adminClient: SupabaseClient,
   orderId: string,
-  opts?: { requirePaddleLiveOrder?: boolean }
+  opts?: { requireLiveOrder?: boolean }
 ): Promise<FulfillOrderResult> {
   const rewardAmount = TJCOIN_REWARDS.program_purchase ?? TJFIT_COINS_PER_PROGRAM_PURCHASE;
   const { data: existingOrder, error: fetchErr } = await adminClient
@@ -30,8 +33,12 @@ export async function fulfillProgramOrderPaid(
     return { ok: false, error: "Order not found" };
   }
 
-  if (opts?.requirePaddleLiveOrder && !isPaddleLiveCheckoutStored(existingOrder.provider)) {
-    return { ok: false, error: "Order is not a Paddle live checkout" };
+  if (
+    opts?.requireLiveOrder &&
+    !isGumroadCheckoutStored(existingOrder.provider) &&
+    !isLegacyCheckoutStored(existingOrder.provider)
+  ) {
+    return { ok: false, error: "Order is not a live checkout" };
   }
 
   if (existingOrder.status !== "paid" && existingOrder.status !== "pending") {

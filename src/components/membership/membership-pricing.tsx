@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { initializePaddle, type Paddle } from "@paddle/paddle-js";
 
 import { Button } from "@/components/ui/Button";
 import { type Locale } from "@/lib/i18n";
@@ -38,8 +37,6 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
   const [working, setWorking] = useState<"pro" | "apex" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saveBadgeVisible, setSaveBadgeVisible] = useState(false);
-  const paddlePromiseRef = useRef<Promise<Paddle | undefined> | null>(null);
-
   const annualSavings = getAnnualSavingsPercent(TJAI_SUBSCRIPTION_PRICES_USD.pro.monthly, TJAI_SUBSCRIPTION_PRICES_USD.pro.annual);
   const price = useMemo(
     () => ({
@@ -61,41 +58,24 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
     }
   };
 
-  const checkout = async (tier: "pro" | "apex") => {
+  const checkout = (tier: "pro" | "apex") => {
     setError(null);
     setWorking(tier);
     try {
-      const priceId =
+      const url =
         tier === "pro"
           ? mode === "monthly"
-            ? process.env.NEXT_PUBLIC_PADDLE_PRO_MONTHLY_PRICE_ID?.trim()
-            : process.env.NEXT_PUBLIC_PADDLE_PRO_ANNUAL_PRICE_ID?.trim()
+            ? process.env.NEXT_PUBLIC_GUMROAD_PRO_MONTHLY_URL?.trim()
+            : process.env.NEXT_PUBLIC_GUMROAD_PRO_ANNUAL_URL?.trim()
           : mode === "monthly"
-            ? process.env.NEXT_PUBLIC_PADDLE_APEX_MONTHLY_PRICE_ID?.trim()
-            : process.env.NEXT_PUBLIC_PADDLE_APEX_ANNUAL_PRICE_ID?.trim();
-      const token = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN?.trim();
-      if (!priceId || !token) {
-        throw new Error(copy.checkoutError);
-      }
-      if (!paddlePromiseRef.current) {
-        const env = (process.env.NEXT_PUBLIC_PADDLE_ENVIRONMENT ?? process.env.NEXT_PUBLIC_PADDLE_ENV ?? "production")
-          .trim()
-          .toLowerCase();
-        paddlePromiseRef.current = initializePaddle({ environment: env === "sandbox" ? "sandbox" : "production", token });
-      }
-      const paddle = await paddlePromiseRef.current;
-      if (!paddle) throw new Error(copy.checkoutError);
-      const origin = typeof window !== "undefined" ? window.location.origin : "";
-      paddle.Checkout.open({
-        items: [{ priceId, quantity: 1 }],
-        settings: {
-          displayMode: "overlay",
-          theme: "dark",
-          locale,
-          successUrl: `${origin}/${locale}/membership?status=success&tier=${tier}`
-        },
-        customData: { tier, billing_mode: mode }
-      });
+            ? process.env.NEXT_PUBLIC_GUMROAD_APEX_MONTHLY_URL?.trim()
+            : process.env.NEXT_PUBLIC_GUMROAD_APEX_ANNUAL_URL?.trim();
+      if (!url) throw new Error(copy.checkoutError);
+      const target = new URL(url);
+      target.searchParams.set("wanted", "true");
+      target.searchParams.set("tjfit_tier", tier);
+      target.searchParams.set("tjfit_billing_mode", mode);
+      window.location.href = target.toString();
     } catch (e) {
       setError(e instanceof Error ? e.message : copy.checkoutError);
     } finally {
@@ -204,7 +184,7 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
             $<span className="tabular-nums">{proPriceDisplay}</span>{" "}
             <span className="text-sm font-medium text-muted">{mode === "monthly" ? copy.perMonthSuffix : copy.perYearSuffix}</span>
           </p>
-          <Button className="mt-4 w-full" disabled={working !== null} onClick={() => void checkout("pro")}>
+          <Button className="mt-4 w-full" disabled={working !== null} onClick={() => checkout("pro")}>
             {working === "pro" ? "..." : copy.cards.pro.cta}
           </Button>
           <ul className="mt-4 space-y-2 text-sm text-muted">
@@ -229,7 +209,7 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
             $<span className="tabular-nums">{apexPriceDisplay}</span>{" "}
             <span className="text-sm font-medium text-muted">{mode === "monthly" ? copy.perMonthSuffix : copy.perYearSuffix}</span>
           </p>
-          <Button className="tj-cta-sheen mt-4 w-full bg-gradient-to-r from-cyan-400 to-sky-500 font-bold text-white shadow-[0_0_24px_rgba(34,211,238,0.22)] transition-[transform,box-shadow,filter] duration-200 hover:scale-[1.01] hover:shadow-[0_0_36px_rgba(34,211,238,0.35)] hover:brightness-110" disabled={working !== null} onClick={() => void checkout("apex")}>
+          <Button className="tj-cta-sheen mt-4 w-full bg-gradient-to-r from-cyan-400 to-sky-500 font-bold text-white shadow-[0_0_24px_rgba(34,211,238,0.22)] transition-[transform,box-shadow,filter] duration-200 hover:scale-[1.01] hover:shadow-[0_0_36px_rgba(34,211,238,0.35)] hover:brightness-110" disabled={working !== null} onClick={() => checkout("apex")}>
             {working === "apex" ? "..." : copy.cards.apex.cta}
           </Button>
           <ul className="mt-4 space-y-2 text-sm text-muted">

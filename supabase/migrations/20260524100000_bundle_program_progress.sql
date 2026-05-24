@@ -14,7 +14,7 @@ create table if not exists public.program_enrollments (
 create index if not exists program_enrollments_user_idx
   on public.program_enrollments(user_id);
 
-create table if not exists public.workout_logs (
+create table if not exists public.bundle_workout_logs (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
   bundle_slug text not null,
@@ -29,8 +29,8 @@ create table if not exists public.workout_logs (
   unique (user_id, bundle_slug, week, day, exercise, set_index)
 );
 
-create index if not exists workout_logs_user_bundle_week_idx
-  on public.workout_logs(user_id, bundle_slug, week);
+create index if not exists bundle_workout_logs_user_bundle_week_idx
+  on public.bundle_workout_logs(user_id, bundle_slug, week);
 
 create table if not exists public.grocery_checks (
   user_id uuid not null references auth.users(id) on delete cascade,
@@ -42,13 +42,13 @@ create table if not exists public.grocery_checks (
 );
 
 alter table public.program_enrollments enable row level security;
-alter table public.workout_logs enable row level security;
+alter table public.bundle_workout_logs enable row level security;
 alter table public.grocery_checks enable row level security;
 
 create policy "enrollments_self" on public.program_enrollments
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
-create policy "workout_logs_self" on public.workout_logs
+create policy "bundle_workout_logs_self" on public.bundle_workout_logs
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 create policy "grocery_checks_self" on public.grocery_checks

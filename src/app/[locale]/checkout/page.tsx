@@ -12,25 +12,14 @@ import { trackMarketingEvent } from "@/lib/analytics-events";
 import { TJFIT_COINS_PER_PROGRAM_PURCHASE, TJFIT_COINS_PER_USD } from "@/lib/tjfit-coin";
 import type { CheckoutClientFlow } from "@/lib/payments/types";
 
-function paddleCheckoutLocale(locale: Locale): string {
-  const map: Record<Locale, string> = { en: "en", tr: "tr", ar: "ar", es: "es", fr: "fr" };
-  return map[locale] ?? "en";
-}
-
 function isCheckoutClientFlow(value: unknown): value is CheckoutClientFlow {
   if (!value || typeof value !== "object") return false;
-  const o = value as { action?: string; orderId?: unknown; amount?: unknown };
+  const o = value as { action?: string; orderId?: unknown; url?: unknown };
   if (o.action === "complete_simulated") {
     return typeof o.orderId === "string";
   }
-  if (o.action === "await_gateway") {
-    const amt = o.amount as { value?: unknown; currency?: unknown } | undefined;
-    return (
-      typeof o.orderId === "string" &&
-      !!amt &&
-      typeof amt.value === "number" &&
-      typeof amt.currency === "string"
-    );
+  if (o.action === "redirect_gumroad") {
+    return typeof o.orderId === "string";
   }
   return false;
 }
@@ -67,7 +56,6 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
   const [savedOrderId, setSavedOrderId] = useState<string | null>(null);
   const [pendingAmountTry, setPendingAmountTry] = useState<number | null>(null);
   const activeGatewayOrderRef = useRef<string | null>(null);
-  const paddleInitRef = useRef<Promise<import("@paddle/paddle-js").Paddle | undefined> | null>(null);
   const pollUntilPaidRef = useRef<(orderId: string) => Promise<void>>(async () => {});
 
   const staticProgramOptions = useMemo<CheckoutProgramOption[]>(
@@ -135,41 +123,8 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
 
   pollUntilPaidRef.current = pollUntilOrderPaid;
 
-  const ensurePaddle = useCallback(async () => {
-    const token = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN?.trim();
-    if (!token) return undefined;
-    if (!paddleInitRef.current) {
-      const pub = (
-        process.env.NEXT_PUBLIC_PADDLE_ENVIRONMENT ??
-        process.env.NEXT_PUBLIC_PADDLE_ENV ??
-        "production"
-      )
-        .trim()
-        .toLowerCase();
-      const env = pub === "sandbox" ? "sandbox" : "production";
-      paddleInitRef.current = import("@paddle/paddle-js").then(({ initializePaddle }) =>
-        initializePaddle({
-          environment: env,
-          token,
-          eventCallback: (event) => {
-            if (event.name === "checkout.completed" && activeGatewayOrderRef.current) {
-              void pollUntilPaidRef.current(activeGatewayOrderRef.current);
-            }
-          }
-        })
-      );
-    }
-    return paddleInitRef.current;
-  }, []);
-
-  const openPaddleCheckout = async () => {
+  const openGumroadCheckout = async () => {
     if (!savedOrderId) return;
-    const token = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN?.trim();
-    if (!token) {
-      setStatusTone("error");
-      setStatus(copy.paddleInitError);
-      return;
-    }
     setWorking(true);
     setStatus(null);
     setStatusTone("neutral");
@@ -180,39 +135,14 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
         credentials: "include",
         body: JSON.stringify({ orderId: savedOrderId })
       });
-      const data = (await res.json()) as {
-        transactionId?: string;
-        customerEmail?: string;
-        error?: string;
-      };
-      if (!res.ok) {
+      const data = (await res.json()) as { url?: string; error?: string };
+      if (!res.ok || !data.url) {
         throw new Error(data.error || `HTTP ${res.status}`);
-      }
-      if (!data.transactionId) {
-        throw new Error("Missing transaction from server.");
       }
       activeGatewayOrderRef.current = savedOrderId;
       setStatusTone("pending");
       setStatus(copy.paddleOpening);
-      const paddle = await ensurePaddle();
-      if (!paddle) {
-        throw new Error(copy.paddleInitError);
-      }
-      const origin = typeof window !== "undefined" ? window.location.origin : "";
-      const programSlug = selectedProgram?.slug;
-      paddle.Checkout.open({
-        transactionId: data.transactionId,
-        customer: data.customerEmail ? { email: data.customerEmail } : undefined,
-        settings: {
-          displayMode: "overlay",
-          theme: "dark",
-          locale: paddleCheckoutLocale(locale),
-          successUrl:
-            origin && programSlug
-              ? `${origin}/${locale}/bundles?success=1&slug=${encodeURIComponent(programSlug)}`
-              : undefined
-        }
-      });
+      window.location.href = data.url;
     } catch (e) {
       setStatusTone("error");
       setStatus(`${copy.errorPrefix} ${e instanceof Error ? e.message : ""}`.trim());
@@ -321,10 +251,10 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
       return;
     }
 
-    if (clientFlow.action === "await_gateway") {
+    if (clientFlow.action === "redirect_gumroad") {
       setWorking(false);
       setSavedOrderId(clientFlow.orderId);
-      setPendingAmountTry(clientFlow.amount.value);
+      setPendingAmountTry(baseTry);
       setStatusTone("pending");
       setStatus(copy.pendingBody);
       return;
@@ -394,7 +324,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
             {pendingAmountTry != null ? (
               <button
                 type="button"
-                onClick={() => void openPaddleCheckout()}
+                onClick={() => void openGumroadCheckout()}
                 disabled={working}
                 className="gradient-button mt-6 w-full rounded-full px-5 py-3.5 text-sm font-semibold text-background disabled:opacity-50"
               >

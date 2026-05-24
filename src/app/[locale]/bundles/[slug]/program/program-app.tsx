@@ -334,7 +334,7 @@ function SetRow({
       if (!supa) return;
       const { data: u } = await supa.auth.getUser();
       if (!u.user) return;
-      await supa.from("workout_logs").upsert(
+      await supa.from("bundle_workout_logs").upsert(
         { ...payload, user_id: u.user.id },
         { onConflict: "user_id,bundle_slug,week,day,exercise,set_index" }
       );
@@ -722,7 +722,7 @@ function BodyWeightLogger({ bundleSlug }: { bundleSlug: string }) {
     if (!supa) return;
     const { data: u } = await supa.auth.getUser();
     if (!u.user) return;
-    await supa.from("workout_logs").upsert(
+    await supa.from("bundle_workout_logs").upsert(
       {
         user_id: u.user.id,
         bundle_slug: bundleSlug,

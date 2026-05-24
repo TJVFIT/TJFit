@@ -143,9 +143,9 @@ export function getPrivacyCopy(locale: Locale): PolicyCopy {
   const enParagraphs = [
     "Last updated: April 2026 | Contact: tjfit.org@gmail.com",
     "1. WHO WE ARE — TJFit (\"we\", \"us\", \"our\") operates the website tjfit.org. We provide AI-powered fitness programs, nutrition plans, and coach marketplace services.",
-    "2. WHAT DATA WE COLLECT — (a) Account data: email address, display name, profile photo, username. (b) Health & fitness data: weight, height, age, fitness goals, workout logs, meal tracking. (c) Payment data: processed entirely by Paddle. TJFit never stores card numbers or CVV. (d) Usage data: pages visited, features used, session duration. (e) Communications: messages sent through TJFit messaging system. (f) AI interaction data: TJAI quiz answers and generated plans.",
-    "3. HOW WE USE YOUR DATA — To provide and improve TJFit services. To generate personalized fitness and nutrition plans via TJAI. To process payments through Paddle. To send transactional emails (receipts, verification). To send newsletters (with your consent). To display your public profile to other TJFit members.",
-    "4. WHO WE SHARE DATA WITH — We do NOT sell your personal data. We share with: Paddle (payment processing) — paddle.com/privacy. Supabase (database hosting) — supabase.com/privacy. Resend (email delivery) — resend.com/privacy. Anthropic/Claude API (AI plan generation — anonymized prompts only, no personal identifiers sent). Coaches on TJFit see: your username and messages you send them. Coaches do NOT see your email, payment details, or private data.",
+    "2. WHAT DATA WE COLLECT — (a) Account data: email address, display name, profile photo, username. (b) Health & fitness data: weight, height, age, fitness goals, workout logs, meal tracking. (c) Payment data: processed entirely by Gumroad. TJFit never stores card numbers or CVV. (d) Usage data: pages visited, features used, session duration. (e) Communications: messages sent through TJFit messaging system. (f) AI interaction data: TJAI quiz answers and generated plans.",
+    "3. HOW WE USE YOUR DATA — To provide and improve TJFit services. To generate personalized fitness and nutrition plans via TJAI. To process payments through Gumroad. To send transactional emails (receipts, verification). To send newsletters (with your consent). To display your public profile to other TJFit members.",
+    "4. WHO WE SHARE DATA WITH — We do NOT sell your personal data. We share with: Gumroad (payment processing) — gumroad.com/privacy. Supabase (database hosting) — supabase.com/privacy. Resend (email delivery) — resend.com/privacy. Anthropic/Claude API (AI plan generation — anonymized prompts only, no personal identifiers sent). Coaches on TJFit see: your username and messages you send them. Coaches do NOT see your email, payment details, or private data.",
     "5. YOUR RIGHTS (GDPR) — Access: request a copy of all data we hold. Correction: update incorrect data via profile settings. Deletion: delete your account and all associated data. Portability: export your data in machine-readable format. Objection: opt out of non-essential data processing. Withdraw consent: unsubscribe from marketing anytime. To exercise rights: email tjfit.org@gmail.com. We respond within 30 days.",
     "6. DATA RETENTION — Active accounts: data retained while account is active. Deleted accounts: personal data deleted within 30 days. Anonymized analytics: retained indefinitely. Payment records: retained as required by tax law (7 years).",
     "7. HEALTH DATA — Body metrics, weight logs, and fitness data are sensitive. We store them encrypted. We never sell health data. TJAI sends anonymized prompts to Claude API. No personally identifiable information is sent to Anthropic.",
@@ -163,9 +163,9 @@ export function getPrivacyCopy(locale: Locale): PolicyCopy {
       paragraphs: [
         "Son güncelleme: Nisan 2026 | İletişim: tjfit.org@gmail.com",
         "1. BİZ KİMİZ — TJFit tjfit.org adresinde faaliyet göstermektedir. Yapay zeka destekli fitness programları, beslenme planları ve koç platformu hizmetleri sunuyoruz.",
-        "2. HANGİ VERİLERİ TOPLUYORUZ — (a) Hesap verileri: e-posta, görünen ad, profil fotoğrafı, kullanıcı adı. (b) Sağlık ve fitness verileri: kilo, boy, yaş, hedefler, antrenman kayıtları. (c) Ödeme verileri: tamamen Paddle tarafından işlenir. Kart numarası veya CVV saklamıyoruz. (d) Kullanım verileri: ziyaret edilen sayfalar, kullanılan özellikler. (e) İletişim: TJFit üzerinden gönderilen mesajlar. (f) Yapay zeka etkileşim verileri: TJAI quiz yanıtları ve oluşturulan planlar.",
-        "3. VERİLERİNİZİ NASIL KULLANIYORUZ — TJFit hizmetlerini sunmak ve iyileştirmek. TJAI aracılığıyla kişiselleştirilmiş planlar oluşturmak. Paddle üzerinden ödemeleri işlemek. İşlemsel e-postalar göndermek. Bülten göndermek (onayınızla). Profilinizi diğer üyelere göstermek.",
-        "4. VERİLERİNİZİ KİMLERLE PAYLAŞIYORUZ — Kişisel verilerinizi SATMIYORUZ. Şunlarla paylaşıyoruz: Paddle (ödeme işleme), Supabase (veritabanı barındırma), Resend (e-posta iletimi), Anthropic/Claude API (yapay zeka plan üretimi — anonimleştirilmiş istemler, kişisel tanımlayıcı yok).",
+        "2. HANGİ VERİLERİ TOPLUYORUZ — (a) Hesap verileri: e-posta, görünen ad, profil fotoğrafı, kullanıcı adı. (b) Sağlık ve fitness verileri: kilo, boy, yaş, hedefler, antrenman kayıtları. (c) Ödeme verileri: tamamen Gumroad tarafından işlenir. Kart numarası veya CVV saklamıyoruz. (d) Kullanım verileri: ziyaret edilen sayfalar, kullanılan özellikler. (e) İletişim: TJFit üzerinden gönderilen mesajlar. (f) Yapay zeka etkileşim verileri: TJAI quiz yanıtları ve oluşturulan planlar.",
+        "3. VERİLERİNİZİ NASIL KULLANIYORUZ — TJFit hizmetlerini sunmak ve iyileştirmek. TJAI aracılığıyla kişiselleştirilmiş planlar oluşturmak. Gumroad üzerinden ödemeleri işlemek. İşlemsel e-postalar göndermek. Bülten göndermek (onayınızla). Profilinizi diğer üyelere göstermek.",
+        "4. VERİLERİNİZİ KİMLERLE PAYLAŞIYORUZ — Kişisel verilerinizi SATMIYORUZ. Şunlarla paylaşıyoruz: Gumroad (ödeme işleme), Supabase (veritabanı barındırma), Resend (e-posta iletimi), Anthropic/Claude API (yapay zeka plan üretimi — anonimleştirilmiş istemler, kişisel tanımlayıcı yok).",
         "5. HAKLARINIZ (GDPR) — Erişim, düzeltme, silme, taşıma, itiraz, onay geri çekme. Talepler için: tjfit.org@gmail.com. 30 gün içinde yanıt veriyoruz.",
         "6. VERİ SAKLAMA — Aktif hesaplar: hesap aktif olduğu sürece. Silinen hesaplar: 30 gün içinde kişisel veriler silinir. Anonim analizler: süresiz.",
         "7. SAĞLIK VERİLERİ — Şifreli olarak saklanır. Satılmaz. TJAI, Claude API'ye anonimleştirilmiş istemler gönderir.",
@@ -183,9 +183,9 @@ export function getPrivacyCopy(locale: Locale): PolicyCopy {
       paragraphs: [
         "آخر تحديث: أبريل 2026 | التواصل: tjfit.org@gmail.com",
         "1. من نحن — يشغّل TJFit الموقع tjfit.org ويوفر برامج لياقة بالذكاء الاصطناعي وخطط تغذية وسوق للمدربين.",
-        "2. البيانات التي نجمعها — (أ) بيانات الحساب: البريد الإلكتروني، الاسم، الصورة، اسم المستخدم. (ب) بيانات الصحة: الوزن والطول والعمر والأهداف. (ج) بيانات الدفع: تُعالَج بالكامل عبر Paddle، لا نحفظ أرقام البطاقات. (د) بيانات الاستخدام: الصفحات والميزات. (هـ) الاتصالات. (و) بيانات الذكاء الاصطناعي.",
+        "2. البيانات التي نجمعها — (أ) بيانات الحساب: البريد الإلكتروني، الاسم، الصورة، اسم المستخدم. (ب) بيانات الصحة: الوزن والطول والعمر والأهداف. (ج) بيانات الدفع: تُعالَج بالكامل عبر Gumroad، لا نحفظ أرقام البطاقات. (د) بيانات الاستخدام: الصفحات والميزات. (هـ) الاتصالات. (و) بيانات الذكاء الاصطناعي.",
         "3. كيف نستخدم بياناتك — لتقديم الخدمات وتحسينها، وإنشاء خطط مخصصة، ومعالجة المدفوعات، وإرسال رسائل خدمة، وعرض ملفك الشخصي.",
-        "4. من يتلقى بياناتك — لا نبيع بياناتك. نشاركها مع: Paddle وSupabase وResend وAnthropic/Claude API (موجّهات مجهولة فقط).",
+        "4. من يتلقى بياناتك — لا نبيع بياناتك. نشاركها مع: Gumroad وSupabase وResend وAnthropic/Claude API (موجّهات مجهولة فقط).",
         "5. حقوقك (GDPR) — الوصول والتصحيح والحذف والنقل والاعتراض. للتواصل: tjfit.org@gmail.com. الرد خلال 30 يوماً.",
         "6. الاحتفاظ بالبيانات — الحسابات النشطة: طوال فترة النشاط. المحذوفة: حذف خلال 30 يوماً.",
         "7. بيانات الصحة — مشفرة ولا تُباع. TJAI يرسل موجّهات مجهولة فقط لـ Claude API.",
@@ -203,9 +203,9 @@ export function getPrivacyCopy(locale: Locale): PolicyCopy {
       paragraphs: [
         "Última actualización: Abril 2026 | Contacto: tjfit.org@gmail.com",
         "1. QUIÉNES SOMOS — TJFit opera el sitio web tjfit.org con programas de fitness con IA, planes de nutrición y un marketplace de entrenadores.",
-        "2. DATOS QUE RECOPILAMOS — (a) Datos de cuenta: email, nombre, foto, usuario. (b) Salud y fitness: peso, altura, edad, objetivos. (c) Pagos: procesados íntegramente por Paddle, no almacenamos datos de tarjeta. (d) Uso: páginas visitadas. (e) Comunicaciones. (f) Datos de IA: respuestas del cuestionario TJAI.",
+        "2. DATOS QUE RECOPILAMOS — (a) Datos de cuenta: email, nombre, foto, usuario. (b) Salud y fitness: peso, altura, edad, objetivos. (c) Pagos: procesados íntegramente por Gumroad, no almacenamos datos de tarjeta. (d) Uso: páginas visitadas. (e) Comunicaciones. (f) Datos de IA: respuestas del cuestionario TJAI.",
         "3. USO DE TUS DATOS — Proveer y mejorar los servicios, generar planes personalizados, procesar pagos, enviar emails transaccionales, mostrar tu perfil público.",
-        "4. CON QUIÉN COMPARTIMOS — No vendemos tus datos. Compartimos con: Paddle, Supabase, Resend, Anthropic/Claude API (prompts anónimos).",
+        "4. CON QUIÉN COMPARTIMOS — No vendemos tus datos. Compartimos con: Gumroad, Supabase, Resend, Anthropic/Claude API (prompts anónimos).",
         "5. TUS DERECHOS (GDPR) — Acceso, corrección, eliminación, portabilidad, oposición. Contacto: tjfit.org@gmail.com. Respondemos en 30 días.",
         "6. RETENCIÓN DE DATOS — Cuentas activas: mientras estén activas. Eliminadas: datos borrados en 30 días.",
         "7. DATOS DE SALUD — Cifrados, no vendidos. TJAI envía prompts anónimos a Claude API.",
@@ -223,9 +223,9 @@ export function getPrivacyCopy(locale: Locale): PolicyCopy {
       paragraphs: [
         "Dernière mise à jour : Avril 2026 | Contact : tjfit.org@gmail.com",
         "1. QUI SOMMES-NOUS — TJFit exploite le site web tjfit.org et propose des programmes fitness par IA, des plans nutritionnels et une marketplace de coachs.",
-        "2. DONNÉES COLLECTÉES — (a) Compte : email, nom, photo, pseudo. (b) Santé et fitness : poids, taille, âge, objectifs. (c) Paiements : traités par Paddle, nous ne stockons pas les données de carte. (d) Utilisation : pages visitées. (e) Communications. (f) Données IA : réponses au quiz TJAI.",
+        "2. DONNÉES COLLECTÉES — (a) Compte : email, nom, photo, pseudo. (b) Santé et fitness : poids, taille, âge, objectifs. (c) Paiements : traités par Gumroad, nous ne stockons pas les données de carte. (d) Utilisation : pages visitées. (e) Communications. (f) Données IA : réponses au quiz TJAI.",
         "3. UTILISATION DES DONNÉES — Fournir et améliorer nos services, générer des plans personnalisés, traiter les paiements, envoyer des emails de service, afficher votre profil public.",
-        "4. PARTAGE DES DONNÉES — Nous ne vendons pas vos données. Nous partageons avec : Paddle, Supabase, Resend, Anthropic/Claude API (prompts anonymisés).",
+        "4. PARTAGE DES DONNÉES — Nous ne vendons pas vos données. Nous partageons avec : Gumroad, Supabase, Resend, Anthropic/Claude API (prompts anonymisés).",
         "5. VOS DROITS (RGPD) — Accès, correction, suppression, portabilité, opposition. Contact : tjfit.org@gmail.com. Réponse sous 30 jours.",
         "6. CONSERVATION — Comptes actifs : tant que le compte est actif. Comptes supprimés : données supprimées sous 30 jours.",
         "7. DONNÉES DE SANTÉ — Chiffrées, non vendues. TJAI envoie des prompts anonymisés à Claude API.",
@@ -249,10 +249,10 @@ export function getRefundCopy(locale: Locale): PolicyCopy {
       title: "Refund Policy",
       paragraphs: [
         "Last updated: April 15, 2026",
-        "Payments for TJFit products and subscriptions are processed by Paddle (paddle.com), who acts as the Merchant of Record for all transactions. All refund requests are handled directly by Paddle in accordance with their refund policy.",
-        "You are entitled to a full refund if you submit your request within 14 days of the transaction date. To request a refund, use the 'View receipt' or 'Manage subscription' link in your purchase confirmation email, or visit paddle.net and select 'Request refund'.",
-        "Refund requests submitted within 14 days of purchase are reviewed by Paddle. Paddle's decision is final and applies to all purchases made through TJFit.",
-        "For refund inquiries, contact Paddle's buyer support at paddle.net. For general TJFit support, email tjfit.org@gmail.com."
+        "Payments for TJFit products and subscriptions are processed by Gumroad (gumroad.com), who acts as the Merchant of Record for all transactions. All refund requests are handled directly by Gumroad in accordance with their refund policy.",
+        "You are entitled to a full refund if you submit your request within 14 days of the transaction date. To request a refund, use the 'View receipt' or 'Manage subscription' link in your purchase confirmation email, or visit gumroad.com/refunds and select 'Request refund'.",
+        "Refund requests submitted within 14 days of purchase are reviewed by Gumroad. Gumroad's decision is final and applies to all purchases made through TJFit.",
+        "For refund inquiries, contact Gumroad's buyer support at gumroad.com/refunds. For general TJFit support, email tjfit.org@gmail.com."
       ],
       lastUpdatedLabel: "Last updated: April 15, 2026"
     },
@@ -261,10 +261,10 @@ export function getRefundCopy(locale: Locale): PolicyCopy {
       title: "İade Politikası",
       paragraphs: [
         "Son güncelleme: 15 Nisan 2026",
-        "TJFit ürünleri ve abonelikleri için ödemeler, tüm işlemlerde Kayıtlı Satıcı olarak hareket eden Paddle (paddle.com) tarafından işlenir. Tüm iade talepleri doğrudan Paddle tarafından, kendi iade politikasına göre karşılanır.",
-        "İşlem tarihinden itibaren 14 gün içinde talepte bulunmanız halinde tam iade hakkına sahipsiniz. İade talebinde bulunmak için satın alma onay e-postanızdaki 'Makbuzu görüntüle' veya 'Aboneliği yönet' bağlantısını kullanın ya da paddle.net adresini ziyaret edip 'İade talebi' seçeneğini belirleyin.",
-        "Satın alma tarihinden itibaren 14 gün içinde iletilen iade talepleri Paddle tarafından incelenir. Paddle'ın kararı kesin olup TJFit üzerinden yapılan tüm satın alımlar için geçerlidir.",
-        "İade sorularınız için Paddle alıcı desteğine paddle.net adresinden ulaşabilirsiniz. Genel TJFit desteği için tjfit.org@gmail.com adresine e-posta gönderin."
+        "TJFit ürünleri ve abonelikleri için ödemeler, tüm işlemlerde Kayıtlı Satıcı olarak hareket eden Gumroad (gumroad.com) tarafından işlenir. Tüm iade talepleri doğrudan Gumroad tarafından, kendi iade politikasına göre karşılanır.",
+        "İşlem tarihinden itibaren 14 gün içinde talepte bulunmanız halinde tam iade hakkına sahipsiniz. İade talebinde bulunmak için satın alma onay e-postanızdaki 'Makbuzu görüntüle' veya 'Aboneliği yönet' bağlantısını kullanın ya da gumroad.com/refunds adresini ziyaret edip 'İade talebi' seçeneğini belirleyin.",
+        "Satın alma tarihinden itibaren 14 gün içinde iletilen iade talepleri Gumroad tarafından incelenir. Gumroad'ın kararı kesin olup TJFit üzerinden yapılan tüm satın alımlar için geçerlidir.",
+        "İade sorularınız için Gumroad alıcı desteğine gumroad.com/refunds adresinden ulaşabilirsiniz. Genel TJFit desteği için tjfit.org@gmail.com adresine e-posta gönderin."
       ],
       lastUpdatedLabel: "Son güncelleme: 15 Nisan 2026"
     },
@@ -273,10 +273,10 @@ export function getRefundCopy(locale: Locale): PolicyCopy {
       title: "سياسة الاسترداد",
       paragraphs: [
         "آخر تحديث: 15 أبريل 2026",
-        "تتم معالجة المدفوعات لمنتجات TJFit والاشتراكات عبر Paddle (paddle.com)، التي تعمل بصفة التاجر الرسمي لجميع المعاملات. تُعالج جميع طلبات الاسترداد مباشرةً من قِبل Paddle وفقًا لسياسة الاسترداد الخاصة بها.",
-        "يحق لك الحصول على استرداد كامل إذا قدّمت طلبك خلال 14 يومًا من تاريخ المعاملة. لتقديم طلب الاسترداد، استخدم رابط 'عرض الإيصال' أو 'إدارة الاشتراك' في بريد تأكيد الشراء، أو تفضل بزيارة paddle.net واختر 'طلب استرداد'.",
-        "تُراجَع طلبات الاسترداد المقدَّمة خلال 14 يومًا من تاريخ الشراء من قِبل Paddle. قرار Paddle نهائي ويُطبَّق على جميع عمليات الشراء التي تُجرى عبر TJFit.",
-        "للاستفسار عن الاسترداد، تواصل مع دعم المشترين في Paddle عبر paddle.net. للحصول على دعم TJFit العام، أرسل بريدًا إلكترونيًا إلى tjfit.org@gmail.com."
+        "تتم معالجة المدفوعات لمنتجات TJFit والاشتراكات عبر Gumroad (gumroad.com)، التي تعمل بصفة التاجر الرسمي لجميع المعاملات. تُعالج جميع طلبات الاسترداد مباشرةً من قِبل Gumroad وفقًا لسياسة الاسترداد الخاصة بها.",
+        "يحق لك الحصول على استرداد كامل إذا قدّمت طلبك خلال 14 يومًا من تاريخ المعاملة. لتقديم طلب الاسترداد، استخدم رابط 'عرض الإيصال' أو 'إدارة الاشتراك' في بريد تأكيد الشراء، أو تفضل بزيارة gumroad.com/refunds واختر 'طلب استرداد'.",
+        "تُراجَع طلبات الاسترداد المقدَّمة خلال 14 يومًا من تاريخ الشراء من قِبل Gumroad. قرار Gumroad نهائي ويُطبَّق على جميع عمليات الشراء التي تُجرى عبر TJFit.",
+        "للاستفسار عن الاسترداد، تواصل مع دعم المشترين في Gumroad عبر gumroad.com/refunds. للحصول على دعم TJFit العام، أرسل بريدًا إلكترونيًا إلى tjfit.org@gmail.com."
       ],
       lastUpdatedLabel: "آخر تحديث: 15 أبريل 2026"
     },
@@ -285,10 +285,10 @@ export function getRefundCopy(locale: Locale): PolicyCopy {
       title: "Política de Reembolso",
       paragraphs: [
         "Última actualización: 15 de abril de 2026",
-        "Los pagos de productos y suscripciones de TJFit son procesados por Paddle (paddle.com), que actúa como Merchant of Record para todas las transacciones. Todas las solicitudes de reembolso son gestionadas directamente por Paddle conforme a su política de reembolsos.",
-        "Tienes derecho a un reembolso completo si presentas tu solicitud dentro de los 14 días siguientes a la fecha de la transacción. Para solicitarlo, usa el enlace 'Ver recibo' o 'Gestionar suscripción' en el correo de confirmación de tu compra, o visita paddle.net y selecciona 'Solicitar reembolso'.",
-        "Las solicitudes de reembolso presentadas dentro de los 14 días posteriores a la compra son revisadas por Paddle. La decisión de Paddle es definitiva y se aplica a todas las compras realizadas a través de TJFit.",
-        "Para consultas sobre reembolsos, contacta el soporte al comprador de Paddle en paddle.net. Para soporte general de TJFit, escribe a tjfit.org@gmail.com."
+        "Los pagos de productos y suscripciones de TJFit son procesados por Gumroad (gumroad.com), que actúa como Merchant of Record para todas las transacciones. Todas las solicitudes de reembolso son gestionadas directamente por Gumroad conforme a su política de reembolsos.",
+        "Tienes derecho a un reembolso completo si presentas tu solicitud dentro de los 14 días siguientes a la fecha de la transacción. Para solicitarlo, usa el enlace 'Ver recibo' o 'Gestionar suscripción' en el correo de confirmación de tu compra, o visita gumroad.com/refunds y selecciona 'Solicitar reembolso'.",
+        "Las solicitudes de reembolso presentadas dentro de los 14 días posteriores a la compra son revisadas por Gumroad. La decisión de Gumroad es definitiva y se aplica a todas las compras realizadas a través de TJFit.",
+        "Para consultas sobre reembolsos, contacta el soporte al comprador de Gumroad en gumroad.com/refunds. Para soporte general de TJFit, escribe a tjfit.org@gmail.com."
       ],
       lastUpdatedLabel: "Última actualización: 15 de abril de 2026"
     },
@@ -297,10 +297,10 @@ export function getRefundCopy(locale: Locale): PolicyCopy {
       title: "Politique de remboursement",
       paragraphs: [
         "Dernière mise à jour : 15 avril 2026",
-        "Les paiements pour les produits et abonnements TJFit sont traités par Paddle (paddle.com), qui agit en tant que Merchant of Record pour toutes les transactions. Toutes les demandes de remboursement sont traitées directement par Paddle conformément à sa politique de remboursement.",
-        "Vous avez droit à un remboursement complet si vous soumettez votre demande dans les 14 jours suivant la date de la transaction. Pour demander un remboursement, utilisez le lien 'Voir le reçu' ou 'Gérer l'abonnement' dans votre e-mail de confirmation d'achat, ou rendez-vous sur paddle.net et sélectionnez 'Demander un remboursement'.",
-        "Les demandes de remboursement soumises dans les 14 jours suivant l'achat sont examinées par Paddle. La décision de Paddle est définitive et s'applique à tous les achats effectués via TJFit.",
-        "Pour toute question concernant les remboursements, contactez le support acheteur de Paddle sur paddle.net. Pour le support général TJFit, écrivez à tjfit.org@gmail.com."
+        "Les paiements pour les produits et abonnements TJFit sont traités par Gumroad (gumroad.com), qui agit en tant que Merchant of Record pour toutes les transactions. Toutes les demandes de remboursement sont traitées directement par Gumroad conformément à sa politique de remboursement.",
+        "Vous avez droit à un remboursement complet si vous soumettez votre demande dans les 14 jours suivant la date de la transaction. Pour demander un remboursement, utilisez le lien 'Voir le reçu' ou 'Gérer l'abonnement' dans votre e-mail de confirmation d'achat, ou rendez-vous sur gumroad.com/refunds et sélectionnez 'Demander un remboursement'.",
+        "Les demandes de remboursement soumises dans les 14 jours suivant l'achat sont examinées par Gumroad. La décision de Gumroad est définitive et s'applique à tous les achats effectués via TJFit.",
+        "Pour toute question concernant les remboursements, contactez le support acheteur de Gumroad sur gumroad.com/refunds. Pour le support général TJFit, écrivez à tjfit.org@gmail.com."
       ],
       lastUpdatedLabel: "Dernière mise à jour : 15 avril 2026"
     }
