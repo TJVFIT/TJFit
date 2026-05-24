@@ -68,6 +68,7 @@ export default function BundleDetailPage({
   const d = copy.detail;
   const card = localizeBundle(bundle, locale);
   const downloadHref = `/api/bundles/download/${bundle.slug}`;
+  const programHref = `/${locale}/bundles/${bundle.slug}/program`;
   const isFree = bundle.save.toLowerCase() === "free";
 
   // Related bundles — same goal first, then fill with others, capped at 3.
@@ -165,6 +166,13 @@ export default function BundleDetailPage({
             className="mt-8 flex flex-wrap items-center gap-3 motion-safe:animate-[tj-fade-up_620ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
             style={{ animationDelay: "480ms" }}
           >
+            <Link
+              href={programHref}
+              className="tj-cta-sheen relative inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-5 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] hover:brightness-110 hover:shadow-[0_0_36px_rgba(34,211,238,0.36)] motion-safe:active:scale-[0.97] sm:flex-none"
+            >
+              Start Program
+              <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
+            </Link>
             <DownloadButton
               href={downloadHref}
               label={copy.download}
@@ -354,12 +362,13 @@ export default function BundleDetailPage({
               {d.readyTitle}
             </p>
           </div>
-          <DownloadButton
-            href={downloadHref}
-            label={copy.download}
-            ariaLabel={d.downloadDossierAria}
-            full
-          />
+          <Link
+            href={programHref}
+            className="tj-cta-sheen inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] hover:brightness-110 sm:w-auto"
+          >
+            Start Program
+            <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
+          </Link>
         </div>
       </RevealSection>
 
@@ -403,9 +412,9 @@ export default function BundleDetailPage({
 
       <StickyBuyBar
         name={card.name}
-        href={downloadHref}
-        label={copy.download}
-        ariaLabel={copy.downloadAria(card.name)}
+        href={programHref}
+        label="Start Program"
+        ariaLabel={`Start ${card.name}`}
       />
     </section>
   );
