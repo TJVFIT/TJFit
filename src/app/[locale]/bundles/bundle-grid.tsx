@@ -121,7 +121,7 @@ function BundleCard({
   copy: BundlesCopy;
 }) {
   const detailHref = `/${locale}/bundles/${bundle.slug}`;
-  const downloadHref = `/api/bundles/download/${bundle.slug}`;
+  const downloadHref = `/api/bundles/download/${bundle.slug}?locale=${locale}`;
   const isFree = bundle.save.toLowerCase() === "free";
   const card = localizeBundle(bundle, locale);
   const tiltRef = useTilt();

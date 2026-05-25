@@ -27,12 +27,194 @@ type LogRow = {
 
 type Tab = "today" | "week" | "recipes" | "grocery" | "progress";
 
-const TAB_DEFS: Array<{ key: Tab; label: string; icon: typeof Dumbbell }> = [
-  { key: "today", label: "Today", icon: Dumbbell },
-  { key: "week", label: "Week", icon: ChevronRight },
-  { key: "recipes", label: "Recipes", icon: Soup },
-  { key: "grocery", label: "Grocery", icon: ShoppingCart },
-  { key: "progress", label: "Progress", icon: TrendingUp }
+type ProgramStrings = {
+  tabs: { today: string; week: string; recipes: string; grocery: string; progress: string };
+  back: string;
+  weekOf: (a: number, b: number) => string;
+  pdfBackup: string;
+  sectionsAria: string;
+  pctComplete: (n: number) => string;
+  askTjai: string;
+  tjaiSeedHelp: (name: string, week: number) => string;
+  noTemplate: string;
+  noRecipes: string;
+  noGrocery: string;
+  scaleBw: (lb: number) => string;
+  ingredientsMethod: string;
+  tjaiSeedSwap: (name: string) => string;
+  swapTjai: string;
+  sendToPhone: string;
+  groceryShareTitle: string;
+  thisWeek: string;
+  setsDone: (a: number, b: number, w: number, t: number) => string;
+  volumePerWeek: string;
+  logBw: string;
+  saved: string;
+  log: string;
+  reps: string;
+  weightPh: string;
+  markComplete: string;
+  markIncomplete: string;
+};
+
+const PROGRAM_T: Record<string, ProgramStrings> = {
+  en: {
+    tabs: { today: "Today", week: "Week", recipes: "Recipes", grocery: "Grocery", progress: "Progress" },
+    back: "Back to bundle",
+    weekOf: (a, b) => `Week ${a} of ${b}`,
+    pdfBackup: "PDF backup",
+    sectionsAria: "Program sections",
+    pctComplete: (n) => `${n}% complete`,
+    askTjai: "Ask TJAI",
+    tjaiSeedHelp: (name, week) => `Help me with my ${name} program, week ${week}.`,
+    noTemplate: "No training template for this bundle yet.",
+    noRecipes: "No recipes yet.",
+    noGrocery: "No grocery list yet.",
+    scaleBw: (lb) => `Scale to bodyweight · ${lb} lb`,
+    ingredientsMethod: "Ingredients + method",
+    tjaiSeedSwap: (name) => `Swap "${name}" for something similar on the same macros.`,
+    swapTjai: "Swap via TJAI",
+    sendToPhone: "Send to phone",
+    groceryShareTitle: "Grocery list",
+    thisWeek: "This week",
+    setsDone: (a, b, w, t) => `${a} of ${b} sets completed · week ${w}/${t}`,
+    volumePerWeek: "Volume per week (reps × load)",
+    logBw: "Log bodyweight",
+    saved: "Saved",
+    log: "Log",
+    reps: "reps",
+    weightPh: "lb / kg",
+    markComplete: "Mark set complete",
+    markIncomplete: "Mark set incomplete"
+  },
+  tr: {
+    tabs: { today: "Bugün", week: "Hafta", recipes: "Tarifler", grocery: "Market", progress: "İlerleme" },
+    back: "Pakete dön",
+    weekOf: (a, b) => `Hafta ${a} / ${b}`,
+    pdfBackup: "PDF yedek",
+    sectionsAria: "Program bölümleri",
+    pctComplete: (n) => `%${n} tamam`,
+    askTjai: "TJAI'ye sor",
+    tjaiSeedHelp: (name, week) => `${name} programımda yardım et, hafta ${week}.`,
+    noTemplate: "Bu paket için henüz antrenman şablonu yok.",
+    noRecipes: "Henüz tarif yok.",
+    noGrocery: "Henüz market listesi yok.",
+    scaleBw: (lb) => `Vücut ağırlığına göre ölçekle · ${lb} lb`,
+    ingredientsMethod: "Malzemeler + yöntem",
+    tjaiSeedSwap: (name) => `"${name}" için aynı makrolarla benzer bir öneri ver.`,
+    swapTjai: "TJAI ile değiştir",
+    sendToPhone: "Telefona gönder",
+    groceryShareTitle: "Market listesi",
+    thisWeek: "Bu hafta",
+    setsDone: (a, b, w, t) => `${a} / ${b} set tamam · hafta ${w}/${t}`,
+    volumePerWeek: "Haftalık hacim (tekrar × yük)",
+    logBw: "Kilo kaydı",
+    saved: "Kaydedildi",
+    log: "Kaydet",
+    reps: "tekrar",
+    weightPh: "lb / kg",
+    markComplete: "Seti tamamlandı olarak işaretle",
+    markIncomplete: "Seti tamamlanmadı olarak işaretle"
+  },
+  ar: {
+    tabs: { today: "اليوم", week: "الأسبوع", recipes: "الوصفات", grocery: "التسوق", progress: "التقدّم" },
+    back: "العودة إلى الباقة",
+    weekOf: (a, b) => `الأسبوع ${a} من ${b}`,
+    pdfBackup: "نسخة PDF",
+    sectionsAria: "أقسام البرنامج",
+    pctComplete: (n) => `${n}% مكتمل`,
+    askTjai: "اسأل TJAI",
+    tjaiSeedHelp: (name, week) => `ساعدني في برنامج ${name}، الأسبوع ${week}.`,
+    noTemplate: "لا يوجد قالب تدريب لهذه الباقة بعد.",
+    noRecipes: "لا توجد وصفات بعد.",
+    noGrocery: "لا توجد قائمة تسوق بعد.",
+    scaleBw: (lb) => `اضبط حسب وزن الجسم · ${lb} رطل`,
+    ingredientsMethod: "المكونات + الطريقة",
+    tjaiSeedSwap: (name) => `استبدل "${name}" بشيء مشابه بنفس الماكروز.`,
+    swapTjai: "استبدل عبر TJAI",
+    sendToPhone: "أرسل إلى الهاتف",
+    groceryShareTitle: "قائمة التسوق",
+    thisWeek: "هذا الأسبوع",
+    setsDone: (a, b, w, t) => `${a} من ${b} مجموعة مكتملة · الأسبوع ${w}/${t}`,
+    volumePerWeek: "الحجم الأسبوعي (تكرار × حمل)",
+    logBw: "سجّل وزن الجسم",
+    saved: "تم الحفظ",
+    log: "سجّل",
+    reps: "تكرارات",
+    weightPh: "رطل / كغ",
+    markComplete: "حدّد المجموعة كمكتملة",
+    markIncomplete: "حدّد المجموعة كغير مكتملة"
+  },
+  es: {
+    tabs: { today: "Hoy", week: "Semana", recipes: "Recetas", grocery: "Compra", progress: "Progreso" },
+    back: "Volver al pack",
+    weekOf: (a, b) => `Semana ${a} de ${b}`,
+    pdfBackup: "Copia PDF",
+    sectionsAria: "Secciones del programa",
+    pctComplete: (n) => `${n}% completado`,
+    askTjai: "Preguntar a TJAI",
+    tjaiSeedHelp: (name, week) => `Ayúdame con mi programa ${name}, semana ${week}.`,
+    noTemplate: "Aún no hay plantilla de entrenamiento para este pack.",
+    noRecipes: "Aún no hay recetas.",
+    noGrocery: "Aún no hay lista de compras.",
+    scaleBw: (lb) => `Ajustar al peso corporal · ${lb} lb`,
+    ingredientsMethod: "Ingredientes + método",
+    tjaiSeedSwap: (name) => `Cambia "${name}" por algo similar con los mismos macros.`,
+    swapTjai: "Cambiar con TJAI",
+    sendToPhone: "Enviar al móvil",
+    groceryShareTitle: "Lista de compras",
+    thisWeek: "Esta semana",
+    setsDone: (a, b, w, t) => `${a} de ${b} series completadas · semana ${w}/${t}`,
+    volumePerWeek: "Volumen por semana (reps × carga)",
+    logBw: "Registrar peso corporal",
+    saved: "Guardado",
+    log: "Registrar",
+    reps: "reps",
+    weightPh: "lb / kg",
+    markComplete: "Marcar serie como completa",
+    markIncomplete: "Marcar serie como incompleta"
+  },
+  fr: {
+    tabs: { today: "Aujourd'hui", week: "Semaine", recipes: "Recettes", grocery: "Courses", progress: "Progrès" },
+    back: "Retour au pack",
+    weekOf: (a, b) => `Semaine ${a} sur ${b}`,
+    pdfBackup: "Copie PDF",
+    sectionsAria: "Sections du programme",
+    pctComplete: (n) => `${n}% terminé`,
+    askTjai: "Demander à TJAI",
+    tjaiSeedHelp: (name, week) => `Aide-moi avec mon programme ${name}, semaine ${week}.`,
+    noTemplate: "Pas encore de modèle d'entraînement pour ce pack.",
+    noRecipes: "Pas encore de recettes.",
+    noGrocery: "Pas encore de liste de courses.",
+    scaleBw: (lb) => `Adapter au poids corporel · ${lb} lb`,
+    ingredientsMethod: "Ingrédients + méthode",
+    tjaiSeedSwap: (name) => `Remplace "${name}" par quelque chose de similaire avec les mêmes macros.`,
+    swapTjai: "Remplacer via TJAI",
+    sendToPhone: "Envoyer au téléphone",
+    groceryShareTitle: "Liste de courses",
+    thisWeek: "Cette semaine",
+    setsDone: (a, b, w, t) => `${a} sur ${b} séries terminées · semaine ${w}/${t}`,
+    volumePerWeek: "Volume par semaine (reps × charge)",
+    logBw: "Enregistrer le poids",
+    saved: "Enregistré",
+    log: "Enregistrer",
+    reps: "reps",
+    weightPh: "lb / kg",
+    markComplete: "Marquer la série terminée",
+    markIncomplete: "Marquer la série non terminée"
+  }
+};
+
+function getProgramT(locale: string): ProgramStrings {
+  return PROGRAM_T[locale] ?? PROGRAM_T.en;
+}
+
+const TAB_DEFS: Array<{ key: Tab; icon: typeof Dumbbell }> = [
+  { key: "today", icon: Dumbbell },
+  { key: "week", icon: ChevronRight },
+  { key: "recipes", icon: Soup },
+  { key: "grocery", icon: ShoppingCart },
+  { key: "progress", icon: TrendingUp }
 ];
 
 export function ProgramApp({
@@ -49,6 +231,7 @@ export function ProgramApp({
   grocery: string[];
 }) {
   const [tab, setTab] = useState<Tab>("today");
+  const t = getProgramT(locale);
   const card = localizeBundle(bundle, locale);
   const days = bundle.weeklyTemplate ?? [];
   const todayIndex = new Date().getDay() % Math.max(days.length, 1);
@@ -62,45 +245,45 @@ export function ProgramApp({
         className="inline-flex min-h-[40px] items-center gap-1.5 text-xs font-semibold text-cyan-300 hover:text-cyan-200"
       >
         <ArrowLeft className="h-3.5 w-3.5 rtl:rotate-180" aria-hidden />
-        Back to bundle
+        {t.back}
       </Link>
 
       <header className="mt-4 flex flex-wrap items-baseline justify-between gap-3">
         <div>
           <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-cyan-200/80">
-            Week {currentWeek} of {bundle.weeks}
+            {t.weekOf(currentWeek, bundle.weeks)}
           </p>
           <h1 className="mt-1 font-display text-2xl font-bold text-white sm:text-3xl">
             {card.name}
           </h1>
         </div>
         <a
-          href={`/api/bundles/download/${bundle.slug}`}
+          href={`/api/bundles/download/${bundle.slug}?locale=${locale}`}
           className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full border border-cyan-300/25 px-3.5 py-2 text-xs font-semibold text-cyan-200 hover:border-cyan-300/55 hover:text-cyan-100"
         >
           <FileDown className="h-3.5 w-3.5" aria-hidden />
-          PDF backup
+          {t.pdfBackup}
         </a>
       </header>
 
       {/* Progress strip */}
-      <ProgressStrip current={currentWeek} total={bundle.weeks} />
+      <ProgressStrip current={currentWeek} total={bundle.weeks} pctLabel={t.pctComplete} />
 
       {/* Tabs */}
       <nav
         role="tablist"
-        aria-label="Program sections"
+        aria-label={t.sectionsAria}
         className="sticky top-[60px] z-20 -mx-4 mt-6 flex gap-1 overflow-x-auto border-y border-white/[0.06] bg-[#0A0A0B]/85 px-4 py-2 backdrop-blur sm:-mx-6 sm:px-6"
       >
-        {TAB_DEFS.map((t) => {
-          const active = tab === t.key;
-          const Icon = t.icon;
+        {TAB_DEFS.map((td) => {
+          const active = tab === td.key;
+          const Icon = td.icon;
           return (
             <button
-              key={t.key}
+              key={td.key}
               role="tab"
               aria-selected={active}
-              onClick={() => setTab(t.key)}
+              onClick={() => setTab(td.key)}
               className={`inline-flex min-h-[40px] shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors ${
                 active
                   ? "bg-cyan-300/15 text-cyan-50 ring-1 ring-cyan-300/40"
@@ -108,7 +291,7 @@ export function ProgramApp({
               }`}
             >
               <Icon className="h-3.5 w-3.5" aria-hidden />
-              {t.label}
+              {t.tabs[td.key]}
             </button>
           );
         })}
@@ -121,11 +304,12 @@ export function ProgramApp({
             week={currentWeek}
             day={activeDay}
             logs={logs.filter((l) => l.week === currentWeek && l.day === activeDay.day)}
+            t={t}
           />
         ) : null}
 
         {tab === "today" && !activeDay ? (
-          <EmptyCard message="No training template for this bundle yet." />
+          <EmptyCard message={t.noTemplate} />
         ) : null}
 
         {tab === "week" ? (
@@ -139,13 +323,14 @@ export function ProgramApp({
           />
         ) : null}
 
-        {tab === "recipes" ? <RecipesTab recipes={bundle.recipes ?? []} locale={locale} /> : null}
+        {tab === "recipes" ? <RecipesTab recipes={bundle.recipes ?? []} locale={locale} t={t} /> : null}
 
         {tab === "grocery" ? (
           <GroceryTab
             bundleSlug={bundle.slug}
             groups={bundle.groceryList ?? []}
             initialChecked={grocery}
+            t={t}
           />
         ) : null}
 
@@ -156,18 +341,19 @@ export function ProgramApp({
             totalWeeks={bundle.weeks}
             logs={logs}
             days={days}
+            t={t}
           />
         ) : null}
       </div>
 
       {/* TJAI floating action */}
       <Link
-        href={`/${locale}/tjai?seed=${encodeURIComponent(`Help me with my ${card.name} program, week ${currentWeek}.`)}`}
+        href={`/${locale}/tjai?seed=${encodeURIComponent(t.tjaiSeedHelp(card.name, currentWeek))}`}
         className="fixed bottom-6 end-4 z-30 inline-flex min-h-[48px] items-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_28px_rgba(34,211,238,0.32)]"
         style={{ paddingBottom: "max(0.25rem, env(safe-area-inset-bottom))" }}
       >
         <Sparkles className="h-4 w-4" aria-hidden />
-        Ask TJAI
+        {t.askTjai}
       </Link>
     </section>
   );
@@ -175,7 +361,15 @@ export function ProgramApp({
 
 /* ────────── progress strip ────────── */
 
-function ProgressStrip({ current, total }: { current: number; total: number }) {
+function ProgressStrip({
+  current,
+  total,
+  pctLabel
+}: {
+  current: number;
+  total: number;
+  pctLabel: (n: number) => string;
+}) {
   const pct = Math.min(100, Math.round((current / total) * 100));
   return (
     <div className="mt-4">
@@ -186,7 +380,7 @@ function ProgressStrip({ current, total }: { current: number; total: number }) {
         />
       </div>
       <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.22em] text-faint">
-        {pct}% complete
+        {pctLabel(pct)}
       </p>
     </div>
   );
@@ -206,12 +400,14 @@ function WorkoutLogger({
   bundleSlug,
   week,
   day,
-  logs
+  logs,
+  t
 }: {
   bundleSlug: string;
   week: number;
   day: NonNullable<Bundle["weeklyTemplate"]>[number];
   logs: LogRow[];
+  t: ProgramStrings;
 }) {
   return (
     <div>
@@ -234,6 +430,7 @@ function WorkoutLogger({
               notes={ex.notes}
               setsCount={setsCount}
               initialLogs={logs.filter((l) => l.exercise === ex.name)}
+              t={t}
             />
           );
         })}
@@ -255,7 +452,8 @@ function ExerciseCard({
   setsLabel,
   notes,
   setsCount,
-  initialLogs
+  initialLogs,
+  t
 }: {
   bundleSlug: string;
   week: number;
@@ -265,6 +463,7 @@ function ExerciseCard({
   notes?: string;
   setsCount: number;
   initialLogs: LogRow[];
+  t: ProgramStrings;
 }) {
   const indices = useMemo(() => Array.from({ length: setsCount }, (_, i) => i + 1), [setsCount]);
 
@@ -288,6 +487,7 @@ function ExerciseCard({
               exercise={name}
               setIndex={idx}
               initial={existing}
+              t={t}
             />
           );
         })}
@@ -302,7 +502,8 @@ function SetRow({
   dayKey,
   exercise,
   setIndex,
-  initial
+  initial,
+  t
 }: {
   bundleSlug: string;
   week: number;
@@ -310,6 +511,7 @@ function SetRow({
   exercise: string;
   setIndex: number;
   initial?: LogRow;
+  t: ProgramStrings;
 }) {
   const [reps, setReps] = useState<string>(initial?.reps?.toString() ?? "");
   const [weight, setWeight] = useState<string>(initial?.weight?.toString() ?? "");
@@ -349,7 +551,7 @@ function SetRow({
       <input
         type="number"
         inputMode="decimal"
-        placeholder="reps"
+        placeholder={t.reps}
         value={reps}
         onChange={(e) => setReps(e.target.value)}
         onBlur={() => save({ reps })}
@@ -358,7 +560,7 @@ function SetRow({
       <input
         type="number"
         inputMode="decimal"
-        placeholder="lb / kg"
+        placeholder={t.weightPh}
         value={weight}
         onChange={(e) => setWeight(e.target.value)}
         onBlur={() => save({ weight })}
@@ -366,7 +568,7 @@ function SetRow({
       />
       <button
         type="button"
-        aria-label={done ? "Mark set incomplete" : "Mark set complete"}
+        aria-label={done ? t.markIncomplete : t.markComplete}
         onClick={() => {
           const next = !done;
           setDone(next);
@@ -428,17 +630,17 @@ function WeekTab({
 
 /* ────────── recipes tab ────────── */
 
-function RecipesTab({ recipes, locale }: { recipes: BundleRecipe[]; locale: string }) {
+function RecipesTab({ recipes, locale, t }: { recipes: BundleRecipe[]; locale: string; t: ProgramStrings }) {
   const [bw, setBw] = useState(180);
   const ref = 180;
 
-  if (recipes.length === 0) return <EmptyCard message="No recipes yet." />;
+  if (recipes.length === 0) return <EmptyCard message={t.noRecipes} />;
 
   return (
     <div>
       <div className="rounded-2xl border border-divider bg-surface/40 p-4">
         <label className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-cyan-200/80">
-          Scale to bodyweight · {bw} lb
+          {t.scaleBw(bw)}
         </label>
         <input
           type="range"
@@ -471,7 +673,7 @@ function RecipesTab({ recipes, locale }: { recipes: BundleRecipe[]; locale: stri
               </div>
               <details className="mt-3">
                 <summary className="cursor-pointer text-xs font-semibold text-cyan-200/90">
-                  Ingredients + method
+                  {t.ingredientsMethod}
                 </summary>
                 <ul className="mt-2 space-y-1 text-sm text-bright/85">
                   {r.ingredients.map((ing, j) => (
@@ -489,11 +691,11 @@ function RecipesTab({ recipes, locale }: { recipes: BundleRecipe[]; locale: stri
                   ))}
                 </ol>
                 <Link
-                  href={`/${locale}/tjai?seed=${encodeURIComponent(`Swap "${r.name}" for something similar on the same macros.`)}`}
+                  href={`/${locale}/tjai?seed=${encodeURIComponent(t.tjaiSeedSwap(r.name))}`}
                   className="mt-3 inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-cyan-300/25 px-3 text-xs font-semibold text-cyan-200 hover:border-cyan-300/55"
                 >
                   <Sparkles className="h-3.5 w-3.5" aria-hidden />
-                  Swap via TJAI
+                  {t.swapTjai}
                 </Link>
               </details>
             </div>
@@ -509,11 +711,13 @@ function RecipesTab({ recipes, locale }: { recipes: BundleRecipe[]; locale: stri
 function GroceryTab({
   bundleSlug,
   groups,
-  initialChecked
+  initialChecked,
+  t
 }: {
   bundleSlug: string;
   groups: NonNullable<Bundle["groceryList"]>;
   initialChecked: string[];
+  t: ProgramStrings;
 }) {
   const [checked, setChecked] = useState<Set<string>>(new Set(initialChecked));
 
@@ -560,7 +764,7 @@ function GroceryTab({
       .join("\n\n");
     try {
       if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
-        await navigator.share({ title: "Grocery list", text });
+        await navigator.share({ title: t.groceryShareTitle, text });
       } else if (navigator.clipboard) {
         await navigator.clipboard.writeText(text);
       }
@@ -569,7 +773,7 @@ function GroceryTab({
     }
   };
 
-  if (groups.length === 0) return <EmptyCard message="No grocery list yet." />;
+  if (groups.length === 0) return <EmptyCard message={t.noGrocery} />;
 
   return (
     <div>
@@ -579,7 +783,7 @@ function GroceryTab({
         className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full border border-cyan-300/30 bg-cyan-300/[0.08] px-3.5 text-xs font-semibold text-cyan-100 hover:border-cyan-300/60"
       >
         <ShoppingCart className="h-3.5 w-3.5" aria-hidden />
-        Send to phone
+        {t.sendToPhone}
       </button>
       <div className="mt-4 space-y-3">
         {groups.map((g) => (
@@ -635,13 +839,15 @@ function ProgressTab({
   currentWeek,
   totalWeeks,
   logs,
-  days
+  days,
+  t
 }: {
   bundleSlug: string;
   currentWeek: number;
   totalWeeks: number;
   logs: LogRow[];
   days: NonNullable<Bundle["weeklyTemplate"]>;
+  t: ProgramStrings;
 }) {
   // Weekly completion: sets done this week / sets planned this week
   const plannedThisWeek = days.reduce(
@@ -665,17 +871,17 @@ function ProgressTab({
     <div className="space-y-4">
       <div className="rounded-2xl border border-cyan-400/15 bg-[linear-gradient(180deg,rgba(34,211,238,0.05),rgba(34,211,238,0.01))] p-5">
         <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-cyan-200/80">
-          This week
+          {t.thisWeek}
         </p>
         <p className="mt-2 font-display text-4xl font-bold text-white">{wkPct}%</p>
         <p className="mt-1 text-xs text-faint">
-          {doneThisWeek} of {plannedThisWeek} sets completed · week {currentWeek}/{totalWeeks}
+          {t.setsDone(doneThisWeek, plannedThisWeek, currentWeek, totalWeeks)}
         </p>
       </div>
 
       <div className="rounded-2xl border border-divider bg-surface/40 p-5">
         <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-cyan-200/80">
-          Volume per week (reps × load)
+          {t.volumePerWeek}
         </p>
         <div className="mt-4 flex h-32 items-end gap-1.5">
           {weeks.map((w) => {
@@ -705,12 +911,12 @@ function ProgressTab({
         </div>
       </div>
 
-      <BodyWeightLogger bundleSlug={bundleSlug} />
+      <BodyWeightLogger bundleSlug={bundleSlug} t={t} />
     </div>
   );
 }
 
-function BodyWeightLogger({ bundleSlug }: { bundleSlug: string }) {
+function BodyWeightLogger({ bundleSlug, t }: { bundleSlug: string; t: ProgramStrings }) {
   const [bw, setBw] = useState<string>("");
   const [saved, setSaved] = useState(false);
 
@@ -745,7 +951,7 @@ function BodyWeightLogger({ bundleSlug }: { bundleSlug: string }) {
   return (
     <div className="rounded-2xl border border-divider bg-surface/40 p-5">
       <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-cyan-200/80">
-        Log bodyweight
+        {t.logBw}
       </p>
       <div className="mt-3 flex gap-2">
         <input
@@ -753,7 +959,7 @@ function BodyWeightLogger({ bundleSlug }: { bundleSlug: string }) {
           inputMode="decimal"
           value={bw}
           onChange={(e) => setBw(e.target.value)}
-          placeholder="lb / kg"
+          placeholder={t.weightPh}
           className="min-h-[44px] flex-1 rounded-lg border border-white/[0.08] bg-black/30 px-3 text-sm text-white placeholder:text-faint focus:border-cyan-300/50 focus:outline-none"
         />
         <button
@@ -761,7 +967,7 @@ function BodyWeightLogger({ bundleSlug }: { bundleSlug: string }) {
           onClick={save}
           className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-5 text-sm font-bold text-[#0A0A0B]"
         >
-          {saved ? "Saved" : "Log"}
+          {saved ? t.saved : t.log}
         </button>
       </div>
     </div>

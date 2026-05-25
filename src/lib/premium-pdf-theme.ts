@@ -6,14 +6,14 @@ import type { jsPDF } from "jspdf";
  */
 export const PDF_THEME = {
   obsidian: { r: 8, g: 8, b: 10 },
-  ink: { r: 24, g: 24, b: 28 },
+  ink: { r: 240, g: 248, b: 252 },
   accent: { r: 34, g: 211, b: 238 },
   accentHi: { r: 165, g: 243, b: 252 },
   accentSoft: { r: 103, g: 232, b: 249 },
-  paper: { r: 248, g: 245, b: 239 },
-  paperMuted: { r: 232, g: 226, b: 215 },
+  paper: { r: 8, g: 8, b: 10 },
+  paperMuted: { r: 24, g: 36, b: 44 },
   textPrimary: { r: 246, g: 243, b: 237 },
-  textMuted: { r: 168, g: 162, b: 148 },
+  textMuted: { r: 148, g: 168, b: 184 },
   hairline: { r: 21, g: 94, b: 117 }
 } as const;
 

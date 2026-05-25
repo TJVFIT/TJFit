@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 
+import { isAdminEmail } from "@/lib/auth-utils";
 import { getBundle } from "@/lib/bundles";
 import { hasPurchasedProgram } from "@/lib/purchases";
 import { requireAuthenticatedUser } from "@/lib/require-authenticated-server";
@@ -19,7 +20,8 @@ export default async function ProgramPage({
 
   const bundle = getBundle(params.slug);
   if (!bundle) notFound();
-  if (!bundle.isFree) {
+  const admin = !!user.email && isAdminEmail(user.email);
+  if (!admin) {
     const paid = await hasPurchasedProgram(supabase, user.id, bundle.slug);
     if (!paid) redirect(`/${locale}/bundles/${bundle.slug}`);
   }

@@ -67,7 +67,7 @@ export default function BundleDetailPage({
   const copy = getBundlesCopy(locale);
   const d = copy.detail;
   const card = localizeBundle(bundle, locale);
-  const downloadHref = `/api/bundles/download/${bundle.slug}`;
+  const downloadHref = `/api/bundles/download/${bundle.slug}?locale=${locale}`;
   const programHref = `/${locale}/bundles/${bundle.slug}/program`;
   const isFree = bundle.save.toLowerCase() === "free";
 

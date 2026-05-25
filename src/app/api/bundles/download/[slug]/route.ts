@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 
 import { buildBundlePdf } from "@/lib/bundle-pdf-builder";
+import { localizeBundle } from "@/lib/bundle-localization";
 import { getBundle } from "@/lib/bundles";
+import { isAdminEmail } from "@/lib/auth-utils";
 import { hasPurchasedProgram } from "@/lib/purchases";
 import { requireAuth } from "@/lib/require-auth";
 
@@ -9,16 +11,13 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 /**
- * GET /api/bundles/download/[slug]
- * Returns the branded PDF dossier for a bundle.
+ * GET /api/bundles/download/[slug]?locale=
+ * Returns the branded PDF dossier in the requested locale.
  *
- * Gating: free bundles are open to any signed-in user. Paid bundles check
- * `program_orders` for a paid row keyed by the bundle slug. Until the owner
- * wires bundle pricing (see feedback_pricing — prices are $0 until set),
- * paid bundles will only be downloadable by users with a real purchase row;
- * the marketing chip ("$10", "$15") is aspirational save copy.
+ * Gating (tight): only paid orders OR admin emails. `isFree` no longer
+ * bypasses the check — every download requires entitlement.
  */
-export async function GET(_req: Request, { params }: { params: { slug: string } }) {
+export async function GET(req: Request, { params }: { params: { slug: string } }) {
   const auth = await requireAuth();
   if (!auth.ok) return auth.response;
 
@@ -27,7 +26,8 @@ export async function GET(_req: Request, { params }: { params: { slug: string } 
     return NextResponse.json({ error: "Bundle not found" }, { status: 404 });
   }
 
-  if (!bundle.isFree) {
+  const admin = !!auth.user.email && isAdminEmail(auth.user.email);
+  if (!admin) {
     const paid = await hasPurchasedProgram(auth.supabase, auth.user.id, bundle.slug);
     if (!paid) {
       return NextResponse.json({ error: "Purchase required" }, { status: 403 });
@@ -41,8 +41,14 @@ export async function GET(_req: Request, { params }: { params: { slug: string } 
     .maybeSingle();
   const buyerName = profile?.full_name ?? auth.user.email?.split("@")[0];
 
+  const url = new URL(req.url);
+  const locale = url.searchParams.get("locale") ?? "en";
+  const copy = localizeBundle(bundle, locale);
+
   const pdf = buildBundlePdf({
     bundle,
+    copy,
+    locale,
     buyerName,
     issuedAt: new Date().toISOString()
   });
