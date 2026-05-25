@@ -28,6 +28,8 @@ export async function POST(request: NextRequest) {
   const body = parsed.value as Record<string, unknown>;
   const programSlug = String(body.programSlug ?? "").trim();
   const discountCode = String(body.discountCode ?? "").trim().toUpperCase();
+  const localeRaw = String(body.locale ?? "en").trim().toLowerCase();
+  const locale = ["en", "tr", "ar", "es", "fr"].includes(localeRaw) ? localeRaw : "en";
   const { providerId } = resolvePaymentBackend();
   const provider = providerIdForStorage(providerId);
   if (!providerId) {
@@ -102,7 +104,8 @@ export async function POST(request: NextRequest) {
       status: "pending",
       discount_code: discountCode || null,
       discount_percent: discountPercent,
-      tjfit_coins_earned: TJFIT_COINS_PER_PROGRAM_PURCHASE
+      tjfit_coins_earned: TJFIT_COINS_PER_PROGRAM_PURCHASE,
+      locale
     })
     .select(
       "id,program_slug,amount_try,final_amount_try,currency,discount_code,discount_percent,provider,status"

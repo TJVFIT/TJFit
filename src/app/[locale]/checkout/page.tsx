@@ -232,7 +232,8 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
       credentials: "include",
       body: JSON.stringify({
         programSlug: selectedProgram.slug,
-        discountCode: discountCodeForOrder
+        discountCode: discountCodeForOrder,
+        locale
       })
     });
     const createData = await createRes.json();

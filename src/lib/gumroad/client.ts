@@ -29,6 +29,7 @@ export function getGumroadCheckoutUrl(opts: {
   orderId: string;
   email?: string;
   userId?: string;
+  locale?: string;
 }): string | null {
   const envKey = `GUMROAD_PRODUCT_${opts.programSlug.toUpperCase().replace(/-/g, "_")}`;
   const base =
@@ -42,6 +43,7 @@ export function getGumroadCheckoutUrl(opts: {
   url.searchParams.set("tjfit_order_id", opts.orderId);
   url.searchParams.set("tjfit_program_slug", opts.programSlug);
   if (opts.userId) url.searchParams.set("tjfit_user_id", opts.userId);
+  if (opts.locale) url.searchParams.set("tjfit_locale", opts.locale);
   if (opts.email) url.searchParams.set("email", opts.email);
   return url.toString();
 }

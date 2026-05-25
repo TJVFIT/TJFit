@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
 
   const { data: order } = await adminClient
     .from("program_orders")
-    .select("id,user_id,status,provider,program_slug")
+    .select("id,user_id,status,provider,program_slug,locale")
     .eq("id", orderId)
     .eq("user_id", user.id)
     .maybeSingle();
@@ -71,7 +71,8 @@ export async function POST(request: NextRequest) {
     programSlug: order.program_slug,
     orderId: order.id,
     email: user.email ?? undefined,
-    userId: user.id
+    userId: user.id,
+    locale: order.locale ?? undefined
   });
 
   if (!url) {
