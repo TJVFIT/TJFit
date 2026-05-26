@@ -51,7 +51,7 @@ export const EmailTemplates = {
   welcome: (name: string, url: string, unsubscribeUrl: string) =>
     renderTemplate({
       title: `Welcome to TJFit, ${name} 💪`,
-      body: "Start your first free program, set your goals, and unlock your first TJCOIN streak this week.",
+      body: "Start your first free program, set your goals, and begin your first weekly streak.",
       ctaLabel: "Start Your Free Program",
       ctaUrl: url,
       footerUrl: unsubscribeUrl
@@ -79,7 +79,7 @@ export const EmailTemplates = {
   achievement: (name: string, unsubscribeUrl: string) =>
     renderTemplate({
       title: `🏆 You just earned: ${name}`,
-      body: "New badge unlocked and TJCOIN awarded. Keep building momentum.",
+      body: "New badge unlocked. Keep building momentum.",
       footerUrl: unsubscribeUrl
     }),
   blogPublished: (title: string, url: string, unsubscribeUrl: string) =>
@@ -99,13 +99,13 @@ export const EmailTemplates = {
   streakMilestone: (days: number, unsubscribeUrl: string) =>
     renderTemplate({
       title: `🔥 ${days}-day streak! You are unstoppable.`,
-      body: "You hit a major consistency milestone. Keep going and claim your TJCOIN rewards.",
+      body: "You hit a major consistency milestone. Keep going.",
       footerUrl: unsubscribeUrl
     }),
-  referralReward: (username: string, amount: number, unsubscribeUrl: string) =>
+  referralReward: (username: string, _amount: number, unsubscribeUrl: string) =>
     renderTemplate({
-      title: "⚡ You earned TJCOIN from a referral!",
-      body: `${username} joined through your link. You earned +${amount} TJCOIN.`,
+      title: "🎉 A friend joined through your link!",
+      body: `${username} just signed up through your invite. Thanks for spreading TJFit.`,
       footerUrl: unsubscribeUrl
     }),
   apexRenewal: (unsubscribeUrl: string) =>

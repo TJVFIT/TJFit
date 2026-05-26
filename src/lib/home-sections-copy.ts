@@ -59,7 +59,7 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", HomeSectionsCopy> = {
       },
       {
         title: "Leaderboards",
-        desc: "Earn TJCOIN, compete on weekly boards, unlock rewards for consistency."
+        desc: "Compete on weekly boards and build streaks alongside the community."
       },
       {
         title: "10 Languages",
@@ -106,7 +106,7 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", HomeSectionsCopy> = {
       },
       {
         title: "Liderlik Tabloları",
-        desc: "TJCOIN kazan, haftalık tablolarda yarış, istikrar için ödüller aç."
+        desc: "Haftalık tablolarda yarış, toplulukla birlikte istikrar serileri oluştur."
       },
       {
         title: "10 Dil",
@@ -153,7 +153,7 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", HomeSectionsCopy> = {
       },
       {
         title: "لوحات الصدارة",
-        desc: "اكسب TJCOIN، ونافس على اللوحات الأسبوعية، وافتح مكافآت الاستمرارية."
+        desc: "نافس على اللوحات الأسبوعية، وابنِ سلاسل الاستمرارية مع المجتمع."
       },
       {
         title: "10 لغات",
@@ -200,7 +200,7 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", HomeSectionsCopy> = {
       },
       {
         title: "Tablas de Clasificación",
-        desc: "Gana TJCOIN, compite en tablas semanales y desbloquea recompensas por constancia."
+        desc: "Compite en tablas semanales y construye rachas con la comunidad."
       },
       {
         title: "10 Idiomas",
@@ -247,7 +247,7 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", HomeSectionsCopy> = {
       },
       {
         title: "Classements",
-        desc: "Gagne des TJCOIN, rivalise sur les tableaux hebdomadaires et débloque des récompenses de régularité."
+        desc: "Rivalise sur les tableaux hebdomadaires et construis des séries avec la communauté."
       },
       {
         title: "10 Langues",
