@@ -8,7 +8,7 @@ Driven by recurring `/loop` cron job `1d297b47` (`*/2 * * * *`). Each fire reads
 
 | # | Group | Phase | Status | Commit | Note |
 |---|---|---|---|---|---|
-| 1 | A | Strip TJCOIN from membership-tier/home-sections/email-templates/subscription/i18n copy | done | 2c3cf75 | i18n.ts had no coin refs (false flag from earlier grep) |
+| 1 | A | Strip TJCOIN from membership-tier/home-sections/email-templates/subscription/i18n copy | done | ba8b29d | i18n.ts had no coin refs (false flag from earlier grep) |
 | 2 | B | ⓘ Audit medical-safety guards → docs/audits/tjai-safety-2026-05.md | pending | — | — |
 | 3 | B | ⚠ Edit safety-guard prompts | blocked: needs-approval | — | Manual phase |
 | 4 | B | Verify /api/tjai/memory GET/DELETE/PATCH coverage | pending | — | — |
