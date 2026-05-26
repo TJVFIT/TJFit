@@ -22,6 +22,11 @@ import { requireAdmin } from "@/lib/require-admin";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
+  // Defense in depth: admin role alone is not enough on a production
+  // deployment. Require an explicit env opt-in to fire simulated webhooks.
+  if (process.env.NODE_ENV === "production" && process.env.ALLOW_TEST_CHECKOUT !== "true") {
+    return NextResponse.json({ error: "Test routes disabled in production." }, { status: 403 });
+  }
   const adminResult = await requireAdmin();
   if (!adminResult.ok) return adminResult.response;
   const admin = adminResult.supabase;

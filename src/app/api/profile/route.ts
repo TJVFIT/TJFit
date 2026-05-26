@@ -14,7 +14,6 @@ export async function PATCH(request: NextRequest) {
     bio?: string;
     privacy_settings?: {
       show_streak?: boolean;
-      show_coins?: boolean;
       show_programs?: boolean;
       show_posts?: boolean;
     };
@@ -35,7 +34,6 @@ export async function PATCH(request: NextRequest) {
   if (body.privacy_settings && typeof body.privacy_settings === "object") {
     patch.privacy_settings = {
       show_streak: body.privacy_settings.show_streak !== false,
-      show_coins: body.privacy_settings.show_coins !== false,
       show_programs: body.privacy_settings.show_programs !== false,
       show_posts: body.privacy_settings.show_posts !== false
     };

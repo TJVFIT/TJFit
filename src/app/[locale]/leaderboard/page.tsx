@@ -14,13 +14,11 @@ type LeaderboardItem = {
   displayName: string;
   isVerified: boolean;
   streak: number;
-  coinsEarned: number;
   blogViews: number;
   programsDone: number;
 };
 
 const TABS = [
-  { key: "coins", label: "TJCOIN" },
   { key: "streaks", label: "Streaks" },
   { key: "blog", label: "Blog" },
   { key: "coaches", label: "Coaches" },
@@ -30,17 +28,13 @@ const TABS = [
 type TabKey = (typeof TABS)[number]["key"];
 
 const EMPTY_MESSAGES: Record<TabKey, { title: string; sub: string }> = {
-  coins: {
-    title: "No rankings yet.",
-    sub: "Earn TJCOIN by buying programs, posting, and training daily to claim the top spot."
-  },
   streaks: {
     title: "No streaks yet.",
     sub: "Log a workout today to start your streak and appear on the board."
   },
   blog: {
     title: "No blog rankings yet.",
-    sub: "Publish your first post to appear here and earn TJCOIN."
+    sub: "Publish your first post to appear here."
   },
   coaches: {
     title: "No coaches ranked yet.",
@@ -53,13 +47,11 @@ const EMPTY_MESSAGES: Record<TabKey, { title: string; sub: string }> = {
 };
 
 function getMetricValue(item: LeaderboardItem, tab: TabKey) {
-  return tab === "streaks"
-    ? `${item.streak} days`
-    : tab === "blog" || tab === "coaches"
-      ? `${item.blogViews} views`
-      : tab === "programs"
-        ? `${item.programsDone} done`
-        : `${item.coinsEarned} ⚡`;
+  return tab === "blog" || tab === "coaches"
+    ? `${item.blogViews} views`
+    : tab === "programs"
+      ? `${item.programsDone} done`
+      : `${item.streak} days`;
 }
 
 // M5 — Animated podium for top 3
@@ -128,7 +120,7 @@ function Podium({ items, tab }: { items: LeaderboardItem[]; tab: TabKey }) {
 
 export default function LeaderboardPage({ params }: { params: { locale: string } }) {
   const locale = params?.locale ?? "en";
-  const [tab, setTab] = useState<TabKey>("coins");
+  const [tab, setTab] = useState<TabKey>("streaks");
   const [period, setPeriod] = useState<"week" | "alltime">("week");
   const [items, setItems] = useState<LeaderboardItem[]>([]);
   const [me, setMe] = useState<LeaderboardItem | null>(null);
@@ -204,11 +196,8 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
             <p className="mt-4 text-lg font-semibold text-white">{EMPTY_MESSAGES[tab].title}</p>
             <p className="mt-2 max-w-sm text-sm text-muted">{EMPTY_MESSAGES[tab].sub}</p>
             <div className="mt-5 flex flex-wrap justify-center gap-3">
-              <a href={`/${locale}/coins#how-to-earn`} className="rounded-full border border-accent/35 bg-accent/10 px-4 py-2 text-sm font-semibold text-accent">
-                How to earn TJCOIN →
-              </a>
               <a href={`/${locale}/bundles`} className="rounded-full border border-divider px-4 py-2 text-sm text-bright">
-                Start Earning →
+                Get Started →
               </a>
             </div>
           </div>
@@ -264,11 +253,6 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
         )}
       </section>
 
-      <section className="mt-8 rounded-xl border border-divider bg-surface p-5 text-sm text-muted">
-        <p className="inline-flex items-center gap-2 text-white">
-          <Trophy className="h-4 w-4 text-accent-violet" /> Weekly top 3 bonuses: +100, +50, +25 TJCOIN
-        </p>
-      </section>
     </PremiumPageShell>
   );
 }

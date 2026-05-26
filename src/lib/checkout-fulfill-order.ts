@@ -7,6 +7,12 @@ import {
 } from "@/lib/payments/stored-provider";
 import { TJCOIN_REWARDS } from "@/lib/tjcoin-events";
 
+// TJCoin retired (Phase 4 cleanup). Set TJFIT_COIN_LEGACY=true to re-enable
+// coin credits on program purchase. Default off — fulfillment skips the coin
+// RPC and writes 0 to tjfit_coins_earned, but the column and tables remain so
+// historical data is preserved.
+const COIN_LEGACY_ENABLED = process.env.TJFIT_COIN_LEGACY === "true";
+
 export type FulfillOrderResult =
   | { ok: true; alreadyPaid?: boolean; coinsEarned: number }
   | { ok: false; error: string };
@@ -22,7 +28,9 @@ export async function fulfillProgramOrderPaid(
   orderId: string,
   opts?: { requireLiveOrder?: boolean }
 ): Promise<FulfillOrderResult> {
-  const rewardAmount = TJCOIN_REWARDS.program_purchase ?? TJFIT_COINS_PER_PROGRAM_PURCHASE;
+  const rewardAmount = COIN_LEGACY_ENABLED
+    ? (TJCOIN_REWARDS.program_purchase ?? TJFIT_COINS_PER_PROGRAM_PURCHASE)
+    : 0;
   const { data: existingOrder, error: fetchErr } = await adminClient
     .from("program_orders")
     .select("id,user_id,status,discount_code,provider")
@@ -79,20 +87,24 @@ export async function fulfillProgramOrderPaid(
 
   // Atomic ledger insert + wallet credit. The RPC returns false if a prior
   // call already credited this order (ledger row exists via unique index).
-  const { data: granted, error: grantError } = await adminClient.rpc(
-    "tjfit_grant_program_purchase_coins",
-    {
-      p_user_id: existingOrder.user_id,
-      p_order_id: existingOrder.id,
-      p_amount: rewardAmount
+  // Skipped entirely when TJCoin legacy mode is disabled (default).
+  let granted: boolean | null = false;
+  if (COIN_LEGACY_ENABLED) {
+    const { data, error: grantError } = await adminClient.rpc(
+      "tjfit_grant_program_purchase_coins",
+      {
+        p_user_id: existingOrder.user_id,
+        p_order_id: existingOrder.id,
+        p_amount: rewardAmount
+      }
+    );
+    if (grantError) {
+      console.error("fulfillProgramOrderPaid: coin grant rpc failed", grantError);
+      // Order is already paid at this point; coin grant can be retried by next
+      // webhook delivery. Return ok so we don't churn the order status.
+      return { ok: true, alreadyPaid: existingOrder.status === "paid", coinsEarned: 0 };
     }
-  );
-
-  if (grantError) {
-    console.error("fulfillProgramOrderPaid: coin grant rpc failed", grantError);
-    // Order is already paid at this point; coin grant can be retried by next
-    // webhook delivery. Return ok so we don't churn the order status.
-    return { ok: true, alreadyPaid: existingOrder.status === "paid", coinsEarned: 0 };
+    granted = data;
   }
 
   if (discountCode) {

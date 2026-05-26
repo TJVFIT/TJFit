@@ -32,7 +32,7 @@ export default async function TjaiMemoryPage({ params }: { params: { locale: str
             ← Back to TJAI
           </Link>
         </div>
-        <TjaiMemoryClient />
+        <TjaiMemoryClient locale={locale} />
       </div>
     </div>
   );

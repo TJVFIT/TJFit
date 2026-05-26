@@ -40,7 +40,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     }
     await admin.from("community_blog_posts").update({ status: "published" }).eq("id", id);
     await awardTJCoin(post.author_id, "blog_post_approved", 100, { metadata: { postId: id } });
-    await enqueuePendingNotification(post.author_id, "achievement", "Your blog post is live! +100 TJCOIN");
+    await enqueuePendingNotification(post.author_id, "achievement", "Your blog post is live!");
     const user = await admin.auth.admin.getUserById(post.author_id);
     const email = user.data.user?.email;
     if (email) {

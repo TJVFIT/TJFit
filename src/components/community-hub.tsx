@@ -138,9 +138,6 @@ type DbChallenge = {
   todayValue: number | null;
   leaderboard: Array<{ userId: string; total: number }>;
   myRank: number | null;
-  coin_prize_1st: number;
-  coin_prize_2nd: number;
-  coin_prize_3rd: number;
 };
 
 function ChallengesLivePanel({
@@ -166,9 +163,6 @@ function ChallengesLivePanel({
               <p className="mt-1 text-sm text-bright">{item.description}</p>
               <p className="mt-2 text-xs text-faint">
                 {item.metric_type} · ends {item.end_date} · {item.participants} joined
-              </p>
-              <p className="mt-1 text-xs text-cyan-300">
-                TJCOIN prizes: {item.coin_prize_1st}/{item.coin_prize_2nd}/{item.coin_prize_3rd}
               </p>
             </div>
             <button
@@ -223,7 +217,6 @@ type DiscoverUser = {
   display_name: string;
   avatar_url: string | null;
   current_streak?: number;
-  coins_earned?: number;
 };
 
 function GroupsPanel({
@@ -605,7 +598,7 @@ export function CommunityHub({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ challengeId, value })
     });
-    island?.showNotification("coins", "+5 TJCOIN for logging today");
+    island?.showNotification("achievement", "Logged for today");
     await loadChallenges();
   };
 

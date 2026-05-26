@@ -2,10 +2,13 @@
 
 import { useEffect, useState } from "react";
 
+import type { Locale } from "@/lib/i18n";
+import { getTjaiMemoryCopy } from "@/lib/tjai-memory-copy";
 import { TJAI_PERSONA_META, TJAI_PERSONAS, type TjaiPersona } from "@/lib/tjai/persona";
 import { cn } from "@/lib/utils";
 
-export function PersonaPicker({ compact = false }: { compact?: boolean }) {
+export function PersonaPicker({ compact = false, locale = "en" }: { compact?: boolean; locale?: Locale }) {
+  const copy = getTjaiMemoryCopy(locale);
   const [persona, setPersona] = useState<TjaiPersona | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -43,7 +46,7 @@ export function PersonaPicker({ compact = false }: { compact?: boolean }) {
 
   return (
     <div className={cn("flex items-center gap-2", compact ? "text-xs" : "text-sm")}>
-      <span className="text-white/50">Coach style:</span>
+      <span className="text-white/50">{copy.coachStyleLabel}</span>
       <div className="inline-flex overflow-hidden rounded-full border border-white/15 bg-white/5">
         {TJAI_PERSONAS.map((p) => {
           const meta = TJAI_PERSONA_META[p];

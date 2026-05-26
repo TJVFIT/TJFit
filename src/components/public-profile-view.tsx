@@ -22,7 +22,6 @@ type ProfileData = {
   display_badge_key: string | null;
   privacy_settings: {
     show_streak: boolean;
-    show_coins: boolean;
     show_programs: boolean;
     show_posts: boolean;
   };
@@ -35,7 +34,6 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
   const [following, setFollowing] = useState(false);
   const [stats, setStats] = useState<{
     streak: number | null;
-    coins: number | null;
     programs_done: number | null;
     blog_posts: number | null;
     followers: number;
@@ -133,7 +131,6 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
 
   const statList = [
     { label: "Streak", value: stats?.streak, icon: "🔥" },
-    { label: "TJCOIN", value: stats?.coins, icon: "⚡" },
     { label: "Programs Done", value: stats?.programs_done, icon: "🏆" },
     { label: "Blog Posts", value: stats?.blog_posts, icon: "📝" }
   ];

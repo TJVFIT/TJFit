@@ -9,7 +9,6 @@ import { formatProgramPrice, getProgramBasePriceTry, localizeProgram } from "@/l
 import { ProtectedRoute } from "@/components/protected-route";
 import { PremiumPageShell, PremiumPanel } from "@/components/premium";
 import { trackMarketingEvent } from "@/lib/analytics-events";
-import { TJFIT_COINS_PER_PROGRAM_PURCHASE, TJFIT_COINS_PER_USD } from "@/lib/tjfit-coin";
 import type { CheckoutClientFlow } from "@/lib/payments/types";
 
 function isCheckoutClientFlow(value: unknown): value is CheckoutClientFlow {
@@ -23,12 +22,6 @@ function isCheckoutClientFlow(value: unknown): value is CheckoutClientFlow {
   }
   return false;
 }
-
-type WalletResponse = {
-  wallet: { balance: number; lifetime_earned: number; lifetime_spent: number };
-  offers: Array<{ key: string; title: string; coin_cost: number; discount_percent: number }>;
-  codes: Array<{ code: string; discount_percent: number; offer_key: string }>;
-};
 
 type CheckoutProgramOption = {
   slug: string;
@@ -44,9 +37,6 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
   const copy = getCheckoutCopy(locale);
   const [activeSlug, setActiveSlug] = useState(programs[0]?.slug ?? "");
   const [customPrograms, setCustomPrograms] = useState<CheckoutProgramOption[]>([]);
-  const [walletData, setWalletData] = useState<WalletResponse | null>(null);
-  const [selectedCode, setSelectedCode] = useState("");
-  /** Typed promo (e.g. JOSEPH1407); takes precedence over wallet dropdown when non-empty. */
   const [promoCodeInput, setPromoCodeInput] = useState("");
   const [appliedPromoCode, setAppliedPromoCode] = useState("");
   const [promoMessage, setPromoMessage] = useState<string | null>(null);
@@ -84,13 +74,6 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
   const baseTry = selectedProgram ? selectedProgram.baseTry : 0;
   const basePrice = formatProgramPrice(baseTry, locale);
 
-  const refreshWallet = useCallback(async () => {
-    const res = await fetch("/api/coins/wallet", { credentials: "include" });
-    if (!res.ok) return;
-    const data = (await res.json()) as WalletResponse;
-    setWalletData(data);
-  }, []);
-
   const pollUntilOrderPaid = useCallback(
     async (orderId: string) => {
       for (let i = 0; i < 24; i++) {
@@ -100,17 +83,13 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
         const j = (await r.json()) as { status?: string };
         if (j.status === "paid") {
           setStatusTone("success");
-          setStatus(
-            `${copy.successPurchase} +${TJFIT_COINS_PER_PROGRAM_PURCHASE} TJFITcoin`
-          );
-          setSelectedCode("");
+          setStatus(copy.successPurchase);
           setPromoCodeInput("");
           setAppliedPromoCode("");
           setPromoMessage(null);
           setSavedOrderId(null);
           setPendingAmountTry(null);
           activeGatewayOrderRef.current = null;
-          await refreshWallet();
           return;
         }
         await new Promise((res) => setTimeout(res, 1250));
@@ -118,7 +97,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
       setStatusTone("pending");
       setStatus(copy.paddleWebhookWait);
     },
-    [copy.paddleWebhookWait, copy.successPurchase, refreshWallet]
+    [copy.paddleWebhookWait, copy.successPurchase]
   );
 
   pollUntilPaidRef.current = pollUntilOrderPaid;
@@ -181,10 +160,6 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
   }, [locale]);
 
   useEffect(() => {
-    void refreshWallet();
-  }, [refreshWallet]);
-
-  useEffect(() => {
     if (!localeValid) return;
     trackMarketingEvent("checkout_start", { locale });
   }, [locale, localeValid]);
@@ -192,28 +167,6 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
   if (!localeValid) {
     notFound();
   }
-
-  const redeemOffer = async (offerKey: string) => {
-    setWorking(true);
-    setStatus(null);
-    setStatusTone("neutral");
-    const res = await fetch("/api/coins/redeem", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ offerKey })
-    });
-    const data = await res.json();
-    setWorking(false);
-    if (!res.ok) {
-      setStatusTone("error");
-      setStatus(`${copy.errorPrefix} ${data.error ?? ""}`.trim());
-      return;
-    }
-    setStatusTone("success");
-    setStatus(`${data.code ?? ""}`);
-    await refreshWallet();
-  };
 
   const completePurchase = async () => {
     if (!selectedProgram) return;
@@ -224,7 +177,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
     setPendingAmountTry(null);
 
     const discountCodeForOrder =
-      appliedPromoCode || promoCodeInput.trim().toUpperCase() || selectedCode || undefined;
+      appliedPromoCode || promoCodeInput.trim().toUpperCase() || undefined;
 
     const createRes = await fetch("/api/checkout/create-order", {
       method: "POST",
@@ -276,16 +229,12 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
     }
 
     setStatusTone("success");
-    setStatus(
-      `${copy.successPurchase} +${completeData.coinsEarned ?? TJFIT_COINS_PER_PROGRAM_PURCHASE} TJFITcoin`
-    );
-    setSelectedCode("");
+    setStatus(copy.successPurchase);
     setPromoCodeInput("");
     setAppliedPromoCode("");
     setPromoMessage(null);
     setSavedOrderId(null);
     setPendingAmountTry(null);
-    await refreshWallet();
   };
 
   const statusClass =
@@ -306,9 +255,6 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
             {copy.title}
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-relaxed text-faint sm:text-base">{copy.lead}</p>
-          <p className="mt-4 text-xs text-dim sm:text-sm">
-            {TJFIT_COINS_PER_PROGRAM_PURCHASE} TJFITcoin / purchase · 1 USD ≈ {TJFIT_COINS_PER_USD} TJFITcoin
-          </p>
         </PremiumPanel>
 
         {savedOrderId ? (
@@ -336,7 +282,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
           </PremiumPanel>
         ) : null}
 
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-6">
           <PremiumPanel>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-dim">{copy.selectProgram}</p>
             <select
@@ -359,28 +305,11 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
                 <p className="mt-4 text-sm text-muted">
                   {copy.price}: <span className="font-medium text-white">{basePrice}</span>
                 </p>
-                <p className="mt-1 text-sm text-muted">
-                  {copy.coinsOnPurchase}:{" "}
-                  <span className="font-medium text-white">{TJFIT_COINS_PER_PROGRAM_PURCHASE}</span>
-                </p>
               </div>
             )}
 
             <div className="mt-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-dim">{copy.discountLabel}</p>
-              <select
-                className="input mt-3"
-                value={selectedCode}
-                onChange={(e) => setSelectedCode(e.target.value)}
-              >
-                <option value="">{copy.noDiscount}</option>
-                {(walletData?.codes ?? []).map((code) => (
-                  <option key={code.code} value={code.code}>
-                    {code.code} ({code.discount_percent}%)
-                  </option>
-                ))}
-              </select>
-              <label className="mt-4 block">
+              <label className="block">
                 <span className="text-xs font-semibold uppercase tracking-[0.18em] text-dim">
                   {copy.promoCodeLabel}
                 </span>
@@ -425,46 +354,6 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
             <p className="mt-4 text-xs leading-relaxed text-dim">{copy.footnote}</p>
             {status ? <p className={`mt-4 text-sm ${statusClass}`}>{status}</p> : null}
           </PremiumPanel>
-
-          <div className="space-y-6">
-            <PremiumPanel>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-dim">{copy.walletTitle}</p>
-              <p className="mt-3 font-display text-3xl font-semibold tabular-nums text-white">
-                {walletData?.wallet.balance ?? 0}
-              </p>
-              <p className="mt-2 text-sm text-faint">
-                {copy.walletLifetime}: {walletData?.wallet.lifetime_earned ?? 0} /{" "}
-                {walletData?.wallet.lifetime_spent ?? 0}
-              </p>
-            </PremiumPanel>
-
-            <PremiumPanel>
-              <p className="text-lg font-semibold text-white">{copy.discountStore}</p>
-              <div className="mt-4 space-y-3">
-                {(walletData?.offers ?? []).map((offer) => (
-                  <div
-                    key={offer.key}
-                    className="group/offer flex items-center justify-between gap-3 rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 transition-[border-color,box-shadow] duration-200 hover:border-cyan-300/30 hover:shadow-[0_0_22px_rgba(34,211,238,0.12)]"
-                  >
-                    <div className="min-w-0">
-                      <p className="font-medium text-white transition-colors duration-200 group-hover/offer:text-cyan-50">{offer.title}</p>
-                      <p className="text-sm text-faint">
-                        {offer.discount_percent}% · {offer.coin_cost} coins
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => redeemOffer(offer.key)}
-                      disabled={working}
-                      className="lux-btn-secondary shrink-0 rounded-full px-4 py-2 text-xs font-medium text-bright disabled:opacity-50"
-                    >
-                      {copy.redeem}
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </PremiumPanel>
-          </div>
         </div>
       </PremiumPageShell>
     </ProtectedRoute>

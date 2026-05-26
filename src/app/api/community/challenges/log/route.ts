@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { enqueuePendingNotification } from "@/lib/pending-notifications";
 import { rateLimit } from "@/lib/rate-limit";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
-import { awardTJCoin } from "@/lib/tjcoin-server";
 
 // Refuse implausibly large values (a "reps" / "minutes" / "km" field). The
 // route previously accepted any positive number, letting a user inflate
@@ -68,9 +66,6 @@ export async function POST(request: NextRequest) {
     .update({ total_logged: Number(participation.total_logged ?? 0) + value })
     .eq("challenge_id", challengeId)
     .eq("user_id", auth.user.id);
-  await awardTJCoin(auth.user.id, "workout_logged", 5, {
-    metadata: { challengeId, value, source: "challenge_log" }
-  });
-  await enqueuePendingNotification(auth.user.id, "coins", "+5 TJCOIN for logging today");
+  // TJCoin retired — challenge logs no longer award coins or enqueue a coin notification.
   return NextResponse.json({ ok: true });
 }

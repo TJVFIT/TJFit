@@ -1,9 +1,9 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { CheckCircle2, Trophy, Zap } from "lucide-react";
+import { CheckCircle2, Trophy } from "lucide-react";
 
-type NotificationType = "signup" | "purchase" | "coins" | "achievement" | "streak";
+type NotificationType = "signup" | "purchase" | "achievement" | "streak";
 
 type DynamicIslandItem = {
   id: number;
@@ -20,7 +20,6 @@ const DynamicIslandContext = createContext<DynamicIslandContextType | null>(null
 const DEFAULT_MESSAGES: Record<NotificationType, string> = {
   signup: "🎉 Welcome to TJFit!",
   purchase: "✅ Purchase successful — full access unlocked",
-  coins: "⚡ TJCOIN earned",
   achievement: "🏆 Achievement unlocked",
   streak: "🔥 Streak milestone reached"
 };
@@ -66,8 +65,6 @@ export function DynamicIslandProvider({ children }: { children: React.ReactNode 
               <div className="flex max-w-[min(440px,calc(100vw-2rem))] items-center gap-2 text-sm font-medium">
                 {current.type === "achievement" ? (
                   <Trophy className="h-4 w-4 shrink-0 text-accent-violet" />
-                ) : current.type === "coins" ? (
-                  <Zap className="h-4 w-4 shrink-0 text-accent" />
                 ) : (
                   <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
                 )}

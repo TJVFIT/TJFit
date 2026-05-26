@@ -20,7 +20,6 @@ type ProfileRow = {
   updated_at?: string | null;
   privacy_settings?: {
     show_streak?: boolean;
-    show_coins?: boolean;
     show_programs?: boolean;
     show_posts?: boolean;
   };
@@ -62,7 +61,7 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
     is_private: false,
     is_searchable: true,
     message_privacy: "everyone",
-    privacy_settings: { show_streak: true, show_coins: true, show_programs: true, show_posts: true },
+    privacy_settings: { show_streak: true, show_programs: true, show_posts: true },
     banner_color: "#111215",
     display_badge_key: null
   });
@@ -97,7 +96,6 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
         message_privacy: normalizePrivacy(p.message_privacy),
         privacy_settings: {
           show_streak: p.privacy_settings?.show_streak !== false,
-          show_coins: p.privacy_settings?.show_coins !== false,
           show_programs: p.privacy_settings?.show_programs !== false,
           show_posts: p.privacy_settings?.show_posts !== false
         },
@@ -429,7 +427,6 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
           <p className="text-xs font-medium uppercase tracking-wider text-faint">Privacy Settings</p>
           {[
             ["show_streak", "Show my streak"],
-            ["show_coins", "Show my TJCOIN balance"],
             ["show_programs", "Show programs I'm doing"],
             ["show_posts", "Show my community posts"]
           ].map(([key, label]) => (

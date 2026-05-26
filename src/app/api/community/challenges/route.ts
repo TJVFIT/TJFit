@@ -19,7 +19,7 @@ export async function GET() {
   const today = new Date().toISOString().slice(0, 10);
   const { data: challenges } = await admin
     .from("community_challenges")
-    .select("id,title,description,metric_type,start_date,end_date,coin_prize_1st,coin_prize_2nd,coin_prize_3rd,coin_completion_reward")
+    .select("id,title,description,metric_type,start_date,end_date")
     .lte("start_date", today)
     .order("end_date", { ascending: true });
 

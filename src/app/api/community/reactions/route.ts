@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { enqueuePendingNotification } from "@/lib/pending-notifications";
 import { rateLimit } from "@/lib/rate-limit";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
@@ -59,21 +58,15 @@ export async function POST(request: NextRequest) {
   }
 
   const result = (Array.isArray(rpcRows) ? rpcRows[0] : rpcRows) as
-    | { awarded?: boolean; reason?: string; coins_earned_today?: number }
+    | { awarded?: boolean; reason?: string }
     | null;
 
-  // Only enqueue a notification when this call actually awarded a coin —
-  // duplicate reactions and cap-reached cases used to still ping the
-  // author, which was spammable.
-  if (result?.awarded) {
-    await enqueuePendingNotification(post.author_id, "coins", "Someone reacted to your post ⚡");
-  }
+  // TJCoin retired — no longer enqueue a coin-earned notification on react.
 
   return NextResponse.json({
     ok: true,
     awarded: Boolean(result?.awarded),
     daily_cap_reached: result?.reason === "daily_cap_reached",
-    already_reacted: result?.reason === "already_reacted",
-    coins_earned_today: Number(result?.coins_earned_today ?? 0)
+    already_reacted: result?.reason === "already_reacted"
   });
 }

@@ -3,9 +3,7 @@
 import { useState } from "react";
 import { ShoppingBag } from "lucide-react";
 
-import { useAuth } from "@/components/auth-provider";
 import { AmbientOrbs } from "@/components/effects/ambient-orbs";
-import { isLocale } from "@/lib/i18n";
 
 const CATEGORIES = [
   { icon: "🏋️", title: "Home Gym Equipment", desc: "Dumbbells, barbells, resistance bands, pull-up bars, kettlebells, power racks — everything to train at home." },
@@ -14,9 +12,7 @@ const CATEGORIES = [
   { icon: "💆", title: "Physiotherapy Equipment", desc: "Massage guns, foam rollers, resistance therapy bands, balance boards, TENS devices. Recover like a pro." }
 ];
 
-export default function EquipmentPage({ params }: { params: { locale: string } }) {
-  const locale = isLocale(params.locale) ? params.locale : "en";
-  const { user } = useAuth();
+export default function EquipmentPage() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -61,15 +57,6 @@ export default function EquipmentPage({ params }: { params: { locale: string } }
             <p className="mt-2 text-sm leading-[1.7] text-muted">{cat.desc}</p>
           </article>
         ))}
-      </div>
-
-      <div className="mt-10 rounded-2xl border border-cyan-400/15 bg-[rgba(34,211,238,0.03)] p-6 text-center">
-        <p className="text-sm font-semibold text-accent">⚡ Your TJCOINs will be redeemable in the store.</p>
-        {user ? (
-          <p className="mt-1 text-xs text-muted">Keep earning coins. They unlock discounts at launch.</p>
-        ) : (
-          <p className="mt-1 text-xs text-muted"><a href={`/${locale}/signup`} className="text-accent underline">Sign up free</a> to start earning TJCOINs. Redeemable at launch.</p>
-        )}
       </div>
 
       <div className="mt-10 rounded-2xl border border-divider bg-surface p-6">

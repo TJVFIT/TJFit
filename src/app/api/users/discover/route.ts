@@ -38,8 +38,8 @@ export async function GET() {
   const [topEarners, activeCoaches, newMembers, candidatePlans, streakFallback] = await Promise.all([
     admin
       .from("leaderboard_weekly_snapshots")
-      .select("user_id,coins_earned")
-      .order("coins_earned", { ascending: false })
+      .select("user_id,streak_days")
+      .order("streak_days", { ascending: false })
       .limit(5),
     admin
       .from("profiles")
@@ -113,8 +113,7 @@ export async function GET() {
     : { data: [] as ProfileLite[] };
   const topMap = new Map((topProfiles ?? []).map((row) => [row.id, row]));
   const top = (topEarners.data ?? []).map((row) => ({
-    ...(topMap.get(row.user_id) ?? { id: row.user_id }),
-    coins_earned: row.coins_earned
+    ...(topMap.get(row.user_id) ?? { id: row.user_id })
   }));
 
   return NextResponse.json({

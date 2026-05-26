@@ -7,7 +7,7 @@ import { useDynamicIsland } from "@/components/ui/dynamic-island";
 
 type PendingRow = {
   id: string;
-  type: "success" | "coins" | "achievement" | "streak";
+  type: "success" | "achievement" | "streak" | "coins";
   message: string;
 };
 
@@ -29,8 +29,10 @@ export function PendingNotificationPoller() {
         if (!res.ok || cancelled) return;
         const rows = (data.notifications ?? []) as PendingRow[];
         for (const row of rows) {
+          // Legacy "coins" rows from retired TJCoin flow → fall through to signup style.
+          if (row.type === "coins") continue;
           const t = row.type === "success" ? "signup" : row.type;
-          island.showNotification(t as "signup" | "coins" | "achievement" | "streak", row.message);
+          island.showNotification(t as "signup" | "achievement" | "streak", row.message);
         }
       } catch {
         // no-op

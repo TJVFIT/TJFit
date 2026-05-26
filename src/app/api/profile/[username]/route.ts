@@ -6,14 +6,12 @@ import { isValidUsername } from "@/lib/username";
 
 type PrivacySettings = {
   show_streak?: boolean;
-  show_coins?: boolean;
   show_programs?: boolean;
   show_posts?: boolean;
 };
 
 const DEFAULT_PRIVACY: Required<PrivacySettings> = {
   show_streak: true,
-  show_coins: true,
   show_programs: true,
   show_posts: true
 };
@@ -47,9 +45,8 @@ export async function GET(_request: NextRequest, { params }: { params: { usernam
   const isSelf = viewerId === profile.id;
   const privacy = { ...DEFAULT_PRIVACY, ...(profile.privacy_settings as PrivacySettings | null) };
 
-  const [wallet, programOrders, blogPosts, followers, following, badges, activeProgress, recentBlogsMerged] =
+  const [programOrders, blogPosts, followers, following, badges, activeProgress, recentBlogsMerged] =
     await Promise.all([
-      admin.from("tjfit_coin_wallets").select("balance").eq("user_id", profile.id).maybeSingle(),
       admin.from("program_orders").select("id", { head: true, count: "exact" }).eq("user_id", profile.id).eq("status", "paid"),
       admin.from("community_blog_posts").select("id", { head: true, count: "exact" }).eq("author_id", profile.id).eq("status", "published"),
       admin.from("user_follows").select("follower_id", { head: true, count: "exact" }).eq("following_id", profile.id),
@@ -78,7 +75,6 @@ export async function GET(_request: NextRequest, { params }: { params: { usernam
 
   const stats = {
     streak: isSelf || privacy.show_streak ? Number(profile.current_streak ?? 0) : null,
-    coins: isSelf || privacy.show_coins ? Number(wallet.data?.balance ?? 0) : null,
     programs_done: isSelf || privacy.show_programs ? Number(programOrders.count ?? 0) : null,
     blog_posts: isSelf || privacy.show_posts ? Number(blogPosts.count ?? 0) : null,
     followers: Number(followers.count ?? 0),
@@ -104,7 +100,10 @@ export async function GET(_request: NextRequest, { params }: { params: { usernam
       display_name: profile.display_name,
       avatar_url: profile.avatar_url,
       bio: profile.bio,
-      role: profile.role,
+      // Public surface: only "coach" is a meaningful public role.
+      // Admin / staff roles are masked to "user" so the public profile
+      // does not advertise privileged accounts.
+      role: profile.role === "coach" ? "coach" : "user",
       is_verified: profile.is_verified,
       banner_color: profile.banner_color ?? "#111215",
       display_badge_key: profile.display_badge_key,

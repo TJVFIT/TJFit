@@ -3,11 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
-type LeaderboardType = "coins" | "streaks" | "blog" | "coaches" | "programs";
+type LeaderboardType = "streaks" | "blog" | "coaches" | "programs";
 type LeaderboardPeriod = "week" | "alltime";
 type SnapshotRow = {
   user_id: string;
-  coins_earned: number | null;
   streak_days: number | null;
   blog_views: number | null;
   posts_count: number | null;
@@ -18,16 +17,14 @@ type SnapshotRow = {
 
 function getMetricColumn(type: LeaderboardType) {
   switch (type) {
-    case "streaks":
-      return "streak_days";
     case "blog":
     case "coaches":
       return "blog_views";
     case "programs":
       return "programs_done";
-    case "coins":
+    case "streaks":
     default:
-      return "coins_earned";
+      return "streak_days";
   }
 }
 
@@ -38,7 +35,8 @@ export async function GET(request: NextRequest) {
   }
 
   const { searchParams } = new URL(request.url);
-  const type = (searchParams.get("type") ?? "coins") as LeaderboardType;
+  const rawType = searchParams.get("type") ?? "streaks";
+  const type = (rawType === "coins" ? "streaks" : rawType) as LeaderboardType;
   const period = (searchParams.get("period") ?? "week") as LeaderboardPeriod;
   const isCoachOnly = type === "coaches";
   const metric = getMetricColumn(type);
@@ -49,7 +47,7 @@ export async function GET(request: NextRequest) {
 
   let query = adminClient
     .from("leaderboard_weekly_snapshots")
-    .select("user_id,coins_earned,streak_days,blog_views,posts_count,programs_done,is_coach,week_start");
+    .select("user_id,streak_days,blog_views,posts_count,programs_done,is_coach,week_start");
 
   if (isCoachOnly) {
     query = query.eq("is_coach", true);
@@ -69,7 +67,6 @@ export async function GET(request: NextRequest) {
       .limit(100);
     rows = (fallbackProfiles ?? []).map((row) => ({
       user_id: row.id,
-      coins_earned: 0,
       streak_days: row.current_streak ?? 0,
       blog_views: 0,
       posts_count: 0,
@@ -94,7 +91,6 @@ export async function GET(request: NextRequest) {
       avatarUrl: profile.avatar_url ?? null,
       isVerified: Boolean(profile.is_verified),
       streak: profile.current_streak ?? row.streak_days ?? 0,
-      coinsEarned: row.coins_earned ?? 0,
       blogViews: row.blog_views ?? 0,
       postsCount: row.posts_count ?? 0,
       programsDone: row.programs_done ?? 0
@@ -113,7 +109,7 @@ export async function GET(request: NextRequest) {
       if (!me) {
         const { data: mine } = await adminClient
           .from("leaderboard_weekly_snapshots")
-          .select("user_id,coins_earned,streak_days,blog_views,posts_count,programs_done")
+          .select("user_id,streak_days,blog_views,posts_count,programs_done")
           .eq("user_id", user.id)
           .order(metric, { ascending: false })
           .limit(1)
@@ -132,7 +128,6 @@ export async function GET(request: NextRequest) {
             avatarUrl: myProfile?.avatar_url ?? null,
             isVerified: Boolean(myProfile?.is_verified),
             streak: myProfile?.current_streak ?? mine.streak_days ?? 0,
-            coinsEarned: mine.coins_earned ?? 0,
             blogViews: mine.blog_views ?? 0,
             postsCount: mine.posts_count ?? 0,
             programsDone: mine.programs_done ?? 0

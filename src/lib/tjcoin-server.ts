@@ -7,7 +7,14 @@ type AwardOptions = {
   allowNegative?: boolean;
 };
 
+// TJCoin retired. Set TJFIT_COIN_LEGACY=true to re-enable coin grants.
+const COIN_LEGACY_ENABLED = process.env.TJFIT_COIN_LEGACY === "true";
+
 export async function awardTJCoin(userId: string, reason: TJCoinRewardReason | string, amount: number, options?: AwardOptions) {
+  if (!COIN_LEGACY_ENABLED) {
+    return { ok: true as const, wallet: null, notification: null };
+  }
+
   if (!userId) {
     return { ok: false as const, error: "Missing user id" };
   }

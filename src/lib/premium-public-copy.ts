@@ -45,20 +45,13 @@ export type CheckoutCopy = {
   selectProgram: string;
   orderSummary: string;
   price: string;
-  coinsOnPurchase: string;
-  discountLabel: string;
   /** Optional text field for site-wide promo codes (e.g. JOSEPH1407) */
   promoCodeLabel: string;
   promoCodePlaceholder: string;
   promoApplyCta: string;
   promoAppliedPrefix: string;
-  noDiscount: string;
   ctaPay: string;
   ctaWorking: string;
-  walletTitle: string;
-  walletLifetime: string;
-  discountStore: string;
-  redeem: string;
   footnote: string;
   pendingTitle: string;
   pendingBody: string;
@@ -321,23 +314,16 @@ const checkout: Record<Locale, CheckoutCopy> = {
   en: {
     badge: "Checkout",
     title: "Complete your purchase",
-    lead: "Every program purchase earns TJFITcoin. Apply member discount codes from your wallet when available.",
+    lead: "Apply a promo code if you have one, then continue to secure payment.",
     selectProgram: "Program",
     orderSummary: "Order summary",
     price: "Price",
-    coinsOnPurchase: "Coins earned",
-    discountLabel: "Discount code",
-    promoCodeLabel: "Or enter a promo code",
+    promoCodeLabel: "Promo code",
     promoCodePlaceholder: "e.g. JOSEPH1407",
     promoApplyCta: "Apply",
     promoAppliedPrefix: "Code applied:",
-    noDiscount: "None",
     ctaPay: "Continue to payment",
     ctaWorking: "Processing…",
-    walletTitle: "Wallet",
-    walletLifetime: "Lifetime earned / spent",
-    discountStore: "Redeem offers",
-    redeem: "Redeem",
     footnote:
       "Checkout uses Gumroad for cards, PayPal, and other methods you enable in your Gumroad dashboard. Test mode completes instantly for development.",
     pendingTitle: "Order secured",
@@ -347,7 +333,7 @@ const checkout: Record<Locale, CheckoutCopy> = {
     gatewayPayCta: "Open secure checkout",
     paddleOpening: "Opening checkout…",
     paddleInitError: "Add NEXT_PUBLIC_GUMROAD_DEFAULT_PRODUCT_URL to your site environment (Gumroad seller dashboard → Developer tools).",
-    paddleWebhookWait: "Payment is processing. Your wallet may take a few seconds to update — you can refresh this page.",
+    paddleWebhookWait: "Payment is processing. You can refresh this page in a few seconds.",
     errorPrefix: "Something went wrong.",
     successPurchase: "Purchase completed.",
     securePaymentTrust: "Secure payment via Gumroad. Instant access after payment."
@@ -355,23 +341,16 @@ const checkout: Record<Locale, CheckoutCopy> = {
   tr: {
     badge: "Odeme",
     title: "Satin almayi tamamlayin",
-    lead: "Her program satin alimi TJFITcoin kazandirir. Cuzdandan indirim kodu varsa uygulayin.",
+    lead: "Varsa promosyon kodunuzu uygulayin, sonra guvenli odemeye gecin.",
     selectProgram: "Program",
     orderSummary: "Siparis ozeti",
     price: "Fiyat",
-    coinsOnPurchase: "Kazanilan coin",
-    discountLabel: "Indirim kodu",
-    promoCodeLabel: "Veya promosyon kodu girin",
+    promoCodeLabel: "Promosyon kodu",
     promoCodePlaceholder: "ornek: JOSEPH1407",
     promoApplyCta: "Uygula",
     promoAppliedPrefix: "Kod uygulandi:",
-    noDiscount: "Yok",
     ctaPay: "Odemeye devam",
     ctaWorking: "Isleniyor…",
-    walletTitle: "Cuzdan",
-    walletLifetime: "Toplam kazanilan / harcanan",
-    discountStore: "Teklifleri kullan",
-    redeem: "Kullan",
     footnote:
       "Odeme Gumroad uzerinden yapilir; Gumroad panelinde actiginiz yontemler gorunur. Test modu gelistirme icin aninda tamamlar.",
     pendingTitle: "Siparis kaydedildi",
@@ -381,7 +360,7 @@ const checkout: Record<Locale, CheckoutCopy> = {
     gatewayPayCta: "Guvenli odemeyi ac",
     paddleOpening: "Odeme aciliyor…",
     paddleInitError: "NEXT_PUBLIC_GUMROAD_DEFAULT_PRODUCT_URL ortam degiskenini ekleyin (Gumroad gelistirici araclari).",
-    paddleWebhookWait: "Odeme isleniyor. Cuzdan birkaç saniye gecikebilir; sayfayi yenileyebilirsiniz.",
+    paddleWebhookWait: "Odeme isleniyor. Sayfayi birkac saniye sonra yenileyebilirsiniz.",
     errorPrefix: "Bir sorun olustu.",
     successPurchase: "Satin alma tamamlandi.",
     securePaymentTrust: "Guvenli odeme Gumroad ile. Odeme sonrasi aninda erisim."
@@ -389,23 +368,16 @@ const checkout: Record<Locale, CheckoutCopy> = {
   ar: {
     badge: "الدفع",
     title: "أكمل عملية الشراء",
-    lead: "كل شراء برنامج يمنحك TJFITcoin. استخدم رموز الخصم من محفظتك عند توفرها.",
+    lead: "أدخل رمزاً ترويجياً إن وُجد، ثم تابع إلى الدفع الآمن.",
     selectProgram: "البرنامج",
     orderSummary: "ملخص الطلب",
     price: "السعر",
-    coinsOnPurchase: "العملات المكتسبة",
-    discountLabel: "رمز الخصم",
-    promoCodeLabel: "أو أدخل رمز ترويجي",
+    promoCodeLabel: "رمز ترويجي",
     promoCodePlaceholder: "مثال: JOSEPH1407",
     promoApplyCta: "تطبيق",
     promoAppliedPrefix: "تم تطبيق الرمز:",
-    noDiscount: "لا يوجد",
     ctaPay: "متابعة الدفع",
     ctaWorking: "جاري المعالجة…",
-    walletTitle: "المحفظة",
-    walletLifetime: "الإجمالي المكتسب / المصروف",
-    discountStore: "استبدال العروض",
-    redeem: "استبدال",
     footnote:
       "الدفع عبر Gumroad؛ تظهر الطرق التي تفعّلها في لوحة Gumroad. وضع الاختبار يكمل فوراً للتطوير.",
     pendingTitle: "تم حفظ الطلب",
@@ -415,7 +387,7 @@ const checkout: Record<Locale, CheckoutCopy> = {
     gatewayPayCta: "افتح الدفع الآمن",
     paddleOpening: "جاري فتح الدفع…",
     paddleInitError: "أضف NEXT_PUBLIC_GUMROAD_DEFAULT_PRODUCT_URL إلى إعدادات الموقع (أدوات المطوّر في Gumroad).",
-    paddleWebhookWait: "جاري معالجة الدفع. قد يتأخر تحديث المحفظة ثوانٍ — يمكنك تحديث الصفحة.",
+    paddleWebhookWait: "جاري معالجة الدفع. يمكنك تحديث الصفحة بعد لحظات.",
     errorPrefix: "حدث خطأ.",
     successPurchase: "اكتملت عملية الشراء.",
     securePaymentTrust: "دفع آمن عبر Gumroad. وصول فوري بعد الدفع."
@@ -423,23 +395,16 @@ const checkout: Record<Locale, CheckoutCopy> = {
   es: {
     badge: "Pago",
     title: "Completa tu compra",
-    lead: "Cada programa suma TJFITcoin. Aplica codigos de descuento de tu cartera si los tienes.",
+    lead: "Aplica un codigo promocional si tienes uno, luego continua al pago seguro.",
     selectProgram: "Programa",
     orderSummary: "Resumen",
     price: "Precio",
-    coinsOnPurchase: "Monedas ganadas",
-    discountLabel: "Codigo de descuento",
-    promoCodeLabel: "O introduce un codigo promocional",
+    promoCodeLabel: "Codigo promocional",
     promoCodePlaceholder: "ej. JOSEPH1407",
     promoApplyCta: "Aplicar",
     promoAppliedPrefix: "Codigo aplicado:",
-    noDiscount: "Ninguno",
     ctaPay: "Continuar al pago",
     ctaWorking: "Procesando…",
-    walletTitle: "Cartera",
-    walletLifetime: "Total ganado / gastado",
-    discountStore: "Canjear ofertas",
-    redeem: "Canjear",
     footnote:
       "El pago es con Gumroad; veras los metodos que actives en el panel de Gumroad. El modo test completa al instante.",
     pendingTitle: "Pedido guardado",
@@ -449,7 +414,7 @@ const checkout: Record<Locale, CheckoutCopy> = {
     gatewayPayCta: "Abrir pago seguro",
     paddleOpening: "Abriendo checkout…",
     paddleInitError: "Anade NEXT_PUBLIC_GUMROAD_DEFAULT_PRODUCT_URL al entorno del sitio (herramientas para desarrolladores de Gumroad).",
-    paddleWebhookWait: "Procesando el pago. La cartera puede tardar unos segundos; puedes actualizar la pagina.",
+    paddleWebhookWait: "Procesando el pago. Puedes actualizar la pagina en unos segundos.",
     errorPrefix: "Algo salio mal.",
     successPurchase: "Compra completada.",
     securePaymentTrust: "Pago seguro con Gumroad. Acceso instantaneo tras pagar."
@@ -457,23 +422,16 @@ const checkout: Record<Locale, CheckoutCopy> = {
   fr: {
     badge: "Paiement",
     title: "Finaliser votre achat",
-    lead: "Chaque programme rapporte des TJFITcoin. Appliquez les codes de reduction de votre portefeuille.",
+    lead: "Appliquez un code promo si vous en avez un, puis continuez vers le paiement securise.",
     selectProgram: "Programme",
     orderSummary: "Recapitulatif",
     price: "Prix",
-    coinsOnPurchase: "Pieces gagnees",
-    discountLabel: "Code de reduction",
-    promoCodeLabel: "Ou saisissez un code promo",
+    promoCodeLabel: "Code promo",
     promoCodePlaceholder: "ex. JOSEPH1407",
     promoApplyCta: "Appliquer",
     promoAppliedPrefix: "Code applique :",
-    noDiscount: "Aucun",
     ctaPay: "Continuer vers le paiement",
     ctaWorking: "Traitement…",
-    walletTitle: "Portefeuille",
-    walletLifetime: "Total gagne / depense",
-    discountStore: "Echanger des offres",
-    redeem: "Echanger",
     footnote:
       "Paiement via Gumroad ; les methodes affichees correspondent a votre tableau de bord Gumroad. Le mode test termine instantanement.",
     pendingTitle: "Commande enregistree",
@@ -485,7 +443,7 @@ const checkout: Record<Locale, CheckoutCopy> = {
     paddleInitError:
       "Ajoutez NEXT_PUBLIC_GUMROAD_DEFAULT_PRODUCT_URL a l'environnement du site (outils developpeur Gumroad).",
     paddleWebhookWait:
-      "Paiement en cours. Le portefeuille peut mettre quelques secondes a se mettre a jour — actualisez la page.",
+      "Paiement en cours. Vous pouvez actualiser la page dans quelques secondes.",
     errorPrefix: "Une erreur s'est produite.",
     successPurchase: "Achat termine.",
     securePaymentTrust: "Paiement securise via Gumroad. Acces immediat apres paiement."
