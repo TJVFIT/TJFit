@@ -21,7 +21,7 @@ Driven by recurring `/loop` cron job `1d297b47` (`*/2 * * * *`). Each fire reads
 | 11 | D | ⓘ Account deletion + data export audit → docs/audits/account-deletion-2026-05.md | done | 5886253 | P0 gap: no /api/account/delete + no /api/account/export. DB cascade mostly clean (17/18 refs cascade) but coach_id has NO ON DELETE clause — blocks deletion of coach users. |
 | 12 | D | ⓘ Activation event inventory → docs/audits/activation-events-2026-05.md | done | ce5bb74 | 10 marketing events fire; ZERO activation events fire post-signup. Badge milestones exist but don't push to analytics. Recommend 7 new events (signup_completed / tjai_quiz_completed / tjai_plan_generated / first_workout_opened / first_grocery_opened / first_progress_logged / program_purchase_completed). |
 | 13 | E | themeColor → viewport migration | done | a10571c | Already correct in src/app/layout.tsx (themeColor inside `export const viewport`). manifest.ts theme_color is PWA spec, not Next.js. No code change needed — confirmed in commit. |
-| 14 | E | i18n:verify hardcoded-string fix | pending | — | — |
+| 14 | E | i18n:verify hardcoded-string fix | done | sha-next | Parity ✓. Scan returns ~80 findings — all false positives (SVG attrs, CSS, JSX fragments, SQL column lists). One borderline placeholder you@example.com left as universal convention. Triage in docs/audits/i18n-scan-2026-05.md. Scanner tuning flagged as P3 follow-up. |
 | 15 | E | Form/error microcopy pass (role="alert") | pending | — | — |
 | 16 | E | ⓘ Mobile + RTL audit → docs/audits/mobile-2026-05.md | pending | — | — |
 | 17 | E | ⓘ Voice/TTS audit → docs/audits/tjai-voice-2026-05.md | pending | — | — |
