@@ -13,7 +13,7 @@ Driven by recurring `/loop` cron job `1d297b47` (`*/2 * * * *`). Each fire reads
 | 3 | B | ⚠ Edit safety-guard prompts | blocked: needs-approval | — | Manual phase |
 | 4 | B | Verify /api/tjai/memory GET/DELETE/PATCH coverage | done | d0a37eb | GET + DELETE existed; PATCH added (edit fact text, 280 char cap, owner-only). Pause is in /api/tjai/settings.memory_enabled. |
 | 5 | B | ⚠ TJAI generate refund-safety + structured output | blocked: needs-approval | — | Manual phase |
-| 6 | C | ⓘ Bundle PDP audit → docs/audits/bundle-pdp-2026-05.md | pending | — | — |
+| 6 | C | ⓘ Bundle PDP audit → docs/audits/bundle-pdp-2026-05.md | done | sha-next | 12 bundles (not 14). Self-contained. None ship weeklyTemplate/recipes/groceryList. PDF gracefully omits absent fields. Honest as "sample-driven roadmap"; not a full week-by-week. |
 | 7 | C | ⚠ Diet registry honesty pass | blocked: needs-approval | — | Manual phase |
 | 8 | C | ⚠ Program registry honesty pass | blocked: needs-approval | — | Manual phase |
 | 9 | D | ⓘ TJAI streaming/stop/retry audit → docs/audits/tjai-stream-2026-05.md | pending | — | — |
