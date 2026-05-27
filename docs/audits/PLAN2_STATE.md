@@ -16,7 +16,7 @@ Driven by recurring `/loop` cron job `1d297b47` (`*/2 * * * *`). Each fire reads
 | 6 | C | ⓘ Bundle PDP audit → docs/audits/bundle-pdp-2026-05.md | done | 3051521 | 12 bundles (not 14). Self-contained. None ship weeklyTemplate/recipes/groceryList. PDF gracefully omits absent fields. Honest as "sample-driven roadmap"; not a full week-by-week. |
 | 7 | C | ⚠ Diet registry honesty pass | blocked: needs-approval | — | Manual phase |
 | 8 | C | ⚠ Program registry honesty pass | blocked: needs-approval | — | Manual phase |
-| 9 | D | ⓘ TJAI streaming/stop/retry audit → docs/audits/tjai-stream-2026-05.md | pending | — | — |
+| 9 | D | ⓘ TJAI streaming/stop/retry audit → docs/audits/tjai-stream-2026-05.md | done | sha-next | Server abort + credit safety ✓. P1 gaps: no client AbortController, no retry-without-duplicate. Phase 23 should fix both. |
 | 10 | D | ⓘ Memory dashboard gap audit → docs/audits/tjai-memory-2026-05.md | pending | — | — |
 | 11 | D | ⓘ Account deletion + data export audit → docs/audits/account-deletion-2026-05.md | pending | — | — |
 | 12 | D | ⓘ Activation event inventory → docs/audits/activation-events-2026-05.md | pending | — | — |
