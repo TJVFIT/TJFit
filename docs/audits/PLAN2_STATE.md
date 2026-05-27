@@ -18,7 +18,7 @@ Driven by recurring `/loop` cron job `1d297b47` (`*/2 * * * *`). Each fire reads
 | 8 | C | ⚠ Program registry honesty pass | blocked: needs-approval | — | Manual phase |
 | 9 | D | ⓘ TJAI streaming/stop/retry audit → docs/audits/tjai-stream-2026-05.md | done | e550240 | Server abort + credit safety ✓. P1 gaps: no client AbortController, no retry-without-duplicate. Phase 23 should fix both. |
 | 10 | D | ⓘ Memory dashboard gap audit → docs/audits/tjai-memory-2026-05.md | done | 170a0b5 | Schema has id/user/fact/category/source/created_at + RLS + CASCADE delete. Missing: updated_at, confidence, last_referenced_at. UI doesn't show source or timestamp; no inline edit (backend ready). P1: wire PATCH UI + sensitive consent gate. |
-| 11 | D | ⓘ Account deletion + data export audit → docs/audits/account-deletion-2026-05.md | done | sha-next | P0 gap: no /api/account/delete + no /api/account/export. DB cascade mostly clean (17/18 refs cascade) but coach_id has NO ON DELETE clause — blocks deletion of coach users. |
+| 11 | D | ⓘ Account deletion + data export audit → docs/audits/account-deletion-2026-05.md | done | 5886253 | P0 gap: no /api/account/delete + no /api/account/export. DB cascade mostly clean (17/18 refs cascade) but coach_id has NO ON DELETE clause — blocks deletion of coach users. |
 | 12 | D | ⓘ Activation event inventory → docs/audits/activation-events-2026-05.md | pending | — | — |
 | 13 | E | themeColor → viewport migration | pending | — | — |
 | 14 | E | i18n:verify hardcoded-string fix | pending | — | — |
