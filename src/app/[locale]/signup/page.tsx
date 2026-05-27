@@ -120,12 +120,12 @@ function SignupForm({ params }: { params: { locale: string } }) {
       }
 
       if (usernameStatus !== "ok") {
-        setError("Choose an available username before continuing.");
+        setError(copy.chooseUsernameFirst);
         return;
       }
 
       if (!goal) {
-        setError("Please select your fitness goal.");
+        setError(copy.chooseGoalFirst);
         return;
       }
       if (!acceptedTerms) {

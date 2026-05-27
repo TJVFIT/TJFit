@@ -32,6 +32,8 @@ type AuthCopy = {
   passwordTooShort: string;
   passwordsDoNotMatch: string;
   acceptTermsRequired: string;
+  chooseUsernameFirst: string;
+  chooseGoalFirst: string;
   signupFailed: string;
   signupSuccess: string;
   confirmPasswordPlaceholder: string;
@@ -230,6 +232,8 @@ const authCopy: Record<Locale, AuthCopy> = {
     passwordTooShort: "Use at least 8 characters.",
     passwordsDoNotMatch: "Passwords don’t match.",
     acceptTermsRequired: "Accept Terms, Privacy, and Billing to continue.",
+    chooseUsernameFirst: "Choose an available username before continuing.",
+    chooseGoalFirst: "Please select your fitness goal.",
     signupFailed: "We couldn’t create your account.",
     signupSuccess: "You’re in. Verify your email, then sign in.",
     confirmPasswordPlaceholder: "Confirm password",
@@ -273,6 +277,8 @@ const authCopy: Record<Locale, AuthCopy> = {
     passwordTooShort: "En az 8 karakter kullan.",
     passwordsDoNotMatch: "Şifreler uyuşmuyor.",
     acceptTermsRequired: "Devam etmek için Şartlar, Gizlilik ve Faturalama metinlerini onayla.",
+    chooseUsernameFirst: "Devam etmek için uygun bir kullanıcı adı seç.",
+    chooseGoalFirst: "Lütfen fitness hedefini seç.",
     signupFailed: "Hesap açılamadı.",
     signupSuccess: "Tamam. E-postanı doğrula, sonra giriş yap.",
     confirmPasswordPlaceholder: "Şifreyi tekrarla",
@@ -316,6 +322,8 @@ const authCopy: Record<Locale, AuthCopy> = {
     passwordTooShort: "٨ أحرف على الأقل.",
     passwordsDoNotMatch: "كلمتا المرور غير متطابقتين.",
     acceptTermsRequired: "وافِق على الشروط والخصوصية والفوترة للمتابعة.",
+    chooseUsernameFirst: "اختر اسم مستخدم متاحاً قبل المتابعة.",
+    chooseGoalFirst: "يُرجى اختيار هدفك الرياضي.",
     signupFailed: "لم نتمكن من إنشاء الحساب.",
     signupSuccess: "تم. أكّد بريدك، ثم سجّل الدخول.",
     confirmPasswordPlaceholder: "تأكيد كلمة المرور",
@@ -359,6 +367,8 @@ const authCopy: Record<Locale, AuthCopy> = {
     passwordTooShort: "Mínimo 8 caracteres.",
     passwordsDoNotMatch: "Las contraseñas no coinciden.",
     acceptTermsRequired: "Acepta Términos, Privacidad y Facturación para continuar.",
+    chooseUsernameFirst: "Elige un nombre de usuario disponible antes de continuar.",
+    chooseGoalFirst: "Por favor selecciona tu objetivo de fitness.",
     signupFailed: "No pudimos crear la cuenta.",
     signupSuccess: "Listo. Confirma tu correo y entra.",
     confirmPasswordPlaceholder: "Repite la contraseña",
@@ -402,6 +412,8 @@ const authCopy: Record<Locale, AuthCopy> = {
     passwordTooShort: "Au moins 8 caractères.",
     passwordsDoNotMatch: "Les mots de passe ne correspondent pas.",
     acceptTermsRequired: "Acceptez Conditions, Confidentialité et Facturation pour continuer.",
+    chooseUsernameFirst: "Choisissez un nom d'utilisateur disponible avant de continuer.",
+    chooseGoalFirst: "Veuillez sélectionner votre objectif fitness.",
     signupFailed: "Création du compte impossible.",
     signupSuccess: "C’est bon. Vérifiez votre e-mail, puis connectez-vous.",
     confirmPasswordPlaceholder: "Confirmer le mot de passe",

@@ -123,8 +123,12 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
       setStatus(copy.paddleOpening);
       window.location.href = data.url;
     } catch (e) {
+      // Log raw details for debugging but show the user a localized,
+      // non-leaky message. Raw stack/JS error strings are not safe to
+      // surface (Baymard adaptive-validation guidance).
+      console.error("[checkout] gateway open failed:", e);
       setStatusTone("error");
-      setStatus(`${copy.errorPrefix} ${e instanceof Error ? e.message : ""}`.trim());
+      setStatus(copy.errorPrefix);
       activeGatewayOrderRef.current = null;
     } finally {
       setWorking(false);
@@ -191,17 +195,19 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
     });
     const createData = await createRes.json();
     if (!createRes.ok) {
+      console.error("[checkout] create-order failed:", createData?.error);
       setWorking(false);
       setStatusTone("error");
-      setStatus(`${copy.errorPrefix} ${createData.error ?? ""}`.trim());
+      setStatus(copy.errorPrefix);
       return;
     }
 
     const clientFlow = createData.clientFlow;
     if (!isCheckoutClientFlow(clientFlow)) {
+      console.error("[checkout] invalid client flow shape:", clientFlow);
       setWorking(false);
       setStatusTone("error");
-      setStatus(`${copy.errorPrefix} Invalid checkout response.`);
+      setStatus(copy.errorPrefix);
       return;
     }
 
@@ -223,8 +229,9 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
     const completeData = await completeRes.json();
     setWorking(false);
     if (!completeRes.ok) {
+      console.error("[checkout] complete-order failed:", completeData?.error);
       setStatusTone("error");
-      setStatus(`${copy.errorPrefix} ${completeData.error ?? ""}`.trim());
+      setStatus(copy.errorPrefix);
       return;
     }
 
@@ -352,7 +359,15 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
             </button>
             <p className="mt-3 text-center text-xs text-faint">{copy.securePaymentTrust}</p>
             <p className="mt-4 text-xs leading-relaxed text-dim">{copy.footnote}</p>
-            {status ? <p className={`mt-4 text-sm ${statusClass}`}>{status}</p> : null}
+            {status ? (
+              <p
+                className={`mt-4 text-sm ${statusClass}`}
+                role={statusTone === "error" ? "alert" : "status"}
+                aria-live={statusTone === "error" ? "assertive" : "polite"}
+              >
+                {status}
+              </p>
+            ) : null}
           </PremiumPanel>
         </div>
       </PremiumPageShell>

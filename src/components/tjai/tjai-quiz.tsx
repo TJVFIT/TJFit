@@ -692,7 +692,11 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
           <h1 className="text-[clamp(1.375rem,3vw,1.75rem)] font-bold leading-[1.3] text-white">{step.question}</h1>
           {step.sub ? <p className="mt-2 text-sm leading-6 text-muted">{step.sub}</p> : null}
           <div className="mt-7">{renderInput()}</div>
-          {showError && !canContinue ? <p className="mt-3 text-sm text-danger">{copy.validation.required}</p> : null}
+          {showError && !canContinue ? (
+            <p className="mt-3 text-sm text-danger" role="alert" aria-live="assertive">
+              {copy.validation.required}
+            </p>
+          ) : null}
         </div>
 
         <div className="sticky bottom-0 mt-8 border-t border-divider/80 bg-background/90 py-4 backdrop-blur">
