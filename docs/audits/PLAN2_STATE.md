@@ -25,7 +25,7 @@ Driven by recurring `/loop` cron job `1d297b47` (`*/2 * * * *`). Each fire reads
 | 15 | E | Form/error microcopy pass (role="alert") | done | e16e90f | Checkout: stripped raw data.error / e.message leaks into UI, added role=alert/status + aria-live to status pill. TJAI quiz + support: added role=alert to validation/error <p>. Signup: 2 hardcoded EN strings → new chooseUsernameFirst / chooseGoalFirst keys in launch-copy.ts across all 5 locales. |
 | 16 | E | ⓘ Mobile + RTL audit → docs/audits/mobile-2026-05.md | pending | — | — |
 | 17 | E | ⓘ Voice/TTS audit → docs/audits/tjai-voice-2026-05.md | pending | — | — |
-| 18 | F | ⚠ Supabase RLS spot-check | blocked: needs-approval | — | Manual phase |
+| 18 | F | Supabase RLS spot-check | done | sha-next | APPROVED. All sensitive tables have RLS + owner-scoped policies (case-insensitive grep — earlier miss was casing). Wrote migration 20260527120000 fixing coach_id FK → ON DELETE SET NULL. Migration committed but NOT db-pushed (needs owner action). Report: docs/audits/rls-spotcheck-2026-05.md. |
 | 19 | F | Page guards for /programs/upload + /blog/write | done | e1e6ad5 | APPROVED. programs/upload route does not exist (audit was speculative). blog/write APIs (eligibility/posts/drafts) all enforce requireAuth + verification server-side. Added blog/write to middleware as auth_user to kill the anonymous form-flash. |
 | 20 | F | Pre-merge full check → docs/audits/pre-merge-2026-05.md | pending | — | — |
 | 21 | G | Hero animations (luxury-home.tsx) | pending | — | — |
