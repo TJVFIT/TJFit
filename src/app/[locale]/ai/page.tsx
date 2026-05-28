@@ -39,11 +39,13 @@ export default async function AiPage({ params }: { params: { locale: string } })
     });
 
     if (!access.canAccessHub) {
-      redirect(`/${locale}/tjai`);
+      // from=ai so /tjai renders its upsell landing instead of bouncing
+      // the user straight back here (would infinite-loop).
+      redirect(`/${locale}/tjai?from=ai`);
     }
 
     return <TJAIHub locale={locale} />;
   } catch {
-    redirect(`/${locale}/tjai`);
+    redirect(`/${locale}/tjai?from=ai`);
   }
 }

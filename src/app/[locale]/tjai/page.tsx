@@ -40,11 +40,17 @@ export async function generateMetadata({ params }: { params: { locale: string } 
   };
 }
 
-export default function TjaiLandingPage({ params }: { params: { locale: string } }) {
-  return <TjaiLandingPageContent params={params} />;
+export default function TjaiLandingPage({
+  params,
+  searchParams
+}: {
+  params: { locale: string };
+  searchParams?: { from?: string };
+}) {
+  return <TjaiLandingPageContent params={params} fromAi={searchParams?.from === "ai"} />;
 }
 
-async function TjaiLandingPageContent({ params }: { params: { locale: string } }) {
+async function TjaiLandingPageContent({ params, fromAi }: { params: { locale: string }; fromAi: boolean }) {
   const locale = requireLocaleParam(params.locale);
   try {
     const supabase = createServerSupabaseClient();
@@ -53,7 +59,10 @@ async function TjaiLandingPageContent({ params }: { params: { locale: string } }
       error
     } = await supabase.auth.getUser();
 
-    if (!error && user?.id) {
+    // Skip the redirect-to-hub when /ai bounced the user here for lacking
+    // hub access — otherwise /ai → /tjai → /ai loops forever. With from=ai
+    // we render the landing (upsell) instead.
+    if (!error && user?.id && !fromAi) {
       const isAdminByEmail = Boolean(user.email && isAdminEmail(user.email));
       const role = isAdminByEmail
         ? "admin"
