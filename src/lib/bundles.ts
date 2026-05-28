@@ -3,7 +3,9 @@
  * Each bundle pairs a 12-week training protocol with a matching diet system,
  * delivered as a branded PDF dossier via /api/bundles/download/[slug].
  *
- * Prices are intentionally $0 until the owner sets them (see feedback_pricing).
+ * Pricing (owner-set 2026-05): Fat Loss + Lean Bulk are free; the other
+ * 10 bundles are $10 USD, converted to the charge currency via live FX at
+ * checkout. Real payment requires a Gumroad product per paid bundle.
  */
 
 export type BundleGoal =
@@ -58,10 +60,12 @@ export type Bundle = {
   dietTitle: string;
   weeks: number;
   sessionsPerWeek: number;
-  /** Display chip — currently always "Free" until owner sets pricing. */
+  /** Display chip — "Free" or a price like "$10". Derived from priceUsd. */
   save: string;
-  /** Free bundles bypass purchase gating on download. */
+  /** True when priceUsd === 0. */
   isFree: boolean;
+  /** Price in USD. 0 = free. Converted to the charge currency via live FX at checkout. */
+  priceUsd: number;
   /** Hero image path — owner will drop real assets later. Falls back to gradient. */
   heroImage: string;
   /** Long-form value prop for the detail page. */
@@ -108,6 +112,7 @@ export const BUNDLES: Bundle[] = [
     sessionsPerWeek: 5,
     save: "Free",
     isFree: true,
+    priceUsd: 0,
     heroImage: "/bundles/fat-loss.svg",
     description:
       "A 12-week resistance-led cut. Compound lifts hold muscle, conditioning blocks raise daily energy expenditure, and the diet keeps protein high through a controlled deficit.",
@@ -154,6 +159,7 @@ export const BUNDLES: Bundle[] = [
     sessionsPerWeek: 5,
     save: "Free",
     isFree: true,
+    priceUsd: 0,
     heroImage: "/bundles/lean-bulk.svg",
     description:
       "Push-pull-legs hypertrophy split layered over a small surplus. Heavy compounds drive strength, accessory volume drives size, and the diet keeps the gain ratio clean.",
@@ -198,8 +204,9 @@ export const BUNDLES: Bundle[] = [
     dietTitle: "Clean Cut Starter",
     weeks: 12,
     sessionsPerWeek: 4,
-    save: "Free",
-    isFree: true,
+    save: "$10",
+    isFree: false,
+    priceUsd: 10,
     heroImage: "/bundles/home-starter.svg",
     description:
       "The on-ramp. Four short bodyweight sessions a week, a calorie framework you can actually follow, and a progression model that makes month 3 feel different from month 1.",
@@ -244,8 +251,9 @@ export const BUNDLES: Bundle[] = [
     dietTitle: "Hard Cut Athlete Diet",
     weeks: 12,
     sessionsPerWeek: 5,
-    save: "Free",
-    isFree: true,
+    save: "$10",
+    isFree: false,
+    priceUsd: 10,
     heroImage: "/bundles/definition.svg",
     description:
       "Volume-rich hypertrophy training married to an aggressive cut. For lifters who already have muscle and want to see it. High protein, structured cardio, weekly refeeds.",
@@ -292,8 +300,9 @@ export const BUNDLES: Bundle[] = [
     dietTitle: "Recomp Macro System",
     weeks: 12,
     sessionsPerWeek: 5,
-    save: "Free",
-    isFree: true,
+    save: "$10",
+    isFree: false,
+    priceUsd: 10,
     heroImage: "/bundles/recomp.svg",
     description:
       "The hardest plan to do well. Maintenance calories, surgical macro timing, and progressive overload that turns body composition over the long arc.",
@@ -338,8 +347,9 @@ export const BUNDLES: Bundle[] = [
     dietTitle: "Strength Athlete Diet",
     weeks: 12,
     sessionsPerWeek: 4,
-    save: "Free",
-    isFree: true,
+    save: "$10",
+    isFree: false,
+    priceUsd: 10,
     heroImage: "/bundles/powerbuilding.svg",
     description:
       "Heavy main lifts (squat, bench, deadlift, OHP) paired with hypertrophy accessories. Linear strength progression on the big four, volume-driven size on everything else.",
@@ -384,8 +394,9 @@ export const BUNDLES: Bundle[] = [
     dietTitle: "Athlete Maintenance Diet",
     weeks: 12,
     sessionsPerWeek: 4,
-    save: "Free",
-    isFree: true,
+    save: "$10",
+    isFree: false,
+    priceUsd: 10,
     heroImage: "/bundles/calisthenics.svg",
     description:
       "A bodyweight-only path from solid pull-ups to clean muscle-ups, handstands, and pistol squats. Skill work, strength work, and the nutrition to support both.",
@@ -430,8 +441,9 @@ export const BUNDLES: Bundle[] = [
     dietTitle: "Performance Fueling Diet",
     weeks: 12,
     sessionsPerWeek: 5,
-    save: "Free",
-    isFree: true,
+    save: "$10",
+    isFree: false,
+    priceUsd: 10,
     heroImage: "/bundles/athlete-conditioning.svg",
     description:
       "General physical preparation for sport. Mixed-modal conditioning, sprint work, strength maintenance, and the carb-forward fueling strategy to sustain it.",
@@ -474,8 +486,9 @@ export const BUNDLES: Bundle[] = [
     dietTitle: "Beginner Nutrition System",
     weeks: 12,
     sessionsPerWeek: 3,
-    save: "Free",
-    isFree: true,
+    save: "$10",
+    isFree: false,
+    priceUsd: 10,
     heroImage: "/bundles/beginner-foundations.svg",
     description:
       "Three sessions a week, the six lifts that matter, and a nutrition framework you can sustain without weighing food. Built for someone who has never lifted seriously before.",
@@ -519,8 +532,9 @@ export const BUNDLES: Bundle[] = [
     dietTitle: "Women's Performance Diet",
     weeks: 12,
     sessionsPerWeek: 4,
-    save: "Free",
-    isFree: true,
+    save: "$10",
+    isFree: false,
+    priceUsd: 10,
     heroImage: "/bundles/womens-sculpt.svg",
     description:
       "Glute-focused lower days, balanced upper work, and a nutrition plan tuned to a woman's training week. Strength first, shape as the result.",
@@ -565,8 +579,9 @@ export const BUNDLES: Bundle[] = [
     dietTitle: "Longevity Nutrition System",
     weeks: 12,
     sessionsPerWeek: 3,
-    save: "Free",
-    isFree: true,
+    save: "$10",
+    isFree: false,
+    priceUsd: 10,
     heroImage: "/bundles/senior-strength.svg",
     description:
       "Strength training built around joint longevity. Machines and dumbbells over barbells where it matters, mobility integrated into every session, and a protein-forward diet for the over-50 athlete.",
@@ -611,8 +626,9 @@ export const BUNDLES: Bundle[] = [
     dietTitle: "Contest Prep Macro System",
     weeks: 12,
     sessionsPerWeek: 6,
-    save: "Free",
-    isFree: true,
+    save: "$10",
+    isFree: false,
+    priceUsd: 10,
     heroImage: "/bundles/cutting-peak.svg",
     description:
       "The advanced cut. Engineered for lifters who already have muscle and want to peak. Structured refeeds, weekly check-ins, peak week protocol, and the discipline to match.",

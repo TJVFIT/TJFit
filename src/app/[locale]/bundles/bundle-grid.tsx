@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { ArrowRight, FileDown, PackageOpen } from "lucide-react";
+import { ArrowRight, PackageOpen } from "lucide-react";
 
+import { BundleCta } from "@/components/bundles/bundle-cta";
 import { useReveal, useTilt } from "@/components/effects/use-3d";
-import { useMagnetic, useMergedRef, useRipple } from "@/components/effects/use-magnetic";
 import type { Bundle, BundleGoal } from "@/lib/bundles";
 import { getBundlesCopy, type BundlesCopy } from "@/lib/bundles-copy";
 import { localizeBundle } from "@/lib/bundle-localization";
@@ -121,14 +121,10 @@ function BundleCard({
   copy: BundlesCopy;
 }) {
   const detailHref = `/${locale}/bundles/${bundle.slug}`;
-  const downloadHref = `/api/bundles/download/${bundle.slug}?locale=${locale}`;
   const isFree = bundle.save.toLowerCase() === "free";
   const card = localizeBundle(bundle, locale);
   const tiltRef = useTilt();
   const reveal = useReveal();
-  const dlMagnetic = useMagnetic<HTMLAnchorElement>({ strength: 6, max: 8 });
-  const dlRipple = useRipple<HTMLAnchorElement>();
-  const dlRef = useMergedRef<HTMLAnchorElement>(dlMagnetic, dlRipple);
 
   // Stagger the reveal so cards cascade into place rather than all popping at once.
   const revealDelay = `${Math.min(index * 60, 360)}ms`;
@@ -242,24 +238,14 @@ function BundleCard({
           </p>
 
           <div className="mt-auto flex items-center gap-3 pt-5">
-            <a
-              ref={dlRef}
-              href={downloadHref}
-              aria-label={copy.downloadAria(card.name)}
-              className="tj-cta-sheen relative inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-4 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] hover:brightness-110 hover:shadow-[0_0_32px_rgba(34,211,238,0.32)] motion-safe:active:scale-[0.97]"
-              style={
-                {
-                  "--mag-x": "0px",
-                  "--mag-y": "0px",
-                  transform: "translate3d(var(--mag-x), var(--mag-y), 0)",
-                  transition:
-                    "transform 220ms cubic-bezier(0.2,1,0.3,1), filter 150ms, box-shadow 220ms"
-                } as React.CSSProperties
-              }
-            >
-              <FileDown className="relative h-4 w-4" aria-hidden />
-              <span className="relative">{copy.download}</span>
-            </a>
+            <BundleCta
+              slug={bundle.slug}
+              locale={locale}
+              isFree={isFree}
+              priceLabel={bundle.save}
+              labels={{ download: copy.download, buy: copy.buy, getFree: copy.getFree, processing: copy.processing }}
+              className="flex-1"
+            />
             <Link
               href={detailHref}
               aria-label={copy.detailsAria(card.name)}

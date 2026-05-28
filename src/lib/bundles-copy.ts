@@ -84,6 +84,9 @@ export type BundlesCopy = {
   sessionsValue: (n: number) => string;
   download: string;
   details: string;
+  buy: string;
+  getFree: string;
+  processing: string;
   footnoteFree: string;
   footnotePaid: string;
   goalAria: (label: string) => string;
@@ -127,6 +130,9 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     sessionsValue: (n) => `${n}×/wk`,
     download: "Download PDF",
     details: "Details",
+    buy: "Buy",
+    getFree: "Get free",
+    processing: "Processing…",
     footnoteFree: "Free with sign-in · branded dossier · A4 print-ready",
     footnotePaid: "Sign in required · branded dossier · A4 print-ready",
     goalAria: (label) => `Goal: ${label}`,
@@ -227,6 +233,9 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     sessionsValue: (n) => `${n}×/hafta`,
     download: "PDF indir",
     details: "Detaylar",
+    buy: "Satın al",
+    getFree: "Ücretsiz al",
+    processing: "İşleniyor…",
     footnoteFree: "Girişle ücretsiz · markalı dosya · A4 baskıya hazır",
     footnotePaid: "Giriş gerekli · markalı dosya · A4 baskıya hazır",
     goalAria: (label) => `Hedef: ${label}`,
@@ -327,6 +336,9 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     sessionsValue: (n) => `${n}×/أسبوع`,
     download: "تنزيل PDF",
     details: "التفاصيل",
+    buy: "اشترِ",
+    getFree: "احصل عليه مجاناً",
+    processing: "جارٍ المعالجة…",
     footnoteFree: "مجاني مع تسجيل الدخول · ملف بالعلامة · جاهز للطباعة A4",
     footnotePaid: "يتطلب تسجيل الدخول · ملف بالعلامة · جاهز للطباعة A4",
     goalAria: (label) => `الهدف: ${label}`,
@@ -427,6 +439,9 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     sessionsValue: (n) => `${n}×/sem`,
     download: "Descargar PDF",
     details: "Detalles",
+    buy: "Comprar",
+    getFree: "Obtener gratis",
+    processing: "Procesando…",
     footnoteFree: "Gratis con inicio de sesión · dossier de marca · listo para imprimir A4",
     footnotePaid: "Requiere inicio de sesión · dossier de marca · listo para imprimir A4",
     goalAria: (label) => `Objetivo: ${label}`,
@@ -527,6 +542,9 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     sessionsValue: (n) => `${n}×/sem`,
     download: "Télécharger le PDF",
     details: "Détails",
+    buy: "Acheter",
+    getFree: "Obtenir gratuitement",
+    processing: "Traitement…",
     footnoteFree: "Gratuit avec connexion · dossier de marque · prêt à imprimer A4",
     footnotePaid: "Connexion requise · dossier de marque · prêt à imprimer A4",
     goalAria: (label) => `Objectif : ${label}`,

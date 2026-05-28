@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { programs } from "@/lib/content";
+import { getBundle } from "@/lib/bundles";
+import { convertUsdToTry } from "@/lib/fx";
 import { getProgramBasePriceTry } from "@/lib/program-localization";
 import {
   getCheckoutPaymentAdapter,
@@ -53,7 +55,19 @@ export async function POST(request: NextRequest) {
   }
 
   let baseTry = 0;
-  if (staticProgram) {
+  const bundle = getBundle(programSlug);
+  if (bundle) {
+    // Bundles are priced in USD by the owner and converted to TRY via live FX.
+    // Intentionally bypasses the global PRICES_ZEROED switch (that only governs
+    // the legacy program catalog); bundles are the live product.
+    if (bundle.priceUsd <= 0) {
+      return NextResponse.json(
+        { error: "This bundle is free. Claim it from the bundle page instead." },
+        { status: 400 }
+      );
+    }
+    baseTry = await convertUsdToTry(bundle.priceUsd);
+  } else if (staticProgram) {
     baseTry = getProgramBasePriceTry(staticProgram);
   } else {
     const { data: customProgram } = await adminClient

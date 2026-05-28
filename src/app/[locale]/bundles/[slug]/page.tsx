@@ -6,7 +6,6 @@ import {
   AtAGlance,
   DetailHero,
   DetailSectionNav,
-  DownloadButton,
   GroceryList,
   PhaseStrip,
   PrepPanel,
@@ -17,6 +16,7 @@ import {
   StickyBuyBar,
   WeeklyTemplate
 } from "./detail-effects";
+import { BundleCta } from "@/components/bundles/bundle-cta";
 import { BundleFigurePair } from "@/components/bundles/bundle-figures";
 import { BUNDLES, getBundle, listBundleSlugs } from "@/lib/bundles";
 import { bundleProductJsonLd } from "@/lib/bundle-jsonld";
@@ -67,7 +67,6 @@ export default function BundleDetailPage({
   const copy = getBundlesCopy(locale);
   const d = copy.detail;
   const card = localizeBundle(bundle, locale);
-  const downloadHref = `/api/bundles/download/${bundle.slug}?locale=${locale}`;
   const programHref = `/${locale}/bundles/${bundle.slug}/program`;
   const isFree = bundle.save.toLowerCase() === "free";
 
@@ -173,10 +172,12 @@ export default function BundleDetailPage({
               Start Program
               <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
             </Link>
-            <DownloadButton
-              href={downloadHref}
-              label={copy.download}
-              ariaLabel={copy.downloadAria(card.name)}
+            <BundleCta
+              slug={bundle.slug}
+              locale={locale}
+              isFree={isFree}
+              priceLabel={bundle.save}
+              labels={{ download: copy.download, buy: copy.buy, getFree: copy.getFree, processing: copy.processing }}
               className="flex-1 sm:flex-none"
             />
             <Link
