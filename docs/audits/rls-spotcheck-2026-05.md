@@ -33,7 +33,7 @@ No sensitive table was found with RLS disabled. No policy was found that leaks a
 
 The Phase 11 audit found `coach_review_requests.coach_id` referenced `auth.users(id)` with **no `ON DELETE` clause** (defaults to RESTRICT) — the only such FK in the schema. That would block deletion of any coach user. The migration drops the unnamed constraint and re-adds it as `ON DELETE SET NULL` (preserves the requesting user's review history; anonymizes the coach attribution).
 
-**Not applied yet.** The migration is committed but `supabase db push` was NOT run from this session (DB writes require explicit owner action / Supabase access). Apply on next migration run / deploy.
+**APPLIED 2026-05-29** to project kohuiyqyixvrcqeepalz via Supabase MCP apply_migration. Verified: confdeltype = n (SET NULL).
 
 ## What this spot-check did NOT cover
 
