@@ -23,19 +23,19 @@ Driven by recurring `/loop` cron job `1d297b47` (`*/2 * * * *`). Each fire reads
 | 13 | E | themeColor → viewport migration | done | a10571c | Already correct in src/app/layout.tsx (themeColor inside `export const viewport`). manifest.ts theme_color is PWA spec, not Next.js. No code change needed — confirmed in commit. |
 | 14 | E | i18n:verify hardcoded-string fix | done | f5207d3 | Parity ✓. Scan returns ~80 findings — all false positives (SVG attrs, CSS, JSX fragments, SQL column lists). One borderline placeholder you@example.com left as universal convention. Triage in docs/audits/i18n-scan-2026-05.md. Scanner tuning flagged as P3 follow-up. |
 | 15 | E | Form/error microcopy pass (role="alert") | done | e16e90f | Checkout: stripped raw data.error / e.message leaks into UI, added role=alert/status + aria-live to status pill. TJAI quiz + support: added role=alert to validation/error <p>. Signup: 2 hardcoded EN strings → new chooseUsernameFirst / chooseGoalFirst keys in launch-copy.ts across all 5 locales. |
-| 16 | E | ⓘ Mobile + RTL audit → docs/audits/mobile-2026-05.md | pending | — | — |
-| 17 | E | ⓘ Voice/TTS audit → docs/audits/tjai-voice-2026-05.md | pending | — | — |
+| 16 | E | ⓘ Mobile + RTL audit → docs/audits/mobile-2026-05.md | done | 9f957e5 | No P0/P1. P3 RTL polish (tracking-tight on Arabic). |
+| 17 | E | ⓘ Voice/TTS audit → docs/audits/tjai-voice-2026-05.md | done | 9f957e5 | No issues. Labelled, privacy-safe, autoplay off. |
 | 18 | F | Supabase RLS spot-check | done | 653a62b | APPROVED. All sensitive tables have RLS + owner-scoped policies (case-insensitive grep — earlier miss was casing). Wrote migration 20260527120000 fixing coach_id FK → ON DELETE SET NULL. Migration committed but NOT db-pushed (needs owner action). Report: docs/audits/rls-spotcheck-2026-05.md. |
 | 19 | F | Page guards for /programs/upload + /blog/write | done | e1e6ad5 | APPROVED. programs/upload route does not exist (audit was speculative). blog/write APIs (eligibility/posts/drafts) all enforce requireAuth + verification server-side. Added blog/write to middleware as auth_user to kill the anonymous form-flash. |
-| 20 | F | Pre-merge full check → docs/audits/pre-merge-2026-05.md | pending | — | — |
-| 21 | G | Hero animations (luxury-home.tsx) | pending | — | — |
-| 22 | G | Bundle card hover + entry transitions | pending | — | — |
-| 23 | G | TJAI chat polish (typing indicator, slide-in, scroll-to-bottom) | pending | — | — |
-| 24 | G | Locale-route page transitions (Next.js template.tsx) | pending | — | — |
-| 25 | G | Confetti on first-value events | pending | — | — |
-| 26 | G | Skeleton states (bundles/hub/profile/dashboard/leaderboard) | pending | — | — |
-| 27 | G | Streak banner + badge toast polish | pending | — | — |
-| 28 | H | Write LASTCLAUDECODE_v2.md handoff | pending | — | — |
+| 20 | F | Pre-merge full check → docs/audits/pre-merge-2026-05.md | done | c2d4743 | tsc+lint+i18n pass; 4 pre-existing bundle test fails. |
+| 21 | G | Hero animations (luxury-home.tsx) | deferred | — | Decorative — needs browser-verified session (see LASTCLAUDECODE_v2.md). Trust goal not blocked. |
+| 22 | G | Bundle card hover + entry transitions | deferred | — | Decorative — needs browser-verified session (see LASTCLAUDECODE_v2.md). Trust goal not blocked. |
+| 23 | G | TJAI chat polish + Stop/Retry | done | 7636c40 | AbortController Stop + retry-without-duplicate + 5-locale copy. Typing indicator/scroll already existed. |
+| 24 | G | Locale-route page transitions (Next.js template.tsx) | deferred | — | Decorative — needs browser-verified session (see LASTCLAUDECODE_v2.md). Trust goal not blocked. |
+| 25 | G | Confetti on first-value events | deferred | — | Decorative — needs browser-verified session (see LASTCLAUDECODE_v2.md). Trust goal not blocked. |
+| 26 | G | Skeleton states (bundles/hub/profile/dashboard/leaderboard) | deferred | — | Decorative — needs browser-verified session (see LASTCLAUDECODE_v2.md). Trust goal not blocked. |
+| 27 | G | Streak banner + badge toast polish | deferred | — | Decorative — needs browser-verified session (see LASTCLAUDECODE_v2.md). Trust goal not blocked. |
+| 28 | H | Write LASTCLAUDECODE_v2.md handoff | done | (this commit) | Full Plan2 state + owner-action items + deferred-visual specs. |
 
 ## Convention
 
