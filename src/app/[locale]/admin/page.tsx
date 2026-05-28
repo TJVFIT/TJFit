@@ -6,6 +6,7 @@ import { AdminCoachApplications } from "@/components/admin-coach-applications";
 import { AdminCoachAuthorization } from "@/components/admin-coach-authorization";
 import { AdminBlogPanel } from "@/components/admin-blog-panel";
 import { AdminChallengesPanel } from "@/components/admin-challenges-panel";
+import { AdminBundlePayments } from "@/components/admin-bundle-payments";
 import { AdminFeedbackList } from "@/components/admin-feedback-list";
 import { ProtectedRoute } from "@/components/protected-route";
 import { StatGrid } from "@/components/ui";
@@ -106,6 +107,7 @@ export default async function AdminPage({ params }: { params: { locale: string }
       </div>
 
       <div className="grid gap-6 xl:grid-cols-2">
+        <AdminBundlePayments />
         <AdminChallengesPanel />
         <AdminBlogPanel />
         <AdminFeedbackList initialSubmissions={submissions} />

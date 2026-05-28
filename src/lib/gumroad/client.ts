@@ -24,28 +24,48 @@ const GUMROAD_BASE_URL = "https://api.gumroad.com/v2";
  * The returned URL has order tracking + email pre-fill appended so the
  * Gumroad webhook can correlate the sale back to the originating order.
  */
-export function getGumroadCheckoutUrl(opts: {
+type CheckoutUrlOpts = {
   programSlug: string;
   orderId: string;
   email?: string;
   userId?: string;
   locale?: string;
-}): string | null {
+};
+
+/**
+ * Append TJFit order-tracking params to a Gumroad product base URL. Gumroad
+ * echoes arbitrary query params back in `url_params` on the sale webhook, so
+ * we use them for idempotent fulfillment. Returns null for an invalid base.
+ */
+export function buildGumroadTrackedUrl(base: string, opts: CheckoutUrlOpts): string | null {
+  const trimmed = base?.trim();
+  if (!trimmed) return null;
+  try {
+    const url = new URL(trimmed);
+    url.searchParams.set("wanted", "true");
+    url.searchParams.set("tjfit_order_id", opts.orderId);
+    url.searchParams.set("tjfit_program_slug", opts.programSlug);
+    if (opts.userId) url.searchParams.set("tjfit_user_id", opts.userId);
+    if (opts.locale) url.searchParams.set("tjfit_locale", opts.locale);
+    if (opts.email) url.searchParams.set("email", opts.email);
+    return url.toString();
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Resolve the hosted Gumroad checkout URL from ENV mapping only
+ * (`GUMROAD_PRODUCT_<SLUG>` → `GUMROAD_DEFAULT_PRODUCT_URL`). For the
+ * DB-backed admin-managed mapping, use resolveBundleGumroadUrl in
+ * src/lib/gumroad/resolve.ts (which falls back to this).
+ */
+export function getGumroadCheckoutUrl(opts: CheckoutUrlOpts): string | null {
   const envKey = `GUMROAD_PRODUCT_${opts.programSlug.toUpperCase().replace(/-/g, "_")}`;
   const base =
     process.env[envKey]?.trim() || process.env.GUMROAD_DEFAULT_PRODUCT_URL?.trim();
   if (!base) return null;
-
-  // Gumroad accepts arbitrary query params, surfaced back in `url_params`
-  // on the sale webhook payload — we use them for idempotent fulfillment.
-  const url = new URL(base);
-  url.searchParams.set("wanted", "true");
-  url.searchParams.set("tjfit_order_id", opts.orderId);
-  url.searchParams.set("tjfit_program_slug", opts.programSlug);
-  if (opts.userId) url.searchParams.set("tjfit_user_id", opts.userId);
-  if (opts.locale) url.searchParams.set("tjfit_locale", opts.locale);
-  if (opts.email) url.searchParams.set("email", opts.email);
-  return url.toString();
+  return buildGumroadTrackedUrl(base, opts);
 }
 
 class GumroadConfigError extends Error {}

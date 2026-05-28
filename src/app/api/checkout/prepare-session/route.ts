@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getGumroadCheckoutUrl } from "@/lib/gumroad/client";
+import { resolveBundleGumroadUrl } from "@/lib/gumroad/resolve";
 import {
   isGumroadCheckoutStored,
   isLegacyCheckoutStored
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const url = getGumroadCheckoutUrl({
+  const url = await resolveBundleGumroadUrl(adminClient, {
     programSlug: order.program_slug,
     orderId: order.id,
     email: user.email ?? undefined,
