@@ -26,7 +26,7 @@ Driven by recurring `/loop` cron job `1d297b47` (`*/2 * * * *`). Each fire reads
 | 16 | E | ⓘ Mobile + RTL audit → docs/audits/mobile-2026-05.md | pending | — | — |
 | 17 | E | ⓘ Voice/TTS audit → docs/audits/tjai-voice-2026-05.md | pending | — | — |
 | 18 | F | ⚠ Supabase RLS spot-check | blocked: needs-approval | — | Manual phase |
-| 19 | F | Page guards for /programs/upload + /blog/write | done | sha-next | APPROVED. programs/upload route does not exist (audit was speculative). blog/write APIs (eligibility/posts/drafts) all enforce requireAuth + verification server-side. Added blog/write to middleware as auth_user to kill the anonymous form-flash. |
+| 19 | F | Page guards for /programs/upload + /blog/write | done | e1e6ad5 | APPROVED. programs/upload route does not exist (audit was speculative). blog/write APIs (eligibility/posts/drafts) all enforce requireAuth + verification server-side. Added blog/write to middleware as auth_user to kill the anonymous form-flash. |
 | 20 | F | Pre-merge full check → docs/audits/pre-merge-2026-05.md | pending | — | — |
 | 21 | G | Hero animations (luxury-home.tsx) | pending | — | — |
 | 22 | G | Bundle card hover + entry transitions | pending | — | — |
