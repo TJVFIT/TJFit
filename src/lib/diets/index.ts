@@ -1,14 +1,16 @@
 // v3.9 round 2 — diets registry placeholder.
 //
-// Real diets ship in a future authoring session per
-// docs/MASTER_PLAN_v4.md and docs/SHIP_REPORT_v3_9.md. For now we
-// surface ONE placeholder so the /[locale]/diets and
-// /[locale]/diets/[slug] routes render something instead of
-// redirecting back to home.
+// ⚠ DEAD CODE as of 2026-05-27 (Plan2 phase 7 honesty pass): this module
+// is imported NOWHERE in src/. The placeholder diet below has empty
+// `weeks: []` and is NOT rendered to any customer. Live diet content the
+// homepage/bundles show comes from `src/lib/content.ts` + `src/lib/bundles.ts`,
+// not this registry. Do NOT wire this into a customer route until it holds
+// real week-by-week content — surfacing an empty-weeks diet as a "12-week
+// diet" would be a content-truth violation (LASTCLAUDECODE.md Cycle 018).
 //
-// To replace with real diets: author files under
-// src/lib/diets/diets/{slug}.ts following the Diet schema, then
-// import + register in REGISTRY below.
+// To make this real: author files under src/lib/diets/diets/{slug}.ts with
+// populated `weeks`, register below, THEN wire a route. See
+// docs/audits/content-truth-2026-05.md.
 
 import type { Diet } from "./schema";
 import { en } from "@/lib/programs/schema";

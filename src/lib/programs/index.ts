@@ -1,5 +1,12 @@
-// Programs registry — the single source of truth for every real,
-// day-by-day v3.9 program.
+// Programs registry — day-by-day program definitions.
+//
+// ⚠ NOTE (Plan2 phase 8 honesty pass, 2026-05-27): this registry is
+// imported NOWHERE in src/ today — it currently registers only
+// `comeback12w`. The programs the homepage/catalog market come from
+// `src/lib/content.ts` (83 entries) and the 4 backed free-product
+// models in `src/lib/free-product-pages.ts`. Do NOT assume this
+// registry is what customers see. Keep it in sync with real content
+// before wiring it to a route. See docs/audits/content-truth-2026-05.md.
 //
 // To add a new program: create a folder under `programs/` matching
 // the program slug, build out the header + week files per the
