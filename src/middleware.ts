@@ -91,6 +91,7 @@ function matchHtmlGuard(pathname: string): { locale: string; kind: GuardKind } |
   if (sub === "/dashboard" || sub.startsWith("/dashboard/")) return { locale, kind: "auth_user" };
   if (sub === "/messages" || sub.startsWith("/messages/")) return { locale, kind: "auth_user" };
   if (sub === "/feed" || sub.startsWith("/feed/")) return { locale, kind: "auth_user" };
+  if (sub === "/blog/write" || sub.startsWith("/blog/write/")) return { locale, kind: "auth_user" };
   if (sub === "/profile/edit" || sub.startsWith("/profile/edit/")) return { locale, kind: "auth_user" };
   if (sub === "/settings/profile" || sub.startsWith("/settings/profile/")) return { locale, kind: "auth_user" };
   if (sub === "/checkout" || sub.startsWith("/checkout/")) return { locale, kind: "auth_user" };
