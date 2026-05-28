@@ -25,6 +25,9 @@ import { localizeBundle } from "@/lib/bundle-localization";
 import { supportedLocales } from "@/lib/i18n";
 import { requireLocaleParam } from "@/lib/require-locale";
 import { getSiteUrl } from "@/lib/site-url";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { hasPurchasedProgram } from "@/lib/purchases";
+import { isAdminEmail } from "@/lib/auth-utils";
 
 export function generateStaticParams() {
   return listBundleSlugs().map((slug) => ({ slug }));
@@ -55,7 +58,7 @@ export function generateMetadata({ params }: { params: { locale: string; slug: s
 }
 
 
-export default function BundleDetailPage({
+export default async function BundleDetailPage({
   params
 }: {
   params: { locale: string; slug: string };
@@ -69,6 +72,22 @@ export default function BundleDetailPage({
   const card = localizeBundle(bundle, locale);
   const programHref = `/${locale}/bundles/${bundle.slug}/program`;
   const isFree = bundle.save.toLowerCase() === "free";
+
+  // Ownership gate: "Start Program" only shows to users who actually own the
+  // bundle (admins always). Everyone else sees the Buy/Get-free CTA only — the
+  // program content is never reachable from the sales page without entitlement.
+  let owns = false;
+  {
+    const supabase = createServerSupabaseClient();
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+    if (user) {
+      owns =
+        (!!user.email && isAdminEmail(user.email)) ||
+        (await hasPurchasedProgram(supabase, user.id, bundle.slug));
+    }
+  }
 
   // Related bundles — same goal first, then fill with others, capped at 3.
   const related = [
@@ -165,21 +184,24 @@ export default function BundleDetailPage({
             className="mt-8 flex flex-wrap items-center gap-3 motion-safe:animate-[tj-fade-up_620ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
             style={{ animationDelay: "480ms" }}
           >
-            <Link
-              href={programHref}
-              className="tj-cta-sheen relative inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-5 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] hover:brightness-110 hover:shadow-[0_0_36px_rgba(34,211,238,0.36)] motion-safe:active:scale-[0.97] sm:flex-none"
-            >
-              Start Program
-              <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
-            </Link>
-            <BundleCta
-              slug={bundle.slug}
-              locale={locale}
-              isFree={isFree}
-              priceLabel={bundle.save}
-              labels={{ download: copy.download, buy: copy.buy, getFree: copy.getFree, processing: copy.processing }}
-              className="flex-1 sm:flex-none"
-            />
+            {owns ? (
+              <Link
+                href={programHref}
+                className="tj-cta-sheen relative inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-5 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] hover:brightness-110 hover:shadow-[0_0_36px_rgba(34,211,238,0.36)] motion-safe:active:scale-[0.97] sm:flex-none"
+              >
+                Start Program
+                <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
+              </Link>
+            ) : (
+              <BundleCta
+                slug={bundle.slug}
+                locale={locale}
+                isFree={isFree}
+                priceLabel={bundle.save}
+                labels={{ download: copy.download, buy: copy.buy, getFree: copy.getFree, processing: copy.processing }}
+                className="flex-1 sm:flex-none"
+              />
+            )}
             <Link
               href={`/${locale}/tjai`}
               className="group/tjai tj-cta-sheen inline-flex min-h-[48px] flex-1 items-center justify-center gap-1.5 rounded-full border border-cyan-300/25 px-4 py-2.5 text-sm font-semibold text-cyan-200 transition-[border-color,color,box-shadow] hover:border-cyan-300/55 hover:text-cyan-100 hover:shadow-[0_0_24px_rgba(34,211,238,0.18)] sm:flex-none"
@@ -411,12 +433,14 @@ export default function BundleDetailPage({
 
       <DetailSectionNav items={navItems} />
 
-      <StickyBuyBar
-        name={card.name}
-        href={programHref}
-        label="Start Program"
-        ariaLabel={`Start ${card.name}`}
-      />
+      {owns ? (
+        <StickyBuyBar
+          name={card.name}
+          href={programHref}
+          label="Start Program"
+          ariaLabel={`Start ${card.name}`}
+        />
+      ) : null}
     </section>
   );
 }

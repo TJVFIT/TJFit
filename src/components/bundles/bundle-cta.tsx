@@ -76,12 +76,15 @@ export function BundleCta({
         credentials: "include",
         body: JSON.stringify({ orderId })
       });
-      const prep = (await prepRes.json().catch(() => ({}))) as { url?: string; error?: string };
-      if (!prepRes.ok || !prep.url) throw new Error(prep.error ?? "no checkout url");
+      const prep = (await prepRes.json().catch(() => ({}))) as { url?: string; error?: string; code?: string };
+      if (prep.code === "GUMROAD_NOT_CONFIGURED") {
+        throw new Error("This bundle isn't connected to checkout yet. Please try again shortly.");
+      }
+      if (!prepRes.ok || !prep.url) throw new Error(prep.error ?? "Checkout is temporarily unavailable.");
       window.location.href = prep.url;
     } catch (e) {
       console.error("[bundle-cta]", e);
-      setError("Something went wrong. Please try again.");
+      setError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
       setBusy(false);
     }
   };

@@ -155,14 +155,8 @@ export async function middleware(request: NextRequest) {
       return redirectRes;
     }
 
-    if (!user.email_confirmed_at && path !== `/${locale}/verify-email`) {
-      const verify = new URL(`/${locale}/verify-email`, request.url);
-      verify.searchParams.set("redirect", path);
-      const redirectRes = NextResponse.redirect(verify);
-      copyCookies(response, redirectRes);
-      applyHtmlCacheHeaders(request, redirectRes);
-      return redirectRes;
-    }
+    // Email verification gate removed (owner directive): authenticated users
+    // get full access without confirming their email first.
 
     const role = await resolveMiddlewareRole(supabase, user);
 

@@ -2,7 +2,6 @@
 
 import { ReactNode, useState } from "react";
 
-import { DelayedEarlyAccessPopup } from "@/components/delayed-early-access-popup";
 import { GuestOnboardingPopup } from "@/components/guest-onboarding-popup";
 import { LogoIntro } from "@/components/logo-intro";
 import { MainErrorBoundary } from "@/components/main-error-boundary";
@@ -43,7 +42,6 @@ export function SiteShell({
         <SiteSideOverlay locale={locale} />
         <ShellNoticeGate locale={locale} />
         <GuestOnboardingPopup locale={locale} />
-        <DelayedEarlyAccessPopup locale={locale} />
 
         <div className={`transition-opacity duration-400 ${introDone ? "opacity-100" : "opacity-0"}`}>
           <MainErrorBoundary>
