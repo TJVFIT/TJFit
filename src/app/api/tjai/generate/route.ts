@@ -166,7 +166,12 @@ export async function POST(request: NextRequest) {
     const msg = error instanceof Error ? error.message : "Unknown error";
     console.error("[TJAI] Unhandled error:", msg);
     failureReason = `uncaught:${msg}`;
-    return NextResponse.json({ error: `Generation failed: ${msg}` }, { status: 500 });
+    // Generic client message — raw error text logged above, not leaked.
+    // The credit is returned by the finally block (delivered is still false).
+    return NextResponse.json(
+      { error: "Generation failed. Your credit was not charged — please try again." },
+      { status: 500 }
+    );
   } finally {
     // Refund in finally so Vercel timeouts and uncaught throws still return the credit.
     // Caveat: when Vercel hard-kills the function at maxDuration, the runtime

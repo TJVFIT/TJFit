@@ -68,44 +68,71 @@ export async function runPlanGenerationPipeline(input: PlanGenerationPipelineInp
     learningInsight
   });
 
-  let rawText: string;
-  try {
-    rawText = await withTiming(trace, "openai_plan_json", () =>
-      callOpenAI({
-        system: systemPrompt,
-        user: userPrompt,
-        maxTokens: 16000,
-        jsonMode: true,
-        onUsage: (usage) => {
-          trace.tokenUsage = usage;
-        }
-      })
-    );
-  } catch (aiError) {
-    pushStage(trace, "failed", { phase: "openai" });
-    appendTraceError(trace, aiError instanceof Error ? aiError.message : "AI generation failed");
-    logPipelineTrace(input.userId, trace);
-    const msg = aiError instanceof Error ? aiError.message : "AI generation failed";
-    return { ok: false, status: 502, error: `AI generation failed: ${msg}`, trace };
+  // Structured-output reliability (Cycle 009): attempt generation, and on a
+  // parse OR structural-schema failure, retry ONCE with a correction hint
+  // appended. Coherence (semantic) failures are not retried — those need a
+  // graceful fail + refund, not a re-roll. Hard limit of 2 attempts so a
+  // pathological model can't burn tokens or stall past the function budget.
+  const REPAIR_INSTRUCTION =
+    "\n\nIMPORTANT: Your previous response could not be parsed as a valid plan. " +
+    "Return ONLY a single valid JSON object that matches the required plan schema exactly — " +
+    "no markdown fences, no commentary, every required field populated.";
+
+  let plan: unknown = null;
+  let lastFailPhase: "json_parse" | "structural_validation" | null = null;
+
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    let rawText: string;
+    try {
+      rawText = await withTiming(trace, attempt === 1 ? "openai_plan_json" : "openai_plan_json_retry", () =>
+        callOpenAI({
+          system: systemPrompt,
+          user: attempt === 1 ? userPrompt : userPrompt + REPAIR_INSTRUCTION,
+          maxTokens: 16000,
+          jsonMode: true,
+          onUsage: (usage) => {
+            trace.tokenUsage = usage;
+          }
+        })
+      );
+    } catch (aiError) {
+      pushStage(trace, "failed", { phase: "openai" });
+      appendTraceError(trace, aiError instanceof Error ? aiError.message : "AI generation failed");
+      logPipelineTrace(input.userId, trace);
+      // Generic message — never leak the upstream error text to the client.
+      return { ok: false, status: 502, error: "AI generation failed. Please try again.", trace };
+    }
+
+    pushStage(trace, "draft_generated", { chars: rawText.length, attempt });
+
+    let parsed: unknown;
+    try {
+      parsed = safeParseJSON(rawText);
+    } catch (parseError) {
+      lastFailPhase = "json_parse";
+      appendTraceError(trace, parseError instanceof Error ? parseError.message : "JSON parse error");
+      continue; // retry (or fall through to graceful fail after attempt 2)
+    }
+
+    if (!validateTjaiPlan(parsed)) {
+      lastFailPhase = "structural_validation";
+      appendTraceError(trace, `validateTjaiPlan failed (attempt ${attempt})`);
+      continue;
+    }
+
+    plan = parsed;
+    lastFailPhase = null;
+    break;
   }
 
-  pushStage(trace, "draft_generated", { chars: rawText.length });
-
-  let plan: unknown;
-  try {
-    plan = safeParseJSON(rawText);
-  } catch (parseError) {
-    pushStage(trace, "failed", { phase: "json_parse" });
-    appendTraceError(trace, parseError instanceof Error ? parseError.message : "JSON parse error");
+  if (plan === null) {
+    pushStage(trace, "failed", { phase: lastFailPhase ?? "structural_validation" });
     logPipelineTrace(input.userId, trace);
-    return { ok: false, status: 502, error: "AI returned an invalid response. Please try again.", trace };
-  }
-
-  if (!validateTjaiPlan(plan)) {
-    pushStage(trace, "failed", { phase: "structural_validation" });
-    appendTraceError(trace, "validateTjaiPlan failed");
-    logPipelineTrace(input.userId, trace);
-    return { ok: false, status: 502, error: "AI returned an incomplete plan. Please try again.", trace };
+    const error =
+      lastFailPhase === "json_parse"
+        ? "AI returned an invalid response. Please try again."
+        : "AI returned an incomplete plan. Please try again.";
+    return { ok: false, status: 502, error, trace };
   }
 
   const coherence = runEnhancedPlanCoherenceChecks(plan as TJAIPlan, input.metrics);
