@@ -53,7 +53,36 @@ export function TJAIChat({
   const composerRef = useRef<HTMLTextAreaElement>(null);
   const threadRef = useRef<HTMLDivElement>(null);
   const stickToBottomRef = useRef(true);
+  const abortRef = useRef<AbortController | null>(null);
+  const lastUserMessageRef = useRef<string>("");
   const copy = getTJAIChatCopy(getChatLocale());
+
+  // User-initiated stop: abort the in-flight request. The server sees the
+  // client disconnect and stops streaming (Phase 9 audit). We keep whatever
+  // partial text already streamed.
+  const stop = () => {
+    abortRef.current?.abort();
+    abortRef.current = null;
+    setLoading(false);
+    setThinking(false);
+  };
+
+  // Retry the last failed send WITHOUT appending a duplicate user message:
+  // drop the trailing empty assistant row, then re-ask the stored text.
+  const retry = () => {
+    const text = lastUserMessageRef.current;
+    if (!text || loading) return;
+    setHistory((prev) => {
+      const next = [...prev];
+      if (next.length && next[next.length - 1]?.role === "assistant" && next[next.length - 1]?.content === "") {
+        next.pop();
+        if (next.length && next[next.length - 1]?.role === "user") next.pop();
+      }
+      return next;
+    });
+    setApiError(null);
+    void ask(text);
+  };
 
   useEffect(() => {
     setConversationId(crypto.randomUUID());
@@ -121,6 +150,7 @@ export function TJAIChat({
       setTrialRemaining(Math.max(0, trialRemaining - 1));
     }
 
+    lastUserMessageRef.current = text;
     stickToBottomRef.current = true;
     setHistory((prev) => [...prev, { role: "user", content: text }, { role: "assistant", content: "" }]);
     setMessage("");
@@ -134,12 +164,15 @@ export function TJAIChat({
     }
     setThinking(false);
 
+    const controller = new AbortController();
+    abortRef.current = controller;
     try {
       const res = await fetch("/api/tjai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ message: text, conversationId })
+        body: JSON.stringify({ message: text, conversationId }),
+        signal: controller.signal
       });
 
       const contentType = res.headers.get("Content-Type") ?? "";
@@ -214,6 +247,10 @@ export function TJAIChat({
         }
       }
     } catch (error) {
+      // User-initiated stop: keep partial text, don't show an error.
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return;
+      }
       console.error("[TJAI chat client] error:", error);
       setHistory((prev) => {
         const updated = [...prev];
@@ -225,6 +262,7 @@ export function TJAIChat({
       });
       setApiError(copy.apiErrorRetry);
     } finally {
+      abortRef.current = null;
       setLoading(false);
       setThinking(false);
     }
@@ -292,7 +330,21 @@ export function TJAIChat({
           ) : null}
         </div>
         {apiError ? (
-          <p className="mt-3 rounded-lg border border-red-500/25 bg-red-500/10 px-3 py-2 text-xs text-red-200">{apiError}</p>
+          <div
+            className="mt-3 flex items-center justify-between gap-3 rounded-lg border border-red-500/25 bg-red-500/10 px-3 py-2 text-xs text-red-200"
+            role="alert"
+            aria-live="assertive"
+          >
+            <span>{apiError}</span>
+            <button
+              type="button"
+              onClick={retry}
+              disabled={loading}
+              className="shrink-0 rounded-full border border-red-300/40 px-3 py-1 font-semibold text-red-100 transition hover:bg-red-400/15 disabled:opacity-40"
+            >
+              {copy.retry}
+            </button>
+          </div>
         ) : null}
 
         <div className="mt-5">
@@ -425,14 +477,25 @@ export function TJAIChat({
             rows={1}
             className="tj-chat-input-premium min-h-11 max-h-[168px] flex-1 resize-none bg-transparent px-3.5 py-2.5 text-sm leading-snug text-white outline-none placeholder:text-dim"
           />
-          <button
-            type="submit"
-            aria-label={copy.send}
-            disabled={loading || thinking || !message.trim()}
-            className="tj-cta-sheen inline-flex h-10 min-w-[44px] items-center justify-center rounded-xl bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-4 text-sm font-bold text-[#0A0A0B] shadow-[0_0_20px_rgba(34,211,238,0.22)] transition-[transform,filter,box-shadow,opacity] duration-150 hover:brightness-110 hover:shadow-[0_0_28px_rgba(34,211,238,0.28)] active:scale-[0.94] disabled:pointer-events-none disabled:opacity-40"
-          >
-            {copy.send}
-          </button>
+          {loading || thinking ? (
+            <button
+              type="button"
+              onClick={stop}
+              aria-label={copy.stop}
+              className="inline-flex h-10 min-w-[44px] items-center justify-center rounded-xl border border-white/15 bg-white/5 px-4 text-sm font-bold text-white transition-[transform,background-color] duration-150 hover:bg-white/10 active:scale-[0.94]"
+            >
+              {copy.stop}
+            </button>
+          ) : (
+            <button
+              type="submit"
+              aria-label={copy.send}
+              disabled={!message.trim()}
+              className="tj-cta-sheen inline-flex h-10 min-w-[44px] items-center justify-center rounded-xl bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-4 text-sm font-bold text-[#0A0A0B] shadow-[0_0_20px_rgba(34,211,238,0.22)] transition-[transform,filter,box-shadow,opacity] duration-150 hover:brightness-110 hover:shadow-[0_0_28px_rgba(34,211,238,0.28)] active:scale-[0.94] disabled:pointer-events-none disabled:opacity-40"
+            >
+              {copy.send}
+            </button>
+          )}
         </form>
         <p className="mt-2 text-center text-[10px] uppercase tracking-[0.18em] text-dim">
           {copy.composerHint}
