@@ -2,7 +2,6 @@ import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 
 import { ClientErrorBoundary } from "@/components/client-error-boundary";
-import { HomepageIntroGate } from "@/components/home/homepage-intro-gate";
 import { coaches, programs } from "@/lib/content";
 import { getHomeLuxuryCopy } from "@/lib/home-luxury-copy";
 import { isLocale, type Locale } from "@/lib/i18n";
@@ -120,14 +119,12 @@ export default function HomePage({ params }: { params: { locale: string } }) {
         </div>
       }
     >
-      <HomepageIntroGate>
-        <ImmersiveHome
-          locale={locale}
-          copy={copy}
-          coaches={coachPreviews}
-          freePrograms={freePrograms}
-        />
-      </HomepageIntroGate>
+      <ImmersiveHome
+        locale={locale}
+        copy={copy}
+        coaches={coachPreviews}
+        freePrograms={freePrograms}
+      />
     </ClientErrorBoundary>
   );
 }

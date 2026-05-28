@@ -27,14 +27,16 @@ const PICKER_TITLE: Record<Locale, string> = {
   fr: "Choisissez votre langue"
 };
 
-/** ~1100ms automated brand runway before language picker (premium ease, no abrupt snap). */
+/** ~1500ms automated brand runway before language picker. Eased out from the
+ * old ~740ms sequence which read as a fast flicker — each phase now has real
+ * breathing room so the monogram draw is legible before the picker appears. */
 const TIMINGS_MS = {
-  t: 50,
-  tj: 180,
-  fit: 320,
-  man: 420,
-  hold: 560,
-  languages: 740
+  t: 80,
+  tj: 320,
+  fit: 620,
+  man: 880,
+  hold: 1180,
+  languages: 1500
 } as const;
 
 export function LogoIntro({
