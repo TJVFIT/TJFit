@@ -60,7 +60,7 @@ export function BadgeUnlockToast() {
 
   return (
     <div className="pointer-events-none fixed bottom-6 right-6 z-50">
-      <div className="pointer-events-auto flex max-w-sm items-center gap-3 rounded-2xl border border-cyan-300/30 bg-gradient-to-br from-cyan-300/15 to-black/85 px-4 py-3 text-white shadow-[0_20px_60px_rgba(34,211,238,0.25)] backdrop-blur animate-in slide-in-from-bottom-4">
+      <div className="pointer-events-auto flex max-w-sm items-center gap-3 rounded-2xl border border-cyan-300/30 bg-gradient-to-br from-cyan-300/15 to-black/85 px-4 py-3 text-white shadow-[0_20px_60px_rgba(34,211,238,0.25)] backdrop-blur animate-in slide-in-from-bottom-4 motion-reduce:animate-none">
         <span className="text-3xl" aria-hidden>
           {current.emoji}
         </span>

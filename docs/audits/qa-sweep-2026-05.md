@@ -50,3 +50,17 @@ Loop broken; no-access users land on the TJAI landing/upsell.
 - Bundle content authoring or `/api/free/download` gating (Phase 8 finding).
 - Account deletion + data export endpoints (Phase 11 P0 finding).
 - Runtime role-matrix test with real accounts.
+
+## Browser verification (2026-05-27, dev server)
+
+Ran `npm run dev` + drove the live app via preview tools. Findings:
+
+- **Intro fix VERIFIED**: homepage shows a single LogoIntro + language picker (5 priority locales), hero renders cleanly after. No second overlay. The reported "2 animations stacked + too fast" bug is gone.
+- **Phase 21 hero animations**: already present (motion-safe entry classes in luxury-home).
+- **Phase 22 bundle cards**: VERIFIED via inspect — `.bundle-card-tilt` computes `transition: transform, box-shadow, border-color` at 0.26s. Hover scale/tilt + motion-safe image scale already implemented. Done.
+- **Phase 24 page transitions**: `src/components/page-transition.tsx` exists with `prefers-reduced-motion` handling + opacity/transform only. Done.
+- **Phase 26 skeletons**: shared `[locale]/loading.tsx` (tj-skeleton) auto-covers every route incl. bundles + profile via Next.js loading inheritance. Done.
+- **Phase 27 streak/badge**: streak-banner uses `motion-safe:animate-pulse`. **Fixed**: badge-unlock-toast `slide-in` had no reduced-motion guard → added `motion-reduce:animate-none`.
+- **Phase 25 confetti**: present on leaderboard + progress-view. Adding it to TJAI plan-generated / first-purchase needs the activation events from Phase 12 → Plan 3.
+
+**Conclusion:** the visual layer was already in good shape from prior work. Browser verification confirmed the intro fix and bundle transitions work live; one real a11y gap (badge toast reduced-motion) was fixed. No blind edits were needed.
