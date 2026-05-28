@@ -47,18 +47,16 @@ const SIGN_OUT_LABEL: Record<Locale, string> = {
 };
 
 const SEARCH_LABEL: Record<Locale, string> = {
-  en: "Programs, TJAI, messages, coaches",
-  tr: "Programlar, TJAI, mesajlar, koclar",
-  ar: "البرامج، TJAI، الرسائل، المدربون",
-  es: "Programas, TJAI, mensajes, coaches",
-  fr: "Programmes, TJAI, messages, coachs"
+  en: "Bundles, TJAI, messages, coaches",
+  tr: "Paketler, TJAI, mesajlar, koclar",
+  ar: "الحزم، TJAI، الرسائل، المدربون",
+  es: "Paquetes, TJAI, mensajes, coaches",
+  fr: "Packs, TJAI, messages, coachs"
 };
 
 const NAV_LABELS: Record<Locale, Record<string, string>> = {
   en: {},
   tr: {
-    Programs: "Programlar",
-    Diets: "Diyetler",
     Coaches: "Koclar",
     Calculator: "Hesaplayici",
     Equipment: "Ekipman",
@@ -68,7 +66,6 @@ const NAV_LABELS: Record<Locale, Record<string, string>> = {
     Messages: "Mesajlar",
     Profile: "Profil",
     Settings: "Ayarlar",
-    Coins: "Coinler",
     Community: "Topluluk",
     Challenges: "Meydan okumalar",
     Leaderboard: "Liderlik tablosu",
@@ -84,8 +81,6 @@ const NAV_LABELS: Record<Locale, Record<string, string>> = {
     "Coach dashboard": "Koc paneli"
   },
   ar: {
-    Programs: "البرامج",
-    Diets: "الأنظمة الغذائية",
     Coaches: "المدربون",
     Calculator: "الحاسبة",
     Equipment: "المعدات",
@@ -95,7 +90,6 @@ const NAV_LABELS: Record<Locale, Record<string, string>> = {
     Messages: "الرسائل",
     Profile: "الملف الشخصي",
     Settings: "الإعدادات",
-    Coins: "النقاط",
     Community: "المجتمع",
     Challenges: "التحديات",
     Leaderboard: "لوحة الصدارة",
@@ -111,8 +105,6 @@ const NAV_LABELS: Record<Locale, Record<string, string>> = {
     "Coach dashboard": "لوحة المدرب"
   },
   es: {
-    Programs: "Programas",
-    Diets: "Dietas",
     Coaches: "Coaches",
     Calculator: "Calculadora",
     Equipment: "Equipo",
@@ -122,7 +114,6 @@ const NAV_LABELS: Record<Locale, Record<string, string>> = {
     Messages: "Mensajes",
     Profile: "Perfil",
     Settings: "Ajustes",
-    Coins: "Monedas",
     Community: "Comunidad",
     Challenges: "Retos",
     Leaderboard: "Clasificacion",
@@ -138,8 +129,6 @@ const NAV_LABELS: Record<Locale, Record<string, string>> = {
     "Coach dashboard": "Panel de coach"
   },
   fr: {
-    Programs: "Programmes",
-    Diets: "Diets",
     Coaches: "Coachs",
     Calculator: "Calculateur",
     Equipment: "Equipement",
@@ -149,7 +138,6 @@ const NAV_LABELS: Record<Locale, Record<string, string>> = {
     Messages: "Messages",
     Profile: "Profil",
     Settings: "Reglages",
-    Coins: "Coins",
     Community: "Communaute",
     Challenges: "Challenges",
     Leaderboard: "Classement",
@@ -190,8 +178,7 @@ function buildGroups(locale: Locale): NavGroup[] {
         { label: "Progress", href: `${base}/progress`, authOnly: true },
         { label: "Messages", href: `${base}/messages`, authOnly: true },
         { label: "Profile", href: `${base}/profile/edit`, authOnly: true },
-        { label: "Settings", href: `${base}/settings`, authOnly: true },
-        { label: "Coins", href: `${base}/coins`, authOnly: true }
+        { label: "Settings", href: `${base}/settings`, authOnly: true }
       ]
     },
     {
