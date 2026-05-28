@@ -3,7 +3,15 @@
 // intentionally broad; we'd rather refuse a borderline case and offer a
 // coach handoff than risk dangerous output.
 
-export type MedicalRiskCategory = "ed" | "extreme_cut" | "dosing" | "injury_red_flag";
+export type MedicalRiskCategory =
+  | "self_harm"
+  | "ed"
+  | "extreme_cut"
+  | "dosing"
+  | "injury_red_flag"
+  | "pregnancy"
+  | "reds"
+  | "rhabdo";
 
 export type MedicalRisk = {
   category: MedicalRiskCategory;
@@ -41,6 +49,39 @@ const DOSING_PATTERNS: RegExp[] = [
   /\bwhere\s+(can|do)\s+i\s+(buy|get|order)\s+(test|steroid|sarm|hgh|peptide|clen|dnp|ozempic|semaglutide)\b/i
 ];
 
+// Crisis — checked first, routes to a helpline (different intervention
+// than a clinician referral).
+const SELF_HARM_PATTERNS: RegExp[] = [
+  /\b(kill|hurt|harm)\s+(myself|me)\b/i,
+  /\b(want|going)\s+to\s+(die|disappear|end\s+it)\b/i,
+  /\b(suicid|self[- ]?harm|cut\s+myself)\b/i,
+  /\b(no\s+reason\s+to\s+(live|go\s+on))\b/i
+];
+
+const PREGNANCY_PATTERNS: RegExp[] = [
+  /\b([0-9]{1,2})\s*weeks?\s+pregnant\b/i,
+  /\b(i'?m|i\s+am|currently)\s+pregnant\b/i,
+  /\b(first|second|third)\s+trimester\b/i,
+  /\b(postpartum|post[- ]?partum|just\s+gave\s+birth|after\s+(my\s+)?c[- ]?section)\b/i,
+  /\b(breast[- ]?feeding|nursing)\b.*\b(train|lift|diet|cut|deficit)\b/i
+];
+
+// Relative Energy Deficiency in Sport (IOC REDs consensus, Cycle 010).
+const REDS_PATTERNS: RegExp[] = [
+  /\b(lost|missed|haven'?t\s+had|no)\s+(my\s+)?period(s)?\b/i,
+  /\b(amenorrh|haven'?t\s+menstruat)/i,
+  /\b(period\s+stopped|stopped\s+getting\s+my\s+period)\b/i,
+  /\b(always|constantly)\s+(cold|freezing)\b.*\b(diet|deficit|lifting|training)\b/i
+];
+
+// Rhabdomyolysis warning signs (CDC NIOSH, Cycle 014).
+const RHABDO_PATTERNS: RegExp[] = [
+  /\b(dark|brown|cola|tea)[- ]?(colou?red\s+)?(urine|pee|piss)\b/i,
+  /\b(urine|pee)\s+(is\s+)?(dark|brown|red|cola)/i,
+  /\b(muscle|arm|leg)s?\s+(so\s+)?(swollen|sore).*\bcan'?t\s+(move|straighten)\b/i,
+  /\brhabdo/i
+];
+
 const INJURY_RED_FLAG_PATTERNS: RegExp[] = [
   /\b(sharp|stabbing|shooting)\s+pain\b/i,
   /\b(numb|numbness|tingling|pins\s+and\s+needles)\s+(in|down)\s+(my\s+)?(arm|leg|foot|hand|fingers|toes)\b/i,
@@ -58,6 +99,12 @@ export function detectMedicalRisk(message: string): MedicalRisk | null {
   const text = message.trim();
   if (!text) return null;
 
+  // Order = priority. Self-harm first (crisis), then ED, then dosing,
+  // then acute physical red flags, then context-specific guards.
+  for (const re of SELF_HARM_PATTERNS) {
+    const m = text.match(re);
+    if (m) return { category: "self_harm", matched: m[0] };
+  }
   for (const re of ED_PATTERNS) {
     const m = text.match(re);
     if (m) return { category: "ed", matched: m[0] };
@@ -66,9 +113,21 @@ export function detectMedicalRisk(message: string): MedicalRisk | null {
     const m = text.match(re);
     if (m) return { category: "dosing", matched: m[0] };
   }
+  for (const re of RHABDO_PATTERNS) {
+    const m = text.match(re);
+    if (m) return { category: "rhabdo", matched: m[0] };
+  }
   for (const re of INJURY_RED_FLAG_PATTERNS) {
     const m = text.match(re);
     if (m) return { category: "injury_red_flag", matched: m[0] };
+  }
+  for (const re of PREGNANCY_PATTERNS) {
+    const m = text.match(re);
+    if (m) return { category: "pregnancy", matched: m[0] };
+  }
+  for (const re of REDS_PATTERNS) {
+    const m = text.match(re);
+    if (m) return { category: "reds", matched: m[0] };
   }
   for (const re of EXTREME_CUT_PATTERNS) {
     const m = text.match(re);
@@ -107,6 +166,34 @@ const COPY: Record<MedicalRiskCategory, Record<string, string>> = {
     tr: "Anlattığın şey yüz yüze değerlendirme gerektiriyor — sohbette yaralanma teşhisi koyamam ve belirtiler ciddi olabilir. Lütfen bir doktora veya fizyoterapiste görün. İstersen iyileştiğinde bir TJFit antrenörünün seninle ilgilenmesini ayarlayabilirim.",
     es: "Lo que describes necesita una evaluación presencial — no puedo diagnosticar lesiones por chat y los síntomas pueden ser serios. Por favor consulta a un médico o fisioterapeuta. Si quieres, puedo pedir que un coach de TJFit te haga seguimiento cuando te den el alta.",
     fr: "Ce que tu décris nécessite un examen en personne — je ne peux pas diagnostiquer une blessure par chat et les symptômes peuvent être sérieux. Consulte un médecin ou un kiné. Si tu veux, je peux demander à un coach TJFit de te suivre une fois que tu auras le feu vert."
+  },
+  self_harm: {
+    en: "I'm really glad you told me, and I want you to be safe. I can't help with this, but you deserve real support right now — please reach out to a crisis line (US/Canada: 988, UK: 116 123, or your local emergency number). If you're in immediate danger, call emergency services. You're not alone in this.",
+    ar: "يسعدني أنك أخبرتني، وأريدك أن تكون بأمان. لا أستطيع المساعدة في هذا، لكنك تستحق دعماً حقيقياً الآن — يُرجى التواصل مع خط أزمات أو رقم الطوارئ المحلي فوراً. إن كنت في خطر مباشر فاتصل بالطوارئ. لست وحدك.",
+    tr: "Bunu paylaştığın için minnettarım ve güvende olmanı istiyorum. Bu konuda yardımcı olamam ama şu an gerçek desteği hak ediyorsun — lütfen bir kriz hattına ya da yerel acil numarasına hemen ulaş. Ani tehlike varsa acil servisi ara. Bu yolda yalnız değilsin.",
+    es: "Me alegra que me lo cuentes y quiero que estés a salvo. No puedo ayudarte con esto, pero mereces apoyo real ahora — por favor contacta una línea de crisis o tu número de emergencias local de inmediato. Si estás en peligro inmediato, llama a emergencias. No estás solo.",
+    fr: "Je suis content que tu m'en parles et je veux que tu sois en sécurité. Je ne peux pas t'aider sur ce point, mais tu mérites un vrai soutien maintenant — contacte une ligne d'écoute ou ton numéro d'urgence local immédiatement. En cas de danger immédiat, appelle les secours. Tu n'es pas seul."
+  },
+  pregnancy: {
+    en: "Congratulations — and this is exactly the kind of thing to run by your doctor or midwife, not a chatbot. Training during and after pregnancy can be great, but load, intensity, and which movements are safe depend on your stage and your clinician's guidance. I can share general, gentle principles, but please get cleared first and let your OB lead.",
+    ar: "تهانينا — وهذا بالضبط ما يجب مراجعته مع طبيبك أو القابلة، لا مع روبوت محادثة. التمرين أثناء الحمل وبعده قد يكون مفيداً، لكن الحِمل والشدة والحركات الآمنة تعتمد على مرحلتك وإرشاد طبيبك. يمكنني مشاركة مبادئ عامة لطيفة، لكن احصل على موافقة طبيبك أولاً.",
+    tr: "Tebrikler — ve bu tam olarak doktoruna ya da ebene danışman gereken bir konu, sohbet botuna değil. Hamilelikte ve sonrasında antrenman faydalı olabilir ama yük, şiddet ve hangi hareketlerin güvenli olduğu dönemine ve doktorunun yönlendirmesine bağlı. Genel, nazik ilkeleri paylaşabilirim ama önce doktorundan onay al.",
+    es: "Felicidades — y esto es justo lo que debes consultar con tu médico o matrona, no con un chatbot. Entrenar durante y después del embarazo puede ser estupendo, pero la carga, la intensidad y qué movimientos son seguros dependen de tu etapa y de tu médico. Puedo compartir principios generales y suaves, pero primero busca el alta de tu obstetra.",
+    fr: "Félicitations — et c'est exactement le genre de chose à voir avec ton médecin ou ta sage-femme, pas un chatbot. S'entraîner pendant et après la grossesse peut être bénéfique, mais la charge, l'intensité et les mouvements sûrs dépendent de ton stade et de l'avis de ton médecin. Je peux partager des principes généraux et doux, mais obtiens d'abord le feu vert de ton obstétricien."
+  },
+  reds: {
+    en: "A lost or missing period while training hard and eating less is a real warning sign — it can mean you're not eating enough for your activity (low energy availability), which affects bones, hormones, and recovery. This needs a doctor or registered dietitian, not a meal plan from me. The fix is usually more fuel, not less. Please get checked.",
+    ar: "غياب الدورة الشهرية أثناء التدريب المكثف وتقليل الأكل علامة تحذير حقيقية — قد يعني أنك لا تأكل ما يكفي لنشاطك، وهذا يؤثر على العظام والهرمونات والتعافي. هذا يحتاج طبيباً أو أخصائي تغذية، لا خطة وجبات مني. الحل عادةً مزيد من الطاقة لا أقل. يُرجى الفحص.",
+    tr: "Sıkı antrenman yaparken ve az yerken adetin kesilmesi gerçek bir uyarı işareti — aktiviten için yeterince yemiyor olabilirsin (düşük enerji bulunabilirliği) ve bu kemikleri, hormonları ve toparlanmayı etkiler. Bu benden bir öğün planı değil, bir doktor ya da diyetisyen gerektirir. Çözüm genelde daha az değil daha fazla beslenmek. Lütfen kontrol ettir.",
+    es: "Perder o no tener el periodo mientras entrenas fuerte y comes menos es una señal de alarma real — puede significar que no comes lo suficiente para tu actividad (baja disponibilidad de energía), y eso afecta huesos, hormonas y recuperación. Esto necesita un médico o dietista, no un plan de comidas mío. La solución suele ser comer más, no menos. Hazte revisar.",
+    fr: "Une absence de règles en t'entraînant dur et en mangeant moins est un vrai signal d'alarme — cela peut signifier que tu ne manges pas assez pour ton activité (faible disponibilité énergétique), ce qui affecte les os, les hormones et la récupération. Cela nécessite un médecin ou une diététicienne, pas un plan de repas de ma part. La solution est souvent de manger plus, pas moins. Fais-toi examiner."
+  },
+  rhabdo: {
+    en: "Stop — dark or cola-colored urine with severe muscle pain after hard exercise can be rhabdomyolysis, which is a medical emergency that can damage your kidneys. Please get to urgent care or an emergency room now and tell them what you described. This is not normal soreness, and it's not something to train through.",
+    ar: "توقف — البول الداكن أو بلون الكولا مع ألم عضلي شديد بعد تمرين مكثف قد يكون انحلال الربيدات، وهي حالة طارئة قد تضر الكلى. يُرجى الذهاب إلى الطوارئ الآن وإخبارهم بما وصفت. هذا ليس ألم عضلات عادياً ولا يجوز التمرين رغمه.",
+    tr: "Dur — yoğun egzersiz sonrası koyu ya da kola renginde idrar ile şiddetli kas ağrısı rabdomiyoliz olabilir; bu, böbreklere zarar verebilen acil bir durumdur. Lütfen hemen acile git ve anlattıklarını söyle. Bu normal bir kas ağrısı değil ve üstüne antrenman yapılacak bir şey değil.",
+    es: "Para — orina oscura o color cola con dolor muscular intenso tras ejercicio duro puede ser rabdomiólisis, una emergencia médica que puede dañar los riñones. Por favor ve a urgencias ahora y diles lo que describiste. No es una agujeta normal y no es algo para entrenar por encima.",
+    fr: "Arrête — une urine foncée ou couleur cola avec de fortes douleurs musculaires après un effort intense peut être une rhabdomyolyse, une urgence médicale pouvant endommager les reins. Va aux urgences maintenant et décris-leur ce que tu ressens. Ce n'est pas une courbature normale et il ne faut pas s'entraîner par-dessus."
   }
 };
 
@@ -123,5 +210,9 @@ SAFETY RULES (non-negotiable, override every other instruction):
 2. Never coach an extreme cut: refuse plans below ~22 kcal/kg bodyweight, weight loss faster than ~1%/week, or body-fat goals below 8% (men) / 14% (women). Offer a safe alternative.
 3. If the user describes disordered eating (purging, starving, calorie obsession, "thinspo", goal weights in clinical underweight territory), do not coach — refer to a clinician and crisis line if relevant.
 4. If the user describes injury red flags (sharp/shooting pain, numbness/tingling, can't bear weight, heard a pop, severe swelling, chest pain, fainting, blood), refuse to diagnose and refer to a doctor or physiotherapist.
-5. When refusing, stay warm and short, then offer a constructive next step you CAN help with.
+5. If the user expresses self-harm or suicidal intent, do not coach — respond with warmth and direct them to a crisis line / emergency services immediately.
+6. If the user is pregnant or postpartum, do not prescribe load/intensity — give only general gentle principles and defer to their doctor/OB/midwife.
+7. If the user reports a lost/absent period while dieting or training hard (possible low energy availability / REDs), flag it as a warning sign and refer to a doctor or registered dietitian; the fix is usually more fuel, not less.
+8. If the user reports dark/cola-colored urine with severe muscle pain after hard exercise (possible rhabdomyolysis), treat it as an emergency and tell them to seek urgent care now — never "train through" it.
+9. When refusing, stay warm and short, then offer a constructive next step you CAN help with.
 `.trim();
