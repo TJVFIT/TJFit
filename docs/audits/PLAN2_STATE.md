@@ -28,13 +28,13 @@ Driven by recurring `/loop` cron job `1d297b47` (`*/2 * * * *`). Each fire reads
 | 18 | F | Supabase RLS spot-check | done | 653a62b | APPROVED. All sensitive tables have RLS + owner-scoped policies (case-insensitive grep — earlier miss was casing). Wrote migration 20260527120000 fixing coach_id FK → ON DELETE SET NULL. Migration committed but NOT db-pushed (needs owner action). Report: docs/audits/rls-spotcheck-2026-05.md. |
 | 19 | F | Page guards for /programs/upload + /blog/write | done | e1e6ad5 | APPROVED. programs/upload route does not exist (audit was speculative). blog/write APIs (eligibility/posts/drafts) all enforce requireAuth + verification server-side. Added blog/write to middleware as auth_user to kill the anonymous form-flash. |
 | 20 | F | Pre-merge full check → docs/audits/pre-merge-2026-05.md | done | c2d4743 | tsc+lint+i18n pass; 4 pre-existing bundle test fails. |
-| 21 | G | Hero animations (luxury-home.tsx) | deferred | — | Decorative — needs browser-verified session (see LASTCLAUDECODE_v2.md). Trust goal not blocked. |
-| 22 | G | Bundle card hover + entry transitions | deferred | — | Decorative — needs browser-verified session (see LASTCLAUDECODE_v2.md). Trust goal not blocked. |
+| 21 | G | Hero animations (luxury-home.tsx) | done | 03a02b8 | VERIFIED live: motion-safe hero entry already present.
+| 22 | G | Bundle card hover + entry transitions | done | 03a02b8 | VERIFIED via inspect: card transition transform/shadow/border @0.26s + motion-safe image scale.
 | 23 | G | TJAI chat polish + Stop/Retry | done | 7636c40 | AbortController Stop + retry-without-duplicate + 5-locale copy. Typing indicator/scroll already existed. |
-| 24 | G | Locale-route page transitions (Next.js template.tsx) | deferred | — | Decorative — needs browser-verified session (see LASTCLAUDECODE_v2.md). Trust goal not blocked. |
-| 25 | G | Confetti on first-value events | deferred | — | Decorative — needs browser-verified session (see LASTCLAUDECODE_v2.md). Trust goal not blocked. |
-| 26 | G | Skeleton states (bundles/hub/profile/dashboard/leaderboard) | deferred | — | Decorative — needs browser-verified session (see LASTCLAUDECODE_v2.md). Trust goal not blocked. |
-| 27 | G | Streak banner + badge toast polish | deferred | — | Decorative — needs browser-verified session (see LASTCLAUDECODE_v2.md). Trust goal not blocked. |
+| 24 | G | Locale-route page transitions (Next.js template.tsx) | done | 03a02b8 | page-transition.tsx exists w/ prefers-reduced-motion (already implemented).
+| 25 | G | Confetti on first-value events | deferred | — | Confetti on TJAI plan/purchase needs activation events (Phase 12) → Plan 3. Present on leaderboard/progress.
+| 26 | G | Skeleton states (bundles/hub/profile/dashboard/leaderboard) | done | 03a02b8 | Shared [locale]/loading.tsx tj-skeleton auto-covers all routes incl bundles/profile.
+| 27 | G | Streak banner + badge toast polish | done | 03a02b8 | streak-banner motion-safe; badge toast given motion-reduce:animate-none.
 | 28 | H | Write LASTCLAUDECODE_v2.md handoff | done | (this commit) | Full Plan2 state + owner-action items + deferred-visual specs. |
 
 ## Convention
