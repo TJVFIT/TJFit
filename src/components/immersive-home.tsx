@@ -22,7 +22,6 @@ import { getHomeSectionsCopy } from "@/lib/home-sections-copy";
 import { BUNDLES } from "@/lib/bundles";
 import { cn } from "@/lib/utils";
 
-import type { HomeCoachPreview } from "@/components/luxury/luxury-home";
 import { HeroSection } from "@/components/home/hero-section";
 import { HomeAmbientBackdrop } from "@/components/home/home-ambient-backdrop";
 import { LogoShowcase } from "@/components/home/logo-showcase";
@@ -205,6 +204,8 @@ function PlatformFeatureCard({
     </article>
   );
 }
+
+type HomeCoachPreview = { slug: string; name: string; specialty: string; rating: number };
 
 export function ImmersiveHome({
   locale, copy, coaches: _coaches, freePrograms: _freePrograms

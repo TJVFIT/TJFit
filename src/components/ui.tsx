@@ -5,7 +5,6 @@ import { HoverLift } from "@/components/motion";
 import { Challenge, Coach, CommunityPost, Product, Transformation } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
-export { ProgramCard } from "@/components/program-card";
 
 export function SectionHeading({
   eyebrow,

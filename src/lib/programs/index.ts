@@ -4,7 +4,7 @@
 // imported NOWHERE in src/ today — it currently registers only
 // `comeback12w`. The programs the homepage/catalog market come from
 // `src/lib/content.ts` (83 entries) and the 4 backed free-product
-// models in `src/lib/free-product-pages.ts`. Do NOT assume this
+// coach-uploaded custom programs (custom_programs table). Do NOT assume this
 // registry is what customers see. Keep it in sync with real content
 // before wiring it to a route. See docs/audits/content-truth-2026-05.md.
 //
