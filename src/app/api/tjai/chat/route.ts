@@ -7,14 +7,12 @@ import {
   extractFactsFromMessage,
   fallbackCoachReply,
   formatMemoryBlock,
-  isLikelyFitnessQuestion,
   loadLongMemoryFacts,
   loadTjaiUserSettings,
   logChatCoachContextBuilt,
   medicalSafetyResponse,
   persistFacts,
   routeCoachChatIntent,
-  TJAI_CHAT_DOMAIN_GUARD,
   type ChatCoachPlanRow,
   type ChatCoachPreferenceRow,
   type ChatCoachProgressEntry,
@@ -163,16 +161,10 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    if (!isLikelyFitnessQuestion(message)) {
-      const guarded = TJAI_CHAT_DOMAIN_GUARD;
-      await auth.supabase.from("tjai_chat_messages").insert([
-        { user_id: auth.user.id, conversation_id: conversationId, role: "user", content: message },
-        { user_id: auth.user.id, conversation_id: conversationId, role: "assistant", content: guarded }
-      ]);
-      return new Response(JSON.stringify({ message: guarded, conversationId }), {
-        headers: { "Content-Type": "application/json" }
-      });
-    }
+    // TJAI answers any topic now (owner directive). The fitness-domain guard
+    // was removed so general questions get a real answer instead of a canned
+    // redirect. The medical-safety guard above still runs first, and the
+    // system prompt keeps TJAI's coaching persona for on-brand replies.
 
     if (!process.env.OPENAI_API_KEY) {
       console.error("[TJAI chat] OPENAI_API_KEY is not set — aborting with 503.");
