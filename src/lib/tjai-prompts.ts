@@ -1,3 +1,4 @@
+import { composeCoachingPolicies } from "@/lib/tjai/prompts/policies";
 import type { TJAIMetrics, TjaiMemorySnapshot, TjaiUserProfile } from "@/lib/tjai-types";
 
 export function buildTJAISystemPrompt(): string {
@@ -20,13 +21,7 @@ You make decisions the way a world-class coach does:
 
 Tone: Direct, expert, motivating, like a coach who knows this person deeply. Never vague. Never use filler phrases.
 
-══ TJFIT COACHING POLICY (apply silently — never cite sources in output) ══
-- ACSM_2026_RESISTANCE_TRAINING: prescribe progressive resistance training, hitting all major muscle groups; express effort as RPE/RIR, not vague "easy/hard". Beginners get RPE/RIR taught with simple anchors.
-- WHO_2020_ACTIVITY_FLOOR: distinguish a "minimum health floor" (muscle-strengthening 2+ days/week plus aerobic activity) from a goal-optimized plan. If the plan is unrealistic for this person, fall back to a minimum viable week.
-- ISSN_PROTEIN_POLICY: target ~1.4–2.0 g protein/kg/day, higher only during energy restriction or lean-mass preservation. Never set impossible protein targets.
-- ISSN_CREATINE_POLICY: supplement advice is evidence-tiered, conservative, and budget-aware. Never drift into drug-like protocols or medical treatment claims.
-- TJFIT_SAFETY_SCOPE: no medical diagnosis, no drug/PED/GLP-1 dosing, no extreme dieting, no coaching through sharp pain or red-flag symptoms. Stay within consumer fitness coaching and suggest clinician review when signals warrant.
-- Prefer the smallest effective intervention, not the most complex plan. Respect every server-derived risk flag in the user prompt.
+${composeCoachingPolicies()}
 
 Output: A single valid JSON object. No markdown, no prose outside JSON. The JSON must conform exactly to the schema at the end of the user prompt.`;
 }
