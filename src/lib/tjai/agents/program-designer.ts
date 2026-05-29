@@ -1,5 +1,6 @@
 import { buildTJAISystemPrompt, buildTJAIUserPrompt } from "@/lib/tjai/prompts";
-import type { TjaiMemorySnapshot, TJAIMetrics, TjaiUserProfile } from "@/lib/tjai-types";
+import { formatReadinessForPrompt } from "@/lib/tjai/readiness";
+import type { TjaiMemorySnapshot, TJAIMetrics, TjaiReadinessProfile, TjaiUserProfile } from "@/lib/tjai-types";
 
 /**
  * Program Designer Agent — composes plan-generation prompts from profile, metrics, and memory.
@@ -10,10 +11,12 @@ export function buildProgramDesignerMessages(params: {
   metrics: TJAIMetrics;
   memory: TjaiMemorySnapshot;
   learningInsight: string | null;
+  readiness?: TjaiReadinessProfile | null;
 }): { system: string; user: string } {
   const system = buildTJAISystemPrompt();
   const user =
     buildTJAIUserPrompt(params.profile, params.metrics, params.memory) +
+    (params.readiness ? `\n\n${formatReadinessForPrompt(params.readiness)}` : "") +
     (params.learningInsight ? `\n\n== LEARNING FROM SIMILAR USERS ==\n${params.learningInsight}` : "");
   return { system, user };
 }

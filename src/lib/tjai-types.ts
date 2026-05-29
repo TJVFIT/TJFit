@@ -99,6 +99,31 @@ export type TjaiUserProfile = {
   dailyRoutine: string;
 };
 
+export type TjaiReadinessFlag = {
+  code: string;
+  severity: "info" | "warn" | "block";
+  message: string;
+  promptInstruction: string;
+};
+
+/**
+ * Server-derived readiness/risk profile (TJFITV.10X PR1).
+ * Distinct from TJAIMetrics.confidenceScore, which is a data-completeness score.
+ * This classifies coaching risk from normalized quiz answers and feeds both the
+ * plan-generation prompt and chat coach context. Never trust the client for this.
+ */
+export type TjaiReadinessProfile = {
+  recoveryRisk: "low" | "medium" | "high";
+  adherenceRisk: "low" | "medium" | "high";
+  injuryRisk: "low" | "medium" | "high";
+  nutritionFeasibility: "low" | "medium" | "high";
+  scheduleFeasibility: "low" | "medium" | "high";
+  planComplexity: "minimal" | "standard" | "advanced";
+  coachingMode: "teach" | "execute" | "support" | "repair";
+  confidence: "low" | "medium" | "high";
+  flags: TjaiReadinessFlag[];
+};
+
 export type TjaiMemorySnapshot = {
   latestPlanSummary: string | null;
   priorPlanGoal: string | null;

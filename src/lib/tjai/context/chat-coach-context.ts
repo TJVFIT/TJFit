@@ -2,6 +2,7 @@ import { getCoachStructuredOutputContract } from "@/lib/tjai/coaching-output-con
 import { coachChatIntentSystemAddendum, type CoachChatIntent } from "@/lib/tjai/orchestrator/chat-intent";
 import { MEDICAL_SAFETY_SYSTEM_ADDENDUM } from "@/lib/tjai/guards/medical-safety";
 import { personaSystemFragment, type TjaiPersona } from "@/lib/tjai/persona";
+import { buildReadinessProfile, formatReadinessForPrompt } from "@/lib/tjai/readiness";
 import { LANGUAGE_NAME_EN, type SupportedLocale } from "@/lib/i18n";
 import { buildTjaiUserProfile } from "@/lib/tjai-intake";
 import type { TjaiMemorySnapshot } from "@/lib/tjai-types";
@@ -91,9 +92,11 @@ export function buildChatCoachSystemPrompt(input: {
       ? input.preferences.map((p) => `${p.preference_key}: ${p.preference_value}`).join("; ")
       : "No stored preferences yet.";
 
-  const profileContext = input.planRow?.answers_json
-    ? buildTjaiUserProfile(input.planRow.answers_json).dailyRoutine
-    : "No normalized TJAI profile stored yet.";
+  const storedProfile = input.planRow?.answers_json
+    ? buildTjaiUserProfile(input.planRow.answers_json)
+    : null;
+  const profileContext = storedProfile ? storedProfile.dailyRoutine : "No normalized TJAI profile stored yet.";
+  const readinessBlock = storedProfile ? `\n\n${formatReadinessForPrompt(buildReadinessProfile(storedProfile))}` : "";
 
   const planContext = input.planRow
     ? `USER'S TJAI PLAN:
@@ -157,6 +160,7 @@ You ALWAYS answer fitness, nutrition, training, and health questions.
 ${languageDirective}
 
 ${planContext}
+${readinessBlock}
 
 ${realDataContext}
 

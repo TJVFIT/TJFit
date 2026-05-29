@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { recordPlanGeneration, getSimilarUserInsight } from "@/lib/tjai-analytics";
 import { buildProgramDesignerMessages } from "@/lib/tjai/agents/program-designer";
+import { buildReadinessProfile } from "@/lib/tjai/readiness";
 import { appendTraceError, createRunTrace, logPipelineTrace, pushStage, withTiming } from "@/lib/tjai/observability";
 import { TJAI_PROMPT_VERSION } from "@/lib/tjai/prompts";
 import { TJAI_SKILL_IDS } from "@/lib/tjai/registry/skills";
@@ -58,14 +59,21 @@ export async function runPlanGenerationPipeline(input: PlanGenerationPipelineInp
     learningInsight = null;
   }
 
-  pushStage(trace, "context_built", { hasInsight: Boolean(learningInsight) });
-  pushStage(trace, "tools_run", { tools: ["memory_snapshot", "similar_user_insight"] });
+  const readiness = buildReadinessProfile(input.profile);
+
+  pushStage(trace, "context_built", {
+    hasInsight: Boolean(learningInsight),
+    readinessConfidence: readiness.confidence,
+    readinessFlags: readiness.flags.map((flag) => flag.code)
+  });
+  pushStage(trace, "tools_run", { tools: ["memory_snapshot", "similar_user_insight", "readiness_profile"] });
 
   const { system: systemPrompt, user: userPrompt } = buildProgramDesignerMessages({
     profile: input.profile,
     metrics: input.metrics,
     memory,
-    learningInsight
+    learningInsight,
+    readiness
   });
 
   // Structured-output reliability (Cycle 009): attempt generation, and on a
