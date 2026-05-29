@@ -14,6 +14,7 @@ import {
   logChatCoachContextBuilt,
   medicalSafetyResponse,
   persistFacts,
+  recordTjaiEvent,
   routeCoachChatIntent,
   type ChatCoachPlanRow,
   type ChatCoachPreferenceRow,
@@ -159,6 +160,15 @@ export async function POST(request: NextRequest) {
         latency_ms: 0,
         cost_usd: 0,
         ok: true
+      });
+      recordTjaiEvent(admin, {
+        event: "safety_guard_triggered",
+        userId: auth.user.id,
+        conversationId,
+        locale: isSupportedLocale(locale) ? locale : "en",
+        riskLevel: "critical",
+        outcome: "aborted",
+        metadata: { category: medicalRisk.category, route: "tjai/chat" }
       });
       return new Response(JSON.stringify({ message: safeReply, conversationId, refused: true }), {
         headers: { "Content-Type": "application/json" }

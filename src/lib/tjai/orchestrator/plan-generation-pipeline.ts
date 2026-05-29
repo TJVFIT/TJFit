@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { recordPlanGeneration, getSimilarUserInsight } from "@/lib/tjai-analytics";
 import { buildProgramDesignerMessages } from "@/lib/tjai/agents/program-designer";
+import { recordTjaiEvent } from "@/lib/tjai/events";
 import { buildReadinessProfile } from "@/lib/tjai/readiness";
 import { appendTraceError, createRunTrace, logPipelineTrace, pushStage, withTiming } from "@/lib/tjai/observability";
 import { TJAI_PROMPT_VERSION } from "@/lib/tjai/prompts";
@@ -89,6 +90,7 @@ export async function runPlanGenerationPipeline(input: PlanGenerationPipelineInp
 
   let plan: unknown = null;
   let lastFailPhase: "json_parse" | "structural_validation" | "semantic_validation" | null = null;
+  let lastSemanticCodes: string[] = [];
   // The retry's correction hint: generic for parse/shape failures, or specific
   // issue paths when semantic safety validation rejects the draft.
   let repairHint = REPAIR_INSTRUCTION;
@@ -137,6 +139,7 @@ export async function runPlanGenerationPipeline(input: PlanGenerationPipelineInp
     // Always-on semantic safety: forbidden foods, drug/PED content, HTML/script,
     // impossible macros. A plan with these errors must never be saved.
     const semantic = validateTjaiPlanSemantics({ plan: parsed as TJAIPlan, profile: input.profile });
+    lastSemanticCodes = semantic.issues.map((issue) => issue.code);
     if (!semantic.ok) {
       lastFailPhase = "semantic_validation";
       repairHint = formatValidationIssuesForRepair(semantic);
@@ -154,6 +157,17 @@ export async function runPlanGenerationPipeline(input: PlanGenerationPipelineInp
   if (plan === null) {
     pushStage(trace, "failed", { phase: lastFailPhase ?? "structural_validation" });
     logPipelineTrace(input.userId, trace);
+    recordTjaiEvent(input.adminClient, {
+      event: lastFailPhase === "semantic_validation" ? "plan_validation_failed" : "plan_generation_failed",
+      userId: input.userId,
+      promptVersion: TJAI_PROMPT_VERSION,
+      outcome: "failure",
+      metadata: {
+        phase: lastFailPhase ?? "structural_validation",
+        goal: input.profile.goal,
+        issue_codes: lastSemanticCodes.join(",")
+      }
+    });
     const error =
       lastFailPhase === "json_parse"
         ? "AI returned an invalid response. Please try again."
@@ -201,6 +215,9 @@ export async function runPlanGenerationPipeline(input: PlanGenerationPipelineInp
       water_ml: Number(input.metrics.water ?? 0),
       training_days_per_week: input.profile.trainingDays,
       training_location: input.profile.trainingLocation,
+      readiness_json: readiness,
+      prompt_version: TJAI_PROMPT_VERSION,
+      validation_json: { ok: true, issue_codes: lastSemanticCodes },
       updated_at: new Date().toISOString()
     })
     .select("id")
@@ -220,6 +237,23 @@ export async function runPlanGenerationPipeline(input: PlanGenerationPipelineInp
 
   pushStage(trace, "delivered", { planId: savedPlan?.id ?? null });
   logPipelineTrace(input.userId, trace);
+
+  recordTjaiEvent(input.adminClient, {
+    event: "plan_generated",
+    userId: input.userId,
+    planId: savedPlan?.id ?? null,
+    promptVersion: TJAI_PROMPT_VERSION,
+    outcome: "success",
+    metadata: {
+      goal: input.profile.goal,
+      experience: input.profile.experienceLevel,
+      readiness_confidence: readiness.confidence,
+      injury_risk: readiness.injuryRisk,
+      adherence_risk: readiness.adherenceRisk,
+      training_days: input.profile.trainingDays,
+      warn_codes: lastSemanticCodes.join(",")
+    }
+  });
 
   return {
     ok: true,

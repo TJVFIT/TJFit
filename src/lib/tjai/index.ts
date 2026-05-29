@@ -58,6 +58,9 @@ export type { CoachChatIntent } from "@/lib/tjai/orchestrator/chat-intent";
 export { buildCoachState, formatCoachStateForPrompt } from "@/lib/tjai/coach-state";
 export type { TjaiCoachState, CoachStateMode } from "@/lib/tjai/coach-state";
 
+export { recordTjaiEvent, sanitizeEventMetadata, toEventRow } from "@/lib/tjai/events";
+export type { TjaiEvent, TjaiEventName, TjaiEventScalar } from "@/lib/tjai/events";
+
 export {
   toolBuildTjaiProfile,
   toolCalculateTjaiMetrics,

@@ -11,6 +11,13 @@ function getAgeRange(age: number): string {
   return "50+";
 }
 
+/** Cohort-size → evidence confidence. Small cohorts must be labeled low. */
+function cohortConfidence(n: number): "low" | "medium" | "high" {
+  if (n >= 10) return "high";
+  if (n >= 5) return "medium";
+  return "low";
+}
+
 function getWeightRange(kg: number): string {
   if (kg < 50) return "<50kg";
   if (kg < 60) return "50-59kg";
@@ -83,7 +90,7 @@ export async function getSimilarUserInsight(
         fallbackData.reduce((s, r) => s + Number(r.generated_protein ?? 0), 0) / fallbackData.length
       );
 
-      return `COMMUNITY BENCHMARK: Among ${fallbackData.length} similar users (${profile.sex}, ${getAgeRange(profile.age)}, goal: ${profile.goal}), average targets are ${avgCalories} kcal/day and ${avgProtein}g protein. Use as a calibration reference.`;
+      return `COMMUNITY BENCHMARK [${cohortConfidence(fallbackData.length)} confidence, n=${fallbackData.length}]: Among similar users (${profile.sex}, ${getAgeRange(profile.age)}, goal: ${profile.goal}), average targets are ${avgCalories} kcal/day and ${avgProtein}g protein. This is a calibration reference only — never override the user's stated constraints or safety risks.`;
     }
 
     const avgCalories = Math.round(
@@ -96,7 +103,7 @@ export async function getSimilarUserInsight(
       data.reduce((sum, r) => sum + Number(r.outcome_weight_change ?? 0), 0) / data.length
     ).toFixed(2);
 
-    return `LEARNING FROM PAST USERS (${data.length} similar users — ${profile.sex}, ${getAgeRange(profile.age)}, ${profile.experienceLevel}, goal: ${profile.goal}): average targets ${avgCalories} kcal/day, ${avgProtein}g protein/day, average weekly weight change ${avgOutcome}kg. Use as calibration reference.`;
+    return `LEARNING FROM PAST USERS [${cohortConfidence(data.length)} confidence, n=${data.length}] (${profile.sex}, ${getAgeRange(profile.age)}, ${profile.experienceLevel}, goal: ${profile.goal}): average targets ${avgCalories} kcal/day, ${avgProtein}g protein/day, average weekly weight change ${avgOutcome}kg. Calibration reference only — never override the user's stated constraints or safety risks.`;
   } catch {
     return null;
   }
