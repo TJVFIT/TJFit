@@ -3,9 +3,11 @@ import { NextRequest } from "next/server";
 import { isAdminEmail } from "@/lib/auth-utils";
 import {
   buildChatCoachSystemPrompt,
+  buildCoachState,
   detectMedicalRisk,
   extractFactsFromMessage,
   fallbackCoachReply,
+  formatCoachStateForPrompt,
   formatMemoryBlock,
   loadLongMemoryFacts,
   loadTjaiUserSettings,
@@ -18,6 +20,8 @@ import {
   type ChatCoachProgressEntry,
   type ChatCoachWorkoutLog
 } from "@/lib/tjai";
+import { buildReadinessProfile } from "@/lib/tjai/readiness";
+import { buildTjaiUserProfile } from "@/lib/tjai-intake";
 import { isSupportedLocale } from "@/lib/i18n";
 import { getTJAIAccess } from "@/lib/tjai-access";
 import { buildTjaiMemorySnapshot, getLatestTjaiPlan } from "@/lib/tjai-plan-store";
@@ -245,8 +249,22 @@ export async function POST(request: NextRequest) {
 
     const longMemoryBlock = userSettings.memory_enabled ? formatMemoryBlock(longMemoryFacts) : "";
 
+    const typedPlanRow = planRow as ChatCoachPlanRow | null;
+    const readiness = typedPlanRow?.answers_json
+      ? buildReadinessProfile(buildTjaiUserProfile(typedPlanRow.answers_json))
+      : null;
+    const coachStateBlock = formatCoachStateForPrompt(
+      buildCoachState({
+        planRow: typedPlanRow,
+        workouts: recentData.workouts,
+        entries: recentData.entries,
+        adaptiveCheckpoint: memorySnapshot.adaptiveCheckpoint,
+        readiness
+      })
+    );
+
     const systemPrompt = buildChatCoachSystemPrompt({
-      planRow: planRow as ChatCoachPlanRow | null,
+      planRow: typedPlanRow,
       memorySnapshot,
       preferences,
       workouts: recentData.workouts,
@@ -254,7 +272,8 @@ export async function POST(request: NextRequest) {
       coachIntent,
       locale: isSupportedLocale(locale) ? locale : "en",
       persona: userSettings.persona,
-      longMemoryBlock
+      longMemoryBlock,
+      coachStateBlock
     });
 
     const messages = [

@@ -43,6 +43,9 @@ export { runEnhancedPlanCoherenceChecks } from "@/lib/tjai/validation/enhanced-p
 export { routeCoachChatIntent, coachChatIntentSystemAddendum } from "@/lib/tjai/orchestrator/chat-intent";
 export type { CoachChatIntent } from "@/lib/tjai/orchestrator/chat-intent";
 
+export { buildCoachState, formatCoachStateForPrompt } from "@/lib/tjai/coach-state";
+export type { TjaiCoachState, CoachStateMode } from "@/lib/tjai/coach-state";
+
 export {
   toolBuildTjaiProfile,
   toolCalculateTjaiMetrics,

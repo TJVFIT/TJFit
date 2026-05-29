@@ -85,6 +85,8 @@ export function buildChatCoachSystemPrompt(input: {
   persona?: TjaiPersona;
   /** Pre-formatted long-memory block (from formatMemoryBlock). */
   longMemoryBlock?: string;
+  /** Pre-formatted coach-state decision block (from formatCoachStateForPrompt). */
+  coachStateBlock?: string;
 }): string {
   const planSummary = (input.planRow?.plan_json?.summary ?? {}) as Record<string, unknown>;
   const preferencesLine =
@@ -161,7 +163,7 @@ ${languageDirective}
 
 ${planContext}
 ${readinessBlock}
-
+${input.coachStateBlock ? `\n${input.coachStateBlock}\n` : ""}
 ${realDataContext}
 
 USER PREFERENCES:
