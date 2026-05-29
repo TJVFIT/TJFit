@@ -4,6 +4,8 @@ export type ExecutionStage =
   | "context_built"
   | "tools_run"
   | "draft_generated"
+  | "semantic_validation_failed"
+  | "repair_attempted"
   | "validated"
   | "delivered"
   | "failed";

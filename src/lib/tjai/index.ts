@@ -39,6 +39,18 @@ export type {
 } from "@/lib/tjai/context/chat-coach-context";
 
 export { runEnhancedPlanCoherenceChecks } from "@/lib/tjai/validation/enhanced-plan-checks";
+export {
+  validateTjaiPlanSemantics,
+  buildTjaiFoodConstraints,
+  mergeValidationResults,
+  formatValidationIssuesForRepair
+} from "@/lib/tjai/validation/semantic-plan-checks";
+export type {
+  TjaiValidationIssue,
+  TjaiValidationResult,
+  TjaiValidationSeverity,
+  TjaiFoodConstraints
+} from "@/lib/tjai/validation/semantic-plan-checks";
 
 export { routeCoachChatIntent, coachChatIntentSystemAddendum } from "@/lib/tjai/orchestrator/chat-intent";
 export type { CoachChatIntent } from "@/lib/tjai/orchestrator/chat-intent";

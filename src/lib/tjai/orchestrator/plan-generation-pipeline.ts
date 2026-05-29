@@ -8,6 +8,7 @@ import { TJAI_PROMPT_VERSION } from "@/lib/tjai/prompts";
 import { TJAI_SKILL_IDS } from "@/lib/tjai/registry/skills";
 import type { TjaiRunTrace } from "@/lib/tjai/types/execution";
 import { runEnhancedPlanCoherenceChecks } from "@/lib/tjai/validation/enhanced-plan-checks";
+import { formatValidationIssuesForRepair, validateTjaiPlanSemantics } from "@/lib/tjai/validation/semantic-plan-checks";
 import { validateTjaiPlan } from "@/lib/tjai-plan-validation";
 import { buildTjaiMemorySnapshot, saveTjaiStructuredMemory } from "@/lib/tjai-plan-store";
 import { callOpenAI, safeParseJSON } from "@/lib/tjai-openai";
@@ -87,7 +88,10 @@ export async function runPlanGenerationPipeline(input: PlanGenerationPipelineInp
     "no markdown fences, no commentary, every required field populated.";
 
   let plan: unknown = null;
-  let lastFailPhase: "json_parse" | "structural_validation" | null = null;
+  let lastFailPhase: "json_parse" | "structural_validation" | "semantic_validation" | null = null;
+  // The retry's correction hint: generic for parse/shape failures, or specific
+  // issue paths when semantic safety validation rejects the draft.
+  let repairHint = REPAIR_INSTRUCTION;
 
   for (let attempt = 1; attempt <= 2; attempt++) {
     let rawText: string;
@@ -95,7 +99,7 @@ export async function runPlanGenerationPipeline(input: PlanGenerationPipelineInp
       rawText = await withTiming(trace, attempt === 1 ? "openai_plan_json" : "openai_plan_json_retry", () =>
         callOpenAI({
           system: systemPrompt,
-          user: attempt === 1 ? userPrompt : userPrompt + REPAIR_INSTRUCTION,
+          user: attempt === 1 ? userPrompt : userPrompt + "\n\n" + repairHint,
           maxTokens: 16000,
           jsonMode: true,
           onUsage: (usage) => {
@@ -118,13 +122,27 @@ export async function runPlanGenerationPipeline(input: PlanGenerationPipelineInp
       parsed = safeParseJSON(rawText);
     } catch (parseError) {
       lastFailPhase = "json_parse";
+      repairHint = REPAIR_INSTRUCTION;
       appendTraceError(trace, parseError instanceof Error ? parseError.message : "JSON parse error");
       continue; // retry (or fall through to graceful fail after attempt 2)
     }
 
     if (!validateTjaiPlan(parsed)) {
       lastFailPhase = "structural_validation";
+      repairHint = REPAIR_INSTRUCTION;
       appendTraceError(trace, `validateTjaiPlan failed (attempt ${attempt})`);
+      continue;
+    }
+
+    // Always-on semantic safety: forbidden foods, drug/PED content, HTML/script,
+    // impossible macros. A plan with these errors must never be saved.
+    const semantic = validateTjaiPlanSemantics({ plan: parsed as TJAIPlan, profile: input.profile });
+    if (!semantic.ok) {
+      lastFailPhase = "semantic_validation";
+      repairHint = formatValidationIssuesForRepair(semantic);
+      pushStage(trace, "semantic_validation_failed", { attempt, codes: semantic.issues.map((issue) => issue.code) });
+      appendTraceError(trace, `semantic validation failed (attempt ${attempt})`);
+      if (attempt < 2) pushStage(trace, "repair_attempted", { reason: "semantic" });
       continue;
     }
 
@@ -139,7 +157,9 @@ export async function runPlanGenerationPipeline(input: PlanGenerationPipelineInp
     const error =
       lastFailPhase === "json_parse"
         ? "AI returned an invalid response. Please try again."
-        : "AI returned an incomplete plan. Please try again.";
+        : lastFailPhase === "semantic_validation"
+          ? "Plan failed safety checks against your restrictions. Please try again."
+          : "AI returned an incomplete plan. Please try again.";
     return { ok: false, status: 502, error, trace };
   }
 
