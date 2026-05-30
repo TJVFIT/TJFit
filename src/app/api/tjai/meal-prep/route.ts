@@ -5,6 +5,7 @@ import { isAdminEmail } from "@/lib/auth-utils";
 // for structured meal-prep extraction; the rest of TJAI runs on OpenAI.
 // Requires ANTHROPIC_API_KEY in env (see .env.example).
 import { callClaude, extractJsonBlock } from "@/lib/tjai-anthropic";
+import { isAnthropicConfigured, providerUnavailableBody } from "@/lib/tjai/provider-policy";
 import { rateLimit } from "@/lib/rate-limit";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
@@ -56,6 +57,10 @@ export async function POST(request: Request) {
   const weekJson = JSON.stringify(week);
   if (weekJson.length > WEEK_MAX_BYTES) {
     return NextResponse.json({ error: "Week payload too large." }, { status: 413 });
+  }
+
+  if (!isAnthropicConfigured()) {
+    return NextResponse.json(providerUnavailableBody(), { status: 503 });
   }
 
   try {

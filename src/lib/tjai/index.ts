@@ -62,6 +62,18 @@ export { recordTjaiEvent, sanitizeEventMetadata, toEventRow } from "@/lib/tjai/e
 export type { TjaiEvent, TjaiEventName, TjaiEventScalar } from "@/lib/tjai/events";
 
 export {
+  PROVIDER_POLICY,
+  TJAI_AI_TASKS,
+  TJAI_PROVIDER_UNAVAILABLE,
+  isOpenAIConfigured,
+  isAnthropicConfigured,
+  isProviderConfigured,
+  isTaskAvailable,
+  providerUnavailableBody
+} from "@/lib/tjai/provider-policy";
+export type { TjaiProvider, TjaiAiTask, TjaiProviderDecision, TjaiProviderFallback } from "@/lib/tjai/provider-policy";
+
+export {
   toolBuildTjaiProfile,
   toolCalculateTjaiMetrics,
   toolTjaiMemorySnapshot,

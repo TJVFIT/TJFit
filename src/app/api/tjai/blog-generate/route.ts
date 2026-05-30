@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 // task-tiering). The rest of TJAI runs on OpenAI. Requires
 // ANTHROPIC_API_KEY in env (see .env.example).
 import { callClaude } from "@/lib/tjai-anthropic";
+import { isAnthropicConfigured, providerUnavailableBody } from "@/lib/tjai/provider-policy";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
@@ -20,6 +21,10 @@ export async function POST(request: NextRequest) {
   const topic = String(body?.topic ?? "").trim();
   const keyword = String(body?.keyword ?? "").trim();
   if (!topic || !keyword) return NextResponse.json({ error: "topic and keyword required" }, { status: 400 });
+
+  if (!isAnthropicConfigured()) {
+    return NextResponse.json(providerUnavailableBody(), { status: 503 });
+  }
 
   const system = "You are TJFit's content writer. Write SEO-optimized fitness articles that are accurate, helpful, and engaging.";
   const user = `Write a comprehensive blog post about: ${topic}

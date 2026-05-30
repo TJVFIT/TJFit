@@ -5,6 +5,7 @@ import { isAdminEmail } from "@/lib/auth-utils";
 // for fast structured meal-swap reasoning; the rest of TJAI runs on
 // OpenAI. Requires ANTHROPIC_API_KEY in env (see .env.example).
 import { callClaude, extractJsonBlock } from "@/lib/tjai-anthropic";
+import { isAnthropicConfigured, providerUnavailableBody } from "@/lib/tjai/provider-policy";
 import { rateLimit } from "@/lib/rate-limit";
 import { getTJAIAccess } from "@/lib/tjai-access";
 import { requireAuth } from "@/lib/require-auth";
@@ -59,6 +60,10 @@ export async function POST(request: Request) {
   const originalMeal = body?.originalMeal;
   const planContext = body?.planContext;
   if (!originalMeal || !planContext) return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
+
+  if (!isAnthropicConfigured()) {
+    return NextResponse.json(providerUnavailableBody(), { status: 503 });
+  }
 
   try {
     const text = await callClaude({
