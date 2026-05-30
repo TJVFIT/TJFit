@@ -58,6 +58,9 @@ export type { CoachChatIntent } from "@/lib/tjai/orchestrator/chat-intent";
 export { buildCoachState, formatCoachStateForPrompt } from "@/lib/tjai/coach-state";
 export type { TjaiCoachState, CoachStateMode } from "@/lib/tjai/coach-state";
 
+export { computeAdaptiveAdjustment, formatAdjustmentForPrompt } from "@/lib/tjai/adaptive-adjustment";
+export type { AdaptiveAdjustment, AdaptiveCheckIn, AdaptiveIntensityAction } from "@/lib/tjai/adaptive-adjustment";
+
 export { recordTjaiEvent, sanitizeEventMetadata, toEventRow } from "@/lib/tjai/events";
 export type { TjaiEvent, TjaiEventName, TjaiEventScalar } from "@/lib/tjai/events";
 

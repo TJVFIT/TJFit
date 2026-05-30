@@ -4,10 +4,10 @@ Legend: **Done** shipped in production code · **Partial** exists in another for
 
 | # | Feature | Status | Notes |
 |---|---------|--------|--------|
-| 1 | AI weekly check-in | **Partial** | `POST/GET /api/tjai/weekly-check-in` + `tjai_weekly_check_ins` table |
+| 1 | AI weekly check-in | **Done** | `POST/GET /api/tjai/weekly-check-in` returns a server-derived `adjustment` + emits `weekly_checkin_submitted` (10X PR9) |
 | 2 | Body recomposition tracker | Partial | Progress entries + plan metrics; dedicated UX TBD |
-| 3 | Smart calorie adjustment | Planned | Tie to checkpoints + regenerate flow |
-| 4 | Adaptive workout intensity | Partial | `tjai_adaptive_checkpoints` exists |
+| 3 | Smart calorie adjustment | Partial | `computeAdaptiveAdjustment` derives a safety-capped calorie delta from check-ins (10X PR9); regen wiring TBD |
+| 4 | Adaptive workout intensity | Partial | `tjai_adaptive_checkpoints` + adjustment `intensityAction` (increase/hold/deload) from check-ins (10X PR9) |
 | 5 | Injury-aware modifications | Partial | Chat intent mode `injury_recovery` + disclaimers in coach prompt |
 | 6 | Gym vs home switch | Planned | Quiz + plan regen UX |
 | 7 | Equipment filter | Planned | Quiz + program JSON constraints |

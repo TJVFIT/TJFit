@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { requireAuth } from "@/lib/require-auth";
+import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { isMissingSchemaMigrationError } from "@/lib/supabase-rpc-errors";
+import { computeAdaptiveAdjustment, type AdaptiveCheckIn } from "@/lib/tjai/adaptive-adjustment";
+import { recordTjaiEvent } from "@/lib/tjai/events";
 import {
   gatherSignals,
   generateSuggestion,
@@ -9,6 +12,13 @@ import {
   shouldSuggest
 } from "@/lib/tjai/suggestions";
 import { getLatestTjaiPlan } from "@/lib/tjai-plan-store";
+
+/**
+ * Conservative daily-calorie floor (TJFITV.10X PR9). The adaptive adjustment never
+ * advises a cut that would push the target below this; per-sex floors are out of
+ * scope here, so we use the higher general value to stay safe for everyone.
+ */
+const ADAPTIVE_CALORIE_FLOOR = 1500;
 
 export const dynamic = "force-dynamic";
 
@@ -109,6 +119,53 @@ export async function POST(request: NextRequest) {
     /* swallow */
   }
 
+  // Close the flywheel loop: turn the last few check-ins into a concrete,
+  // safety-capped plan adjustment for the coming week (TJFITV.10X PR9).
+  let adjustment: import("@/lib/tjai/adaptive-adjustment").AdaptiveAdjustment | null = null;
+  try {
+    const { data: recentRows } = await auth.supabase
+      .from("tjai_weekly_check_ins")
+      .select("week_start,energy,adherence")
+      .eq("user_id", auth.user.id)
+      .order("week_start", { ascending: false })
+      .limit(3);
+
+    const checkIns: AdaptiveCheckIn[] = (recentRows ?? []).map((r) => ({
+      energy: Number(r.energy),
+      adherence: Number(r.adherence),
+      weekStart: r.week_start
+    }));
+
+    const plan = await getLatestTjaiPlan(auth.supabase, auth.user.id);
+    const planRow = plan as { goal?: string | null; daily_calories?: number | null } | null;
+
+    adjustment = computeAdaptiveAdjustment({
+      checkIns,
+      currentCalories: planRow?.daily_calories ?? null,
+      calorieFloorKcal: ADAPTIVE_CALORIE_FLOOR,
+      goal: planRow?.goal ?? null
+    });
+
+    const admin = getSupabaseServerClient();
+    if (admin) {
+      recordTjaiEvent(admin, {
+        event: "weekly_checkin_submitted",
+        userId: auth.user.id,
+        outcome: "success",
+        metadata: {
+          energy,
+          adherence,
+          calorie_delta: adjustment.calorieDelta,
+          intensity_action: adjustment.intensityAction,
+          refeed_recommended: adjustment.refeedRecommended,
+          confidence: adjustment.confidence
+        }
+      });
+    }
+  } catch {
+    /* swallow — adjustment is advisory, never block the check-in response */
+  }
+
   void (async () => {
     try {
       const signals = await gatherSignals(auth.supabase, auth.user.id);
@@ -128,5 +185,5 @@ export async function POST(request: NextRequest) {
     }
   })();
 
-  return NextResponse.json({ ok: true, check_in: data, streak, newBadges });
+  return NextResponse.json({ ok: true, check_in: data, streak, newBadges, adjustment });
 }
