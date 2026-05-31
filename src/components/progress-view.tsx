@@ -244,7 +244,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
       origin: { y: 0.6 },
       colors: ["#22D3EE", "#0EA5E9", "#22D3EE", "#22C55E"]
     });
-    showToast("Milestone completed 🎉");
+    showToast("Milestone completed");
     await load();
   };
 
@@ -456,7 +456,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
                     <div className="min-w-0">
                       <p className="font-medium text-white">{m.title}</p>
                       {m.target_value && (
-                        <p className="mt-0.5 text-xs text-accent">🎯 {m.target_value}</p>
+                        <p className="mt-0.5 text-xs text-accent">{m.target_value}</p>
                       )}
                     </div>
                     {m.status !== "completed" ? (

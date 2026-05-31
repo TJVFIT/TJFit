@@ -31,7 +31,7 @@ export function CoachAnalyticsWidget() {
       <div className="mt-3 grid gap-2 md:grid-cols-4">
         <div className="rounded-xl border border-white/10 p-3 text-sm text-muted">Students: {data.all_time.total_students}</div>
         <div className="rounded-xl border border-white/10 p-3 text-sm text-muted">Total earnings: €{Number(data.all_time.total_earnings ?? 0).toFixed(2)}</div>
-        <div className="rounded-xl border border-white/10 p-3 text-sm text-muted">Average rating: ⭐ {data.all_time.average_rating}</div>
+        <div className="rounded-xl border border-white/10 p-3 text-sm text-muted">Average rating: {data.all_time.average_rating}</div>
         <div className="rounded-xl border border-white/10 p-3 text-sm text-muted">Programs created: {data.all_time.programs_created}</div>
       </div>
       {data.top_program ? (

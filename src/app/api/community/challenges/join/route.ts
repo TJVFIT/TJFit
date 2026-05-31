@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to join challenge" }, { status: 500 });
     }
     if (!error) {
-      await enqueuePendingNotification(auth.user.id, "success", "Challenge joined! Good luck 💪");
+      await enqueuePendingNotification(auth.user.id, "success", "Challenge joined! Good luck");
     }
   }
 

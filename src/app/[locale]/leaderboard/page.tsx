@@ -239,7 +239,7 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
                           {item.displayName} {item.isVerified ? <span className="text-accent">✓</span> : null}
                           {isMe ? <span className="ml-1.5 text-[10px] text-accent">(you)</span> : null}
                         </p>
-                        <p className="text-xs text-dim">🔥 {item.streak} streak</p>
+                        <p className="text-xs text-dim">{item.streak} streak</p>
                       </div>
                     </div>
                     <p className={`text-sm font-semibold ${isTop1 ? "text-accent" : isTop2 ? "text-cyan-400/70" : isTop3 ? "text-cyan-400/45" : "text-dim"}`}>

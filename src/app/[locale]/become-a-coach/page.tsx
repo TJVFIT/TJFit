@@ -28,9 +28,9 @@ const COPY: Record<Locale, {
     hero: "Turn Your Expertise Into Income.",
     heroSub: "Publish your programs on TJFit and reach a global fitness community across 5 languages.",
     applyNow: "Apply Now ↓",
-    b1title: "🌍 5 Languages", b1sub: "English, Turkish, Arabic, Spanish, French",
-    b2title: "📈 Growing Platform", b2sub: "Members actively buying daily",
-    b3title: "💰 You Set the Price", b3sub: "We handle payments and delivery",
+    b1title: "5 Languages", b1sub: "English, Turkish, Arabic, Spanish, French",
+    b2title: "Growing Platform", b2sub: "Members actively buying daily",
+    b3title: "You Set the Price", b3sub: "We handle payments and delivery",
     howTitle: "How It Works",
     steps: [
       { num: "01", title: "Apply", sub: "Complete the short application below" },
@@ -39,8 +39,8 @@ const COPY: Record<Locale, {
       { num: "04", title: "Earn", sub: "Paid on every sale, monthly" }
     ],
     createTitle: "What You Can Create",
-    c1: "🏋️ Training Programs", c1sub: "12-week structured workout plans",
-    c2: "🥗 Diet Plans", c2sub: "Meal plans with macros and shopping lists",
+    c1: "Training Programs", c1sub: "12-week structured workout plans",
+    c2: "Diet Plans", c2sub: "Meal plans with macros and shopping lists",
     reqTitle: "Requirements",
     reqs: [
       "✓ Certified personal trainer or nutrition qualification",
@@ -61,9 +61,9 @@ const COPY: Record<Locale, {
     hero: "Uzmanlığınızı Gelire Dönüştürün.",
     heroSub: "TJFit'te programlarınızı yayınlayın ve 5 dilde küresel fitness topluluğuna ulaşın.",
     applyNow: "Hemen Başvur ↓",
-    b1title: "🌍 5 Dil", b1sub: "Türkçe, İngilizce, Arapça, İspanyolca, Fransızca",
-    b2title: "📈 Büyüyen Platform", b2sub: "Üyeler her gün aktif olarak satın alıyor",
-    b3title: "💰 Fiyatı Siz Belirleyin", b3sub: "Ödemeleri ve teslimatı biz hallederiz",
+    b1title: "5 Dil", b1sub: "Türkçe, İngilizce, Arapça, İspanyolca, Fransızca",
+    b2title: "Büyüyen Platform", b2sub: "Üyeler her gün aktif olarak satın alıyor",
+    b3title: "Fiyatı Siz Belirleyin", b3sub: "Ödemeleri ve teslimatı biz hallederiz",
     howTitle: "Nasıl Çalışır",
     steps: [
       { num: "01", title: "Başvur", sub: "Aşağıdaki kısa formu doldurun" },
@@ -72,8 +72,8 @@ const COPY: Record<Locale, {
       { num: "04", title: "Kazan", sub: "Her satışta aylık ödeme alırsınız" }
     ],
     createTitle: "Ne Oluşturabilirsiniz",
-    c1: "🏋️ Antrenman Programları", c1sub: "12 haftalık yapılandırılmış egzersiz planları",
-    c2: "🥗 Diyet Planları", c2sub: "Makrolar ve alışveriş listeli beslenme planları",
+    c1: "Antrenman Programları", c1sub: "12 haftalık yapılandırılmış egzersiz planları",
+    c2: "Diyet Planları", c2sub: "Makrolar ve alışveriş listeli beslenme planları",
     reqTitle: "Gereksinimler",
     reqs: [
       "✓ Sertifikalı personal trainer veya beslenme uzmanı",
@@ -94,9 +94,9 @@ const COPY: Record<Locale, {
     hero: "حوّل خبرتك إلى دخل.",
     heroSub: "انشر برامجك على TJFit وتواصل مع مجتمع لياقة عالمي بـ 5 لغات.",
     applyNow: "قدّم الآن ↓",
-    b1title: "🌍 5 لغات", b1sub: "العربية والإنجليزية والتركية والإسبانية والفرنسية",
-    b2title: "📈 منصة متنامية", b2sub: "أعضاء يشترون بنشاط يومياً",
-    b3title: "💰 أنت تحدد السعر", b3sub: "نحن نتولى المدفوعات والتسليم",
+    b1title: "5 لغات", b1sub: "العربية والإنجليزية والتركية والإسبانية والفرنسية",
+    b2title: "منصة متنامية", b2sub: "أعضاء يشترون بنشاط يومياً",
+    b3title: "أنت تحدد السعر", b3sub: "نحن نتولى المدفوعات والتسليم",
     howTitle: "كيف يعمل",
     steps: [
       { num: "01", title: "قدّم طلبك", sub: "أكمل النموذج القصير أدناه" },
@@ -105,8 +105,8 @@ const COPY: Record<Locale, {
       { num: "04", title: "اكسب", sub: "تُدفع على كل عملية بيع، شهرياً" }
     ],
     createTitle: "ما يمكنك إنشاؤه",
-    c1: "🏋️ برامج التدريب", c1sub: "خطط تمرين منظمة لمدة 12 أسبوعاً",
-    c2: "🥗 خطط الحمية", c2sub: "خطط وجبات مع المغذيات وقوائم التسوق",
+    c1: "برامج التدريب", c1sub: "خطط تمرين منظمة لمدة 12 أسبوعاً",
+    c2: "خطط الحمية", c2sub: "خطط وجبات مع المغذيات وقوائم التسوق",
     reqTitle: "المتطلبات",
     reqs: [
       "✓ مدرب شخصي معتمد أو مؤهل تغذية",
@@ -127,9 +127,9 @@ const COPY: Record<Locale, {
     hero: "Convierte Tu Experiencia en Ingresos.",
     heroSub: "Publica tus programas en TJFit y llega a una comunidad global en 5 idiomas.",
     applyNow: "Solicitar Ahora ↓",
-    b1title: "🌍 5 Idiomas", b1sub: "Español, Inglés, Turco, Árabe, Francés",
-    b2title: "📈 Plataforma en Crecimiento", b2sub: "Miembros comprando activamente cada día",
-    b3title: "💰 Tú Fijas el Precio", b3sub: "Nosotros gestionamos pagos y entrega",
+    b1title: "5 Idiomas", b1sub: "Español, Inglés, Turco, Árabe, Francés",
+    b2title: "Plataforma en Crecimiento", b2sub: "Miembros comprando activamente cada día",
+    b3title: "Tú Fijas el Precio", b3sub: "Nosotros gestionamos pagos y entrega",
     howTitle: "Cómo Funciona",
     steps: [
       { num: "01", title: "Solicita", sub: "Completa el formulario corto" },
@@ -138,8 +138,8 @@ const COPY: Record<Locale, {
       { num: "04", title: "Gana", sub: "Pagado en cada venta, mensualmente" }
     ],
     createTitle: "Qué Puedes Crear",
-    c1: "🏋️ Programas de Entrenamiento", c1sub: "Planes de entrenamiento estructurados de 12 semanas",
-    c2: "🥗 Planes de Dieta", c2sub: "Planes de comidas con macros y listas de compras",
+    c1: "Programas de Entrenamiento", c1sub: "Planes de entrenamiento estructurados de 12 semanas",
+    c2: "Planes de Dieta", c2sub: "Planes de comidas con macros y listas de compras",
     reqTitle: "Requisitos",
     reqs: [
       "✓ Entrenador personal certificado o cualificación nutricional",
@@ -160,9 +160,9 @@ const COPY: Record<Locale, {
     hero: "Transformez Votre Expertise en Revenus.",
     heroSub: "Publiez vos programmes sur TJFit et rejoignez une communauté mondiale en 5 langues.",
     applyNow: "Postuler Maintenant ↓",
-    b1title: "🌍 5 Langues", b1sub: "Français, Anglais, Turc, Arabe, Espagnol",
-    b2title: "📈 Plateforme en Croissance", b2sub: "Des membres achètent activement chaque jour",
-    b3title: "💰 Vous Fixez le Prix", b3sub: "Nous gérons les paiements et la livraison",
+    b1title: "5 Langues", b1sub: "Français, Anglais, Turc, Arabe, Espagnol",
+    b2title: "Plateforme en Croissance", b2sub: "Des membres achètent activement chaque jour",
+    b3title: "Vous Fixez le Prix", b3sub: "Nous gérons les paiements et la livraison",
     howTitle: "Comment Ça Marche",
     steps: [
       { num: "01", title: "Postulez", sub: "Remplissez le formulaire ci-dessous" },
@@ -171,8 +171,8 @@ const COPY: Record<Locale, {
       { num: "04", title: "Gagnez", sub: "Payé à chaque vente, mensuellement" }
     ],
     createTitle: "Ce Que Vous Pouvez Créer",
-    c1: "🏋️ Programmes d'Entraînement", c1sub: "Plans d'entraînement structurés sur 12 semaines",
-    c2: "🥗 Plans Alimentaires", c2sub: "Plans de repas avec macros et listes de courses",
+    c1: "Programmes d'Entraînement", c1sub: "Plans d'entraînement structurés sur 12 semaines",
+    c2: "Plans Alimentaires", c2sub: "Plans de repas avec macros et listes de courses",
     reqTitle: "Conditions",
     reqs: [
       "✓ Coach personnel certifié ou qualification en nutrition",

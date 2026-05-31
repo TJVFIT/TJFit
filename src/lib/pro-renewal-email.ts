@@ -84,7 +84,7 @@ export async function sendProMonthlyProgramEmail(input: RenewalInput) {
   const pdfBase64 = toPdfBase64(text);
   return sendEmail({
     to: input.email,
-    subject: `Your ${month} TJFit Pro Program is here 💪`,
+    subject: `Your ${month} TJFit Pro Program is here`,
     html: EmailTemplates.proMonthlyProgram(month, unsubscribeUrl),
     attachments: [{ filename: `tjfit-pro-program-${month.replace(/\s+/g, "-").toLowerCase()}.pdf`, content: pdfBase64 }]
   });

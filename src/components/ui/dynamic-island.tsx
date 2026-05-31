@@ -18,10 +18,10 @@ type DynamicIslandContextType = {
 const DynamicIslandContext = createContext<DynamicIslandContextType | null>(null);
 
 const DEFAULT_MESSAGES: Record<NotificationType, string> = {
-  signup: "🎉 Welcome to TJFit!",
-  purchase: "✅ Purchase successful — full access unlocked",
-  achievement: "🏆 Achievement unlocked",
-  streak: "🔥 Streak milestone reached"
+  signup: "Welcome to TJFit!",
+  purchase: "Purchase successful — full access unlocked",
+  achievement: "Achievement unlocked",
+  streak: "Streak milestone reached"
 };
 
 export function DynamicIslandProvider({ children }: { children: React.ReactNode }) {

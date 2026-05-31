@@ -127,7 +127,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
 
       <div className="border-t border-[rgba(255,255,255,0.04)] px-6 py-5 lg:px-8">
         <div className="mx-auto flex max-w-[1200px] flex-col items-center justify-between gap-4 text-xs text-dim sm:flex-row">
-          <p>© {new Date().getFullYear()} TJFit. All rights reserved.</p>
+          <p>{new Date().getFullYear()} TJFit. All rights reserved.</p>
           <div className="flex flex-wrap justify-center gap-2 sm:justify-end">
             {supportedLocales.map((loc) => (
               <Link

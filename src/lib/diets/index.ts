@@ -1,6 +1,6 @@
 // v3.9 round 2 — diets registry placeholder.
 //
-// ⚠ DEAD CODE as of 2026-05-27 (Plan2 phase 7 honesty pass): this module
+// DEAD CODE as of 2026-05-27 (Plan2 phase 7 honesty pass): this module
 // is imported NOWHERE in src/. The placeholder diet below has empty
 // `weeks: []` and is NOT rendered to any customer. Live diet content the
 // homepage/bundles show comes from `src/lib/content.ts` + `src/lib/bundles.ts`,

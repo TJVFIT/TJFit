@@ -362,11 +362,11 @@ const BASE_STEPS: BaseStep[] = [
     sub: "This shapes the entire TJAI plan.",
     type: "single",
     options: [
-      opt("🔥 Lose Fat — Burn fat, get lean", "fat_loss"),
-      opt("💪 Build Muscle — Get bigger and stronger", "muscle_gain"),
-      opt("⚖️ Body Recomposition — Lose fat AND gain muscle", "recomposition"),
-      opt("🏃 Improve Fitness — Endurance, health, energy", "fitness"),
-      opt("🏠 Stay Active — Move more, feel better", "stay_active")
+      opt("Lose Fat — Burn fat, get lean", "fat_loss"),
+      opt("Build Muscle — Get bigger and stronger", "muscle_gain"),
+      opt("Body Recomposition — Lose fat AND gain muscle", "recomposition"),
+      opt("Improve Fitness — Endurance, health, energy", "fitness"),
+      opt("Stay Active — Move more, feel better", "stay_active")
     ],
     required: true
   },
@@ -445,9 +445,9 @@ const BASE_STEPS: BaseStep[] = [
     sub: "Be honest — this directly affects training demand, recovery, and calories.",
     type: "single",
     options: [
-      opt("🐢 Slow & Sustainable — I want lasting results, no rush", "slow"),
-      opt("⚡ Moderate Pace — Steady progress, good balance", "moderate"),
-      opt("🚀 Fast Results — I'm fully committed to pushing hard", "aggressive")
+      opt("Slow & Sustainable — I want lasting results, no rush", "slow"),
+      opt("Moderate Pace — Steady progress, good balance", "moderate"),
+      opt("Fast Results — I'm fully committed to pushing hard", "aggressive")
     ],
     required: true
   },
@@ -542,11 +542,11 @@ const BASE_STEPS: BaseStep[] = [
     sub: "High stress changes recovery, appetite, and how aggressive TJAI should be.",
     type: "single",
     options: [
-      opt("😌 Very Low — Life is calm and manageable", "very_low"),
-      opt("😐 Low — Occasional minor stress", "low"),
-      opt("😤 Moderate — Regular work or life pressure", "moderate"),
-      opt("😰 High — Frequently stressed", "high"),
-      opt("🤯 Very High — Overwhelmed regularly", "very_high")
+      opt("Very Low — Life is calm and manageable", "very_low"),
+      opt("Low — Occasional minor stress", "low"),
+      opt("Moderate — Regular work or life pressure", "moderate"),
+      opt("High — Frequently stressed", "high"),
+      opt("Very High — Overwhelmed regularly", "very_high")
     ],
     required: true
   },
@@ -582,9 +582,9 @@ const BASE_STEPS: BaseStep[] = [
     sub: "TJAI will choose foods and supplement tiers that match this budget.",
     type: "single",
     options: [
-      opt("💰 Budget-Conscious — Keep meals affordable", "budget"),
-      opt("💵 Moderate — Balanced quality and cost", "moderate"),
-      opt("💎 Flexible — Performance quality matters most", "premium")
+      opt("Budget-Conscious — Keep meals affordable", "budget"),
+      opt("Moderate — Balanced quality and cost", "moderate"),
+      opt("Flexible — Performance quality matters most", "premium")
     ],
     required: true
   },
@@ -603,9 +603,9 @@ const BASE_STEPS: BaseStep[] = [
     sub: "Be honest — TJAI should match your real level, not your ambition.",
     type: "single",
     options: [
-      opt("🌱 Beginner — Less than 6 months of consistent training", "beginner"),
-      opt("📈 Intermediate — 6 to 24 months of real training", "intermediate"),
-      opt("🏆 Advanced — 2+ years of serious structured training", "advanced")
+      opt("Beginner — Less than 6 months of consistent training", "beginner"),
+      opt("Intermediate — 6 to 24 months of real training", "intermediate"),
+      opt("Advanced — 2+ years of serious structured training", "advanced")
     ],
     required: true
   },
@@ -615,9 +615,9 @@ const BASE_STEPS: BaseStep[] = [
     sub: "This determines exercise selection and plan structure.",
     type: "single",
     options: [
-      opt("🏠 Home — Mostly training at home", "home"),
-      opt("🏋️ Gym — Full gym access", "gym"),
-      opt("🔀 Hybrid — Mix of home and gym", "hybrid")
+      opt("Home — Mostly training at home", "home"),
+      opt("Gym — Full gym access", "gym"),
+      opt("Hybrid — Mix of home and gym", "hybrid")
     ],
     required: true
   },

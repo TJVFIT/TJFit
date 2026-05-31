@@ -145,7 +145,6 @@ export function LanguageSwitcher({
                   )}
                 >
                   <span className="flex items-center gap-2.5 min-w-0">
-                    <span className="text-base leading-none" aria-hidden>{meta.flag}</span>
                     <span className="flex min-w-0 flex-col">
                       <span className="truncate font-semibold text-[#F6F3ED]">{meta.native}</span>
                       <span className="truncate text-[11px] opacity-60">{meta.label} · {code.toUpperCase()}</span>

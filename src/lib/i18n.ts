@@ -927,12 +927,12 @@ export function getDirection(locale: Locale | SupportedLocale) {
 export const supportedLocales = locales;
 export type SupportedLocale = (typeof supportedLocales)[number];
 
-export const LOCALE_META: Record<SupportedLocale, { label: string; native: string; flag: string; dir: "ltr" | "rtl" }> = {
-  en: { label: "English", native: "English", flag: "🇬🇧", dir: "ltr" },
-  tr: { label: "Turkish", native: "Türkçe", flag: "🇹🇷", dir: "ltr" },
-  ar: { label: "Arabic", native: "العربية", flag: "🇸🇦", dir: "rtl" },
-  es: { label: "Spanish", native: "Español", flag: "🇪🇸", dir: "ltr" },
-  fr: { label: "French", native: "Français", flag: "🇫🇷", dir: "ltr" },
+export const LOCALE_META: Record<SupportedLocale, { label: string; native: string; dir: "ltr" | "rtl" }> = {
+  en: { label: "English", native: "English", dir: "ltr" },
+  tr: { label: "Turkish", native: "Türkçe", dir: "ltr" },
+  ar: { label: "Arabic", native: "العربية", dir: "rtl" },
+  es: { label: "Spanish", native: "Español", dir: "ltr" },
+  fr: { label: "French", native: "Français", dir: "ltr" },
 };
 
 export function isSupportedLocale(value: string): value is SupportedLocale {

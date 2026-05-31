@@ -93,7 +93,7 @@ export default function HomePage({ params }: { params: { locale: string } }) {
               aria-hidden
               className="flex h-14 w-14 items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-300/[0.07] text-2xl"
             >
-              ⚠
+             
             </span>
             <h1 className="mt-5 font-display text-xl font-semibold text-white">
               {FALLBACK_COPY[locale].title}

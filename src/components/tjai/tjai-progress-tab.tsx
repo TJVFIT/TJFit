@@ -208,7 +208,7 @@ export function TJAIProgressTab({ locale = "en" }: { locale?: string }) {
       {evalData?.hasEnoughData && evalData?.evaluation?.shouldAdapt && (
         <article className="rounded-2xl border border-cyan-300/35 bg-[linear-gradient(135deg,rgba(34,211,238,0.06),rgba(14,165,233,0.04))] p-5 shadow-[0_0_28px_-12px_rgba(34,211,238,0.32)]">
           <div className="flex items-start gap-3">
-            <span className="mt-0.5 text-lg">⚡</span>
+            <span className="mt-0.5 text-lg"></span>
             <div className="min-w-0 flex-1">
               <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-cyan-200">
                 {t.planCheck}

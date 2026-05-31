@@ -51,7 +51,7 @@ export function CoachCard({ locale, coach }: { locale: string; coach: Coach }) {
 
       <p className="mt-3 line-clamp-2 text-sm text-muted">{coach.bio || "Coach profile"}</p>
       <div className="mt-4 flex items-center justify-between text-xs text-faint">
-        <span>⭐ {coach.stats?.average_rating ?? 0}</span>
+        <span>{coach.stats?.average_rating ?? 0}</span>
         <span>{coach.stats?.students ?? 0} students</span>
         <span>{coach.stats?.programs ?? 0} programs</span>
       </div>

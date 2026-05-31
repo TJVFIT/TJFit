@@ -48,7 +48,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       const url = `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://tjfit.org"}/api/email/unsubscribe?token=${token}`;
       await sendEmail({
         to: email,
-        subject: "Your blog post is live on TJFit! 📝",
+        subject: "Your blog post is live on TJFit!",
         html: EmailTemplates.blogPublished(post.title, `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://tjfit.org"}/en/blog/${id}`, url)
       });
     }

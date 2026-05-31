@@ -6,10 +6,10 @@ import { ShoppingBag } from "lucide-react";
 import { AmbientOrbs } from "@/components/effects/ambient-orbs";
 
 const CATEGORIES = [
-  { icon: "🏋️", title: "Home Gym Equipment", desc: "Dumbbells, barbells, resistance bands, pull-up bars, kettlebells, power racks — everything to train at home." },
-  { icon: "🍳", title: "Smart Cooking Gadgets", desc: "Kitchen scales, air fryers, blenders, meal prep containers. Nutrition starts in the kitchen." },
-  { icon: "🌲", title: "Outdoor Training Equipment", desc: "Suspension trainers, agility ladders, jump ropes, portable pull-up bars, outdoor yoga mats." },
-  { icon: "💆", title: "Physiotherapy Equipment", desc: "Massage guns, foam rollers, resistance therapy bands, balance boards, TENS devices. Recover like a pro." }
+  { icon: "", title: "Home Gym Equipment", desc: "Dumbbells, barbells, resistance bands, pull-up bars, kettlebells, power racks — everything to train at home." },
+  { icon: "", title: "Smart Cooking Gadgets", desc: "Kitchen scales, air fryers, blenders, meal prep containers. Nutrition starts in the kitchen." },
+  { icon: "", title: "Outdoor Training Equipment", desc: "Suspension trainers, agility ladders, jump ropes, portable pull-up bars, outdoor yoga mats." },
+  { icon: "", title: "Physiotherapy Equipment", desc: "Massage guns, foam rollers, resistance therapy bands, balance boards, TENS devices. Recover like a pro." }
 ];
 
 export default function EquipmentPage() {

@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
       const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://tjfit.org";
       await sendEmail({
         to: payload.email,
-        subject: "Your Free 3-Day Workout Plan from TJFit 💪",
+        subject: "Your Free 3-Day Workout Plan from TJFit",
         html: EmailTemplates.newsletterPlanWelcome(baseUrl)
       });
     }

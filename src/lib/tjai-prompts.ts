@@ -154,10 +154,10 @@ Rules:
   const isBeginnerLevel = profile.experienceLevel === "beginner";
 
   const coachWarnings: string[] = [];
-  if (highStress && fastPace) coachWarnings.push("⚠️ High stress + aggressive pace = elevated cortisol risk. Moderate calorie deficit automatically. Prioritize recovery days.");
-  if (poorSleep) coachWarnings.push("⚠️ Sleep deprivation detected. Add sleep optimization protocol. Reduce volume on day 1 of each week.");
-  if (highStress && poorSleep) coachWarnings.push("⚠️ Compounding recovery risk. Include mandatory deload in weeks 4, 8. Cortisol management is priority.");
-  if (isBeginnerLevel) coachWarnings.push("⚠️ Beginner detected. Use 2-week adaptation phase. Teach RPE scale. Simpler exercises. More education notes.");
+  if (highStress && fastPace) coachWarnings.push("High stress + aggressive pace = elevated cortisol risk. Moderate calorie deficit automatically. Prioritize recovery days.");
+  if (poorSleep) coachWarnings.push("Sleep deprivation detected. Add sleep optimization protocol. Reduce volume on day 1 of each week.");
+  if (highStress && poorSleep) coachWarnings.push("Compounding recovery risk. Include mandatory deload in weeks 4, 8. Cortisol management is priority.");
+  if (isBeginnerLevel) coachWarnings.push("Beginner detected. Use 2-week adaptation phase. Teach RPE scale. Simpler exercises. More education notes.");
 
   const memoryBlock = memory
     ? `== TJAI MEMORY ==
@@ -187,7 +187,7 @@ Adaptive checkpoint: ${
 Generate a complete 12-week transformation plan for this person. Apply your full coaching intelligence to this data — connect every data point, notice conflicts, and make decisions that optimize their results.
 
 ══ COACH INTELLIGENCE ANALYSIS ══
-${coachWarnings.length > 0 ? coachWarnings.join("\n") : "✅ No critical flags detected. Proceed with standard protocol."}
+${coachWarnings.length > 0 ? coachWarnings.join("\n") : "No critical flags detected. Proceed with standard protocol."}
 
 Metabolic type: ${metrics.metabolicType} — adjust macro ratios accordingly.
 Confidence score: ${metrics.confidenceScore}/100

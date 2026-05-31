@@ -130,9 +130,9 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
   }
 
   const statList = [
-    { label: "Streak", value: stats?.streak, icon: "🔥" },
-    { label: "Programs Done", value: stats?.programs_done, icon: "🏆" },
-    { label: "Blog Posts", value: stats?.blog_posts, icon: "📝" }
+    { label: "Streak", value: stats?.streak, icon: "" },
+    { label: "Programs Done", value: stats?.programs_done, icon: "" },
+    { label: "Blog Posts", value: stats?.blog_posts, icon: "" }
   ];
 
   const badgePreview = badges.slice(0, 6);

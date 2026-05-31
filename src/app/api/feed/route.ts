@@ -96,7 +96,7 @@ export async function GET(request: NextRequest) {
       user_id: row.user_id,
       type: "program_week",
       created_at: row.completed_at as string,
-      message: `finished Week ${row.week_number} of ${row.program_slug} 🎉`,
+      message: `finished Week ${row.week_number} of ${row.program_slug}`,
       meta: { program_slug: row.program_slug, week_number: row.week_number }
     });
   }
@@ -123,7 +123,7 @@ export async function GET(request: NextRequest) {
       user_id: row.id,
       type: "streak_milestone",
       created_at: row.updated_at ?? new Date().toISOString(),
-      message: `hit a ${row.current_streak}-day streak! 🔥`,
+      message: `hit a ${row.current_streak}-day streak!`,
       meta: { streak: row.current_streak }
     });
   }
@@ -133,7 +133,7 @@ export async function GET(request: NextRequest) {
       user_id: row.user_id,
       type: "badge",
       created_at: row.earned_at,
-      message: `earned the ${row.badge_key} badge 🏆`,
+      message: `earned the ${row.badge_key} badge`,
       meta: { badge_key: row.badge_key }
     });
   }

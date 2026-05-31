@@ -1,6 +1,6 @@
 // Programs registry — day-by-day program definitions.
 //
-// ⚠ NOTE (Plan2 phase 8 honesty pass, 2026-05-27): this registry is
+// NOTE (Plan2 phase 8 honesty pass, 2026-05-27): this registry is
 // imported NOWHERE in src/ today — it currently registers only
 // `comeback12w`. The programs the homepage/catalog market come from
 // `src/lib/content.ts` (83 entries) and the 4 backed free-product

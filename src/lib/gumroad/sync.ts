@@ -1,4 +1,4 @@
-// v5 — Bidirectional Supabase ↔ Gumroad product sync.
+// v5 — Bidirectional Supabase Gumroad product sync.
 //
 // Two flows:
 //   * `syncProductToGumroad()`  — admin clicks "Publish" in /admin

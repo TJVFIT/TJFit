@@ -36,7 +36,7 @@ export const EmailTemplates = {
     }),
   newsletterPlanWelcome: (url: string) =>
     renderTemplate({
-      title: "Your Free 3-Day Workout Plan from TJFit 💪",
+      title: "Your Free 3-Day Workout Plan from TJFit",
       body: [
         "Day 1 — Upper Body: Push-ups 4x10, DB Row 4x12, DB Shoulder Press 3x10, Tricep Dips 3x12, Plank 3x40s.",
         "Day 2 — Lower Body: Squats 4x12, Romanian Deadlift 4x10, Reverse Lunges 3x12/side, Glute Bridge 3x15, Calf Raises 4x20.",
@@ -50,7 +50,7 @@ export const EmailTemplates = {
     }),
   welcome: (name: string, url: string, unsubscribeUrl: string) =>
     renderTemplate({
-      title: `Welcome to TJFit, ${name} 💪`,
+      title: `Welcome to TJFit, ${name}`,
       body: "Start your first free program, set your goals, and begin your first weekly streak.",
       ctaLabel: "Start Your Free Program",
       ctaUrl: url,
@@ -58,13 +58,13 @@ export const EmailTemplates = {
     }),
   weeklyPro: (month: string, unsubscribeUrl: string) =>
     renderTemplate({
-      title: `Your ${month} TJFit Pro Program is ready 🏋️`,
+      title: `Your ${month} TJFit Pro Program is ready`,
       body: "Your new 4-week structure is attached. Stay consistent and keep your streak alive this month.",
       footerUrl: unsubscribeUrl
     }),
   proMonthlyProgram: (month: string, unsubscribeUrl: string) =>
     renderTemplate({
-      title: `Your ${month} TJFit Pro Program is here 💪`,
+      title: `Your ${month} TJFit Pro Program is here`,
       body: "Your fresh 4-week training program is attached as a PDF. Stay consistent and keep stacking progress.",
       footerUrl: unsubscribeUrl
     }),
@@ -78,13 +78,13 @@ export const EmailTemplates = {
     }),
   achievement: (name: string, unsubscribeUrl: string) =>
     renderTemplate({
-      title: `🏆 You just earned: ${name}`,
+      title: `You just earned: ${name}`,
       body: "New badge unlocked. Keep building momentum.",
       footerUrl: unsubscribeUrl
     }),
   blogPublished: (title: string, url: string, unsubscribeUrl: string) =>
     renderTemplate({
-      title: "Your blog post is live on TJFit! 📝",
+      title: "Your blog post is live on TJFit!",
       body: `Your post "${title}" is now published and visible to the community.`,
       ctaLabel: "View Blog Post",
       ctaUrl: url,
@@ -98,13 +98,13 @@ export const EmailTemplates = {
     }),
   streakMilestone: (days: number, unsubscribeUrl: string) =>
     renderTemplate({
-      title: `🔥 ${days}-day streak! You are unstoppable.`,
+      title: `${days}-day streak! You are unstoppable.`,
       body: "You hit a major consistency milestone. Keep going.",
       footerUrl: unsubscribeUrl
     }),
   referralReward: (username: string, _amount: number, unsubscribeUrl: string) =>
     renderTemplate({
-      title: "🎉 A friend joined through your link!",
+      title: "A friend joined through your link!",
       body: `${username} just signed up through your invite. Thanks for spreading TJFit.`,
       footerUrl: unsubscribeUrl
     }),

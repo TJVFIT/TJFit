@@ -279,7 +279,7 @@ export function TJAIResult({
 
         {/* Medical disclaimer */}
         <div className="flex items-start gap-3 rounded-xl border border-cyan-400/20 bg-cyan-400/5 px-4 py-3">
-          <span className="mt-0.5 shrink-0 text-cyan-300">⚠️</span>
+          <span className="mt-0.5 shrink-0 text-cyan-300"></span>
           <p className="text-xs text-cyan-200/80">
             Consult a physician before starting any new training or nutrition program. TJAI generates personalized guidance but is not a substitute for professional medical advice.
           </p>
@@ -386,14 +386,14 @@ export function TJAIResult({
         </article>
 
         <div className="rounded-xl border border-[rgba(14, 165, 233,0.2)] bg-[rgba(14, 165, 233,0.06)] p-5">
-          <p className="text-sm font-semibold text-accent-violet">⚡ Plateau Alert</p>
+          <p className="text-sm font-semibold text-accent-violet">Plateau Alert</p>
           <p className="mt-1 text-sm text-bright">
             Based on your profile, most people with your metabolism plateau around Week {metrics.plateauWeek}. We already built your plateau breaker into that point.
           </p>
         </div>
         {metrics.reverseDietNeeded ? (
           <div className="rounded-xl border border-[rgba(34,211,238,0.2)] bg-[rgba(34,211,238,0.06)] p-5">
-            <p className="text-sm font-semibold text-accent">🔄 Metabolic Reset Added</p>
+            <p className="text-sm font-semibold text-accent">Metabolic Reset Added</p>
             <p className="mt-1 text-sm text-bright">We detected signs of adaptation. Your plan starts with a 2-week reset before the main 12-week system.</p>
           </div>
         ) : null}
