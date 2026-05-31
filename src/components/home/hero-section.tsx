@@ -141,7 +141,6 @@ export type HeroSectionProps = {
   locale: Locale;
   direction: "ltr" | "rtl";
   reduce: boolean;
-  liveStats: { activeToday: number };
   heroEntered: boolean;
   hideScrollCue: boolean;
   lineIn: (delay: number) => CSSProperties;
@@ -158,7 +157,6 @@ export function HeroSection({
   locale,
   direction,
   reduce,
-  liveStats,
   heroEntered,
   hideScrollCue,
   lineIn,
@@ -229,11 +227,8 @@ export function HeroSection({
         <div className={cn("max-w-[45rem]", direction === "rtl" ? "text-right lg:ms-auto" : "text-left")}>
           <div style={lineIn(80)}>
             <span className="inline-flex items-center gap-2 rounded-[12px] border border-accent/25 bg-accent/10 px-3.5 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-accent-muted">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-40 motion-reduce:hidden" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
-              </span>
-              {liveStats.activeToday > 0 ? `${liveStats.activeToday} ${copy.liveTrainingSuffix}` : copy.fallbackBadge}
+              <span className="inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
+              {copy.fallbackBadge}
             </span>
           </div>
 

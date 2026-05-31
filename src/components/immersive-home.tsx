@@ -220,7 +220,6 @@ export function ImmersiveHome({
 
   const [heroEntered, setHeroEntered] = useState(reduce);
   const [hideScrollCue, setHideScrollCue] = useState(false);
-  const [liveStats, setLiveStats] = useState({ activeToday: 0 });
 
   const heroSectionRef = useRef<HTMLElement | null>(null);
 
@@ -237,16 +236,6 @@ export function ImmersiveHome({
     fn();
     window.addEventListener("scroll", fn, { passive: true });
     return () => window.removeEventListener("scroll", fn);
-  }, []);
-
-  // Live stats
-  useEffect(() => {
-    let cancelled = false;
-    fetch("/api/stats/live", { cache: "no-store" })
-      .then(r => r.ok ? r.json() : null)
-      .then(d => { if (!cancelled && d) setLiveStats({ activeToday: Number(d.activeToday ?? 0) }); })
-      .catch(() => {});
-    return () => { cancelled = true; };
   }, []);
 
 
@@ -313,7 +302,6 @@ export function ImmersiveHome({
         locale={locale}
         direction={direction}
         reduce={reduce}
-        liveStats={liveStats}
         heroEntered={heroEntered}
         hideScrollCue={hideScrollCue}
         lineIn={lineIn}
