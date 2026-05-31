@@ -17,21 +17,20 @@ export type BadgeMeta = {
   code: BadgeCode;
   label: string;
   description: string;
-  emoji: string;
 };
 
 export const BADGE_CATALOG: Record<BadgeCode, BadgeMeta> = {
-  first_plan: { code: "first_plan", label: "Plan Lit", description: "Generated your first TJAI plan", emoji: "🧭" },
-  first_workout: { code: "first_workout", label: "Day One", description: "Logged your first workout", emoji: "🔥" },
-  first_meal_log: { code: "first_meal_log", label: "Tracked", description: "Logged your first meal", emoji: "🍽️" },
-  first_progress_photo: { code: "first_progress_photo", label: "On Camera", description: "Uploaded your first progress photo", emoji: "📸" },
-  first_pr: { code: "first_pr", label: "New PR", description: "Hit your first personal record", emoji: "🏆" },
-  first_check_in: { code: "first_check_in", label: "Reporting In", description: "Completed your first weekly check-in", emoji: "📋" },
-  streak_7: { code: "streak_7", label: "7-Day Streak", description: "Active 7 days in a row", emoji: "⚡" },
-  streak_30: { code: "streak_30", label: "30-Day Streak", description: "Active 30 days in a row", emoji: "💎" },
-  streak_100: { code: "streak_100", label: "Century Streak", description: "100 days in a row", emoji: "👑" },
-  ten_workouts: { code: "ten_workouts", label: "10 Sessions", description: "Logged 10 workouts", emoji: "💪" },
-  fifty_workouts: { code: "fifty_workouts", label: "50 Sessions", description: "Logged 50 workouts", emoji: "🛡️" }
+  first_plan: { code: "first_plan", label: "Plan Lit", description: "Generated your first TJAI plan" },
+  first_workout: { code: "first_workout", label: "Day One", description: "Logged your first workout" },
+  first_meal_log: { code: "first_meal_log", label: "Tracked", description: "Logged your first meal" },
+  first_progress_photo: { code: "first_progress_photo", label: "On Camera", description: "Uploaded your first progress photo" },
+  first_pr: { code: "first_pr", label: "New PR", description: "Hit your first personal record" },
+  first_check_in: { code: "first_check_in", label: "Reporting In", description: "Completed your first weekly check-in" },
+  streak_7: { code: "streak_7", label: "7-Day Streak", description: "Active 7 days in a row" },
+  streak_30: { code: "streak_30", label: "30-Day Streak", description: "Active 30 days in a row" },
+  streak_100: { code: "streak_100", label: "Century Streak", description: "100 days in a row" },
+  ten_workouts: { code: "ten_workouts", label: "10 Sessions", description: "Logged 10 workouts" },
+  fifty_workouts: { code: "fifty_workouts", label: "50 Sessions", description: "Logged 50 workouts" }
 };
 
 export async function listAwardedBadges(

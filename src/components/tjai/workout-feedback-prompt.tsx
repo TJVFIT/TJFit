@@ -1,9 +1,16 @@
 "use client";
 
+import { Feather, Flame, ThumbsUp, type LucideIcon } from "lucide-react";
 import { useState } from "react";
 
 import type { Locale } from "@/lib/i18n";
 import { getWorkoutFeedbackCopy, type WorkoutFeedbackRating as Rating } from "@/lib/workout-feedback-copy";
+
+const RATING_ICONS: Record<Rating, LucideIcon> = {
+  too_easy: Feather,
+  right: ThumbsUp,
+  too_hard: Flame
+};
 
 // Adaptive feedback loop (master upgrade prompt 6.4) — drop this in
 // any "workout complete" surface to capture a 1-tap rating that the
@@ -52,13 +59,11 @@ export function WorkoutFeedbackPrompt({
   };
 
   if (state.kind === "ok") {
-    const chosen = copy.options[state.rating];
+    const ChosenIcon = RATING_ICONS[state.rating];
     return (
       <div className="rounded-2xl border border-divider bg-surface p-5">
-        <p className="text-sm text-bright">
-          <span className="me-2 text-lg" aria-hidden>
-            {chosen.emoji}
-          </span>
+        <p className="flex items-center text-sm text-bright">
+          <ChosenIcon className="me-2 h-4 w-4 text-accent" aria-hidden />
           {copy.thanks}
         </p>
       </div>
@@ -73,6 +78,7 @@ export function WorkoutFeedbackPrompt({
       <div className="mt-4 grid grid-cols-3 gap-2">
         {ratings.map((rating) => {
           const opt = copy.options[rating];
+          const OptIcon = RATING_ICONS[rating];
           const isSubmitting = state.kind === "submitting" && state.rating === rating;
           const disabled = state.kind === "submitting";
           return (
@@ -84,9 +90,7 @@ export function WorkoutFeedbackPrompt({
               aria-busy={isSubmitting}
               className="inline-flex min-h-[44px] flex-col items-center justify-center gap-1 rounded-xl border border-white/[0.08] bg-white/[0.025] px-3 py-2 text-[12px] font-medium text-bright transition-colors duration-150 hover:border-accent/40 hover:bg-accent/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 disabled:cursor-progress disabled:opacity-60"
             >
-              <span className="text-2xl" aria-hidden>
-                {opt.emoji}
-              </span>
+              <OptIcon className="h-6 w-6 text-accent" aria-hidden />
               <span>{opt.label}</span>
             </button>
           );

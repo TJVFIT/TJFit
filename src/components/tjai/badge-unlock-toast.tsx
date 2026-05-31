@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 
 import { showUpgradePrompt } from "@/components/tjai/upgrade-prompt";
+import { BadgeIcon } from "@/lib/tjai/badge-icons";
 
-type Badge = { code: string; label: string; description: string; emoji: string };
+type Badge = { code: string; label: string; description: string };
 
 let listeners: Array<(b: Badge[]) => void> = [];
 
@@ -22,7 +23,7 @@ export function celebrateBadges(newly: Badge[]) {
       const first = newly[0];
       showUpgradePrompt({
         reason: "first_badge",
-        title: `Nice — you just earned ${first.label} ${first.emoji}`,
+        title: `Nice — you just earned ${first.label}`,
         body: "You're already getting value. Unlock TJAI Pro to keep the streak going with unlimited chat, voice replies, and adaptive plans.",
         ctaHref: "/membership",
         ctaLabel: "See plans"
@@ -61,8 +62,8 @@ export function BadgeUnlockToast() {
   return (
     <div className="pointer-events-none fixed bottom-6 right-6 z-50">
       <div className="pointer-events-auto flex max-w-sm items-center gap-3 rounded-2xl border border-cyan-300/30 bg-gradient-to-br from-cyan-300/15 to-black/85 px-4 py-3 text-white shadow-[0_20px_60px_rgba(34,211,238,0.25)] backdrop-blur animate-in slide-in-from-bottom-4 motion-reduce:animate-none">
-        <span className="text-3xl" aria-hidden>
-          {current.emoji}
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-300/10 text-cyan-200" aria-hidden>
+          <BadgeIcon code={current.code} className="h-5 w-5" />
         </span>
         <div className="leading-tight">
           <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-cyan-300">Badge unlocked</div>

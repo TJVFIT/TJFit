@@ -2,13 +2,15 @@
 
 import { useEffect, useState } from "react";
 
+import { BadgeIcon, StreakIcon } from "@/lib/tjai/badge-icons";
+
 type Streak = {
   current_streak: number;
   longest_streak: number;
   last_active_date: string | null;
 };
 
-type Badge = { code: string; label: string; emoji: string; awarded_at: string };
+type Badge = { code: string; label: string; awarded_at: string };
 
 export function StreakBanner() {
   const [streak, setStreak] = useState<Streak | null>(null);
@@ -28,9 +30,7 @@ export function StreakBanner() {
   return (
     <div className="mb-3 flex items-center justify-between gap-3 rounded-xl border border-cyan-300/20 bg-[linear-gradient(135deg,rgba(34,211,238,0.06),rgba(0,0,0,0.3))] px-4 py-2.5 shadow-[0_0_24px_-12px_rgba(34,211,238,0.4)]">
       <div className="flex items-center gap-3 text-sm">
-        <span className="text-lg motion-safe:animate-pulse" aria-hidden>
-          {streak.current_streak >= 30 ? "💎" : streak.current_streak >= 7 ? "⚡" : "🔥"}
-        </span>
+        <StreakIcon streak={streak.current_streak} className="h-5 w-5 text-cyan-300 motion-safe:animate-pulse" />
         <div className="leading-tight">
           <div className="font-semibold text-white">
             {streak.current_streak} day{streak.current_streak === 1 ? "" : "s"} streak
@@ -44,9 +44,9 @@ export function StreakBanner() {
             <span
               key={b.code}
               title={`${b.label} · ${new Date(b.awarded_at).toLocaleDateString()}`}
-              className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-cyan-300/20 bg-cyan-300/[0.06] text-base transition-[border-color,background-color,box-shadow] duration-200 hover:border-cyan-300/45 hover:bg-cyan-300/[0.1] hover:shadow-[0_0_14px_rgba(34,211,238,0.22)]"
+              className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-cyan-300/20 bg-cyan-300/[0.06] text-cyan-200 transition-[border-color,background-color,box-shadow] duration-200 hover:border-cyan-300/45 hover:bg-cyan-300/[0.1] hover:shadow-[0_0_14px_rgba(34,211,238,0.22)]"
             >
-              {b.emoji}
+              <BadgeIcon code={b.code} className="h-3.5 w-3.5" />
             </span>
           ))}
         </div>

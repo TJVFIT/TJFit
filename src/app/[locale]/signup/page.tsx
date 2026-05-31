@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { notFound, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState } from "react";
-import { Eye, EyeOff, Upload, Camera } from "lucide-react";
+import { Eye, EyeOff, Upload, Camera, Dumbbell, Flame, Home, Scale, type LucideIcon } from "lucide-react";
 import { AuthPageFrame } from "@/components/auth-page-frame";
 import { AsyncButton } from "@/components/ui/AsyncButton";
 import { Logo } from "@/components/ui/Logo";
@@ -16,6 +16,13 @@ import { BILLING_PROVIDER, PRIVACY_VERSION, TERMS_VERSION } from "@/lib/legal";
 import { sanitizeRedirectParam } from "@/lib/safe-redirect";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { isValidUsername, normalizeUsername } from "@/lib/username";
+
+const GOAL_ICONS: Record<SignupGoalKey, LucideIcon> = {
+  lose_fat: Flame,
+  build_muscle: Dumbbell,
+  home_training: Home,
+  recomposition: Scale
+};
 
 function SignupForm({ params }: { params: { locale: string } }) {
   const router = useRouter();
@@ -370,7 +377,9 @@ function SignupForm({ params }: { params: { locale: string } }) {
 
           {step === 4 ? (
             <div className="grid gap-3 sm:grid-cols-2">
-              {goals.map((g) => (
+              {goals.map((g) => {
+                const GoalIcon = GOAL_ICONS[g.key];
+                return (
                 <button
                   key={g.key}
                   type="button"
@@ -381,11 +390,12 @@ function SignupForm({ params }: { params: { locale: string } }) {
                       : "border-white/10 text-bright hover:border-cyan-300/40 hover:bg-cyan-300/[0.04] hover:text-cyan-100"
                   }`}
                 >
-                  <p className="text-lg">{g.emoji}</p>
+                  <GoalIcon className="h-5 w-5 text-cyan-300" aria-hidden />
                   <p className="mt-1 font-semibold">{g.title}</p>
                   <p className="mt-1 text-xs text-faint">{g.sub}</p>
                 </button>
-              ))}
+                );
+              })}
             </div>
           ) : null}
           <label className="flex items-start gap-3 rounded-[10px] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 text-sm leading-relaxed text-[var(--color-text-secondary)] transition-colors hover:border-[rgba(255,255,255,0.12)]">

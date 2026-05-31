@@ -1,5 +1,6 @@
 "use client";
 
+import { Crown, Dumbbell, Flame, Target, Zap, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -12,6 +13,14 @@ import Image from "next/image";
 import { getCommunityCopy } from "@/lib/launch-copy";
 
 type TabKey = "threads" | "challenges" | "groups" | "transformations" | "blogs" | "people";
+
+const REACTIONS: Array<{ key: string; Icon: LucideIcon }> = [
+  { key: "fire", Icon: Flame },
+  { key: "muscle", Icon: Dumbbell },
+  { key: "crown", Icon: Crown },
+  { key: "lightning", Icon: Zap },
+  { key: "target", Icon: Target }
+];
 
 type BlogPost = {
   id: string;
@@ -75,20 +84,15 @@ function ThreadsPanel({
           </div>
           <p className="mt-3 text-sm text-bright">{post.content}</p>
           <div className="mt-3 flex flex-wrap gap-2">
-            {[
-              ["fire", "🔥"],
-              ["muscle", "💪"],
-              ["crown", "👑"],
-              ["lightning", "⚡"],
-              ["target", "🎯"]
-            ].map(([key, emoji]) => (
+            {REACTIONS.map(({ key, Icon }) => (
               <button
                 key={key}
                 type="button"
                 onClick={() => onReact(post.id, key)}
-                className="rounded-full border border-white/15 px-2.5 py-1 text-xs text-bright hover:border-cyan-300/40"
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-2.5 py-1 text-xs text-bright hover:border-cyan-300/40"
               >
-                {emoji} {reactions[post.id]?.[key] ?? 0}
+                <Icon className="h-3.5 w-3.5 text-cyan-300" aria-hidden />
+                {reactions[post.id]?.[key] ?? 0}
               </button>
             ))}
           </div>
@@ -587,7 +591,7 @@ export function CommunityHub({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ challengeId })
     });
-    island?.showNotification("signup", "Challenge joined! Good luck 💪");
+    island?.showNotification("signup", "Challenge joined. Good luck.");
     await loadChallenges();
   };
 

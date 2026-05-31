@@ -2,21 +2,18 @@ export type TjaiPersona = "drill" | "clinical" | "mentor";
 
 export const TJAI_PERSONAS: TjaiPersona[] = ["drill", "clinical", "mentor"];
 
-export const TJAI_PERSONA_META: Record<TjaiPersona, { label: string; tagline: string; emoji: string }> = {
+export const TJAI_PERSONA_META: Record<TjaiPersona, { label: string; tagline: string }> = {
   drill: {
     label: "Drill Sergeant",
-    tagline: "No excuses. Higher standards. Push.",
-    emoji: "🔥"
+    tagline: "No excuses. Higher standards. Push."
   },
   clinical: {
     label: "Clinical",
-    tagline: "Evidence-based, calm, precise.",
-    emoji: "🧪"
+    tagline: "Evidence-based, calm, precise."
   },
   mentor: {
     label: "Mentor",
-    tagline: "Friendly, patient, in your corner.",
-    emoji: "🤝"
+    tagline: "Friendly, patient, in your corner."
   }
 };
 
