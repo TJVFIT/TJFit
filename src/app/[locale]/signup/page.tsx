@@ -24,6 +24,29 @@ const GOAL_ICONS: Record<SignupGoalKey, LucideIcon> = {
   recomposition: Scale
 };
 
+// COPPA: TJFit does not knowingly collect data from children under 13.
+// A neutral date-of-birth gate on step 1 blocks under-13 accounts.
+const MIN_AGE = 13;
+
+const DOB_COPY: Record<Locale, { label: string; under13: string }> = {
+  en: { label: "Date of birth", under13: "You must be at least 13 years old to use TJFit." },
+  tr: { label: "Doğum tarihi", under13: "TJFit'i kullanmak için en az 13 yaşında olmalısınız." },
+  ar: { label: "تاريخ الميلاد", under13: "يجب أن يكون عمرك 13 عامًا على الأقل لاستخدام TJFit." },
+  es: { label: "Fecha de nacimiento", under13: "Debes tener al menos 13 años para usar TJFit." },
+  fr: { label: "Date de naissance", under13: "Vous devez avoir au moins 13 ans pour utiliser TJFit." }
+};
+
+function ageFromBirthDate(value: string): number | null {
+  if (!value) return null;
+  const dob = new Date(value);
+  if (Number.isNaN(dob.getTime())) return null;
+  const now = new Date();
+  let age = now.getFullYear() - dob.getFullYear();
+  const m = now.getMonth() - dob.getMonth();
+  if (m < 0 || (m === 0 && now.getDate() < dob.getDate())) age--;
+  return age;
+}
+
 function SignupForm({ params }: { params: { locale: string } }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -39,6 +62,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
   const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "ok" | "taken" | "invalid">("idle");
   const [goal, setGoal] = useState<SignupGoalKey | null>(null);
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [birthDate, setBirthDate] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   if (!isLocale(params?.locale ?? "")) {
@@ -63,7 +87,15 @@ function SignupForm({ params }: { params: { locale: string } }) {
 
   const emailValid = useMemo(() => /\S+@\S+\.\S+/.test(email.trim()), [email]);
   const passwordValid = password.length >= 8;
-  const step1Valid = emailValid && passwordValid && password === confirmPassword;
+  const age = useMemo(() => ageFromBirthDate(birthDate), [birthDate]);
+  const ageValid = age !== null && age >= MIN_AGE;
+  const step1Valid = emailValid && passwordValid && password === confirmPassword && ageValid;
+  const dobMax = useMemo(() => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - MIN_AGE);
+    return d.toISOString().slice(0, 10);
+  }, []);
+  const dobCopy = DOB_COPY[locale];
 
   useEffect(() => {
     if (!username.trim()) {
@@ -124,6 +156,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
         if (!emailValid) setError(copy.emailInvalid);
         else if (password !== confirmPassword) setError(copy.passwordsDoNotMatch);
         else if (!passwordValid) setError(copy.passwordTooShort);
+        else if (!ageValid) setError(dobCopy.under13);
         else setError(copy.signupErrorStep1);
         return;
       }
@@ -155,6 +188,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
             username: cleanUsername,
             goal,
             referral_code: referralCode,
+            birth_date: birthDate,
             terms_accepted: true,
             terms_version: TERMS_VERSION,
             terms_accepted_at: now,
@@ -293,11 +327,28 @@ function SignupForm({ params }: { params: { locale: string } }) {
                   minLength={8}
                 />
               </div>
+              <div>
+                <label htmlFor="signup-dob" className="mb-1.5 block text-start text-xs font-medium text-[var(--color-text-secondary)]">
+                  {dobCopy.label}
+                </label>
+                <input
+                  id="signup-dob"
+                  className="input"
+                  type="date"
+                  name="bday"
+                  autoComplete="bday"
+                  max={dobMax}
+                  value={birthDate}
+                  onChange={(e) => setBirthDate(e.target.value)}
+                  required
+                />
+              </div>
               {!emailValid && email ? <p className="text-xs text-red-400">{copy.emailInvalid}</p> : null}
               {!passwordValid && password ? <p className="text-xs text-red-400">{copy.passwordTooShort}</p> : null}
               {password && confirmPassword && password !== confirmPassword ? (
                 <p className="text-xs text-red-400">{copy.passwordsDoNotMatch}</p>
               ) : null}
+              {birthDate && !ageValid ? <p className="text-xs text-red-400">{dobCopy.under13}</p> : null}
             </>
           ) : null}
 
@@ -444,6 +495,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
                     if (!emailValid) setError(copy.emailInvalid);
                     else if (password !== confirmPassword) setError(copy.passwordsDoNotMatch);
                     else if (!passwordValid) setError(copy.passwordTooShort);
+                    else if (!ageValid) setError(dobCopy.under13);
                     else setError(copy.signupErrorStep1);
                     return;
                   }

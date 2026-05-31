@@ -36,6 +36,7 @@ export function getTermsCopy(locale: Locale, billingProvider: string, version: s
         {
           title: "2. Eligibility and Account Security",
           body: [
+            "You must be at least 13 years old to create an account or use TJFit. Users under 13 are not permitted, and accounts found to belong to a child under 13 are deleted. Users aged 13–17 must have parental consent.",
             "You must provide accurate information, keep your login credentials secure, and be responsible for activity under your account.",
             "TJFit may suspend accounts used for fraud, abuse, or unlawful activity."
           ]
@@ -83,7 +84,7 @@ export function getTermsCopy(locale: Locale, billingProvider: string, version: s
       title: "Sartlar ve Kosullar",
       sections: [
         { title: "1. Sartlarin Kabul Edilmesi", body: ["TJFit'i kullanarak bu Sartlari, Gizlilik Politikasini ve Iade Politikasini kabul etmis olursun.", "Kabul etmiyorsan platformu kullanmamalisin."] },
-        { title: "2. Uygunluk ve Hesap Guvenligi", body: ["Dogru bilgi vermeli, giris bilgilerini korumali ve hesabindaki islemlerden sorumlu olmalisin.", "Dolandiricilik, kotuye kullanim veya yasa disi faaliyetlerde kullanilan hesaplar askiya alinabilir."] },
+        { title: "2. Uygunluk ve Hesap Guvenligi", body: ["TJFit'i kullanmak veya hesap olusturmak icin en az 13 yasinda olmalisin. 13 yas alti kullanicilara izin verilmez; 13 yas altina ait oldugu tespit edilen hesaplar silinir. 13-17 yas arasi kullanicilarin ebeveyn onayi gerekir.", "Dogru bilgi vermeli, giris bilgilerini korumali ve hesabindaki islemlerden sorumlu olmalisin.", "Dolandiricilik, kotuye kullanim veya yasa disi faaliyetlerde kullanilan hesaplar askiya alinabilir."] },
         { title: "3. Saglik ve Tibbi Uyari", body: ["TJFit egitim ve koçluk sunar; tibbi tani veya tedavi sunmaz.", "Herhangi bir programa baslamadan once lisansli bir saglik uzmanina danis."] },
         { title: `4. Odeme ve Faturalama (${billingProvider})`, body: [`Ucretli urunlerin odemeleri ${billingProvider} tarafindan islenebilir. Satin alarak secilen odeme yontemi uzerinden tahsilati kabul edersin.`, "Fiyatlandirma, iptal ve iadeler odeme ekranindaki sartlara ve TJFit iade politikasina tabidir."] },
         { title: "5. Kabul Edilebilir Kullanim", body: ["Platformu tersine muhendislik icin kullanamaz, veri kaziyamaz, taciz edemez veya guvenlige mudahale edemezsin.", "Ihlaller hesap kisitlamasi veya kapatma ile sonuclanabilir."] },
@@ -97,7 +98,7 @@ export function getTermsCopy(locale: Locale, billingProvider: string, version: s
       title: "الشروط والاحكام",
       sections: [
         { title: "1. قبول الشروط", body: ["عند انشاء حساب او استخدام TJFit فانك توافق على هذه الشروط وسياسة الخصوصية وسياسة الاسترداد.", "اذا لم توافق فلا يجوز لك استخدام المنصة."] },
-        { title: "2. الاهلية وامان الحساب", body: ["يجب تقديم معلومات صحيحة والحفاظ على بيانات الدخول وتحمل مسؤولية النشاط داخل حسابك.", "يجوز لـ TJFit ايقاف الحسابات المستخدمة في الاحتيال او الاساءة او النشاط غير القانوني."] },
+        { title: "2. الاهلية وامان الحساب", body: ["يجب ان يكون عمرك 13 عاماً على الاقل لإنشاء حساب او استخدام TJFit. لا يُسمح لمن هم دون 13 عاماً، وتُحذف الحسابات التي يتبيّن انها تخص طفلاً دون 13. على من تتراوح اعمارهم بين 13 و17 الحصول على موافقة ولي الامر.", "يجب تقديم معلومات صحيحة والحفاظ على بيانات الدخول وتحمل مسؤولية النشاط داخل حسابك.", "يجوز لـ TJFit ايقاف الحسابات المستخدمة في الاحتيال او الاساءة او النشاط غير القانوني."] },
         { title: "3. اخلاء المسؤولية الصحية والطبية", body: ["TJFit يقدم تعليما وتوجيها وليس تشخيصا او علاجا طبيا.", "استشر مختصا مرخصا قبل بدء اي برنامج."] },
         { title: `4. الدفع والفوترة (${billingProvider})`, body: [`قد تتم معالجة المدفوعات للمنتجات المدفوعة بواسطة ${billingProvider}. عند الشراء فانك تفوض تحصيل الرسوم من وسيلة الدفع المختارة.`, "تخضع الاسعار والاسترداد والالغاء للشروط المعروضة عند الدفع ولسياسة استرداد TJFit."] },
         { title: "5. الاستخدام المقبول", body: ["لا يجوز الهندسة العكسية او جمع البيانات او المضايقة او رفع محتوى غير قانوني او العبث بامن المنصة.", "قد تؤدي المخالفات الى الايقاف او الاغلاق الدائم."] },
@@ -111,7 +112,7 @@ export function getTermsCopy(locale: Locale, billingProvider: string, version: s
       title: "Terminos y Condiciones",
       sections: [
         { title: "1. Aceptacion de los Terminos", body: ["Al crear una cuenta o usar TJFit, aceptas estos Terminos, nuestra Politica de Privacidad y la Politica de Reembolso.", "Si no estas de acuerdo, no debes usar la plataforma."] },
-        { title: "2. Elegibilidad y Seguridad de la Cuenta", body: ["Debes dar informacion correcta, proteger tus credenciales y responsabilizarte de la actividad de tu cuenta.", "TJFit puede suspender cuentas usadas para fraude, abuso o actividad ilegal."] },
+        { title: "2. Elegibilidad y Seguridad de la Cuenta", body: ["Debes tener al menos 13 anos para crear una cuenta o usar TJFit. No se permite a menores de 13; las cuentas que pertenezcan a un menor de 13 se eliminan. Los usuarios de 13 a 17 anos necesitan consentimiento parental.", "Debes dar informacion correcta, proteger tus credenciales y responsabilizarte de la actividad de tu cuenta.", "TJFit puede suspender cuentas usadas para fraude, abuso o actividad ilegal."] },
         { title: "3. Aviso de Salud y Medicina", body: ["TJFit ofrece educacion y coaching, no diagnostico ni tratamiento medico.", "Consulta a un profesional sanitario antes de iniciar cualquier programa."] },
         { title: `4. Pagos y Facturacion (${billingProvider})`, body: [`Los pagos de productos de pago pueden ser procesados por ${billingProvider}. Al comprar, autorizas los cargos mediante el metodo seleccionado.`, "Los precios, reembolsos y cancelaciones siguen las condiciones mostradas en checkout y la politica de reembolso de TJFit."] },
         { title: "5. Uso Aceptable", body: ["No puedes hacer ingenieria inversa, scraping, acoso, subir contenido ilegal ni interferir con la seguridad.", "Las infracciones pueden llevar a suspension o cierre permanente."] },
@@ -125,7 +126,7 @@ export function getTermsCopy(locale: Locale, billingProvider: string, version: s
       title: "Conditions Generales",
       sections: [
         { title: "1. Acceptation des Conditions", body: ["En creant un compte ou en utilisant TJFit, vous acceptez ces Conditions, notre Politique de Confidentialite et notre Politique de Remboursement.", "Si vous n'etes pas d'accord, vous ne devez pas utiliser la plateforme."] },
-        { title: "2. Eligibilite et Securite du Compte", body: ["Vous devez fournir des informations exactes, proteger vos identifiants et rester responsable de l'activite de votre compte.", "TJFit peut suspendre les comptes utilises pour fraude, abus ou activite illegale."] },
+        { title: "2. Eligibilite et Securite du Compte", body: ["Vous devez avoir au moins 13 ans pour creer un compte ou utiliser TJFit. Les moins de 13 ans ne sont pas autorises ; les comptes appartenant a un enfant de moins de 13 ans sont supprimes. Les utilisateurs de 13 a 17 ans doivent avoir le consentement parental.", "Vous devez fournir des informations exactes, proteger vos identifiants et rester responsable de l'activite de votre compte.", "TJFit peut suspendre les comptes utilises pour fraude, abus ou activite illegale."] },
         { title: "3. Avertissement Sante et Medical", body: ["TJFit fournit de l'education et du coaching, pas un diagnostic ou traitement medical.", "Consultez un professionnel de sante avant de commencer un programme."] },
         { title: `4. Paiements et Facturation (${billingProvider})`, body: [`Les paiements des produits payants peuvent etre traites par ${billingProvider}. En achetant, vous autorisez le debit via le moyen de paiement choisi.`, "Les prix, remboursements et annulations suivent les conditions affichees au paiement et la politique de remboursement TJFit."] },
         { title: "5. Utilisation Acceptable", body: ["Vous ne pouvez pas faire d'ingenierie inverse, de scraping, de harcelement, publier du contenu illegal ou nuire a la securite.", "Les violations peuvent entrainer suspension ou suppression definitive."] },
@@ -150,7 +151,7 @@ export function getPrivacyCopy(locale: Locale): PolicyCopy {
     "6. DATA RETENTION — Active accounts: data retained while account is active. Deleted accounts: personal data deleted within 30 days. Anonymized analytics: retained indefinitely. Payment records: retained as required by tax law (7 years).",
     "7. HEALTH DATA — Body metrics, weight logs, and fitness data are sensitive. We store them encrypted. We never sell health data. TJAI sends anonymized prompts to Claude API. No personally identifiable information is sent to Anthropic.",
     "8. COOKIES — Essential cookies for login sessions and preferences. Analytics cookies to understand site usage (anonymized). You can disable non-essential cookies in your browser settings.",
-    "9. CHILDREN — TJFit is not intended for users under 16. If we discover a user is under 16, we delete their account immediately.",
+    "9. CHILDREN'S PRIVACY (COPPA) — TJFit is not directed to children under 13 and we do not knowingly collect personal information from anyone under 13. Account creation requires a date of birth and is blocked for users under 13. If we learn that we have collected data from a child under 13, we delete that account and its data immediately. Parents or guardians who believe their under-13 child has provided us data can contact tjfit.org@gmail.com for removal. Users aged 13–17 should use TJFit only with parental consent.",
     "10. SECURITY — Industry-standard encryption (HTTPS, encrypted database). Passwords are hashed and never stored in plain text. We regularly review our security practices.",
     "11. CHANGES — We may update this policy. We notify users by email for major changes. Continued use after changes = acceptance.",
     "12. CONTACT — Privacy questions: tjfit.org@gmail.com"
@@ -170,7 +171,7 @@ export function getPrivacyCopy(locale: Locale): PolicyCopy {
         "6. VERİ SAKLAMA — Aktif hesaplar: hesap aktif olduğu sürece. Silinen hesaplar: 30 gün içinde kişisel veriler silinir. Anonim analizler: süresiz.",
         "7. SAĞLIK VERİLERİ — Şifreli olarak saklanır. Satılmaz. TJAI, Claude API'ye anonimleştirilmiş istemler gönderir.",
         "8. ÇEREZLER — Oturum ve tercihler için zorunlu çerezler. Analitik çerezler (anonimleştirilmiş).",
-        "9. ÇOCUKLAR — TJFit 16 yaş altı kullanıcılara yönelik değildir.",
+        "9. ÇOCUKLARIN GİZLİLİĞİ (COPPA) — TJFit 13 yaş altı çocuklara yönelik değildir ve 13 yaş altından bilerek kişisel veri toplamayız. Hesap oluşturmak doğum tarihi gerektirir ve 13 yaş altı için engellenir. 13 yaşından küçük birinden veri topladığımızı öğrenirsek hesabı ve verilerini derhal sileriz. Kaldırma talepleri için: tjfit.org@gmail.com. 13–17 yaş arası kullanıcılar TJFit'i yalnızca ebeveyn onayıyla kullanmalıdır.",
         "10. GÜVENLİK — HTTPS ve şifreli veritabanı. Şifreler hashlenir.",
         "11. DEĞİŞİKLİKLER — Büyük değişiklikler için e-posta bildirimi yapılır.",
         "12. İLETİŞİM — tjfit.org@gmail.com"
@@ -190,7 +191,7 @@ export function getPrivacyCopy(locale: Locale): PolicyCopy {
         "6. الاحتفاظ بالبيانات — الحسابات النشطة: طوال فترة النشاط. المحذوفة: حذف خلال 30 يوماً.",
         "7. بيانات الصحة — مشفرة ولا تُباع. TJAI يرسل موجّهات مجهولة فقط لـ Claude API.",
         "8. ملفات تعريف الارتباط — أساسية للجلسات والتحليلات المجهولة.",
-        "9. الأطفال — TJFit ليس مخصصاً لمن هم دون 16 عاماً.",
+        "9. خصوصية الأطفال (COPPA) — TJFit غير موجَّه للأطفال دون 13 عاماً ولا نجمع عن قصد بيانات ممن هم دون 13. يتطلب إنشاء الحساب تاريخ ميلاد ويُمنع لمن هم دون 13 عاماً. إذا علمنا بجمع بيانات من طفل دون 13 نحذف الحساب وبياناته فوراً. لطلب الحذف: tjfit.org@gmail.com. على من تتراوح أعمارهم بين 13 و17 عاماً استخدام TJFit بموافقة ولي الأمر فقط.",
         "10. الأمان — تشفير HTTPS وقاعدة بيانات مشفرة وكلمات مرور مجزأة.",
         "11. التغييرات — إشعار بالبريد للتغييرات الكبرى.",
         "12. التواصل — tjfit.org@gmail.com"
@@ -210,7 +211,7 @@ export function getPrivacyCopy(locale: Locale): PolicyCopy {
         "6. RETENCIÓN DE DATOS — Cuentas activas: mientras estén activas. Eliminadas: datos borrados en 30 días.",
         "7. DATOS DE SALUD — Cifrados, no vendidos. TJAI envía prompts anónimos a Claude API.",
         "8. COOKIES — Esenciales para sesiones y analíticas anónimas.",
-        "9. MENORES — TJFit no está dirigido a menores de 16 años.",
+        "9. PRIVACIDAD DE MENORES (COPPA) — TJFit no está dirigido a menores de 13 años y no recopilamos a sabiendas datos de menores de 13. Crear una cuenta requiere fecha de nacimiento y está bloqueado para menores de 13. Si detectamos datos de un menor de 13, eliminamos la cuenta y sus datos de inmediato. Para solicitudes de eliminación: tjfit.org@gmail.com. Los usuarios de 13 a 17 años deben usar TJFit solo con consentimiento parental.",
         "10. SEGURIDAD — HTTPS, base de datos cifrada, contraseñas hasheadas.",
         "11. CAMBIOS — Notificación por email en cambios importantes.",
         "12. CONTACTO — tjfit.org@gmail.com"
@@ -230,7 +231,7 @@ export function getPrivacyCopy(locale: Locale): PolicyCopy {
         "6. CONSERVATION — Comptes actifs : tant que le compte est actif. Comptes supprimés : données supprimées sous 30 jours.",
         "7. DONNÉES DE SANTÉ — Chiffrées, non vendues. TJAI envoie des prompts anonymisés à Claude API.",
         "8. COOKIES — Essentiels pour les sessions et les analyses anonymisées.",
-        "9. MINEURS — TJFit n'est pas destiné aux moins de 16 ans.",
+        "9. CONFIDENTIALITÉ DES MINEURS (COPPA) — TJFit n'est pas destiné aux enfants de moins de 13 ans et nous ne collectons pas sciemment de données de personnes de moins de 13 ans. La création de compte exige une date de naissance et est bloquée pour les moins de 13 ans. Si nous apprenons avoir collecté des données d'un enfant de moins de 13 ans, nous supprimons immédiatement le compte et ses données. Pour toute demande de suppression : tjfit.org@gmail.com. Les utilisateurs de 13 à 17 ans doivent utiliser TJFit uniquement avec le consentement parental.",
         "10. SÉCURITÉ — HTTPS, base de données chiffrée, mots de passe hachés.",
         "11. MODIFICATIONS — Notification par email pour les changements majeurs.",
         "12. CONTACT — tjfit.org@gmail.com"
