@@ -13,7 +13,7 @@ export function AuthPageFrame({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="relative flex min-h-[100dvh] flex-col items-center justify-center px-4 py-16 sm:px-6 lg:px-8">
+    <div className="relative flex min-h-[100dvh] flex-col items-center justify-center px-4 py-12 pb-[max(3rem,env(safe-area-inset-bottom,0px))] pt-[max(3rem,env(safe-area-inset-top,0px))] sm:px-6 sm:py-16 lg:px-8">
       <AmbientBackground variant="both" intensity="low" />
       {/* Two drifting brand-cyan orbs — same vocabulary as /bundles, /404, /coming-soon. */}
       <div
@@ -30,7 +30,7 @@ export function AuthPageFrame({ children }: { children: React.ReactNode }) {
           entered ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
         )}
       >
-        <div className="rounded-[20px] border border-cyan-300/12 bg-surface p-8 shadow-[0_24px_64px_rgba(0,0,0,0.6),0_0_44px_rgba(34,211,238,0.1)] sm:p-12 max-sm:rounded-none max-sm:border-0 max-sm:shadow-none max-sm:max-w-none">
+        <div className="max-sm:max-w-none max-sm:rounded-none max-sm:border-0 max-sm:shadow-none rounded-[20px] border border-divider bg-surface p-6 shadow-[0_24px_64px_rgba(0,0,0,0.6)] sm:p-12">
           {children}
         </div>
       </div>

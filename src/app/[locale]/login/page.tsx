@@ -6,6 +6,7 @@ import { Suspense, useState } from "react";
 import { AuthPageFrame } from "@/components/auth-page-frame";
 import { AsyncButton } from "@/components/ui/AsyncButton";
 import { Logo } from "@/components/ui/Logo";
+import { mapSupabaseAuthError } from "@/lib/auth-errors";
 import { getAuthCopy } from "@/lib/launch-copy";
 import { isLocale, type Locale } from "@/lib/i18n";
 import { sanitizeRedirectParam } from "@/lib/safe-redirect";
@@ -56,7 +57,7 @@ function LoginForm({ params }: { params: { locale: string } }) {
         password
       });
       if (err) {
-        setError(err.message ?? copy.loginFailed);
+        setError(mapSupabaseAuthError(err.message, copy));
         return;
       }
       router.push(redirectSafe ?? `/${locale}/dashboard`);
@@ -88,41 +89,56 @@ function LoginForm({ params }: { params: { locale: string } }) {
           }}
           className="mt-8 space-y-5"
         >
-          <input
-            className="input"
-            type="email"
-            name="email"
-            autoComplete="email"
-            aria-label={copy.emailPlaceholder}
-            placeholder={copy.emailPlaceholder}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            className="input"
-            type="password"
-            name="password"
-            autoComplete="current-password"
-            aria-label={copy.passwordPlaceholder}
-            placeholder={copy.passwordPlaceholder}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <div>
+            <label htmlFor="login-email" className="mb-1.5 block text-start text-xs font-medium text-[var(--color-text-secondary)]">
+              {copy.emailPlaceholder}
+            </label>
+            <input
+              id="login-email"
+              className="input"
+              type="email"
+              name="email"
+              autoComplete="email"
+              inputMode="email"
+              placeholder={copy.emailPlaceholder}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="login-password" className="mb-1.5 block text-start text-xs font-medium text-[var(--color-text-secondary)]">
+              {copy.passwordPlaceholder}
+            </label>
+            <input
+              id="login-password"
+              className="input"
+              type="password"
+              name="password"
+              autoComplete="current-password"
+              placeholder={copy.passwordPlaceholder}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
           <div className="flex justify-end">
-            <Link href={`/${locale}/forgot-password`} className="text-xs text-faint hover:text-bright">
-              {copy.forgotPassword}
+            <Link href={`/${locale}/forgot-password`} className="text-xs text-faint transition-colors hover:text-bright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background">
+              {copy.forgotPasswordLink}
             </Link>
           </div>
-          {error ? <div className="tj-api-error-block" role="alert" aria-live="polite">{error}</div> : null}
+          {error ? (
+            <div className="tj-api-error-block" role="alert">
+              {error}
+            </div>
+          ) : null}
           <AsyncButton
-            type="button"
+            type="submit"
             fullWidth
             loading={loading}
             loadingText={copy.signingIn}
             className="gradient-button flex min-h-[48px] w-full touch-manipulation items-center justify-center gap-2 rounded-full px-5 py-3 text-base font-semibold text-[#09090B] transition hover:brightness-105"
-            onClick={() => submitLogin()}
+            onClick={async () => {}}
           >
             {copy.loginButton}
           </AsyncButton>

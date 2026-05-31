@@ -1,11 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+
 import { Logo } from "@/components/ui/Logo";
 import { getNavChromeCopy } from "@/lib/launch-copy";
 import { getSocialCopy } from "@/lib/social-copy";
 import type { Locale } from "@/lib/i18n";
 import { isLocale } from "@/lib/i18n";
+import { sanitizeRedirectParam } from "@/lib/safe-redirect";
 
 export function AuthRequiredPanel({
   locale,
@@ -15,8 +18,12 @@ export function AuthRequiredPanel({
   className?: string;
 }) {
   const loc = (isLocale(locale) ? locale : "en") as Locale;
+  const pathname = usePathname() ?? "";
   const s = getSocialCopy(loc);
   const nav = getNavChromeCopy(loc);
+  const redirectSafe = sanitizeRedirectParam(pathname, loc);
+  const loginQs = redirectSafe ? `?redirect=${encodeURIComponent(redirectSafe)}` : "";
+  const signupQs = redirectSafe ? `?redirect=${encodeURIComponent(redirectSafe)}` : "";
 
   return (
     <div className={`tj-surface-shell mx-auto max-w-md px-6 py-10 text-center ${className}`}>
@@ -26,10 +33,10 @@ export function AuthRequiredPanel({
       <p className="tj-section-title mt-6 text-xl sm:text-2xl">{s.loginRequiredTitle}</p>
       <p className="tj-prose-muted mx-auto mt-3 max-w-sm">{s.loginRequiredBody}</p>
       <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-        <Link href={`/${loc}/login`} className="lux-btn-primary inline-flex min-h-[48px] justify-center rounded-full px-8 py-3 text-sm font-semibold text-[#05080a]">
+        <Link href={`/${loc}/login${loginQs}`} className="lux-btn-primary inline-flex min-h-[48px] justify-center rounded-full px-8 py-3 text-sm font-semibold text-[#05080a]">
           {nav.loginLabel}
         </Link>
-        <Link href={`/${loc}/signup`} className="lux-btn-secondary inline-flex min-h-[48px] justify-center rounded-full px-8 py-3 text-sm font-medium text-bright">
+        <Link href={`/${loc}/signup${signupQs}`} className="lux-btn-secondary inline-flex min-h-[48px] justify-center rounded-full px-8 py-3 text-sm font-medium text-bright">
           {nav.joinLabel}
         </Link>
       </div>

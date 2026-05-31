@@ -63,6 +63,7 @@ const googleVerification = googleVerificationToken();
 
 export const viewport: Viewport = {
   viewportFit: "cover",
+  colorScheme: "dark",
   themeColor: "#09090B"
 };
 
@@ -75,7 +76,7 @@ export const metadata: Metadata = {
   title: { default: defaultTitle, template: "%s | TJFit" },
   description: defaultDescription,
   applicationName: "TJFit",
-  manifest: "/manifest.webmanifest",
+  manifest: "/manifest.json",
   icons: {
     icon: [{ url: BRAND.faviconIco, type: "image/x-icon" }],
     apple: [{ url: BRAND.appleTouchIcon, type: "image/png" }],

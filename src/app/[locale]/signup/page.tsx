@@ -7,6 +7,8 @@ import { Eye, EyeOff, Upload, Camera } from "lucide-react";
 import { AuthPageFrame } from "@/components/auth-page-frame";
 import { AsyncButton } from "@/components/ui/AsyncButton";
 import { Logo } from "@/components/ui/Logo";
+import { mapSupabaseAuthError } from "@/lib/auth-errors";
+import { getSignupGoals, type SignupGoalKey } from "@/lib/auth-signup-content";
 import { getAuthCopy } from "@/lib/launch-copy";
 import { isLocale, type Locale } from "@/lib/i18n";
 import { compressImage } from "@/lib/image-compress";
@@ -14,15 +16,6 @@ import { BILLING_PROVIDER, PRIVACY_VERSION, TERMS_VERSION } from "@/lib/legal";
 import { sanitizeRedirectParam } from "@/lib/safe-redirect";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { isValidUsername, normalizeUsername } from "@/lib/username";
-
-type GoalKey = "lose_fat" | "build_muscle" | "home_training" | "recomposition";
-
-const GOALS: Array<{ key: GoalKey; emoji: string; title: string; sub: string }> = [
-  { key: "lose_fat", emoji: "🔥", title: "Lose Fat", sub: "Burn calories, build endurance" },
-  { key: "build_muscle", emoji: "💪", title: "Build Muscle", sub: "Gain strength and size" },
-  { key: "home_training", emoji: "🏠", title: "Train at Home", sub: "No gym, no problem" },
-  { key: "recomposition", emoji: "⚖️", title: "Recomposition", sub: "Lose fat, gain muscle simultaneously" }
-];
 
 function SignupForm({ params }: { params: { locale: string } }) {
   const router = useRouter();
@@ -37,7 +30,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [username, setUsername] = useState("");
   const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "ok" | "taken" | "invalid">("idle");
-  const [goal, setGoal] = useState<GoalKey | null>(null);
+  const [goal, setGoal] = useState<SignupGoalKey | null>(null);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
 
@@ -54,6 +47,12 @@ function SignupForm({ params }: { params: { locale: string } }) {
     redirectTarget !== null
       ? `/${locale}/login?redirect=${encodeURIComponent(redirectTarget)}`
       : `/${locale}/login`;
+
+  const goals = useMemo(() => getSignupGoals(locale), [locale]);
+  const stepLabel = useMemo(
+    () => copy.signupStepProgress.replace("{current}", String(step)).replace("{total}", "4"),
+    [copy.signupStepProgress, step]
+  );
 
   const emailValid = useMemo(() => /\S+@\S+\.\S+/.test(email.trim()), [email]);
   const passwordValid = password.length >= 8;
@@ -115,17 +114,20 @@ function SignupForm({ params }: { params: { locale: string } }) {
       }
 
       if (!step1Valid) {
-        setError(copy.passwordTooShort);
+        if (!emailValid) setError(copy.emailInvalid);
+        else if (password !== confirmPassword) setError(copy.passwordsDoNotMatch);
+        else if (!passwordValid) setError(copy.passwordTooShort);
+        else setError(copy.signupErrorStep1);
         return;
       }
 
       if (usernameStatus !== "ok") {
-        setError(copy.chooseUsernameFirst);
+        setError(copy.signupChooseUsernameError);
         return;
       }
 
       if (!goal) {
-        setError(copy.chooseGoalFirst);
+        setError(copy.signupErrorGoal);
         return;
       }
       if (!acceptedTerms) {
@@ -161,7 +163,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
       });
 
       if (signUpError) {
-        setError(signUpError.message ?? copy.signupFailed);
+        setError(mapSupabaseAuthError(signUpError.message, copy));
         return;
       }
 
@@ -208,7 +210,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
         </h1>
         <p className="mt-2 text-center text-sm leading-relaxed text-muted">{copy.signupSubtitle}</p>
         <div className="mt-6">
-          <p className="mb-2 text-center text-xs text-faint">Step {step} of 4</p>
+          <p className="mb-2 text-center text-xs text-faint">{stepLabel}</p>
           <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
             <div className="h-full rounded-full bg-cyan-400 transition-all duration-300" style={{ width: `${(step / 4) * 100}%` }} />
           </div>
@@ -223,44 +225,72 @@ function SignupForm({ params }: { params: { locale: string } }) {
         >
           {step === 1 ? (
             <>
-              <input
-                className="input"
-                type="email"
-                placeholder={copy.emailPlaceholder}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-              <div className="relative">
+              <div>
+                <label htmlFor="signup-email" className="mb-1.5 block text-start text-xs font-medium text-[var(--color-text-secondary)]">
+                  {copy.emailPlaceholder}
+                </label>
                 <input
-                  className="input pr-11"
+                  id="signup-email"
+                  className="input"
+                  type="email"
+                  name="email"
+                  autoComplete="email"
+                  inputMode="email"
+                  placeholder={copy.emailPlaceholder}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="signup-password" className="mb-1.5 block text-start text-xs font-medium text-[var(--color-text-secondary)]">
+                  {copy.passwordMinPlaceholder}
+                </label>
+                <div className="relative">
+                  <input
+                    id="signup-password"
+                    className="input pr-11"
+                    type={showPassword ? "text" : "password"}
+                    name="new-password"
+                    autoComplete="new-password"
+                    placeholder={copy.passwordMinPlaceholder}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    minLength={8}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                    aria-label="Toggle password visibility"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" aria-hidden /> : <Eye className="h-4 w-4" aria-hidden />}
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label htmlFor="signup-confirm" className="mb-1.5 block text-start text-xs font-medium text-[var(--color-text-secondary)]">
+                  {copy.confirmPasswordPlaceholder}
+                </label>
+                <input
+                  id="signup-confirm"
+                  className="input"
                   type={showPassword ? "text" : "password"}
-                  placeholder={copy.passwordMinPlaceholder}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  name="new-password"
+                  autoComplete="new-password"
+                  placeholder={copy.confirmPasswordPlaceholder}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                   minLength={8}
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-white"
-                  aria-label="Toggle password visibility"
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
               </div>
-              <input
-                className="input"
-                type={showPassword ? "text" : "password"}
-                placeholder={copy.confirmPasswordPlaceholder}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                minLength={8}
-              />
-              {!emailValid && email ? <p className="text-xs text-red-400">Please enter a valid email address.</p> : null}
-              {!passwordValid && password ? <p className="text-xs text-red-400">Password must be at least 8 characters.</p> : null}
+              {!emailValid && email ? <p className="text-xs text-red-400">{copy.emailInvalid}</p> : null}
+              {!passwordValid && password ? <p className="text-xs text-red-400">{copy.passwordTooShort}</p> : null}
+              {password && confirmPassword && password !== confirmPassword ? (
+                <p className="text-xs text-red-400">{copy.passwordsDoNotMatch}</p>
+              ) : null}
             </>
           ) : null}
 
@@ -275,6 +305,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
                   setAvatarPreview(URL.createObjectURL(f));
                 }}
                 onDragOver={(e) => e.preventDefault()}
+                role="presentation"
                 className="mx-auto flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-white/20 bg-white/5"
               >
                 {avatarPreview ? (
@@ -287,41 +318,59 @@ function SignupForm({ params }: { params: { locale: string } }) {
                   </div>
                 )}
               </div>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (!f) return;
-                  setAvatarFile(f);
-                  setAvatarPreview(URL.createObjectURL(f));
-                }}
-                className="block w-full text-sm text-bright file:mr-3 file:rounded-full file:border-0 file:bg-white/10 file:px-3 file:py-1.5 file:text-sm file:text-white"
-              />
-              <p className="text-center text-xs text-faint">You can always add a photo later in your profile.</p>
+              <div>
+                <label htmlFor="signup-avatar" className="sr-only">
+                  {copy.avatarFileLabel}
+                </label>
+                <input
+                  id="signup-avatar"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (!f) return;
+                    setAvatarFile(f);
+                    setAvatarPreview(URL.createObjectURL(f));
+                  }}
+                  className="block w-full text-sm text-bright file:mr-3 file:rounded-full file:border-0 file:bg-white/10 file:px-3 file:py-1.5 file:text-sm file:text-white"
+                />
+              </div>
+              <p className="text-center text-xs text-faint">{copy.signupAvatarLater}</p>
               <button type="button" className="mx-auto block text-xs text-faint hover:text-bright" onClick={() => setStep(3)}>
-                Skip for now
+                {copy.skipForNow}
               </button>
             </div>
           ) : null}
 
           {step === 3 ? (
             <div className="space-y-3">
-              <input className="input" type="text" placeholder="@username" value={username} onChange={(e) => setUsername(e.target.value)} />
-              {usernameStatus === "checking" ? <p className="text-xs text-faint">Checking username...</p> : null}
-              {usernameStatus === "ok" ? <p className="text-xs text-emerald-400">Available!</p> : null}
-              {usernameStatus === "taken" ? <p className="text-xs text-red-400">Username taken. Try another.</p> : null}
-              {usernameStatus === "invalid" ? (
-                <p className="text-xs text-red-400">3-20 characters. Letters, numbers, underscore only.</p>
-              ) : null}
-              <p className="text-xs text-faint">3-20 characters. Letters, numbers, underscore only.</p>
-              <p className="text-xs text-faint">This is how others find and message you.</p>
+              <div>
+                <label htmlFor="signup-username" className="mb-1.5 block text-start text-xs font-medium text-[var(--color-text-secondary)]">
+                  {copy.usernamePlaceholder}
+                </label>
+                <input
+                  id="signup-username"
+                  className="input"
+                  type="text"
+                  name="username"
+                  autoComplete="username"
+                  placeholder="@username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </div>
+              {usernameStatus === "checking" ? <p className="text-xs text-faint">{copy.signupCheckingUsername}</p> : null}
+              {usernameStatus === "ok" ? <p className="text-xs text-emerald-400">{copy.signupUsernameOk}</p> : null}
+              {usernameStatus === "taken" ? <p className="text-xs text-red-400">{copy.signupUsernameTaken}</p> : null}
+              {usernameStatus === "invalid" ? <p className="text-xs text-red-400">{copy.signupUsernameInvalid}</p> : null}
+              <p className="text-xs text-faint">{copy.signupUsernameHint}</p>
+              <p className="text-xs text-faint">{copy.signupFindYouHint}</p>
             </div>
           ) : null}
 
           {step === 4 ? (
             <div className="grid gap-3 sm:grid-cols-2">
-              {GOALS.map((g) => (
+              {goals.map((g) => (
                 <button
                   key={g.key}
                   type="button"
@@ -362,15 +411,19 @@ function SignupForm({ params }: { params: { locale: string } }) {
               , {BILLING_PROVIDER} {copy.billingSuffix}
             </span>
           </label>
-          {error ? <div className="tj-api-error-block" role="alert" aria-live="polite">{error}</div> : null}
-          <div className="flex gap-3">
+          {error ? (
+            <div className="tj-api-error-block" role="alert">
+              {error}
+            </div>
+          ) : null}
+          <div className="flex flex-col gap-3 sm:flex-row">
             {step > 1 ? (
               <button
                 type="button"
                 onClick={() => setStep((s) => Math.max(1, s - 1))}
                 className="min-h-[48px] flex-1 rounded-full border border-white/15 px-5 py-3 text-sm text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_18px_rgba(34,211,238,0.14)]"
               >
-                Back
+                {copy.signupBack}
               </button>
             ) : null}
             {step < 4 ? (
@@ -378,11 +431,14 @@ function SignupForm({ params }: { params: { locale: string } }) {
                 type="button"
                 onClick={() => {
                   if (step === 1 && !step1Valid) {
-                    setError("Please complete Step 1 correctly.");
+                    if (!emailValid) setError(copy.emailInvalid);
+                    else if (password !== confirmPassword) setError(copy.passwordsDoNotMatch);
+                    else if (!passwordValid) setError(copy.passwordTooShort);
+                    else setError(copy.signupErrorStep1);
                     return;
                   }
                   if (step === 3 && usernameStatus !== "ok") {
-                    setError("Please choose an available username.");
+                    setError(copy.signupErrorUsername);
                     return;
                   }
                   setError(null);
@@ -390,7 +446,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
                 }}
                 className="tj-cta-sheen gradient-button min-h-[48px] flex-1 rounded-full px-5 py-3 text-base font-semibold text-[#09090B]"
               >
-                Continue
+                {copy.signupContinue}
               </button>
             ) : (
               <AsyncButton
@@ -401,13 +457,13 @@ function SignupForm({ params }: { params: { locale: string } }) {
                 className="tj-cta-sheen gradient-button flex min-h-[48px] w-full touch-manipulation items-center justify-center gap-2 rounded-full px-5 py-3 text-base font-semibold text-[#09090B] transition hover:brightness-105"
                 onClick={() => submitSignup()}
               >
-                Finish Setup
+                {copy.signupFinish}
               </AsyncButton>
             )}
           </div>
         </form>
 
-        <p className="mt-4 text-center text-xs text-[var(--color-text-muted)]">Free to join. No credit card required.</p>
+        <p className="mt-4 text-center text-xs text-[var(--color-text-muted)]">{copy.signupFreeToJoin}</p>
 
         <p className="mt-6 text-center text-sm text-dim">
           {copy.alreadyHaveAccount}{" "}

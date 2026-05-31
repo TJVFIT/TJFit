@@ -1,6 +1,6 @@
 import type { Locale } from "@/lib/i18n";
 
-type AuthCopy = {
+export type AuthCopy = {
   loginBadge: string;
   loginTitle: string;
   loginSubtitle: string;
@@ -45,6 +45,30 @@ type AuthCopy = {
   termsLink: string;
   privacyLink: string;
   billingSuffix: string;
+  forgotPasswordLink: string;
+  invalidCredentials: string;
+  emailNotConfirmed: string;
+  signupEmailRegistered: string;
+  /** Use {current} and {total} placeholders. */
+  signupStepProgress: string;
+  signupBack: string;
+  signupContinue: string;
+  signupFinish: string;
+  signupFreeToJoin: string;
+  signupErrorStep1: string;
+  signupErrorUsername: string;
+  signupErrorGoal: string;
+  signupChooseUsernameError: string;
+  signupCheckingUsername: string;
+  signupUsernameOk: string;
+  signupUsernameTaken: string;
+  signupUsernameInvalid: string;
+  signupUsernameHint: string;
+  signupFindYouHint: string;
+  emailInvalid: string;
+  avatarFileLabel: string;
+  skipForNow: string;
+  signupAvatarLater: string;
 };
 
 type GuestPopupCopy = {
@@ -133,9 +157,12 @@ type FooterCopy = {
   becomeCoach: string;
   community: string;
   companyComingSoon: string;
+  press: string;
 };
 
 type NavChromeCopy = {
+  /** Skip to main content (accessibility) */
+  skipToContent: string;
   menu: string;
   navigation: string;
   language: string;
@@ -244,7 +271,30 @@ const authCopy: Record<Locale, AuthCopy> = {
     agreePrefix: "I agree to the",
     termsLink: "Terms of Service",
     privacyLink: "Privacy Policy",
-    billingSuffix: "billing terms."
+    billingSuffix: "billing terms.",
+    forgotPasswordLink: "Forgot password?",
+    invalidCredentials: "That email or password doesn’t match our records.",
+    emailNotConfirmed: "Confirm your email first — check your inbox for the verification link.",
+    signupEmailRegistered: "This email is already registered. Sign in instead.",
+    signupStepProgress: "Step {current} of {total}",
+    signupBack: "Back",
+    signupContinue: "Continue",
+    signupFinish: "Finish setup",
+    signupFreeToJoin: "Free to join. No credit card required.",
+    signupErrorStep1: "Please complete the fields above correctly.",
+    signupErrorUsername: "Please choose an available username.",
+    signupErrorGoal: "Please select your fitness goal.",
+    signupChooseUsernameError: "Choose an available username before continuing.",
+    signupCheckingUsername: "Checking username…",
+    signupUsernameOk: "Available.",
+    signupUsernameTaken: "Username taken. Try another.",
+    signupUsernameInvalid: "3–20 characters. Letters, numbers, and underscore only.",
+    signupUsernameHint: "3–20 characters. Letters, numbers, underscore only.",
+    signupFindYouHint: "This is how others find and message you.",
+    emailInvalid: "Enter a valid email address.",
+    avatarFileLabel: "Upload profile photo",
+    skipForNow: "Skip for now",
+    signupAvatarLater: "You can always add a photo later in your profile."
   },
   tr: {
     loginBadge: "Giriş",
@@ -289,7 +339,30 @@ const authCopy: Record<Locale, AuthCopy> = {
     agreePrefix: "Şunları kabul ediyorum:",
     termsLink: "Hizmet Şartları",
     privacyLink: "Gizlilik Politikası",
-    billingSuffix: "faturalama koşulları."
+    billingSuffix: "faturalama koşulları.",
+    forgotPasswordLink: "Şifreni mi unuttun?",
+    invalidCredentials: "E-posta veya şifre yanlış.",
+    emailNotConfirmed: "Önce e-postanı doğrula — gelen kutundaki bağlantıyı kontrol et.",
+    signupEmailRegistered: "Bu e-posta zaten kayıtlı. Giriş yap.",
+    signupStepProgress: "Adım {current} / {total}",
+    signupBack: "Geri",
+    signupContinue: "Devam",
+    signupFinish: "Tamamla",
+    signupFreeToJoin: "Ücretsiz katıl. Kredi kartı gerekmez.",
+    signupErrorStep1: "Lütfen yukarıdaki alanları doğru doldur.",
+    signupErrorUsername: "Müsait bir kullanıcı adı seç.",
+    signupErrorGoal: "Bir fitness hedefi seç.",
+    signupChooseUsernameError: "Devam etmek için kullanılabilir bir kullanıcı adı seç.",
+    signupCheckingUsername: "Kullanıcı adı kontrol ediliyor…",
+    signupUsernameOk: "Uygun.",
+    signupUsernameTaken: "Bu kullanıcı adı alınmış. Başka dene.",
+    signupUsernameInvalid: "3–20 karakter. Sadece harf, rakam ve alt çizgi.",
+    signupUsernameHint: "3–20 karakter. Harf, rakam, alt çizgi.",
+    signupFindYouHint: "Böyle bulunur ve mesaj atılır.",
+    emailInvalid: "Geçerli bir e-posta gir.",
+    avatarFileLabel: "Profil fotoğrafı yükle",
+    skipForNow: "Şimdilik geç",
+    signupAvatarLater: "Fotoğrafı daha sonra profilinden ekleyebilirsin."
   },
   ar: {
     loginBadge: "دخول",
@@ -334,7 +407,30 @@ const authCopy: Record<Locale, AuthCopy> = {
     agreePrefix: "أوافق على",
     termsLink: "شروط الخدمة",
     privacyLink: "سياسة الخصوصية",
-    billingSuffix: "وشروط الفوترة."
+    billingSuffix: "وشروط الفوترة.",
+    forgotPasswordLink: "نسيت كلمة المرور؟",
+    invalidCredentials: "البريد أو كلمة المرور غير صحيحة.",
+    emailNotConfirmed: "أكّد بريدك أولاً — تحقق من رسالة التحقق.",
+    signupEmailRegistered: "هذا البريد مسجّل مسبقاً. سجّل الدخول.",
+    signupStepProgress: "الخطوة {current} من {total}",
+    signupBack: "رجوع",
+    signupContinue: "متابعة",
+    signupFinish: "إنهاء الإعداد",
+    signupFreeToJoin: "مجاني. لا حاجة لبطاقة.",
+    signupErrorStep1: "أكمل الحقول أعلاه بشكل صحيح.",
+    signupErrorUsername: "اختر اسماً متاحاً.",
+    signupErrorGoal: "اختر هدف لياقتك.",
+    signupChooseUsernameError: "اختر اسماً متاحاً قبل المتابعة.",
+    signupCheckingUsername: "جارٍ التحقق من الاسم…",
+    signupUsernameOk: "متاح.",
+    signupUsernameTaken: "الاسم مستخدم. جرّب آخر.",
+    signupUsernameInvalid: "٣–٢٠ حرفاً. أحرف وأرقام وشرطة سفلية فقط.",
+    signupUsernameHint: "٣–٢٠ حرفاً. أحرف وأرقام وشرطة سفلية.",
+    signupFindYouHint: "بهذا يجدك الآخرون ويراسلونك.",
+    emailInvalid: "أدخل بريداً صالحاً.",
+    avatarFileLabel: "رفع صورة الملف",
+    skipForNow: "تخطّي الآن",
+    signupAvatarLater: "يمكنك إضافة صورة لاحقاً من ملفك الشخصي."
   },
   es: {
     loginBadge: "Entrar",
@@ -379,7 +475,30 @@ const authCopy: Record<Locale, AuthCopy> = {
     agreePrefix: "Acepto los",
     termsLink: "Términos del servicio",
     privacyLink: "Política de privacidad",
-    billingSuffix: "y términos de facturación."
+    billingSuffix: "y términos de facturación.",
+    forgotPasswordLink: "¿Olvidaste tu contraseña?",
+    invalidCredentials: "El correo o la contraseña no coinciden.",
+    emailNotConfirmed: "Confirma tu correo primero — revisa el enlace de verificación.",
+    signupEmailRegistered: "Este correo ya está registrado. Entra.",
+    signupStepProgress: "Paso {current} de {total}",
+    signupBack: "Atrás",
+    signupContinue: "Continuar",
+    signupFinish: "Finalizar",
+    signupFreeToJoin: "Gratis. Sin tarjeta.",
+    signupErrorStep1: "Completa los campos correctamente.",
+    signupErrorUsername: "Elige un nombre de usuario disponible.",
+    signupErrorGoal: "Selecciona tu objetivo.",
+    signupChooseUsernameError: "Elige un nombre disponible antes de continuar.",
+    signupCheckingUsername: "Comprobando nombre…",
+    signupUsernameOk: "Disponible.",
+    signupUsernameTaken: "Nombre ocupado. Prueba otro.",
+    signupUsernameInvalid: "3–20 caracteres. Letras, números y guión bajo.",
+    signupUsernameHint: "3–20 caracteres. Letras, números y guión bajo.",
+    signupFindYouHint: "Así te encontrarán y escribirán.",
+    emailInvalid: "Introduce un correo válido.",
+    avatarFileLabel: "Subir foto de perfil",
+    skipForNow: "Omitir por ahora",
+    signupAvatarLater: "Siempre puedes añadir una foto después en tu perfil."
   },
   fr: {
     loginBadge: "Connexion",
@@ -424,7 +543,30 @@ const authCopy: Record<Locale, AuthCopy> = {
     agreePrefix: "J’accepte les",
     termsLink: "Conditions d’utilisation",
     privacyLink: "Politique de confidentialité",
-    billingSuffix: "et conditions de facturation."
+    billingSuffix: "et conditions de facturation.",
+    forgotPasswordLink: "Mot de passe oublié ?",
+    invalidCredentials: "E-mail ou mot de passe incorrect.",
+    emailNotConfirmed: "Confirmez d’abord votre e-mail — lien de vérification dans la boîte de réception.",
+    signupEmailRegistered: "Cet e-mail est déjà inscrit. Connectez-vous.",
+    signupStepProgress: "Étape {current} sur {total}",
+    signupBack: "Retour",
+    signupContinue: "Continuer",
+    signupFinish: "Terminer",
+    signupFreeToJoin: "Gratuit. Sans carte bancaire.",
+    signupErrorStep1: "Complétez correctement les champs ci-dessus.",
+    signupErrorUsername: "Choisissez un nom d’utilisateur disponible.",
+    signupErrorGoal: "Sélectionnez votre objectif.",
+    signupChooseUsernameError: "Choisissez un nom disponible avant de continuer.",
+    signupCheckingUsername: "Vérification du nom…",
+    signupUsernameOk: "Disponible.",
+    signupUsernameTaken: "Nom pris. Essayez-en un autre.",
+    signupUsernameInvalid: "3–20 caractères. Lettres, chiffres et underscore.",
+    signupUsernameHint: "3–20 caractères. Lettres, chiffres, underscore.",
+    signupFindYouHint: "Les autres vous trouvent et vous écrivent ainsi.",
+    emailInvalid: "Saisissez un e-mail valide.",
+    avatarFileLabel: "Téléverser une photo de profil",
+    skipForNow: "Passer pour l’instant",
+    signupAvatarLater: "Vous pourrez ajouter une photo plus tard dans votre profil."
   }
 };
 
@@ -753,7 +895,8 @@ const footerCopy: Record<Locale, FooterCopy> = {
     contact: "Contact Support",
     becomeCoach: "Become a Coach",
     community: "Community",
-    companyComingSoon: "(Coming Soon)"
+    companyComingSoon: "(Coming Soon)",
+    press: "Press & media"
   },
   tr: {
     description: "Daha akilli antrenman. Daha iyi beslenme. Daha hizli donusum.",
@@ -773,7 +916,8 @@ const footerCopy: Record<Locale, FooterCopy> = {
     contact: "Destek iletisim",
     becomeCoach: "Koc Ol",
     community: "Topluluk",
-    companyComingSoon: "(Cok yakinda)"
+    companyComingSoon: "(Cok yakinda)",
+    press: "Basın"
   },
   ar: {
     description: "تدرّب بذكاء. كُل أفضل. تحوّل أسرع.",
@@ -793,7 +937,8 @@ const footerCopy: Record<Locale, FooterCopy> = {
     contact: "تواصل مع الدعم",
     becomeCoach: "كن مدرباً",
     community: "المجتمع",
-    companyComingSoon: "(قريباً)"
+    companyComingSoon: "(قريباً)",
+    press: "الصحافة والإعلام"
   },
   es: {
     description: "Entrena mas inteligente. Come mejor. Transforma mas rapido.",
@@ -813,7 +958,8 @@ const footerCopy: Record<Locale, FooterCopy> = {
     contact: "Contactar Soporte",
     becomeCoach: "Conviertete en Coach",
     community: "Comunidad",
-    companyComingSoon: "(Proximamente)"
+    companyComingSoon: "(Proximamente)",
+    press: "Prensa"
   },
   fr: {
     description: "Entrainez-vous plus intelligemment. Mangez mieux. Transformez-vous plus vite.",
@@ -833,7 +979,8 @@ const footerCopy: Record<Locale, FooterCopy> = {
     contact: "Contacter le support",
     becomeCoach: "Devenir Coach",
     community: "Communaute",
-    companyComingSoon: "(Bientot)"
+    companyComingSoon: "(Bientot)",
+    press: "Presse"
   }
 };
 
@@ -990,6 +1137,7 @@ const homePageSectionCopy: Record<Locale, HomePageSectionCopy> = {
 
 const navChromeCopy: Record<Locale, NavChromeCopy> = {
   en: {
+    skipToContent: "Skip to main content",
     menu: "Menu",
     navigation: "Menu",
     language: "Language",
@@ -1009,6 +1157,7 @@ const navChromeCopy: Record<Locale, NavChromeCopy> = {
     moreLabel: "More"
   },
   tr: {
+    skipToContent: "Ana içeriğe geç",
     menu: "Menü",
     navigation: "Gezinme",
     language: "Dil",
@@ -1028,6 +1177,7 @@ const navChromeCopy: Record<Locale, NavChromeCopy> = {
     moreLabel: "Daha fazla"
   },
   ar: {
+    skipToContent: "تخطي إلى المحتوى الرئيسي",
     menu: "القائمة",
     navigation: "التنقل",
     language: "اللغة",
@@ -1047,6 +1197,7 @@ const navChromeCopy: Record<Locale, NavChromeCopy> = {
     moreLabel: "المزيد"
   },
   es: {
+    skipToContent: "Ir al contenido principal",
     menu: "Menu",
     navigation: "Navegacion",
     language: "Idioma",
@@ -1066,6 +1217,7 @@ const navChromeCopy: Record<Locale, NavChromeCopy> = {
     moreLabel: "Mas"
   },
   fr: {
+    skipToContent: "Aller au contenu principal",
     menu: "Menu",
     navigation: "Navigation",
     language: "Langue",
