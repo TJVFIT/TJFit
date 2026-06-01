@@ -11,12 +11,14 @@ values
   ('community-blog-images', 'community-blog-images', true, 10485760, array['image/webp','image/jpeg','image/png'])
 on conflict (id) do nothing;
 
--- AVATARS: public read; authenticated users may write only within their own
--- "<uid>/..." folder (matches the signup upload path `${userId}/avatar-*.webp`).
-create policy "avatars public read"
-  on storage.objects for select
-  using (bucket_id = 'avatars');
+-- Both buckets are public=true, so objects are served via the public CDN URL
+-- (getPublicUrl) without any storage.objects SELECT policy. We deliberately do
+-- NOT add a broad SELECT policy: it would let clients LIST every object
+-- (advisor lint 0025 public_bucket_allows_listing) — e.g. enumerate all users'
+-- avatar paths — without enabling anything the app needs.
 
+-- AVATARS: authenticated users may write only within their own "<uid>/..."
+-- folder (matches the signup upload path `${userId}/avatar-*.webp`).
 create policy "avatars owner insert"
   on storage.objects for insert to authenticated
   with check (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
@@ -30,9 +32,7 @@ create policy "avatars owner delete"
   on storage.objects for delete to authenticated
   using (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
 
--- COMMUNITY-BLOG-IMAGES: public read. Writes go through the service-role admin
--- client (api/blog/posts, api/community/blogs), which bypasses RLS, so no
--- anon/authenticated write policy is granted.
-create policy "blog images public read"
-  on storage.objects for select
-  using (bucket_id = 'community-blog-images');
+-- COMMUNITY-BLOG-IMAGES: writes go through the service-role admin client
+-- (api/blog/posts, api/community/blogs), which bypasses RLS, so no
+-- anon/authenticated write policy is granted. Public reads use the public CDN
+-- URL (no SELECT policy needed, per the note above).
