@@ -9,7 +9,40 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import sharp from "sharp";
-import toIco from "to-ico";
+
+/**
+ * Pack PNG buffers into a single multi-resolution .ico. ICO files may embed
+ * PNG data directly (supported by every modern browser), so no external encoder
+ * is needed — this replaces the `to-ico` dependency, which pulled in a chain of
+ * critical-CVE transitive deps (jimp/request/minimist/mkdirp/form-data).
+ */
+function pngsToIco(buffers) {
+  const header = Buffer.alloc(6);
+  header.writeUInt16LE(0, 0); // reserved
+  header.writeUInt16LE(1, 2); // type: 1 = icon
+  header.writeUInt16LE(buffers.length, 4); // image count
+
+  const entries = [];
+  let offset = 6 + buffers.length * 16; // dir entries follow the header
+  for (const png of buffers) {
+    // PNG IHDR: width/height are big-endian uint32 at byte offsets 16 and 20.
+    const width = png.readUInt32BE(16);
+    const height = png.readUInt32BE(20);
+    const entry = Buffer.alloc(16);
+    entry.writeUInt8(width >= 256 ? 0 : width, 0);
+    entry.writeUInt8(height >= 256 ? 0 : height, 1);
+    entry.writeUInt8(0, 2); // palette size
+    entry.writeUInt8(0, 3); // reserved
+    entry.writeUInt16LE(1, 4); // color planes
+    entry.writeUInt16LE(32, 6); // bits per pixel
+    entry.writeUInt32LE(png.length, 8); // image data size
+    entry.writeUInt32LE(offset, 12); // image data offset
+    entries.push(entry);
+    offset += png.length;
+  }
+
+  return Buffer.concat([header, ...entries, ...buffers]);
+}
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
@@ -188,7 +221,7 @@ async function main() {
   const icon512 = await sharp(iconSource).resize(512, 512).png().toBuffer();
   const apple180 = await sharp(iconSource).resize(180, 180).png().toBuffer();
 
-  const ico = await toIco([fav16, fav32, fav48]);
+  const ico = pngsToIco([fav16, fav32, fav48]);
   fs.writeFileSync(faviconIco, ico);
 
   fs.mkdirSync(appDir, { recursive: true });
