@@ -19,6 +19,12 @@ export type TjaiMemoryCopy = {
   empty: string;
   forget: string;
   forgetAria: string;
+  edit: string;
+  save: string;
+  cancel: string;
+  editAria: string;
+  saveError: string;
+  allFilter: string;
   toggleAria: (label: string) => string;
   categories: {
     goal: string;
@@ -46,6 +52,12 @@ const en: TjaiMemoryCopy = {
   empty: "Nothing stored yet. Talk to TJAI and it’ll remember the durable stuff.",
   forget: "forget",
   forgetAria: "Forget this",
+  edit: "edit",
+  save: "save",
+  cancel: "cancel",
+  editAria: "Edit this",
+  saveError: "Couldn’t save. Try again.",
+  allFilter: "All",
   toggleAria: (label) => `Toggle ${label}`,
   categories: {
     goal: "Goals",
@@ -73,6 +85,12 @@ const tr: TjaiMemoryCopy = {
   empty: "Henüz bir şey kayıtlı değil. TJAI ile konuş, kalıcı şeyleri hatırlar.",
   forget: "unut",
   forgetAria: "Bunu unut",
+  edit: "düzenle",
+  save: "kaydet",
+  cancel: "iptal",
+  editAria: "Bunu düzenle",
+  saveError: "Kaydedilemedi. Tekrar dene.",
+  allFilter: "Tümü",
   toggleAria: (label) => `${label} aç/kapat`,
   categories: {
     goal: "Hedefler",
@@ -100,6 +118,12 @@ const ar: TjaiMemoryCopy = {
   empty: "لا شيء محفوظ بعد. تحدّث مع TJAI وسيحفظ النقاط المستمرة.",
   forget: "أنسَ",
   forgetAria: "أنسَ هذه",
+  edit: "تعديل",
+  save: "حفظ",
+  cancel: "إلغاء",
+  editAria: "عدّل هذه",
+  saveError: "تعذّر الحفظ. حاول مجدداً.",
+  allFilter: "الكل",
   toggleAria: (label) => `تبديل ${label}`,
   categories: {
     goal: "الأهداف",
@@ -127,6 +151,12 @@ const es: TjaiMemoryCopy = {
   empty: "Aún no hay nada guardado. Habla con TJAI y recordará lo importante.",
   forget: "olvidar",
   forgetAria: "Olvidar esto",
+  edit: "editar",
+  save: "guardar",
+  cancel: "cancelar",
+  editAria: "Editar esto",
+  saveError: "No se pudo guardar. Inténtalo de nuevo.",
+  allFilter: "Todos",
   toggleAria: (label) => `Alternar ${label}`,
   categories: {
     goal: "Objetivos",
@@ -154,6 +184,12 @@ const fr: TjaiMemoryCopy = {
   empty: "Rien de stocké pour l’instant. Discutez avec TJAI et il mémorisera l’essentiel.",
   forget: "oublier",
   forgetAria: "Oublier ceci",
+  edit: "modifier",
+  save: "enregistrer",
+  cancel: "annuler",
+  editAria: "Modifier ceci",
+  saveError: "Échec de l’enregistrement. Réessayez.",
+  allFilter: "Tous",
   toggleAria: (label) => `Basculer ${label}`,
   categories: {
     goal: "Objectifs",
