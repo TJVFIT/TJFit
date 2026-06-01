@@ -194,12 +194,12 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
     return (
       <div className="flex min-h-[60svh] items-center justify-center">
         <div className="w-full max-w-xl rounded-2xl border border-divider bg-surface p-8 text-center">
-          <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-full border border-purple-300/30 bg-purple-500/10 text-accent shadow-[0_0_24px_rgba(168, 85, 247,0.35)]">
+          <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-full border border-purple-300/30 bg-purple-500/10 text-accent shadow-[0_0_24px_rgba(168,85,247,0.35)]">
             <Sparkles className="h-6 w-6" />
           </div>
           <h3 className="mt-4 text-2xl font-bold text-white">{t.buildTitle}</h3>
           <p className="mt-2 text-sm text-muted">{t.buildSub}</p>
-          <button type="button" onClick={() => setShowBuilder(true)} className="mt-5 tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 py-2 text-sm font-semibold text-[#09090B]">
+          <button type="button" onClick={() => setShowBuilder(true)} className="mt-5 tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 py-2 text-sm font-semibold text-[#09090B]">
             {t.start}
           </button>
           <a href={`/${locale}/membership?tjai_onetime=1`} className="mt-3 inline-flex rounded-full border border-divider px-4 py-2 text-xs text-bright">
@@ -246,7 +246,7 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
                 setPhaseIdx(idx);
                 setDayIdx(0);
               }}
-              className={cn("rounded-full border px-3 py-1.5 text-xs", idx === phaseIdx ? "border-accent bg-[rgba(168, 85, 247,0.08)] text-white" : "border-divider text-muted")}
+              className={cn("rounded-full border px-3 py-1.5 text-xs", idx === phaseIdx ? "border-accent bg-[rgba(168,85,247,0.08)] text-white" : "border-divider text-muted")}
             >
               {week.weekRange}
             </button>
@@ -258,7 +258,7 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
               key={`${day.label}-${idx}`}
               type="button"
               onClick={() => setDayIdx(idx)}
-              className={cn("rounded-full border px-3 py-1.5 text-xs", idx === dayIdx ? "border-accent bg-[rgba(168, 85, 247,0.08)] text-white" : "border-divider text-muted")}
+              className={cn("rounded-full border px-3 py-1.5 text-xs", idx === dayIdx ? "border-accent bg-[rgba(168,85,247,0.08)] text-white" : "border-divider text-muted")}
             >
               {day.label}
             </button>

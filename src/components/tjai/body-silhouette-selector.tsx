@@ -46,15 +46,15 @@ export function BodySilhouetteSelector({
               onClick={() => onSelect({ bodyType: option.bodyType, estimatedBF: option.estimatedBF })}
               className={cn(
                 "w-[130px] rounded-xl border p-3 text-center transition-all sm:w-[150px]",
-                selected ? "border-accent bg-[rgba(168, 85, 247,0.06)]" : "border-divider bg-surface hover:border-[rgba(168, 85, 247,0.4)]"
+                selected ? "border-accent bg-[rgba(168,85,247,0.06)]" : "border-divider bg-surface hover:border-[rgba(168,85,247,0.4)]"
               )}
             >
               <svg
                 viewBox="0 0 100 140"
-                className={cn("mx-auto h-[110px] w-auto sm:h-[140px]", selected && "drop-shadow-[0_0_8px_rgba(168, 85, 247,0.4)]")}
+                className={cn("mx-auto h-[110px] w-auto sm:h-[140px]", selected && "drop-shadow-[0_0_8px_rgba(168,85,247,0.4)]")}
               >
                 <g transform={`translate(50,70) scale(${option.scale}) translate(-50,-70)`}>
-                  <path d={bodyPath} fill={selected ? "rgba(168, 85, 247,0.06)" : "transparent"} stroke={selected ? "#A855F7" : "#1E2028"} strokeWidth="2.2" />
+                  <path d={bodyPath} fill={selected ? "rgba(168,85,247,0.06)" : "transparent"} stroke={selected ? "#A855F7" : "#1E2028"} strokeWidth="2.2" />
                 </g>
               </svg>
               <div className={cn("mt-2 text-xs font-medium", selected ? "text-white" : "text-muted")}>{option.bodyType}</div>

@@ -29,7 +29,7 @@ export default function PressPage({ params }: { params: { locale: string } }) {
             <a
               key={label}
               href={href}
-              className="group/dl inline-flex min-h-[44px] items-center justify-between rounded-xl border border-divider bg-[#0D1015] px-4 py-2 text-sm text-bright transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.04] hover:text-purple-50 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.14)]"
+              className="group/dl inline-flex min-h-[44px] items-center justify-between rounded-xl border border-divider bg-[#0D1015] px-4 py-2 text-sm text-bright transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.04] hover:text-purple-50 hover:shadow-[0_0_18px_rgba(168,85,247,0.14)]"
             >
               <span>{label}</span>
               <span className="text-purple-300 transition-[transform,color] duration-200 motion-safe:group-hover/dl:translate-x-0.5 group-hover/dl:text-purple-100">Download →</span>
@@ -77,7 +77,7 @@ export default function PressPage({ params }: { params: { locale: string } }) {
           ["Bundles", "12"],
           ["Countries reached", "50+"]
         ].map(([label, value]) => (
-          <div key={label} className="group/stat rounded-xl border border-divider bg-surface p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-purple-300/35 hover:shadow-[0_0_22px_rgba(168, 85, 247,0.14)] motion-safe:hover:-translate-y-0.5">
+          <div key={label} className="group/stat rounded-xl border border-divider bg-surface p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-purple-300/35 hover:shadow-[0_0_22px_rgba(168,85,247,0.14)] motion-safe:hover:-translate-y-0.5">
             <p className="text-xs text-dim">{label}</p>
             <p className="mt-1 text-xl font-bold text-white tabular-nums transition-colors duration-200 group-hover/stat:text-purple-100">{value}</p>
           </div>

@@ -20,7 +20,7 @@ export function LogoShowcase({ locale, reduce }: LogoShowcaseProps) {
         <div
           className="absolute inset-0 opacity-40"
           style={{
-            background: "radial-gradient(ellipse 55% 60% at 50% 50%, rgba(168, 85, 247,0.14) 0%, transparent 62%)",
+            background: "radial-gradient(ellipse 55% 60% at 50% 50%, rgba(168,85,247,0.14) 0%, transparent 62%)",
           }}
         />
         {!reduce && <div className="tj-logo-wireframe absolute left-1/2 top-1/2 h-[min(120vw,520px)] w-[min(120vw,520px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-white/[0.07]" />}
@@ -44,7 +44,7 @@ export function LogoShowcase({ locale, reduce }: LogoShowcaseProps) {
               alt="TJFit"
               width={420}
               height={344}
-              className="h-auto w-[min(72vw,320px)] object-contain drop-shadow-[0_0_40px_rgba(168, 85, 247,0.18)] transition-[filter] duration-300 motion-safe:group-hover/logoshowcase:drop-shadow-[0_0_56px_rgba(168, 85, 247,0.32)]"
+              className="h-auto w-[min(72vw,320px)] object-contain drop-shadow-[0_0_40px_rgba(168,85,247,0.18)] transition-[filter] duration-300 motion-safe:group-hover/logoshowcase:drop-shadow-[0_0_56px_rgba(168,85,247,0.32)]"
               sizes="320px"
             />
           </Link>

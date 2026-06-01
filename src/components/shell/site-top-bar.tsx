@@ -249,7 +249,7 @@ export function SiteTopBar({ locale }: { locale: Locale }) {
             aria-label={user ? "Account" : SIGN_IN_LABEL[locale]}
             className={cn(
               "tj-cta-sheen group/account inline-flex min-h-[44px] items-center gap-2 rounded-md border border-white/[0.09] bg-white/[0.02] px-3.5 py-1.5 text-[13px] font-medium text-white transition-[border-color,background-color,color,box-shadow] duration-200",
-              "hover:border-purple-300/40 hover:bg-purple-300/[0.05] hover:text-purple-50 hover:shadow-[0_0_22px_rgba(168, 85, 247,0.16)]"
+              "hover:border-purple-300/40 hover:bg-purple-300/[0.05] hover:text-purple-50 hover:shadow-[0_0_22px_rgba(168,85,247,0.16)]"
             )}
           >
             <UserRound

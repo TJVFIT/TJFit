@@ -17,9 +17,9 @@ export function ObsidianPanel({
 }) {
   const glowStyle: CSSProperties = {};
   if (glow === "accent") {
-    glowStyle.background = `radial-gradient(circle at 85% 0%, rgba(168, 85, 247, 0.14), transparent 55%), ${TJ_PALETTE.obsidianGlass}`;
+    glowStyle.background = `radial-gradient(circle at 85% 0%, rgba(168,85,247,0.14), transparent 55%), ${TJ_PALETTE.obsidianGlass}`;
   } else if (glow === "moonlight") {
-    glowStyle.background = `radial-gradient(circle at 15% 100%, rgba(143, 164, 196, 0.12), transparent 55%), ${TJ_PALETTE.obsidianGlass}`;
+    glowStyle.background = `radial-gradient(circle at 15% 100%, rgba(143,164,196,0.12), transparent 55%), ${TJ_PALETTE.obsidianGlass}`;
   } else {
     glowStyle.background = TJ_PALETTE.obsidianGlass;
   }
@@ -30,7 +30,7 @@ export function ObsidianPanel({
       }
       style={{
         borderColor: TJ_PALETTE.hairline,
-        boxShadow: "0 24px 80px -32px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(246, 243, 237, 0.04)",
+        boxShadow: "0 24px 80px -32px rgba(0,0,0,0.85), inset 0 1px 0 rgba(246,243,237,0.04)",
         ...glowStyle,
         ...style
       }}

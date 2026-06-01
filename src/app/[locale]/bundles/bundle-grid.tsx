@@ -99,7 +99,7 @@ export function BundleGrid({
           <button
             type="button"
             onClick={() => setActive("all")}
-            className="tj-cta-sheen mt-5 inline-flex min-h-[40px] items-center justify-center rounded-full border border-purple-300/45 bg-purple-300/[0.08] px-5 text-xs font-semibold text-purple-50 transition-[border-color,background-color,box-shadow] duration-200 hover:border-purple-300/65 hover:bg-purple-300/[0.14] hover:shadow-[0_0_22px_rgba(168, 85, 247,0.2)]"
+            className="tj-cta-sheen mt-5 inline-flex min-h-[40px] items-center justify-center rounded-full border border-purple-300/45 bg-purple-300/[0.08] px-5 text-xs font-semibold text-purple-50 transition-[border-color,background-color,box-shadow] duration-200 hover:border-purple-300/65 hover:bg-purple-300/[0.14] hover:shadow-[0_0_22px_rgba(168,85,247,0.2)]"
           >
             {copy.filterLabels.all}
           </button>
@@ -141,7 +141,7 @@ function BundleCard({
     >
       <article
         ref={tiltRef}
-        className="bundle-card-tilt group relative flex h-full flex-col overflow-hidden rounded-2xl border border-purple-400/20 bg-[linear-gradient(180deg,rgba(8,8,11,0.92),rgba(8,8,11,0.55))] shadow-[0_0_32px_rgba(168, 85, 247,0.06)] hover:border-purple-300/45 hover:shadow-[0_0_56px_rgba(168, 85, 247,0.18)]"
+        className="bundle-card-tilt group relative flex h-full flex-col overflow-hidden rounded-2xl border border-purple-400/20 bg-[linear-gradient(180deg,rgba(8,8,11,0.92),rgba(8,8,11,0.55))] shadow-[0_0_32px_rgba(168,85,247,0.06)] hover:border-purple-300/45 hover:shadow-[0_0_56px_rgba(168,85,247,0.18)]"
         style={
           {
             "--tilt-x": "0deg",
@@ -163,14 +163,14 @@ function BundleCard({
           className="pointer-events-none absolute inset-0 z-[3] rounded-2xl mix-blend-screen"
           style={{
             background:
-              "radial-gradient(180px circle at var(--glare-x) var(--glare-y), rgba(168, 85, 247,0.22), transparent 70%)",
+              "radial-gradient(180px circle at var(--glare-x) var(--glare-y), rgba(168,85,247,0.22), transparent 70%)",
             opacity: "var(--glare-opacity)",
             transition: "opacity 220ms ease-out"
           }}
         />
 
         <div
-          className="relative aspect-[16/10] w-full overflow-hidden bg-[linear-gradient(135deg,rgba(168, 85, 247,0.18),rgba(124, 58, 237,0.06)_45%,rgba(8,8,11,0.9))]"
+          className="relative aspect-[16/10] w-full overflow-hidden bg-[linear-gradient(135deg,rgba(168,85,247,0.18),rgba(124,58,237,0.06)_45%,rgba(8,8,11,0.9))]"
           aria-hidden
         >
           {/* <img> instead of CSS background so the SVG's embedded
@@ -190,7 +190,7 @@ function BundleCard({
             className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
             style={{
               background:
-                "radial-gradient(60% 70% at 80% 20%, rgba(168, 85, 247,0.18), transparent 70%)"
+                "radial-gradient(60% 70% at 80% 20%, rgba(168,85,247,0.18), transparent 70%)"
             }}
           />
           <div className="absolute inset-x-0 top-0 z-[2] flex items-start justify-between p-4">

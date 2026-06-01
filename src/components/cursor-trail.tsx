@@ -57,7 +57,7 @@ export function CursorTrail() {
         const size = p.size * (1 - progress * 0.5);
         ctx.beginPath();
         ctx.arc(p.x, y, size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(168, 85, 247,${opacity})`;
+        ctx.fillStyle = `rgba(168,85,247,${opacity})`;
         ctx.fill();
       }
       rafRef.current = window.requestAnimationFrame(render);

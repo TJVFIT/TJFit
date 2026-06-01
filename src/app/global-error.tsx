@@ -14,7 +14,7 @@ export default function GlobalError({
       <body className="min-h-screen bg-background font-sans antialiased text-bright">
         <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 text-center">
           <div
-            className="pointer-events-none absolute left-1/2 top-0 h-[24rem] w-[24rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(168, 85, 247,0.06)_0%,transparent_72%)]"
+            className="pointer-events-none absolute left-1/2 top-0 h-[24rem] w-[24rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(168,85,247,0.06)_0%,transparent_72%)]"
             aria-hidden
           />
           <h1 className="text-3xl font-bold text-white">Something went wrong.</h1>

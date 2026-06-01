@@ -33,7 +33,7 @@ export function DetailHero({ image }: { image: string }) {
   return (
     <div
       ref={ref}
-      className="relative mt-6 aspect-[21/9] w-full overflow-hidden rounded-2xl border border-purple-400/20 shadow-[0_0_44px_rgba(168, 85, 247,0.08)]"
+      className="relative mt-6 aspect-[21/9] w-full overflow-hidden rounded-2xl border border-purple-400/20 shadow-[0_0_44px_rgba(168,85,247,0.08)]"
       style={{ "--parallax-y": "0px" } as React.CSSProperties}
       aria-hidden
     >
@@ -51,7 +51,7 @@ export function DetailHero({ image }: { image: string }) {
         className="pointer-events-none absolute inset-0 motion-safe:transition-opacity motion-safe:duration-[1800ms]"
         style={{
           background:
-            "radial-gradient(50% 60% at 82% 18%, rgba(168, 85, 247,0.22), transparent 70%)",
+            "radial-gradient(50% 60% at 82% 18%, rgba(168,85,247,0.22), transparent 70%)",
           opacity: mounted ? 1 : 0.4
         }}
       />
@@ -80,7 +80,7 @@ export function PhaseStrip({
         className="pointer-events-none absolute left-0 right-0 top-1/2 hidden h-px -translate-y-1/2 origin-left rtl:origin-right sm:block"
         style={{
           background:
-            "linear-gradient(90deg, transparent, rgba(168, 85, 247,0.18) 12%, rgba(168, 85, 247,0.32) 50%, rgba(168, 85, 247,0.18) 88%, transparent)",
+            "linear-gradient(90deg, transparent, rgba(168,85,247,0.18) 12%, rgba(168,85,247,0.32) 50%, rgba(168,85,247,0.18) 88%, transparent)",
           transform: reveal.shown ? "scaleX(1)" : "scaleX(0)",
           transition: "transform 1100ms cubic-bezier(0.2, 1, 0.3, 1) 100ms"
         }}
@@ -97,9 +97,9 @@ export function PhaseStrip({
             // LTR, right→left in RTL — without needing the locale here.
             insetInlineStart: reveal.shown ? "calc(100% - 10px)" : "0px",
             background:
-              "radial-gradient(circle, rgba(237, 233, 254,1) 0%, rgba(168, 85, 247,0.9) 50%, transparent 70%)",
+              "radial-gradient(circle, rgba(237,233,254,1) 0%, rgba(168,85,247,0.9) 50%, transparent 70%)",
             boxShadow:
-              "0 0 18px rgba(168, 85, 247,0.9), 0 0 36px rgba(168, 85, 247,0.5)",
+              "0 0 18px rgba(168,85,247,0.9), 0 0 36px rgba(168,85,247,0.5)",
             opacity: reveal.shown ? 0 : 1,
             transition: reveal.shown
               ? "inset-inline-start 1400ms cubic-bezier(0.2, 1, 0.3, 1) 200ms, opacity 700ms ease-out 1500ms"
@@ -137,7 +137,7 @@ function PhaseCard({
     >
       <div
         ref={tiltRef}
-        className="relative h-full overflow-hidden rounded-2xl border border-divider bg-surface/40 p-4 transition-[border-color,box-shadow] duration-300 hover:border-purple-300/40 hover:shadow-[0_0_36px_rgba(168, 85, 247,0.12)]"
+        className="relative h-full overflow-hidden rounded-2xl border border-divider bg-surface/40 p-4 transition-[border-color,box-shadow] duration-300 hover:border-purple-300/40 hover:shadow-[0_0_36px_rgba(168,85,247,0.12)]"
         style={
           {
             "--tilt-x": "0deg",
@@ -158,7 +158,7 @@ function PhaseCard({
           className="pointer-events-none absolute inset-0 rounded-2xl mix-blend-screen"
           style={{
             background:
-              "radial-gradient(150px circle at var(--glare-x) var(--glare-y), rgba(168, 85, 247,0.18), transparent 70%)",
+              "radial-gradient(150px circle at var(--glare-x) var(--glare-y), rgba(168,85,247,0.18), transparent 70%)",
             opacity: "var(--glare-opacity)",
             transition: "opacity 220ms ease-out"
           }}
@@ -204,14 +204,14 @@ export function AtAGlance({
         className="pointer-events-none absolute -inset-4 hidden motion-safe:block"
         style={{
           background:
-            "radial-gradient(60% 60% at 50% 50%, rgba(168, 85, 247,0.10), transparent 70%)",
+            "radial-gradient(60% 60% at 50% 50%, rgba(168,85,247,0.10), transparent 70%)",
           filter: "blur(28px)",
           animation: "tj-chip-pulse 6s ease-in-out infinite"
         }}
       />
       <div
         ref={tiltRef}
-        className="relative rounded-2xl border border-purple-400/20 bg-[linear-gradient(180deg,rgba(168, 85, 247,0.05),rgba(168, 85, 247,0.01))] p-5 transition-[border-color,box-shadow] duration-300 hover:border-purple-300/40 hover:shadow-[0_0_44px_rgba(168, 85, 247,0.16)]"
+        className="relative rounded-2xl border border-purple-400/20 bg-[linear-gradient(180deg,rgba(168,85,247,0.05),rgba(168,85,247,0.01))] p-5 transition-[border-color,box-shadow] duration-300 hover:border-purple-300/40 hover:shadow-[0_0_44px_rgba(168,85,247,0.16)]"
         style={
           {
             "--tilt-x": "0deg",
@@ -232,7 +232,7 @@ export function AtAGlance({
           className="pointer-events-none absolute inset-0 rounded-2xl mix-blend-screen"
           style={{
             background:
-              "radial-gradient(160px circle at var(--glare-x) var(--glare-y), rgba(168, 85, 247,0.18), transparent 70%)",
+              "radial-gradient(160px circle at var(--glare-x) var(--glare-y), rgba(168,85,247,0.18), transparent 70%)",
             opacity: "var(--glare-opacity)",
             transition: "opacity 220ms ease-out"
           }}
@@ -289,7 +289,7 @@ export function DownloadButton({
       ref={ref}
       href={href}
       aria-label={ariaLabel}
-      className={`tj-cta-sheen relative inline-flex min-h-[48px] ${full ? "w-full" : ""} items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-5 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(168, 85, 247,0.22)] hover:brightness-110 hover:shadow-[0_0_36px_rgba(168, 85, 247,0.36)] motion-safe:active:scale-[0.97] ${full ? "sm:w-auto" : ""} ${className}`}
+      className={`tj-cta-sheen relative inline-flex min-h-[48px] ${full ? "w-full" : ""} items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-5 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(168,85,247,0.22)] hover:brightness-110 hover:shadow-[0_0_36px_rgba(168,85,247,0.36)] motion-safe:active:scale-[0.97] ${full ? "sm:w-auto" : ""} ${className}`}
       style={
         {
           "--mag-x": "0px",
@@ -361,8 +361,8 @@ export function ShareButton({
       aria-label={ariaLabel ?? `Share ${title}`}
       className={`tj-cta-sheen inline-flex min-h-[48px] items-center justify-center gap-1.5 rounded-full border px-4 py-2.5 text-sm font-semibold transition-[border-color,color,box-shadow] motion-safe:active:scale-[0.97] ${
         state === "idle"
-          ? "border-white/15 text-bright hover:border-purple-300/35 hover:text-purple-100 hover:shadow-[0_0_24px_rgba(168, 85, 247,0.16)]"
-          : "border-purple-300/45 text-purple-100 shadow-[0_0_24px_rgba(168, 85, 247,0.22)]"
+          ? "border-white/15 text-bright hover:border-purple-300/35 hover:text-purple-100 hover:shadow-[0_0_24px_rgba(168,85,247,0.16)]"
+          : "border-purple-300/45 text-purple-100 shadow-[0_0_24px_rgba(168,85,247,0.22)]"
       }`}
     >
       {state === "idle" ? (
@@ -429,7 +429,7 @@ export function StickyBuyBar({
           href={href}
           aria-label={ariaLabel}
           tabIndex={shown ? 0 : -1}
-          className="tj-cta-sheen inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(168, 85, 247,0.26)] hover:brightness-110 motion-safe:active:scale-[0.97]"
+          className="tj-cta-sheen inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(168,85,247,0.26)] hover:brightness-110 motion-safe:active:scale-[0.97]"
         >
           <FileDown className="h-4 w-4" aria-hidden />
           {label}
@@ -487,7 +487,7 @@ export function DetailSectionNav({
                 <span
                   className={`h-1.5 rounded-full transition-all duration-300 ${
                     isActive
-                      ? "w-7 bg-purple-300 shadow-[0_0_10px_rgba(168, 85, 247,0.55)]"
+                      ? "w-7 bg-purple-300 shadow-[0_0_10px_rgba(168,85,247,0.55)]"
                       : "w-3 bg-white/20 group-hover/nav:bg-purple-300/50"
                   }`}
                 />
@@ -552,7 +552,7 @@ function WeeklyTemplateCard({
     >
       <div
         ref={tiltRef}
-        className="relative h-full overflow-hidden rounded-2xl border border-divider bg-surface/40 p-5 transition-[border-color,box-shadow] duration-300 hover:border-purple-300/40 hover:shadow-[0_0_36px_rgba(168, 85, 247,0.12)]"
+        className="relative h-full overflow-hidden rounded-2xl border border-divider bg-surface/40 p-5 transition-[border-color,box-shadow] duration-300 hover:border-purple-300/40 hover:shadow-[0_0_36px_rgba(168,85,247,0.12)]"
         style={
           {
             "--tilt-x": "0deg",
@@ -634,7 +634,7 @@ function ProgressionCard({
         transform: reveal.shown ? "translateY(0)" : "translateY(14px)",
         transition: `opacity 600ms cubic-bezier(0.2,1,0.3,1) ${delay}, transform 600ms cubic-bezier(0.2,1,0.3,1) ${delay}`
       }}
-      className="relative overflow-hidden rounded-2xl border border-purple-400/15 bg-[linear-gradient(180deg,rgba(168, 85, 247,0.05),rgba(168, 85, 247,0.01))] p-5 transition-[border-color,box-shadow] duration-300 hover:border-purple-300/35 hover:shadow-[0_0_32px_rgba(168, 85, 247,0.10)]"
+      className="relative overflow-hidden rounded-2xl border border-purple-400/15 bg-[linear-gradient(180deg,rgba(168,85,247,0.05),rgba(168,85,247,0.01))] p-5 transition-[border-color,box-shadow] duration-300 hover:border-purple-300/35 hover:shadow-[0_0_32px_rgba(168,85,247,0.10)]"
     >
       <span
         aria-hidden
@@ -782,7 +782,7 @@ function RecipeCard({
         transform: reveal.shown ? "translateY(0)" : "translateY(12px)",
         transition: `opacity 520ms cubic-bezier(0.2,1,0.3,1) ${delay}, transform 520ms cubic-bezier(0.2,1,0.3,1) ${delay}`
       }}
-      className="overflow-hidden rounded-2xl border border-divider bg-surface/40 transition-[border-color,box-shadow] duration-300 hover:border-purple-300/40 hover:shadow-[0_0_36px_rgba(168, 85, 247,0.12)]"
+      className="overflow-hidden rounded-2xl border border-divider bg-surface/40 transition-[border-color,box-shadow] duration-300 hover:border-purple-300/40 hover:shadow-[0_0_36px_rgba(168,85,247,0.12)]"
     >
       <button
         type="button"

@@ -187,7 +187,7 @@ export default async function BundleDetailPage({
             {owns ? (
               <Link
                 href={programHref}
-                className="tj-cta-sheen relative inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-5 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(168, 85, 247,0.22)] hover:brightness-110 hover:shadow-[0_0_36px_rgba(168, 85, 247,0.36)] motion-safe:active:scale-[0.97] sm:flex-none"
+                className="tj-cta-sheen relative inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-5 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(168,85,247,0.22)] hover:brightness-110 hover:shadow-[0_0_36px_rgba(168,85,247,0.36)] motion-safe:active:scale-[0.97] sm:flex-none"
               >
                 Start Program
                 <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
@@ -204,7 +204,7 @@ export default async function BundleDetailPage({
             )}
             <Link
               href={`/${locale}/tjai`}
-              className="group/tjai tj-cta-sheen inline-flex min-h-[48px] flex-1 items-center justify-center gap-1.5 rounded-full border border-purple-300/25 px-4 py-2.5 text-sm font-semibold text-purple-200 transition-[border-color,color,box-shadow] hover:border-purple-300/55 hover:text-purple-100 hover:shadow-[0_0_24px_rgba(168, 85, 247,0.18)] sm:flex-none"
+              className="group/tjai tj-cta-sheen inline-flex min-h-[48px] flex-1 items-center justify-center gap-1.5 rounded-full border border-purple-300/25 px-4 py-2.5 text-sm font-semibold text-purple-200 transition-[border-color,color,box-shadow] hover:border-purple-300/55 hover:text-purple-100 hover:shadow-[0_0_24px_rgba(168,85,247,0.18)] sm:flex-none"
             >
               {d.askTjai}
               <ArrowRight
@@ -308,14 +308,14 @@ export default async function BundleDetailPage({
             ].map((stat) => (
               <div
                 key={stat.label}
-                className="group/stat relative overflow-hidden rounded-xl border border-white/[0.06] bg-black/20 p-4 transition-[border-color,background-color,box-shadow] duration-300 hover:border-purple-300/35 hover:bg-purple-300/[0.04] hover:shadow-[0_0_28px_rgba(168, 85, 247,0.10)]"
+                className="group/stat relative overflow-hidden rounded-xl border border-white/[0.06] bg-black/20 p-4 transition-[border-color,background-color,box-shadow] duration-300 hover:border-purple-300/35 hover:bg-purple-300/[0.04] hover:shadow-[0_0_28px_rgba(168,85,247,0.10)]"
               >
                 <div
                   aria-hidden
                   className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-60 transition-opacity duration-300 group-hover/stat:opacity-100"
                   style={{
                     background:
-                      "linear-gradient(90deg, transparent, rgba(168, 85, 247,0.55) 30%, rgba(237, 233, 254,0.9) 50%, rgba(168, 85, 247,0.55) 70%, transparent)"
+                      "linear-gradient(90deg, transparent, rgba(168,85,247,0.55) 30%, rgba(237,233,254,0.9) 50%, rgba(168,85,247,0.55) 70%, transparent)"
                   }}
                 />
                 <dt className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-purple-200/80">
@@ -376,7 +376,7 @@ export default async function BundleDetailPage({
       ) : null}
 
       <RevealSection delay={160}>
-        <div className="mt-14 flex flex-col items-stretch gap-4 rounded-2xl border border-purple-400/20 bg-[linear-gradient(180deg,rgba(168, 85, 247,0.06),rgba(168, 85, 247,0.01))] p-5 sm:flex-row sm:items-center sm:justify-between sm:p-7">
+        <div className="mt-14 flex flex-col items-stretch gap-4 rounded-2xl border border-purple-400/20 bg-[linear-gradient(180deg,rgba(168,85,247,0.06),rgba(168,85,247,0.01))] p-5 sm:flex-row sm:items-center sm:justify-between sm:p-7">
           <div>
             <p className="text-[11px] font-mono font-semibold uppercase tracking-[0.22em] text-purple-200/80">
               {d.readyEyebrow}
@@ -387,7 +387,7 @@ export default async function BundleDetailPage({
           </div>
           <Link
             href={programHref}
-            className="tj-cta-sheen inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(168, 85, 247,0.22)] hover:brightness-110 sm:w-auto"
+            className="tj-cta-sheen inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(168,85,247,0.22)] hover:brightness-110 sm:w-auto"
           >
             Start Program
             <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
@@ -408,7 +408,7 @@ export default async function BundleDetailPage({
                   <Link
                     key={rb.slug}
                     href={`/${locale}/bundles/${rb.slug}`}
-                    className="group/rel flex flex-col rounded-xl border border-white/[0.07] bg-surface/40 p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-purple-300/35 hover:shadow-[0_0_24px_rgba(168, 85, 247,0.12)] motion-safe:hover:-translate-y-0.5"
+                    className="group/rel flex flex-col rounded-xl border border-white/[0.07] bg-surface/40 p-4 transition-[border-color,box-shadow,transform] duration-200 hover:border-purple-300/35 hover:shadow-[0_0_24px_rgba(168,85,247,0.12)] motion-safe:hover:-translate-y-0.5"
                   >
                     <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-purple-200/70">
                       {rc.goalLabel}

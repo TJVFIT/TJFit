@@ -76,10 +76,10 @@ export function Logo({
   const filterStyle = blendWithBackground
     ? [
         "drop-shadow(0 10px 28px rgba(0,0,0,0.34))",
-        "drop-shadow(0 0 18px rgba(168, 85, 247,0.14))",
+        "drop-shadow(0 0 18px rgba(168,85,247,0.14))",
       ].join(" ")
     : glow
-      ? "drop-shadow(0 0 16px rgba(168, 85, 247,0.22))"
+      ? "drop-shadow(0 0 16px rgba(168,85,247,0.22))"
       : undefined;
 
   const artStyle: CSSProperties = {
@@ -131,7 +131,7 @@ export function Logo({
         <path
           d="M18 24H42M30 24V53M49 20V45C49 52 45 56 38 56C33 56 29 54 27 50"
           fill="none"
-          stroke="rgba(168, 85, 247,0.24)"
+          stroke="rgba(168,85,247,0.24)"
           strokeWidth="12"
           opacity="0.42"
           strokeLinecap="square"
@@ -165,7 +165,7 @@ export function Logo({
       className={cn(
         "group/logo inline-flex cursor-pointer items-center justify-center rounded-lg px-1.5 py-1",
         "transition-[transform,box-shadow] duration-200 ease-out",
-        "motion-safe:hover:scale-[1.03] motion-safe:hover:shadow-[0_0_22px_rgba(168, 85, 247,0.18)]",
+        "motion-safe:hover:scale-[1.03] motion-safe:hover:shadow-[0_0_22px_rgba(168,85,247,0.18)]",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300/55 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         !suppressMinTouchTarget && "min-h-[44px] min-w-[44px]"
       )}

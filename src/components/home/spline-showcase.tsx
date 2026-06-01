@@ -68,7 +68,7 @@ export function SplineShowcase(_props: Props) {
       aria-labelledby="spline-showcase-headline"
     >
       <div
-        className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_60%_50%_at_30%_40%,rgba(167, 139, 250,0.10),transparent_60%)]"
+        className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_60%_50%_at_30%_40%,rgba(167,139,250,0.10),transparent_60%)]"
         aria-hidden
       />
 

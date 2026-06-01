@@ -163,7 +163,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
         style={{
           borderColor: TJ_PALETTE.hairline,
           background:
-            `radial-gradient(ellipse 70% 60% at 70% 20%, rgba(168, 85, 247,0.14), transparent 62%), radial-gradient(ellipse 44% 40% at 12% 100%, rgba(246,243,237,0.05), transparent 68%), ${TJ_PALETTE.obsidian}`
+            `radial-gradient(ellipse 70% 60% at 70% 20%, rgba(168,85,247,0.14), transparent 62%), radial-gradient(ellipse 44% 40% at 12% 100%, rgba(246,243,237,0.05), transparent 68%), ${TJ_PALETTE.obsidian}`
         }}
       >
         <div
@@ -251,9 +251,9 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
           {FEATURE_ROWS.map(({ Icon, title, body }) => (
             <article
               key={title}
-              className="group rounded-2xl border border-divider bg-surface p-5 transition-[border-color,background-color,box-shadow,transform] duration-300 motion-safe:hover:-translate-y-1 hover:border-purple-300/35 hover:bg-surface-2 hover:shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5),0_0_28px_rgba(168, 85, 247,0.12)]"
+              className="group rounded-2xl border border-divider bg-surface p-5 transition-[border-color,background-color,box-shadow,transform] duration-300 motion-safe:hover:-translate-y-1 hover:border-purple-300/35 hover:bg-surface-2 hover:shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5),0_0_28px_rgba(168,85,247,0.12)]"
             >
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-purple-300/20 bg-purple-300/[0.06] text-purple-200 transition-[border-color,background-color,box-shadow] duration-300 group-hover:border-purple-300/45 group-hover:bg-purple-300/[0.12] group-hover:shadow-[0_0_18px_rgba(168, 85, 247,0.22)]">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-purple-300/20 bg-purple-300/[0.06] text-purple-200 transition-[border-color,background-color,box-shadow] duration-300 group-hover:border-purple-300/45 group-hover:bg-purple-300/[0.12] group-hover:shadow-[0_0_18px_rgba(168,85,247,0.22)]">
                 <Icon className="h-5 w-5" strokeWidth={1.6} />
               </span>
               <p className="mt-4 text-lg font-semibold text-white transition-colors duration-200 group-hover:text-purple-50">{title}</p>
@@ -346,8 +346,8 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
               key={title}
               className={`relative rounded-2xl border p-5 transition-[border-color,transform,box-shadow] duration-200 hover:-translate-y-1 ${
                 best
-                  ? "border-purple-400/35 bg-[linear-gradient(180deg,rgba(168, 85, 247,0.06),rgba(168, 85, 247,0.01))] shadow-[0_0_42px_rgba(168, 85, 247,0.12)] hover:shadow-[0_0_56px_rgba(168, 85, 247,0.18)]"
-                  : "border-divider bg-surface hover:border-purple-300/25 hover:shadow-[0_0_28px_rgba(168, 85, 247,0.06)]"
+                  ? "border-purple-400/35 bg-[linear-gradient(180deg,rgba(168,85,247,0.06),rgba(168,85,247,0.01))] shadow-[0_0_42px_rgba(168,85,247,0.12)] hover:shadow-[0_0_56px_rgba(168,85,247,0.18)]"
+                  : "border-divider bg-surface hover:border-purple-300/25 hover:shadow-[0_0_28px_rgba(168,85,247,0.06)]"
               }`}
             >
               {best ? (
@@ -386,7 +386,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
         <h2 className="text-3xl font-extrabold text-white">{copy.finalTitle}</h2>
         <Link
           href={`/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`}
-          className="mt-5 inline-flex min-h-[52px] items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-10 text-base font-bold text-[#09090B]"
+          className="mt-5 inline-flex min-h-[52px] items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-10 text-base font-bold text-[#09090B]"
         >
           {copy.finalCta}
           <ArrowRight className="ms-2 h-4 w-4" aria-hidden />

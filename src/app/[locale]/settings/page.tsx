@@ -21,7 +21,7 @@ export default function SettingsIndexPage({ params }: { params: { locale: string
             <Link
               key={href}
               href={href}
-              className="group/setrow flex items-center justify-between rounded-xl border border-divider bg-surface p-4 text-bright transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.04] hover:text-purple-50 hover:shadow-[0_0_22px_rgba(168, 85, 247,0.14)]"
+              className="group/setrow flex items-center justify-between rounded-xl border border-divider bg-surface p-4 text-bright transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.04] hover:text-purple-50 hover:shadow-[0_0_22px_rgba(168,85,247,0.14)]"
             >
               <span>{label}</span>
               <span className="text-faint transition-[transform,color] duration-200 motion-safe:group-hover/setrow:translate-x-0.5 group-hover/setrow:text-purple-200">→</span>

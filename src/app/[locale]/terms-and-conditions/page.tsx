@@ -16,7 +16,7 @@ export default function TermsPage({ params }: { params: { locale: string } }) {
         <span className="tj-title-shimmer">{copy.title}</span>
       </h1>
       {copy.sections.map((section) => (
-        <section key={section.title} className="group/sect space-y-3 rounded-[24px] border border-white/10 bg-white/5 p-6 transition-[border-color,box-shadow] duration-200 hover:border-purple-300/25 hover:shadow-[0_0_28px_rgba(168, 85, 247,0.1)]">
+        <section key={section.title} className="group/sect space-y-3 rounded-[24px] border border-white/10 bg-white/5 p-6 transition-[border-color,box-shadow] duration-200 hover:border-purple-300/25 hover:shadow-[0_0_28px_rgba(168,85,247,0.1)]">
           <h2 className="text-lg font-semibold text-white transition-colors duration-200 group-hover/sect:text-purple-50">{section.title}</h2>
           {section.body.map((paragraph) => (
             <p key={paragraph} className="text-sm leading-7 text-bright">

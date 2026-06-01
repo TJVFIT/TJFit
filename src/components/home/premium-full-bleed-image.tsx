@@ -15,17 +15,17 @@ const DRIFT: Record<PremiumBleedPreset, string> = {
 
 const FILTER: Record<PremiumBleedPreset, string> = {
   programs: "saturate(1.05) contrast(1.04)",
-  tjai: "saturate(1.08) contrast(1.05) drop-shadow(0 0 50px rgba(168, 85, 247,0.28))",
-  nexus: "saturate(1.06) contrast(1.05) brightness(0.92) drop-shadow(0 0 48px rgba(168, 85, 247,0.16))",
+  tjai: "saturate(1.08) contrast(1.05) drop-shadow(0 0 50px rgba(168,85,247,0.28))",
+  nexus: "saturate(1.06) contrast(1.05) brightness(0.92) drop-shadow(0 0 48px rgba(168,85,247,0.16))",
 };
 
 const PROCEDURAL_SURFACE: Record<PremiumBleedPreset, string> = {
   programs:
-    "radial-gradient(ellipse 44% 34% at 64% 40%, rgba(168, 85, 247,0.13), transparent 62%), linear-gradient(122deg, transparent 0 48%, rgba(246,243,237,0.055) 48.2% 48.8%, transparent 49% 100%), repeating-linear-gradient(116deg, rgba(246,243,237,0.035) 0 1px, transparent 1px 72px)",
+    "radial-gradient(ellipse 44% 34% at 64% 40%, rgba(168,85,247,0.13), transparent 62%), linear-gradient(122deg, transparent 0 48%, rgba(246,243,237,0.055) 48.2% 48.8%, transparent 49% 100%), repeating-linear-gradient(116deg, rgba(246,243,237,0.035) 0 1px, transparent 1px 72px)",
   tjai:
-    "radial-gradient(circle at 58% 45%, rgba(168, 85, 247,0.16), transparent 18%), radial-gradient(circle at 58% 45%, transparent 0 24%, rgba(168, 85, 247,0.11) 24.5% 25%, transparent 25.5% 100%), repeating-conic-gradient(from 8deg at 58% 45%, rgba(196, 181, 253,0.1) 0deg 2deg, transparent 2deg 18deg)",
+    "radial-gradient(circle at 58% 45%, rgba(168,85,247,0.16), transparent 18%), radial-gradient(circle at 58% 45%, transparent 0 24%, rgba(168,85,247,0.11) 24.5% 25%, transparent 25.5% 100%), repeating-conic-gradient(from 8deg at 58% 45%, rgba(196,181,253,0.1) 0deg 2deg, transparent 2deg 18deg)",
   nexus:
-    "radial-gradient(ellipse 42% 38% at 50% 42%, rgba(168, 85, 247,0.14), transparent 62%), linear-gradient(90deg, transparent 0 24%, rgba(246,243,237,0.045) 24.2% 24.4%, transparent 24.6% 100%), repeating-linear-gradient(30deg, rgba(168, 85, 247,0.05) 0 1px, transparent 1px 58px)"
+    "radial-gradient(ellipse 42% 38% at 50% 42%, rgba(168,85,247,0.14), transparent 62%), linear-gradient(90deg, transparent 0 24%, rgba(246,243,237,0.045) 24.2% 24.4%, transparent 24.6% 100%), repeating-linear-gradient(30deg, rgba(168,85,247,0.05) 0 1px, transparent 1px 58px)"
 };
 
 const SURFACE_CLASS: Record<PremiumBleedPreset, string> = {
@@ -86,7 +86,7 @@ export function PremiumFullBleedImage({
             className="absolute inset-0 opacity-70 mix-blend-overlay"
             style={{
               background:
-                "radial-gradient(ellipse 80% 70% at 70% 45%, rgba(168, 85, 247,0.07) 0%, transparent 55%), radial-gradient(ellipse 50% 50% at 20% 30%, rgba(246,243,237,0.035) 0%, transparent 50%)",
+                "radial-gradient(ellipse 80% 70% at 70% 45%, rgba(168,85,247,0.07) 0%, transparent 55%), radial-gradient(ellipse 50% 50% at 20% 30%, rgba(246,243,237,0.035) 0%, transparent 50%)",
             }}
           />
         </>
@@ -100,7 +100,7 @@ export function PremiumFullBleedImage({
           className="absolute inset-0 opacity-80 mix-blend-overlay"
           style={{
             background:
-              "radial-gradient(ellipse 85% 65% at 50% 42%, rgba(168, 85, 247,0.09) 0%, transparent 58%), radial-gradient(ellipse 55% 50% at 15% 70%, rgba(246,243,237,0.035) 0%, transparent 50%), radial-gradient(ellipse 50% 45% at 88% 65%, rgba(168, 85, 247,0.05) 0%, transparent 48%)",
+              "radial-gradient(ellipse 85% 65% at 50% 42%, rgba(168,85,247,0.09) 0%, transparent 58%), radial-gradient(ellipse 55% 50% at 15% 70%, rgba(246,243,237,0.035) 0%, transparent 50%), radial-gradient(ellipse 50% 45% at 88% 65%, rgba(168,85,247,0.05) 0%, transparent 48%)",
           }}
         />
         <div className="absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-[#0A0A0B] via-[#0A0A0B]/40 to-transparent" />

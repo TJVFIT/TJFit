@@ -44,8 +44,8 @@ function HeroMetric({ label, value, hint }: { label: string; value: string; hint
         className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-0 transition-opacity duration-300 group-hover/metric:opacity-100"
         style={{
           background:
-            "linear-gradient(90deg, transparent, rgba(168, 85, 247,0.7) 35%, rgba(237, 233, 254,0.9) 50%, rgba(168, 85, 247,0.7) 65%, transparent)",
-          boxShadow: "0 0 12px rgba(168, 85, 247,0.45)"
+            "linear-gradient(90deg, transparent, rgba(168,85,247,0.7) 35%, rgba(237,233,254,0.9) 50%, rgba(168,85,247,0.7) 65%, transparent)",
+          boxShadow: "0 0 12px rgba(168,85,247,0.45)"
         }}
       />
       <p className="font-display text-2xl font-semibold tracking-tight text-white transition-colors duration-200 group-hover/metric:text-purple-50">
@@ -85,7 +85,7 @@ function HeroCommandPanel({ reduce, copy }: { reduce: boolean; copy: HomeLuxuryC
   const rowIcons = [Dumbbell, Utensils, Gauge] as const;
   return (
     <div className="tj-hero-command-panel relative mx-auto w-full max-w-[23.75rem] overflow-hidden rounded-[22px] border border-white/[0.08] bg-[rgba(13,15,18,0.58)] p-3.5 shadow-[0_30px_90px_rgba(0,0,0,0.34),inset_0_1px_0_rgba(255,255,255,0.07)] backdrop-blur-xl">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_12%,rgba(168, 85, 247,0.12),transparent_34%)]" aria-hidden />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_12%,rgba(168,85,247,0.12),transparent_34%)]" aria-hidden />
       <div className="relative flex items-center justify-between border-b border-white/[0.07] pb-4">
         <div>
           <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-faint">{copy.commandToday}</p>
@@ -179,7 +179,7 @@ export function HeroSection({
       <div
         className="pointer-events-none absolute inset-0 z-0"
         style={{
-          background: `radial-gradient(ellipse 90% 70% at 78% 38%, rgba(168, 85, 247,0.11), transparent 58%), radial-gradient(ellipse 70% 60% at 8% 88%, rgba(246,243,237,0.045), transparent 55%), ${TJ_PALETTE.obsidian}`
+          background: `radial-gradient(ellipse 90% 70% at 78% 38%, rgba(168,85,247,0.11), transparent 58%), radial-gradient(ellipse 70% 60% at 8% 88%, rgba(246,243,237,0.045), transparent 55%), ${TJ_PALETTE.obsidian}`
         }}
         aria-hidden
       />
@@ -189,7 +189,7 @@ export function HeroSection({
       <span className="ghost-text start-[-5%] top-[8%] max-md:start-0 max-md:top-[10%]" aria-hidden style={{ color: "rgba(246,243,237,0.035)" }}>
         TRAINING
       </span>
-      <span className="ghost-text end-[-4%] bottom-[8%] max-md:end-0" aria-hidden style={{ color: "rgba(168, 85, 247,0.045)" }}>
+      <span className="ghost-text end-[-4%] bottom-[8%] max-md:end-0" aria-hidden style={{ color: "rgba(168,85,247,0.045)" }}>
         SYSTEM
       </span>
 
@@ -242,7 +242,7 @@ export function HeroSection({
           <div
             className="my-7 h-px"
             style={{
-              background: "linear-gradient(90deg, rgba(168, 85, 247,0.52), rgba(246,243,237,0.22), transparent)",
+              background: "linear-gradient(90deg, rgba(168,85,247,0.52), rgba(246,243,237,0.22), transparent)",
               width: heroEntered ? "100%" : "0%",
               opacity: heroEntered ? 1 : 0,
               transition: reduce
@@ -265,7 +265,7 @@ export function HeroSection({
               style={{
                 background: `linear-gradient(180deg, ${TJ_PALETTE.accentHi}, ${TJ_PALETTE.accent})`,
                 color: TJ_PALETTE.obsidian,
-                boxShadow: "0 18px 44px rgba(0,0,0,0.3), 0 0 34px rgba(168, 85, 247,0.18)"
+                boxShadow: "0 18px 44px rgba(0,0,0,0.3), 0 0 34px rgba(168,85,247,0.18)"
               }}
             >
               {ctaPrimary}
@@ -315,7 +315,7 @@ function HeroBundlesLink({ href, label }: { href: string; label: string }) {
     <a
       ref={ref}
       href={href}
-      className="group/hero-cta tj-cta-sheen relative inline-flex min-h-[54px] min-w-[44px] flex-1 items-center justify-center gap-2 rounded-[14px] border border-white/[0.12] bg-white/[0.035] px-7 py-3.5 text-[15px] font-semibold text-white hover:border-purple-300/35 hover:bg-purple-300/[0.05] hover:shadow-[0_0_36px_rgba(168, 85, 247,0.18)] sm:flex-none"
+      className="group/hero-cta tj-cta-sheen relative inline-flex min-h-[54px] min-w-[44px] flex-1 items-center justify-center gap-2 rounded-[14px] border border-white/[0.12] bg-white/[0.035] px-7 py-3.5 text-[15px] font-semibold text-white hover:border-purple-300/35 hover:bg-purple-300/[0.05] hover:shadow-[0_0_36px_rgba(168,85,247,0.18)] sm:flex-none"
       style={
         {
           "--mag-x": "0px",

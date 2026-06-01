@@ -214,7 +214,7 @@ export function MessagesInboxHome({ locale }: { locale: Locale }) {
             loading={busy}
             loadingText={s.saving}
             disabled={!usernameInput.trim()}
-            className="tj-cta-sheen min-h-[48px] shrink-0 !rounded-lg !bg-[linear-gradient(135deg,#A855F7,#7C3AED)] !px-5 !text-sm !font-medium !text-[#05080a] !shadow-[0_0_18px_rgba(168, 85, 247,0.22)] hover:!shadow-[0_0_26px_rgba(168, 85, 247,0.35)] hover:!brightness-110"
+            className="tj-cta-sheen min-h-[48px] shrink-0 !rounded-lg !bg-[linear-gradient(135deg,#A855F7,#7C3AED)] !px-5 !text-sm !font-medium !text-[#05080a] !shadow-[0_0_18px_rgba(168,85,247,0.22)] hover:!shadow-[0_0_26px_rgba(168,85,247,0.35)] hover:!brightness-110"
             onClick={() => resolveUsernameAndStart()}
           >
             {s.newChatButton}

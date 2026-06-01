@@ -104,7 +104,7 @@ export default function HomePage({ params }: { params: { locale: string } }) {
             <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
               <a
                 href={`/${locale}`}
-                className="tj-cta-sheen inline-flex min-h-[44px] items-center justify-center rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-6 text-sm font-bold text-[#09090B] shadow-[0_0_20px_rgba(168, 85, 247,0.25)]"
+                className="tj-cta-sheen inline-flex min-h-[44px] items-center justify-center rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-6 text-sm font-bold text-[#09090B] shadow-[0_0_20px_rgba(168,85,247,0.25)]"
               >
                 {FALLBACK_COPY[locale].retry}
               </a>

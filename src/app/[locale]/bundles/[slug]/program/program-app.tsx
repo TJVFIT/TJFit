@@ -349,7 +349,7 @@ export function ProgramApp({
       {/* TJAI floating action */}
       <Link
         href={`/${locale}/tjai?seed=${encodeURIComponent(t.tjaiSeedHelp(card.name, currentWeek))}`}
-        className="fixed bottom-6 end-4 z-30 inline-flex min-h-[48px] items-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_28px_rgba(168, 85, 247,0.32)]"
+        className="fixed bottom-6 end-4 z-30 inline-flex min-h-[48px] items-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_28px_rgba(168,85,247,0.32)]"
         style={{ paddingBottom: "max(0.25rem, env(safe-area-inset-bottom))" }}
       >
         <Sparkles className="h-4 w-4" aria-hidden />
@@ -869,7 +869,7 @@ function ProgressTab({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl border border-purple-400/15 bg-[linear-gradient(180deg,rgba(168, 85, 247,0.05),rgba(168, 85, 247,0.01))] p-5">
+      <div className="rounded-2xl border border-purple-400/15 bg-[linear-gradient(180deg,rgba(168,85,247,0.05),rgba(168,85,247,0.01))] p-5">
         <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-purple-200/80">
           {t.thisWeek}
         </p>
@@ -898,7 +898,7 @@ function ProgressTab({
                   background: isCurrent
                     ? "linear-gradient(180deg,#A855F7,#7C3AED)"
                     : v > 0
-                    ? "rgba(168, 85, 247,0.45)"
+                    ? "rgba(168,85,247,0.45)"
                     : "rgba(255,255,255,0.06)"
                 }}
               />

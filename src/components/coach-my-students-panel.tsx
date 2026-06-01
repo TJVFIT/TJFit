@@ -69,7 +69,7 @@ export function CoachMyStudentsPanel({ locale }: { locale: Locale }) {
           <button
             key={action}
             type="button"
-            className="rounded-full border border-white/10 px-4 py-2 text-sm text-white transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.05] hover:text-purple-50 hover:shadow-[0_0_16px_rgba(168, 85, 247,0.14)]"
+            className="rounded-full border border-white/10 px-4 py-2 text-sm text-white transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.05] hover:text-purple-50 hover:shadow-[0_0_16px_rgba(168,85,247,0.14)]"
           >
             {action}
           </button>

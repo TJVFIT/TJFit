@@ -14,11 +14,11 @@ export default function ComingSoonPage() {
   return (
     <main className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-background px-6 py-16 text-center text-white">
       <div
-        className="pointer-events-none fixed -left-[80px] -top-[120px] h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(168, 85, 247,0.08)_0%,transparent_70%)] blur-[40px] motion-safe:[animation:tj-orb-drift-a_38s_ease-in-out_infinite]"
+        className="pointer-events-none fixed -left-[80px] -top-[120px] h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(168,85,247,0.08)_0%,transparent_70%)] blur-[40px] motion-safe:[animation:tj-orb-drift-a_38s_ease-in-out_infinite]"
         aria-hidden
       />
       <div
-        className="pointer-events-none fixed -bottom-[80px] -right-[80px] h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle,rgba(167, 139, 250,0.06)_0%,transparent_70%)] blur-[40px] motion-safe:[animation:tj-orb-drift-b_46s_ease-in-out_infinite]"
+        className="pointer-events-none fixed -bottom-[80px] -right-[80px] h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle,rgba(167,139,250,0.06)_0%,transparent_70%)] blur-[40px] motion-safe:[animation:tj-orb-drift-b_46s_ease-in-out_infinite]"
         aria-hidden
       />
 

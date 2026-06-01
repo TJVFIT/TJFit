@@ -104,10 +104,10 @@ function ChartTooltip(props: Record<string, unknown>) {
     <div
       style={{
         background: "rgba(13,14,18,0.95)",
-        border: "1px solid rgba(168, 85, 247,0.3)",
+        border: "1px solid rgba(168,85,247,0.3)",
         borderRadius: 12,
         padding: "10px 14px",
-        boxShadow: "0 0 20px rgba(168, 85, 247,0.12), 0 8px 32px rgba(0,0,0,0.5)",
+        boxShadow: "0 0 20px rgba(168,85,247,0.12), 0 8px 32px rgba(0,0,0,0.5)",
         fontSize: 12
       }}
     >

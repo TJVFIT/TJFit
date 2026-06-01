@@ -206,7 +206,7 @@ export function TJAIProgressTab({ locale = "en" }: { locale?: string }) {
 
       {/* Task 6 — Adaptive plan evaluation card */}
       {evalData?.hasEnoughData && evalData?.evaluation?.shouldAdapt && (
-        <article className="rounded-2xl border border-purple-300/35 bg-[linear-gradient(135deg,rgba(168, 85, 247,0.06),rgba(124, 58, 237,0.04))] p-5 shadow-[0_0_28px_-12px_rgba(168, 85, 247,0.32)]">
+        <article className="rounded-2xl border border-purple-300/35 bg-[linear-gradient(135deg,rgba(168,85,247,0.06),rgba(124,58,237,0.04))] p-5 shadow-[0_0_28px_-12px_rgba(168,85,247,0.32)]">
           <div className="flex items-start gap-3">
             <span className="mt-0.5 text-lg"></span>
             <div className="min-w-0 flex-1">
@@ -235,7 +235,7 @@ export function TJAIProgressTab({ locale = "en" }: { locale?: string }) {
                 <button
                   type="button"
                   onClick={() => router.push(`/${locale}/ai?regen=1`)}
-                  className="tj-cta-sheen mt-4 inline-flex min-h-[44px] items-center justify-center rounded-full border border-purple-300/45 bg-purple-300/[0.12] px-5 py-2 text-sm font-semibold text-purple-50 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/65 hover:bg-purple-300/[0.18] hover:shadow-[0_0_22px_rgba(168, 85, 247,0.22)]"
+                  className="tj-cta-sheen mt-4 inline-flex min-h-[44px] items-center justify-center rounded-full border border-purple-300/45 bg-purple-300/[0.12] px-5 py-2 text-sm font-semibold text-purple-50 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/65 hover:bg-purple-300/[0.18] hover:shadow-[0_0_22px_rgba(168,85,247,0.22)]"
                 >
                   {t.updatePlan}
                 </button>

@@ -471,7 +471,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
       <header className="flex shrink-0 items-center gap-2 border-b border-divider bg-surface px-3 py-3 sm:gap-3 sm:px-4">
         <Link
           href={`/${locale}/messages`}
-          className="group/back flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.16)] lg:hidden"
+          className="group/back flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_18px_rgba(168,85,247,0.16)] lg:hidden"
           aria-label={s.threadBack}
         >
           <span className="text-lg leading-none">‹</span>
@@ -529,7 +529,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
             <p className="text-sm text-red-400">{fetchError}</p>
             <button
               type="button"
-              className="tj-cta-sheen mt-4 rounded-full border border-white/15 px-4 py-2 text-sm text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.14)]"
+              className="tj-cta-sheen mt-4 rounded-full border border-white/15 px-4 py-2 text-sm text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_18px_rgba(168,85,247,0.14)]"
               onClick={() => void loadMessages()}
             >
               {t.threadRetry}
@@ -550,7 +550,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
                   type="button"
                   onClick={() => void loadOlder()}
                   disabled={loadingOlder}
-                  className="rounded-full border border-white/15 px-3 py-1 text-xs text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_14px_rgba(168, 85, 247,0.12)] disabled:opacity-60"
+                  className="rounded-full border border-white/15 px-3 py-1 text-xs text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_14px_rgba(168,85,247,0.12)] disabled:opacity-60"
                 >
                   {loadingOlder ? "Loading..." : "Load older messages"}
                 </button>
@@ -578,7 +578,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
                       className={clsx(
                         "w-full px-4 py-3 text-[15px] leading-snug text-white transition-[box-shadow] duration-200",
                         mine
-                          ? "rounded-2xl rounded-br rounded-tl-2xl border border-[rgba(168, 85, 247,0.2)] bg-[rgba(168, 85, 247,0.12)] hover:shadow-[0_0_20px_rgba(168, 85, 247,0.1)]"
+                          ? "rounded-2xl rounded-br rounded-tl-2xl border border-[rgba(168,85,247,0.2)] bg-[rgba(168,85,247,0.12)] hover:shadow-[0_0_20px_rgba(168,85,247,0.1)]"
                           : "rounded-2xl rounded-bl rounded-tr-2xl border border-divider bg-surface transition-[border-color] duration-150 hover:border-purple-300/20"
                       )}
                     >
@@ -636,7 +636,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
             size="sm"
             loading={sending}
             disabled={!showComposer || !messageText.trim()}
-            className="tj-cta-sheen flex h-12 w-12 shrink-0 touch-manipulation !min-h-[48px] !min-w-[48px] !rounded-xl !bg-[linear-gradient(135deg,#A855F7,#7C3AED)] !px-0 !text-[#05080a] !shadow-[0_0_18px_rgba(168, 85, 247,0.22)] hover:!scale-100 hover:!shadow-[0_0_26px_rgba(168, 85, 247,0.35)] hover:!brightness-110 hover:!opacity-100 sm:h-11 sm:w-11 sm:!min-h-[44px] sm:!min-w-[44px]"
+            className="tj-cta-sheen flex h-12 w-12 shrink-0 touch-manipulation !min-h-[48px] !min-w-[48px] !rounded-xl !bg-[linear-gradient(135deg,#A855F7,#7C3AED)] !px-0 !text-[#05080a] !shadow-[0_0_18px_rgba(168,85,247,0.22)] hover:!scale-100 hover:!shadow-[0_0_26px_rgba(168,85,247,0.35)] hover:!brightness-110 hover:!opacity-100 sm:h-11 sm:w-11 sm:!min-h-[44px] sm:!min-w-[44px]"
             aria-label={t.send}
             onClick={() => void sendText()}
           >

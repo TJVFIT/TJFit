@@ -51,7 +51,7 @@ export default function CalculatorPage({ params }: { params: { locale: string } 
       </h1>
       <p className="relative mt-3 text-sm text-muted">Calculate daily calories, macros, and hydration targets instantly.</p>
 
-      <section className="relative mt-8 rounded-2xl border border-divider bg-surface p-6 transition-[border-color,box-shadow] duration-300 hover:border-purple-300/25 hover:shadow-[0_0_36px_rgba(168, 85, 247,0.10)]">
+      <section className="relative mt-8 rounded-2xl border border-divider bg-surface p-6 transition-[border-color,box-shadow] duration-300 hover:border-purple-300/25 hover:shadow-[0_0_36px_rgba(168,85,247,0.10)]">
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="text-sm text-muted">
             Age
@@ -97,20 +97,20 @@ export default function CalculatorPage({ params }: { params: { locale: string } 
       </section>
 
       {submitted ? (
-        <section ref={resultRef} className="mt-8 rounded-2xl border border-accent/30 bg-surface p-6 shadow-[0_0_32px_rgba(168, 85, 247,0.08)]">
+        <section ref={resultRef} className="mt-8 rounded-2xl border border-accent/30 bg-surface p-6 shadow-[0_0_32px_rgba(168,85,247,0.08)]">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">✓ Your Results</p>
           <p className="mt-2 text-5xl font-extrabold text-accent">{result.calories} <span className="text-2xl font-semibold text-muted">kcal/day</span></p>
           <p className="text-sm text-muted">Your personalized daily calorie target</p>
           <div className="mt-4 grid gap-2 sm:grid-cols-3">
-            <div className="group/macro rounded-lg border border-divider bg-surface-2 p-3 text-center transition-[border-color,box-shadow] duration-200 hover:border-purple-300/35 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.14)]">
+            <div className="group/macro rounded-lg border border-divider bg-surface-2 p-3 text-center transition-[border-color,box-shadow] duration-200 hover:border-purple-300/35 hover:shadow-[0_0_18px_rgba(168,85,247,0.14)]">
               <p className="text-xs text-faint">Protein</p>
               <p className="mt-1 text-lg font-bold text-white transition-colors duration-200 group-hover/macro:text-purple-50">{result.protein}g</p>
             </div>
-            <div className="group/macro rounded-lg border border-divider bg-surface-2 p-3 text-center transition-[border-color,box-shadow] duration-200 hover:border-purple-300/35 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.14)]">
+            <div className="group/macro rounded-lg border border-divider bg-surface-2 p-3 text-center transition-[border-color,box-shadow] duration-200 hover:border-purple-300/35 hover:shadow-[0_0_18px_rgba(168,85,247,0.14)]">
               <p className="text-xs text-faint">Carbs</p>
               <p className="mt-1 text-lg font-bold text-white transition-colors duration-200 group-hover/macro:text-purple-50">{result.carbs}g</p>
             </div>
-            <div className="group/macro rounded-lg border border-divider bg-surface-2 p-3 text-center transition-[border-color,box-shadow] duration-200 hover:border-purple-300/35 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.14)]">
+            <div className="group/macro rounded-lg border border-divider bg-surface-2 p-3 text-center transition-[border-color,box-shadow] duration-200 hover:border-purple-300/35 hover:shadow-[0_0_18px_rgba(168,85,247,0.14)]">
               <p className="text-xs text-faint">Fat</p>
               <p className="mt-1 text-lg font-bold text-white transition-colors duration-200 group-hover/macro:text-purple-50">{result.fat}g</p>
             </div>

@@ -68,8 +68,8 @@ export function SpeakerButton({ text, autoplay = false }: { text: string; autopl
       aria-label={state === "playing" ? "Stop audio" : "Play audio"}
       className={`inline-flex h-6 w-6 items-center justify-center rounded-full border transition-[border-color,background-color,color,box-shadow] duration-200 ${
         state === "playing"
-          ? "border-purple-300/55 bg-purple-300/[0.12] text-purple-100 shadow-[0_0_14px_rgba(168, 85, 247,0.32)]"
-          : "border-white/10 bg-white/5 text-white/60 hover:border-purple-300/40 hover:bg-purple-300/[0.06] hover:text-purple-100 hover:shadow-[0_0_12px_rgba(168, 85, 247,0.18)]"
+          ? "border-purple-300/55 bg-purple-300/[0.12] text-purple-100 shadow-[0_0_14px_rgba(168,85,247,0.32)]"
+          : "border-white/10 bg-white/5 text-white/60 hover:border-purple-300/40 hover:bg-purple-300/[0.06] hover:text-purple-100 hover:shadow-[0_0_12px_rgba(168,85,247,0.18)]"
       }`}
     >
       {state === "loading" ? (

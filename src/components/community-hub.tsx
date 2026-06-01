@@ -172,7 +172,7 @@ function ChallengesLivePanel({
             <button
               type="button"
               onClick={() => onJoin(item.id)}
-              className="tj-cta-sheen rounded-full border border-purple-400/35 bg-purple-500/10 px-4 py-2 text-xs font-semibold text-purple-100 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/55 hover:bg-purple-500/15 hover:text-purple-50 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.18)]"
+              className="tj-cta-sheen rounded-full border border-purple-400/35 bg-purple-500/10 px-4 py-2 text-xs font-semibold text-purple-100 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/55 hover:bg-purple-500/15 hover:text-purple-50 hover:shadow-[0_0_18px_rgba(168,85,247,0.18)]"
             >
               {item.joined ? "Joined" : "Join Challenge"}
             </button>
@@ -240,7 +240,7 @@ function GroupsPanel({
           <button
             type="button"
             onClick={() => onToggle(group.id, group.joined ? "leave" : "join")}
-            className="mt-4 tj-cta-sheen rounded-full border border-purple-400/35 bg-purple-500/10 px-4 py-2 text-xs font-semibold text-purple-100 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/55 hover:bg-purple-500/15 hover:text-purple-50 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.18)]"
+            className="mt-4 tj-cta-sheen rounded-full border border-purple-400/35 bg-purple-500/10 px-4 py-2 text-xs font-semibold text-purple-100 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/55 hover:bg-purple-500/15 hover:text-purple-50 hover:shadow-[0_0_18px_rgba(168,85,247,0.18)]"
           >
             {group.joined ? "Leave Group" : "Join Group"}
           </button>
@@ -644,7 +644,7 @@ export function CommunityHub({
                 }}
                 className={`rounded-full border px-4 py-2 text-sm font-medium transition-[border-color,background-color,color,box-shadow] duration-200 ${
                   activeTab === tab.key
-                    ? "tj-chip-active border-purple-300/45 bg-purple-500/12 text-purple-50 shadow-[0_0_24px_-10px_rgba(168, 85, 247,0.28)]"
+                    ? "tj-chip-active border-purple-300/45 bg-purple-500/12 text-purple-50 shadow-[0_0_24px_-10px_rgba(168,85,247,0.28)]"
                     : "border-white/10 bg-white/[0.04] text-muted hover:border-purple-300/35 hover:bg-purple-300/[0.04] hover:text-purple-100"
                 }`}
               >
@@ -775,7 +775,7 @@ export function CommunityHub({
                           type="button"
                           onClick={() => translateBlog(post.id)}
                           disabled={translateLoadingId === post.id}
-                          className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-bright transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.05] hover:text-purple-100 hover:shadow-[0_0_14px_rgba(168, 85, 247,0.12)] disabled:opacity-60"
+                          className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-bright transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.05] hover:text-purple-100 hover:shadow-[0_0_14px_rgba(168,85,247,0.12)] disabled:opacity-60"
                         >
                           {translateLoadingId === post.id ? copy.translating : copy.translate}
                         </button>
@@ -789,7 +789,7 @@ export function CommunityHub({
                                 return next;
                               })
                             }
-                            className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-bright transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.05] hover:text-purple-100 hover:shadow-[0_0_14px_rgba(168, 85, 247,0.12)]"
+                            className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-bright transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.05] hover:text-purple-100 hover:shadow-[0_0_14px_rgba(168,85,247,0.12)]"
                           >
                             {copy.showOriginal}
                           </button>

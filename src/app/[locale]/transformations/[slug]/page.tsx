@@ -31,7 +31,7 @@ export default function TransformationDetailPage({
         <p className="mt-4 max-w-3xl text-sm leading-7 text-muted">{transformation.story}</p>
 
         <div className="mt-8 grid gap-5 md:grid-cols-3">
-          <div className="rounded-[28px] border border-dashed border-purple-300/20 bg-[linear-gradient(180deg,rgba(168, 85, 247,0.04),rgba(0,0,0,0.3))] p-8 text-center text-xs uppercase tracking-[0.24em] text-purple-200/70 shadow-[inset_0_0_28px_-12px_rgba(168, 85, 247,0.2)]">
+          <div className="rounded-[28px] border border-dashed border-purple-300/20 bg-[linear-gradient(180deg,rgba(168,85,247,0.04),rgba(0,0,0,0.3))] p-8 text-center text-xs uppercase tracking-[0.24em] text-purple-200/70 shadow-[inset_0_0_28px_-12px_rgba(168,85,247,0.2)]">
             Before photo
           </div>
           <div className="rounded-[28px] border border-white/10 bg-white/5 p-6">
@@ -42,7 +42,7 @@ export default function TransformationDetailPage({
             <p className="mt-4 text-sm text-muted">Strength stat</p>
             <p className="mt-2 text-xl text-white">{transformation.strengthStat}</p>
           </div>
-          <div className="rounded-[28px] border border-dashed border-purple-300/20 bg-[linear-gradient(180deg,rgba(168, 85, 247,0.04),rgba(0,0,0,0.3))] p-8 text-center text-xs uppercase tracking-[0.24em] text-purple-200/70 shadow-[inset_0_0_28px_-12px_rgba(168, 85, 247,0.2)]">
+          <div className="rounded-[28px] border border-dashed border-purple-300/20 bg-[linear-gradient(180deg,rgba(168,85,247,0.04),rgba(0,0,0,0.3))] p-8 text-center text-xs uppercase tracking-[0.24em] text-purple-200/70 shadow-[inset_0_0_28px_-12px_rgba(168,85,247,0.2)]">
             After photo
           </div>
         </div>

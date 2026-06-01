@@ -30,7 +30,7 @@ export function CoachReviewRequest({ locale, planId }: { locale: Locale; planId?
   };
 
   return (
-    <section className="rounded-2xl border border-[rgba(168, 85, 247,0.1)] bg-[linear-gradient(135deg,rgba(168, 85, 247,0.04),rgba(124, 58, 237,0.04))] p-8">
+    <section className="rounded-2xl border border-[rgba(168,85,247,0.1)] bg-[linear-gradient(135deg,rgba(168,85,247,0.04),rgba(124,58,237,0.04))] p-8">
       <h3 className="text-xl font-semibold text-white">{copy.title}</h3>
       <p className="mt-2 text-sm text-muted">{copy.description}</p>
       <ul className="mt-4 space-y-1 text-sm text-bright">

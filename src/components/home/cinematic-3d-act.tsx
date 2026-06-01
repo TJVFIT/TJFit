@@ -9,7 +9,7 @@ const Cinematic3DSceneImpl = dynamic(
     ssr: false,
     loading: () => (
       <div
-        className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(168, 85, 247,0.18),transparent_60%)]"
+        className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(168,85,247,0.18),transparent_60%)]"
         aria-hidden
       />
     )
@@ -55,7 +55,7 @@ export function Cinematic3DAct() {
       aria-labelledby="cinematic-3d-headline"
     >
       <div
-        className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_70%_55%_at_70%_40%,rgba(168, 85, 247,0.08),transparent_65%)]"
+        className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_70%_55%_at_70%_40%,rgba(168,85,247,0.08),transparent_65%)]"
         aria-hidden
       />
       <div className="absolute inset-0 z-[1]" aria-hidden>

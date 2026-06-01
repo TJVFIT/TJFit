@@ -31,7 +31,7 @@ export function AmbientOrbs({ variant = "default" }: { variant?: "default" | "co
           width: `${a.w}px`,
           height: `${a.h}px`,
           borderRadius: "50%",
-          background: `radial-gradient(circle, rgba(168, 85, 247,${a.alphaA}) 0%, rgba(168, 85, 247,${a.alphaB}) 40%, transparent 70%)`,
+          background: `radial-gradient(circle, rgba(168,85,247,${a.alphaA}) 0%, rgba(168,85,247,${a.alphaB}) 40%, transparent 70%)`,
           filter: `blur(${a.blur}px)`,
           animation: "tj-orb-drift-a 38s ease-in-out infinite"
         }}
@@ -44,7 +44,7 @@ export function AmbientOrbs({ variant = "default" }: { variant?: "default" | "co
           width: `${b.w}px`,
           height: `${b.h}px`,
           borderRadius: "50%",
-          background: `radial-gradient(circle, rgba(124, 58, 237,${b.alphaA}) 0%, rgba(124, 58, 237,${b.alphaB}) 45%, transparent 70%)`,
+          background: `radial-gradient(circle, rgba(124,58,237,${b.alphaA}) 0%, rgba(124,58,237,${b.alphaB}) 45%, transparent 70%)`,
           filter: `blur(${b.blur}px)`,
           animation: "tj-orb-drift-b 46s ease-in-out infinite"
         }}

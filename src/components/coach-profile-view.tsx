@@ -212,7 +212,7 @@ export function CoachProfileView({ locale, slug }: { locale: string; slug: strin
           [c.statRating, data.stats.average_rating],
           [c.statBlogPosts, data.stats.blog_post_count]
         ].map(([label, value]) => (
-          <article key={String(label)} className="group/stat rounded-lg border border-divider bg-surface-2 p-3 transition-[border-color,box-shadow] duration-200 hover:border-purple-300/30 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.12)]">
+          <article key={String(label)} className="group/stat rounded-lg border border-divider bg-surface-2 p-3 transition-[border-color,box-shadow] duration-200 hover:border-purple-300/30 hover:shadow-[0_0_18px_rgba(168,85,247,0.12)]">
             <p className="text-xl font-bold text-white transition-colors duration-200 group-hover/stat:text-purple-50">{value}</p>
             <p className="text-[11px] uppercase tracking-[0.14em] text-faint transition-colors duration-200 group-hover/stat:text-purple-200/80">{label}</p>
           </article>
@@ -235,7 +235,7 @@ export function CoachProfileView({ locale, slug }: { locale: string; slug: strin
           {(coach.certifications ?? []).map((cert) => (
             <span
               key={cert}
-              className="group/cert inline-flex items-center gap-1.5 rounded-full border border-purple-300/20 bg-purple-300/[0.04] px-3 py-1.5 text-xs text-bright transition-[border-color,background-color,box-shadow,color] duration-200 hover:border-purple-300/45 hover:bg-purple-300/[0.08] hover:text-purple-50 hover:shadow-[0_0_16px_rgba(168, 85, 247,0.16)]"
+              className="group/cert inline-flex items-center gap-1.5 rounded-full border border-purple-300/20 bg-purple-300/[0.04] px-3 py-1.5 text-xs text-bright transition-[border-color,background-color,box-shadow,color] duration-200 hover:border-purple-300/45 hover:bg-purple-300/[0.08] hover:text-purple-50 hover:shadow-[0_0_16px_rgba(168,85,247,0.16)]"
             >
               <Check className="h-3.5 w-3.5 text-green-400 transition-transform duration-200 motion-safe:group-hover/cert:scale-110" />
               {cert}
@@ -249,7 +249,7 @@ export function CoachProfileView({ locale, slug }: { locale: string; slug: strin
         <p className="text-xs uppercase tracking-[0.14em] text-faint">{c.featuredEyebrow}</p>
         <h3 className="mt-2 text-lg font-semibold text-white">{coach.featured_program_id ? `${c.programLabel} ${coach.featured_program_id}` : c.noFeatured}</h3>
         {coach.featured_program_id ? (
-          <Link href={`/${locale}/bundles`} className="mt-3 inline-flex tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2 text-sm font-semibold text-[#09090B]">
+          <Link href={`/${locale}/bundles`} className="mt-3 inline-flex tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2 text-sm font-semibold text-[#09090B]">
             {c.viewBundles}
           </Link>
         ) : null}

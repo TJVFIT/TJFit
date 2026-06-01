@@ -41,7 +41,7 @@ export function UpgradePrompt() {
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm">
-      <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-purple-300/25 bg-gradient-to-br from-[#0D0F12] via-[#0D0F12] to-[rgba(168, 85, 247,0.08)] p-6 shadow-[0_30px_80px_rgba(168, 85, 247,0.2)]">
+      <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-purple-300/25 bg-gradient-to-br from-[#0D0F12] via-[#0D0F12] to-[rgba(168,85,247,0.08)] p-6 shadow-[0_30px_80px_rgba(168,85,247,0.2)]">
         <div
           className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-purple-300/20 blur-3xl"
           aria-hidden
@@ -87,7 +87,7 @@ export function UpgradePrompt() {
             <button
               type="button"
               onClick={() => setPayload(null)}
-              className="rounded-md border border-white/15 px-4 py-2.5 text-sm text-white/70 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.05] hover:text-purple-100 hover:shadow-[0_0_14px_rgba(168, 85, 247,0.12)]"
+              className="rounded-md border border-white/15 px-4 py-2.5 text-sm text-white/70 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.05] hover:text-purple-100 hover:shadow-[0_0_14px_rgba(168,85,247,0.12)]"
             >
               Later
             </button>

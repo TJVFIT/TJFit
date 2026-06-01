@@ -116,7 +116,7 @@ function StatCard({ value, label, delay, active }: { value: number; label: strin
   const count = useCountUp(value, 1200, active);
   return (
     <div
-      className="group/stat rounded-[14px] border border-divider bg-surface p-6 text-center transition-[border-color,box-shadow,opacity,transform] duration-500 ease-out [@media(hover:hover)]:hover:border-purple-300/35 [@media(hover:hover)]:hover:shadow-[0_12px_40px_rgba(0,0,0,0.35),0_0_28px_rgba(168, 85, 247,0.14)] [@media(hover:hover)]:motion-safe:hover:-translate-y-0.5"
+      className="group/stat rounded-[14px] border border-divider bg-surface p-6 text-center transition-[border-color,box-shadow,opacity,transform] duration-500 ease-out [@media(hover:hover)]:hover:border-purple-300/35 [@media(hover:hover)]:hover:shadow-[0_12px_40px_rgba(0,0,0,0.35),0_0_28px_rgba(168,85,247,0.14)] [@media(hover:hover)]:motion-safe:hover:-translate-y-0.5"
       style={{
         transitionDelay: `${delay}ms`,
         opacity: active ? 1 : 0,
@@ -209,7 +209,7 @@ function QuickLogWidget({ locale }: { locale: Locale }) {
                   type="button"
                   onClick={() => void submit()}
                   disabled={saving || !exercise.trim()}
-                  className="tj-cta-sheen inline-flex min-h-[44px] items-center justify-center rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-5 text-sm font-bold text-black shadow-[0_0_18px_rgba(168, 85, 247,0.22)] transition-[transform,box-shadow,opacity] duration-200 hover:scale-[1.02] hover:shadow-[0_0_28px_rgba(168, 85, 247,0.35)] disabled:opacity-50"
+                  className="tj-cta-sheen inline-flex min-h-[44px] items-center justify-center rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-5 text-sm font-bold text-black shadow-[0_0_18px_rgba(168,85,247,0.22)] transition-[transform,box-shadow,opacity] duration-200 hover:scale-[1.02] hover:shadow-[0_0_28px_rgba(168,85,247,0.35)] disabled:opacity-50"
                 >
                   {saving ? "Logging…" : "Log workout"}
                 </button>
@@ -308,7 +308,7 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
         <p className="text-sm text-red-400">{loadError ?? t.loadError}</p>
         <button
           type="button"
-          className="tj-cta-sheen mt-4 rounded-full border border-white/15 px-5 py-2 text-sm text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.14)]"
+          className="tj-cta-sheen mt-4 rounded-full border border-white/15 px-5 py-2 text-sm text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_18px_rgba(168,85,247,0.14)]"
           onClick={() => void load()}
         >
           {t.retry}
@@ -351,7 +351,7 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
           <div className="flex flex-col items-end gap-2">
             {/* F3 — Streak counter */}
             {summary.currentStreak > 0 && (
-              <div className="flex items-center gap-2 rounded-full border border-purple-300/35 bg-purple-300/[0.1] px-4 py-1.5 shadow-[0_0_18px_rgba(168, 85, 247,0.16)]">
+              <div className="flex items-center gap-2 rounded-full border border-purple-300/35 bg-purple-300/[0.1] px-4 py-1.5 shadow-[0_0_18px_rgba(168,85,247,0.16)]">
                 <Flame className="flame-flicker h-4 w-4 text-purple-200" />
                 <span className="text-sm font-bold text-purple-100">{summary.currentStreak} day streak</span>
               </div>
@@ -360,7 +360,7 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
           </div>
         </div>
         <div
-          className="mt-8 h-px w-full bg-[linear-gradient(90deg,transparent,rgba(168, 85, 247,0.4),transparent)]"
+          className="mt-8 h-px w-full bg-[linear-gradient(90deg,transparent,rgba(168,85,247,0.4),transparent)]"
           aria-hidden
         />
       </header>
@@ -384,7 +384,7 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
           <h2 className="text-[13px] font-medium uppercase tracking-widest text-dim">{t.activeProgram}</h2>
           <Link
             href={`/${locale}/bundles`}
-            className="group/ap flex flex-col gap-6 rounded-2xl border border-divider bg-surface p-8 transition-[border-color,box-shadow,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-purple-300/35 hover:shadow-[0_20px_60px_rgba(0,0,0,0.45),0_0_36px_rgba(168, 85, 247,0.12)] motion-reduce:hover:transform-none [@media(hover:hover)]:hover:-translate-y-1"
+            className="group/ap flex flex-col gap-6 rounded-2xl border border-divider bg-surface p-8 transition-[border-color,box-shadow,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-purple-300/35 hover:shadow-[0_20px_60px_rgba(0,0,0,0.45),0_0_36px_rgba(168,85,247,0.12)] motion-reduce:hover:transform-none [@media(hover:hover)]:hover:-translate-y-1"
           >
             <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0 flex-1">
@@ -396,7 +396,7 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
                   />
                 </div>
               </div>
-              <span className="tj-cta-sheen inline-flex min-h-[48px] shrink-0 items-center justify-center rounded-full border border-purple-300/35 bg-purple-300/[0.1] px-6 py-2.5 text-sm font-semibold text-purple-50 transition-[transform,border-color,box-shadow,color] duration-200 group-hover/ap:scale-[1.02] group-hover/ap:border-purple-300/55 group-hover/ap:bg-purple-300/[0.14] group-hover/ap:shadow-[0_0_28px_rgba(168, 85, 247,0.22)]">
+              <span className="tj-cta-sheen inline-flex min-h-[48px] shrink-0 items-center justify-center rounded-full border border-purple-300/35 bg-purple-300/[0.1] px-6 py-2.5 text-sm font-semibold text-purple-50 transition-[transform,border-color,box-shadow,color] duration-200 group-hover/ap:scale-[1.02] group-hover/ap:border-purple-300/55 group-hover/ap:bg-purple-300/[0.14] group-hover/ap:shadow-[0_0_28px_rgba(168,85,247,0.22)]">
                 Continue →
               </span>
             </div>

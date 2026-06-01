@@ -4,7 +4,7 @@ export default function RootNotFound() {
   return (
     <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-background px-6 text-center">
       <div
-        className="pointer-events-none absolute left-1/2 top-0 h-[25rem] w-[25rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(168, 85, 247,0.06)_0%,transparent_72%)]"
+        className="pointer-events-none absolute left-1/2 top-0 h-[25rem] w-[25rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(168,85,247,0.06)_0%,transparent_72%)]"
         aria-hidden
       />
       <p className="animate-[tj-fade-up_380ms_ease-out_forwards] bg-gradient-to-br from-[#1E2028] to-[#2D2F38] bg-clip-text text-[clamp(6rem,20vw,12rem)] font-extrabold leading-none text-transparent" style={{ animationDelay: "100ms", opacity: 0 }}>

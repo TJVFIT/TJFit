@@ -51,7 +51,7 @@ export default function EquipmentPage() {
 
       <div className="mt-12 grid gap-6 sm:grid-cols-2">
         {CATEGORIES.map((cat) => (
-          <article key={cat.title} className="group/cat rounded-2xl border border-divider bg-surface p-6 transition-[border-color,box-shadow,transform] duration-300 hover:border-purple-300/35 hover:shadow-[0_20px_44px_-16px_rgba(0,0,0,0.5),0_0_28px_rgba(168, 85, 247,0.12)] motion-safe:hover:-translate-y-0.5">
+          <article key={cat.title} className="group/cat rounded-2xl border border-divider bg-surface p-6 transition-[border-color,box-shadow,transform] duration-300 hover:border-purple-300/35 hover:shadow-[0_20px_44px_-16px_rgba(0,0,0,0.5),0_0_28px_rgba(168,85,247,0.12)] motion-safe:hover:-translate-y-0.5">
             <p className="text-3xl">{cat.icon}</p>
             <h3 className="mt-3 text-lg font-semibold text-white transition-colors duration-200 group-hover/cat:text-purple-50">{cat.title}</h3>
             <p className="mt-2 text-sm leading-[1.7] text-muted">{cat.desc}</p>
@@ -73,7 +73,7 @@ export default function EquipmentPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            <button type="submit" disabled={submitting} className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 py-2.5 text-sm font-bold text-[#09090B] disabled:opacity-50">
+            <button type="submit" disabled={submitting} className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 py-2.5 text-sm font-bold text-[#09090B] disabled:opacity-50">
               {submitting ? "Adding..." : "Notify Me"}
             </button>
           </form>

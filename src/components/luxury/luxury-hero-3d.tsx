@@ -8,7 +8,7 @@ import type { HeroMouseRef } from "@/components/luxury/luxury-hero-3d-canvas";
 function Hero3DBackdropSkeleton() {
   return (
     <div className="pointer-events-none absolute inset-0 z-[1] bg-background" aria-hidden>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(168, 85, 247,0.09),transparent),radial-gradient(ellipse_50%_40%_at_100%_0%,rgba(124, 58, 237,0.06),transparent)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(168,85,247,0.09),transparent),radial-gradient(ellipse_50%_40%_at_100%_0%,rgba(124,58,237,0.06),transparent)]" />
       <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-purple-500/[0.07] via-transparent to-violet-500/[0.07]" />
     </div>
   );
@@ -17,7 +17,7 @@ function Hero3DBackdropSkeleton() {
 function Hero3DBackdropFallback() {
   return (
     <div className="pointer-events-none absolute inset-0 z-[1]" aria-hidden>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(168, 85, 247,0.07),transparent),radial-gradient(ellipse_50%_40%_at_100%_0%,rgba(124, 58, 237,0.04),transparent)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(168,85,247,0.07),transparent),radial-gradient(ellipse_50%_40%_at_100%_0%,rgba(124,58,237,0.04),transparent)]" />
     </div>
   );
 }

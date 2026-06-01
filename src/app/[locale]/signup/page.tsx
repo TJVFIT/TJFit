@@ -437,7 +437,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
                   onClick={() => setGoal(g.key)}
                   className={`rounded-2xl border p-4 text-left transition-[border-color,background-color,color,box-shadow] duration-200 ${
                     goal === g.key
-                      ? "border-purple-300/55 bg-purple-300/[0.1] text-purple-50 shadow-[0_0_22px_rgba(168, 85, 247,0.16)]"
+                      ? "border-purple-300/55 bg-purple-300/[0.1] text-purple-50 shadow-[0_0_22px_rgba(168,85,247,0.16)]"
                       : "border-white/10 text-bright hover:border-purple-300/40 hover:bg-purple-300/[0.04] hover:text-purple-100"
                   }`}
                 >
@@ -482,7 +482,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
               <button
                 type="button"
                 onClick={() => setStep((s) => Math.max(1, s - 1))}
-                className="min-h-[48px] flex-1 rounded-full border border-white/15 px-5 py-3 text-sm text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.14)]"
+                className="min-h-[48px] flex-1 rounded-full border border-white/15 px-5 py-3 text-sm text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_18px_rgba(168,85,247,0.14)]"
               >
                 {copy.signupBack}
               </button>

@@ -138,7 +138,7 @@ export function HomeBlogsPreview({
             <Link
               key={post.id}
               href={hrefAll}
-              className="group flex h-full flex-col overflow-hidden rounded-xl border border-white/[0.07] bg-surface-elevated/40 transition-[border-color,box-shadow,transform] duration-300 hover:border-purple-300/30 hover:shadow-[0_18px_44px_rgba(0,0,0,0.4),0_0_28px_rgba(168, 85, 247,0.08)] motion-safe:hover:-translate-y-0.5"
+              className="group flex h-full flex-col overflow-hidden rounded-xl border border-white/[0.07] bg-surface-elevated/40 transition-[border-color,box-shadow,transform] duration-300 hover:border-purple-300/30 hover:shadow-[0_18px_44px_rgba(0,0,0,0.4),0_0_28px_rgba(168,85,247,0.08)] motion-safe:hover:-translate-y-0.5"
             >
               {post.image_url ? (
                 <div className="relative aspect-[16/9] w-full overflow-hidden bg-black/40">

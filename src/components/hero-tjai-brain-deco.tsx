@@ -50,7 +50,7 @@ export function HeroTjaiBrainDeco({ reduce, active }: { reduce: boolean; active:
           )}
           style={{
             background:
-              "radial-gradient(circle at 42% 38%, rgba(168, 85, 247,0.35) 0%, rgba(124, 58, 237,0.12) 42%, transparent 68%)"
+              "radial-gradient(circle at 42% 38%, rgba(168,85,247,0.35) 0%, rgba(124,58,237,0.12) 42%, transparent 68%)"
           }}
         />
         <div
@@ -68,7 +68,7 @@ export function HeroTjaiBrainDeco({ reduce, active }: { reduce: boolean; active:
             className="h-[92%] w-[92%] max-h-full max-w-full object-contain p-3 select-none"
             style={{
               filter:
-                "drop-shadow(0 0 20px rgba(168, 85, 247,0.55)) drop-shadow(0 0 48px rgba(124, 58, 237,0.2))"
+                "drop-shadow(0 0 20px rgba(168,85,247,0.55)) drop-shadow(0 0 48px rgba(124,58,237,0.2))"
             }}
           />
         </div>

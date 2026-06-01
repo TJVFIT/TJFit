@@ -108,7 +108,7 @@ export function TJAIHub({ locale }: { locale: Locale }) {
       <div
         className="pointer-events-none absolute inset-0 z-0 opacity-[0.55]"
         style={{
-          background: `radial-gradient(ellipse 80% 50% at 70% 0%, rgba(168, 85, 247,0.12), transparent 60%), radial-gradient(ellipse 60% 40% at 10% 100%, rgba(143,164,196,0.05), transparent 55%)`
+          background: `radial-gradient(ellipse 80% 50% at 70% 0%, rgba(168,85,247,0.12), transparent 60%), radial-gradient(ellipse 60% 40% at 10% 100%, rgba(143,164,196,0.05), transparent 55%)`
         }}
         aria-hidden
       />
@@ -142,7 +142,7 @@ export function TJAIHub({ locale }: { locale: Locale }) {
                     "rounded-full border px-3 py-1 text-xs font-semibold",
                     tier === "pro"
                       ? "border-blue-400/35 bg-blue-400/10 text-blue-300"
-                      : "border-[rgba(168, 85, 247,0.35)] bg-[rgba(168, 85, 247,0.12)] text-accent"
+                      : "border-[rgba(168,85,247,0.35)] bg-[rgba(168,85,247,0.12)] text-accent"
                   )}>
                     [{tierLabel(locale, tier).toUpperCase()}]
                   </span>
@@ -169,7 +169,7 @@ export function TJAIHub({ locale }: { locale: Locale }) {
                   className={cn(
                     "inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm transition-[background-color,color,box-shadow] duration-200",
                     tab === item.key
-                      ? "bg-[linear-gradient(135deg,#A855F7,#7C3AED)] font-bold text-[#09090B] shadow-[0_0_18px_rgba(168, 85, 247,0.22)]"
+                      ? "bg-[linear-gradient(135deg,#A855F7,#7C3AED)] font-bold text-[#09090B] shadow-[0_0_18px_rgba(168,85,247,0.22)]"
                       : "bg-transparent text-muted hover:bg-purple-300/[0.06] hover:text-purple-100"
                   )}
                 >

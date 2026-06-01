@@ -32,7 +32,7 @@ export function AmbientBackground({
             top: -100,
             left: "20%",
             borderRadius: "50%",
-            background: `radial-gradient(circle, rgba(168, 85, 247,${cyanCore}) 0%, transparent 70%)`,
+            background: `radial-gradient(circle, rgba(168,85,247,${cyanCore}) 0%, transparent 70%)`,
             filter: "blur(40px)"
           }}
         />
@@ -46,7 +46,7 @@ export function AmbientBackground({
             bottom: "10%",
             right: "10%",
             borderRadius: "50%",
-            background: `radial-gradient(circle, rgba(124, 58, 237,${skyCore}) 0%, transparent 70%)`,
+            background: `radial-gradient(circle, rgba(124,58,237,${skyCore}) 0%, transparent 70%)`,
             filter: "blur(40px)"
           }}
         />

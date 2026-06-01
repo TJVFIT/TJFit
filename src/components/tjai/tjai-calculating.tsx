@@ -83,7 +83,7 @@ export function TJAICalculating({ copy, metrics, done = false }: Props) {
             )}
           >
             <div
-              className="h-full rounded-full bg-[linear-gradient(90deg,#A855F7,#7C3AED)] shadow-[0_0_18px_rgba(168, 85, 247,0.45)] transition-[width] duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)]"
+              className="h-full rounded-full bg-[linear-gradient(90deg,#A855F7,#7C3AED)] shadow-[0_0_18px_rgba(168,85,247,0.45)] transition-[width] duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)]"
               style={{ width: `${Math.max(0, Math.min(progress, 100))}%` }}
             />
           </div>

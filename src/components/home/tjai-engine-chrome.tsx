@@ -31,7 +31,7 @@ export function TjaiEngineChrome({ active, reduce }: { active: boolean; reduce: 
         <div
           className="absolute left-1/2 top-1/2 h-[min(42vw,280px)] w-[min(42vw,280px)] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-30"
           style={{
-            background: "radial-gradient(circle, rgba(168, 85, 247,0.22) 0%, rgba(124, 58, 237,0.08) 42%, transparent 70%)",
+            background: "radial-gradient(circle, rgba(168,85,247,0.22) 0%, rgba(124,58,237,0.08) 42%, transparent 70%)",
           }}
         />
         {!reduce && <div className="tj-tjai-core-pulse absolute left-1/2 top-1/2 h-[min(28vw,200px)] w-[min(28vw,200px)] -translate-x-1/2 -translate-y-1/2 rounded-full" />}

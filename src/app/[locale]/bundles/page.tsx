@@ -46,7 +46,7 @@ export default function BundlesPage({ params }: { params: { locale: string } }) 
           className="pointer-events-none absolute -left-24 -top-24 hidden h-72 w-72 motion-safe:block rtl:left-auto rtl:-right-24"
           style={{
             background:
-              "conic-gradient(from 0deg, rgba(168, 85, 247,0.18), rgba(124, 58, 237,0.04) 30%, transparent 60%, rgba(168, 85, 247,0.14) 100%)",
+              "conic-gradient(from 0deg, rgba(168,85,247,0.18), rgba(124,58,237,0.04) 30%, transparent 60%, rgba(168,85,247,0.14) 100%)",
             filter: "blur(56px)",
             opacity: 0.7,
             animation: "tj-halo-spin 22s linear infinite"
@@ -74,14 +74,14 @@ export default function BundlesPage({ params }: { params: { locale: string } }) 
 
       <BundleGrid bundles={BUNDLES} locale={locale} />
 
-      <div className="relative mt-14 overflow-hidden rounded-2xl border border-divider bg-surface/40 p-6 transition-[border-color,box-shadow] duration-300 hover:border-purple-300/30 hover:shadow-[0_0_40px_rgba(168, 85, 247,0.10)] sm:p-8">
+      <div className="relative mt-14 overflow-hidden rounded-2xl border border-divider bg-surface/40 p-6 transition-[border-color,box-shadow] duration-300 hover:border-purple-300/30 hover:shadow-[0_0_40px_rgba(168,85,247,0.10)] sm:p-8">
         {/* Top hairline — drawn cyan accent that signals "this is brand-tier content" */}
         <div
           aria-hidden
           className="pointer-events-none absolute inset-x-0 top-0 h-px"
           style={{
             background:
-              "linear-gradient(90deg, transparent, rgba(168, 85, 247,0.45) 30%, rgba(237, 233, 254,0.75) 50%, rgba(168, 85, 247,0.45) 70%, transparent)"
+              "linear-gradient(90deg, transparent, rgba(168,85,247,0.45) 30%, rgba(237,233,254,0.75) 50%, rgba(168,85,247,0.45) 70%, transparent)"
           }}
         />
         {/* Top-right corner glow — same vocabulary as the cards */}
@@ -90,7 +90,7 @@ export default function BundlesPage({ params }: { params: { locale: string } }) 
           className="pointer-events-none absolute right-0 top-0 h-40 w-64 rtl:right-auto rtl:left-0"
           style={{
             background:
-              "radial-gradient(60% 70% at 80% 20%, rgba(168, 85, 247,0.12), transparent 70%)"
+              "radial-gradient(60% 70% at 80% 20%, rgba(168,85,247,0.12), transparent 70%)"
           }}
         />
         <p className="relative text-[11px] font-semibold uppercase tracking-[0.22em] text-purple-200/80">

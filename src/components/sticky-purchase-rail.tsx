@@ -55,7 +55,7 @@ export function StickyPurchaseRail({
       className={cn(
         "rounded-[18px] border border-white/[0.08] bg-gradient-to-b from-white/[0.055] to-white/[0.018] p-6",
         "transition-shadow duration-[240ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none",
-        pinned ? "shadow-[0_30px_80px_-48px_rgba(168, 85, 247,0.55),0_18px_50px_-34px_rgba(0,0,0,0.9)]" : ""
+        pinned ? "shadow-[0_30px_80px_-48px_rgba(168,85,247,0.55),0_18px_50px_-34px_rgba(0,0,0,0.9)]" : ""
       )}
       data-pinned={pinned}
     >

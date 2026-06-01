@@ -225,7 +225,7 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
         <p className="text-sm text-red-400">{initialLoadError}</p>
         <button
           type="button"
-          className="rounded-full border border-white/15 px-5 py-2.5 text-sm text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.14)]"
+          className="rounded-full border border-white/15 px-5 py-2.5 text-sm text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_18px_rgba(168,85,247,0.14)]"
           onClick={() => void load()}
         >
           {s.retryLabel}

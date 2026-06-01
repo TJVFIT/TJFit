@@ -129,7 +129,7 @@ export function LogoIntro({
             ctx.beginPath();
             ctx.moveTo(nodes[i].x, nodes[i].y);
             ctx.lineTo(nodes[j].x, nodes[j].y);
-            ctx.strokeStyle = `rgba(168, 85, 247,${(1 - dist / maxDist) * 0.28})`;
+            ctx.strokeStyle = `rgba(168,85,247,${(1 - dist / maxDist) * 0.28})`;
             ctx.lineWidth = 0.8;
             ctx.stroke();
           }
@@ -139,7 +139,7 @@ export function LogoIntro({
         const pulse = 0.5 + 0.5 * Math.sin(frame * 0.04 + n.x);
         ctx.beginPath();
         ctx.arc(n.x, n.y, 2.2, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(168, 85, 247,${n.alpha * pulse})`;
+        ctx.fillStyle = `rgba(168,85,247,${n.alpha * pulse})`;
         ctx.fill();
       }
       frame++;
@@ -208,7 +208,7 @@ export function LogoIntro({
         aria-hidden
         style={{
           background: showT
-            ? "radial-gradient(ellipse 55% 45% at 50% 50%, rgba(168, 85, 247,0.12) 0%, rgba(168, 85, 247,0.03) 50%, transparent 70%)"
+            ? "radial-gradient(ellipse 55% 45% at 50% 50%, rgba(168,85,247,0.12) 0%, rgba(168,85,247,0.03) 50%, transparent 70%)"
             : "transparent",
           transition: `background ${showLangs ? 240 : 360}ms ${PHASE_EASE}`
         }}
@@ -240,7 +240,7 @@ export function LogoIntro({
                 opacity: showImage ? 0 : showT ? 1 : 0,
                 transform: showT ? "translateY(0) scale(1)" : "translateY(16px) scale(0.95)",
                 transition: `opacity 360ms ${PHASE_EASE}, transform 380ms ${PHASE_EASE}`,
-                textShadow: "0 0 24px rgba(168, 85, 247,0.6), 0 0 72px rgba(168, 85, 247,0.25)"
+                textShadow: "0 0 24px rgba(168,85,247,0.6), 0 0 72px rgba(168,85,247,0.25)"
               }}
             >
               T
@@ -252,7 +252,7 @@ export function LogoIntro({
                 opacity: showImage ? 0 : showJ ? 1 : 0,
                 transform: showJ ? "translateY(0) scale(1)" : "translateY(36px) scale(0.95)",
                 transition: `opacity 400ms ${PHASE_EASE}, transform 440ms cubic-bezier(0.2, 0.8, 0.2, 1)`,
-                textShadow: "0 0 24px rgba(168, 85, 247,0.6), 0 0 72px rgba(168, 85, 247,0.25)",
+                textShadow: "0 0 24px rgba(168,85,247,0.6), 0 0 72px rgba(168,85,247,0.25)",
                 marginInlineStart: "-0.04em"
               }}
             >
@@ -268,7 +268,7 @@ export function LogoIntro({
                 opacity: showFit && !showImage ? 1 : 0,
                 transform: showFit ? "translateY(0)" : "translateY(10px)",
                 transition: `opacity 320ms ${PHASE_EASE}, transform 320ms ${PHASE_EASE}`,
-                textShadow: "0 0 18px rgba(168, 85, 247,0.4)"
+                textShadow: "0 0 18px rgba(168,85,247,0.4)"
               }}
             >
               FIT

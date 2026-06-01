@@ -99,7 +99,7 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
         <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <button
             type="button"
-            className="rounded-full border border-white/15 px-5 py-2 text-sm text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.14)]"
+            className="rounded-full border border-white/15 px-5 py-2 text-sm text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_18px_rgba(168,85,247,0.14)]"
             onClick={() => window.location.reload()}
           >
             {s.retryLabel}
@@ -180,7 +180,7 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
 
               <div className="flex flex-wrap gap-2">
                 {profile.self ? (
-                  <Link href={`/${locale}/profile/edit`} className="rounded-full border border-white/20 px-5 py-2 text-sm text-white transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.05] hover:text-purple-50 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.14)]">
+                  <Link href={`/${locale}/profile/edit`} className="rounded-full border border-white/20 px-5 py-2 text-sm text-white transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.05] hover:text-purple-50 hover:shadow-[0_0_18px_rgba(168,85,247,0.14)]">
                     Edit Profile
                   </Link>
                 ) : user ? (
@@ -191,7 +191,7 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
                     onCountChange={(count) => setStats((prev) => (prev ? { ...prev, followers: count } : prev))}
                   />
                 ) : (
-                  <Link href={`/${locale}/login`} className="rounded-full border border-white/20 px-5 py-2 text-sm text-white transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.05] hover:text-purple-50 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.14)]">
+                  <Link href={`/${locale}/login`} className="rounded-full border border-white/20 px-5 py-2 text-sm text-white transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.05] hover:text-purple-50 hover:shadow-[0_0_18px_rgba(168,85,247,0.14)]">
                     Sign in to Follow
                   </Link>
                 )}

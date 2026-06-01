@@ -37,7 +37,7 @@ function CancellationModal({ open, onClose }: { open: boolean; onClose: () => vo
             <li>Priority support</li>
           </ul>
           <div className="mt-4 flex gap-2">
-            <button className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2 text-sm font-semibold text-[#09090B]" onClick={onClose}>
+            <button className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2 text-sm font-semibold text-[#09090B]" onClick={onClose}>
               Keep My Subscription
             </button>
             <button className="rounded-full border border-divider px-4 py-2 text-sm text-bright" onClick={() => setStep(2)}>

@@ -149,7 +149,7 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
       </div>
 
       {showInitial ? (
-        <div className="relative mt-10 overflow-hidden rounded-[28px] border border-white/[0.08] bg-gradient-to-br from-white/[0.06] via-white/[0.02] to-transparent p-8 text-center shadow-[0_0_60px_-30px_rgba(168, 85, 247,0.25)]">
+        <div className="relative mt-10 overflow-hidden rounded-[28px] border border-white/[0.08] bg-gradient-to-br from-white/[0.06] via-white/[0.02] to-transparent p-8 text-center shadow-[0_0_60px_-30px_rgba(168,85,247,0.25)]">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-purple-400/20 bg-purple-400/10 text-purple-200/90">
             <Search className="h-6 w-6" strokeWidth={1.75} aria-hidden />
           </div>
@@ -166,7 +166,7 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
           <p>{error}</p>
           <button
             type="button"
-            className="mt-3 rounded-full border border-white/15 px-4 py-1.5 text-xs text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_14px_rgba(168, 85, 247,0.12)]"
+            className="mt-3 rounded-full border border-white/15 px-4 py-1.5 text-xs text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_14px_rgba(168,85,247,0.12)]"
             onClick={() => void runSearch()}
           >
             {s.retryLabel}
@@ -219,7 +219,7 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
 
             return (
               <li key={id || uname}>
-                <article className="group overflow-hidden rounded-[24px] border border-white/[0.08] bg-gradient-to-br from-white/[0.07] via-white/[0.02] to-transparent p-4 shadow-[0_0_40px_-24px_rgba(168, 85, 247,0.35)] transition-[border-color,box-shadow,transform] duration-300 hover:border-purple-300/35 hover:shadow-[0_18px_44px_-16px_rgba(0,0,0,0.5),0_0_36px_rgba(168, 85, 247,0.14)] motion-safe:hover:-translate-y-0.5 sm:p-5">
+                <article className="group overflow-hidden rounded-[24px] border border-white/[0.08] bg-gradient-to-br from-white/[0.07] via-white/[0.02] to-transparent p-4 shadow-[0_0_40px_-24px_rgba(168,85,247,0.35)] transition-[border-color,box-shadow,transform] duration-300 hover:border-purple-300/35 hover:shadow-[0_18px_44px_-16px_rgba(0,0,0,0.5),0_0_36px_rgba(168,85,247,0.14)] motion-safe:hover:-translate-y-0.5 sm:p-5">
                   <div className="flex flex-col gap-5 sm:flex-row sm:items-stretch sm:gap-6">
                     <div className="flex min-w-0 flex-1 gap-4">
                       <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-background shadow-inner ring-1 ring-white/5">

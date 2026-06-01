@@ -86,7 +86,7 @@ export function SuggestionCards() {
                 type="button"
                 onClick={() => decide(s.id, "rejected")}
                 disabled={busyId === s.id}
-                className="rounded-md border border-white/15 px-3 py-1.5 text-xs font-medium text-white/70 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/35 hover:bg-purple-300/[0.05] hover:text-purple-100 hover:shadow-[0_0_12px_rgba(168, 85, 247,0.1)] disabled:opacity-50"
+                className="rounded-md border border-white/15 px-3 py-1.5 text-xs font-medium text-white/70 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/35 hover:bg-purple-300/[0.05] hover:text-purple-100 hover:shadow-[0_0_12px_rgba(168,85,247,0.1)] disabled:opacity-50"
               >
                 Skip
               </button>

@@ -17,7 +17,7 @@ const HeroStageImpl = dynamic(() => import("./hero-stage-impl").then((m) => m.He
   ssr: false,
   loading: () => (
     <div
-      className="absolute inset-0 bg-[radial-gradient(circle_at_65%_40%,rgba(168, 85, 247,0.16),transparent_60%)]"
+      className="absolute inset-0 bg-[radial-gradient(circle_at_65%_40%,rgba(168,85,247,0.16),transparent_60%)]"
       aria-hidden
     />
   )
