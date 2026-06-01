@@ -98,7 +98,7 @@ export default function LocaleNotFound() {
         style={{
           animationDelay: "100ms",
           opacity: 0,
-          textShadow: "0 0 40px rgba(34,211,238,0.45), 0 0 80px rgba(34,211,238,0.18)"
+          textShadow: "0 0 40px rgba(168, 85, 247,0.45), 0 0 80px rgba(168, 85, 247,0.18)"
         }}
       >
         <span className="tj-title-shimmer">404</span>
@@ -112,7 +112,7 @@ export default function LocaleNotFound() {
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <Link
           href={`/${locale}`}
-          className="inline-flex min-h-[44px] animate-[tj-fade-up_380ms_ease-out_forwards] items-center justify-center rounded-full border border-cyan-400/30 bg-cyan-400/10 px-6 py-2.5 text-sm font-semibold text-cyan-200 transition-colors hover:border-cyan-400/50 hover:text-white"
+          className="inline-flex min-h-[44px] animate-[tj-fade-up_380ms_ease-out_forwards] items-center justify-center rounded-full border border-purple-400/30 bg-purple-400/10 px-6 py-2.5 text-sm font-semibold text-purple-200 transition-colors hover:border-purple-400/50 hover:text-white"
           style={{ animationDelay: "400ms", opacity: 0 }}
         >
           {c.home}
@@ -140,9 +140,9 @@ export default function LocaleNotFound() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={c.searchPlaceholder}
-            className="min-h-[44px] w-full rounded-full border border-white/10 bg-white/[0.04] px-4 text-sm text-white outline-none ring-cyan-400/30 focus:border-cyan-400/35 focus:ring-2"
+            className="min-h-[44px] w-full rounded-full border border-white/10 bg-white/[0.04] px-4 text-sm text-white outline-none ring-purple-400/30 focus:border-purple-400/35 focus:ring-2"
           />
-          <button className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 text-sm font-semibold text-[#09090B]">Go</button>
+          <button className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 text-sm font-semibold text-[#09090B]">Go</button>
         </form>
       </div>
       <div className="mt-7 animate-[tj-fade-up_380ms_ease-out_forwards]" style={{ animationDelay: "560ms", opacity: 0 }}>

@@ -41,7 +41,7 @@ function CentralOrb({ mouseRef }: { mouseRef: HeroMouseRef }) {
         <torusKnotGeometry args={[1.3, 0.38, 180, 24, 2, 3]} />
         <meshStandardMaterial
           color="#061820"
-          emissive="#22d3ee"
+          emissive="#A855F7"
           emissiveIntensity={0.6}
           roughness={0.05}
           metalness={0.95}
@@ -51,15 +51,15 @@ function CentralOrb({ mouseRef }: { mouseRef: HeroMouseRef }) {
       {/* Wireframe overlay for depth */}
       <mesh ref={wireRef} position={[0, 0, 0]}>
         <torusKnotGeometry args={[1.31, 0.39, 120, 16, 2, 3]} />
-        <meshBasicMaterial color="#22d3ee" wireframe transparent opacity={0.12} />
+        <meshBasicMaterial color="#A855F7" wireframe transparent opacity={0.12} />
       </mesh>
 
       {/* Orbital ring 1 */}
       <mesh ref={ringRef} position={[0, 0, 0]}>
         <torusGeometry args={[2.2, 0.018, 8, 120]} />
         <meshStandardMaterial
-          color="#22d3ee"
-          emissive="#22d3ee"
+          color="#A855F7"
+          emissive="#A855F7"
           emissiveIntensity={0.8}
           roughness={0.1}
           metalness={0.9}
@@ -102,7 +102,7 @@ function Satellites() {
     [-2.4, 1.6, -1.5]
   ];
 
-  const colors = ["#22d3ee", "#a78bfa", "#22d3ee", "#67e8f9", "#a78bfa", "#22d3ee"];
+  const colors = ["#A855F7", "#a78bfa", "#A855F7", "#C4B5FD", "#a78bfa", "#A855F7"];
 
   return (
     <group ref={groupRef}>
@@ -139,7 +139,7 @@ function Scene({ mouseRef }: { mouseRef: HeroMouseRef }) {
   return (
     <>
       {/* Atmospheric sparkles */}
-      <Sparkles count={120} scale={12} size={1.2} speed={0.3} color="#22d3ee" opacity={0.5} />
+      <Sparkles count={120} scale={12} size={1.2} speed={0.3} color="#A855F7" opacity={0.5} />
       <Sparkles count={60} scale={16} size={0.8} speed={0.2} color="#a78bfa" opacity={0.3} />
 
       <CentralOrb mouseRef={mouseRef} />
@@ -165,9 +165,9 @@ function Lights() {
   return (
     <>
       <ambientLight intensity={0.08} />
-      <pointLight ref={light1} position={[4, 3, 4]} intensity={2.5} color="#22d3ee" distance={20} decay={1.8} />
+      <pointLight ref={light1} position={[4, 3, 4]} intensity={2.5} color="#A855F7" distance={20} decay={1.8} />
       <pointLight ref={light2} position={[-4, -2, 3]} intensity={1.8} color="#a78bfa" distance={18} decay={1.8} />
-      <pointLight position={[0, 5, 2]} intensity={0.8} color="#67e8f9" distance={14} decay={2} />
+      <pointLight position={[0, 5, 2]} intensity={0.8} color="#C4B5FD" distance={14} decay={2} />
       <pointLight position={[0, -4, 1]} intensity={0.5} color="#7c3aed" distance={12} decay={2} />
     </>
   );

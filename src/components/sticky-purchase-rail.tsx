@@ -55,7 +55,7 @@ export function StickyPurchaseRail({
       className={cn(
         "rounded-[18px] border border-white/[0.08] bg-gradient-to-b from-white/[0.055] to-white/[0.018] p-6",
         "transition-shadow duration-[240ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none",
-        pinned ? "shadow-[0_30px_80px_-48px_rgba(34,211,238,0.55),0_18px_50px_-34px_rgba(0,0,0,0.9)]" : ""
+        pinned ? "shadow-[0_30px_80px_-48px_rgba(168, 85, 247,0.55),0_18px_50px_-34px_rgba(0,0,0,0.9)]" : ""
       )}
       data-pinned={pinned}
     >
@@ -66,7 +66,7 @@ export function StickyPurchaseRail({
       <div className="mt-6 space-y-3 text-sm text-bright">
         <RailRow label={difficultyLabel} value={difficulty} />
         <RailRow label={durationLabel} value={duration} />
-        <RailRow label={priceLabel} value={priceCopy} valueClassName="text-cyan-100" />
+        <RailRow label={priceLabel} value={priceCopy} valueClassName="text-purple-100" />
       </div>
 
       <div className="mt-6 flex flex-col gap-3">
@@ -81,13 +81,13 @@ export function StickyPurchaseRail({
         {secondaryHref && secondaryLabel ? (
           <Link
             href={secondaryHref}
-            className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-white/15 px-5 py-2.5 text-sm font-medium text-white/85 transition-colors hover:border-cyan-300/40 hover:text-white"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-white/15 px-5 py-2.5 text-sm font-medium text-white/85 transition-colors hover:border-purple-300/40 hover:text-white"
           >
             {secondaryLabel}
           </Link>
         ) : null}
         {accessCopy ? (
-          <p className="inline-flex items-center gap-2 text-sm font-medium text-cyan-100">
+          <p className="inline-flex items-center gap-2 text-sm font-medium text-purple-100">
             <CheckCircle2 className="h-4 w-4" aria-hidden />
             {accessCopy}
           </p>

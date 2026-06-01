@@ -9,7 +9,7 @@ const Cinematic3DSceneImpl = dynamic(
     ssr: false,
     loading: () => (
       <div
-        className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(34,211,238,0.18),transparent_60%)]"
+        className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(168, 85, 247,0.18),transparent_60%)]"
         aria-hidden
       />
     )
@@ -55,7 +55,7 @@ export function Cinematic3DAct() {
       aria-labelledby="cinematic-3d-headline"
     >
       <div
-        className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_70%_55%_at_70%_40%,rgba(34,211,238,0.08),transparent_65%)]"
+        className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_70%_55%_at_70%_40%,rgba(168, 85, 247,0.08),transparent_65%)]"
         aria-hidden
       />
       <div className="absolute inset-0 z-[1]" aria-hidden>
@@ -68,7 +68,7 @@ export function Cinematic3DAct() {
 
       <div className="relative z-10 mx-auto max-w-5xl">
         <p
-          className="text-[11px] font-semibold uppercase tracking-[0.28em] text-cyan-200/85 motion-safe:animate-[tj-fade-up_520ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
+          className="text-[11px] font-semibold uppercase tracking-[0.28em] text-purple-200/85 motion-safe:animate-[tj-fade-up_520ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
           style={{ animationDelay: "80ms" }}
         >
           Engineered intelligence
@@ -80,7 +80,7 @@ export function Cinematic3DAct() {
         >
           Your transformation,
           <br />
-          <span className="bg-gradient-to-r from-cyan-300 to-sky-400 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-purple-300 to-violet-400 bg-clip-text text-transparent">
             computed in real time.
           </span>
         </h2>

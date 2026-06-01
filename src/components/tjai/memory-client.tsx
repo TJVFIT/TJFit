@@ -146,7 +146,7 @@ export function TjaiMemoryClient({ locale = "en" }: { locale?: Locale }) {
             <div className="space-y-5">
               {CATEGORY_ORDER.filter((c) => grouped[c]?.length).map((cat) => (
                 <div key={cat}>
-                  <h3 className="mb-2 text-xs uppercase tracking-wide text-cyan-300">
+                  <h3 className="mb-2 text-xs uppercase tracking-wide text-purple-300">
                     {copy.categories[cat] ?? cat}
                   </h3>
                   <ul className="space-y-2">
@@ -195,7 +195,7 @@ function Toggle({
       type="button"
       onClick={() => onChange(!on)}
       disabled={disabled}
-      className={`relative h-6 w-11 rounded-full transition ${on ? "bg-cyan-400" : "bg-white/15"}`}
+      className={`relative h-6 w-11 rounded-full transition ${on ? "bg-purple-400" : "bg-white/15"}`}
       aria-label={ariaLabel}
     >
       <span

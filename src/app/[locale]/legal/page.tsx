@@ -33,25 +33,25 @@ export default function LegalHubPage({ params }: { params: { locale: string } })
               >
                 <a
                   href="#faq"
-                  className="rounded-full border border-divider px-3 py-1.5 text-xs text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_16px_rgba(34,211,238,0.18)]"
+                  className="rounded-full border border-divider px-3 py-1.5 text-xs text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_16px_rgba(168, 85, 247,0.18)]"
                 >
                   {copy.navFaq}
                 </a>
                 <a
                   href="#user-terms"
-                  className="rounded-full border border-divider px-3 py-1.5 text-xs text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_16px_rgba(34,211,238,0.18)]"
+                  className="rounded-full border border-divider px-3 py-1.5 text-xs text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_16px_rgba(168, 85, 247,0.18)]"
                 >
                   {copy.navUserTerms}
                 </a>
                 <a
                   href="#coach-terms"
-                  className="rounded-full border border-divider px-3 py-1.5 text-xs text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_16px_rgba(34,211,238,0.18)]"
+                  className="rounded-full border border-divider px-3 py-1.5 text-xs text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_16px_rgba(168, 85, 247,0.18)]"
                 >
                   {copy.navCoachTerms}
                 </a>
                 <a
                   href="#privacy"
-                  className="rounded-full border border-divider px-3 py-1.5 text-xs text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_16px_rgba(34,211,238,0.18)]"
+                  className="rounded-full border border-divider px-3 py-1.5 text-xs text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_16px_rgba(168, 85, 247,0.18)]"
                 >
                   {copy.navPrivacy}
                 </a>
@@ -70,7 +70,7 @@ export default function LegalHubPage({ params }: { params: { locale: string } })
                   {copy.faq.map((item, idx) => (
                     <details
                       key={item.id}
-                      className={`legal-faq-details tj-blur-reveal tj-revealed tj-stagger-${Math.min(6, (idx % 6) + 1)} group rounded-xl border border-divider bg-surface transition-[border-color] duration-200 ease-out open:border-[rgba(34,211,238,0.2)] hover:border-[rgba(255,255,255,0.1)]`}
+                      className={`legal-faq-details tj-blur-reveal tj-revealed tj-stagger-${Math.min(6, (idx % 6) + 1)} group rounded-xl border border-divider bg-surface transition-[border-color] duration-200 ease-out open:border-[rgba(168, 85, 247,0.2)] hover:border-[rgba(255,255,255,0.1)]`}
                     >
                       <summary className="cursor-pointer list-none px-5 py-4 text-[15px] font-semibold text-white outline-none marker:content-none [&::-webkit-details-marker]:hidden">
                         <span className="flex items-center justify-between gap-3">

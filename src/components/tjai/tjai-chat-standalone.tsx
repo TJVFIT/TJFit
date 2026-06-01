@@ -554,12 +554,12 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
         </div>
       </aside>
 
-      <section className="relative flex min-h-0 flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0D0F12]/90 shadow-[0_0_0_1px_rgba(34,211,238,0.04),0_20px_70px_rgba(0,0,0,0.4)] backdrop-blur-md">
+      <section className="relative flex min-h-0 flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0D0F12]/90 shadow-[0_0_0_1px_rgba(168, 85, 247,0.04),0_20px_70px_rgba(0,0,0,0.4)] backdrop-blur-md">
         <div
           className="pointer-events-none absolute inset-0 opacity-40"
           style={{
             background:
-              "radial-gradient(ellipse 70% 45% at 0% 0%, rgba(34,211,238,0.08), transparent 50%), radial-gradient(ellipse 50% 40% at 100% 100%, rgba(14, 165, 233,0.06), transparent 45%)"
+              "radial-gradient(ellipse 70% 45% at 0% 0%, rgba(168, 85, 247,0.08), transparent 50%), radial-gradient(ellipse 50% 40% at 100% 100%, rgba(124, 58, 237,0.06), transparent 45%)"
           }}
           aria-hidden
         />
@@ -571,7 +571,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
                   key={`s-${index}`}
                   type="button"
                   onClick={() => void sendMessage(STARTER_PROMPTS[index] ?? item)}
-                  className="rounded-xl border border-white/[0.06] bg-surface/90 px-4 py-3 text-start text-sm text-white/95 shadow-sm transition-all duration-200 hover:border-accent/35 hover:bg-[rgba(34,211,238,0.05)] active:scale-[0.99]"
+                  className="rounded-xl border border-white/[0.06] bg-surface/90 px-4 py-3 text-start text-sm text-white/95 shadow-sm transition-all duration-200 hover:border-accent/35 hover:bg-[rgba(168, 85, 247,0.05)] active:scale-[0.99]"
                 >
                   <span className="block text-[11px] font-semibold uppercase tracking-[0.12em] text-dim">{t.starter}</span>
                   <span className="mt-1 block font-medium text-bright">{item}</span>
@@ -585,7 +585,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
               className={cn(
                 "group relative max-w-[min(92%,28rem)] rounded-2xl px-4 py-3 text-sm shadow-sm transition-[transform,box-shadow] duration-200",
                 message.role === "user"
-                  ? "ms-auto bg-gradient-to-br from-[#22D3EE] to-[#0EA5E9] text-[#0A0A0B]"
+                  ? "ms-auto bg-gradient-to-br from-[#A855F7] to-[#7C3AED] text-[#0A0A0B]"
                   : "me-auto border border-white/[0.07] bg-surface/95 text-white"
               )}
             >
@@ -683,7 +683,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
             <button
               type="submit"
               disabled={isStreaming || isThinking}
-              className="tj-cta-sheen inline-flex h-10 w-10 items-center justify-center rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] text-[#0A0A0B] shadow-[0_0_18px_rgba(34,211,238,0.2)] transition-[transform,filter,box-shadow] duration-200 hover:brightness-110 hover:shadow-[0_0_26px_rgba(34,211,238,0.32)] active:scale-[0.95] disabled:opacity-45"
+              className="tj-cta-sheen inline-flex h-10 w-10 items-center justify-center rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] text-[#0A0A0B] shadow-[0_0_18px_rgba(168, 85, 247,0.2)] transition-[transform,filter,box-shadow] duration-200 hover:brightness-110 hover:shadow-[0_0_26px_rgba(168, 85, 247,0.32)] active:scale-[0.95] disabled:opacity-45"
             >
               <Send className="h-4 w-4" />
             </button>
@@ -700,7 +700,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
           <div className="w-full max-w-md rounded-2xl border border-divider bg-surface p-6">
             <h3 className="text-lg font-semibold text-white">{t.trialUsed}</h3>
             <p className="mt-2 text-sm text-muted">{t.trialSub}</p>
-            <a href={`/${locale}/membership`} className="mt-4 inline-flex tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2 text-sm font-semibold text-[#09090B]">
+            <a href={`/${locale}/membership`} className="mt-4 inline-flex tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2 text-sm font-semibold text-[#09090B]">
               {t.upgrade}
             </a>
             <button type="button" className="mt-3 block text-xs text-faint" onClick={() => setShowLimitOverlay(false)}>

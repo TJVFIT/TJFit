@@ -49,7 +49,7 @@ export function MobileCtaBar({ ariaLabel, eyebrow, priceCopy, href, label }: Mob
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <div className="min-w-0">
           <p className="truncate text-[11px] font-medium uppercase tracking-[0.18em] text-white/45">{eyebrow}</p>
-          <p className="truncate text-[15px] font-semibold tabular-nums text-cyan-100">{priceCopy}</p>
+          <p className="truncate text-[15px] font-semibold tabular-nums text-purple-100">{priceCopy}</p>
         </div>
         <Link
           href={href}

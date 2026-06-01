@@ -20,8 +20,8 @@ function CoreOrb() {
       <mesh ref={meshRef}>
         <icosahedronGeometry args={[1.25, 1]} />
         <meshStandardMaterial
-          color="#22d3ee"
-          emissive="#0ea5e9"
+          color="#A855F7"
+          emissive="#7C3AED"
           emissiveIntensity={1.6}
           metalness={0.45}
           roughness={0.2}
@@ -32,7 +32,7 @@ function CoreOrb() {
         <icosahedronGeometry args={[1.18, 0]} />
         <meshStandardMaterial
           color="#06080d"
-          emissive="#0891b2"
+          emissive="#7C3AED"
           emissiveIntensity={0.42}
           transparent
           opacity={0.55}
@@ -54,7 +54,7 @@ function OrbitRings() {
       {[1.85, 2.4, 3.05].map((r, i) => (
         <mesh key={i} rotation={[Math.PI / 2 + i * 0.18, i * 0.4, 0]}>
           <torusGeometry args={[r, 0.006, 16, 120]} />
-          <meshBasicMaterial color="#22d3ee" transparent opacity={0.45 - i * 0.1} />
+          <meshBasicMaterial color="#A855F7" transparent opacity={0.45 - i * 0.1} />
         </mesh>
       ))}
     </group>
@@ -90,11 +90,11 @@ export function Cinematic3DSceneImpl() {
       <Suspense fallback={null}>
         <fog attach="fog" args={["#06080d", 6, 14]} />
         <ambientLight intensity={0.18} />
-        <pointLight position={[3, 2, 3]} intensity={1.4} color="#22d3ee" />
+        <pointLight position={[3, 2, 3]} intensity={1.4} color="#A855F7" />
         <pointLight position={[-3, -1, -1]} intensity={0.85} color="#3b82f6" />
         <CoreOrb />
         <OrbitRings />
-        <Sparkles count={220} scale={[10, 10, 10]} size={1.8} speed={0.45} color="#67e8f9" opacity={0.7} />
+        <Sparkles count={220} scale={[10, 10, 10]} size={1.8} speed={0.45} color="#C4B5FD" opacity={0.7} />
         <PointerCamera />
       </Suspense>
     </Canvas>

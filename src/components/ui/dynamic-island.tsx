@@ -61,7 +61,7 @@ export function DynamicIslandProvider({ children }: { children: React.ReactNode 
             className={reduceMotion ? "opacity-100" : "tj-dynamic-island-bubble"}
             role="status"
           >
-            <div className="rounded-full border border-cyan-300/20 bg-surface px-5 py-2.5 text-white shadow-[0_12px_40px_rgba(0,0,0,0.55),0_0_28px_rgba(34,211,238,0.16)] backdrop-blur-xl backdrop-saturate-[1.1]">
+            <div className="rounded-full border border-purple-300/20 bg-surface px-5 py-2.5 text-white shadow-[0_12px_40px_rgba(0,0,0,0.55),0_0_28px_rgba(168, 85, 247,0.16)] backdrop-blur-xl backdrop-saturate-[1.1]">
               <div className="flex max-w-[min(440px,calc(100vw-2rem))] items-center gap-2 text-sm font-medium">
                 {current.type === "achievement" ? (
                   <Trophy className="h-4 w-4 shrink-0 text-accent-violet" />

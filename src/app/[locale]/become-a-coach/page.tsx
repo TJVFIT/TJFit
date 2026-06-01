@@ -200,7 +200,7 @@ export default function BecomeCoachPage({ params }: { params: { locale: string }
       <section className="relative overflow-hidden px-4 py-20 sm:px-6 lg:px-8">
         <AmbientOrbs />
         <div className="relative mx-auto max-w-3xl text-center">
-          <span className="inline-flex rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-300">
+          <span className="inline-flex rounded-full border border-purple-400/25 bg-purple-400/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-purple-300">
             {c.badge}
           </span>
           <h1 className="mt-6 text-balance font-display text-4xl font-extrabold leading-tight tracking-[-0.02em] sm:text-5xl">
@@ -209,7 +209,7 @@ export default function BecomeCoachPage({ params }: { params: { locale: string }
           <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted sm:text-base">{c.heroSub}</p>
           <a
             href="#apply"
-            className="mt-8 inline-flex min-h-[52px] items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-8 py-3 text-base font-bold text-background transition hover:bg-white"
+            className="mt-8 inline-flex min-h-[52px] items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-8 py-3 text-base font-bold text-background transition hover:bg-white"
           >
             {c.applyNow}
           </a>
@@ -278,7 +278,7 @@ export default function BecomeCoachPage({ params }: { params: { locale: string }
       {/* Application Form */}
       <section id="apply" className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
         <div className="rounded-3xl border border-divider bg-surface p-6 sm:p-10">
-          <span className="inline-flex rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-300">
+          <span className="inline-flex rounded-full border border-purple-400/25 bg-purple-400/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-purple-300">
             {c.badge}
           </span>
           <h2 className="mt-4 text-2xl font-bold text-white">{c.formTitle}</h2>
@@ -302,7 +302,7 @@ export default function BecomeCoachPage({ params }: { params: { locale: string }
         <div className="mt-10 flex flex-wrap gap-3">
           <Link
             href={`/${locale}/bundles`}
-            className="rounded-full border border-cyan-400/30 bg-cyan-500/10 px-5 py-2.5 text-sm font-medium text-cyan-100 transition hover:border-cyan-400/50"
+            className="rounded-full border border-purple-400/30 bg-purple-500/10 px-5 py-2.5 text-sm font-medium text-purple-100 transition hover:border-purple-400/50"
           >
             Browse Bundles
           </Link>

@@ -44,9 +44,9 @@ export function ScrollProgressBar() {
         style={{
           willChange: "transform",
           background:
-            "linear-gradient(90deg, rgba(34,211,238,0) 0%, rgba(34,211,238,0.8) 30%, rgba(165,243,252,0.95) 60%, rgba(14,165,233,0.7) 100%)",
+            "linear-gradient(90deg, rgba(168, 85, 247,0) 0%, rgba(168, 85, 247,0.8) 30%, rgba(237, 233, 254,0.95) 60%, rgba(124, 58, 237,0.7) 100%)",
           boxShadow:
-            "0 0 14px rgba(34,211,238,0.55), 0 0 36px rgba(34,211,238,0.28)"
+            "0 0 14px rgba(168, 85, 247,0.55), 0 0 36px rgba(168, 85, 247,0.28)"
         }}
       />
     </div>

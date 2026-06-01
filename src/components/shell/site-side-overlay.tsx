@@ -269,7 +269,7 @@ export function SiteSideOverlay({ locale }: { locale: Locale }) {
           "group/burger fixed start-3 top-3 z-40 inline-flex h-10 w-10 items-center justify-center rounded-md",
           "border border-white/[0.09] bg-[rgba(15,15,18,0.7)] text-white/85 backdrop-blur",
           "transition-[border-color,background-color,color,box-shadow] duration-200",
-          "hover:border-cyan-300/40 hover:bg-[rgba(20,24,28,0.85)] hover:text-cyan-100 hover:shadow-[0_0_22px_rgba(34,211,238,0.18)]",
+          "hover:border-purple-300/40 hover:bg-[rgba(20,24,28,0.85)] hover:text-purple-100 hover:shadow-[0_0_22px_rgba(168, 85, 247,0.18)]",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60",
           "sm:start-4 sm:top-3.5",
           open && "pointer-events-none opacity-0"
@@ -312,7 +312,7 @@ export function SiteSideOverlay({ locale }: { locale: Locale }) {
               type="button"
               onClick={close}
               aria-label={CLOSE_LABEL[locale] ?? CLOSE_LABEL.en}
-              className="group/closebtn inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/[0.08] text-white/70 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:bg-cyan-300/[0.04] hover:text-cyan-100 hover:shadow-[0_0_18px_rgba(34,211,238,0.16)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
+              className="group/closebtn inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/[0.08] text-white/70 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.04] hover:text-purple-100 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.16)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
             >
               <X
                 className="h-4 w-4 transition-transform duration-200 motion-safe:group-hover/closebtn:rotate-90"
@@ -324,13 +324,13 @@ export function SiteSideOverlay({ locale }: { locale: Locale }) {
           <Link
             href={`/${locale}/search`}
             onClick={close}
-            className="group/sidesearch relative z-[1] mx-6 mt-6 flex items-center gap-3 rounded-md border border-white/[0.07] bg-white/[0.02] px-3.5 py-2.5 transition-[border-color,background-color,box-shadow] duration-200 hover:border-cyan-300/40 hover:bg-cyan-300/[0.04] hover:shadow-[0_0_22px_rgba(34,211,238,0.14)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 sm:mx-8"
+            className="group/sidesearch relative z-[1] mx-6 mt-6 flex items-center gap-3 rounded-md border border-white/[0.07] bg-white/[0.02] px-3.5 py-2.5 transition-[border-color,background-color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.04] hover:shadow-[0_0_22px_rgba(168, 85, 247,0.14)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 sm:mx-8"
           >
             <Search
-              className="h-4 w-4 text-white/40 transition-colors duration-200 group-hover/sidesearch:text-cyan-200"
+              className="h-4 w-4 text-white/40 transition-colors duration-200 group-hover/sidesearch:text-purple-200"
               aria-hidden
             />
-            <span className="text-sm text-white/55 transition-colors duration-200 group-hover/sidesearch:text-cyan-50">
+            <span className="text-sm text-white/55 transition-colors duration-200 group-hover/sidesearch:text-purple-50">
               {SEARCH_LABEL[locale] ?? SEARCH_LABEL.en}
             </span>
           </Link>

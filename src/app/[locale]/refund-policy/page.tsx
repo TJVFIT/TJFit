@@ -14,7 +14,7 @@ export default function RefundPolicyPage({ params }: { params: { locale: string 
       <h1 className="relative text-4xl font-semibold">
         <span className="tj-title-shimmer">{copy.title}</span>
       </h1>
-      <section className="group/refund relative space-y-3 rounded-[24px] border border-white/10 bg-white/5 p-6 transition-[border-color,box-shadow] duration-200 hover:border-cyan-300/25 hover:shadow-[0_0_28px_rgba(34,211,238,0.1)]">
+      <section className="group/refund relative space-y-3 rounded-[24px] border border-white/10 bg-white/5 p-6 transition-[border-color,box-shadow] duration-200 hover:border-purple-300/25 hover:shadow-[0_0_28px_rgba(168, 85, 247,0.1)]">
         {copy.paragraphs.map((paragraph) => (
           <p key={paragraph} className="text-sm leading-7 text-bright">
             {paragraph}

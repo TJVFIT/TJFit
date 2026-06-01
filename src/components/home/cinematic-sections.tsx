@@ -50,10 +50,10 @@ export function CinematicHowItWorks() {
                 )}
                 style={{ transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)" }}
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[rgba(34,211,238,0.2)] bg-[rgba(34,211,238,0.08)] text-[13px] font-bold text-accent transition-[box-shadow,border-color] duration-300 group-hover/step:border-cyan-300/45 group-hover/step:shadow-[0_0_18px_rgba(34,211,238,0.32)]">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[rgba(168, 85, 247,0.2)] bg-[rgba(168, 85, 247,0.08)] text-[13px] font-bold text-accent transition-[box-shadow,border-color] duration-300 group-hover/step:border-purple-300/45 group-hover/step:shadow-[0_0_18px_rgba(168, 85, 247,0.32)]">
                   {s.n}
                 </div>
-                <div className="mt-4 flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(34,211,238,0.06)] transition-[border-color,background-color] duration-300 group-hover/step:border-cyan-300/30 group-hover/step:bg-cyan-300/[0.1]">
+                <div className="mt-4 flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(168, 85, 247,0.06)] transition-[border-color,background-color] duration-300 group-hover/step:border-purple-300/30 group-hover/step:bg-purple-300/[0.1]">
                   <s.Icon className="h-5 w-5 text-accent" strokeWidth={1.5} />
                 </div>
                 <h3 className="mt-4 text-lg font-bold tracking-tight text-white">{s.title}</h3>
@@ -90,21 +90,21 @@ export function CinematicTransformation({ reduce }: { reduce: boolean }) {
             </svg>
           </div>
 
-          <div className="flex flex-col items-center justify-center gap-2 border-y border-[rgba(34,211,238,0.15)] bg-[#0D0F12] px-4 py-6 md:border-x md:border-y-0">
-            <div className="h-16 w-px bg-gradient-to-b from-transparent via-[rgba(34,211,238,0.35)] to-transparent" />
-            <span className="tj-chip-active rounded-full border border-cyan-300/35 bg-cyan-300/[0.1] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-50">
+          <div className="flex flex-col items-center justify-center gap-2 border-y border-[rgba(168, 85, 247,0.15)] bg-[#0D0F12] px-4 py-6 md:border-x md:border-y-0">
+            <div className="h-16 w-px bg-gradient-to-b from-transparent via-[rgba(168, 85, 247,0.35)] to-transparent" />
+            <span className="tj-chip-active rounded-full border border-purple-300/35 bg-purple-300/[0.1] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-purple-50">
               12 weeks
             </span>
-            <div className="h-16 w-px bg-gradient-to-b from-transparent via-[rgba(34,211,238,0.35)] to-transparent" />
+            <div className="h-16 w-px bg-gradient-to-b from-transparent via-[rgba(168, 85, 247,0.35)] to-transparent" />
           </div>
 
-          <div className="relative border-s border-[rgba(255,255,255,0.04)] bg-gradient-to-bl from-[rgba(34,211,238,0.07)] to-transparent p-8 md:border-s-0 md:border-e-2 md:border-e-[rgba(34,211,238,0.25)]">
-            <span className="rounded-full border border-[rgba(34,211,238,0.3)] bg-[rgba(34,211,238,0.1)] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent">
+          <div className="relative border-s border-[rgba(255,255,255,0.04)] bg-gradient-to-bl from-[rgba(168, 85, 247,0.07)] to-transparent p-8 md:border-s-0 md:border-e-2 md:border-e-[rgba(168, 85, 247,0.25)]">
+            <span className="rounded-full border border-[rgba(168, 85, 247,0.3)] bg-[rgba(168, 85, 247,0.1)] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent">
               Week 12
             </span>
             <p className="mt-4 text-sm leading-relaxed text-muted">Progressive overload you can feel — strength, composition, and consistency compound.</p>
             <svg
-              className={cn("mt-8 h-28 w-full text-accent/25", !reduce && "drop-shadow-[0_0_24px_rgba(34,211,238,0.12)]")}
+              className={cn("mt-8 h-28 w-full text-accent/25", !reduce && "drop-shadow-[0_0_24px_rgba(168, 85, 247,0.12)]")}
               viewBox="0 0 120 100"
               preserveAspectRatio="xMidYMid meet"
               aria-hidden

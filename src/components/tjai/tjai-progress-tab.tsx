@@ -206,11 +206,11 @@ export function TJAIProgressTab({ locale = "en" }: { locale?: string }) {
 
       {/* Task 6 — Adaptive plan evaluation card */}
       {evalData?.hasEnoughData && evalData?.evaluation?.shouldAdapt && (
-        <article className="rounded-2xl border border-cyan-300/35 bg-[linear-gradient(135deg,rgba(34,211,238,0.06),rgba(14,165,233,0.04))] p-5 shadow-[0_0_28px_-12px_rgba(34,211,238,0.32)]">
+        <article className="rounded-2xl border border-purple-300/35 bg-[linear-gradient(135deg,rgba(168, 85, 247,0.06),rgba(124, 58, 237,0.04))] p-5 shadow-[0_0_28px_-12px_rgba(168, 85, 247,0.32)]">
           <div className="flex items-start gap-3">
             <span className="mt-0.5 text-lg"></span>
             <div className="min-w-0 flex-1">
-              <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-cyan-200">
+              <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-purple-200">
                 {t.planCheck}
               </h3>
               <p className="mt-1 text-sm font-medium text-white">
@@ -226,7 +226,7 @@ export function TJAIProgressTab({ locale = "en" }: { locale?: string }) {
               <ul className="mt-3 space-y-1.5">
                 {evalData.evaluation.recommendations.map((rec, i) => (
                   <li key={i} className="text-xs text-bright">
-                    <span className="font-semibold text-cyan-200">{rec.type.toUpperCase()}: </span>
+                    <span className="font-semibold text-purple-200">{rec.type.toUpperCase()}: </span>
                     {rec.action}
                   </li>
                 ))}
@@ -235,7 +235,7 @@ export function TJAIProgressTab({ locale = "en" }: { locale?: string }) {
                 <button
                   type="button"
                   onClick={() => router.push(`/${locale}/ai?regen=1`)}
-                  className="tj-cta-sheen mt-4 inline-flex min-h-[44px] items-center justify-center rounded-full border border-cyan-300/45 bg-cyan-300/[0.12] px-5 py-2 text-sm font-semibold text-cyan-50 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/65 hover:bg-cyan-300/[0.18] hover:shadow-[0_0_22px_rgba(34,211,238,0.22)]"
+                  className="tj-cta-sheen mt-4 inline-flex min-h-[44px] items-center justify-center rounded-full border border-purple-300/45 bg-purple-300/[0.12] px-5 py-2 text-sm font-semibold text-purple-50 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/65 hover:bg-purple-300/[0.18] hover:shadow-[0_0_22px_rgba(168, 85, 247,0.22)]"
                 >
                   {t.updatePlan}
                 </button>

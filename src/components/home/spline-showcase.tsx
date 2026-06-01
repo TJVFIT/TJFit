@@ -68,7 +68,7 @@ export function SplineShowcase(_props: Props) {
       aria-labelledby="spline-showcase-headline"
     >
       <div
-        className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_60%_50%_at_30%_40%,rgba(56,189,248,0.10),transparent_60%)]"
+        className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_60%_50%_at_30%_40%,rgba(167, 139, 250,0.10),transparent_60%)]"
         aria-hidden
       />
 
@@ -85,7 +85,7 @@ export function SplineShowcase(_props: Props) {
 
       <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-start">
         <p
-          className="text-[11px] font-semibold uppercase tracking-[0.28em] text-cyan-200/85 motion-safe:animate-[tj-fade-up_520ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
+          className="text-[11px] font-semibold uppercase tracking-[0.28em] text-purple-200/85 motion-safe:animate-[tj-fade-up_520ms_cubic-bezier(0.2,1,0.3,1)_forwards] motion-safe:opacity-0"
           style={{ animationDelay: "80ms" }}
         >
           Touch the system
@@ -97,7 +97,7 @@ export function SplineShowcase(_props: Props) {
         >
           Move your cursor.
           <br />
-          <span className="bg-gradient-to-r from-cyan-300 to-blue-400 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-purple-300 to-blue-400 bg-clip-text text-transparent">
             The system responds.
           </span>
         </h2>

@@ -337,7 +337,7 @@ export function CookieConsentBanner({ locale }: { locale: Locale }) {
             <button
               type="button"
               onClick={() => persist({ analytics: true, marketing: true })}
-              className="inline-flex min-h-[44px] items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 text-sm font-bold text-[#09090B] transition-transform duration-150 active:scale-[0.97]"
+              className="inline-flex min-h-[44px] items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 text-sm font-bold text-[#09090B] transition-transform duration-150 active:scale-[0.97]"
             >
               {copy.modal.acceptAll}
             </button>
@@ -388,7 +388,7 @@ export function CookieConsentBanner({ locale }: { locale: Locale }) {
           <button
             type="button"
             onClick={() => persist({ analytics: true, marketing: true })}
-            className="inline-flex min-h-[44px] items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 text-[13px] font-bold text-[#09090B] transition-transform duration-150 active:scale-[0.97]"
+            className="inline-flex min-h-[44px] items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 text-[13px] font-bold text-[#09090B] transition-transform duration-150 active:scale-[0.97]"
           >
             {copy.banner.acceptAll}
           </button>

@@ -95,7 +95,7 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
   if (!user) {
     return (
       <div className="relative mx-auto min-h-[70dvh] max-w-2xl px-4 py-10 sm:px-6 sm:py-14">
-        <div className="pointer-events-none absolute inset-x-0 -top-24 h-64 bg-gradient-to-b from-cyan-500/10 via-transparent to-transparent blur-3xl" />
+        <div className="pointer-events-none absolute inset-x-0 -top-24 h-64 bg-gradient-to-b from-purple-500/10 via-transparent to-transparent blur-3xl" />
         <div className="relative">
           <Link href={`/${locale}`} className="text-xs font-medium text-faint transition hover:text-bright">
             ← {dict.nav.home}
@@ -114,7 +114,7 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
 
   return (
     <div className="relative mx-auto min-h-[70dvh] max-w-2xl px-4 py-10 sm:px-6 sm:py-14">
-      <div className="pointer-events-none absolute inset-x-0 -top-24 h-64 bg-gradient-to-b from-cyan-500/10 via-transparent to-transparent blur-3xl" />
+      <div className="pointer-events-none absolute inset-x-0 -top-24 h-64 bg-gradient-to-b from-purple-500/10 via-transparent to-transparent blur-3xl" />
 
       <div className="relative">
         <Link href={`/${locale}/messages`} className="text-xs font-medium text-faint transition hover:text-bright">
@@ -132,7 +132,7 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
             <Search className="h-4 w-4" strokeWidth={2} aria-hidden />
           </div>
           <input
-            className="input w-full rounded-2xl border-white/[0.12] bg-[#0c0c0f]/80 py-3.5 pl-11 pr-4 text-[15px] text-white shadow-[0_0_0_1px_rgba(255,255,255,0.04)] backdrop-blur-sm placeholder:text-dim focus:border-cyan-400/35 focus:ring-cyan-400/20"
+            className="input w-full rounded-2xl border-white/[0.12] bg-[#0c0c0f]/80 py-3.5 pl-11 pr-4 text-[15px] text-white shadow-[0_0_0_1px_rgba(255,255,255,0.04)] backdrop-blur-sm placeholder:text-dim focus:border-purple-400/35 focus:ring-purple-400/20"
             placeholder={s.searchPlaceholder}
             value={q}
             onChange={(e) => setQ(e.target.value)}
@@ -149,8 +149,8 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
       </div>
 
       {showInitial ? (
-        <div className="relative mt-10 overflow-hidden rounded-[28px] border border-white/[0.08] bg-gradient-to-br from-white/[0.06] via-white/[0.02] to-transparent p-8 text-center shadow-[0_0_60px_-30px_rgba(34,211,238,0.25)]">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-400/10 text-cyan-200/90">
+        <div className="relative mt-10 overflow-hidden rounded-[28px] border border-white/[0.08] bg-gradient-to-br from-white/[0.06] via-white/[0.02] to-transparent p-8 text-center shadow-[0_0_60px_-30px_rgba(168, 85, 247,0.25)]">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-purple-400/20 bg-purple-400/10 text-purple-200/90">
             <Search className="h-6 w-6" strokeWidth={1.75} aria-hidden />
           </div>
           <p className="font-display text-lg font-semibold text-white">{s.searchStartPrompt}</p>
@@ -166,7 +166,7 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
           <p>{error}</p>
           <button
             type="button"
-            className="mt-3 rounded-full border border-white/15 px-4 py-1.5 text-xs text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_14px_rgba(34,211,238,0.12)]"
+            className="mt-3 rounded-full border border-white/15 px-4 py-1.5 text-xs text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_14px_rgba(168, 85, 247,0.12)]"
             onClick={() => void runSearch()}
           >
             {s.retryLabel}
@@ -219,7 +219,7 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
 
             return (
               <li key={id || uname}>
-                <article className="group overflow-hidden rounded-[24px] border border-white/[0.08] bg-gradient-to-br from-white/[0.07] via-white/[0.02] to-transparent p-4 shadow-[0_0_40px_-24px_rgba(34,211,238,0.35)] transition-[border-color,box-shadow,transform] duration-300 hover:border-cyan-300/35 hover:shadow-[0_18px_44px_-16px_rgba(0,0,0,0.5),0_0_36px_rgba(34,211,238,0.14)] motion-safe:hover:-translate-y-0.5 sm:p-5">
+                <article className="group overflow-hidden rounded-[24px] border border-white/[0.08] bg-gradient-to-br from-white/[0.07] via-white/[0.02] to-transparent p-4 shadow-[0_0_40px_-24px_rgba(168, 85, 247,0.35)] transition-[border-color,box-shadow,transform] duration-300 hover:border-purple-300/35 hover:shadow-[0_18px_44px_-16px_rgba(0,0,0,0.5),0_0_36px_rgba(168, 85, 247,0.14)] motion-safe:hover:-translate-y-0.5 sm:p-5">
                   <div className="flex flex-col gap-5 sm:flex-row sm:items-stretch sm:gap-6">
                     <div className="flex min-w-0 flex-1 gap-4">
                       <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-background shadow-inner ring-1 ring-white/5">
@@ -234,14 +234,14 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
 
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <h2 className="truncate font-display text-lg font-semibold text-white transition-colors duration-200 group-hover:text-cyan-50">{displayName}</h2>
+                          <h2 className="truncate font-display text-lg font-semibold text-white transition-colors duration-200 group-hover:text-purple-50">{displayName}</h2>
                           {r.is_private ? (
-                            <span className="shrink-0 rounded border border-sky-400/30 bg-sky-400/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-sky-200/85">
+                            <span className="shrink-0 rounded border border-violet-400/30 bg-violet-400/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-violet-200/85">
                               {s.privateProfile}
                             </span>
                           ) : null}
                         </div>
-                        <p className="mt-0.5 font-mono text-sm text-cyan-200/70">@{uname}</p>
+                        <p className="mt-0.5 font-mono text-sm text-purple-200/70">@{uname}</p>
                         {safeBio ? (
                           <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted">{safeBio}</p>
                         ) : null}
@@ -255,7 +255,7 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
                         {uname !== "—" ? (
                           <Link
                             href={`/${locale}/profile/${encodeURIComponent(uname)}`}
-                            className="rounded-full border border-white/15 px-4 py-2.5 text-center text-xs font-semibold text-bright transition hover:border-cyan-400/35 hover:bg-white/[0.08]"
+                            className="rounded-full border border-white/15 px-4 py-2.5 text-center text-xs font-semibold text-bright transition hover:border-purple-400/35 hover:bg-white/[0.08]"
                           >
                             {s.viewProfileButton}
                           </Link>

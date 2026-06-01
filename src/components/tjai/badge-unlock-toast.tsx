@@ -61,12 +61,12 @@ export function BadgeUnlockToast() {
 
   return (
     <div className="pointer-events-none fixed bottom-6 right-6 z-50">
-      <div className="pointer-events-auto flex max-w-sm items-center gap-3 rounded-2xl border border-cyan-300/30 bg-gradient-to-br from-cyan-300/15 to-black/85 px-4 py-3 text-white shadow-[0_20px_60px_rgba(34,211,238,0.25)] backdrop-blur animate-in slide-in-from-bottom-4 motion-reduce:animate-none">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-300/10 text-cyan-200" aria-hidden>
+      <div className="pointer-events-auto flex max-w-sm items-center gap-3 rounded-2xl border border-purple-300/30 bg-gradient-to-br from-purple-300/15 to-black/85 px-4 py-3 text-white shadow-[0_20px_60px_rgba(168, 85, 247,0.25)] backdrop-blur animate-in slide-in-from-bottom-4 motion-reduce:animate-none">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-purple-300/30 bg-purple-300/10 text-purple-200" aria-hidden>
           <BadgeIcon code={current.code} className="h-5 w-5" />
         </span>
         <div className="leading-tight">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-cyan-300">Badge unlocked</div>
+          <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-purple-300">Badge unlocked</div>
           <div className="text-sm font-semibold">{current.label}</div>
           <div className="text-xs text-white/70">{current.description}</div>
         </div>

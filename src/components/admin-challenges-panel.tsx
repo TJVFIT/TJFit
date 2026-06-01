@@ -49,7 +49,7 @@ export function AdminChallengesPanel() {
           <input type="number" className="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm text-white" value={form.coin_prize_3rd} onChange={(e) => setForm((p) => ({ ...p, coin_prize_3rd: Number(e.target.value) }))} />
           <input type="number" className="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm text-white" value={form.coin_completion_reward} onChange={(e) => setForm((p) => ({ ...p, coin_completion_reward: Number(e.target.value) }))} />
         </div>
-        <button type="submit" className="btn-primary-shimmer rounded-full bg-gradient-to-br from-[#22D3EE] to-[#0EA5E9] px-4 py-2 text-sm font-semibold text-[#09090B]">
+        <button type="submit" className="btn-primary-shimmer rounded-full bg-gradient-to-br from-[#A855F7] to-[#7C3AED] px-4 py-2 text-sm font-semibold text-[#09090B]">
           Create Challenge
         </button>
         {status ? <p className="text-xs text-bright">{status}</p> : null}

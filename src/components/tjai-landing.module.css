@@ -55,10 +55,10 @@
 @keyframes ctaGlow {
   0%,
   100% {
-    box-shadow: 0 12px 40px rgba(34, 211, 238, 0.28);
+    box-shadow: 0 12px 40px rgba(168, 85, 247, 0.28);
   }
   50% {
-    box-shadow: 0 12px 56px rgba(34, 211, 238, 0.46);
+    box-shadow: 0 12px 56px rgba(168, 85, 247, 0.46);
   }
 }
 
@@ -107,7 +107,7 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(34, 211, 238, 0.16) 50%,
+    rgba(168, 85, 247, 0.16) 50%,
     transparent 100%
   );
   pointer-events: none;
@@ -127,8 +127,8 @@
   width: 6px;
   height: 6px;
   border-radius: 9999px;
-  background: rgba(34, 211, 238, 0.9);
-  box-shadow: 0 0 12px rgba(34, 211, 238, 0.55);
+  background: rgba(168, 85, 247, 0.9);
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.55);
   animation: dotPulse 1.8s ease-in-out infinite;
 }
 

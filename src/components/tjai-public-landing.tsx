@@ -163,7 +163,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
         style={{
           borderColor: TJ_PALETTE.hairline,
           background:
-            `radial-gradient(ellipse 70% 60% at 70% 20%, rgba(34,211,238,0.14), transparent 62%), radial-gradient(ellipse 44% 40% at 12% 100%, rgba(246,243,237,0.05), transparent 68%), ${TJ_PALETTE.obsidian}`
+            `radial-gradient(ellipse 70% 60% at 70% 20%, rgba(168, 85, 247,0.14), transparent 62%), radial-gradient(ellipse 44% 40% at 12% 100%, rgba(246,243,237,0.05), transparent 68%), ${TJ_PALETTE.obsidian}`
         }}
       >
         <div
@@ -210,7 +210,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
           >
             <div className="mb-4 flex items-center justify-between border-b border-white/[0.06] pb-3">
               <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#71717A]">Live preview</span>
-              <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-2.5 py-1 text-[10px] font-semibold text-cyan-200">
+              <span className="rounded-full border border-purple-300/20 bg-purple-300/10 px-2.5 py-1 text-[10px] font-semibold text-purple-200">
                 adaptive
               </span>
             </div>
@@ -251,12 +251,12 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
           {FEATURE_ROWS.map(({ Icon, title, body }) => (
             <article
               key={title}
-              className="group rounded-2xl border border-divider bg-surface p-5 transition-[border-color,background-color,box-shadow,transform] duration-300 motion-safe:hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-surface-2 hover:shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5),0_0_28px_rgba(34,211,238,0.12)]"
+              className="group rounded-2xl border border-divider bg-surface p-5 transition-[border-color,background-color,box-shadow,transform] duration-300 motion-safe:hover:-translate-y-1 hover:border-purple-300/35 hover:bg-surface-2 hover:shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5),0_0_28px_rgba(168, 85, 247,0.12)]"
             >
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-300/20 bg-cyan-300/[0.06] text-cyan-200 transition-[border-color,background-color,box-shadow] duration-300 group-hover:border-cyan-300/45 group-hover:bg-cyan-300/[0.12] group-hover:shadow-[0_0_18px_rgba(34,211,238,0.22)]">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-purple-300/20 bg-purple-300/[0.06] text-purple-200 transition-[border-color,background-color,box-shadow] duration-300 group-hover:border-purple-300/45 group-hover:bg-purple-300/[0.12] group-hover:shadow-[0_0_18px_rgba(168, 85, 247,0.22)]">
                 <Icon className="h-5 w-5" strokeWidth={1.6} />
               </span>
-              <p className="mt-4 text-lg font-semibold text-white transition-colors duration-200 group-hover:text-cyan-50">{title}</p>
+              <p className="mt-4 text-lg font-semibold text-white transition-colors duration-200 group-hover:text-purple-50">{title}</p>
               <p className="mt-2 text-sm leading-relaxed text-muted">{body}</p>
             </article>
           ))}
@@ -270,7 +270,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
             <button
               key={key}
               onClick={() => setTab(key)}
-              className={`rounded-lg px-4 py-2 text-sm ${tab === key ? "bg-cyan-400/15 text-cyan-300" : "text-muted"}`}
+              className={`rounded-lg px-4 py-2 text-sm ${tab === key ? "bg-purple-400/15 text-purple-300" : "text-muted"}`}
             >
               {key[0].toUpperCase() + key.slice(1)}
             </button>
@@ -308,7 +308,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
             <p className="mt-1 text-muted">Daily total: 2,150 kcal</p>
           </div>
         ) : null}
-        <Link href={`/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`} className="mt-4 inline-flex text-sm font-semibold text-cyan-300">
+        <Link href={`/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`} className="mt-4 inline-flex text-sm font-semibold text-purple-300">
           Unlock full plan at checkout <ArrowRight className="ms-1 h-4 w-4" aria-hidden />
         </Link>
       </section>
@@ -346,13 +346,13 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
               key={title}
               className={`relative rounded-2xl border p-5 transition-[border-color,transform,box-shadow] duration-200 hover:-translate-y-1 ${
                 best
-                  ? "border-cyan-400/35 bg-[linear-gradient(180deg,rgba(34,211,238,0.06),rgba(34,211,238,0.01))] shadow-[0_0_42px_rgba(34,211,238,0.12)] hover:shadow-[0_0_56px_rgba(34,211,238,0.18)]"
-                  : "border-divider bg-surface hover:border-cyan-300/25 hover:shadow-[0_0_28px_rgba(34,211,238,0.06)]"
+                  ? "border-purple-400/35 bg-[linear-gradient(180deg,rgba(168, 85, 247,0.06),rgba(168, 85, 247,0.01))] shadow-[0_0_42px_rgba(168, 85, 247,0.12)] hover:shadow-[0_0_56px_rgba(168, 85, 247,0.18)]"
+                  : "border-divider bg-surface hover:border-purple-300/25 hover:shadow-[0_0_28px_rgba(168, 85, 247,0.06)]"
               }`}
             >
               {best ? (
                 <span
-                  className={`absolute -top-3 start-5 inline-flex items-center gap-1.5 rounded-full border border-cyan-300/35 bg-[#06080d] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200 ${styles.bestPulse}`}
+                  className={`absolute -top-3 start-5 inline-flex items-center gap-1.5 rounded-full border border-purple-300/35 bg-[#06080d] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-purple-200 ${styles.bestPulse}`}
                 >
                   Best value
                 </span>
@@ -361,7 +361,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
               <p className="mt-2 whitespace-pre-line text-sm text-muted">{body}</p>
               <Link
                 href={href}
-                className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-cyan-300 transition-colors hover:text-cyan-200"
+                className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-purple-300 transition-colors hover:text-purple-200"
               >
                 Choose
                 <ArrowRight className="ms-1 h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
@@ -386,7 +386,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
         <h2 className="text-3xl font-extrabold text-white">{copy.finalTitle}</h2>
         <Link
           href={`/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`}
-          className="mt-5 inline-flex min-h-[52px] items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-10 text-base font-bold text-[#09090B]"
+          className="mt-5 inline-flex min-h-[52px] items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-10 text-base font-bold text-[#09090B]"
         >
           {copy.finalCta}
           <ArrowRight className="ms-2 h-4 w-4" aria-hidden />

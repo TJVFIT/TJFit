@@ -4,7 +4,7 @@ export default function RootNotFound() {
   return (
     <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-background px-6 text-center">
       <div
-        className="pointer-events-none absolute left-1/2 top-0 h-[25rem] w-[25rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.06)_0%,transparent_72%)]"
+        className="pointer-events-none absolute left-1/2 top-0 h-[25rem] w-[25rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(168, 85, 247,0.06)_0%,transparent_72%)]"
         aria-hidden
       />
       <p className="animate-[tj-fade-up_380ms_ease-out_forwards] bg-gradient-to-br from-[#1E2028] to-[#2D2F38] bg-clip-text text-[clamp(6rem,20vw,12rem)] font-extrabold leading-none text-transparent" style={{ animationDelay: "100ms", opacity: 0 }}>
@@ -18,7 +18,7 @@ export default function RootNotFound() {
       </p>
       <Link
         href="/en"
-        className="mt-8 inline-flex min-h-[44px] animate-[tj-fade-up_380ms_ease-out_forwards] items-center justify-center rounded-full border border-cyan-400/30 bg-cyan-400/10 px-6 py-2.5 text-sm font-semibold text-cyan-200 transition-colors hover:border-cyan-400/50 hover:text-white"
+        className="mt-8 inline-flex min-h-[44px] animate-[tj-fade-up_380ms_ease-out_forwards] items-center justify-center rounded-full border border-purple-400/30 bg-purple-400/10 px-6 py-2.5 text-sm font-semibold text-purple-200 transition-colors hover:border-purple-400/50 hover:text-white"
         style={{ animationDelay: "400ms", opacity: 0 }}
       >
         ? Back to TJFit

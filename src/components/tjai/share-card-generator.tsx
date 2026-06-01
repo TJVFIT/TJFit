@@ -25,21 +25,25 @@ export function ShareCardGenerator({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    const rootStyle = getComputedStyle(document.documentElement);
+    const displayFont = rootStyle.getPropertyValue("--font-display").trim() || "'Space Grotesk', system-ui, sans-serif";
+    const bodyFont = rootStyle.getPropertyValue("--font-sans").trim() || "Manrope, system-ui, sans-serif";
+
     ctx.fillStyle = "#09090B";
     ctx.fillRect(0, 0, dims.w, dims.h);
     const grad = ctx.createRadialGradient(dims.w / 2, 120, 100, dims.w / 2, 120, 600);
-    grad.addColorStop(0, "rgba(34,211,238,0.15)");
-    grad.addColorStop(1, "rgba(34,211,238,0)");
+    grad.addColorStop(0, "rgba(168, 85, 247,0.15)");
+    grad.addColorStop(1, "rgba(168, 85, 247,0)");
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, dims.w, dims.h);
 
-    ctx.fillStyle = "#22D3EE";
-    ctx.font = "700 30px Inter, Arial";
+    ctx.fillStyle = "#A855F7";
+    ctx.font = `700 30px ${displayFont}`;
     ctx.textAlign = "center";
     ctx.fillText("MY TJAI PLAN", dims.w / 2, 260);
 
     ctx.fillStyle = "#FFFFFF";
-    ctx.font = "800 72px Inter, Arial";
+    ctx.font = `800 72px ${displayFont}`;
     ctx.fillText(goal.toUpperCase(), dims.w / 2, 360);
 
     const cards = [`${calories} kcal/day`, `${protein}g protein`, duration];
@@ -50,11 +54,11 @@ export function ShareCardGenerator({
       ctx.strokeStyle = "#1E2028";
       ctx.strokeRect(x, 460, 220, 120);
       ctx.fillStyle = "#FFFFFF";
-      ctx.font = "600 28px Inter, Arial";
+      ctx.font = `600 28px ${bodyFont}`;
       ctx.fillText(text, x + 110, 530);
     });
 
-    ctx.strokeStyle = "#22D3EE";
+    ctx.strokeStyle = "#A855F7";
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(dims.w / 2 - 260, 640);
@@ -62,7 +66,7 @@ export function ShareCardGenerator({
     ctx.stroke();
 
     ctx.fillStyle = "#A1A1AA";
-    ctx.font = "500 30px Inter, Arial";
+    ctx.font = `500 30px ${bodyFont}`;
     ctx.fillText("Personalized by TJAI — TJFit AI Coach", dims.w / 2, 720);
     ctx.fillText("Create your plan at tjfit.org/ai", dims.w / 2, dims.h - 120);
   };
@@ -99,7 +103,7 @@ export function ShareCardGenerator({
         </button>
       </div>
       <div className="mt-4 flex gap-2">
-        <button type="button" onClick={download} className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2 text-sm font-semibold text-[#09090B]">
+        <button type="button" onClick={download} className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2 text-sm font-semibold text-[#09090B]">
           Download Card
         </button>
         <button type="button" onClick={() => void copyImage()} className="rounded-full border border-divider px-4 py-2 text-sm text-muted">

@@ -193,7 +193,7 @@ export function MessagesInboxHome({ locale }: { locale: Locale }) {
                     <button
                       key={item.id}
                       type="button"
-                      className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-bright transition-[background-color,color] duration-150 hover:bg-cyan-300/[0.04] hover:text-cyan-100"
+                      className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-bright transition-[background-color,color] duration-150 hover:bg-purple-300/[0.04] hover:text-purple-100"
                       onClick={() => {
                         setUsernameInput(`@${item.username}`);
                         setSearchResults([]);
@@ -214,7 +214,7 @@ export function MessagesInboxHome({ locale }: { locale: Locale }) {
             loading={busy}
             loadingText={s.saving}
             disabled={!usernameInput.trim()}
-            className="tj-cta-sheen min-h-[48px] shrink-0 !rounded-lg !bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] !px-5 !text-sm !font-medium !text-[#05080a] !shadow-[0_0_18px_rgba(34,211,238,0.22)] hover:!shadow-[0_0_26px_rgba(34,211,238,0.35)] hover:!brightness-110"
+            className="tj-cta-sheen min-h-[48px] shrink-0 !rounded-lg !bg-[linear-gradient(135deg,#A855F7,#7C3AED)] !px-5 !text-sm !font-medium !text-[#05080a] !shadow-[0_0_18px_rgba(168, 85, 247,0.22)] hover:!shadow-[0_0_26px_rgba(168, 85, 247,0.35)] hover:!brightness-110"
             onClick={() => resolveUsernameAndStart()}
           >
             {s.newChatButton}
@@ -229,7 +229,7 @@ export function MessagesInboxHome({ locale }: { locale: Locale }) {
           <button
             type="button"
             disabled={busy}
-            className="mt-2 text-left text-sm font-medium text-cyan-200/90 hover:text-cyan-100 disabled:opacity-40"
+            className="mt-2 text-left text-sm font-medium text-purple-200/90 hover:text-purple-100 disabled:opacity-40"
             onClick={() => void startChatWithPeerId(activeCoachId)}
           >
             {s.openCoachChat}
@@ -238,7 +238,7 @@ export function MessagesInboxHome({ locale }: { locale: Locale }) {
       ) : null}
 
       <p className="text-center text-xs text-dim lg:pb-2">
-        <Link href={`/${locale}/profile/search`} className="text-muted underline-offset-2 hover:text-cyan-200/80 hover:underline">
+        <Link href={`/${locale}/profile/search`} className="text-muted underline-offset-2 hover:text-purple-200/80 hover:underline">
           {s.peopleSearchTitle}
         </Link>
       </p>

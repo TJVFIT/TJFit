@@ -67,7 +67,7 @@ export function FilterPill({
       className={cn(
         "min-h-[44px] rounded-lg px-5 py-2 text-[13px] font-medium transition-[color,background-color,border-color,box-shadow] duration-200 ease-out sm:min-h-0",
         active
-          ? "border border-[rgba(34,211,238,0.25)] bg-[rgba(34,211,238,0.10)] font-semibold text-accent"
+          ? "border border-[rgba(168, 85, 247,0.25)] bg-[rgba(168, 85, 247,0.10)] font-semibold text-accent"
           : "border border-transparent bg-transparent text-dim hover:bg-[rgba(255,255,255,0.04)] hover:text-muted"
       )}
     >

@@ -61,14 +61,14 @@ export function BundleGrid({
               onClick={() => setActive(key)}
               className={`inline-flex min-h-[36px] items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-[color,border-color,background-color] motion-safe:transition-all ${
                 isActive
-                  ? "tj-chip-active border-cyan-300/60 bg-cyan-300/[0.12] text-cyan-50"
-                  : "border-white/[0.08] bg-white/[0.02] text-bright/80 hover:border-cyan-300/30 hover:text-cyan-100"
+                  ? "tj-chip-active border-purple-300/60 bg-purple-300/[0.12] text-purple-50"
+                  : "border-white/[0.08] bg-white/[0.02] text-bright/80 hover:border-purple-300/30 hover:text-purple-100"
               }`}
             >
               {copy.filterLabels[key]}
               <span
                 className={`tabular-nums text-[10px] ${
-                  isActive ? "text-cyan-200/80" : "text-faint"
+                  isActive ? "text-purple-200/80" : "text-faint"
                 }`}
               >
                 {count}
@@ -99,7 +99,7 @@ export function BundleGrid({
           <button
             type="button"
             onClick={() => setActive("all")}
-            className="tj-cta-sheen mt-5 inline-flex min-h-[40px] items-center justify-center rounded-full border border-cyan-300/45 bg-cyan-300/[0.08] px-5 text-xs font-semibold text-cyan-50 transition-[border-color,background-color,box-shadow] duration-200 hover:border-cyan-300/65 hover:bg-cyan-300/[0.14] hover:shadow-[0_0_22px_rgba(34,211,238,0.2)]"
+            className="tj-cta-sheen mt-5 inline-flex min-h-[40px] items-center justify-center rounded-full border border-purple-300/45 bg-purple-300/[0.08] px-5 text-xs font-semibold text-purple-50 transition-[border-color,background-color,box-shadow] duration-200 hover:border-purple-300/65 hover:bg-purple-300/[0.14] hover:shadow-[0_0_22px_rgba(168, 85, 247,0.2)]"
           >
             {copy.filterLabels.all}
           </button>
@@ -141,7 +141,7 @@ function BundleCard({
     >
       <article
         ref={tiltRef}
-        className="bundle-card-tilt group relative flex h-full flex-col overflow-hidden rounded-2xl border border-cyan-400/20 bg-[linear-gradient(180deg,rgba(8,8,11,0.92),rgba(8,8,11,0.55))] shadow-[0_0_32px_rgba(34,211,238,0.06)] hover:border-cyan-300/45 hover:shadow-[0_0_56px_rgba(34,211,238,0.18)]"
+        className="bundle-card-tilt group relative flex h-full flex-col overflow-hidden rounded-2xl border border-purple-400/20 bg-[linear-gradient(180deg,rgba(8,8,11,0.92),rgba(8,8,11,0.55))] shadow-[0_0_32px_rgba(168, 85, 247,0.06)] hover:border-purple-300/45 hover:shadow-[0_0_56px_rgba(168, 85, 247,0.18)]"
         style={
           {
             "--tilt-x": "0deg",
@@ -163,14 +163,14 @@ function BundleCard({
           className="pointer-events-none absolute inset-0 z-[3] rounded-2xl mix-blend-screen"
           style={{
             background:
-              "radial-gradient(180px circle at var(--glare-x) var(--glare-y), rgba(34,211,238,0.22), transparent 70%)",
+              "radial-gradient(180px circle at var(--glare-x) var(--glare-y), rgba(168, 85, 247,0.22), transparent 70%)",
             opacity: "var(--glare-opacity)",
             transition: "opacity 220ms ease-out"
           }}
         />
 
         <div
-          className="relative aspect-[16/10] w-full overflow-hidden bg-[linear-gradient(135deg,rgba(34,211,238,0.18),rgba(14,165,233,0.06)_45%,rgba(8,8,11,0.9))]"
+          className="relative aspect-[16/10] w-full overflow-hidden bg-[linear-gradient(135deg,rgba(168, 85, 247,0.18),rgba(124, 58, 237,0.06)_45%,rgba(8,8,11,0.9))]"
           aria-hidden
         >
           {/* <img> instead of CSS background so the SVG's embedded
@@ -190,12 +190,12 @@ function BundleCard({
             className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
             style={{
               background:
-                "radial-gradient(60% 70% at 80% 20%, rgba(34,211,238,0.18), transparent 70%)"
+                "radial-gradient(60% 70% at 80% 20%, rgba(168, 85, 247,0.18), transparent 70%)"
             }}
           />
           <div className="absolute inset-x-0 top-0 z-[2] flex items-start justify-between p-4">
             <span
-              className="rounded-full border border-cyan-300/30 bg-black/40 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-100 backdrop-blur"
+              className="rounded-full border border-purple-300/30 bg-black/40 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-purple-100 backdrop-blur"
               aria-label={copy.goalAria(card.goalLabel)}
             >
               {card.goalLabel}
@@ -204,7 +204,7 @@ function BundleCard({
               className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] backdrop-blur ${
                 isFree
                   ? "border border-white/20 bg-white/[0.08] text-white/85"
-                  : "border border-cyan-300/40 bg-cyan-300/[0.12] text-cyan-50"
+                  : "border border-purple-300/40 bg-purple-300/[0.12] text-purple-50"
               }`}
               aria-label={copy.priceAria(bundle.save)}
             >
@@ -249,7 +249,7 @@ function BundleCard({
             <Link
               href={detailHref}
               aria-label={copy.detailsAria(card.name)}
-              className="tj-cta-sheen inline-flex min-h-[44px] items-center gap-1 rounded-full border border-cyan-300/20 px-3.5 py-2.5 text-xs font-semibold text-cyan-200 transition-colors hover:border-cyan-300/40 hover:text-cyan-100"
+              className="tj-cta-sheen inline-flex min-h-[44px] items-center gap-1 rounded-full border border-purple-300/20 px-3.5 py-2.5 text-xs font-semibold text-purple-200 transition-colors hover:border-purple-300/40 hover:text-purple-100"
             >
               {copy.details}
               <ArrowRight

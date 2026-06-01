@@ -191,7 +191,7 @@ export function MessagesLayoutShell({
           <p>{loadError}</p>
           <button
             type="button"
-            className="mt-2 rounded-full border border-white/15 px-3 py-1 text-[11px] text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_14px_rgba(34,211,238,0.12)]"
+            className="mt-2 rounded-full border border-white/15 px-3 py-1 text-[11px] text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_14px_rgba(168, 85, 247,0.12)]"
             onClick={() => void load()}
           >
             {t.threadRetry}
@@ -219,16 +219,16 @@ export function MessagesLayoutShell({
                     className={clsx(
                       "flex min-h-[52px] items-stretch gap-3 px-5 py-3.5 transition-[background-color,border-color] duration-150 ease-out sm:min-h-0",
                       activeId === c.id
-                        ? "border-l-[3px] border-l-[#22D3EE] bg-[rgba(34,211,238,0.06)]"
+                        ? "border-l-[3px] border-l-[#A855F7] bg-[rgba(168, 85, 247,0.06)]"
                         : "border-l-[3px] border-l-transparent hover:bg-[rgba(255,255,255,0.04)]",
-                      unread && activeId !== c.id && "bg-[rgba(34,211,238,0.04)]"
+                      unread && activeId !== c.id && "bg-[rgba(168, 85, 247,0.04)]"
                     )}
                   >
                     <div className="relative shrink-0">
                       <div
                         className={clsx(
                           "flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-divider bg-[#18191E] text-xs font-semibold text-muted",
-                          unread ? "border-[rgba(34,211,238,0.35)]" : ""
+                          unread ? "border-[rgba(168, 85, 247,0.35)]" : ""
                         )}
                       >
                         {c.peer.avatar_url ? (
@@ -238,7 +238,7 @@ export function MessagesLayoutShell({
                         )}
                       </div>
                       {unread ? (
-                        <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-cyan-500 px-1 text-[10px] font-bold text-[#05080a]">
+                        <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-purple-500 px-1 text-[10px] font-bold text-[#05080a]">
                           {c.unread_count > 9 ? "9+" : c.unread_count}
                         </span>
                       ) : null}
@@ -295,7 +295,7 @@ export function MessagesLayoutShell({
             </div>
             <Link
               href={`/${locale}/profile/edit`}
-              className="rounded-full border border-white/12 px-3 py-1.5 text-xs text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_14px_rgba(34,211,238,0.12)]"
+              className="rounded-full border border-white/12 px-3 py-1.5 text-xs text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_14px_rgba(168, 85, 247,0.12)]"
             >
               {s.settingsLink}
             </Link>

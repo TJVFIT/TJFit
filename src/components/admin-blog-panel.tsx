@@ -75,13 +75,13 @@ export function AdminBlogPanel() {
               {post.author_name} · {post.category ?? "General"}
             </p>
             <div className="mt-2 flex flex-wrap gap-2">
-              <button type="button" onClick={() => void moderate(post.id, "approve")} className="rounded-full border border-cyan-300/35 px-3 py-1 text-xs text-cyan-200">
+              <button type="button" onClick={() => void moderate(post.id, "approve")} className="rounded-full border border-purple-300/35 px-3 py-1 text-xs text-purple-200">
                 Approve
               </button>
               <button type="button" onClick={() => void moderate(post.id, "reject")} className="rounded-full border border-red-300/35 px-3 py-1 text-xs text-red-200">
                 Reject
               </button>
-              <button type="button" onClick={() => void moderate(post.id, "feature")} className="rounded-full border border-sky-300/40 px-3 py-1 text-xs text-sky-200">
+              <button type="button" onClick={() => void moderate(post.id, "feature")} className="rounded-full border border-violet-300/40 px-3 py-1 text-xs text-violet-200">
                 Feature
               </button>
             </div>
@@ -93,14 +93,14 @@ export function AdminBlogPanel() {
         <p className="text-sm font-semibold text-white">Generate with TJAI</p>
         <input className="mt-3 w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm text-white" placeholder="Topic" value={topic} onChange={(e) => setTopic(e.target.value)} />
         <input className="mt-2 w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm text-white" placeholder="Keyword" value={keyword} onChange={(e) => setKeyword(e.target.value)} />
-        <button type="button" onClick={() => void generate()} className="btn-primary-shimmer mt-3 rounded-full bg-gradient-to-br from-[#22D3EE] to-[#0EA5E9] px-4 py-2 text-xs font-semibold text-[#09090B]">
+        <button type="button" onClick={() => void generate()} className="btn-primary-shimmer mt-3 rounded-full bg-gradient-to-br from-[#A855F7] to-[#7C3AED] px-4 py-2 text-xs font-semibold text-[#09090B]">
           Generate Draft
         </button>
         {generated ? <textarea readOnly className="mt-3 min-h-[180px] w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs text-bright" value={generated} /> : null}
         {draftId ? (
           <Link
             href={`/${locale}/blog/write?draft_id=${encodeURIComponent(draftId)}`}
-            className="mt-3 inline-flex rounded-full border border-cyan-300/35 px-4 py-2 text-xs text-cyan-200"
+            className="mt-3 inline-flex rounded-full border border-purple-300/35 px-4 py-2 text-xs text-purple-200"
           >
             Open in Editor
           </Link>

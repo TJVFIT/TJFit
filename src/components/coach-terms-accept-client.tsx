@@ -90,7 +90,7 @@ export function CoachTermsAcceptClient({
             type="checkbox"
             checked={checked}
             onChange={(e) => setChecked(e.target.checked)}
-            className="mt-1 h-4 w-4 rounded border-white/20 bg-black/40 text-cyan-400 focus:ring-cyan-400/40"
+            className="mt-1 h-4 w-4 rounded border-white/20 bg-black/40 text-purple-400 focus:ring-purple-400/40"
           />
           <span>{copy.checkboxLabel}</span>
         </label>
@@ -99,7 +99,7 @@ export function CoachTermsAcceptClient({
           type="button"
           disabled={working}
           onClick={onAccept}
-          className="mt-6 inline-flex min-h-[44px] w-full items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-sky-500 px-6 py-3 text-sm font-semibold text-[#05080a] shadow-[0_0_28px_-10px_rgba(34,211,238,0.45)] disabled:opacity-50 sm:w-auto"
+          className="mt-6 inline-flex min-h-[44px] w-full items-center justify-center rounded-full bg-gradient-to-r from-purple-400 to-violet-500 px-6 py-3 text-sm font-semibold text-[#05080a] shadow-[0_0_28px_-10px_rgba(168, 85, 247,0.45)] disabled:opacity-50 sm:w-auto"
         >
           {working ? copy.accepting : copy.acceptButton}
         </button>

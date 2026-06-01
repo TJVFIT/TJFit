@@ -14,11 +14,11 @@ export default function ComingSoonPage() {
   return (
     <main className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-background px-6 py-16 text-center text-white">
       <div
-        className="pointer-events-none fixed -left-[80px] -top-[120px] h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.08)_0%,transparent_70%)] blur-[40px] motion-safe:[animation:tj-orb-drift-a_38s_ease-in-out_infinite]"
+        className="pointer-events-none fixed -left-[80px] -top-[120px] h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(168, 85, 247,0.08)_0%,transparent_70%)] blur-[40px] motion-safe:[animation:tj-orb-drift-a_38s_ease-in-out_infinite]"
         aria-hidden
       />
       <div
-        className="pointer-events-none fixed -bottom-[80px] -right-[80px] h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.06)_0%,transparent_70%)] blur-[40px] motion-safe:[animation:tj-orb-drift-b_46s_ease-in-out_infinite]"
+        className="pointer-events-none fixed -bottom-[80px] -right-[80px] h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle,rgba(167, 139, 250,0.06)_0%,transparent_70%)] blur-[40px] motion-safe:[animation:tj-orb-drift-b_46s_ease-in-out_infinite]"
         aria-hidden
       />
 
@@ -35,12 +35,12 @@ export default function ComingSoonPage() {
           Premium AI-powered fitness coaching, transformations, and a global community — almost ready.
         </p>
 
-        <div className="mt-10 h-px w-24 bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent" />
+        <div className="mt-10 h-px w-24 bg-gradient-to-r from-transparent via-purple-400/40 to-transparent" />
 
         <p className="mt-8 text-xs uppercase tracking-[0.2em] text-faint">Team & admin access</p>
         <Link
           href="/en/login"
-          className="mt-3 text-sm font-medium text-cyan-300 underline-offset-4 transition hover:text-cyan-200 hover:underline"
+          className="mt-3 text-sm font-medium text-purple-300 underline-offset-4 transition hover:text-purple-200 hover:underline"
         >
           Sign in →
         </Link>

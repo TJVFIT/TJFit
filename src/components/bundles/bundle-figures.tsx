@@ -3,7 +3,7 @@
  * Each glyph is a single inline SVG drawn from scratch (no stock art),
  * sized to a 64×64 viewBox so two figures sit cleanly side-by-side in the
  * hero. Every stroke is `currentColor` so we can tint with Tailwind text
- * utilities — `text-cyan-300/70` keeps them on-brand without baking color.
+ * utilities — `text-purple-300/70` keeps them on-brand without baking color.
  */
 
 import type { SVGProps } from "react";
@@ -227,8 +227,8 @@ export function BundleFigurePair({
   const [A, B] = pair;
   return (
     <div className={className} aria-hidden>
-      <A width={size} height={size} className="text-cyan-300/70" />
-      <B width={size} height={size} className="text-cyan-300/45" />
+      <A width={size} height={size} className="text-purple-300/70" />
+      <B width={size} height={size} className="text-purple-300/45" />
     </div>
   );
 }

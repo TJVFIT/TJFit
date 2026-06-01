@@ -49,7 +49,7 @@ export function ProtectedRoute({ children, locale, requireAdmin }: Props) {
         <p className="max-w-md text-sm text-muted">{authCopy.sessionCheckFailed}</p>
         <button
           type="button"
-          className="mt-6 rounded-full border border-white/15 bg-white/[0.06] px-6 py-2.5 text-sm font-medium text-bright transition hover:border-cyan-400/35"
+          className="mt-6 rounded-full border border-white/15 bg-white/[0.06] px-6 py-2.5 text-sm font-medium text-bright transition hover:border-purple-400/35"
           onClick={() => window.location.reload()}
         >
           {locale === "tr" ? "Yenile" : locale === "ar" ? "تحديث" : locale === "es" ? "Actualizar" : locale === "fr" ? "Actualiser" : "Refresh"}

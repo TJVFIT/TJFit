@@ -68,12 +68,12 @@ export function SpeakerButton({ text, autoplay = false }: { text: string; autopl
       aria-label={state === "playing" ? "Stop audio" : "Play audio"}
       className={`inline-flex h-6 w-6 items-center justify-center rounded-full border transition-[border-color,background-color,color,box-shadow] duration-200 ${
         state === "playing"
-          ? "border-cyan-300/55 bg-cyan-300/[0.12] text-cyan-100 shadow-[0_0_14px_rgba(34,211,238,0.32)]"
-          : "border-white/10 bg-white/5 text-white/60 hover:border-cyan-300/40 hover:bg-cyan-300/[0.06] hover:text-cyan-100 hover:shadow-[0_0_12px_rgba(34,211,238,0.18)]"
+          ? "border-purple-300/55 bg-purple-300/[0.12] text-purple-100 shadow-[0_0_14px_rgba(168, 85, 247,0.32)]"
+          : "border-white/10 bg-white/5 text-white/60 hover:border-purple-300/40 hover:bg-purple-300/[0.06] hover:text-purple-100 hover:shadow-[0_0_12px_rgba(168, 85, 247,0.18)]"
       }`}
     >
       {state === "loading" ? (
-        <span className="h-2 w-2 animate-pulse rounded-full bg-cyan-300" />
+        <span className="h-2 w-2 animate-pulse rounded-full bg-purple-300" />
       ) : state === "playing" ? (
         <svg viewBox="0 0 12 12" className="h-3 w-3 fill-current">
           <rect x="2" y="2" width="3" height="8" rx="0.5" />

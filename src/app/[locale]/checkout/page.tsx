@@ -250,7 +250,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
       : statusTone === "success"
         ? "text-emerald-300"
         : statusTone === "pending"
-          ? "text-cyan-200/90"
+          ? "text-purple-200/90"
           : "text-muted";
 
   return (
@@ -265,8 +265,8 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
         </PremiumPanel>
 
         {savedOrderId ? (
-          <PremiumPanel className="mb-8 border-cyan-400/20 bg-cyan-950/10">
-            <p className="text-sm font-semibold text-cyan-100">{copy.pendingTitle}</p>
+          <PremiumPanel className="mb-8 border-purple-400/20 bg-purple-950/10">
+            <p className="text-sm font-semibold text-purple-100">{copy.pendingTitle}</p>
             <p className="mt-2 text-sm leading-relaxed text-muted">{copy.pendingBody}</p>
             {pendingAmountTry != null ? (
               <p className="mt-4 text-sm text-bright">
@@ -346,7 +346,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
               >
                 {copy.promoApplyCta}
               </button>
-              {promoMessage ? <p className="mt-2 text-xs text-cyan-300">{promoMessage}</p> : null}
+              {promoMessage ? <p className="mt-2 text-xs text-purple-300">{promoMessage}</p> : null}
             </div>
 
             <button

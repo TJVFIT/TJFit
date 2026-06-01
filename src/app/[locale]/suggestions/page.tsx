@@ -20,7 +20,7 @@ type Suggestion = {
 
 const STATUS_COLORS: Record<string, string> = {
   under_review: "border-faint/30 bg-faint/10 text-bright",
-  planned: "border-cyan-400/30 bg-cyan-500/10 text-cyan-200",
+  planned: "border-purple-400/30 bg-purple-500/10 text-purple-200",
   done: "border-emerald-400/30 bg-emerald-500/10 text-emerald-200",
   rejected: "border-red-400/20 bg-red-500/10 text-red-300"
 };
@@ -104,7 +104,7 @@ export default function SuggestionsPage({ params }: { params: { locale: string }
         <button
           type="button"
           onClick={() => { if (!user) { window.location.href = `/${locale}/login?redirect=/${locale}/suggestions`; return; } setShowModal(true); }}
-          className="shrink-0 tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2.5 text-sm font-bold text-[#09090B]"
+          className="shrink-0 tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2.5 text-sm font-bold text-[#09090B]"
         >
           Submit an idea →
         </button>
@@ -113,7 +113,7 @@ export default function SuggestionsPage({ params }: { params: { locale: string }
       <div className="mt-6 flex flex-wrap gap-2">
         {FILTERS.map((f) => (
           <button key={f.key} type="button" onClick={() => setFilter(f.key)}
-            className={`rounded-full border px-4 py-1.5 text-sm transition-[border-color,background-color,color,box-shadow] duration-200 ${filter === f.key ? "tj-chip-active border-cyan-300/45 bg-cyan-300/[0.1] text-cyan-50" : "border-divider text-muted hover:border-cyan-300/30 hover:bg-cyan-300/[0.04] hover:text-cyan-100"}`}
+            className={`rounded-full border px-4 py-1.5 text-sm transition-[border-color,background-color,color,box-shadow] duration-200 ${filter === f.key ? "tj-chip-active border-purple-300/45 bg-purple-300/[0.1] text-purple-50" : "border-divider text-muted hover:border-purple-300/30 hover:bg-purple-300/[0.04] hover:text-purple-100"}`}
           >
             {f.label}
           </button>
@@ -131,9 +131,9 @@ export default function SuggestionsPage({ params }: { params: { locale: string }
           </div>
         ) : (
           items.map((item) => (
-            <article key={item.id} className="group/sug flex gap-4 rounded-2xl border border-divider bg-surface p-4 transition-[border-color,box-shadow] duration-200 hover:border-cyan-300/25 hover:shadow-[0_0_24px_rgba(34,211,238,0.1)]">
+            <article key={item.id} className="group/sug flex gap-4 rounded-2xl border border-divider bg-surface p-4 transition-[border-color,box-shadow] duration-200 hover:border-purple-300/25 hover:shadow-[0_0_24px_rgba(168, 85, 247,0.1)]">
               <button type="button" onClick={() => void vote(item.id)}
-                className="flex shrink-0 flex-col items-center gap-1 rounded-xl border border-divider bg-[#0D0F12] px-3 py-2 text-sm text-bright transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/45 hover:bg-cyan-300/[0.06] hover:text-cyan-100 hover:shadow-[0_0_16px_rgba(34,211,238,0.18)]"
+                className="flex shrink-0 flex-col items-center gap-1 rounded-xl border border-divider bg-[#0D0F12] px-3 py-2 text-sm text-bright transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/45 hover:bg-purple-300/[0.06] hover:text-purple-100 hover:shadow-[0_0_16px_rgba(168, 85, 247,0.18)]"
               >
                 <ChevronUp className="h-4 w-4" />
                 <span className="font-semibold">{item.vote_count}</span>
@@ -172,7 +172,7 @@ export default function SuggestionsPage({ params }: { params: { locale: string }
               </select>
               {error ? <p className="text-xs text-red-400">{error}</p> : null}
               <div className="flex gap-3">
-                <button type="submit" disabled={submitting} className="flex-1 tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] py-2.5 text-sm font-bold text-[#09090B] disabled:opacity-50">
+                <button type="submit" disabled={submitting} className="flex-1 tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] py-2.5 text-sm font-bold text-[#09090B] disabled:opacity-50">
                   {submitting ? "Submitting..." : "Submit Idea"}
                 </button>
                 <button type="button" onClick={() => setShowModal(false)} className="rounded-full border border-divider px-4 py-2.5 text-sm text-muted">

@@ -35,7 +35,7 @@ export function CoachMessageBody({ text, className }: { text: string; className?
 
     if (t.startsWith("### ")) {
       blocks.push(
-        <h4 key={`h-${k++}`} className="text-[11px] font-bold uppercase tracking-[0.16em] text-cyan-300/90">
+        <h4 key={`h-${k++}`} className="text-[11px] font-bold uppercase tracking-[0.16em] text-purple-300/90">
           {parseInlineBold(t.slice(4))}
         </h4>
       );
@@ -97,7 +97,7 @@ export function CoachThinkingPulse() {
     >
       <span
         className={cn(
-          "text-[11px] font-medium uppercase tracking-[0.18em] text-cyan-200/75 motion-reduce:opacity-90",
+          "text-[11px] font-medium uppercase tracking-[0.18em] text-purple-200/75 motion-reduce:opacity-90",
           styles.thinkLabel
         )}
       >
@@ -108,7 +108,7 @@ export function CoachThinkingPulse() {
           <span
             key={d}
             className={cn(
-              "inline-block h-1.5 w-1.5 rounded-full bg-cyan-300/90",
+              "inline-block h-1.5 w-1.5 rounded-full bg-purple-300/90",
               styles.thinkDot
             )}
             style={{ animationDelay: `${d * 180}ms` }}

@@ -263,13 +263,13 @@ export function TJAIResult({
   const lineData = {
     labels: metrics.weightCurve.map((_, i) => `W${i}`),
     datasets: [
-      { label: "Projected", data: metrics.weightCurve, borderColor: "#22D3EE", backgroundColor: "rgba(34,211,238,0.12)", tension: 0.35, fill: true },
+      { label: "Projected", data: metrics.weightCurve, borderColor: "#A855F7", backgroundColor: "rgba(168, 85, 247,0.12)", tension: 0.35, fill: true },
       { label: "No action", data: metrics.weightCurve.map(() => Number(answers.s1_weight ?? 0)), borderColor: "rgba(239,68,68,0.4)", borderDash: [6, 6], tension: 0.2 }
     ]
   };
   const pieData = {
     labels: ["Protein", "Carbs", "Fat"],
-    datasets: [{ data: [metrics.protein * 4, metrics.carbs * 4, metrics.fat * 9], backgroundColor: ["#22D3EE", "#0EA5E9", "rgba(255,255,255,0.35)"], borderWidth: 0 }]
+    datasets: [{ data: [metrics.protein * 4, metrics.carbs * 4, metrics.fat * 9], backgroundColor: ["#A855F7", "#7C3AED", "rgba(255,255,255,0.35)"], borderWidth: 0 }]
   };
   const decisionReasons = useMemo(() => buildTjaiDecisionReasons(answers, metrics), [answers, metrics]);
 
@@ -278,9 +278,9 @@ export function TJAIResult({
       <div className="mx-auto w-full max-w-5xl space-y-8">
 
         {/* Medical disclaimer */}
-        <div className="flex items-start gap-3 rounded-xl border border-cyan-400/20 bg-cyan-400/5 px-4 py-3">
-          <span className="mt-0.5 shrink-0 text-cyan-300"></span>
-          <p className="text-xs text-cyan-200/80">
+        <div className="flex items-start gap-3 rounded-xl border border-purple-400/20 bg-purple-400/5 px-4 py-3">
+          <span className="mt-0.5 shrink-0 text-purple-300"></span>
+          <p className="text-xs text-purple-200/80">
             Consult a physician before starting any new training or nutrition program. TJAI generates personalized guidance but is not a substitute for professional medical advice.
           </p>
         </div>
@@ -360,7 +360,7 @@ export function TJAIResult({
               <div>
                 <p className="text-xs text-muted">Projected BF% {metrics.projectedFinalBF}%</p>
                 <div className="mt-1 h-2 rounded-full bg-divider">
-                  <div className="h-full rounded-full bg-[rgba(34,211,238,0.3)]" style={{ width: `${Math.min(100, Math.max(0, metrics.projectedFinalBF * 2))}%` }} />
+                  <div className="h-full rounded-full bg-[rgba(168, 85, 247,0.3)]" style={{ width: `${Math.min(100, Math.max(0, metrics.projectedFinalBF * 2))}%` }} />
                 </div>
               </div>
             </div>
@@ -385,14 +385,14 @@ export function TJAIResult({
           </div>
         </article>
 
-        <div className="rounded-xl border border-[rgba(14, 165, 233,0.2)] bg-[rgba(14, 165, 233,0.06)] p-5">
+        <div className="rounded-xl border border-[rgba(124, 58, 237,0.2)] bg-[rgba(124, 58, 237,0.06)] p-5">
           <p className="text-sm font-semibold text-accent-violet">Plateau Alert</p>
           <p className="mt-1 text-sm text-bright">
             Based on your profile, most people with your metabolism plateau around Week {metrics.plateauWeek}. We already built your plateau breaker into that point.
           </p>
         </div>
         {metrics.reverseDietNeeded ? (
-          <div className="rounded-xl border border-[rgba(34,211,238,0.2)] bg-[rgba(34,211,238,0.06)] p-5">
+          <div className="rounded-xl border border-[rgba(168, 85, 247,0.2)] bg-[rgba(168, 85, 247,0.06)] p-5">
             <p className="text-sm font-semibold text-accent">Metabolic Reset Added</p>
             <p className="mt-1 text-sm text-bright">We detected signs of adaptation. Your plan starts with a 2-week reset before the main 12-week system.</p>
           </div>
@@ -401,13 +401,13 @@ export function TJAIResult({
         <div ref={dietRef} className={cn("reveal-up space-y-4", inDiet && "is-in")}>
           <h2 className="text-2xl font-bold">{copy.result.yourDiet}</h2>
           <div className="flex flex-wrap gap-2">
-            <button onClick={() => void generateGrocery()} className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] px-4 py-2 text-sm font-bold text-[#09090B] shadow-[0_0_18px_rgba(34,211,238,0.22)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] hover:shadow-[0_0_28px_rgba(34,211,238,0.35)]">
+            <button onClick={() => void generateGrocery()} className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-4 py-2 text-sm font-bold text-[#09090B] shadow-[0_0_18px_rgba(168, 85, 247,0.22)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] hover:shadow-[0_0_28px_rgba(168, 85, 247,0.35)]">
               {loadingGrocery ? "Building your grocery list..." : "Generate Grocery List"}
             </button>
-            <button onClick={() => void generateMealPrep()} className="tj-cta-sheen rounded-full border border-divider px-4 py-2 text-sm text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_18px_rgba(34,211,238,0.14)]">
+            <button onClick={() => void generateMealPrep()} className="tj-cta-sheen rounded-full border border-divider px-4 py-2 text-sm text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.14)]">
               {loadingMealPrep ? "Generating..." : "Generate Meal Prep Guide"}
             </button>
-            <button onClick={() => void exportPdf()} className="tj-cta-sheen rounded-full border border-divider px-4 py-2 text-sm text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_18px_rgba(34,211,238,0.14)]">
+            <button onClick={() => void exportPdf()} className="tj-cta-sheen rounded-full border border-divider px-4 py-2 text-sm text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.14)]">
               {loadingPdf ? "Generating PDF..." : "Download My Plan (PDF)"}
             </button>
           </div>
@@ -423,7 +423,7 @@ export function TJAIResult({
                 className={cn(
                   "rounded-full border px-4 py-2 text-sm transition-all",
                   i === dietTab
-                    ? "border-accent bg-[rgba(34,211,238,0.08)] text-white"
+                    ? "border-accent bg-[rgba(168, 85, 247,0.08)] text-white"
                     : "border-divider text-muted hover:border-accent"
                 )}
               >
@@ -526,7 +526,7 @@ export function TJAIResult({
                 onClick={() => setProgramTab(i)}
                 className={cn(
                   "rounded-full border px-4 py-2 text-sm transition-all",
-                  i === programTab ? "border-accent bg-[rgba(34,211,238,0.08)] text-white" : "border-divider text-muted"
+                  i === programTab ? "border-accent bg-[rgba(168, 85, 247,0.08)] text-white" : "border-divider text-muted"
                 )}
               >
                 {phase.weekRange} · {phase.phase} {phase.isDeload ? "· DELOAD" : ""}
@@ -535,7 +535,7 @@ export function TJAIResult({
           </div>
           <div className="space-y-3">
             {(activeProgramPhase?.days ?? []).map((day, i) => (
-              <article key={`${day.day}-${i}`} className={cn("rounded-xl border border-divider bg-surface p-5", activeProgramPhase?.isDeload && "bg-[rgba(34,211,238,0.03)]")}>
+              <article key={`${day.day}-${i}`} className={cn("rounded-xl border border-divider bg-surface p-5", activeProgramPhase?.isDeload && "bg-[rgba(168, 85, 247,0.03)]")}>
                 <h3 className="text-lg font-semibold text-accent">
                   {day.day} — {day.label}
                 </h3>
@@ -566,8 +566,8 @@ export function TJAIResult({
             <h3 className="text-lg font-semibold text-white">{copy.result.supplements}</h3>
             {(
               [
-                ["Tier 1 — Essential", mutablePlan.diet.supplements?.tier1 ?? [], "#22D3EE", "t1"],
-                ["Tier 2 — Helpful", mutablePlan.diet.supplements?.tier2 ?? [], "#0EA5E9", "t2"],
+                ["Tier 1 — Essential", mutablePlan.diet.supplements?.tier1 ?? [], "#A855F7", "t1"],
+                ["Tier 2 — Helpful", mutablePlan.diet.supplements?.tier2 ?? [], "#7C3AED", "t2"],
                 ["Tier 3 — Optional", mutablePlan.diet.supplements?.tier3 ?? [], "#52525B", "t3"]
               ] as const
             ).map(([title, items, border, key]) => (
@@ -602,7 +602,7 @@ export function TJAIResult({
         </div>
 
         {mutablePlan.diet.cheatMealStrategy ? (
-          <div className="rounded-xl border border-[rgba(14, 165, 233,0.15)] bg-[rgba(14, 165, 233,0.04)] p-5">
+          <div className="rounded-xl border border-[rgba(124, 58, 237,0.15)] bg-[rgba(124, 58, 237,0.04)] p-5">
             <button type="button" onClick={() => setCheatOpen((v) => !v)} className="text-left text-lg font-semibold text-white">
               Cheat Meal Strategy
             </button>
@@ -670,7 +670,7 @@ export function TJAIResult({
               type="button"
               onClick={handleSave}
               disabled={isSaving}
-              className="tj-cta-sheen min-h-11 rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] px-5 text-sm font-bold text-[#09090B] shadow-[0_0_18px_rgba(34,211,238,0.22)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] hover:shadow-[0_0_28px_rgba(34,211,238,0.35)] disabled:opacity-50"
+              className="tj-cta-sheen min-h-11 rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-5 text-sm font-bold text-[#09090B] shadow-[0_0_18px_rgba(168, 85, 247,0.22)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] hover:shadow-[0_0_28px_rgba(168, 85, 247,0.35)] disabled:opacity-50"
             >
               {isSaving ? copy.result.saving : copy.result.saveToDashboard}
             </button>
@@ -708,7 +708,7 @@ export function TJAIResult({
                       ))}
                     </ul>
                     <p className="mt-2 text-xs text-muted">P {meal.protein}g · C {meal.carbs}g · F {meal.fat}g</p>
-                    <button type="button" onClick={() => chooseSwap(meal)} className="mt-3 tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-3 py-1 text-xs font-semibold text-[#09090B]">
+                    <button type="button" onClick={() => chooseSwap(meal)} className="mt-3 tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-3 py-1 text-xs font-semibold text-[#09090B]">
                       Choose this meal
                     </button>
                   </article>

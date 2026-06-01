@@ -104,10 +104,10 @@ function ChartTooltip(props: Record<string, unknown>) {
     <div
       style={{
         background: "rgba(13,14,18,0.95)",
-        border: "1px solid rgba(34,211,238,0.3)",
+        border: "1px solid rgba(168, 85, 247,0.3)",
         borderRadius: 12,
         padding: "10px 14px",
-        boxShadow: "0 0 20px rgba(34,211,238,0.12), 0 8px 32px rgba(0,0,0,0.5)",
+        boxShadow: "0 0 20px rgba(168, 85, 247,0.12), 0 8px 32px rgba(0,0,0,0.5)",
         fontSize: 12
       }}
     >
@@ -242,7 +242,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
       particleCount: 70,
       spread: 80,
       origin: { y: 0.6 },
-      colors: ["#22D3EE", "#0EA5E9", "#22D3EE", "#22C55E"]
+      colors: ["#A855F7", "#7C3AED", "#A855F7", "#22C55E"]
     });
     showToast("Milestone completed");
     await load();
@@ -283,8 +283,8 @@ export function ProgressView({ locale }: { locale: Locale }) {
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="weightGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#22D3EE" stopOpacity={0.25} />
-                    <stop offset="95%" stopColor="#22D3EE" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#A855F7" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#A855F7" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid stroke="rgba(255,255,255,0.05)" strokeDasharray="3 3" />
@@ -294,10 +294,10 @@ export function ProgressView({ locale }: { locale: Locale }) {
                 <Area
                   type="monotone"
                   dataKey="weight"
-                  stroke="#22D3EE"
+                  stroke="#A855F7"
                   strokeWidth={2}
                   fill="url(#weightGrad)"
-                  dot={{ r: 3, fill: "#22D3EE" }}
+                  dot={{ r: 3, fill: "#A855F7" }}
                   connectNulls
                   isAnimationActive
                   animationDuration={1200}
@@ -312,8 +312,8 @@ export function ProgressView({ locale }: { locale: Locale }) {
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="fatGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#0EA5E9" stopOpacity={0.25} />
-                    <stop offset="95%" stopColor="#0EA5E9" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#7C3AED" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#7C3AED" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid stroke="rgba(255,255,255,0.05)" strokeDasharray="3 3" />
@@ -323,10 +323,10 @@ export function ProgressView({ locale }: { locale: Locale }) {
                 <Area
                   type="monotone"
                   dataKey="fat"
-                  stroke="#0EA5E9"
+                  stroke="#7C3AED"
                   strokeWidth={2}
                   fill="url(#fatGrad)"
-                  dot={{ r: 3, fill: "#0EA5E9" }}
+                  dot={{ r: 3, fill: "#7C3AED" }}
                   connectNulls
                   isAnimationActive
                   animationDuration={1200}

@@ -100,7 +100,7 @@ export function AdminBundlePayments() {
           type="button"
           onClick={createAll}
           disabled={busy || allLinked}
-          className="rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] px-5 py-2.5 text-sm font-bold text-[#09090B] disabled:opacity-50"
+          className="rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-5 py-2.5 text-sm font-bold text-[#09090B] disabled:opacity-50"
         >
           {allLinked ? "All linked ✓" : "Create all Gumroad products"}
         </button>
@@ -114,7 +114,7 @@ export function AdminBundlePayments() {
       ) : null}
 
       {status ? (
-        <p className="mt-3 text-xs text-cyan-200" role="status" aria-live="polite">
+        <p className="mt-3 text-xs text-purple-200" role="status" aria-live="polite">
           {status}
         </p>
       ) : null}
@@ -150,7 +150,7 @@ export function AdminBundlePayments() {
                 type="button"
                 onClick={() => saveManual(i.slug)}
                 disabled={busy}
-                className="rounded-full border border-cyan-300/35 px-4 py-2 text-xs font-semibold text-cyan-100 hover:bg-cyan-300/10 disabled:opacity-50"
+                className="rounded-full border border-purple-300/35 px-4 py-2 text-xs font-semibold text-purple-100 hover:bg-purple-300/10 disabled:opacity-50"
               >
                 Save
               </button>

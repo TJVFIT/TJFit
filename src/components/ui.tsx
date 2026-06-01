@@ -32,7 +32,7 @@ export function CoachCard({ coach, href }: { coach: Coach; href: string }) {
       <Link href={href} className="glass-panel block rounded-[28px] p-6 transition">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-accent/80 to-cyan-300/80 text-lg font-semibold text-white">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-accent/80 to-purple-300/80 text-lg font-semibold text-white">
               {coach.name
                 .split(" ")
                 .map((part) => part[0])
@@ -45,7 +45,7 @@ export function CoachCard({ coach, href }: { coach: Coach; href: string }) {
             </div>
           </div>
           <div className="flex items-center gap-1 rounded-full bg-white/5 px-3 py-1 text-sm text-bright">
-            <Star className="h-4 w-4 fill-current text-cyan-300" />
+            <Star className="h-4 w-4 fill-current text-purple-300" />
             {coach.rating}
           </div>
         </div>

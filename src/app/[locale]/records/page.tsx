@@ -161,13 +161,13 @@ export default function RecordsPage({ params }: { params: { locale: string } }) 
           <Dumbbell className="mx-auto h-12 w-12 text-dim" strokeWidth={1.5} />
           <p className="mt-4 text-lg font-semibold text-white">{copy.emptyTitle}</p>
           <p className="mt-2 max-w-xs text-sm text-muted">{copy.emptyBody}</p>
-          <a href={`/${locale}/progress`} className="tj-cta-sheen mt-6 inline-flex items-center justify-center rounded-full border border-cyan-300/45 bg-cyan-300/[0.1] px-6 py-2.5 text-sm font-semibold text-cyan-50 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/65 hover:bg-cyan-300/[0.14] hover:shadow-[0_0_22px_rgba(34,211,238,0.22)]">{copy.progressCta}</a>
+          <a href={`/${locale}/progress`} className="tj-cta-sheen mt-6 inline-flex items-center justify-center rounded-full border border-purple-300/45 bg-purple-300/[0.1] px-6 py-2.5 text-sm font-semibold text-purple-50 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/65 hover:bg-purple-300/[0.14] hover:shadow-[0_0_22px_rgba(168, 85, 247,0.22)]">{copy.progressCta}</a>
         </div>
       )}
       {!loading && !error && filtered.length > 0 && (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((pr) => (
-            <div key={pr.exercise} className="group/pr rounded-2xl border border-divider bg-surface p-5 transition-[border-color,box-shadow,transform] duration-200 hover:border-cyan-300/35 hover:shadow-[0_18px_40px_-16px_rgba(0,0,0,0.5),0_0_28px_rgba(34,211,238,0.12)] motion-safe:hover:-translate-y-0.5">
+            <div key={pr.exercise} className="group/pr rounded-2xl border border-divider bg-surface p-5 transition-[border-color,box-shadow,transform] duration-200 hover:border-purple-300/35 hover:shadow-[0_18px_40px_-16px_rgba(0,0,0,0.5),0_0_28px_rgba(168, 85, 247,0.12)] motion-safe:hover:-translate-y-0.5">
               <div className="flex items-start justify-between gap-2">
                 <p className="text-base font-semibold text-white">{pr.exercise}</p>
                 <span className="shrink-0 text-xs text-dim">{pr.total_sets} {copy.sets}</span>
@@ -177,11 +177,11 @@ export default function RecordsPage({ params }: { params: { locale: string } }) 
                 {pr.max_weight_kg != null ? (
                   <div className="tj-pr-weight-shimmer relative flex items-center gap-1.5 overflow-hidden rounded-md px-1 py-0.5">
                     <Trophy className="h-3.5 w-3.5 text-accent" />
-                    <PRValue value={pr.max_weight_kg} suffix=" kg" color="#22D3EE" />
+                    <PRValue value={pr.max_weight_kg} suffix=" kg" color="#A855F7" />
                   </div>
                 ) : null}
-                {pr.max_reps != null ? <div className="flex items-center gap-1.5"><Repeat className="h-3.5 w-3.5 text-accent" /><PRValue value={pr.max_reps} suffix=" reps" color="#22D3EE" /></div> : null}
-                {pr.max_duration_minutes != null ? <div className="flex items-center gap-1.5"><Timer className="h-3.5 w-3.5 text-accent-violet" /><PRValue value={pr.max_duration_minutes} suffix=" min" color="#0EA5E9" /></div> : null}
+                {pr.max_reps != null ? <div className="flex items-center gap-1.5"><Repeat className="h-3.5 w-3.5 text-accent" /><PRValue value={pr.max_reps} suffix=" reps" color="#A855F7" /></div> : null}
+                {pr.max_duration_minutes != null ? <div className="flex items-center gap-1.5"><Timer className="h-3.5 w-3.5 text-accent-violet" /><PRValue value={pr.max_duration_minutes} suffix=" min" color="#7C3AED" /></div> : null}
               </div>
               <p className="mt-3 text-xs text-faint">{copy.totalSets}: {pr.total_sets}</p>
             </div>

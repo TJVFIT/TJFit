@@ -37,10 +37,10 @@ export default function EquipmentPage() {
     <div className="relative mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
       <AmbientOrbs />
       <div className="relative text-center">
-        <div className="mx-auto mb-6 inline-flex h-16 w-16 items-center justify-center rounded-full border border-cyan-400/25 bg-cyan-500/10">
+        <div className="mx-auto mb-6 inline-flex h-16 w-16 items-center justify-center rounded-full border border-purple-400/25 bg-purple-500/10">
           <ShoppingBag className="h-8 w-8 text-accent" />
         </div>
-        <span className="inline-flex animate-pulse rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-300">
+        <span className="inline-flex animate-pulse rounded-full border border-purple-400/25 bg-purple-400/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-purple-300">
           Launching Soon
         </span>
         <h1 className="mt-4 text-4xl font-extrabold sm:text-5xl">
@@ -51,9 +51,9 @@ export default function EquipmentPage() {
 
       <div className="mt-12 grid gap-6 sm:grid-cols-2">
         {CATEGORIES.map((cat) => (
-          <article key={cat.title} className="group/cat rounded-2xl border border-divider bg-surface p-6 transition-[border-color,box-shadow,transform] duration-300 hover:border-cyan-300/35 hover:shadow-[0_20px_44px_-16px_rgba(0,0,0,0.5),0_0_28px_rgba(34,211,238,0.12)] motion-safe:hover:-translate-y-0.5">
+          <article key={cat.title} className="group/cat rounded-2xl border border-divider bg-surface p-6 transition-[border-color,box-shadow,transform] duration-300 hover:border-purple-300/35 hover:shadow-[0_20px_44px_-16px_rgba(0,0,0,0.5),0_0_28px_rgba(168, 85, 247,0.12)] motion-safe:hover:-translate-y-0.5">
             <p className="text-3xl">{cat.icon}</p>
-            <h3 className="mt-3 text-lg font-semibold text-white transition-colors duration-200 group-hover/cat:text-cyan-50">{cat.title}</h3>
+            <h3 className="mt-3 text-lg font-semibold text-white transition-colors duration-200 group-hover/cat:text-purple-50">{cat.title}</h3>
             <p className="mt-2 text-sm leading-[1.7] text-muted">{cat.desc}</p>
           </article>
         ))}
@@ -73,7 +73,7 @@ export default function EquipmentPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            <button type="submit" disabled={submitting} className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 py-2.5 text-sm font-bold text-[#09090B] disabled:opacity-50">
+            <button type="submit" disabled={submitting} className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 py-2.5 text-sm font-bold text-[#09090B] disabled:opacity-50">
               {submitting ? "Adding..." : "Notify Me"}
             </button>
           </form>

@@ -91,7 +91,7 @@ export default function HomePage({ params }: { params: { locale: string } }) {
           <div className="tj-empty-state mx-auto flex max-w-md flex-col items-center rounded-2xl px-8 py-12 text-center">
             <span
               aria-hidden
-              className="flex h-14 w-14 items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-300/[0.07] text-2xl"
+              className="flex h-14 w-14 items-center justify-center rounded-full border border-purple-300/30 bg-purple-300/[0.07] text-2xl"
             >
              
             </span>
@@ -104,13 +104,13 @@ export default function HomePage({ params }: { params: { locale: string } }) {
             <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
               <a
                 href={`/${locale}`}
-                className="tj-cta-sheen inline-flex min-h-[44px] items-center justify-center rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] px-6 text-sm font-bold text-[#09090B] shadow-[0_0_20px_rgba(34,211,238,0.25)]"
+                className="tj-cta-sheen inline-flex min-h-[44px] items-center justify-center rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-6 text-sm font-bold text-[#09090B] shadow-[0_0_20px_rgba(168, 85, 247,0.25)]"
               >
                 {FALLBACK_COPY[locale].retry}
               </a>
               <a
                 href={`/${locale}/bundles`}
-                className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-white/[0.14] bg-white/[0.05] px-6 text-sm font-medium text-bright transition-colors hover:border-cyan-300/35 hover:text-cyan-100"
+                className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-white/[0.14] bg-white/[0.05] px-6 text-sm font-medium text-bright transition-colors hover:border-purple-300/35 hover:text-purple-100"
               >
                 {FALLBACK_COPY[locale].browse}
               </a>

@@ -68,7 +68,7 @@ export function InteractiveCard({ children, className = "", reducedMotion }: Int
           className="pointer-events-none absolute inset-0 z-10 transition-opacity duration-300"
           style={{
             opacity: spotlight.visible ? 1 : 0,
-            background: `radial-gradient(200px circle at ${spotlight.x}% ${spotlight.y}%, rgba(34,211,238,0.07), transparent 70%)`
+            background: `radial-gradient(200px circle at ${spotlight.x}% ${spotlight.y}%, rgba(168, 85, 247,0.07), transparent 70%)`
           }}
           aria-hidden
         />

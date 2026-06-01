@@ -116,7 +116,7 @@ export function HomeCoachCta({ locale }: { locale: Locale }) {
             <ul className="mt-10 space-y-4">
               {copy.points.map((point) => (
                 <li key={point} className="flex gap-3 text-sm leading-relaxed text-bright">
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-[rgba(34,211,238,0.25)] bg-[rgba(34,211,238,0.08)] text-accent">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-[rgba(168, 85, 247,0.25)] bg-[rgba(168, 85, 247,0.08)] text-accent">
                     <Check className="h-3 w-3" strokeWidth={2.5} aria-hidden />
                   </span>
                   {point}
@@ -125,7 +125,7 @@ export function HomeCoachCta({ locale }: { locale: Locale }) {
             </ul>
             <Link
               href={`/${locale}/become-a-coach`}
-              className="tj-cta-sheen mt-10 inline-flex min-h-[50px] items-center justify-center rounded-[10px] border border-[rgba(255,255,255,0.14)] px-8 text-sm font-semibold text-white transition-[border-color,color,background-color,box-shadow,transform] duration-200 hover:border-[rgba(34,211,238,0.4)] hover:bg-[rgba(34,211,238,0.04)] hover:text-cyan-50 hover:shadow-[0_0_22px_rgba(34,211,238,0.16)] hover:-translate-y-px"
+              className="tj-cta-sheen mt-10 inline-flex min-h-[50px] items-center justify-center rounded-[10px] border border-[rgba(255,255,255,0.14)] px-8 text-sm font-semibold text-white transition-[border-color,color,background-color,box-shadow,transform] duration-200 hover:border-[rgba(168, 85, 247,0.4)] hover:bg-[rgba(168, 85, 247,0.04)] hover:text-purple-50 hover:shadow-[0_0_22px_rgba(168, 85, 247,0.16)] hover:-translate-y-px"
             >
               {copy.cta}
             </Link>
@@ -133,21 +133,21 @@ export function HomeCoachCta({ locale }: { locale: Locale }) {
 
           <div className="relative flex justify-center lg:col-span-5">
             <div
-              className="glass-panel relative hidden w-full max-w-[280px] rotate-[-2deg] rounded-2xl border border-[rgba(255,255,255,0.06)] p-5 shadow-[0_0_60px_rgba(34,211,238,0.08)] lg:block"
+              className="glass-panel relative hidden w-full max-w-[280px] rotate-[-2deg] rounded-2xl border border-[rgba(255,255,255,0.06)] p-5 shadow-[0_0_60px_rgba(168, 85, 247,0.08)] lg:block"
               aria-hidden
             >
               <p className="text-center text-xs font-semibold uppercase tracking-[0.12em] text-muted">{copy.mockTitle}</p>
               <div className="mt-5 grid grid-cols-3 gap-2 text-center">
-                <div className="rounded-lg border border-cyan-300/12 bg-[rgba(17,18,21,0.6)] px-2 py-3 shadow-[inset_0_0_18px_-8px_rgba(34,211,238,0.18)]">
+                <div className="rounded-lg border border-purple-300/12 bg-[rgba(17,18,21,0.6)] px-2 py-3 shadow-[inset_0_0_18px_-8px_rgba(168, 85, 247,0.18)]">
                   <p className="font-display text-lg font-bold tabular-nums text-white">142</p>
                   <p className="mt-1 text-[10px] font-medium uppercase tracking-wide text-dim">{copy.mockStudents}</p>
                 </div>
-                <div className="rounded-lg border border-cyan-300/12 bg-[rgba(17,18,21,0.6)] px-2 py-3 shadow-[inset_0_0_18px_-8px_rgba(34,211,238,0.18)]">
+                <div className="rounded-lg border border-purple-300/12 bg-[rgba(17,18,21,0.6)] px-2 py-3 shadow-[inset_0_0_18px_-8px_rgba(168, 85, 247,0.18)]">
                   <p className="font-display text-lg font-bold tabular-nums text-accent">€2,840</p>
                   <p className="mt-1 text-[10px] font-medium uppercase tracking-wide text-dim">{copy.mockRevenue}</p>
                 </div>
-                <div className="rounded-lg border border-cyan-300/12 bg-[rgba(17,18,21,0.6)] px-2 py-3 shadow-[inset_0_0_18px_-8px_rgba(34,211,238,0.18)]">
-                  <p className="text-lg font-bold text-cyan-300">★ 4.9</p>
+                <div className="rounded-lg border border-purple-300/12 bg-[rgba(17,18,21,0.6)] px-2 py-3 shadow-[inset_0_0_18px_-8px_rgba(168, 85, 247,0.18)]">
+                  <p className="text-lg font-bold text-purple-300">★ 4.9</p>
                   <p className="mt-1 text-[10px] font-medium uppercase tracking-wide text-dim">{copy.mockRating}</p>
                 </div>
               </div>
@@ -155,7 +155,7 @@ export function HomeCoachCta({ locale }: { locale: Locale }) {
                 {bars.map((h, i) => (
                   <div
                     key={i}
-                    className="tj-mock-bar w-5 rounded-t-sm bg-gradient-to-t from-[rgba(34,211,238,0.15)] to-[rgba(34,211,238,0.55)]"
+                    className="tj-mock-bar w-5 rounded-t-sm bg-gradient-to-t from-[rgba(168, 85, 247,0.15)] to-[rgba(168, 85, 247,0.55)]"
                     style={{ height: `${h}px`, animationDelay: `${i * 70}ms` }}
                   />
                 ))}

@@ -22,7 +22,7 @@ export function GlowLayer({
     <div
       className={cn("pointer-events-none absolute inset-0", className)}
       style={{
-        background: `radial-gradient(ellipse 58% 72% at ${center}, rgba(34,211,238,${cyanOpacity}) 0%, transparent 58%)${v}`,
+        background: `radial-gradient(ellipse 58% 72% at ${center}, rgba(168, 85, 247,${cyanOpacity}) 0%, transparent 58%)${v}`,
       }}
       aria-hidden
     />

@@ -79,7 +79,7 @@ export function Heartbeat() {
         <path
           d={ECG_PATH}
           fill="none"
-          stroke="#22D3EE"
+          stroke="#A855F7"
           strokeWidth={1.5}
           strokeLinecap="round"
           strokeLinejoin="round"

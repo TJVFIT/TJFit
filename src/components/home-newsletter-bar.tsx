@@ -107,7 +107,7 @@ export function HomeNewsletterBar({ locale }: { locale: Locale }) {
   };
 
   return (
-    <section className="reveal-section relative border-y border-[rgba(34,211,238,0.08)] bg-[rgba(34,211,238,0.03)] px-6 py-[clamp(3rem,6vw,4.5rem)] lg:px-12">
+    <section className="reveal-section relative border-y border-[rgba(168, 85, 247,0.08)] bg-[rgba(168, 85, 247,0.03)] px-6 py-[clamp(3rem,6vw,4.5rem)] lg:px-12">
       <span className="ghost-text pointer-events-none start-1/2 top-6 -translate-x-1/2 opacity-[0.02]" aria-hidden>
         NEWSLETTER
       </span>
@@ -125,20 +125,20 @@ export function HomeNewsletterBar({ locale }: { locale: Locale }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={copy.placeholder}
-              className="min-h-[48px] w-full rounded-[10px] border border-[rgba(255,255,255,0.08)] bg-[rgba(13,15,18,0.75)] px-4 text-sm text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] outline-none backdrop-blur-md transition-[border-color,box-shadow] placeholder:text-dim focus:border-[rgba(34,211,238,0.35)] focus:ring-1 focus:ring-[rgba(34,211,238,0.2)]"
+              className="min-h-[48px] w-full rounded-[10px] border border-[rgba(255,255,255,0.08)] bg-[rgba(13,15,18,0.75)] px-4 text-sm text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] outline-none backdrop-blur-md transition-[border-color,box-shadow] placeholder:text-dim focus:border-[rgba(168, 85, 247,0.35)] focus:ring-1 focus:ring-[rgba(168, 85, 247,0.2)]"
               disabled={busy || done}
             />
             <button
               type="submit"
               disabled={busy || done}
-              className="tj-cta-sheen min-h-[48px] shrink-0 rounded-[10px] bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] px-6 text-sm font-extrabold text-[#09090B] shadow-[0_12px_40px_rgba(34,211,238,0.22)] transition-[filter,transform,box-shadow] duration-200 hover:brightness-110 hover:shadow-[0_16px_48px_rgba(34,211,238,0.34)] hover:-translate-y-0.5 disabled:opacity-60 sm:px-8"
+              className="tj-cta-sheen min-h-[48px] shrink-0 rounded-[10px] bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-6 text-sm font-extrabold text-[#09090B] shadow-[0_12px_40px_rgba(168, 85, 247,0.22)] transition-[filter,transform,box-shadow] duration-200 hover:brightness-110 hover:shadow-[0_16px_48px_rgba(168, 85, 247,0.34)] hover:-translate-y-0.5 disabled:opacity-60 sm:px-8"
             >
               {busy ? "…" : copy.cta}
             </button>
           </div>
           {done ? (
             <p className="mt-4 flex items-center justify-center gap-2 text-sm font-medium text-accent sm:justify-start">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[rgba(34,211,238,0.15)]">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[rgba(168, 85, 247,0.15)]">
                 <Check className="h-3.5 w-3.5" strokeWidth={2.5} aria-hidden />
               </span>
               {copy.success}

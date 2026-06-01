@@ -46,7 +46,7 @@ export function PricingPreviewHome({
               key={t.name}
               className="rounded-2xl border border-white/[0.08] bg-white/[0.02] px-6 py-8 ring-1 ring-white/[0.04]"
             >
-              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-cyan-300/80">{tierStatus}</p>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-purple-300/80">{tierStatus}</p>
               <p className="mt-4 font-display text-xl font-semibold text-white">{t.name}</p>
               <p className="mt-3 text-sm leading-relaxed text-faint">{t.teaser}</p>
             </div>

@@ -158,7 +158,7 @@ export function ComingSoonLaunchPage({
   return (
     <section className="relative min-h-[100svh] overflow-hidden bg-background px-4 py-12 sm:px-6 lg:px-8">
       <div
-        className="pointer-events-none absolute left-1/2 top-0 h-[32rem] w-[32rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.10)_0%,transparent_72%)]"
+        className="pointer-events-none absolute left-1/2 top-0 h-[32rem] w-[32rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(168, 85, 247,0.10)_0%,transparent_72%)]"
         aria-hidden
       />
       <div className="relative mx-auto flex min-h-[80svh] w-full max-w-3xl flex-col items-center justify-center text-center">
@@ -166,7 +166,7 @@ export function ComingSoonLaunchPage({
           <Logo variant="icon" size="auth" href={`/${locale}`} />
         </div>
         <span
-          className="mt-8 inline-flex rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-300 animate-[tj-fade-up_420ms_ease-out_forwards]"
+          className="mt-8 inline-flex rounded-full border border-purple-400/25 bg-purple-400/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-purple-300 animate-[tj-fade-up_420ms_ease-out_forwards]"
           style={{ animationDelay: "200ms", opacity: 0 }}
         >
           {c.badge}

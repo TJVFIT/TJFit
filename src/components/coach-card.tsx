@@ -42,7 +42,7 @@ export function CoachCard({ locale, coach }: { locale: string; coach: Coach }) {
 
       <div className="mt-3 flex flex-wrap gap-1.5">
         {tags.map((tag) => (
-          <span key={tag} className="rounded-full border border-cyan-400/25 bg-cyan-500/10 px-2 py-0.5 text-[11px] text-cyan-200">
+          <span key={tag} className="rounded-full border border-purple-400/25 bg-purple-500/10 px-2 py-0.5 text-[11px] text-purple-200">
             {tag}
           </span>
         ))}

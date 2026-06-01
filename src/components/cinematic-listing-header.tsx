@@ -54,7 +54,7 @@ export function CinematicListingHeader({
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute left-1/2 top-0 h-[500px] w-[500px] max-w-[100vw] -translate-x-1/2 bg-[radial-gradient(circle,rgba(34,211,238,0.07)_0%,transparent_55%)]"
+        className="pointer-events-none absolute left-1/2 top-0 h-[500px] w-[500px] max-w-[100vw] -translate-x-1/2 bg-[radial-gradient(circle,rgba(168, 85, 247,0.07)_0%,transparent_55%)]"
         aria-hidden
       />
       <div className="relative z-[1] mx-auto w-full min-w-0 max-w-[1200px]">
@@ -75,7 +75,7 @@ export function CinematicListingHeader({
           style={{ transitionDelay: inView ? "200ms" : "0ms" }}
         >
           <WordReveal text={headlineBefore} />
-          <span className="bg-gradient-to-r from-[#A5F3FC] via-[#22D3EE] to-[#0EA5E9] bg-clip-text bg-[length:200%_100%] text-transparent motion-safe:animate-[tj-title-shimmer_9s_linear_infinite]">
+          <span className="bg-gradient-to-r from-[#EDE9FE] via-[#A855F7] to-[#7C3AED] bg-clip-text bg-[length:200%_100%] text-transparent motion-safe:animate-[tj-title-shimmer_9s_linear_infinite]">
             <WordReveal text={headlineGradient} delay={120} />
           </span>
         </h1>
@@ -91,7 +91,7 @@ export function CinematicListingHeader({
         {children ? <div className="mt-8 flex flex-wrap items-center gap-4">{children}</div> : null}
       </div>
       <div
-        className="pointer-events-none absolute bottom-0 left-0 right-0 h-px bg-[linear-gradient(90deg,transparent,rgba(34,211,238,0.4),transparent)]"
+        className="pointer-events-none absolute bottom-0 left-0 right-0 h-px bg-[linear-gradient(90deg,transparent,rgba(168, 85, 247,0.4),transparent)]"
         aria-hidden
       />
     </header>

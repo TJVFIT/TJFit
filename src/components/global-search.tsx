@@ -62,8 +62,8 @@ export function GlobalSearch({ locale, collapsed, onExpand }: { locale: string; 
 
   return (
     <div className="relative mt-2 px-2">
-      <div className="group/gsearch flex items-center gap-2 rounded-lg border border-divider bg-surface px-3 py-2 transition-[border-color,box-shadow] duration-200 focus-within:border-cyan-300/45 focus-within:shadow-[0_0_22px_rgba(34,211,238,0.16)]">
-        <Search className="h-4 w-4 text-dim transition-colors duration-200 group-focus-within/gsearch:text-cyan-200" />
+      <div className="group/gsearch flex items-center gap-2 rounded-lg border border-divider bg-surface px-3 py-2 transition-[border-color,box-shadow] duration-200 focus-within:border-purple-300/45 focus-within:shadow-[0_0_22px_rgba(168, 85, 247,0.16)]">
+        <Search className="h-4 w-4 text-dim transition-colors duration-200 group-focus-within/gsearch:text-purple-200" />
         <input
           value={query}
           onFocus={() => setOpen(true)}
@@ -85,7 +85,7 @@ export function GlobalSearch({ locale, collapsed, onExpand }: { locale: string; 
                 <p className="mb-1 text-[10px] uppercase tracking-[0.14em] text-dim">{label}</p>
                 <div className="space-y-1">
                   {items.map((item) => (
-                    <Link key={item.id} href={`/${locale}${item.href}`} className="block rounded-md px-2 py-1.5 text-xs text-bright transition-[background-color,color] duration-150 hover:bg-cyan-300/[0.06] hover:text-cyan-100">
+                    <Link key={item.id} href={`/${locale}${item.href}`} className="block rounded-md px-2 py-1.5 text-xs text-bright transition-[background-color,color] duration-150 hover:bg-purple-300/[0.06] hover:text-purple-100">
                       {item.title}
                     </Link>
                   ))}
@@ -94,7 +94,7 @@ export function GlobalSearch({ locale, collapsed, onExpand }: { locale: string; 
             ) : null
           )}
           {searchNormalize(query).length >= 2 ? (
-            <Link href={`/${locale}/search?q=${encodeURIComponent(query)}`} className="tj-cta-sheen block rounded-md border border-divider px-2 py-2 text-center text-xs text-accent transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-50 hover:shadow-[0_0_14px_rgba(34,211,238,0.12)]">
+            <Link href={`/${locale}/search?q=${encodeURIComponent(query)}`} className="tj-cta-sheen block rounded-md border border-divider px-2 py-2 text-center text-xs text-accent transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-50 hover:shadow-[0_0_14px_rgba(168, 85, 247,0.12)]">
               View all results
             </Link>
           ) : null}

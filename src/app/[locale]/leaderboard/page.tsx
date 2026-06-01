@@ -68,7 +68,7 @@ function Podium({ items, tab }: { items: LeaderboardItem[]; tab: TabKey }) {
         particleCount: 80,
         spread: 72,
         origin: { y: 0.52, x: 0.5 },
-        colors: ["#22D3EE", "#0EA5E9", "#22D3EE"]
+        colors: ["#A855F7", "#7C3AED", "#A855F7"]
       });
     }, 720);
     return () => window.clearTimeout(t);
@@ -78,16 +78,16 @@ function Podium({ items, tab }: { items: LeaderboardItem[]; tab: TabKey }) {
 
   const order = [items[1], items[0], items[2]]; // 2nd left, 1st center, 3rd right
   const heights = [140, 180, 110];
-  const colors = ["rgba(34,211,238,0.6)", "#22D3EE", "rgba(34,211,238,0.35)"];
+  const colors = ["rgba(168, 85, 247,0.6)", "#A855F7", "rgba(168, 85, 247,0.35)"];
   const glows = [
-    "shadow-[0_0_20px_rgba(34,211,238,0.2)]",
-    "shadow-[0_0_40px_rgba(34,211,238,0.35)]",
-    "shadow-[0_0_12px_rgba(34,211,238,0.12)]"
+    "shadow-[0_0_20px_rgba(168, 85, 247,0.2)]",
+    "shadow-[0_0_40px_rgba(168, 85, 247,0.35)]",
+    "shadow-[0_0_12px_rgba(168, 85, 247,0.12)]"
   ];
   const crowns = [
-    <Crown key="s" className="h-4 w-4" style={{ color: "rgba(34,211,238,0.6)" }} />,
-    <Crown key="g" className="crown-glow-accent h-5 w-5" style={{ color: "#22D3EE", filter: "drop-shadow(0 0 8px rgba(34,211,238,0.5))" }} />,
-    <Crown key="b" className="h-4 w-4" style={{ color: "rgba(34,211,238,0.35)" }} />
+    <Crown key="s" className="h-4 w-4" style={{ color: "rgba(168, 85, 247,0.6)" }} />,
+    <Crown key="g" className="crown-glow-accent h-5 w-5" style={{ color: "#A855F7", filter: "drop-shadow(0 0 8px rgba(168, 85, 247,0.5))" }} />,
+    <Crown key="b" className="h-4 w-4" style={{ color: "rgba(168, 85, 247,0.35)" }} />
   ];
 
   return (
@@ -163,7 +163,7 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
               key={entry.key}
               type="button"
               onClick={() => { setTab(entry.key); setActiveTabIdx(idx); }}
-              className={`relative rounded-full border px-3 py-2 text-xs font-semibold transition-[border-color,background-color,color,box-shadow] duration-200 ${tab === entry.key ? "tj-chip-active border-cyan-300/45 bg-cyan-300/[0.1] text-cyan-50" : "border-divider text-muted hover:border-cyan-300/35 hover:bg-cyan-300/[0.04] hover:text-cyan-100"}`}
+              className={`relative rounded-full border px-3 py-2 text-xs font-semibold transition-[border-color,background-color,color,box-shadow] duration-200 ${tab === entry.key ? "tj-chip-active border-purple-300/45 bg-purple-300/[0.1] text-purple-50" : "border-divider text-muted hover:border-purple-300/35 hover:bg-purple-300/[0.04] hover:text-purple-100"}`}
             >
               {entry.label}
             </button>
@@ -175,7 +175,7 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
               key={p}
               type="button"
               onClick={() => setPeriod(p)}
-              className={`rounded-full border px-3 py-1.5 transition-[border-color,background-color,color] duration-200 ${period === p ? "border-cyan-300/40 bg-cyan-300/[0.06] text-cyan-50" : "border-divider text-muted hover:border-cyan-300/30 hover:text-cyan-100"}`}
+              className={`rounded-full border px-3 py-1.5 transition-[border-color,background-color,color] duration-200 ${period === p ? "border-purple-300/40 bg-purple-300/[0.06] text-purple-50" : "border-divider text-muted hover:border-purple-300/30 hover:text-purple-100"}`}
             >
               {p === "week" ? "This Week" : "All Time"}
             </button>
@@ -211,38 +211,38 @@ export default function LeaderboardPage({ params }: { params: { locale: string }
                 const isTop2 = item.rank === 2;
                 const isTop3 = item.rank === 3;
                 const rankClass = isTop1
-                  ? "border-cyan-400/50"
+                  ? "border-purple-400/50"
                   : isTop2
-                    ? "border-cyan-400/25"
+                    ? "border-purple-400/25"
                     : isTop3
-                      ? "border-cyan-400/15"
+                      ? "border-purple-400/15"
                       : "border-divider";
                 return (
                   <div
                     key={item.userId}
-                    className={`group/row flex items-center justify-between rounded-xl border bg-[#0D0E12] px-4 py-3 transition-[border-color,box-shadow,transform] duration-200 hover:shadow-[0_0_22px_rgba(34,211,238,0.12)] motion-safe:hover:-translate-y-0.5 ${rankClass} ${isMe ? "animate-pulse ring-1 ring-accent/40" : ""}`}
+                    className={`group/row flex items-center justify-between rounded-xl border bg-[#0D0E12] px-4 py-3 transition-[border-color,box-shadow,transform] duration-200 hover:shadow-[0_0_22px_rgba(168, 85, 247,0.12)] motion-safe:hover:-translate-y-0.5 ${rankClass} ${isMe ? "animate-pulse ring-1 ring-accent/40" : ""}`}
                   >
                     <div className="flex items-center gap-3">
                       <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#14161D] text-sm font-bold text-white transition-colors duration-200 group-hover/row:bg-[#191C24]">
                         {item.rank === 1 ? (
-                          <Crown className="crown-glow-accent h-4 w-4" style={{ color: "#22D3EE", filter: "drop-shadow(0 0 8px rgba(34,211,238,0.5))" }} />
+                          <Crown className="crown-glow-accent h-4 w-4" style={{ color: "#A855F7", filter: "drop-shadow(0 0 8px rgba(168, 85, 247,0.5))" }} />
                         ) : item.rank === 2 ? (
-                          <Crown className="h-4 w-4" style={{ color: "rgba(34,211,238,0.6)" }} />
+                          <Crown className="h-4 w-4" style={{ color: "rgba(168, 85, 247,0.6)" }} />
                         ) : item.rank === 3 ? (
-                          <Crown className="h-4 w-4" style={{ color: "rgba(34,211,238,0.35)" }} />
+                          <Crown className="h-4 w-4" style={{ color: "rgba(168, 85, 247,0.35)" }} />
                         ) : (
                           <span className="text-muted">{item.rank}</span>
                         )}
                       </div>
                       <div>
-                        <p className="font-medium text-white transition-colors duration-200 group-hover/row:text-cyan-50">
+                        <p className="font-medium text-white transition-colors duration-200 group-hover/row:text-purple-50">
                           {item.displayName} {item.isVerified ? <span className="text-accent">✓</span> : null}
                           {isMe ? <span className="ml-1.5 text-[10px] text-accent">(you)</span> : null}
                         </p>
                         <p className="text-xs text-dim">{item.streak} streak</p>
                       </div>
                     </div>
-                    <p className={`text-sm font-semibold ${isTop1 ? "text-accent" : isTop2 ? "text-cyan-400/70" : isTop3 ? "text-cyan-400/45" : "text-dim"}`}>
+                    <p className={`text-sm font-semibold ${isTop1 ? "text-accent" : isTop2 ? "text-purple-400/70" : isTop3 ? "text-purple-400/45" : "text-dim"}`}>
                       {getMetricValue(item, tab)}
                     </p>
                   </div>

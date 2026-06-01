@@ -105,7 +105,7 @@ export function useRipple<T extends HTMLElement = HTMLAnchorElement>() {
         width: ${size}px;
         height: ${size}px;
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(34,211,238,0.45) 0%, rgba(34,211,238,0.12) 35%, transparent 70%);
+        background: radial-gradient(circle, rgba(168, 85, 247,0.45) 0%, rgba(168, 85, 247,0.12) 35%, transparent 70%);
         transform: scale(0);
         opacity: 1;
         pointer-events: none;

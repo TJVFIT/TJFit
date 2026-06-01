@@ -240,7 +240,7 @@ export default function SupportPage({ params }: { params: { locale: string } }) 
             </label>
             <textarea
               id="support-message"
-              className="min-h-[120px] w-full rounded-xl border border-divider bg-surface p-3 text-sm text-white outline-none ring-cyan-400/20 placeholder:text-dim focus:border-accent focus:ring-2 focus:ring-accent/20"
+              className="min-h-[120px] w-full rounded-xl border border-divider bg-surface p-3 text-sm text-white outline-none ring-purple-400/20 placeholder:text-dim focus:border-accent focus:ring-2 focus:ring-accent/20"
               name="message"
               value={form.message}
               onChange={(e) => setForm((p) => ({ ...p, message: e.target.value }))}

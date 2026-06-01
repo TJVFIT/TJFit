@@ -105,7 +105,7 @@ export function ParticleField({ className }: { className?: string }) {
             const dist = Math.hypot(a.x - b.x, a.y - b.y);
             if (dist > lineDistance) continue;
             const opacity = (1 - dist / lineDistance) * 0.15;
-            ctx.strokeStyle = `rgba(34,211,238,${opacity})`;
+            ctx.strokeStyle = `rgba(168, 85, 247,${opacity})`;
             ctx.lineWidth = 0.5;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
@@ -116,7 +116,7 @@ export function ParticleField({ className }: { className?: string }) {
       }
 
       for (const p of particles) {
-        ctx.fillStyle = `rgba(34,211,238,${p.alpha})`;
+        ctx.fillStyle = `rgba(168, 85, 247,${p.alpha})`;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fill();

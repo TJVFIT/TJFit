@@ -99,12 +99,12 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
         <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <button
             type="button"
-            className="rounded-full border border-white/15 px-5 py-2 text-sm text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_18px_rgba(34,211,238,0.14)]"
+            className="rounded-full border border-white/15 px-5 py-2 text-sm text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.14)]"
             onClick={() => window.location.reload()}
           >
             {s.retryLabel}
           </button>
-          <Link href={`/${locale}/profile/search`} className="text-sm text-cyan-300/90 hover:underline">
+          <Link href={`/${locale}/profile/search`} className="text-sm text-purple-300/90 hover:underline">
             {s.backToSearch}
           </Link>
         </div>
@@ -160,7 +160,7 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
           <div className="px-5 pb-6 sm:px-8">
             <div className="-mt-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div className="flex items-start gap-4">
-                <div className="relative h-20 w-20 overflow-hidden rounded-full border border-cyan-300/45 bg-[#18191E] ring-2 ring-[#09090B]">
+                <div className="relative h-20 w-20 overflow-hidden rounded-full border border-purple-300/45 bg-[#18191E] ring-2 ring-[#09090B]">
                   <AnimatedAvatar
                     url={profile.avatar_url}
                     name={profile.display_name || profile.username || "?"}
@@ -173,14 +173,14 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
                     <span className="tj-title-shimmer">{profile.display_name || profile.username}</span>
                   </h1>
                   <p className="text-sm text-faint">@{profile.username}</p>
-                  <p className="mt-1 text-xs uppercase tracking-[0.14em] text-cyan-300">{roleLabel(profile.role)}</p>
+                  <p className="mt-1 text-xs uppercase tracking-[0.14em] text-purple-300">{roleLabel(profile.role)}</p>
                   {profile.bio ? <p className="mt-2 max-w-xl text-sm text-bright">{profile.bio}</p> : null}
                 </div>
               </div>
 
               <div className="flex flex-wrap gap-2">
                 {profile.self ? (
-                  <Link href={`/${locale}/profile/edit`} className="rounded-full border border-white/20 px-5 py-2 text-sm text-white transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:bg-cyan-300/[0.05] hover:text-cyan-50 hover:shadow-[0_0_18px_rgba(34,211,238,0.14)]">
+                  <Link href={`/${locale}/profile/edit`} className="rounded-full border border-white/20 px-5 py-2 text-sm text-white transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.05] hover:text-purple-50 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.14)]">
                     Edit Profile
                   </Link>
                 ) : user ? (
@@ -191,7 +191,7 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
                     onCountChange={(count) => setStats((prev) => (prev ? { ...prev, followers: count } : prev))}
                   />
                 ) : (
-                  <Link href={`/${locale}/login`} className="rounded-full border border-white/20 px-5 py-2 text-sm text-white transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:bg-cyan-300/[0.05] hover:text-cyan-50 hover:shadow-[0_0_18px_rgba(34,211,238,0.14)]">
+                  <Link href={`/${locale}/login`} className="rounded-full border border-white/20 px-5 py-2 text-sm text-white transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.05] hover:text-purple-50 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.14)]">
                     Sign in to Follow
                   </Link>
                 )}
@@ -245,7 +245,7 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
               {activeProgram.program_slug} - Week {activeProgram.week} of 12
             </p>
             <div className="mt-2 h-2 overflow-hidden rounded-full bg-divider">
-              <div className="h-full bg-cyan-400" style={{ width: `${activeProgram.completion_percent}%` }} />
+              <div className="h-full bg-purple-400" style={{ width: `${activeProgram.completion_percent}%` }} />
             </div>
           </section>
         ) : null}

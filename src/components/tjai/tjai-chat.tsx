@@ -277,12 +277,12 @@ export function TJAIChat({
     (history[lastAssistantIdx]?.content?.length ?? 0) > 12;
 
   return (
-    <section className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0D0F12]/85 p-5 shadow-[0_0_0_1px_rgba(34,211,238,0.05),0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-md">
+    <section className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0D0F12]/85 p-5 shadow-[0_0_0_1px_rgba(168, 85, 247,0.05),0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-md">
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.5]"
         style={{
           background:
-            "radial-gradient(ellipse 80% 50% at 0% 0%, rgba(34,211,238,0.07), transparent 55%), radial-gradient(ellipse 60% 40% at 100% 100%, rgba(14, 165, 233,0.06), transparent 50%)"
+            "radial-gradient(ellipse 80% 50% at 0% 0%, rgba(168, 85, 247,0.07), transparent 55%), radial-gradient(ellipse 60% 40% at 100% 100%, rgba(124, 58, 237,0.06), transparent 50%)"
         }}
         aria-hidden
       />
@@ -296,7 +296,7 @@ export function TJAIChat({
           </div>
           <a
             href={typeof window !== "undefined" ? `${window.location.pathname.replace(/\/$/, "")}/memory` : "./memory"}
-            className="shrink-0 rounded-md border border-white/10 px-3 py-1.5 text-[11px] uppercase tracking-wide text-white/60 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/35 hover:bg-cyan-300/[0.05] hover:text-cyan-100 hover:shadow-[0_0_12px_rgba(34,211,238,0.1)]"
+            className="shrink-0 rounded-md border border-white/10 px-3 py-1.5 text-[11px] uppercase tracking-wide text-white/60 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/35 hover:bg-purple-300/[0.05] hover:text-purple-100 hover:shadow-[0_0_12px_rgba(168, 85, 247,0.1)]"
           >
             {copy.memory}
           </a>
@@ -318,8 +318,8 @@ export function TJAIChat({
               className={cn(
                 "text-[11px] font-medium uppercase tracking-[0.14em] transition",
                 trialRemaining <= 1
-                  ? "text-cyan-200 underline-offset-4 hover:underline"
-                  : "text-white/60 hover:text-cyan-200"
+                  ? "text-purple-200 underline-offset-4 hover:underline"
+                  : "text-white/60 hover:text-purple-200"
               )}
               title={copy.askTitle}
             >
@@ -361,9 +361,9 @@ export function TJAIChat({
                 key={s.label}
                 type="button"
                 onClick={() => void ask(s.prompt)}
-                className="group rounded-xl border border-white/[0.06] bg-surface/90 px-4 py-3.5 text-start text-sm text-white/95 shadow-sm transition-[border-color,background-color,transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-[rgba(34,211,238,0.06)] hover:shadow-[0_0_28px_rgba(34,211,238,0.1)] active:translate-y-0 active:scale-[0.99]"
+                className="group rounded-xl border border-white/[0.06] bg-surface/90 px-4 py-3.5 text-start text-sm text-white/95 shadow-sm transition-[border-color,background-color,transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-[rgba(168, 85, 247,0.06)] hover:shadow-[0_0_28px_rgba(168, 85, 247,0.1)] active:translate-y-0 active:scale-[0.99]"
               >
-                <span className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-cyan-200/70 transition-colors group-hover:text-cyan-200">
+                <span className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-purple-200/70 transition-colors group-hover:text-purple-200">
                   {s.label}
                 </span>
                 <span className="mt-1.5 line-clamp-2 block text-[13px] font-medium leading-snug text-bright/95">
@@ -388,7 +388,7 @@ export function TJAIChat({
                 "max-w-[min(92%,28rem)] rounded-2xl px-4 py-3 text-sm shadow-sm transition-[transform,box-shadow] duration-200",
                 styles.messageEnter,
                 m.role === "user"
-                  ? "chat-bubble-user ms-auto rounded-br-md border border-[rgba(34,211,238,0.22)] bg-gradient-to-br from-[rgba(34,211,238,0.14)] to-[rgba(34,211,238,0.06)] text-white"
+                  ? "chat-bubble-user ms-auto rounded-br-md border border-[rgba(168, 85, 247,0.22)] bg-gradient-to-br from-[rgba(168, 85, 247,0.14)] to-[rgba(168, 85, 247,0.06)] text-white"
                   : "chat-bubble-ai me-auto rounded-bl-md border border-white/[0.07] bg-surface/95 text-bright"
               )}
             >
@@ -427,7 +427,7 @@ export function TJAIChat({
                 messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
               }}
               aria-label={copy.jumpToLatest}
-              className="absolute bottom-2 end-3 z-[5] inline-flex h-9 w-9 items-center justify-center rounded-full border border-cyan-300/40 bg-[#0E1014]/95 text-cyan-100 shadow-[0_0_18px_rgba(34,211,238,0.25)] backdrop-blur transition-[transform,border-color,box-shadow] duration-200 hover:scale-105 hover:border-cyan-300/60 hover:shadow-[0_0_26px_rgba(34,211,238,0.4)] motion-safe:animate-[tj-fade-up_220ms_ease-out]"
+              className="absolute bottom-2 end-3 z-[5] inline-flex h-9 w-9 items-center justify-center rounded-full border border-purple-300/40 bg-[#0E1014]/95 text-purple-100 shadow-[0_0_18px_rgba(168, 85, 247,0.25)] backdrop-blur transition-[transform,border-color,box-shadow] duration-200 hover:scale-105 hover:border-purple-300/60 hover:shadow-[0_0_26px_rgba(168, 85, 247,0.4)] motion-safe:animate-[tj-fade-up_220ms_ease-out]"
             >
               <ChevronDown className="h-4 w-4" aria-hidden />
             </button>
@@ -491,7 +491,7 @@ export function TJAIChat({
               type="submit"
               aria-label={copy.send}
               disabled={!message.trim()}
-              className="tj-cta-sheen inline-flex h-10 min-w-[44px] items-center justify-center rounded-xl bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-4 text-sm font-bold text-[#0A0A0B] shadow-[0_0_20px_rgba(34,211,238,0.22)] transition-[transform,filter,box-shadow,opacity] duration-150 hover:brightness-110 hover:shadow-[0_0_28px_rgba(34,211,238,0.28)] active:scale-[0.94] disabled:pointer-events-none disabled:opacity-40"
+              className="tj-cta-sheen inline-flex h-10 min-w-[44px] items-center justify-center rounded-xl bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-4 text-sm font-bold text-[#0A0A0B] shadow-[0_0_20px_rgba(168, 85, 247,0.22)] transition-[transform,filter,box-shadow,opacity] duration-150 hover:brightness-110 hover:shadow-[0_0_28px_rgba(168, 85, 247,0.28)] active:scale-[0.94] disabled:pointer-events-none disabled:opacity-40"
             >
               {copy.send}
             </button>

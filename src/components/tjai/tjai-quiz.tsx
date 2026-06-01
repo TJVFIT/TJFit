@@ -443,8 +443,8 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
                 className={cn(
                   "flex w-full items-center gap-3 rounded-[10px] border px-4 py-3.5 text-left text-sm font-medium transition-all duration-200 ease-out",
                   selected
-                    ? "border-accent bg-[rgba(34,211,238,0.08)] text-white"
-                    : "border-divider bg-surface text-muted hover:border-[rgba(34,211,238,0.3)] hover:bg-[rgba(34,211,238,0.04)] hover:text-white"
+                    ? "border-accent bg-[rgba(168, 85, 247,0.08)] text-white"
+                    : "border-divider bg-surface text-muted hover:border-[rgba(168, 85, 247,0.3)] hover:bg-[rgba(168, 85, 247,0.04)] hover:text-white"
                 )}
               >
                 <span
@@ -493,8 +493,8 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
                 className={cn(
                   "flex w-full items-center gap-3 rounded-[10px] border px-4 py-3.5 text-left text-sm font-medium transition-all duration-200 ease-out",
                   active
-                    ? "border-accent bg-[rgba(34,211,238,0.08)] text-white"
-                    : "border-divider bg-surface text-muted hover:border-[rgba(34,211,238,0.3)] hover:bg-[rgba(34,211,238,0.04)] hover:text-white"
+                    ? "border-accent bg-[rgba(168, 85, 247,0.08)] text-white"
+                    : "border-divider bg-surface text-muted hover:border-[rgba(168, 85, 247,0.3)] hover:bg-[rgba(168, 85, 247,0.04)] hover:text-white"
                 )}
               >
                 <span
@@ -526,7 +526,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
               max={step.max}
               value={typeof currentAnswer === "number" ? currentAnswer : ""}
               onChange={(event) => updateAnswer(Number(event.target.value))}
-              className="w-full rounded-[10px] border border-divider bg-surface px-4 py-3 text-base text-white outline-none transition-all focus:border-accent focus:ring-2 focus:ring-[rgba(34,211,238,0.2)]"
+              className="w-full rounded-[10px] border border-divider bg-surface px-4 py-3 text-base text-white outline-none transition-all focus:border-accent focus:ring-2 focus:ring-[rgba(168, 85, 247,0.2)]"
             />
             <span className="pointer-events-none absolute end-4 top-1/2 -translate-y-1/2 text-sm text-dim">{step.unit}</span>
           </div>
@@ -539,7 +539,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
       const max = step.max ?? 100;
       const value = typeof currentAnswer === "number" ? currentAnswer : min;
       const pct = ((value - min) / Math.max(1, max - min)) * 100;
-      const sliderFill = direction === "rtl" ? `linear-gradient(to left,#22D3EE ${pct}%,#1E2028 ${pct}%)` : `linear-gradient(to right,#22D3EE ${pct}%,#1E2028 ${pct}%)`;
+      const sliderFill = direction === "rtl" ? `linear-gradient(to left,#A855F7 ${pct}%,#1E2028 ${pct}%)` : `linear-gradient(to right,#A855F7 ${pct}%,#1E2028 ${pct}%)`;
       return (
         <div>
           <div className="text-center">
@@ -604,7 +604,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
           value={textValue}
           onChange={(event) => updateAnswer(event.target.value)}
           placeholder={step.placeholder}
-          className="min-h-[120px] w-full rounded-xl border border-divider bg-surface p-4 text-sm text-white outline-none transition-all placeholder:text-dim focus:border-accent focus:ring-2 focus:ring-[rgba(34,211,238,0.2)]"
+          className="min-h-[120px] w-full rounded-xl border border-divider bg-surface p-4 text-sm text-white outline-none transition-all placeholder:text-dim focus:border-accent focus:ring-2 focus:ring-[rgba(168, 85, 247,0.2)]"
         />
         <div className="mt-2 text-right text-xs text-dim">
           {textValue.length} {copy.quiz.chars}
@@ -625,7 +625,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
           </p>
           <div className="h-[2px] overflow-hidden rounded-full bg-divider">
             <div
-              className="tjai-progress-fill h-full bg-[linear-gradient(90deg,#22D3EE,#0EA5E9)]"
+              className="tjai-progress-fill h-full bg-[linear-gradient(90deg,#A855F7,#7C3AED)]"
               style={{ width: `${progress}%`, marginLeft: direction === "rtl" ? "auto" : undefined }}
             />
           </div>
@@ -645,7 +645,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
                   setIdx(resumePrompt.currentStep);
                   setResumePrompt(null);
                 }}
-                className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] px-4 py-2 text-xs font-semibold text-[#09090B] shadow-[0_0_18px_rgba(34,211,238,0.22)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] hover:shadow-[0_0_28px_rgba(34,211,238,0.35)]"
+                className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-4 py-2 text-xs font-semibold text-[#09090B] shadow-[0_0_18px_rgba(168, 85, 247,0.22)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] hover:shadow-[0_0_28px_rgba(168, 85, 247,0.35)]"
               >
                 {uiCopy.resume}
               </button>
@@ -665,7 +665,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
           </div>
         ) : null}
 
-        <aside className="mt-4 rounded-xl border border-[rgba(34,211,238,0.15)] bg-[rgba(34,211,238,0.05)] p-4">
+        <aside className="mt-4 rounded-xl border border-[rgba(168, 85, 247,0.15)] bg-[rgba(168, 85, 247,0.05)] p-4">
           <p className="text-sm font-semibold text-white">{uiCopy.numbersTitle}</p>
           <div className="mt-3 grid grid-cols-1 gap-2 text-sm sm:grid-cols-3">
             <div className="rounded-lg border border-divider bg-[#0F1116] p-3">
@@ -723,8 +723,8 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
                 className={cn(
                   "tj-cta-sheen min-h-11 rounded-full px-5 text-sm font-bold text-[#09090B] transition-all disabled:cursor-not-allowed disabled:opacity-40",
                   safeIdx === total - 1
-                    ? "bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_24px_rgba(34,211,238,0.25)] hover:scale-[1.02] motion-safe:animate-[tjai-pulse_1.8s_ease-in-out_infinite]"
-                    : "bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] hover:scale-[1.02]",
+                    ? "bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_24px_rgba(168, 85, 247,0.25)] hover:scale-[1.02] motion-safe:animate-[tjai-pulse_1.8s_ease-in-out_infinite]"
+                    : "bg-[linear-gradient(135deg,#A855F7,#7C3AED)] hover:scale-[1.02]",
                   shake && "animate-[tjai-shake_300ms_ease]"
                 )}
               >

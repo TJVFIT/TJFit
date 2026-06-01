@@ -242,7 +242,7 @@ export function ProgramApp({
     <section className="mx-auto max-w-3xl px-4 pb-32 pt-8 sm:px-6">
       <Link
         href={`/${locale}/bundles/${bundle.slug}`}
-        className="inline-flex min-h-[40px] items-center gap-1.5 text-xs font-semibold text-cyan-300 hover:text-cyan-200"
+        className="inline-flex min-h-[40px] items-center gap-1.5 text-xs font-semibold text-purple-300 hover:text-purple-200"
       >
         <ArrowLeft className="h-3.5 w-3.5 rtl:rotate-180" aria-hidden />
         {t.back}
@@ -250,7 +250,7 @@ export function ProgramApp({
 
       <header className="mt-4 flex flex-wrap items-baseline justify-between gap-3">
         <div>
-          <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-cyan-200/80">
+          <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-purple-200/80">
             {t.weekOf(currentWeek, bundle.weeks)}
           </p>
           <h1 className="mt-1 font-display text-2xl font-bold text-white sm:text-3xl">
@@ -259,7 +259,7 @@ export function ProgramApp({
         </div>
         <a
           href={`/api/bundles/download/${bundle.slug}?locale=${locale}`}
-          className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full border border-cyan-300/25 px-3.5 py-2 text-xs font-semibold text-cyan-200 hover:border-cyan-300/55 hover:text-cyan-100"
+          className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full border border-purple-300/25 px-3.5 py-2 text-xs font-semibold text-purple-200 hover:border-purple-300/55 hover:text-purple-100"
         >
           <FileDown className="h-3.5 w-3.5" aria-hidden />
           {t.pdfBackup}
@@ -286,8 +286,8 @@ export function ProgramApp({
               onClick={() => setTab(td.key)}
               className={`inline-flex min-h-[40px] shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors ${
                 active
-                  ? "bg-cyan-300/15 text-cyan-50 ring-1 ring-cyan-300/40"
-                  : "text-bright/70 hover:bg-white/[0.04] hover:text-cyan-100"
+                  ? "bg-purple-300/15 text-purple-50 ring-1 ring-purple-300/40"
+                  : "text-bright/70 hover:bg-white/[0.04] hover:text-purple-100"
               }`}
             >
               <Icon className="h-3.5 w-3.5" aria-hidden />
@@ -349,7 +349,7 @@ export function ProgramApp({
       {/* TJAI floating action */}
       <Link
         href={`/${locale}/tjai?seed=${encodeURIComponent(t.tjaiSeedHelp(card.name, currentWeek))}`}
-        className="fixed bottom-6 end-4 z-30 inline-flex min-h-[48px] items-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_28px_rgba(34,211,238,0.32)]"
+        className="fixed bottom-6 end-4 z-30 inline-flex min-h-[48px] items-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_28px_rgba(168, 85, 247,0.32)]"
         style={{ paddingBottom: "max(0.25rem, env(safe-area-inset-bottom))" }}
       >
         <Sparkles className="h-4 w-4" aria-hidden />
@@ -375,7 +375,7 @@ function ProgressStrip({
     <div className="mt-4">
       <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/[0.05]">
         <div
-          className="h-full rounded-full bg-[linear-gradient(90deg,#22D3EE,#0EA5E9)]"
+          className="h-full rounded-full bg-[linear-gradient(90deg,#A855F7,#7C3AED)]"
           style={{ width: `${pct}%`, transition: "width 600ms cubic-bezier(0.2,1,0.3,1)" }}
         />
       </div>
@@ -411,7 +411,7 @@ function WorkoutLogger({
 }) {
   return (
     <div>
-      <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-cyan-200/80">
+      <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-purple-200/80">
         {day.day} · {day.sessionName}
       </p>
       <h2 className="mt-1 font-display text-xl font-bold text-white sm:text-2xl">{day.focus}</h2>
@@ -471,7 +471,7 @@ function ExerciseCard({
     <div className="rounded-2xl border border-divider bg-surface/40 p-4">
       <div className="flex items-baseline justify-between gap-3">
         <p className="text-sm font-semibold text-white">{name}</p>
-        <span className="font-mono text-[11px] font-semibold text-cyan-100">{setsLabel}</span>
+        <span className="font-mono text-[11px] font-semibold text-purple-100">{setsLabel}</span>
       </div>
       {notes ? <p className="mt-1 text-[11px] italic text-faint">{notes}</p> : null}
 
@@ -545,7 +545,7 @@ function SetRow({
 
   return (
     <div className="flex items-center gap-2">
-      <span className="w-6 shrink-0 font-mono text-[11px] font-bold text-cyan-300/80">
+      <span className="w-6 shrink-0 font-mono text-[11px] font-bold text-purple-300/80">
         {String(setIndex).padStart(2, "0")}
       </span>
       <input
@@ -555,7 +555,7 @@ function SetRow({
         value={reps}
         onChange={(e) => setReps(e.target.value)}
         onBlur={() => save({ reps })}
-        className="min-h-[40px] w-full flex-1 rounded-lg border border-white/[0.08] bg-black/30 px-3 py-2 text-sm text-white placeholder:text-faint focus:border-cyan-300/50 focus:outline-none"
+        className="min-h-[40px] w-full flex-1 rounded-lg border border-white/[0.08] bg-black/30 px-3 py-2 text-sm text-white placeholder:text-faint focus:border-purple-300/50 focus:outline-none"
       />
       <input
         type="number"
@@ -564,7 +564,7 @@ function SetRow({
         value={weight}
         onChange={(e) => setWeight(e.target.value)}
         onBlur={() => save({ weight })}
-        className="min-h-[40px] w-full flex-1 rounded-lg border border-white/[0.08] bg-black/30 px-3 py-2 text-sm text-white placeholder:text-faint focus:border-cyan-300/50 focus:outline-none"
+        className="min-h-[40px] w-full flex-1 rounded-lg border border-white/[0.08] bg-black/30 px-3 py-2 text-sm text-white placeholder:text-faint focus:border-purple-300/50 focus:outline-none"
       />
       <button
         type="button"
@@ -576,8 +576,8 @@ function SetRow({
         }}
         className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-colors ${
           done
-            ? "border-cyan-300/60 bg-cyan-300/20 text-cyan-50"
-            : "border-white/15 text-bright/60 hover:border-cyan-300/40 hover:text-cyan-100"
+            ? "border-purple-300/60 bg-purple-300/20 text-purple-50"
+            : "border-white/15 text-bright/60 hover:border-purple-300/40 hover:text-purple-100"
         }`}
       >
         <Check className="h-4 w-4" aria-hidden />
@@ -608,18 +608,18 @@ function WeekTab({
               onClick={() => onPick(i)}
               className={`flex w-full items-center justify-between gap-3 rounded-2xl border px-4 py-3.5 text-left transition-colors ${
                 active
-                  ? "border-cyan-300/45 bg-cyan-300/[0.06]"
-                  : "border-divider bg-surface/40 hover:border-cyan-300/30"
+                  ? "border-purple-300/45 bg-purple-300/[0.06]"
+                  : "border-divider bg-surface/40 hover:border-purple-300/30"
               }`}
             >
               <div>
-                <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-cyan-200/80">
+                <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-purple-200/80">
                   {d.day}
                 </p>
                 <p className="mt-1 text-sm font-semibold text-white">{d.sessionName}</p>
                 <p className="mt-0.5 text-xs italic text-faint">{d.focus}</p>
               </div>
-              <ChevronRight className="h-4 w-4 text-cyan-300/70 rtl:rotate-180" aria-hidden />
+              <ChevronRight className="h-4 w-4 text-purple-300/70 rtl:rotate-180" aria-hidden />
             </button>
           </li>
         );
@@ -639,7 +639,7 @@ function RecipesTab({ recipes, locale, t }: { recipes: BundleRecipe[]; locale: s
   return (
     <div>
       <div className="rounded-2xl border border-divider bg-surface/40 p-4">
-        <label className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-cyan-200/80">
+        <label className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-purple-200/80">
           {t.scaleBw(bw)}
         </label>
         <input
@@ -649,7 +649,7 @@ function RecipesTab({ recipes, locale, t }: { recipes: BundleRecipe[]; locale: s
           step={5}
           value={bw}
           onChange={(e) => setBw(Number(e.target.value))}
-          className="mt-3 w-full accent-cyan-400"
+          className="mt-3 w-full accent-purple-400"
         />
       </div>
 
@@ -661,18 +661,18 @@ function RecipesTab({ recipes, locale, t }: { recipes: BundleRecipe[]; locale: s
           const f = Math.round((r.fat * bw) / ref);
           return (
             <div key={`${r.name}-${i}`} className="rounded-2xl border border-divider bg-surface/40 p-4">
-              <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-cyan-200/80">
+              <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-purple-200/80">
                 {r.mealType} · {r.time}
               </p>
               <p className="mt-1 font-display text-base font-bold text-white">{r.name}</p>
               <div className="mt-2 flex flex-wrap gap-1.5 font-mono text-[10px] font-semibold">
-                <span className="rounded-full bg-cyan-300/10 px-2 py-1 text-cyan-100">{k} kcal</span>
+                <span className="rounded-full bg-purple-300/10 px-2 py-1 text-purple-100">{k} kcal</span>
                 <span className="rounded-full bg-white/[0.05] px-2 py-1 text-white/85">P {p}g</span>
                 <span className="rounded-full bg-white/[0.05] px-2 py-1 text-white/85">C {c}g</span>
                 <span className="rounded-full bg-white/[0.05] px-2 py-1 text-white/85">F {f}g</span>
               </div>
               <details className="mt-3">
-                <summary className="cursor-pointer text-xs font-semibold text-cyan-200/90">
+                <summary className="cursor-pointer text-xs font-semibold text-purple-200/90">
                   {t.ingredientsMethod}
                 </summary>
                 <ul className="mt-2 space-y-1 text-sm text-bright/85">
@@ -683,7 +683,7 @@ function RecipesTab({ recipes, locale, t }: { recipes: BundleRecipe[]; locale: s
                 <ol className="mt-3 space-y-1 text-sm text-bright/85">
                   {r.steps.map((s, j) => (
                     <li key={j} className="flex gap-2">
-                      <span className="font-mono font-bold text-cyan-300/80">
+                      <span className="font-mono font-bold text-purple-300/80">
                         {String(j + 1).padStart(2, "0")}
                       </span>
                       <span>{s}</span>
@@ -692,7 +692,7 @@ function RecipesTab({ recipes, locale, t }: { recipes: BundleRecipe[]; locale: s
                 </ol>
                 <Link
                   href={`/${locale}/tjai?seed=${encodeURIComponent(t.tjaiSeedSwap(r.name))}`}
-                  className="mt-3 inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-cyan-300/25 px-3 text-xs font-semibold text-cyan-200 hover:border-cyan-300/55"
+                  className="mt-3 inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-purple-300/25 px-3 text-xs font-semibold text-purple-200 hover:border-purple-300/55"
                 >
                   <Sparkles className="h-3.5 w-3.5" aria-hidden />
                   {t.swapTjai}
@@ -780,7 +780,7 @@ function GroceryTab({
       <button
         type="button"
         onClick={share}
-        className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full border border-cyan-300/30 bg-cyan-300/[0.08] px-3.5 text-xs font-semibold text-cyan-100 hover:border-cyan-300/60"
+        className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full border border-purple-300/30 bg-purple-300/[0.08] px-3.5 text-xs font-semibold text-purple-100 hover:border-purple-300/60"
       >
         <ShoppingCart className="h-3.5 w-3.5" aria-hidden />
         {t.sendToPhone}
@@ -788,7 +788,7 @@ function GroceryTab({
       <div className="mt-4 space-y-3">
         {groups.map((g) => (
           <div key={g.category} className="rounded-2xl border border-divider bg-surface/40 p-4">
-            <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-cyan-200/80">
+            <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-purple-200/80">
               {g.category}
             </p>
             <ul className="mt-3 space-y-1.5">
@@ -804,11 +804,11 @@ function GroceryTab({
                     >
                       <span
                         className={`mt-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded border ${
-                          isChecked ? "border-cyan-300 bg-cyan-300/20" : "border-white/20"
+                          isChecked ? "border-purple-300 bg-purple-300/20" : "border-white/20"
                         }`}
                         aria-hidden
                       >
-                        {isChecked ? <Check className="h-3 w-3 text-cyan-200" /> : null}
+                        {isChecked ? <Check className="h-3 w-3 text-purple-200" /> : null}
                       </span>
                       <span
                         className={`flex-1 text-sm leading-snug ${
@@ -817,7 +817,7 @@ function GroceryTab({
                       >
                         {it.item}
                       </span>
-                      <span className="shrink-0 font-mono text-[11px] font-semibold text-cyan-100/80">
+                      <span className="shrink-0 font-mono text-[11px] font-semibold text-purple-100/80">
                         {it.quantity}
                       </span>
                     </button>
@@ -869,8 +869,8 @@ function ProgressTab({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl border border-cyan-400/15 bg-[linear-gradient(180deg,rgba(34,211,238,0.05),rgba(34,211,238,0.01))] p-5">
-        <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-cyan-200/80">
+      <div className="rounded-2xl border border-purple-400/15 bg-[linear-gradient(180deg,rgba(168, 85, 247,0.05),rgba(168, 85, 247,0.01))] p-5">
+        <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-purple-200/80">
           {t.thisWeek}
         </p>
         <p className="mt-2 font-display text-4xl font-bold text-white">{wkPct}%</p>
@@ -880,7 +880,7 @@ function ProgressTab({
       </div>
 
       <div className="rounded-2xl border border-divider bg-surface/40 p-5">
-        <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-cyan-200/80">
+        <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-purple-200/80">
           {t.volumePerWeek}
         </p>
         <div className="mt-4 flex h-32 items-end gap-1.5">
@@ -896,9 +896,9 @@ function ProgressTab({
                 style={{
                   height: `${h}%`,
                   background: isCurrent
-                    ? "linear-gradient(180deg,#22D3EE,#0EA5E9)"
+                    ? "linear-gradient(180deg,#A855F7,#7C3AED)"
                     : v > 0
-                    ? "rgba(34,211,238,0.45)"
+                    ? "rgba(168, 85, 247,0.45)"
                     : "rgba(255,255,255,0.06)"
                 }}
               />
@@ -950,7 +950,7 @@ function BodyWeightLogger({ bundleSlug, t }: { bundleSlug: string; t: ProgramStr
 
   return (
     <div className="rounded-2xl border border-divider bg-surface/40 p-5">
-      <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-cyan-200/80">
+      <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-purple-200/80">
         {t.logBw}
       </p>
       <div className="mt-3 flex gap-2">
@@ -960,12 +960,12 @@ function BodyWeightLogger({ bundleSlug, t }: { bundleSlug: string; t: ProgramStr
           value={bw}
           onChange={(e) => setBw(e.target.value)}
           placeholder={t.weightPh}
-          className="min-h-[44px] flex-1 rounded-lg border border-white/[0.08] bg-black/30 px-3 text-sm text-white placeholder:text-faint focus:border-cyan-300/50 focus:outline-none"
+          className="min-h-[44px] flex-1 rounded-lg border border-white/[0.08] bg-black/30 px-3 text-sm text-white placeholder:text-faint focus:border-purple-300/50 focus:outline-none"
         />
         <button
           type="button"
           onClick={save}
-          className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-5 text-sm font-bold text-[#0A0A0B]"
+          className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-5 text-sm font-bold text-[#0A0A0B]"
         >
           {saved ? t.saved : t.log}
         </button>

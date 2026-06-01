@@ -230,25 +230,25 @@ export function TJAIShell({
           </div>
 
           <div className="mt-6 grid gap-4 md:grid-cols-2">
-            <article className={`rounded-xl border p-5 ${!recommendAggressive ? "border-accent bg-[rgba(34,211,238,0.04)]" : "border-divider bg-surface"}`}>
+            <article className={`rounded-xl border p-5 ${!recommendAggressive ? "border-accent bg-[rgba(168, 85, 247,0.04)]" : "border-divider bg-surface"}`}>
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-accent">{accessCopy.moderateTitle}</h3>
                 {!recommendAggressive && <span className="rounded-full bg-accent/20 px-2 py-0.5 text-[10px] font-bold text-accent">RECOMMENDED</span>}
               </div>
               <p className="mt-2 text-sm text-muted">{accessCopy.moderateBody}</p>
               <p className="mt-2 text-xs text-faint">{moderate.weeklyWeightChange} kg/week expected</p>
-              <button type="button" className="mt-4 w-full tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2.5 text-sm font-bold text-[#09090B]" onClick={() => void handleGenerate(normalizedDraft, "moderate")}>
+              <button type="button" className="mt-4 w-full tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2.5 text-sm font-bold text-[#09090B]" onClick={() => void handleGenerate(normalizedDraft, "moderate")}>
                 {accessCopy.moderateCta}
               </button>
             </article>
-            <article className={`rounded-xl border p-5 transition-[border-color,box-shadow] duration-200 ${recommendAggressive ? "border-cyan-300/45 bg-[rgba(14,165,233,0.05)] shadow-[0_0_28px_rgba(34,211,238,0.12)]" : "border-divider bg-surface"}`}>
+            <article className={`rounded-xl border p-5 transition-[border-color,box-shadow] duration-200 ${recommendAggressive ? "border-purple-300/45 bg-[rgba(124, 58, 237,0.05)] shadow-[0_0_28px_rgba(168, 85, 247,0.12)]" : "border-divider bg-surface"}`}>
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-cyan-50">{accessCopy.aggressiveTitle}</h3>
-                {recommendAggressive && <span className="rounded-full border border-cyan-300/40 bg-cyan-300/[0.14] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-cyan-100 shadow-[0_0_12px_rgba(34,211,238,0.22)]">RECOMMENDED</span>}
+                <h3 className="text-lg font-semibold text-purple-50">{accessCopy.aggressiveTitle}</h3>
+                {recommendAggressive && <span className="rounded-full border border-purple-300/40 bg-purple-300/[0.14] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-purple-100 shadow-[0_0_12px_rgba(168, 85, 247,0.22)]">RECOMMENDED</span>}
               </div>
               <p className="mt-2 text-sm text-muted">{accessCopy.aggressiveBody}</p>
               <p className="mt-2 text-xs text-faint">{aggressive.weeklyWeightChange} kg/week expected</p>
-              <button type="button" className="tj-cta-sheen mt-4 w-full rounded-full border border-cyan-300/45 px-4 py-2.5 text-sm font-semibold text-cyan-50 transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/70 hover:text-cyan-100 hover:shadow-[0_0_22px_rgba(34,211,238,0.18)]" onClick={() => void handleGenerate(normalizedDraft, "aggressive")}>
+              <button type="button" className="tj-cta-sheen mt-4 w-full rounded-full border border-purple-300/45 px-4 py-2.5 text-sm font-semibold text-purple-50 transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/70 hover:text-purple-100 hover:shadow-[0_0_22px_rgba(168, 85, 247,0.18)]" onClick={() => void handleGenerate(normalizedDraft, "aggressive")}>
                 {accessCopy.aggressiveCta}
               </button>
             </article>
@@ -268,7 +268,7 @@ export function TJAIShell({
               <h3 className="text-xl font-semibold text-white">{accessCopy.upgrade.title}</h3>
               <p className="mt-2 text-sm text-muted">{accessCopy.upgrade.body}</p>
               <div className="mt-5 grid gap-2">
-                <a href={`/${locale}/membership?tjai_onetime=1`} className="btn-primary-shimmer inline-flex min-h-[44px] items-center justify-center rounded-full bg-gradient-to-br from-[#22D3EE] to-[#0EA5E9] px-4 py-2 text-sm font-bold text-[#09090B]">
+                <a href={`/${locale}/membership?tjai_onetime=1`} className="btn-primary-shimmer inline-flex min-h-[44px] items-center justify-center rounded-full bg-gradient-to-br from-[#A855F7] to-[#7C3AED] px-4 py-2 text-sm font-bold text-[#09090B]">
                   {accessCopy.upgrade.oneTime.replace("{price}", String(TJAI_ONE_TIME_PRICE_USD))}
                 </a>
                 <a href={`/${locale}/membership?tier=pro`} className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-accent px-4 py-2 text-sm font-semibold text-bright">
@@ -303,7 +303,7 @@ export function TJAIShell({
               <div className="mt-6 flex flex-col gap-3">
                 <button
                   type="button"
-                  className="w-full tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 py-2.5 text-sm font-bold text-black"
+                  className="w-full tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 py-2.5 text-sm font-bold text-black"
                   onClick={() => {
                     if (pendingAnswers) void handleGenerate(pendingAnswers, pendingPace);
                   }}
@@ -360,8 +360,8 @@ export function TJAIShell({
             <button
               className={`rounded-full px-4 py-2 text-sm font-semibold transition-[background-color,border-color,color,box-shadow] duration-200 ${
                 selectedPlanMode === "moderate"
-                  ? "tj-cta-sheen bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] text-[#09090B] shadow-[0_0_18px_rgba(34,211,238,0.22)]"
-                  : "border border-divider text-muted hover:border-cyan-300/40 hover:text-cyan-100"
+                  ? "tj-cta-sheen bg-[linear-gradient(135deg,#A855F7,#7C3AED)] text-[#09090B] shadow-[0_0_18px_rgba(168, 85, 247,0.22)]"
+                  : "border border-divider text-muted hover:border-purple-300/40 hover:text-purple-100"
               }`}
               onClick={() => { setPlan(comparePlans.moderate); setMetrics(compareMetrics.moderate); setSelectedPlanMode("moderate"); }}
             >
@@ -370,15 +370,15 @@ export function TJAIShell({
             <button
               className={`rounded-full px-4 py-2 text-sm font-semibold transition-[background-color,border-color,color,box-shadow] duration-200 ${
                 selectedPlanMode === "aggressive"
-                  ? "tj-cta-sheen bg-[linear-gradient(135deg,#0EA5E9,#0284C7)] text-[#09090B] shadow-[0_0_18px_rgba(14,165,233,0.28)]"
-                  : "border border-divider text-muted hover:border-cyan-300/40 hover:text-cyan-100"
+                  ? "tj-cta-sheen bg-[linear-gradient(135deg,#7C3AED,#6D28D9)] text-[#09090B] shadow-[0_0_18px_rgba(124, 58, 237,0.28)]"
+                  : "border border-divider text-muted hover:border-purple-300/40 hover:text-purple-100"
               }`}
               onClick={() => { setPlan(comparePlans.aggressive); setMetrics(compareMetrics.aggressive); setSelectedPlanMode("aggressive"); }}
             >
               View Aggressive Plan
             </button>
             <button
-              className="rounded-full border border-divider px-4 py-2 text-sm text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_14px_rgba(34,211,238,0.12)]"
+              className="rounded-full border border-divider px-4 py-2 text-sm text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_14px_rgba(168, 85, 247,0.12)]"
               onClick={() => setPhase("result")}
             >
               Continue

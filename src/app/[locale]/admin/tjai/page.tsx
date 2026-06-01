@@ -189,7 +189,7 @@ function Stat({
       <div className="text-xs uppercase tracking-wide text-white/50">{label}</div>
       <div
         className={`mt-1 text-2xl font-semibold ${
-          negative ? "text-red-300" : accent ? "text-cyan-300" : "text-white"
+          negative ? "text-red-300" : accent ? "text-purple-300" : "text-white"
         }`}
       >
         {value}

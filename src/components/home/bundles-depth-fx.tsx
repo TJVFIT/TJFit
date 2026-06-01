@@ -14,7 +14,7 @@ export function BundlesDepthFx({ reduce }: { reduce: boolean }) {
         <div
           key={i}
           className={cn(
-            "absolute rounded-lg border border-white/[0.04] bg-gradient-to-b from-white/[0.03] to-transparent shadow-[0_24px_80px_rgba(0,0,0,0.55),0_0_40px_rgba(34,211,238,0.06)]",
+            "absolute rounded-lg border border-white/[0.04] bg-gradient-to-b from-white/[0.03] to-transparent shadow-[0_24px_80px_rgba(0,0,0,0.55),0_0_40px_rgba(168, 85, 247,0.06)]",
             "tj-program-card-float",
             i === 0 && "left-[8%] top-[18%] h-[22%] w-[28%] max-md:left-[4%] max-md:top-[22%] max-md:h-[18%] max-md:w-[40%]",
             i === 1 && "left-[38%] top-[12%] h-[26%] w-[30%] max-md:left-[30%] max-md:top-[16%] max-md:h-[20%] max-md:w-[52%]",

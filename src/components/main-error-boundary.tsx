@@ -18,7 +18,7 @@ export function MainErrorBoundary({ children }: { children: ReactNode }) {
           <button
             type="button"
             onClick={() => window.location.reload()}
-            className="mt-8 rounded-full border border-white/[0.12] bg-white/[0.06] px-6 py-2.5 text-sm font-medium text-bright transition hover:border-cyan-400/35 hover:bg-white/[0.1]"
+            className="mt-8 rounded-full border border-white/[0.12] bg-white/[0.06] px-6 py-2.5 text-sm font-medium text-bright transition hover:border-purple-400/35 hover:bg-white/[0.1]"
           >
             Reload page
           </button>

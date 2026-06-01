@@ -82,7 +82,7 @@ function TJAIMessage({ msg, active }: { msg: Message; active: boolean }) {
   if (msg.role === "user") {
     return (
       <div className="flex justify-end">
-        <div className="max-w-[80%] rounded-2xl rounded-br-sm bg-[rgba(34,211,238,0.12)] border border-[rgba(34,211,238,0.2)] px-4 py-2.5 text-sm text-white">
+        <div className="max-w-[80%] rounded-2xl rounded-br-sm bg-[rgba(168, 85, 247,0.12)] border border-[rgba(168, 85, 247,0.2)] px-4 py-2.5 text-sm text-white">
           {msg.text}
         </div>
       </div>
@@ -91,7 +91,7 @@ function TJAIMessage({ msg, active }: { msg: Message; active: boolean }) {
 
   return (
     <div className="flex items-start gap-2">
-      <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[rgba(34,211,238,0.15)] text-accent">
+      <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[rgba(168, 85, 247,0.15)] text-accent">
         <Sparkles className="h-3.5 w-3.5" />
       </div>
       <div className="max-w-[85%] rounded-2xl rounded-bl-sm border border-divider bg-surface px-4 py-2.5 text-sm text-bright">
@@ -152,14 +152,14 @@ export function TJAITypingShowcase({ locale }: { locale: Locale }) {
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           {/* Left: copy */}
           <div>
-            <span className="inline-flex rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-300">
+            <span className="inline-flex rounded-full border border-purple-400/25 bg-purple-400/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-purple-300">
               {copy.badge}
             </span>
             <h2 className="mt-5 text-3xl font-extrabold text-white sm:text-4xl">{copy.title}</h2>
             <p className="mt-3 max-w-md text-base text-muted">{copy.sub}</p>
             <a
               href={`/${locale}/ai`}
-              className="mt-8 inline-flex min-h-[48px] items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-7 py-3 text-sm font-bold text-[#09090B] transition hover:bg-white"
+              className="mt-8 inline-flex min-h-[48px] items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-7 py-3 text-sm font-bold text-[#09090B] transition hover:bg-white"
             >
               {copy.cta}
             </a>
@@ -172,7 +172,7 @@ export function TJAITypingShowcase({ locale }: { locale: Locale }) {
           >
             {/* Header */}
             <div className="mb-4 flex items-center gap-2 border-b border-divider pb-3">
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[rgba(34,211,238,0.15)]">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[rgba(168, 85, 247,0.15)]">
                 <Sparkles className="h-3.5 w-3.5 text-accent" />
               </div>
               <span className="text-sm font-semibold text-white">TJAI</span>

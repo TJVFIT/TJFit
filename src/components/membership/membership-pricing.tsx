@@ -120,7 +120,7 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
           </div>
           {/* ME15 — animated save badge */}
           <span
-            className="inline-flex items-center rounded-full border border-cyan-400/25 bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-300 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+            className="inline-flex items-center rounded-full border border-purple-400/25 bg-purple-400/10 px-3 py-1 text-xs font-semibold text-purple-300 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
             style={{
               opacity: saveBadgeVisible ? 1 : 0,
               transform: saveBadgeVisible ? "scale(1)" : "scale(0.7)",
@@ -145,7 +145,7 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
           </div>
           <a
             href={`/${locale}/tjai`}
-            className="inline-flex min-h-[46px] items-center justify-center rounded-full border border-accent px-5 text-sm font-semibold text-accent hover:bg-[rgba(34,211,238,0.06)]"
+            className="inline-flex min-h-[46px] items-center justify-center rounded-full border border-accent px-5 text-sm font-semibold text-accent hover:bg-[rgba(168, 85, 247,0.06)]"
           >
             {copy.standalone.cta}
           </a>
@@ -173,10 +173,10 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
 
         {/* Pro */}
         <article
-          className="group relative overflow-hidden rounded-2xl border border-cyan-400/35 p-6 shadow-[0_0_40px_rgba(34,211,238,0.14)] transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-1 hover:border-cyan-400/55 hover:shadow-[0_30px_80px_rgba(34,211,238,0.18)]"
-          style={{ background: "linear-gradient(165deg, rgba(34,211,238,0.05) 0%, rgba(17,18,21,0.85) 60%)", backdropFilter: "blur(24px)" }}
+          className="group relative overflow-hidden rounded-2xl border border-purple-400/35 p-6 shadow-[0_0_40px_rgba(168, 85, 247,0.14)] transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-1 hover:border-purple-400/55 hover:shadow-[0_30px_80px_rgba(168, 85, 247,0.18)]"
+          style={{ background: "linear-gradient(165deg, rgba(168, 85, 247,0.05) 0%, rgba(17,18,21,0.85) 60%)", backdropFilter: "blur(24px)" }}
         >
-          <div className="mb-3 inline-flex rounded-full border border-cyan-400/30 bg-cyan-400/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-cyan-300">
+          <div className="mb-3 inline-flex rounded-full border border-purple-400/30 bg-purple-400/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-purple-300">
             {copy.cards.pro.badge}
           </div>
           <h3 className="text-xl font-bold text-white">{copy.cards.pro.name}</h3>
@@ -196,12 +196,12 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
 
         {/* Apex — ME15 rotating border */}
         <article
-          className="apex-card group relative overflow-hidden rounded-2xl p-6 transition-[transform,box-shadow] duration-300 hover:-translate-y-2 hover:shadow-[0_40px_100px_rgba(14, 165, 233,0.22)]"
-          style={{ background: "linear-gradient(165deg, rgba(14, 165, 233,0.07) 0%, rgba(17,18,21,0.9) 60%)", backdropFilter: "blur(24px)" }}
+          className="apex-card group relative overflow-hidden rounded-2xl p-6 transition-[transform,box-shadow] duration-300 hover:-translate-y-2 hover:shadow-[0_40px_100px_rgba(124, 58, 237,0.22)]"
+          style={{ background: "linear-gradient(165deg, rgba(124, 58, 237,0.07) 0%, rgba(17,18,21,0.9) 60%)", backdropFilter: "blur(24px)" }}
         >
           {/* Animated conic border */}
-          <div className="pointer-events-none absolute inset-0 rounded-2xl" style={{ padding: "1px", background: "conic-gradient(from var(--apex-angle, 0deg), #0EA5E9, #22D3EE, #0EA5E9)", WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", maskComposite: "exclude" }} aria-hidden />
-          <div className="mb-3 inline-flex rounded-full border border-sky-400/30 bg-sky-400/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-sky-300">
+          <div className="pointer-events-none absolute inset-0 rounded-2xl" style={{ padding: "1px", background: "conic-gradient(from var(--apex-angle, 0deg), #7C3AED, #A855F7, #7C3AED)", WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", maskComposite: "exclude" }} aria-hidden />
+          <div className="mb-3 inline-flex rounded-full border border-violet-400/30 bg-violet-400/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-violet-300">
             {copy.cards.apex.badge}
           </div>
           <h3 className="text-xl font-bold text-white">{copy.cards.apex.name}</h3>
@@ -209,7 +209,7 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
             $<span className="tabular-nums">{apexPriceDisplay}</span>{" "}
             <span className="text-sm font-medium text-muted">{mode === "monthly" ? copy.perMonthSuffix : copy.perYearSuffix}</span>
           </p>
-          <Button className="tj-cta-sheen mt-4 w-full bg-gradient-to-r from-cyan-400 to-sky-500 font-bold text-white shadow-[0_0_24px_rgba(34,211,238,0.22)] transition-[transform,box-shadow,filter] duration-200 hover:scale-[1.01] hover:shadow-[0_0_36px_rgba(34,211,238,0.35)] hover:brightness-110" disabled={working !== null} onClick={() => checkout("apex")}>
+          <Button className="tj-cta-sheen mt-4 w-full bg-gradient-to-r from-purple-400 to-violet-500 font-bold text-white shadow-[0_0_24px_rgba(168, 85, 247,0.22)] transition-[transform,box-shadow,filter] duration-200 hover:scale-[1.01] hover:shadow-[0_0_36px_rgba(168, 85, 247,0.35)] hover:brightness-110" disabled={working !== null} onClick={() => checkout("apex")}>
             {working === "apex" ? "..." : copy.cards.apex.cta}
           </Button>
           <ul className="mt-4 space-y-2 text-sm text-muted">

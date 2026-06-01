@@ -38,7 +38,7 @@ export function AdminFeedbackList({
               className={`rounded-full px-3 py-1.5 text-xs font-medium ${
                 filter === f
                   ? "bg-accent text-white"
-                  : "border border-white/10 bg-white/5 text-bright transition-[border-color,background-color,color] duration-200 hover:border-cyan-300/30 hover:bg-cyan-300/[0.05] hover:text-cyan-100"
+                  : "border border-white/10 bg-white/5 text-bright transition-[border-color,background-color,color] duration-200 hover:border-purple-300/30 hover:bg-purple-300/[0.05] hover:text-purple-100"
               }`}
             >
               {f === "all" ? "All" : f.replace("_", " ")}

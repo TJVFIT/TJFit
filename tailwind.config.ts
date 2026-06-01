@@ -82,34 +82,37 @@ const config: Config = {
         dim: "#52525B",
         faint: "#71717A",
         bright: "#D4D4D8",
-        accent: "#22D3EE",
-        "accent-muted": "#67E8F9",
-        "accent-sky": "#0EA5E9",
-        /** Slate accent — historical name; kept for back-compat. */
-        "accent-violet": "#94A3B8",
-        /** True purple — premium / AI / Apex / TJAI badges only. */
-        premium: "#A78BFA",
+        /** Primary brand accent — electric violet. */
+        accent: "#A855F7",
+        /** Soft purple — muted accent / hover tints. */
+        "accent-muted": "#C4B5FD",
+        /** Violet — secondary brand accent (historical name "sky"). */
+        "accent-sky": "#7C3AED",
+        /** Soft purple — historical name "violet"; kept for back-compat. */
+        "accent-violet": "#C4B5FD",
+        /** Bright lavender-violet — premium / AI / Apex / TJAI badges. */
+        premium: "#C4B5FD",
         success: "#22C55E",
-        /** Softer red than the legacy #EF4444 — pairs better with cyan accent. */
+        /** Softer red than the legacy #EF4444 — pairs with the violet accent. */
         danger: "#F87171",
         warning: "#F59E0B",
         text: "#FFFFFF"
       },
       fontFamily: {
-        sans: ["var(--font-sans)", "DM Sans", "ui-sans-serif", "system-ui", "sans-serif"],
-        display: ["var(--font-display)", "Sora", "ui-sans-serif", "system-ui", "sans-serif"],
+        sans: ["var(--font-sans)", "Manrope", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "Space Grotesk", "ui-sans-serif", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "JetBrains Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"]
       },
       boxShadow: {
         glass: "0 20px 80px rgba(0, 0, 0, 0.45)",
-        "lux-glow": "0 0 60px -12px rgba(34, 211, 238, 0.35)",
-        "lux-violet": "0 18px 50px -24px rgba(148, 163, 184, 0.24)",
+        "lux-glow": "0 0 60px -12px rgba(168, 85, 247, 0.35)",
+        "lux-violet": "0 18px 50px -24px rgba(124, 58, 237, 0.30)",
         "premium-card": "0 12px 40px -16px rgba(0,0,0,0.5)"
       },
       backgroundImage: {
-        /** Cool hero wash — cyan + sky (brand-only) */
+        /** Premium hero wash — electric violet + violet (brand-only) */
         "hero-gradient":
-          "radial-gradient(circle at 50% 0%, rgba(34,211,238,0.14), transparent 42%), radial-gradient(circle at 100% 40%, rgba(14,165,233,0.08), transparent 38%)"
+          "radial-gradient(circle at 50% 0%, rgba(168,85,247,0.16), transparent 42%), radial-gradient(circle at 100% 40%, rgba(124,58,237,0.10), transparent 38%)"
       }
     }
   },

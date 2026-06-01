@@ -1,24 +1,24 @@
 /**
- * TJFit v2 visual palette — obsidian black + brand cyan.
+ * TJFit visual palette — obsidian black + brand violet.
  * Shared by 3D scenes, card treatments, and surface re-skins.
  */
 
 export const TJ_PALETTE = {
   // Backgrounds — deep obsidian
-  obsidian: "#08080a",
-  obsidianRaised: "#0d0d10",
-  obsidianGlass: "rgba(14, 14, 18, 0.72)",
+  obsidian: "#050507",
+  obsidianRaised: "#0b0710",
+  obsidianGlass: "rgba(18, 12, 28, 0.72)",
 
-  // Cyan — primary accent family
-  accent: "#22D3EE",
-  accentHi: "#A5F3FC",
-  accentLo: "#0E7490",
-  accentSoft: "#67E8F9",
-  accentDeep: "#155E75",
+  // Violet — primary accent family
+  accent: "#A855F7",
+  accentHi: "#EDE9FE",
+  accentLo: "#6D28D9",
+  accentSoft: "#C4B5FD",
+  accentDeep: "#4C1D95",
 
   // Cool accents — used sparingly for depth contrast
-  moonlight: "#c8d4e8",
-  frostIce: "#8fa4c4",
+  moonlight: "#d6cdec",
+  frostIce: "#a99bc8",
 
   // Text
   textPrimary: "#f6f3ed",
@@ -38,8 +38,8 @@ export type TJPalette = typeof TJ_PALETTE;
 
 /** Three.js-friendly hex ints for lights. */
 export const TJ_LIGHTS = {
-  keyAccent: 0x22d3ee,
-  fillMoonlight: 0x87a4d4,
-  rimAccent: 0x22d3ee,
+  keyAccent: 0xa855f7,
+  fillMoonlight: 0x8b7bb8,
+  rimAccent: 0x7c3aed,
   ambient: 0xffffff
 } as const;

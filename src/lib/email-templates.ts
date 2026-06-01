@@ -9,7 +9,7 @@ type BaseTemplate = {
 function renderTemplate({ title, body, ctaLabel, ctaUrl, footerUrl }: BaseTemplate) {
   const cta =
     ctaLabel && ctaUrl
-      ? `<a href="${ctaUrl}" style="display:inline-block;padding:12px 20px;border-radius:9999px;background:#22D3EE;color:#09090B;text-decoration:none;font-weight:700">${ctaLabel}</a>`
+      ? `<a href="${ctaUrl}" style="display:inline-block;padding:12px 20px;border-radius:9999px;background:#A855F7;color:#09090B;text-decoration:none;font-weight:700">${ctaLabel}</a>`
       : "";
   const unsubscribe = footerUrl
     ? `<p style="margin-top:24px;font-size:12px;color:#52525B"><a href="${footerUrl}" style="color:#A1A1AA">Unsubscribe</a></p>`
@@ -17,7 +17,7 @@ function renderTemplate({ title, body, ctaLabel, ctaUrl, footerUrl }: BaseTempla
   return `
   <div style="background:#09090B;padding:24px;font-family:Inter,Segoe UI,Arial,sans-serif;color:#fff;">
     <div style="max-width:620px;margin:0 auto;border:1px solid #1E2028;border-radius:16px;background:#111215;padding:24px;">
-      <h1 style="font-size:24px;margin:0 0 12px;color:#22D3EE">TJFit</h1>
+      <h1 style="font-size:24px;margin:0 0 12px;color:#A855F7">TJFit</h1>
       <h2 style="font-size:22px;margin:0 0 12px;color:#fff">${title}</h2>
       <p style="font-size:15px;line-height:1.6;color:#A1A1AA;margin:0 0 20px">${body}</p>
       ${cta}

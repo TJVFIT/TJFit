@@ -96,7 +96,7 @@ export function BundleCta({
         onClick={run}
         disabled={busy}
         aria-label={isFree ? `${labels.getFree} ${slug}` : `${labels.buy} ${slug} ${priceLabel}`}
-        className="tj-cta-sheen relative inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-4 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] transition-[filter,box-shadow,transform] duration-150 hover:brightness-110 hover:shadow-[0_0_32px_rgba(34,211,238,0.32)] motion-safe:active:scale-[0.97] disabled:opacity-60"
+        className="tj-cta-sheen relative inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-4 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(168, 85, 247,0.22)] transition-[filter,box-shadow,transform] duration-150 hover:brightness-110 hover:shadow-[0_0_32px_rgba(168, 85, 247,0.32)] motion-safe:active:scale-[0.97] disabled:opacity-60"
       >
         {busy ? (
           <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden />

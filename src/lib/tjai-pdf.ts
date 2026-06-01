@@ -9,11 +9,11 @@ export function buildTJAIPlanPdf(args: { userName: string; goal: string; generat
   const margin = 40;
 
   const addHeader = (title: string) => {
-    pdf.setDrawColor(34, 211, 238);
+    pdf.setDrawColor(168, 85, 247);
     pdf.setLineWidth(2);
     pdf.line(0, 20, pageWidth, 20);
     pdf.setFontSize(16);
-    pdf.setTextColor(34, 211, 238);
+    pdf.setTextColor(168, 85, 247);
     pdf.text("TJFit", margin, 45);
     pdf.setTextColor(255, 255, 255);
     pdf.setFontSize(12);

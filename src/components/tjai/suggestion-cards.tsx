@@ -11,12 +11,12 @@ type Suggestion = {
 };
 
 const KIND_META: Record<string, { label: string; color: string }> = {
-  deload: { label: "Deload", color: "text-sky-300" },
-  progression: { label: "Progress", color: "text-cyan-300" },
-  swap: { label: "Swap", color: "text-sky-300" },
-  volume_change: { label: "Volume", color: "text-cyan-300" },
-  frequency_change: { label: "Frequency", color: "text-cyan-300" },
-  recovery_week: { label: "Recovery", color: "text-sky-300" },
+  deload: { label: "Deload", color: "text-violet-300" },
+  progression: { label: "Progress", color: "text-purple-300" },
+  swap: { label: "Swap", color: "text-violet-300" },
+  volume_change: { label: "Volume", color: "text-purple-300" },
+  frequency_change: { label: "Frequency", color: "text-purple-300" },
+  recovery_week: { label: "Recovery", color: "text-violet-300" },
   general: { label: "Adjust", color: "text-white/70" }
 };
 
@@ -62,7 +62,7 @@ export function SuggestionCards() {
         return (
           <div
             key={s.id}
-            className="rounded-xl border border-cyan-300/20 bg-gradient-to-br from-cyan-300/[0.06] to-transparent p-4 shadow-sm"
+            className="rounded-xl border border-purple-300/20 bg-gradient-to-br from-purple-300/[0.06] to-transparent p-4 shadow-sm"
           >
             <div className="flex items-center justify-between gap-3">
               <span className={`text-[10px] font-semibold uppercase tracking-[0.14em] ${meta.color}`}>
@@ -78,7 +78,7 @@ export function SuggestionCards() {
                 type="button"
                 onClick={() => decide(s.id, "accepted")}
                 disabled={busyId === s.id}
-                className="rounded-md bg-cyan-400 px-3 py-1.5 text-xs font-semibold text-black transition hover:bg-cyan-300 disabled:opacity-50"
+                className="rounded-md bg-purple-400 px-3 py-1.5 text-xs font-semibold text-black transition hover:bg-purple-300 disabled:opacity-50"
               >
                 Accept
               </button>
@@ -86,7 +86,7 @@ export function SuggestionCards() {
                 type="button"
                 onClick={() => decide(s.id, "rejected")}
                 disabled={busyId === s.id}
-                className="rounded-md border border-white/15 px-3 py-1.5 text-xs font-medium text-white/70 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/35 hover:bg-cyan-300/[0.05] hover:text-cyan-100 hover:shadow-[0_0_12px_rgba(34,211,238,0.1)] disabled:opacity-50"
+                className="rounded-md border border-white/15 px-3 py-1.5 text-xs font-medium text-white/70 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/35 hover:bg-purple-300/[0.05] hover:text-purple-100 hover:shadow-[0_0_12px_rgba(168, 85, 247,0.1)] disabled:opacity-50"
               >
                 Skip
               </button>

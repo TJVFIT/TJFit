@@ -69,7 +69,7 @@ export default function LocaleError({
         <button
           type="button"
           onClick={() => window.location.reload()}
-          className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-cyan-400/30 bg-cyan-400/10 px-6 py-2.5 text-sm font-semibold text-cyan-200 transition-colors hover:border-cyan-400/50 hover:text-white"
+          className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-purple-400/30 bg-purple-400/10 px-6 py-2.5 text-sm font-semibold text-purple-200 transition-colors hover:border-purple-400/50 hover:text-white"
         >
           {c.refresh}
         </button>

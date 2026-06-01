@@ -91,7 +91,7 @@ export function NumberDisplay({
           // un-earned number, otherwise unobtrusive.
           earned && "text-[#7DEAFA]",
           // Brief bloom shadow on first mount when freshly earned.
-          bloomed && "[text-shadow:0_0_24px_rgba(34,211,238,0.55)]",
+          bloomed && "[text-shadow:0_0_24px_rgba(168, 85, 247,0.55)]",
           className
         )}
         style={animationStyle}

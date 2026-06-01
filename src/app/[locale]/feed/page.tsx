@@ -66,7 +66,7 @@ export default function FeedPage({ params }: { params: { locale: string } }) {
         {!loading && items.length === 0 ? (
           <div className="mt-5 rounded-xl border border-white/10 bg-surface-2 p-5 text-center">
             <p className="text-sm text-bright">Follow other members to see their activity here.</p>
-            <Link href={`/${locale}/community?tab=people`} className="mt-3 inline-flex text-sm text-cyan-300">
+            <Link href={`/${locale}/community?tab=people`} className="mt-3 inline-flex text-sm text-purple-300">
               Discover People →
             </Link>
           </div>

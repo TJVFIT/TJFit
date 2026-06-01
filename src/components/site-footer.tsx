@@ -35,7 +35,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
 
   // Small cyan accent dot before label that slides in from -3px on hover.
   const linkClass =
-    "group/foot-link relative inline-block pl-0 text-sm leading-relaxed text-dim transition-[color,padding-left] duration-200 hover:pl-3 hover:text-cyan-100 before:absolute before:left-0 before:top-1/2 before:h-1.5 before:w-1.5 before:-translate-x-2 before:-translate-y-1/2 before:rounded-full before:bg-cyan-300 before:opacity-0 before:shadow-[0_0_8px_rgba(34,211,238,0.6)] before:transition-[opacity,transform] before:duration-200 before:content-[''] hover:before:translate-x-0 hover:before:opacity-100 motion-reduce:hover:pl-0 motion-reduce:hover:before:translate-x-0";
+    "group/foot-link relative inline-block pl-0 text-sm leading-relaxed text-dim transition-[color,padding-left] duration-200 hover:pl-3 hover:text-purple-100 before:absolute before:left-0 before:top-1/2 before:h-1.5 before:w-1.5 before:-translate-x-2 before:-translate-y-1/2 before:rounded-full before:bg-purple-300 before:opacity-0 before:shadow-[0_0_8px_rgba(168, 85, 247,0.6)] before:transition-[opacity,transform] before:duration-200 before:content-[''] hover:before:translate-x-0 hover:before:opacity-100 motion-reduce:hover:pl-0 motion-reduce:hover:before:translate-x-0";
 
   const platformLinks = [
     { href: `/${locale}/bundles`, label: copy.programs },
@@ -69,7 +69,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
           <svg width="100%" height="16" viewBox="0 0 400 16" className="max-w-md text-[rgba(255,255,255,0.08)]">
             <line x1="0" y1="8" x2="170" y2="8" stroke="currentColor" strokeWidth="0.5" />
             <line x1="230" y1="8" x2="400" y2="8" stroke="currentColor" strokeWidth="0.5" />
-            <circle cx="200" cy="8" r="3" fill="none" stroke="rgba(34,211,238,0.35)" strokeWidth="0.5" />
+            <circle cx="200" cy="8" r="3" fill="none" stroke="rgba(168, 85, 247,0.35)" strokeWidth="0.5" />
           </svg>
         </div>
 
@@ -151,7 +151,7 @@ function cnPill(active: boolean) {
   return [
     "rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide transition-[border-color,color,background-color,box-shadow] duration-200",
     active
-      ? "tj-chip-active border-[rgba(34,211,238,0.45)] bg-[rgba(34,211,238,0.12)] text-accent"
-      : "border-[rgba(255,255,255,0.08)] bg-[rgba(13,15,18,0.6)] text-dim hover:border-[rgba(34,211,238,0.35)] hover:bg-[rgba(34,211,238,0.06)] hover:text-cyan-100 hover:shadow-[0_0_14px_rgba(34,211,238,0.15)]",
+      ? "tj-chip-active border-[rgba(168, 85, 247,0.45)] bg-[rgba(168, 85, 247,0.12)] text-accent"
+      : "border-[rgba(255,255,255,0.08)] bg-[rgba(13,15,18,0.6)] text-dim hover:border-[rgba(168, 85, 247,0.35)] hover:bg-[rgba(168, 85, 247,0.06)] hover:text-purple-100 hover:shadow-[0_0_14px_rgba(168, 85, 247,0.15)]",
   ].join(" ");
 }

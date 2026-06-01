@@ -37,7 +37,7 @@ function CancellationModal({ open, onClose }: { open: boolean; onClose: () => vo
             <li>Priority support</li>
           </ul>
           <div className="mt-4 flex gap-2">
-            <button className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2 text-sm font-semibold text-[#09090B]" onClick={onClose}>
+            <button className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2 text-sm font-semibold text-[#09090B]" onClick={onClose}>
               Keep My Subscription
             </button>
             <button className="rounded-full border border-divider px-4 py-2 text-sm text-bright" onClick={() => setStep(2)}>
@@ -53,10 +53,10 @@ function CancellationModal({ open, onClose }: { open: boolean; onClose: () => vo
           <h3 className="text-xl font-semibold text-white">Need a break?</h3>
           <p className="mt-2 text-sm text-muted">Pause your subscription for 1 or 2 months instead.</p>
           <div className="mt-4 flex flex-wrap gap-2">
-            <button className="rounded-full border border-cyan-400/30 px-4 py-2 text-sm text-cyan-200" onClick={() => setStep(4)}>
+            <button className="rounded-full border border-purple-400/30 px-4 py-2 text-sm text-purple-200" onClick={() => setStep(4)}>
               Pause for 1 Month
             </button>
-            <button className="rounded-full border border-cyan-400/30 px-4 py-2 text-sm text-cyan-200" onClick={() => setStep(4)}>
+            <button className="rounded-full border border-purple-400/30 px-4 py-2 text-sm text-purple-200" onClick={() => setStep(4)}>
               Pause for 2 Months
             </button>
             <button className="text-sm text-faint" onClick={() => setStep(3)}>

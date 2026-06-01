@@ -184,7 +184,7 @@ export function StartFunnelClient({ locale }: { locale: Locale }) {
         </div>
 
         <div className="mt-10 grid gap-4 lg:grid-cols-3">
-          <article className="rounded-3xl border border-white/10 bg-[linear-gradient(135deg,rgba(34,211,238,0.12),rgba(14,165,233,0.03))] p-6">
+          <article className="rounded-3xl border border-white/10 bg-[linear-gradient(135deg,rgba(168, 85, 247,0.12),rgba(124, 58, 237,0.03))] p-6">
             <Dumbbell className="h-10 w-10 text-accent" />
             <h2 className="mt-4 text-xl font-bold text-white">{copy.freePrograms}</h2>
             <p className="mt-2 text-sm text-muted">{copy.freeProgramsSub}</p>
@@ -195,17 +195,17 @@ export function StartFunnelClient({ locale }: { locale: Locale }) {
             </ul>
             <Link
               href={`/${locale}/bundles`}
-              className="mt-5 inline-flex min-h-[46px] w-full items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 text-sm font-bold text-[#09090B]"
+              className="mt-5 inline-flex min-h-[46px] w-full items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 text-sm font-bold text-[#09090B]"
             >
               {copy.browsePrograms}
             </Link>
           </article>
 
-          <article className="rounded-3xl border border-white/10 bg-[linear-gradient(135deg,rgba(34,211,238,0.12),rgba(14,165,233,0.03))] p-6">
+          <article className="rounded-3xl border border-white/10 bg-[linear-gradient(135deg,rgba(168, 85, 247,0.12),rgba(124, 58, 237,0.03))] p-6">
             <Sparkles className="h-10 w-10 text-accent" />
             <div className="mt-4 flex items-center justify-between gap-2">
               <h2 className="text-xl font-bold text-white">{copy.tjai}</h2>
-              <span className="rounded-full border border-cyan-400/30 bg-cyan-500/10 px-2 py-1 text-[10px] font-semibold text-cyan-200">
+              <span className="rounded-full border border-purple-400/30 bg-purple-500/10 px-2 py-1 text-[10px] font-semibold text-purple-200">
                 {copy.trial}
               </span>
             </div>
@@ -216,25 +216,25 @@ export function StartFunnelClient({ locale }: { locale: Locale }) {
             </div>
             <Link
               href={`/${locale}/tjai`}
-              className="mt-5 inline-flex min-h-[46px] w-full items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 text-sm font-bold text-[#09090B]"
+              className="mt-5 inline-flex min-h-[46px] w-full items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 text-sm font-bold text-[#09090B]"
             >
               {copy.startTjai}
             </Link>
           </article>
 
-          <article className="rounded-3xl border border-white/10 bg-[linear-gradient(135deg,rgba(34,211,238,0.12),rgba(14,165,233,0.03))] p-6">
+          <article className="rounded-3xl border border-white/10 bg-[linear-gradient(135deg,rgba(168, 85, 247,0.12),rgba(124, 58, 237,0.03))] p-6">
             <Calculator className="h-10 w-10 text-accent" />
             <h2 className="mt-4 text-xl font-bold text-white">{copy.calculator}</h2>
             <p className="mt-2 text-sm text-muted">{copy.calculatorSub}</p>
             <div className="mt-4 flex items-center gap-3 rounded-xl border border-white/10 bg-[#0D1015] p-3">
-              <Brain className="h-5 w-5 text-cyan-300" />
+              <Brain className="h-5 w-5 text-purple-300" />
               <div className="h-2 w-full rounded-full bg-white/5">
-                <div className="h-full w-[45%] rounded-full bg-gradient-to-r from-[#22D3EE] to-[#0EA5E9]" />
+                <div className="h-full w-[45%] rounded-full bg-gradient-to-r from-[#A855F7] to-[#7C3AED]" />
               </div>
             </div>
             <Link
               href={`/${locale}/calculator`}
-              className="mt-5 inline-flex min-h-[46px] w-full items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 text-sm font-bold text-[#09090B]"
+              className="mt-5 inline-flex min-h-[46px] w-full items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 text-sm font-bold text-[#09090B]"
             >
               {copy.calcTdee}
             </Link>
@@ -248,13 +248,13 @@ export function StartFunnelClient({ locale }: { locale: Locale }) {
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
             <Link
               href={`/${locale}/membership?tier=pro`}
-              className="inline-flex min-h-[46px] items-center justify-center rounded-full border border-white/20 px-4 text-sm font-semibold text-white transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:bg-cyan-300/[0.05] hover:text-cyan-50 hover:shadow-[0_0_16px_rgba(34,211,238,0.14)]"
+              className="inline-flex min-h-[46px] items-center justify-center rounded-full border border-white/20 px-4 text-sm font-semibold text-white transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.05] hover:text-purple-50 hover:shadow-[0_0_16px_rgba(168, 85, 247,0.14)]"
             >
               {copy.getPro}
             </Link>
             <Link
               href={`/${locale}/membership?tier=apex`}
-              className="inline-flex min-h-[46px] items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 text-sm font-bold text-[#09090B]"
+              className="inline-flex min-h-[46px] items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 text-sm font-bold text-[#09090B]"
             >
               {copy.getApex}
             </Link>
@@ -283,7 +283,7 @@ export function StartFunnelClient({ locale }: { locale: Locale }) {
       <style jsx>{`
         .typing-line {
           width: fit-content;
-          border-right: 1px solid rgba(34, 211, 238, 0.45);
+          border-right: 1px solid rgba(168, 85, 247, 0.45);
           white-space: nowrap;
           overflow: hidden;
           animation: tjtyping 2.6s steps(26, end) infinite;

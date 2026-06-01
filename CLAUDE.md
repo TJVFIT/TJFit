@@ -11,7 +11,7 @@ Read the focused docs in `docs/claude/` only when the task requires them.
 - **Domain:** tjfit.org (production; auto-deploys from `main` on Vercel project `tjfitmain`)
 - **Product:** Premium multilingual online fitness coaching + bundles + TJAI plan generator
 - **Locales (do not remove):** `en`, `tr`, `ar`, `es`, `fr`
-- **Brand colors:** cyan / blue / black. **NOT** champagne/gold — replace on sight.
+- **Brand colors:** black / deep purple / violet / soft purple / pale lavender. Cyan/sky are **no longer** primary brand accents — replace on sight. Keep **no** champagne/gold.
 
 ## 2. Tech stack
 
@@ -43,7 +43,7 @@ If a task seems to require touching a protected area, **stop and ask first.**
 - No error handling for impossible cases. Validate only at boundaries.
 - Never invent prices — all program/diet prices stay `$0` until the owner sets them.
 - Shopify / equipment store is **out of scope** until the owner green-lights it.
-- Cyan/blue/black only. No champagne/gold anywhere.
+- Purple/violet/black only. No cyan/sky as primary accent. No champagne/gold anywhere.
 
 ## 5. Testing / build rules
 

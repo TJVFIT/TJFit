@@ -23,7 +23,7 @@ export function CoachProfileGate({
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
       <div className="overflow-hidden rounded-[32px] border border-white/[0.1] bg-gradient-to-b from-white/[0.06] to-white/[0.02] shadow-[0_32px_80px_-40px_rgba(0,0,0,0.85)]">
-        <div className="aspect-[21/9] bg-gradient-to-br from-cyan-500/15 via-zinc-900/50 to-sky-600/12" aria-hidden />
+        <div className="aspect-[21/9] bg-gradient-to-br from-purple-500/15 via-zinc-900/50 to-violet-600/12" aria-hidden />
         <div className="px-8 py-10 sm:px-12 sm:py-12">
           <span className="lux-badge inline-flex">{copy.badge}</span>
           <h1 className="mt-8 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">{copy.title}</h1>
@@ -34,7 +34,7 @@ export function CoachProfileGate({
             <ul className="mt-5 space-y-3 text-sm text-muted">
               {copy.proofItems.map((item) => (
                 <li key={item} className="flex gap-3">
-                  <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-cyan-400/70" aria-hidden />
+                  <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-purple-400/70" aria-hidden />
                   <span>{item}</span>
                 </li>
               ))}
@@ -52,7 +52,7 @@ export function CoachProfileGate({
           <div className="mt-10">
             <Link
               href={`/${locale}/coaches`}
-              className="text-sm font-medium text-cyan-200/90 underline-offset-4 hover:underline"
+              className="text-sm font-medium text-purple-200/90 underline-offset-4 hover:underline"
             >
               ← {copy.ctaBack}
             </Link>

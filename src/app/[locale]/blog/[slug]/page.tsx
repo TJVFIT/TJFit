@@ -104,7 +104,7 @@ export default async function BlogDetailPage({ params }: { params: { locale: str
   return (
     <PremiumPageShell>
       <article className="rounded-2xl border border-divider bg-surface p-6">
-        <p className="text-xs uppercase tracking-[0.14em] text-cyan-300">{postRow.category ?? "General"}</p>
+        <p className="text-xs uppercase tracking-[0.14em] text-purple-300">{postRow.category ?? "General"}</p>
         <h1 className="mt-2 text-3xl font-extrabold text-white">
           <span className="tj-title-shimmer">{postRow.title}</span>
         </h1>
@@ -118,17 +118,17 @@ export default async function BlogDetailPage({ params }: { params: { locale: str
         <h2 className="text-lg font-semibold text-white">You might also like</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-3">
           {related.map((item) => (
-            <article key={item.id} className="group/related rounded-lg border border-divider bg-surface-2 p-3 transition-[border-color,box-shadow] duration-200 hover:border-cyan-300/30 hover:shadow-[0_0_22px_rgba(34,211,238,0.1)]">
-              <p className="text-[11px] uppercase tracking-[0.12em] text-cyan-300">{item.category ?? "General"}</p>
+            <article key={item.id} className="group/related rounded-lg border border-divider bg-surface-2 p-3 transition-[border-color,box-shadow] duration-200 hover:border-purple-300/30 hover:shadow-[0_0_22px_rgba(168, 85, 247,0.1)]">
+              <p className="text-[11px] uppercase tracking-[0.12em] text-purple-300">{item.category ?? "General"}</p>
               <h3 className="mt-2 line-clamp-2 text-sm font-semibold text-white">{item.title}</h3>
               <p className="mt-2 line-clamp-3 text-xs text-muted">{item.content}</p>
-              <Link href={`/${locale}/blog/${item.id}`} className="mt-3 inline-flex text-xs text-accent transition-colors duration-200 hover:text-cyan-50">
+              <Link href={`/${locale}/blog/${item.id}`} className="mt-3 inline-flex text-xs text-accent transition-colors duration-200 hover:text-purple-50">
                 Read →
               </Link>
             </article>
           ))}
         </div>
-        <Link href={`/${locale}/blog`} className="mt-4 inline-flex text-sm text-accent transition-colors duration-200 hover:text-cyan-50">
+        <Link href={`/${locale}/blog`} className="mt-4 inline-flex text-sm text-accent transition-colors duration-200 hover:text-purple-50">
           Back to all posts →
         </Link>
       </section>

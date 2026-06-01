@@ -91,13 +91,13 @@ function CountUp({ target, suffix = "", label }: { target: number; suffix?: stri
     >
       <p
         ref={numRef}
-        className={`font-display text-[clamp(1.65rem,3.8vw,2.65rem)] font-medium tabular-nums tracking-tight bg-gradient-to-r from-white via-cyan-100 to-white bg-clip-text text-transparent motion-safe:transition-transform motion-safe:duration-300 ${
+        className={`font-display text-[clamp(1.65rem,3.8vw,2.65rem)] font-medium tabular-nums tracking-tight bg-gradient-to-r from-white via-purple-100 to-white bg-clip-text text-transparent motion-safe:transition-transform motion-safe:duration-300 ${
           settled ? "motion-safe:scale-100" : "motion-safe:scale-[0.96]"
         }`}
         style={
           {
             "--countup-glow": "0",
-            filter: "drop-shadow(0 0 calc(var(--countup-glow) * 14px) rgba(34, 211, 238, calc(var(--countup-glow) * 0.6)))"
+            filter: "drop-shadow(0 0 calc(var(--countup-glow) * 14px) rgba(168, 85, 247, calc(var(--countup-glow) * 0.6)))"
           } as React.CSSProperties
         }
       >
@@ -140,7 +140,7 @@ function BundleTeaserCTA({ href, label }: { href: string; label: string }) {
     <a
       ref={ref}
       href={href}
-      className="group/cta tj-cta-sheen relative inline-flex min-h-[52px] shrink-0 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] px-7 py-3 text-sm font-bold text-background shadow-[0_4px_24px_rgba(34,211,238,0.35)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] hover:shadow-[0_8px_44px_rgba(34,211,238,0.55)]"
+      className="group/cta tj-cta-sheen relative inline-flex min-h-[52px] shrink-0 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-7 py-3 text-sm font-bold text-background shadow-[0_4px_24px_rgba(168, 85, 247,0.35)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] hover:shadow-[0_8px_44px_rgba(168, 85, 247,0.55)]"
       style={
         {
           "--mag-x": "0px",
@@ -165,7 +165,7 @@ function PlatformFeatureCard({
   icon: Icon,
   title,
   desc,
-  accent = "#22D3EE",
+  accent = "#A855F7",
   span = 1,
 }: {
   icon: React.ElementType;
@@ -195,7 +195,7 @@ function PlatformFeatureCard({
           span === 2 && "md:mb-0"
         )}
       >
-        <Icon className="h-[18px] w-[18px] text-muted transition-colors duration-200 group-hover:text-cyan-100" strokeWidth={1.5} />
+        <Icon className="h-[18px] w-[18px] text-muted transition-colors duration-200 group-hover:text-purple-100" strokeWidth={1.5} />
       </div>
       <div className="min-w-0 flex-1">
         <h3 className="font-display text-lg font-medium tracking-tight text-white">{title}</h3>
@@ -253,12 +253,12 @@ export function ImmersiveHome({
   // Icon/accent/layout meta stays here; the title + desc come from the
   // localized home-sections copy (order must match).
   const featureMeta = [
-    { icon: Brain, accent: "#22D3EE", span: 2 as const },
-    { icon: Dumbbell, accent: "#67E8F9", span: 1 as const },
-    { icon: Apple, accent: "#0EA5E9", span: 1 as const },
-    { icon: Users, accent: "#22D3EE", span: 1 as const },
-    { icon: Trophy, accent: "#67E8F9", span: 1 as const },
-    { icon: Globe, accent: "#0EA5E9", span: 1 as const }
+    { icon: Brain, accent: "#A855F7", span: 2 as const },
+    { icon: Dumbbell, accent: "#C4B5FD", span: 1 as const },
+    { icon: Apple, accent: "#7C3AED", span: 1 as const },
+    { icon: Users, accent: "#A855F7", span: 1 as const },
+    { icon: Trophy, accent: "#C4B5FD", span: 1 as const },
+    { icon: Globe, accent: "#7C3AED", span: 1 as const }
   ];
   const features = featureMeta.map((m, i) => ({
     ...m,
@@ -335,7 +335,7 @@ export function ImmersiveHome({
           </div>
           <Link
             href={`/${locale}/tjai`}
-            className="lux-btn-primary inline-flex min-h-[48px] shrink-0 items-center justify-center gap-2 tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] shadow-[0_0_16px_rgba(34,211,238,0.2)] hover:shadow-[0_0_24px_rgba(34,211,238,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-6 py-3 text-sm font-bold text-background shadow-[0_4px_24px_rgba(34,211,238,0.35)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02]"
+            className="lux-btn-primary inline-flex min-h-[48px] shrink-0 items-center justify-center gap-2 tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168, 85, 247,0.2)] hover:shadow-[0_0_24px_rgba(168, 85, 247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-6 py-3 text-sm font-bold text-background shadow-[0_4px_24px_rgba(168, 85, 247,0.35)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02]"
           >
             {sectionsCopy.tjai.cta} <ArrowRight className="h-4 w-4 rtl:rotate-180" />
           </Link>
@@ -353,7 +353,7 @@ export function ImmersiveHome({
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "radial-gradient(45% 60% at 78% 30%, rgba(34,211,238,0.10), transparent 70%)"
+              "radial-gradient(45% 60% at 78% 30%, rgba(168, 85, 247,0.10), transparent 70%)"
           }}
         />
         <div className="relative mx-auto flex max-w-5xl flex-col items-start gap-8 md:flex-row md:items-center md:justify-between md:gap-10">
@@ -369,7 +369,7 @@ export function ImmersiveHome({
               {(["fat-loss", "muscle-gain", "recomp", "strength", "conditioning", "foundation"] as const).map((key) => (
                 <span
                   key={key}
-                  className="rounded-full border border-cyan-300/25 bg-cyan-300/[0.05] px-2.5 py-1 text-cyan-100/85"
+                  className="rounded-full border border-purple-300/25 bg-purple-300/[0.05] px-2.5 py-1 text-purple-100/85"
                 >
                   {bundlesCopy.filterLabels[key]}
                 </span>
@@ -462,12 +462,12 @@ export function ImmersiveHome({
             <div
               className="relative h-[320px] w-[320px] rounded-full"
               style={{
-                background: "radial-gradient(circle at 50% 45%, rgba(34,211,238,0.18) 0%, rgba(34,211,238,0.06) 42%, transparent 70%)",
-                boxShadow: "0 0 120px rgba(34,211,238,0.18) inset"
+                background: "radial-gradient(circle at 50% 45%, rgba(168, 85, 247,0.18) 0%, rgba(168, 85, 247,0.06) 42%, transparent 70%)",
+                boxShadow: "0 0 120px rgba(168, 85, 247,0.18) inset"
               }}
             >
-              <div className="absolute inset-10 rounded-full border border-[rgba(34,211,238,0.18)]" />
-              <div className="absolute inset-20 rounded-full border border-[rgba(34,211,238,0.12)]" />
+              <div className="absolute inset-10 rounded-full border border-[rgba(168, 85, 247,0.18)]" />
+              <div className="absolute inset-20 rounded-full border border-[rgba(168, 85, 247,0.12)]" />
               <div className="absolute inset-0 flex items-center justify-center">
                 <span className="font-display text-5xl font-bold tracking-tight text-accent">TJAI</span>
               </div>
@@ -508,11 +508,11 @@ export function ImmersiveHome({
               ].map((row) => (
                 <li
                   key={row.title}
-                  className="group flex gap-4 rounded-xl border border-transparent bg-transparent p-1 transition-[border-color,background-color] duration-200 hover:border-[rgba(34,211,238,0.12)] hover:bg-[rgba(34,211,238,0.03)]"
+                  className="group flex gap-4 rounded-xl border border-transparent bg-transparent p-1 transition-[border-color,background-color] duration-200 hover:border-[rgba(168, 85, 247,0.12)] hover:bg-[rgba(168, 85, 247,0.03)]"
                   style={{ transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)" }}
                 >
                   <span
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(34,211,238,0.06)] transition-[border-color,box-shadow] duration-200 group-hover:border-[rgba(34,211,238,0.35)]"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(168, 85, 247,0.06)] transition-[border-color,box-shadow] duration-200 group-hover:border-[rgba(168, 85, 247,0.35)]"
                   >
                     <row.Icon className="h-5 w-5 text-accent" strokeWidth={1.5} />
                   </span>
@@ -527,14 +527,14 @@ export function ImmersiveHome({
             <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
               <TjaiMagneticPrimary
                 href={`/${locale}/ai`}
-                className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-[10px] bg-accent px-8 py-3.5 text-[15px] font-extrabold text-[#09090B] shadow-[0_12px_40px_rgba(34,211,238,0.28)] transition-[filter,transform,box-shadow] duration-200 hover:brightness-110 hover:-translate-y-0.5"
+                className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-[10px] bg-accent px-8 py-3.5 text-[15px] font-extrabold text-[#09090B] shadow-[0_12px_40px_rgba(168, 85, 247,0.28)] transition-[filter,transform,box-shadow] duration-200 hover:brightness-110 hover:-translate-y-0.5"
               >
                 <Zap className="h-4 w-4 shrink-0" aria-hidden />
                 Build my plan — free preview
               </TjaiMagneticPrimary>
               <Link
                 href={`/${locale}/ai`}
-                className="inline-flex min-h-[52px] items-center justify-center rounded-[10px] border border-[rgba(255,255,255,0.14)] px-8 py-3.5 text-[15px] font-semibold text-white transition-[border-color,background-color,color] duration-200 hover:border-[rgba(34,211,238,0.35)] hover:bg-[rgba(34,211,238,0.04)] hover:text-accent"
+                className="inline-flex min-h-[52px] items-center justify-center rounded-[10px] border border-[rgba(255,255,255,0.14)] px-8 py-3.5 text-[15px] font-semibold text-white transition-[border-color,background-color,color] duration-200 hover:border-[rgba(168, 85, 247,0.35)] hover:bg-[rgba(168, 85, 247,0.04)] hover:text-accent"
               >
                 See a sample plan
                 <ArrowRight className="ms-1 h-4 w-4" aria-hidden />
@@ -603,12 +603,12 @@ export function ImmersiveHome({
               "M 600 550 L 380 490",
               "M 600 550 L 820 490",
             ].map((d, i) => (
-              <path key={i} d={d} fill="none" stroke="#22D3EE" strokeWidth="1.5" strokeLinecap="round"
+              <path key={i} d={d} fill="none" stroke="#A855F7" strokeWidth="1.5" strokeLinecap="round"
                 strokeDasharray="1000" strokeDashoffset="1000"
                 style={{ animation: `nodeTravel ${3 + i * 0.7}s ease-in-out ${i * 0.4}s infinite` }} />
             ))}
             {[[600,550],[600,300],[300,100],[900,100],[150,200],[1050,200],[380,490],[820,490]].map(([cx, cy], i) => (
-              <circle key={i} cx={cx} cy={cy} r="5" fill="#22D3EE"
+              <circle key={i} cx={cx} cy={cy} r="5" fill="#A855F7"
                 style={{ animation: `neuralPulse ${2 + i * 0.3}s ease-in-out ${i * 0.2}s infinite` }} />
             ))}
           </svg>
@@ -621,20 +621,20 @@ export function ImmersiveHome({
             <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-dim">Access</p>
             <h2 className="mt-5 font-display text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
               Start your next{" "}
-              <span className="bg-gradient-to-r from-[#22D3EE] to-[#67E8F9] bg-clip-text text-transparent">12 weeks</span>
+              <span className="bg-gradient-to-r from-[#A855F7] to-[#C4B5FD] bg-clip-text text-transparent">12 weeks</span>
               <span className="text-faint">.</span>
             </h2>
             <p className="mt-6 text-lg text-muted">{copy.midCta?.sub ?? "Join thousands already training smarter with TJFit."}</p>
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link
                 href={`/${locale}/signup`}
-                className="tj-cta-glow-hover inline-flex min-h-[56px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#22D3EE] to-[#0EA5E9] px-10 py-4 text-base font-bold text-[#0A0A0B] shadow-[0_0_40px_rgba(34,211,238,0.5),0_0_80px_rgba(34,211,238,0.2)] transition-transform hover:scale-[1.04]"
+                className="tj-cta-glow-hover inline-flex min-h-[56px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#A855F7] to-[#7C3AED] px-10 py-4 text-base font-bold text-[#0A0A0B] shadow-[0_0_40px_rgba(168, 85, 247,0.5),0_0_80px_rgba(168, 85, 247,0.2)] transition-transform hover:scale-[1.04]"
               >
                 {navChrome.joinLabel} — It&apos;s Free
               </Link>
               <Link
                 href={`/${locale}/bundles`}
-                className="tj-cta-sheen inline-flex min-h-[56px] items-center justify-center rounded-full border border-white/20 bg-white/[0.05] px-10 py-4 text-base font-semibold text-white backdrop-blur-sm transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:bg-cyan-300/[0.05] hover:text-cyan-50 hover:shadow-[0_0_22px_rgba(34,211,238,0.16)]"
+                className="tj-cta-sheen inline-flex min-h-[56px] items-center justify-center rounded-full border border-white/20 bg-white/[0.05] px-10 py-4 text-base font-semibold text-white backdrop-blur-sm transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.05] hover:text-purple-50 hover:shadow-[0_0_22px_rgba(168, 85, 247,0.16)]"
               >
                 Browse Bundles
               </Link>

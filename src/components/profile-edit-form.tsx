@@ -225,7 +225,7 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
         <p className="text-sm text-red-400">{initialLoadError}</p>
         <button
           type="button"
-          className="rounded-full border border-white/15 px-5 py-2.5 text-sm text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_18px_rgba(34,211,238,0.14)]"
+          className="rounded-full border border-white/15 px-5 py-2.5 text-sm text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.14)]"
           onClick={() => void load()}
         >
           {s.retryLabel}
@@ -266,12 +266,12 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
         {form.username && isValidUsername(form.username.trim()) ? (
           <Link
             href={`/${locale}/profile/${encodeURIComponent(form.username.trim())}`}
-            className="mt-3 inline-block text-xs text-cyan-300/85 hover:text-cyan-200 hover:underline"
+            className="mt-3 inline-block text-xs text-purple-300/85 hover:text-purple-200 hover:underline"
           >
             {s.viewProfileButton} (@{form.username.trim()})
           </Link>
         ) : (
-          <p className="mt-3 rounded-xl border border-cyan-500/20 bg-cyan-500/5 px-3 py-2 text-xs text-cyan-100/85">
+          <p className="mt-3 rounded-xl border border-purple-500/20 bg-purple-500/5 px-3 py-2 text-xs text-purple-100/85">
             {s.profileChooseUsernameHint}
           </p>
         )}
@@ -379,7 +379,7 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
         </label>
 
         {error ? <p className="text-sm text-red-400">{error}</p> : null}
-        {savedFlash ? <p className="text-sm text-cyan-300/90">{s.saved}</p> : null}
+        {savedFlash ? <p className="text-sm text-purple-300/90">{s.saved}</p> : null}
 
         <AsyncButton
           type="button"
@@ -401,7 +401,7 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
               key={color}
               type="button"
               onClick={() => setForm((f) => ({ ...f, banner_color: color }))}
-              className={`h-9 rounded-lg border ${form.banner_color === color ? "border-cyan-300" : "border-white/15"}`}
+              className={`h-9 rounded-lg border ${form.banner_color === color ? "border-purple-300" : "border-white/15"}`}
               style={{ backgroundColor: color }}
             />
           ))}

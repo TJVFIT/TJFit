@@ -253,7 +253,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
         <div className="mt-6">
           <p className="mb-2 text-center text-xs text-faint">{stepLabel}</p>
           <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
-            <div className="h-full rounded-full bg-cyan-400 transition-all duration-300" style={{ width: `${(step / 4) * 100}%` }} />
+            <div className="h-full rounded-full bg-purple-400 transition-all duration-300" style={{ width: `${(step / 4) * 100}%` }} />
           </div>
         </div>
 
@@ -437,11 +437,11 @@ function SignupForm({ params }: { params: { locale: string } }) {
                   onClick={() => setGoal(g.key)}
                   className={`rounded-2xl border p-4 text-left transition-[border-color,background-color,color,box-shadow] duration-200 ${
                     goal === g.key
-                      ? "border-cyan-300/55 bg-cyan-300/[0.1] text-cyan-50 shadow-[0_0_22px_rgba(34,211,238,0.16)]"
-                      : "border-white/10 text-bright hover:border-cyan-300/40 hover:bg-cyan-300/[0.04] hover:text-cyan-100"
+                      ? "border-purple-300/55 bg-purple-300/[0.1] text-purple-50 shadow-[0_0_22px_rgba(168, 85, 247,0.16)]"
+                      : "border-white/10 text-bright hover:border-purple-300/40 hover:bg-purple-300/[0.04] hover:text-purple-100"
                   }`}
                 >
-                  <GoalIcon className="h-5 w-5 text-cyan-300" aria-hidden />
+                  <GoalIcon className="h-5 w-5 text-purple-300" aria-hidden />
                   <p className="mt-1 font-semibold">{g.title}</p>
                   <p className="mt-1 text-xs text-faint">{g.sub}</p>
                 </button>
@@ -482,7 +482,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
               <button
                 type="button"
                 onClick={() => setStep((s) => Math.max(1, s - 1))}
-                className="min-h-[48px] flex-1 rounded-full border border-white/15 px-5 py-3 text-sm text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_18px_rgba(34,211,238,0.14)]"
+                className="min-h-[48px] flex-1 rounded-full border border-white/15 px-5 py-3 text-sm text-bright transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.14)]"
               >
                 {copy.signupBack}
               </button>

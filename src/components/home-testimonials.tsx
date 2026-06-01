@@ -122,7 +122,7 @@ export function HomeTestimonials({ locale }: { locale: Locale }) {
           <button
             type="button"
             onClick={() => go(-1)}
-            className="absolute start-0 top-1/2 z-[2] hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(13,15,18,0.85)] text-muted backdrop-blur-md transition-[border-color,color,box-shadow,transform] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_18px_rgba(34,211,238,0.18)] md:flex"
+            className="absolute start-0 top-1/2 z-[2] hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(13,15,18,0.85)] text-muted backdrop-blur-md transition-[border-color,color,box-shadow,transform] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.18)] md:flex"
             aria-label="Previous testimonial"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -130,7 +130,7 @@ export function HomeTestimonials({ locale }: { locale: Locale }) {
           <button
             type="button"
             onClick={() => go(1)}
-            className="absolute end-0 top-1/2 z-[2] hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(13,15,18,0.85)] text-muted backdrop-blur-md transition-[border-color,color,box-shadow,transform] duration-200 hover:border-cyan-300/40 hover:text-cyan-100 hover:shadow-[0_0_18px_rgba(34,211,238,0.18)] md:flex"
+            className="absolute end-0 top-1/2 z-[2] hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(13,15,18,0.85)] text-muted backdrop-blur-md transition-[border-color,color,box-shadow,transform] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.18)] md:flex"
             aria-label="Next testimonial"
           >
             <ChevronRight className="h-5 w-5" />
@@ -150,14 +150,14 @@ export function HomeTestimonials({ locale }: { locale: Locale }) {
                   className="glass-panel-glow shrink-0 rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[rgba(13,15,18,0.65)] px-6 py-8 sm:px-10 sm:py-10"
                   style={{ width: `${100 / total}%` }}
                 >
-                  <div className="flex gap-0.5 text-[#A5F3FC]" aria-hidden>
+                  <div className="flex gap-0.5 text-[#EDE9FE]" aria-hidden>
                     {Array.from({ length: 5 }).map((_, i) => (
                       <span key={i}>★</span>
                     ))}
                   </div>
                   <p className="mt-5 line-clamp-4 text-[15px] italic leading-[1.7] text-white">{t.quote}</p>
                   <div className="mt-8 flex items-center gap-3 border-t border-[rgba(255,255,255,0.06)] pt-6">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[rgba(34,211,238,0.2)] bg-[rgba(34,211,238,0.08)] text-sm font-bold text-accent">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[rgba(168, 85, 247,0.2)] bg-[rgba(168, 85, 247,0.08)] text-sm font-bold text-accent">
                       {t.name.slice(0, 1)}
                     </div>
                     <div>
@@ -181,7 +181,7 @@ export function HomeTestimonials({ locale }: { locale: Locale }) {
               onClick={() => setActiveIdx(idx)}
               className={cn(
                 "h-2 rounded-full transition-[width,background-color] duration-300 ease-out",
-                idx === activeIdx ? "w-6 bg-accent" : "w-2 border border-[rgba(34,211,238,0.35)] bg-transparent hover:bg-[rgba(34,211,238,0.2)]"
+                idx === activeIdx ? "w-6 bg-accent" : "w-2 border border-[rgba(168, 85, 247,0.35)] bg-transparent hover:bg-[rgba(168, 85, 247,0.2)]"
               )}
               aria-label={`Slide ${idx + 1}`}
               aria-current={idx === activeIdx}

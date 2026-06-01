@@ -89,9 +89,9 @@ function ThreadsPanel({
                 key={key}
                 type="button"
                 onClick={() => onReact(post.id, key)}
-                className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-2.5 py-1 text-xs text-bright hover:border-cyan-300/40"
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-2.5 py-1 text-xs text-bright hover:border-purple-300/40"
               >
-                <Icon className="h-3.5 w-3.5 text-cyan-300" aria-hidden />
+                <Icon className="h-3.5 w-3.5 text-purple-300" aria-hidden />
                 {reactions[post.id]?.[key] ?? 0}
               </button>
             ))}
@@ -172,7 +172,7 @@ function ChallengesLivePanel({
             <button
               type="button"
               onClick={() => onJoin(item.id)}
-              className="tj-cta-sheen rounded-full border border-cyan-400/35 bg-cyan-500/10 px-4 py-2 text-xs font-semibold text-cyan-100 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/55 hover:bg-cyan-500/15 hover:text-cyan-50 hover:shadow-[0_0_18px_rgba(34,211,238,0.18)]"
+              className="tj-cta-sheen rounded-full border border-purple-400/35 bg-purple-500/10 px-4 py-2 text-xs font-semibold text-purple-100 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/55 hover:bg-purple-500/15 hover:text-purple-50 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.18)]"
             >
               {item.joined ? "Joined" : "Join Challenge"}
             </button>
@@ -205,7 +205,7 @@ function ChallengesLivePanel({
                   #{idx + 1} · {row.total}
                 </p>
               ))}
-              {item.myRank ? <p className="mt-2 text-cyan-300">Your rank: #{item.myRank}</p> : null}
+              {item.myRank ? <p className="mt-2 text-purple-300">Your rank: #{item.myRank}</p> : null}
             </div>
           </details>
         </article>
@@ -240,7 +240,7 @@ function GroupsPanel({
           <button
             type="button"
             onClick={() => onToggle(group.id, group.joined ? "leave" : "join")}
-            className="mt-4 tj-cta-sheen rounded-full border border-cyan-400/35 bg-cyan-500/10 px-4 py-2 text-xs font-semibold text-cyan-100 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/55 hover:bg-cyan-500/15 hover:text-cyan-50 hover:shadow-[0_0_18px_rgba(34,211,238,0.18)]"
+            className="mt-4 tj-cta-sheen rounded-full border border-purple-400/35 bg-purple-500/10 px-4 py-2 text-xs font-semibold text-purple-100 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/55 hover:bg-purple-500/15 hover:text-purple-50 hover:shadow-[0_0_18px_rgba(168, 85, 247,0.18)]"
           >
             {group.joined ? "Leave Group" : "Join Group"}
           </button>
@@ -323,7 +323,7 @@ function PeoplePanel({ locale }: { locale: Locale }) {
         </div>
       )}
       <p className="text-xs text-dim">
-        <Link href={`/${locale}/feed`} className="text-cyan-300">
+        <Link href={`/${locale}/feed`} className="text-purple-300">
           Open feed
         </Link>
       </p>
@@ -644,8 +644,8 @@ export function CommunityHub({
                 }}
                 className={`rounded-full border px-4 py-2 text-sm font-medium transition-[border-color,background-color,color,box-shadow] duration-200 ${
                   activeTab === tab.key
-                    ? "tj-chip-active border-cyan-300/45 bg-cyan-500/12 text-cyan-50 shadow-[0_0_24px_-10px_rgba(34,211,238,0.28)]"
-                    : "border-white/10 bg-white/[0.04] text-muted hover:border-cyan-300/35 hover:bg-cyan-300/[0.04] hover:text-cyan-100"
+                    ? "tj-chip-active border-purple-300/45 bg-purple-500/12 text-purple-50 shadow-[0_0_24px_-10px_rgba(168, 85, 247,0.28)]"
+                    : "border-white/10 bg-white/[0.04] text-muted hover:border-purple-300/35 hover:bg-purple-300/[0.04] hover:text-purple-100"
                 }`}
               >
                 {tab.label}
@@ -742,7 +742,7 @@ export function CommunityHub({
                         </span>
                         <span className="flex items-center gap-2">
                           {post.is_pinned ? (
-                            <span className="rounded border border-sky-400/30 bg-sky-400/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-sky-200">
+                            <span className="rounded border border-violet-400/30 bg-violet-400/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-violet-200">
                               {copy.pinned}
                             </span>
                           ) : null}
@@ -775,7 +775,7 @@ export function CommunityHub({
                           type="button"
                           onClick={() => translateBlog(post.id)}
                           disabled={translateLoadingId === post.id}
-                          className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-bright transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:bg-cyan-300/[0.05] hover:text-cyan-100 hover:shadow-[0_0_14px_rgba(34,211,238,0.12)] disabled:opacity-60"
+                          className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-bright transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.05] hover:text-purple-100 hover:shadow-[0_0_14px_rgba(168, 85, 247,0.12)] disabled:opacity-60"
                         >
                           {translateLoadingId === post.id ? copy.translating : copy.translate}
                         </button>
@@ -789,7 +789,7 @@ export function CommunityHub({
                                 return next;
                               })
                             }
-                            className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-bright transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-cyan-300/40 hover:bg-cyan-300/[0.05] hover:text-cyan-100 hover:shadow-[0_0_14px_rgba(34,211,238,0.12)]"
+                            className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-bright transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.05] hover:text-purple-100 hover:shadow-[0_0_14px_rgba(168, 85, 247,0.12)]"
                           >
                             {copy.showOriginal}
                           </button>
@@ -809,7 +809,7 @@ export function CommunityHub({
                             type="button"
                             onClick={() => togglePin(post.id, !post.is_pinned)}
                             disabled={actionLoadingId === post.id}
-                            className="rounded-full border border-cyan-400/30 px-3 py-1.5 text-xs text-cyan-200 transition hover:bg-cyan-400/10 disabled:opacity-60"
+                            className="rounded-full border border-purple-400/30 px-3 py-1.5 text-xs text-purple-200 transition hover:bg-purple-400/10 disabled:opacity-60"
                           >
                             {actionLoadingId === post.id
                               ? copy.working

@@ -33,7 +33,7 @@ export function DetailHero({ image }: { image: string }) {
   return (
     <div
       ref={ref}
-      className="relative mt-6 aspect-[21/9] w-full overflow-hidden rounded-2xl border border-cyan-400/20 shadow-[0_0_44px_rgba(34,211,238,0.08)]"
+      className="relative mt-6 aspect-[21/9] w-full overflow-hidden rounded-2xl border border-purple-400/20 shadow-[0_0_44px_rgba(168, 85, 247,0.08)]"
       style={{ "--parallax-y": "0px" } as React.CSSProperties}
       aria-hidden
     >
@@ -51,7 +51,7 @@ export function DetailHero({ image }: { image: string }) {
         className="pointer-events-none absolute inset-0 motion-safe:transition-opacity motion-safe:duration-[1800ms]"
         style={{
           background:
-            "radial-gradient(50% 60% at 82% 18%, rgba(34,211,238,0.22), transparent 70%)",
+            "radial-gradient(50% 60% at 82% 18%, rgba(168, 85, 247,0.22), transparent 70%)",
           opacity: mounted ? 1 : 0.4
         }}
       />
@@ -80,7 +80,7 @@ export function PhaseStrip({
         className="pointer-events-none absolute left-0 right-0 top-1/2 hidden h-px -translate-y-1/2 origin-left rtl:origin-right sm:block"
         style={{
           background:
-            "linear-gradient(90deg, transparent, rgba(34,211,238,0.18) 12%, rgba(34,211,238,0.32) 50%, rgba(34,211,238,0.18) 88%, transparent)",
+            "linear-gradient(90deg, transparent, rgba(168, 85, 247,0.18) 12%, rgba(168, 85, 247,0.32) 50%, rgba(168, 85, 247,0.18) 88%, transparent)",
           transform: reveal.shown ? "scaleX(1)" : "scaleX(0)",
           transition: "transform 1100ms cubic-bezier(0.2, 1, 0.3, 1) 100ms"
         }}
@@ -97,9 +97,9 @@ export function PhaseStrip({
             // LTR, right→left in RTL — without needing the locale here.
             insetInlineStart: reveal.shown ? "calc(100% - 10px)" : "0px",
             background:
-              "radial-gradient(circle, rgba(165,243,252,1) 0%, rgba(34,211,238,0.9) 50%, transparent 70%)",
+              "radial-gradient(circle, rgba(237, 233, 254,1) 0%, rgba(168, 85, 247,0.9) 50%, transparent 70%)",
             boxShadow:
-              "0 0 18px rgba(34,211,238,0.9), 0 0 36px rgba(34,211,238,0.5)",
+              "0 0 18px rgba(168, 85, 247,0.9), 0 0 36px rgba(168, 85, 247,0.5)",
             opacity: reveal.shown ? 0 : 1,
             transition: reveal.shown
               ? "inset-inline-start 1400ms cubic-bezier(0.2, 1, 0.3, 1) 200ms, opacity 700ms ease-out 1500ms"
@@ -137,7 +137,7 @@ function PhaseCard({
     >
       <div
         ref={tiltRef}
-        className="relative h-full overflow-hidden rounded-2xl border border-divider bg-surface/40 p-4 transition-[border-color,box-shadow] duration-300 hover:border-cyan-300/40 hover:shadow-[0_0_36px_rgba(34,211,238,0.12)]"
+        className="relative h-full overflow-hidden rounded-2xl border border-divider bg-surface/40 p-4 transition-[border-color,box-shadow] duration-300 hover:border-purple-300/40 hover:shadow-[0_0_36px_rgba(168, 85, 247,0.12)]"
         style={
           {
             "--tilt-x": "0deg",
@@ -158,7 +158,7 @@ function PhaseCard({
           className="pointer-events-none absolute inset-0 rounded-2xl mix-blend-screen"
           style={{
             background:
-              "radial-gradient(150px circle at var(--glare-x) var(--glare-y), rgba(34,211,238,0.18), transparent 70%)",
+              "radial-gradient(150px circle at var(--glare-x) var(--glare-y), rgba(168, 85, 247,0.18), transparent 70%)",
             opacity: "var(--glare-opacity)",
             transition: "opacity 220ms ease-out"
           }}
@@ -167,12 +167,12 @@ function PhaseCard({
         {/* Phase number watermark */}
         <span
           aria-hidden
-          className="pointer-events-none absolute right-3 top-2 font-display text-5xl font-extrabold leading-none tracking-tight text-cyan-200/[0.06]"
+          className="pointer-events-none absolute right-3 top-2 font-display text-5xl font-extrabold leading-none tracking-tight text-purple-200/[0.06]"
         >
           {String(index + 1).padStart(2, "0")}
         </span>
 
-        <p className="relative text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+        <p className="relative text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-purple-200/80">
           {phase.name}
         </p>
         <p className="relative mt-3 text-sm leading-relaxed text-bright/85">
@@ -204,14 +204,14 @@ export function AtAGlance({
         className="pointer-events-none absolute -inset-4 hidden motion-safe:block"
         style={{
           background:
-            "radial-gradient(60% 60% at 50% 50%, rgba(34,211,238,0.10), transparent 70%)",
+            "radial-gradient(60% 60% at 50% 50%, rgba(168, 85, 247,0.10), transparent 70%)",
           filter: "blur(28px)",
           animation: "tj-chip-pulse 6s ease-in-out infinite"
         }}
       />
       <div
         ref={tiltRef}
-        className="relative rounded-2xl border border-cyan-400/20 bg-[linear-gradient(180deg,rgba(34,211,238,0.05),rgba(34,211,238,0.01))] p-5 transition-[border-color,box-shadow] duration-300 hover:border-cyan-300/40 hover:shadow-[0_0_44px_rgba(34,211,238,0.16)]"
+        className="relative rounded-2xl border border-purple-400/20 bg-[linear-gradient(180deg,rgba(168, 85, 247,0.05),rgba(168, 85, 247,0.01))] p-5 transition-[border-color,box-shadow] duration-300 hover:border-purple-300/40 hover:shadow-[0_0_44px_rgba(168, 85, 247,0.16)]"
         style={
           {
             "--tilt-x": "0deg",
@@ -232,12 +232,12 @@ export function AtAGlance({
           className="pointer-events-none absolute inset-0 rounded-2xl mix-blend-screen"
           style={{
             background:
-              "radial-gradient(160px circle at var(--glare-x) var(--glare-y), rgba(34,211,238,0.18), transparent 70%)",
+              "radial-gradient(160px circle at var(--glare-x) var(--glare-y), rgba(168, 85, 247,0.18), transparent 70%)",
             opacity: "var(--glare-opacity)",
             transition: "opacity 220ms ease-out"
           }}
         />
-        <p className="relative text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-cyan-200/80">
+        <p className="relative text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-purple-200/80">
           {title}
         </p>
         <dl className="relative mt-4 space-y-3 text-sm">
@@ -289,7 +289,7 @@ export function DownloadButton({
       ref={ref}
       href={href}
       aria-label={ariaLabel}
-      className={`tj-cta-sheen relative inline-flex min-h-[48px] ${full ? "w-full" : ""} items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-5 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.22)] hover:brightness-110 hover:shadow-[0_0_36px_rgba(34,211,238,0.36)] motion-safe:active:scale-[0.97] ${full ? "sm:w-auto" : ""} ${className}`}
+      className={`tj-cta-sheen relative inline-flex min-h-[48px] ${full ? "w-full" : ""} items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-5 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(168, 85, 247,0.22)] hover:brightness-110 hover:shadow-[0_0_36px_rgba(168, 85, 247,0.36)] motion-safe:active:scale-[0.97] ${full ? "sm:w-auto" : ""} ${className}`}
       style={
         {
           "--mag-x": "0px",
@@ -361,8 +361,8 @@ export function ShareButton({
       aria-label={ariaLabel ?? `Share ${title}`}
       className={`tj-cta-sheen inline-flex min-h-[48px] items-center justify-center gap-1.5 rounded-full border px-4 py-2.5 text-sm font-semibold transition-[border-color,color,box-shadow] motion-safe:active:scale-[0.97] ${
         state === "idle"
-          ? "border-white/15 text-bright hover:border-cyan-300/35 hover:text-cyan-100 hover:shadow-[0_0_24px_rgba(34,211,238,0.16)]"
-          : "border-cyan-300/45 text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.22)]"
+          ? "border-white/15 text-bright hover:border-purple-300/35 hover:text-purple-100 hover:shadow-[0_0_24px_rgba(168, 85, 247,0.16)]"
+          : "border-purple-300/45 text-purple-100 shadow-[0_0_24px_rgba(168, 85, 247,0.22)]"
       }`}
     >
       {state === "idle" ? (
@@ -414,7 +414,7 @@ export function StickyBuyBar({
 
   return (
     <div
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-cyan-400/20 bg-[#0A0A0B]/92 backdrop-blur-md ease-[cubic-bezier(0.2,1,0.3,1)] motion-safe:transition-[transform,opacity] motion-safe:duration-300 md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-purple-400/20 bg-[#0A0A0B]/92 backdrop-blur-md ease-[cubic-bezier(0.2,1,0.3,1)] motion-safe:transition-[transform,opacity] motion-safe:duration-300 md:hidden"
       style={{
         paddingBottom: "max(0.625rem, env(safe-area-inset-bottom))",
         transform: shown ? "translateY(0)" : "translateY(110%)",
@@ -429,7 +429,7 @@ export function StickyBuyBar({
           href={href}
           aria-label={ariaLabel}
           tabIndex={shown ? 0 : -1}
-          className="tj-cta-sheen inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#22D3EE_0%,#0EA5E9_100%)] px-5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(34,211,238,0.26)] hover:brightness-110 motion-safe:active:scale-[0.97]"
+          className="tj-cta-sheen inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(168, 85, 247,0.26)] hover:brightness-110 motion-safe:active:scale-[0.97]"
         >
           <FileDown className="h-4 w-4" aria-hidden />
           {label}
@@ -487,13 +487,13 @@ export function DetailSectionNav({
                 <span
                   className={`h-1.5 rounded-full transition-all duration-300 ${
                     isActive
-                      ? "w-7 bg-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.55)]"
-                      : "w-3 bg-white/20 group-hover/nav:bg-cyan-300/50"
+                      ? "w-7 bg-purple-300 shadow-[0_0_10px_rgba(168, 85, 247,0.55)]"
+                      : "w-3 bg-white/20 group-hover/nav:bg-purple-300/50"
                   }`}
                 />
                 <span
                   className={`text-[10px] font-semibold uppercase tracking-[0.14em] transition-colors duration-200 ${
-                    isActive ? "text-cyan-100" : "text-dim group-hover/nav:text-cyan-200/80"
+                    isActive ? "text-purple-100" : "text-dim group-hover/nav:text-purple-200/80"
                   }`}
                 >
                   {it.label}
@@ -552,7 +552,7 @@ function WeeklyTemplateCard({
     >
       <div
         ref={tiltRef}
-        className="relative h-full overflow-hidden rounded-2xl border border-divider bg-surface/40 p-5 transition-[border-color,box-shadow] duration-300 hover:border-cyan-300/40 hover:shadow-[0_0_36px_rgba(34,211,238,0.12)]"
+        className="relative h-full overflow-hidden rounded-2xl border border-divider bg-surface/40 p-5 transition-[border-color,box-shadow] duration-300 hover:border-purple-300/40 hover:shadow-[0_0_36px_rgba(168, 85, 247,0.12)]"
         style={
           {
             "--tilt-x": "0deg",
@@ -567,12 +567,12 @@ function WeeklyTemplateCard({
       >
         <div className="flex items-baseline justify-between gap-3">
           <div>
-            <p className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+            <p className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-purple-200/80">
               {weekLabel} · {day.day}
             </p>
             <p className="mt-1 font-display text-lg font-bold text-white">{day.sessionName}</p>
           </div>
-          <Dumbbell className="h-4 w-4 text-cyan-300/60" aria-hidden />
+          <Dumbbell className="h-4 w-4 text-purple-300/60" aria-hidden />
         </div>
         <p className="mt-2 text-xs italic text-faint">{day.focus}</p>
         <ul className="mt-4 divide-y divide-white/[0.06] rounded-xl border border-white/[0.06] bg-black/20">
@@ -584,7 +584,7 @@ function WeeklyTemplateCard({
                   <p className="mt-0.5 text-[10px] italic text-faint">{ex.notes}</p>
                 ) : null}
               </div>
-              <span className="shrink-0 whitespace-nowrap text-[11px] font-semibold text-cyan-100">
+              <span className="shrink-0 whitespace-nowrap text-[11px] font-semibold text-purple-100">
                 {ex.sets}
               </span>
             </li>
@@ -634,15 +634,15 @@ function ProgressionCard({
         transform: reveal.shown ? "translateY(0)" : "translateY(14px)",
         transition: `opacity 600ms cubic-bezier(0.2,1,0.3,1) ${delay}, transform 600ms cubic-bezier(0.2,1,0.3,1) ${delay}`
       }}
-      className="relative overflow-hidden rounded-2xl border border-cyan-400/15 bg-[linear-gradient(180deg,rgba(34,211,238,0.05),rgba(34,211,238,0.01))] p-5 transition-[border-color,box-shadow] duration-300 hover:border-cyan-300/35 hover:shadow-[0_0_32px_rgba(34,211,238,0.10)]"
+      className="relative overflow-hidden rounded-2xl border border-purple-400/15 bg-[linear-gradient(180deg,rgba(168, 85, 247,0.05),rgba(168, 85, 247,0.01))] p-5 transition-[border-color,box-shadow] duration-300 hover:border-purple-300/35 hover:shadow-[0_0_32px_rgba(168, 85, 247,0.10)]"
     >
       <span
         aria-hidden
-        className="pointer-events-none absolute right-3 top-2 font-display text-5xl font-extrabold leading-none tracking-tight text-cyan-200/[0.06]"
+        className="pointer-events-none absolute right-3 top-2 font-display text-5xl font-extrabold leading-none tracking-tight text-purple-200/[0.06]"
       >
         {String(index + 1).padStart(2, "0")}
       </span>
-      <p className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+      <p className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-purple-200/80">
         {phase.phase} · {phase.weeks}
       </p>
       <div className="mt-4 space-y-3">
@@ -656,7 +656,7 @@ function ProgressionCard({
           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-faint">
             {labels.intensity}
           </p>
-          <p className="mt-1 text-sm leading-snug text-cyan-100">{phase.intensityCue}</p>
+          <p className="mt-1 text-sm leading-snug text-purple-100">{phase.intensityCue}</p>
         </div>
       </div>
     </div>
@@ -682,14 +682,14 @@ export function PrepPanel({
       <PrepCard title={labels.warmup} items={warmup} icon="warm" />
       <PrepCard title={labels.cooldown} items={cooldown} icon="cool" />
       <div className="lg:col-span-2">
-        <p className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+        <p className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-purple-200/80">
           {labels.equipment}
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           {equipment.map((e) => (
             <span
               key={e}
-              className="rounded-full border border-cyan-300/20 bg-cyan-300/[0.05] px-3 py-1.5 text-xs font-semibold text-cyan-100"
+              className="rounded-full border border-purple-300/20 bg-purple-300/[0.05] px-3 py-1.5 text-xs font-semibold text-purple-100"
             >
               {e}
             </span>
@@ -713,18 +713,18 @@ function PrepCard({
     <div className="rounded-2xl border border-divider bg-surface/40 p-5">
       <div className="flex items-center gap-2">
         {icon === "warm" ? (
-          <Flame className="h-4 w-4 text-cyan-300" aria-hidden />
+          <Flame className="h-4 w-4 text-purple-300" aria-hidden />
         ) : (
-          <Clock className="h-4 w-4 text-cyan-300" aria-hidden />
+          <Clock className="h-4 w-4 text-purple-300" aria-hidden />
         )}
-        <p className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+        <p className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-purple-200/80">
           {title}
         </p>
       </div>
       <ul className="mt-4 space-y-2.5">
         {items.map((line, i) => (
           <li key={i} className="flex items-start gap-2 text-sm leading-relaxed text-bright/90">
-            <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-300/70" aria-hidden />
+            <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-300/70" aria-hidden />
             {line}
           </li>
         ))}
@@ -782,7 +782,7 @@ function RecipeCard({
         transform: reveal.shown ? "translateY(0)" : "translateY(12px)",
         transition: `opacity 520ms cubic-bezier(0.2,1,0.3,1) ${delay}, transform 520ms cubic-bezier(0.2,1,0.3,1) ${delay}`
       }}
-      className="overflow-hidden rounded-2xl border border-divider bg-surface/40 transition-[border-color,box-shadow] duration-300 hover:border-cyan-300/40 hover:shadow-[0_0_36px_rgba(34,211,238,0.12)]"
+      className="overflow-hidden rounded-2xl border border-divider bg-surface/40 transition-[border-color,box-shadow] duration-300 hover:border-purple-300/40 hover:shadow-[0_0_36px_rgba(168, 85, 247,0.12)]"
     >
       <button
         type="button"
@@ -791,12 +791,12 @@ function RecipeCard({
         aria-expanded={open}
       >
         <div className="min-w-0">
-          <p className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+          <p className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-purple-200/80">
             {copy.mealTypeLabels[recipe.mealType]} · {recipe.time}
           </p>
           <p className="mt-1.5 font-display text-base font-bold text-white">{recipe.name}</p>
           <div className="mt-3 flex flex-wrap gap-1.5 text-[10px] font-semibold">
-            <span className="rounded-full bg-cyan-300/10 px-2 py-1 text-cyan-100">
+            <span className="rounded-full bg-purple-300/10 px-2 py-1 text-purple-100">
               {recipe.kcal} {copy.kcal}
             </span>
             <span className="rounded-full bg-white/[0.05] px-2 py-1 text-white/85">
@@ -811,7 +811,7 @@ function RecipeCard({
           </div>
         </div>
         <ChevronDown
-          className={`h-4 w-4 shrink-0 text-cyan-300/70 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+          className={`h-4 w-4 shrink-0 text-purple-300/70 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
           aria-hidden
         />
       </button>
@@ -821,7 +821,7 @@ function RecipeCard({
       >
         <div className="overflow-hidden">
           <div className="border-t border-white/[0.06] px-5 py-4">
-            <p className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+            <p className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-purple-200/80">
               {copy.ingredients}
             </p>
             <ul className="mt-2 space-y-1.5">
@@ -831,13 +831,13 @@ function RecipeCard({
                 </li>
               ))}
             </ul>
-            <p className="mt-4 text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+            <p className="mt-4 text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-purple-200/80">
               {copy.steps}
             </p>
             <ol className="mt-2 space-y-2">
               {recipe.steps.map((s, i) => (
                 <li key={i} className="flex gap-2.5 text-sm leading-snug text-bright/85">
-                  <span className="shrink-0 font-bold tabular-nums text-cyan-300/80">
+                  <span className="shrink-0 font-bold tabular-nums text-purple-300/80">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <span>{s}</span>
@@ -875,8 +875,8 @@ export function GroceryList({ groups }: { groups: BundleGroceryCategory[] }) {
           className="rounded-2xl border border-divider bg-surface/40 p-5"
         >
           <div className="flex items-center gap-2">
-            <ShoppingCart className="h-4 w-4 text-cyan-300" aria-hidden />
-            <p className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-cyan-200/80">
+            <ShoppingCart className="h-4 w-4 text-purple-300" aria-hidden />
+            <p className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-purple-200/80">
               {group.category}
             </p>
           </div>
@@ -895,12 +895,12 @@ export function GroceryList({ groups }: { groups: BundleGroceryCategory[] }) {
                     <span
                       className={`mt-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${
                         isChecked
-                          ? "border-cyan-300 bg-cyan-300/20"
+                          ? "border-purple-300 bg-purple-300/20"
                           : "border-white/20"
                       }`}
                       aria-hidden
                     >
-                      {isChecked ? <Check className="h-3 w-3 text-cyan-200" /> : null}
+                      {isChecked ? <Check className="h-3 w-3 text-purple-200" /> : null}
                     </span>
                     <span
                       className={`flex-1 text-sm leading-snug transition-colors ${
@@ -909,7 +909,7 @@ export function GroceryList({ groups }: { groups: BundleGroceryCategory[] }) {
                     >
                       {it.item}
                     </span>
-                    <span className="shrink-0 text-[11px] font-semibold text-cyan-100/80">
+                    <span className="shrink-0 text-[11px] font-semibold text-purple-100/80">
                       {it.quantity}
                     </span>
                   </button>

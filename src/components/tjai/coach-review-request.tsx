@@ -30,7 +30,7 @@ export function CoachReviewRequest({ locale, planId }: { locale: Locale; planId?
   };
 
   return (
-    <section className="rounded-2xl border border-[rgba(34,211,238,0.1)] bg-[linear-gradient(135deg,rgba(34,211,238,0.04),rgba(14, 165, 233,0.04))] p-8">
+    <section className="rounded-2xl border border-[rgba(168, 85, 247,0.1)] bg-[linear-gradient(135deg,rgba(168, 85, 247,0.04),rgba(124, 58, 237,0.04))] p-8">
       <h3 className="text-xl font-semibold text-white">{copy.title}</h3>
       <p className="mt-2 text-sm text-muted">{copy.description}</p>
       <ul className="mt-4 space-y-1 text-sm text-bright">
@@ -40,7 +40,7 @@ export function CoachReviewRequest({ locale, planId }: { locale: Locale; planId?
       </ul>
       <div className="mt-4 inline-flex rounded-full border border-divider px-3 py-1 text-xs text-muted">{copy.included}</div>
       <div className="mt-4">
-        <button type="button" onClick={() => void requestReview()} disabled={state === "loading"} className="rounded-full bg-[linear-gradient(135deg,#22D3EE,#0EA5E9)] px-5 py-2 text-sm font-bold text-[#09090B] disabled:opacity-50">
+        <button type="button" onClick={() => void requestReview()} disabled={state === "loading"} className="rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-5 py-2 text-sm font-bold text-[#09090B] disabled:opacity-50">
           {state === "loading" ? copy.submitting : copy.request}
         </button>
       </div>
