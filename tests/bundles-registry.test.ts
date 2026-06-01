@@ -109,8 +109,11 @@ describe("bundles registry lookups", () => {
   });
 
   it("getBundle(slug) round-trips for every bundle", () => {
+    // getBundle enriches the base entry with its content layer ({ ...b, ...content }),
+    // so it returns a new object rather than the registry instance. The lookup
+    // contract is that it resolves to the bundle with the same slug.
     for (const b of BUNDLES) {
-      expect(getBundle(b.slug)).toBe(b);
+      expect(getBundle(b.slug)?.slug).toBe(b.slug);
     }
   });
 
