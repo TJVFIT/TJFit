@@ -31,9 +31,10 @@ const nextConfig = {
     ];
   },
   // Baseline security headers applied to every response. Deliberately omits
-  // Content-Security-Policy and Permissions-Policy: a CSP needs per-embed
-  // testing (Spline/Three.js/GA4/Meta/Supabase/Sentry/Gumroad) and Permissions-
-  // Policy could block camera/mic features — both belong in a supervised pass.
+  // Content-Security-Policy: a CSP needs per-embed testing
+  // (Spline/Three.js/GA4/Meta/Supabase/Sentry/Gumroad) in a supervised pass.
+  // Permissions-Policy keeps microphone=(self) — TJAI voice input uses the
+  // Web Speech API; camera/geolocation are unused anywhere in the app.
   // HSTS uses no `preload` to avoid the irreversible preload-list commitment.
   async headers() {
     return [
@@ -44,6 +45,7 @@ const nextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(self), geolocation=(), browsing-topics=()" },
           { key: "X-DNS-Prefetch-Control", value: "on" }
         ]
       }
