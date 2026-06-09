@@ -41,7 +41,7 @@ If a task seems to require touching a protected area, **stop and ask first.**
 - Match the surrounding style. No unrequested refactors, abstractions, or cleanup.
 - No comments unless the *why* is non-obvious.
 - No error handling for impossible cases. Validate only at boundaries.
-- Never invent prices — all program/diet prices stay `$0` until the owner sets them.
+- Prices are owner-set and LIVE (2026-06-10): bundles $10 via Gumroad, TJAI credit packs $8/$35/$65, subs in `src/lib/tjai-pricing.ts`. Never invent or change a price without owner direction.
 - Shopify / equipment store is **out of scope** until the owner green-lights it.
 - Purple/violet/black only. No cyan/sky as primary accent. No champagne/gold anywhere.
 

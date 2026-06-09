@@ -16,6 +16,34 @@ import type { QuizAnswers, TJAIMetrics, TJAIPlan } from "@/lib/tjai-types";
 
 type Phase = "quiz" | "approach" | "calculating" | "compare" | "result";
 
+const OUT_OF_CREDITS_COPY: Record<Locale, { title: string; body: string; cta: string }> = {
+  en: {
+    title: "Out of plan credits",
+    body: "You've used all your TJAI plan credits. Get more to generate your next personalized plan.",
+    cta: "Get plan credits"
+  },
+  tr: {
+    title: "Plan kredin bitti",
+    body: "Tüm TJAI plan kredilerini kullandın. Bir sonraki kişisel planını üretmek için kredi al.",
+    cta: "Kredi al"
+  },
+  ar: {
+    title: "نفدت أرصدة الخطط",
+    body: "استخدمت كل أرصدة خطط TJAI. احصل على المزيد لإنشاء خطتك المخصصة التالية.",
+    cta: "احصل على أرصدة"
+  },
+  es: {
+    title: "Sin créditos de plan",
+    body: "Has usado todos tus créditos de planes TJAI. Consigue más para generar tu próximo plan personalizado.",
+    cta: "Obtener créditos"
+  },
+  fr: {
+    title: "Plus de crédits de plan",
+    body: "Tu as utilisé tous tes crédits de plans TJAI. Obtiens-en d'autres pour générer ton prochain plan personnalisé.",
+    cta: "Obtenir des crédits"
+  }
+};
+
 export function TJAIShell({
   locale,
   initialAnswers,
@@ -40,6 +68,7 @@ export function TJAIShell({
   const [remainingMessages, setRemainingMessages] = useState(0);
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [generateError, setGenerateError] = useState<string | null>(null);
+  const [outOfCredits, setOutOfCredits] = useState(false);
   const [pendingAnswers, setPendingAnswers] = useState<QuizAnswers | null>(null);
   const [pendingPace, setPendingPace] = useState<"moderate" | "aggressive" | undefined>(undefined);
 
@@ -88,6 +117,7 @@ export function TJAIShell({
     setPendingAnswers(normalizedAnswers);
     setPendingPace(paceOverride);
     setGenerateError(null);
+    setOutOfCredits(false);
     const effective = paceOverride ? normalizeQuizAnswers({ ...normalizedAnswers, s2_pace: paceOverride }) : normalizedAnswers;
     const localMetrics = calculateTJAIMetrics(effective);
     setMetrics(localMetrics);
@@ -109,6 +139,12 @@ export function TJAIShell({
       }
       const data = await response.json();
       if (!response.ok) {
+        if (response.status === 402) {
+          const oc = OUT_OF_CREDITS_COPY[locale] ?? OUT_OF_CREDITS_COPY.en;
+          setOutOfCredits(true);
+          setGenerateError(oc.body);
+          return;
+        }
         const errMsg = data?.error ?? "Plan generation failed. Please try again.";
         console.error("[TJAI] generate error:", errMsg);
         setGenerateError(errMsg);
@@ -294,13 +330,27 @@ export function TJAIShell({
         <TJAICalculating copy={copy} metrics={metrics} done={Boolean(plan) && !generateError} />
         {generateError && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-            <div className="w-full max-w-md rounded-2xl border border-red-500/30 bg-[#0F0A0A] p-6 text-center shadow-2xl">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-500/10 text-red-400">
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+            <div className={`w-full max-w-md rounded-2xl border p-6 text-center shadow-2xl ${outOfCredits ? "border-purple-400/35 bg-[#0D0A12]" : "border-red-500/30 bg-[#0F0A0A]"}`}>
+              <div className={`mx-auto flex h-12 w-12 items-center justify-center rounded-full ${outOfCredits ? "bg-purple-400/10 text-purple-300" : "bg-red-500/10 text-red-400"}`}>
+                {outOfCredits ? (
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                ) : (
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                )}
               </div>
-              <h3 className="mt-4 text-lg font-semibold text-white">Generation Failed</h3>
+              <h3 className="mt-4 text-lg font-semibold text-white">
+                {outOfCredits ? (OUT_OF_CREDITS_COPY[locale] ?? OUT_OF_CREDITS_COPY.en).title : "Generation Failed"}
+              </h3>
               <p className="mt-2 text-sm text-muted">{generateError}</p>
               <div className="mt-6 flex flex-col gap-3">
+                {outOfCredits ? (
+                  <a
+                    href={`/${locale}/tjai/credits`}
+                    className="w-full tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 py-2.5 text-sm font-bold text-black"
+                  >
+                    {(OUT_OF_CREDITS_COPY[locale] ?? OUT_OF_CREDITS_COPY.en).cta}
+                  </a>
+                ) : (
                 <button
                   type="button"
                   className="w-full tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 py-2.5 text-sm font-bold text-black"
@@ -310,10 +360,11 @@ export function TJAIShell({
                 >
                   Try Again
                 </button>
+                )}
                 <button
                   type="button"
                   className="text-sm text-faint hover:text-white"
-                  onClick={() => { setGenerateError(null); setPhase("approach"); }}
+                  onClick={() => { setGenerateError(null); setOutOfCredits(false); setPhase("approach"); }}
                 >
                   ← Go Back
                 </button>

@@ -9,7 +9,7 @@ import { getSupabaseServerClient } from "@/lib/supabase-server";
 //   ANTHROPIC_MODEL_SONNET=claude-sonnet-4-...
 //   ANTHROPIC_MODEL_HAIKU=claude-haiku-4-...
 export const CLAUDE_MODELS = {
-  opus: process.env.ANTHROPIC_MODEL_OPUS ?? "claude-opus-4-7",
+  opus: process.env.ANTHROPIC_MODEL_OPUS ?? "claude-opus-4-8",
   sonnet: process.env.ANTHROPIC_MODEL_SONNET ?? "claude-sonnet-4-6",
   haiku: process.env.ANTHROPIC_MODEL_HAIKU ?? "claude-haiku-4-5"
 } as const;
