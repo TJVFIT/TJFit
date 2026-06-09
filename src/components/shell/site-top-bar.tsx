@@ -78,7 +78,7 @@ function tjaiItems(locale: Locale): SubItem[] {
   return [
     { label: l.generate, href: `${base}/tjai`, meta: m.generate },
     { label: l.chat, href: `${base}/ai`, meta: m.chat },
-    { label: l.credits, href: `${base}/coins` }
+    { label: l.credits, href: `${base}/tjai/credits` }
   ];
 }
 

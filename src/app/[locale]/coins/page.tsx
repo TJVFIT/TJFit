@@ -4,5 +4,5 @@ import { isLocale } from "@/lib/i18n";
 
 export default function CoinsRedirectPage({ params }: { params: { locale: string } }) {
   const locale = isLocale(params?.locale ?? "") ? params.locale : "en";
-  redirect(`/${locale}/dashboard`);
+  redirect(`/${locale}/tjai/credits`);
 }
