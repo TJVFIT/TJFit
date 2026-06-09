@@ -12,24 +12,19 @@
 | Locale routing | Root `/` 308 → `/en`; 5 locales (en/tr/ar/es/fr) with parity-checked dictionaries; RTL handled for `ar` |
 | Security/trust signals | HTTPS + HSTS, no mixed content (image hosts pinned) |
 | Coming-soon sections | `/live`, `/store` robots-disallowed — won't index placeholder content |
+| Hreflang + canonicals | **Verified in code** (`[locale]/layout.tsx:51-69`): per-locale self-referencing canonical, `alternates.languages` for all 5 locales + `x-default → /en`; bundle pages emit their own per-page alternates |
 
 ## Recommendations (ranked)
 
-1. **Hreflang alternates (High, low effort):** ensure `alternates.languages`
-   is emitted per page (Next metadata API) so Google serves the right locale —
-   with 5 locales this is the single biggest international SEO lever. Verify
-   in page-source after next deploy; add where missing.
-2. **Per-page canonical spot-check (Medium):** with locale prefixes, confirm
-   canonicals self-reference the locale URL (not `/en` for all locales).
-3. **Schema depth (Medium):** add `Product` (bundles), `FAQPage` (support),
+1. **Schema depth (Medium):** add `Product` (bundles), `FAQPage` (support),
    and `Article` (blog) JSON-LD once prices are real — Product schema with a
    $0 price would do more harm than good today, so sequence it after pricing.
-4. **Internal linking (Medium):** programs ↔ bundles ↔ TJAI cross-links exist;
+2. **Internal linking (Medium):** programs ↔ bundles ↔ TJAI cross-links exist;
    add blog → program contextual links as content grows (largest organic
    compounding loop).
-5. **Search Console (Owner, 10 min):** verify property + submit sitemap if not
+3. **Search Console (Owner, 10 min):** verify property + submit sitemap if not
    already done; needed to monitor the locale rollout.
-6. **AI-search readiness (Low):** content is server-rendered and crawlable —
+4. **AI-search readiness (Low):** content is server-rendered and crawlable —
    no blocker; revisit after launch content push.
 
 No critical SEO defects found.

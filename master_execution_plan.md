@@ -30,7 +30,6 @@ spoofable RPCs) are fixed and verified.
 | Content-Security-Policy (start Report-Only, then enforce) | Defense-in-depth | Medium | 0.5–1 day | Supervised: must test Spline/Three/GA4/Meta/TikTok/Supabase/Sentry/Gumroad |
 | RLS rewrite pass: `auth_rls_initplan` (135) + `multiple_permissive_policies` (228) | DB performance at scale | High | 1–2 days | Supervised + staging verification; lockout risk if batched blind |
 | Add `supabase db push`/drift check to CI | Prevents drift recurrence (root cause of the worst launch bug) | Low | 2 h | None — good first post-launch task |
-| Hreflang alternates verification/add | International SEO | Low | 2–4 h | None |
 | Founding-member email + TJAI credit-pack surfacing | Revenue | Low | 0.5 day each | After pricing |
 | Consolidate chart.js vs recharts to one library | Bundle size | Medium | 0.5 day | None |
 | Wire web-vitals field data (Speed Insights/PostHog) | Measurement | Low | 1 h | None |
