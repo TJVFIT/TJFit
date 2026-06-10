@@ -30,13 +30,31 @@ const nextConfig = {
       }
     ];
   },
-  // Baseline security headers applied to every response. Deliberately omits
-  // Content-Security-Policy: a CSP needs per-embed testing
-  // (Spline/Three.js/GA4/Meta/Supabase/Sentry/Gumroad) in a supervised pass.
+  // Baseline security headers applied to every response.
   // Permissions-Policy keeps microphone=(self) — TJAI voice input uses the
   // Web Speech API; camera/geolocation are unused anywhere in the app.
   // HSTS uses no `preload` to avoid the irreversible preload-list commitment.
+  // CSP ships Report-Only (production builds only, so dev webpack-eval noise
+  // stays out of local consoles): it cannot break anything, and DevTools
+  // surfaces every violation so the policy can be tightened then enforced.
+  // 'unsafe-inline' in script-src is required until Next.js nonces are wired.
   async headers() {
+    const cspReportOnly = [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://www.googletagmanager.com https://connect.facebook.net https://analytics.tiktok.com",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: blob: https://images.unsplash.com https://kohuiyqyixvrcqeepalz.supabase.co https://www.googletagmanager.com https://*.google-analytics.com https://www.facebook.com",
+      "font-src 'self' data:",
+      "connect-src 'self' https://kohuiyqyixvrcqeepalz.supabase.co wss://kohuiyqyixvrcqeepalz.supabase.co https://*.google-analytics.com https://analytics.tiktok.com https://www.facebook.com https://*.sentry.io https://prod.spline.design",
+      "media-src 'self' blob: data: https://kohuiyqyixvrcqeepalz.supabase.co",
+      "worker-src 'self' blob:",
+      "frame-src 'self'",
+      "frame-ancestors 'self'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "object-src 'none'"
+    ].join("; ");
+
     return [
       {
         source: "/:path*",
@@ -46,7 +64,10 @@ const nextConfig = {
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(self), geolocation=(), browsing-topics=()" },
-          { key: "X-DNS-Prefetch-Control", value: "on" }
+          { key: "X-DNS-Prefetch-Control", value: "on" },
+          ...(process.env.NODE_ENV === "production"
+            ? [{ key: "Content-Security-Policy-Report-Only", value: cspReportOnly }]
+            : [])
         ]
       }
     ];
