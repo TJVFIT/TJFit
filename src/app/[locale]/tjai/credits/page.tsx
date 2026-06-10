@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Check, Sparkles, Zap } from "lucide-react";
 
+import { MotionReveal } from "@/components/home/motion-reveal";
 import { buildGumroadTrackedUrl } from "@/lib/gumroad/client";
 import type { Locale } from "@/lib/i18n";
 import { requireLocaleParam } from "@/lib/require-locale";
@@ -232,9 +233,9 @@ export default async function TjaiCreditsPage({ params }: { params: { locale: st
               : null;
 
           return (
+            <MotionReveal key={pack.id} delayMs={index * 120} className="h-full">
             <article
-              key={pack.id}
-              className={`relative flex flex-col rounded-2xl border p-6 transition-[transform,box-shadow] duration-300 hover:-translate-y-1 ${
+              className={`bundle-card-tilt relative flex h-full flex-col rounded-2xl border p-6 transition-[transform,box-shadow] duration-300 hover:-translate-y-1 ${
                 isPopular
                   ? "border-purple-400/45 bg-[linear-gradient(165deg,rgba(124,58,237,0.16),rgba(9,9,11,0.6))] shadow-[0_0_42px_rgba(168,85,247,0.16)]"
                   : "border-divider bg-surface hover:shadow-[0_0_28px_rgba(168,85,247,0.10)]"
@@ -294,6 +295,7 @@ export default async function TjaiCreditsPage({ params }: { params: { locale: st
                 )}
               </div>
             </article>
+            </MotionReveal>
           );
         })}
       </div>
