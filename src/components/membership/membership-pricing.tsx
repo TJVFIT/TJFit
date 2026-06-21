@@ -9,6 +9,21 @@ import { TJAI_ONE_TIME_PRICE_USD, TJAI_SUBSCRIPTION_PRICES_USD, getAnnualSavings
 
 type BillingMode = "monthly" | "annual";
 
+// Hosted Gumroad subscription checkout URLs. NEXT_PUBLIC_* vars are inlined at
+// build time, so referencing each literal lets the client gate the CTA: when a
+// tier/mode has no configured URL the button is disabled rather than letting a
+// buyer click a primary CTA straight into an error.
+const SUB_URLS = {
+  pro: {
+    monthly: (process.env.NEXT_PUBLIC_GUMROAD_PRO_MONTHLY_URL ?? "").trim(),
+    annual: (process.env.NEXT_PUBLIC_GUMROAD_PRO_ANNUAL_URL ?? "").trim()
+  },
+  apex: {
+    monthly: (process.env.NEXT_PUBLIC_GUMROAD_APEX_MONTHLY_URL ?? "").trim(),
+    annual: (process.env.NEXT_PUBLIC_GUMROAD_APEX_ANNUAL_URL ?? "").trim()
+  }
+} as const;
+
 function useCountUp(target: number, duration = 500) {
   const [value, setValue] = useState(target);
   const prev = useRef(target);
@@ -62,14 +77,7 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
     setError(null);
     setWorking(tier);
     try {
-      const url =
-        tier === "pro"
-          ? mode === "monthly"
-            ? process.env.NEXT_PUBLIC_GUMROAD_PRO_MONTHLY_URL?.trim()
-            : process.env.NEXT_PUBLIC_GUMROAD_PRO_ANNUAL_URL?.trim()
-          : mode === "monthly"
-            ? process.env.NEXT_PUBLIC_GUMROAD_APEX_MONTHLY_URL?.trim()
-            : process.env.NEXT_PUBLIC_GUMROAD_APEX_ANNUAL_URL?.trim();
+      const url = SUB_URLS[tier][mode];
       if (!url) throw new Error(copy.checkoutError);
       const target = new URL(url);
       target.searchParams.set("wanted", "true");
@@ -84,6 +92,9 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
   };
 
   const bool = (value: boolean) => (value ? "✓" : "—");
+
+  const proConfigured = Boolean(SUB_URLS.pro[mode]);
+  const apexConfigured = Boolean(SUB_URLS.apex[mode]);
 
   return (
     <section className="mt-8">
@@ -184,9 +195,12 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
             $<span className="tabular-nums">{proPriceDisplay}</span>{" "}
             <span className="text-sm font-medium text-muted">{mode === "monthly" ? copy.perMonthSuffix : copy.perYearSuffix}</span>
           </p>
-          <Button className="mt-4 w-full" disabled={working !== null} onClick={() => checkout("pro")}>
+          <Button className="mt-4 w-full" disabled={working !== null || !proConfigured} onClick={() => checkout("pro")}>
             {working === "pro" ? "..." : copy.cards.pro.cta}
           </Button>
+          {!proConfigured ? (
+            <p className="mt-2 text-center text-xs text-muted">{copy.checkoutError}</p>
+          ) : null}
           <ul className="mt-4 space-y-2 text-sm text-muted">
             {copy.cards.pro.features.map((feature) => (
               <li key={feature} className="flex items-start gap-2"><span className="text-accent">✓</span>{feature}</li>
@@ -209,9 +223,12 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
             $<span className="tabular-nums">{apexPriceDisplay}</span>{" "}
             <span className="text-sm font-medium text-muted">{mode === "monthly" ? copy.perMonthSuffix : copy.perYearSuffix}</span>
           </p>
-          <Button className="tj-cta-sheen mt-4 w-full bg-gradient-to-r from-purple-400 to-violet-500 font-bold text-white shadow-[0_0_24px_rgba(168,85,247,0.22)] transition-[transform,box-shadow,filter] duration-200 hover:scale-[1.01] hover:shadow-[0_0_36px_rgba(168,85,247,0.35)] hover:brightness-110" disabled={working !== null} onClick={() => checkout("apex")}>
+          <Button className="tj-cta-sheen mt-4 w-full bg-gradient-to-r from-purple-400 to-violet-500 font-bold text-white shadow-[0_0_24px_rgba(168,85,247,0.22)] transition-[transform,box-shadow,filter] duration-200 hover:scale-[1.01] hover:shadow-[0_0_36px_rgba(168,85,247,0.35)] hover:brightness-110" disabled={working !== null || !apexConfigured} onClick={() => checkout("apex")}>
             {working === "apex" ? "..." : copy.cards.apex.cta}
           </Button>
+          {!apexConfigured ? (
+            <p className="mt-2 text-center text-xs text-muted">{copy.checkoutError}</p>
+          ) : null}
           <ul className="mt-4 space-y-2 text-sm text-muted">
             {copy.cards.apex.features.map((feature) => (
               <li key={feature} className="flex items-start gap-2"><span className="text-accent-violet">✓</span>{feature}</li>
