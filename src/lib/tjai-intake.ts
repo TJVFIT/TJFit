@@ -369,6 +369,15 @@ function coerceNumberAnswer(value: unknown, fallback: number): number {
   return parsed && parsed > 0 ? parsed : fallback;
 }
 
+/** Like coerceNumberAnswer but clamps to a physiologically plausible range, so a
+ * malformed or adversarial quiz submission can't push absurd values (age 999,
+ * 5 kg, 900 cm) into the BMR/TDEE math and produce a broken or unsafe plan. */
+function coerceNumberInRange(value: unknown, fallback: number, min: number, max: number): number {
+  const parsed = parseMaybeNumber(value);
+  const n = parsed && parsed > 0 ? parsed : fallback;
+  return Math.min(Math.max(n, min), max);
+}
+
 export function normalizeQuizAnswers(raw: Record<string, unknown>): QuizAnswers {
   const goal = normalizeGoal(raw.s2_goal);
   const normalized: QuizAnswers = {
@@ -479,9 +488,9 @@ export function buildTjaiUserProfile(rawAnswers: Record<string, unknown>): TjaiU
 
   const profile: TjaiUserProfile = {
     sex: oneOf(asString(answers.s1_gender), ["male", "female"] as const, "male"),
-    age: coerceNumberAnswer(answers.s1_age, 29),
-    heightCm: coerceNumberAnswer(answers.s1_height, 175),
-    weightKg: coerceNumberAnswer(answers.s1_weight, 75),
+    age: coerceNumberInRange(answers.s1_age, 29, 13, 100),
+    heightCm: coerceNumberInRange(answers.s1_height, 175, 120, 250),
+    weightKg: coerceNumberInRange(answers.s1_weight, 75, 30, 300),
     targetWeightKg: parseMaybeNumber(answers.s19_target_weight),
     goal,
     goalDetail: normalizeGoalDetail(answers.s2_goal_detail, goal),
