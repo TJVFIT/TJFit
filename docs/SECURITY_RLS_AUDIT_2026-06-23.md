@@ -11,15 +11,15 @@ own rows on these via the public REST API — fine for personal content, a
 |---|---|---|---|
 | `tjai_plan_purchases` | `FOR ALL` | `SELECT`-only | self-grant paid TJAI features (chat/PDF/tools) |
 | `user_subscriptions` | `FOR ALL` | `SELECT`-only | **self-grant Apex/Pro tier for free** (highest value) |
+| `reaction_coin_log` | `ALL true` (public!) | deny-all (service-only) | reset daily-cap row → farm reaction-coins past 10/day; tamper others' rows |
 
-Both verified safe: no app code writes these via the user client (webhook /
+All verified safe: no app code writes these via the user client (webhook /
 SECURITY DEFINER RPC / adminClient do all writes, bypassing RLS); user-client
 SELECT preserved for the `/ai` entitlement read.
 
 ## 🟠 To triage (NOT yet changed — need per-table verification)
 | Table | Policy | Risk | Notes |
 |---|---|---|---|
-| `reaction_coin_log` | ALL `true` | **Med/High** any user writes/deletes any row. Verify whether coin balances derive from this log (mint risk) or only from `tjfit_coin_ledger` (service-only). |
 | `program_certificates` | ALL `auth.uid()=user_id` | Med self-grant completion certificates (fake achievement / social proof). |
 | `tjai_badges`, `user_badges`(INSERT `true`), `tjai_streaks` | ALL / INSERT | Low cosmetic gamification; still should be service-write. |
 
