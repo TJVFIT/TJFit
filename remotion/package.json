@@ -1,0 +1,21 @@
+{
+  "name": "tjfit-reels",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Code-driven TJFit promo reels (Remotion). Renders real 1080x1920 MP4s reusing the site's violet brand tokens.",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render TJFitReel out/tjfit-reel.mp4 --codec=h264",
+    "still": "remotion still TJFitReel out/cover.png --frame=30"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.1",
+    "typescript": "^5.4.5"
+  }
+}

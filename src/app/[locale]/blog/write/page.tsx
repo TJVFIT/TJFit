@@ -86,17 +86,17 @@ export default function BlogWritePage({ params }: { params: { locale: string } }
       <section className="rounded-2xl border border-divider bg-surface p-6">
         <h1 className="text-3xl font-extrabold text-white">Write a Blog Post</h1>
         <form className="mt-6 space-y-4" onSubmit={submit}>
-          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" className="w-full rounded-xl border border-divider bg-background px-3 py-2 text-white" required />
-          <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full rounded-xl border border-divider bg-background px-3 py-2 text-white">
+          <input aria-label="Post title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" className="w-full rounded-xl border border-divider bg-background px-3 py-2 text-white" required />
+          <select aria-label="Category" value={category} onChange={(e) => setCategory(e.target.value)} className="w-full rounded-xl border border-divider bg-background px-3 py-2 text-white">
             <option>Training</option>
             <option>Nutrition</option>
             <option>Mindset</option>
             <option>Recovery</option>
             <option>Lifestyle</option>
           </select>
-          <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="Write your article..." className="min-h-[220px] w-full rounded-xl border border-divider bg-background px-3 py-2 text-white" required />
-          <input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="Tags (comma separated)" className="w-full rounded-xl border border-divider bg-background px-3 py-2 text-white" />
-          <input type="file" accept="image/*" onChange={(e) => setImage(e.target.files?.[0] ?? null)} className="w-full text-sm text-bright" />
+          <textarea aria-label="Article content" value={content} onChange={(e) => setContent(e.target.value)} placeholder="Write your article..." className="min-h-[220px] w-full rounded-xl border border-divider bg-background px-3 py-2 text-white" required />
+          <input aria-label="Tags, comma separated" value={tags} onChange={(e) => setTags(e.target.value)} placeholder="Tags (comma separated)" className="w-full rounded-xl border border-divider bg-background px-3 py-2 text-white" />
+          <input aria-label="Cover image" type="file" accept="image/*" onChange={(e) => setImage(e.target.files?.[0] ?? null)} className="w-full text-sm text-bright" />
           <p className="text-xs text-faint">SEO description preview: {seoDescription || "-"}</p>
           <Button type="submit">Submit for Review</Button>
           {status ? <p className="text-sm text-bright">{status}</p> : null}

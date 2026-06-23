@@ -245,7 +245,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
         </div>
       </section>
 
-      <section className="mt-10">
+      <section className="reveal-section tj-whirl mt-10">
         <h2 className="text-2xl font-bold text-white">{copy.doesTitle}</h2>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           {FEATURE_ROWS.map(({ Icon, title, body }) => (
@@ -313,7 +313,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
         </Link>
       </section>
 
-      <section className="mt-10">
+      <section className="reveal-section tj-whirl tj-whirl-alt mt-10">
         <h2 className="text-2xl font-bold text-white">{copy.pricingTitle}</h2>
         <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {[
@@ -382,7 +382,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
         </div>
       </section>
 
-      <section className="mt-10 rounded-3xl border border-divider bg-[linear-gradient(180deg,#111215_0%,#0D1015_100%)] p-8 text-center">
+      <section className="reveal-section tj-whirl mt-10 rounded-3xl border border-divider bg-[linear-gradient(180deg,#111215_0%,#0D1015_100%)] p-8 text-center">
         <h2 className="text-3xl font-extrabold text-white">{copy.finalTitle}</h2>
         <Link
           href={`/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`}

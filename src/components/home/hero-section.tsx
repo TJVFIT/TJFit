@@ -168,7 +168,7 @@ export function HeroSection({
   copy,
   sectionRef
 }: HeroSectionProps) {
-  const headlineLine = [heroHeadline, heroHeadlineLine2, heroGradientTagline].filter(Boolean).join(" ");
+  const headlineLine = [heroHeadline, heroHeadlineLine2].filter(Boolean).join(" ");
 
   return (
     <section
@@ -179,7 +179,7 @@ export function HeroSection({
       <div
         className="pointer-events-none absolute inset-0 z-0"
         style={{
-          background: `radial-gradient(ellipse 90% 70% at 78% 38%, rgba(168,85,247,0.11), transparent 58%), radial-gradient(ellipse 70% 60% at 8% 88%, rgba(246,243,237,0.045), transparent 55%), ${TJ_PALETTE.obsidian}`
+          background: `radial-gradient(ellipse 92% 72% at 78% 36%, rgba(168,85,247,0.16), transparent 60%), radial-gradient(ellipse 60% 50% at 70% 30%, rgba(124,58,237,0.10), transparent 52%), radial-gradient(ellipse 70% 60% at 8% 88%, rgba(246,243,237,0.05), transparent 55%), ${TJ_PALETTE.obsidian}`
         }}
         aria-hidden
       />
@@ -201,7 +201,7 @@ export function HeroSection({
             "linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.44) 18%, #000 36%, #000 82%, transparent 100%)",
           WebkitMaskImage:
             "linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.44) 18%, #000 36%, #000 82%, transparent 100%)",
-          opacity: reduce ? 0.3 : 0.58
+          opacity: reduce ? 0.32 : 0.66
         }}
         aria-hidden
       >
@@ -233,11 +233,31 @@ export function HeroSection({
           </div>
 
           <h1
-            className="hero-headline mt-8 max-w-[13ch] text-balance font-display font-black tracking-[-0.035em]"
+            className="hero-headline mt-8 max-w-[14ch] text-balance font-display font-black tracking-[-0.035em]"
             style={{ ...lineIn(150), fontSize: "clamp(46px, 6.4vw, 88px)", lineHeight: 0.94, color: TJ_PALETTE.textPrimary }}
           >
             {headlineLine}
           </h1>
+
+          {heroGradientTagline ? (
+            <p
+              className="tj-hero-gradient-line mt-5 max-w-[26ch] font-display font-bold tracking-[-0.005em]"
+              style={{
+                ...lineIn(250),
+                fontSize: "clamp(16px, 1.7vw, 24px)",
+                lineHeight: 1.25,
+                backgroundImage:
+                  "linear-gradient(102deg, #d8caff 0%, #a855f7 46%, #ede9fe 100%)",
+                WebkitBackgroundClip: "text",
+                backgroundClip: "text",
+                color: "transparent",
+                WebkitTextFillColor: "transparent",
+                filter: "drop-shadow(0 0 20px rgba(168,85,247,0.28))"
+              }}
+            >
+              {heroGradientTagline}
+            </p>
+          ) : null}
 
           <div
             className="my-7 h-px"

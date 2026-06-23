@@ -33,7 +33,7 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", HomeSectionsCopy> = {
       "Coach marketplace",
       "10 languages"
     ],
-    stats: { bundles: "Free Bundles", weeks: "Weeks Per Plan", languages: "Languages" },
+    stats: { bundles: "Bundles", weeks: "Weeks Per Plan", languages: "Languages" },
     platformSpec: {
       eyebrow: "The stack",
       headingLead: "Built like training software,",
@@ -80,7 +80,7 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", HomeSectionsCopy> = {
       "Koç pazarı",
       "10 dil"
     ],
-    stats: { bundles: "Ücretsiz Paket", weeks: "Plan Başına Hafta", languages: "Dil" },
+    stats: { bundles: "Paket", weeks: "Plan Başına Hafta", languages: "Dil" },
     platformSpec: {
       eyebrow: "Sistem",
       headingLead: "Antrenman yazılımı gibi kuruldu,",
@@ -127,7 +127,7 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", HomeSectionsCopy> = {
       "سوق المدربين",
       "10 لغات"
     ],
-    stats: { bundles: "حزم مجانية", weeks: "أسابيع لكل خطة", languages: "لغات" },
+    stats: { bundles: "حزم", weeks: "أسابيع لكل خطة", languages: "لغات" },
     platformSpec: {
       eyebrow: "المنظومة",
       headingLead: "مبني مثل برمجيات التدريب،",
@@ -174,7 +174,7 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", HomeSectionsCopy> = {
       "Mercado de coaches",
       "10 idiomas"
     ],
-    stats: { bundles: "Paquetes Gratis", weeks: "Semanas Por Plan", languages: "Idiomas" },
+    stats: { bundles: "Paquetes", weeks: "Semanas Por Plan", languages: "Idiomas" },
     platformSpec: {
       eyebrow: "El stack",
       headingLead: "Construido como software de entrenamiento,",
@@ -221,7 +221,7 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", HomeSectionsCopy> = {
       "Place de marché coachs",
       "10 langues"
     ],
-    stats: { bundles: "Packs Gratuits", weeks: "Semaines Par Plan", languages: "Langues" },
+    stats: { bundles: "Packs", weeks: "Semaines Par Plan", languages: "Langues" },
     platformSpec: {
       eyebrow: "Le stack",
       headingLead: "Conçu comme un logiciel d'entraînement,",

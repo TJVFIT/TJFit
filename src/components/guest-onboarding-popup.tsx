@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Locale } from "@/lib/i18n";
 import { useAuth } from "@/components/auth-provider";
 import { getGuestPopupCopy } from "@/lib/launch-copy";
+import { cn } from "@/lib/utils";
 
 const ENTRY_DONE_KEY = "tjfit_entry_choice_done";
 
@@ -13,6 +14,7 @@ export function GuestOnboardingPopup({ locale }: { locale: Locale }) {
   const router = useRouter();
   const pathname = usePathname();
   const [visible, setVisible] = useState(false);
+  const [entered, setEntered] = useState(false);
   const copy = getGuestPopupCopy(locale);
 
   useEffect(() => {
@@ -28,8 +30,25 @@ export function GuestOnboardingPopup({ locale }: { locale: Locale }) {
     }
 
     const entryDone = localStorage.getItem(ENTRY_DONE_KEY) === "1";
-    setVisible(!entryDone);
+    if (entryDone) {
+      setVisible(false);
+      return;
+    }
+
+    // Let the premium hero land and animate in before surfacing the entry
+    // choice — a blocking modal on first paint reads as cluttered, not luxe.
+    const t = window.setTimeout(() => setVisible(true), 1600);
+    return () => window.clearTimeout(t);
   }, [user, loading, locale, pathname]);
+
+  useEffect(() => {
+    if (!visible) {
+      setEntered(false);
+      return;
+    }
+    const r = requestAnimationFrame(() => setEntered(true));
+    return () => cancelAnimationFrame(r);
+  }, [visible]);
 
   const markDone = () => {
     try {
@@ -50,8 +69,18 @@ export function GuestOnboardingPopup({ locale }: { locale: Locale }) {
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/75 px-4">
-      <div className="glass-panel w-full max-w-lg rounded-[28px] p-6">
+    <div
+      className={cn(
+        "fixed inset-0 z-[120] flex items-center justify-center px-4 transition-[background-color,backdrop-filter] duration-500",
+        entered ? "bg-black/75 backdrop-blur-sm" : "bg-black/0"
+      )}
+    >
+      <div
+        className={cn(
+          "glass-panel w-full max-w-lg rounded-[28px] p-6 transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none motion-reduce:transform-none",
+          entered ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-3 scale-[0.97]"
+        )}
+      >
         <p className="text-xs uppercase tracking-[0.24em] text-faint">{copy.welcome}</p>
         <h2 className="mt-3 text-2xl font-semibold text-white">{copy.entryTitle}</h2>
         <p className="mt-3 text-sm text-muted">{copy.entrySubtitle}</p>

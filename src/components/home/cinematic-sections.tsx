@@ -70,7 +70,7 @@ export function CinematicHowItWorks() {
 /** Before / after transformation strip */
 export function CinematicTransformation({ reduce }: { reduce: boolean }) {
   return (
-    <section className="reveal-section relative border-t border-[rgba(255,255,255,0.06)] bg-background px-6 py-[clamp(3.5rem,8vw,7.5rem)] lg:px-12">
+    <section className="reveal-section tj-whirl tj-whirl-alt relative border-t border-[rgba(255,255,255,0.06)] bg-background px-6 py-[clamp(3.5rem,8vw,7.5rem)] lg:px-12">
       <div className="relative z-[1] mx-auto max-w-3xl">
         <div className="glass-panel-glow relative grid overflow-hidden rounded-2xl border border-[rgba(255,255,255,0.06)] md:grid-cols-[1fr_auto_1fr]">
           <div className="relative border-e border-[rgba(255,255,255,0.04)] bg-gradient-to-br from-[rgba(239,68,68,0.06)] to-transparent p-8 md:border-e-0 md:border-s-2 md:border-s-[rgba(239,68,68,0.25)]">

@@ -2293,6 +2293,43 @@ html {
   transform: translate3d(0, 0, 0) scale(1);
 }
 
+/* ── 3D whirl reveal ───────────────────────────────────────────────
+   Signature scroll moment: the section swings in from deep 3D space —
+   a perspective rotateY/rotateX whirl that settles dead-flat as it enters
+   the viewport. `html { overflow-x: hidden }` clips the transient sideways
+   travel so it never spawns a scrollbar. Higher specificity than the base
+   .reveal-section rules, so it overrides them. Reduced-motion fully neutral. */
+.reveal-section.tj-whirl {
+  opacity: 0;
+  transform: perspective(1800px) rotateX(15deg) rotateY(-30deg) rotateZ(-5deg) scale(0.9) translate3d(0, 84px, -360px);
+  transform-origin: 50% 96%;
+  transform-style: preserve-3d;
+  filter: blur(9px);
+  transition:
+    opacity 1350ms cubic-bezier(0.16, 1, 0.3, 1) var(--tj-reveal-delay, 0ms),
+    transform 1350ms cubic-bezier(0.18, 0.9, 0.24, 1) var(--tj-reveal-delay, 0ms),
+    filter 1050ms cubic-bezier(0.16, 1, 0.3, 1) var(--tj-reveal-delay, 0ms);
+  will-change: opacity, transform, filter;
+  backface-visibility: hidden;
+}
+/* Mirror variant — spirals in from the opposite side, so alternating sections
+   whirl left / right as you scroll instead of all leaning the same way. */
+.reveal-section.tj-whirl.tj-whirl-alt {
+  transform: perspective(1800px) rotateX(15deg) rotateY(30deg) rotateZ(5deg) scale(0.9) translate3d(0, 84px, -360px);
+}
+.reveal-section.tj-whirl.revealed {
+  opacity: 1;
+  transform: perspective(1800px) rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1) translate3d(0, 0, 0);
+  filter: blur(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal-section.tj-whirl {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}
+
 /* Bar grow effect — scaleY from 0 → 1 with transform-origin: bottom,
    gated to fire when parent reveal-section enters viewport. Used on
    the home become-a-coach mock dashboard bar chart. */
@@ -3972,6 +4009,22 @@ button[aria-disabled="true"],
   border-color: rgba(246, 243, 237, 0.08);
   animation-duration: 14s;
   animation-direction: reverse;
+}
+
+/* Power-on bloom — a single violet light burst the moment the logo locks in,
+   giving the intro a real climax instead of a soft fade. Only mounts in the
+   full-motion path (reduced-motion skips straight past the logo phase). */
+.tj-intro-bloom {
+  width: clamp(300px, 48vw, 600px);
+  height: clamp(300px, 48vw, 600px);
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.5) 0%, rgba(124, 58, 237, 0.2) 34%, transparent 68%);
+  animation: tjIntroBloom 1150ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes tjIntroBloom {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.32); }
+  26% { opacity: 0.95; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.75); }
 }
 
 .tj-intro-logo-shell {

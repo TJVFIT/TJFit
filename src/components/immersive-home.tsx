@@ -183,6 +183,11 @@ function PlatformFeatureCard({
       )}
     >
       <div
+        className="pointer-events-none absolute -right-12 -top-12 h-36 w-36 rounded-full opacity-0 blur-[60px] transition-opacity duration-500 group-hover:opacity-100"
+        style={{ background: `radial-gradient(circle, ${accent}33, transparent 70%)` }}
+        aria-hidden
+      />
+      <div
         className="pointer-events-none absolute left-8 top-20 bottom-20 w-px opacity-90 lg:left-10"
         style={{
           background: `linear-gradient(180deg, transparent 0%, ${accent}55 35%, ${accent}40 65%, transparent 100%)`,
@@ -191,11 +196,11 @@ function PlatformFeatureCard({
       />
       <div
         className={cn(
-          "mb-6 flex h-10 w-10 shrink-0 items-center justify-center border border-white/[0.08] bg-background",
+          "relative mb-6 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/[0.08] bg-[rgba(255,255,255,0.025)] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-[border-color,box-shadow] duration-300 group-hover:border-purple-300/35 group-hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_22px_rgba(168,85,247,0.22)]",
           span === 2 && "md:mb-0"
         )}
       >
-        <Icon className="h-[18px] w-[18px] text-muted transition-colors duration-200 group-hover:text-purple-100" strokeWidth={1.5} />
+        <Icon className="h-[19px] w-[19px] text-muted transition-colors duration-200 group-hover:text-purple-100" strokeWidth={1.5} />
       </div>
       <div className="min-w-0 flex-1">
         <h3 className="font-display text-lg font-medium tracking-tight text-white">{title}</h3>
@@ -320,7 +325,7 @@ export function ImmersiveHome({
       <SectionTransition variant="soft" />
 
       <section
-        className="reveal-section relative border-t border-divider bg-[rgba(10,10,11,0.7)] px-6 py-16 lg:px-12 lg:py-20"
+        className="reveal-section tj-whirl tj-whirl-alt relative border-t border-divider bg-[rgba(10,10,11,0.7)] px-6 py-16 lg:px-12 lg:py-20"
         aria-label="TJAI overview"
       >
         <div className="mx-auto flex max-w-5xl flex-col items-start gap-8 md:flex-row md:items-center md:justify-between md:gap-10">
@@ -388,7 +393,7 @@ export function ImmersiveHome({
       </div>
 
       {/* Platform spec */}
-      <section className="reveal-section border-t border-divider px-6 py-24 lg:px-12 lg:py-32">
+      <section className="reveal-section tj-whirl border-t border-divider px-6 py-24 lg:px-12 lg:py-32">
         <div className="mx-auto max-w-6xl">
           <MotionReveal reducedMotion={reduce} className="max-w-2xl">
             <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-dim">{sectionsCopy.platformSpec.eyebrow}</p>
@@ -432,7 +437,7 @@ export function ImmersiveHome({
       {/* ══════════════ TJAI — KINETIC HEART CORE ══════════════ */}
       <section
         ref={(el) => { tjaiRef.current = el; }}
-        className="reveal-section relative overflow-hidden border-t border-divider bg-background lg:min-h-[700px]"
+        className="reveal-section tj-whirl relative overflow-hidden border-t border-divider bg-background lg:min-h-[700px]"
       >
         <span
           className="ghost-text pointer-events-none start-1/2 top-8 z-0 max-lg:opacity-[0.02] -translate-x-1/2 text-[clamp(4rem,18vw,12rem)]"

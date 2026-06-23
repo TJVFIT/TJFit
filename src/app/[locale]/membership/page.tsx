@@ -56,7 +56,9 @@ export default function MembershipPage({ params }: { params: { locale: string } 
         </div>
       </section>
 
-      <MembershipPricing locale={locale} />
+      <div className="reveal-section tj-whirl">
+        <MembershipPricing locale={locale} />
+      </div>
     </PremiumPageShell>
   );
 }

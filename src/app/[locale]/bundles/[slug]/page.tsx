@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 
 import {
   AtAGlance,
@@ -218,6 +218,11 @@ export default async function BundleDetailPage({
               labels={{ idle: d.shareIdle, shared: d.shareShared, copied: d.shareCopied }}
             />
           </div>
+
+          <p className="mt-5 flex flex-wrap items-center gap-x-2 text-[11px] font-medium tracking-wide text-muted">
+            <Check className="h-3.5 w-3.5 shrink-0 text-purple-300" aria-hidden />
+            {bundle.isFree ? copy.footnoteFree : copy.footnotePaid}
+          </p>
         </div>
 
         <AtAGlance

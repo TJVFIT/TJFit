@@ -222,6 +222,9 @@ export function LogoIntro({
           <div className="tj-intro-orbit tj-intro-orbit--inner absolute left-1/2 top-1/2 h-[min(42vw,380px)] w-[min(42vw,380px)] -translate-x-1/2 -translate-y-1/2 rounded-full" aria-hidden />
 
           <div className="relative flex items-center justify-center" style={{ minHeight: "clamp(190px, 32vw, 340px)" }}>
+            {showImage ? (
+              <div className="tj-intro-bloom pointer-events-none absolute left-1/2 top-1/2" aria-hidden />
+            ) : null}
             <div
               className="tj-intro-logo-shell absolute flex items-center justify-center rounded-[2rem] border border-white/[0.08] bg-white/[0.025] backdrop-blur-md"
               style={{
