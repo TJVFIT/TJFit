@@ -338,7 +338,8 @@
   --color-accent-violet-glow: rgba(124, 58, 237, 0.28);
   --color-text-primary: #ffffff;
   --color-text-secondary: #a1a1aa;
-  --color-text-muted: #52525b;
+  /* Bumped from #52525b (2.56:1, WCAG fail) to clear AA-large on bg + surface. */
+  --color-text-muted: #6b6b76;
   /** Softer red — matches Tailwind `danger` token. */
   --color-error: #f87171;
   --color-success: #22c55e;

@@ -79,7 +79,7 @@ const config: Config = {
         },
         divider: "#1E2028",
         muted: "#A1A1AA",
-        dim: "#52525B",
+        dim: "#6B6B76",
         faint: "#71717A",
         bright: "#D4D4D8",
         /** Primary brand accent — electric violet. */
