@@ -17,6 +17,7 @@ on branch **`feat/tjfit-continuous`** (16 commits ahead of `main`, build green, 
    - Subscriptions: set the 4 `NEXT_PUBLIC_GUMROAD_{PRO,APEX}_{MONTHLY,ANNUAL}_URL` env vars (now documented in `.env.example`).
    - One end-to-end test purchase (bundle → PDF email → access).
 4. **One copy decision:** homepage says "10 Languages" / "20+ Programs" but you ship 5 locales / 12 bundles. Tell me "set to 5/12" or "we're shipping the other 5 locales" and I'll execute.
+5. **⚠️ Fabricated testimonials (legal — your call):** the homepage shows 5 named testimonials with specific result claims ("Lost 12kg · Dubai") + 5★, but you have ~7 real users and 0 coaches. Invented reviews are FTC false-advertising (the 2024 fake-review rule has per-violation penalties); UK/EU/TR have parallel rules. I already removed the false "thousands of members" / "no fake stars" subtitle claims. The testimonial *content* I left for you: **either** give me real, permissioned testimonials to swap in, **or** tell me to gate the section until you have some. Don't leave invented ones live.
 
 ## 🔐 Security fixes already LIVE on prod (the headline)
 All missed by the automated advisor; all verified safe + reversible. Detail: `docs/SECURITY_RLS_AUDIT_2026-06-23.md`.
