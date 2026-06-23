@@ -439,6 +439,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
               <button
                 key={`${step.id}-${String(option.value)}`}
                 type="button"
+                aria-pressed={selected}
                 onClick={() => updateAnswer(option.value, idx < total - 1)}
                 className={cn(
                   "flex w-full items-center gap-3 rounded-[10px] border px-4 py-3.5 text-left text-sm font-medium transition-all duration-200 ease-out",
@@ -489,6 +490,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
               <button
                 key={`${step.id}-${optionValue}`}
                 type="button"
+                aria-pressed={active}
                 onClick={() => toggle(optionValue)}
                 className={cn(
                   "flex w-full items-center gap-3 rounded-[10px] border px-4 py-3.5 text-left text-sm font-medium transition-all duration-200 ease-out",
@@ -522,6 +524,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
           <div className="relative">
             <input
               type="number"
+              aria-labelledby={`tjai-q-${step.id}`}
               min={step.min}
               max={step.max}
               value={typeof currentAnswer === "number" ? currentAnswer : ""}
@@ -549,6 +552,8 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
           <div className="mt-6">
             <input
               type="range"
+              aria-labelledby={`tjai-q-${step.id}`}
+              aria-valuetext={`${value}${step.unit ? ` ${step.unit}` : ""}`}
               min={min}
               max={max}
               step={step.step ?? 1}
@@ -689,7 +694,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
           className="question-enter mt-8 flex-1"
         >
           <div className="mb-4 text-[11px] uppercase tracking-[0.2em] text-accent">{step.section}</div>
-          <h1 className="text-[clamp(1.375rem,3vw,1.75rem)] font-bold leading-[1.3] text-white">{step.question}</h1>
+          <h1 id={`tjai-q-${step.id}`} className="text-[clamp(1.375rem,3vw,1.75rem)] font-bold leading-[1.3] text-white">{step.question}</h1>
           {step.sub ? <p className="mt-2 text-sm leading-6 text-muted">{step.sub}</p> : null}
           <div className="mt-7">{renderInput()}</div>
           {showError && !canContinue ? (
