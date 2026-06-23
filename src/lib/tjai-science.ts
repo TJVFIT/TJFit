@@ -217,6 +217,13 @@ export function calculateTJAIMetrics(answers: QuizAnswers): TJAIMetrics {
   }
   if (metabolicType === "hormonal" && (profile.goal === "fat_loss" || profile.goal === "recomposition")) calorieTarget *= 0.95;
 
+  // Hard safety floor: re-clamp AFTER the stress/sleep + metabolic-type
+  // multipliers above, which can otherwise stack and push a cut below the
+  // minimum the goal calc already enforced (1200 kcal female / 1500 male).
+  if (profile.goal === "fat_loss" || profile.goal === "recomposition") {
+    calorieTarget = Math.max(calorieTarget, profile.sex === "female" ? 1200 : 1500);
+  }
+
   const carbCalories = calorieTarget - protein * 4 - fat * 9;
   let carbs = carbCalories / 4;
   const carbFloor = profile.dietStyle === "low_carb" ? 50 : 100;
