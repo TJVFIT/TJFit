@@ -19,12 +19,12 @@ SELECT preserved for the `/ai` entitlement read.
 ## 🟠 To triage (NOT yet changed — need per-table verification)
 | Table | Policy | Risk | Notes |
 |---|---|---|---|
-| `user_discount_codes` | INSERT `auth.uid()=user_id` | **High?** self-issue a discount code → cheap checkout — IF checkout honors user-written codes. Verify how `checkout-promo-codes` resolves discounts. |
 | `reaction_coin_log` | ALL `true` | **Med/High** any user writes/deletes any row. Verify whether coin balances derive from this log (mint risk) or only from `tjfit_coin_ledger` (service-only). |
 | `program_certificates` | ALL `auth.uid()=user_id` | Med self-grant completion certificates (fake achievement / social proof). |
 | `tjai_badges`, `user_badges`(INSERT `true`), `tjai_streaks` | ALL / INSERT | Low cosmetic gamification; still should be service-write. |
 
 ## ✅ Confirmed legitimate (no change)
+- `user_discount_codes` (INSERT) — **verified safe.** Checkout honors only `tjfit_discount_codes` (SELECT-only for users; minted by the coin-debiting SECURITY DEFINER redeem RPC). `user_discount_codes` is a secondary log checkout never reads, so a self-insert grants nothing.
 - `progress_milestones` (ALL `auth.uid()=user_id`) — user's own progress logs; correct.
 - `affiliates`, `manual_purchase_requests` — public-apply forms; values (commission rate, approval) live in service-controlled tables. *Verify `affiliates` UPDATE can't self-approve / set commission_rate.*
 
