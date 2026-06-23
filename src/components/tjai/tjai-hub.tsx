@@ -141,7 +141,7 @@ export function TJAIHub({ locale }: { locale: Locale }) {
                   <span className={cn(
                     "rounded-full border px-3 py-1 text-xs font-semibold",
                     tier === "pro"
-                      ? "border-blue-400/35 bg-blue-400/10 text-blue-300"
+                      ? "border-purple-300/35 bg-purple-300/10 text-purple-200"
                       : "border-[rgba(168,85,247,0.35)] bg-[rgba(168,85,247,0.12)] text-accent"
                   )}>
                     [{tierLabel(locale, tier).toUpperCase()}]

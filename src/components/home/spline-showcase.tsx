@@ -97,7 +97,7 @@ export function SplineShowcase(_props: Props) {
         >
           Move your cursor.
           <br />
-          <span className="bg-gradient-to-r from-purple-300 to-blue-400 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-purple-300 to-violet-400 bg-clip-text text-transparent">
             The system responds.
           </span>
         </h2>

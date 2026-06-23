@@ -91,7 +91,7 @@ export function Cinematic3DSceneImpl() {
         <fog attach="fog" args={["#06080d", 6, 14]} />
         <ambientLight intensity={0.18} />
         <pointLight position={[3, 2, 3]} intensity={1.4} color="#A855F7" />
-        <pointLight position={[-3, -1, -1]} intensity={0.85} color="#3b82f6" />
+        <pointLight position={[-3, -1, -1]} intensity={0.85} color="#7C3AED" />
         <CoreOrb />
         <OrbitRings />
         <Sparkles count={220} scale={[10, 10, 10]} size={1.8} speed={0.45} color="#C4B5FD" opacity={0.7} />
