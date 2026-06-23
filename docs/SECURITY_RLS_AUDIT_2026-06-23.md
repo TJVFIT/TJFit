@@ -54,3 +54,20 @@ the caller before granting/spending.
 *Pattern: a SECURITY DEFINER function that grants/spends value should either
 enforce `auth.uid()` on every actor param, or have EXECUTE restricted to the
 service role (called only through a trusted server route).*
+
+## 🔴 Permissive SELECT (read) leaks — advisor blind spot
+The advisor deliberately ignores `SELECT USING (true)` (assumes intentional public
+read) — but on a table with PII it's a data leak.
+
+**Fixed (high severity):** `public.profiles` had two `SELECT USING (true)` policies
+exposing **every column of every row** via REST — `email` (mass harvest), `role`
+(admin enumeration), `subscription_tier`/`tjai_credit_balance` (financial privacy),
+`privacy_settings`/`is_private` (private profiles were readable). Replaced with
+self-read (`auth.uid()=id`); migration `20260623170000`. Verified safe: all app
+profile reads use the service role or the curated SECURITY DEFINER RPCs
+(`get_profile_card`/`search_profiles`); the public coaches listing uses the service
+role — nothing relied on the public RLS read.
+
+**Swept:** no other private/PII table has `SELECT(true)` (messages, plans, progress,
+credits, workouts, conversations are all `auth.uid()`-scoped). `profiles` was the
+only one.
