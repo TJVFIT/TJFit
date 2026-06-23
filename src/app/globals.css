@@ -638,7 +638,7 @@ h1, h2, h3, h4, h5, h6,
 :root[lang="ru"] body { font-feature-settings: normal; }
 
 ::selection {
-  background: rgb(34 211 238 / 0.3);
+  background: rgba(168, 85, 247, 0.3);
   color: #ffffff;
   text-shadow: none;
 }
@@ -732,8 +732,8 @@ progress {
   outline: none;
   border-color: rgba(168, 85, 247, 0.55) !important;
   box-shadow:
-    0 0 0 3px rgb(34 211 238 / 0.3),
-    0 0 12px rgb(34 211 238 / 0.16) !important;
+    0 0 0 3px rgba(168, 85, 247, 0.3),
+    0 0 12px rgba(168, 85, 247, 0.16) !important;
   transition:
     border-color 220ms var(--tj-ease-premium),
     box-shadow 220ms var(--tj-ease-premium);
@@ -1257,7 +1257,7 @@ strong, b {
 
 .input:focus-visible {
   border-color: var(--color-accent-cyan);
-  box-shadow: 0 0 0 3px rgb(34 211 238 / 0.3);
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.3);
   transition:
     border-color 220ms var(--tj-ease-premium),
     box-shadow 220ms var(--tj-ease-premium);
@@ -3639,13 +3639,13 @@ button:focus-visible,
 [role="menuitem"]:focus-visible,
 [tabindex="0"]:focus-visible,
 summary:focus-visible {
-  outline: 2px solid rgb(34 211 238 / 0.75);
+  outline: 2px solid rgba(168, 85, 247, 0.75);
   outline-offset: 3px;
   border-radius: 4px;
   /* Soft outer halo — gives the ring brand presence without affecting layout. */
   box-shadow:
-    0 0 0 4px rgb(34 211 238 / 0.18),
-    0 0 22px rgb(34 211 238 / 0.22);
+    0 0 0 4px rgba(168, 85, 247, 0.18),
+    0 0 22px rgba(168, 85, 247, 0.22);
   transition: outline-offset 140ms ease, box-shadow 140ms ease;
 }
 @media (prefers-reduced-motion: reduce) {
