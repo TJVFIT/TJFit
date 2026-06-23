@@ -1206,6 +1206,36 @@
         "locale_check": "en",
         "next_action_required": false
       }
+    },
+    {
+      "id": "bundle-recommend-home-fatloss-en",
+      "locale": "en",
+      "persona": "mentor",
+      "profile": {
+        "goal": "fat_loss",
+        "experience": "beginner",
+        "equipment": [
+          "home",
+          "dumbbells"
+        ],
+        "days_per_week": 3,
+        "injury": null,
+        "diet": "omnivore",
+        "cuisine": "western"
+      },
+      "prompt": "I want to lose fat but I only train at home with dumbbells. Which TJFit program should I get?",
+      "expected": {
+        "safety_required": false,
+        "must_include": [
+          "bundle"
+        ],
+        "must_not_include": [
+          "Hypertrophy System",
+          "Fat Burn Accelerator"
+        ],
+        "locale_check": "en",
+        "next_action_required": true
+      }
     }
   ]
 }
