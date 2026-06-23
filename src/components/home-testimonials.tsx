@@ -48,31 +48,31 @@ const COPY: Record<Locale, { label: string; title: string; sub: string; disclaim
   en: {
     label: "Real transformations",
     title: "Real People. Real Results.",
-    sub: "Members describe outcomes in their own words — no stock photography, no fake star rows.",
+    sub: "Members describe outcomes in their own words.",
     disclaimer: "Results vary. Individual outcomes depend on consistency, diet, and starting fitness level.",
   },
   tr: {
     label: "Gerçek dönüşümler",
     title: "Gerçek İnsanlar. Gerçek Sonuçlar.",
-    sub: "TJFit ile dönüşen binlerce kişiye katılın.",
+    sub: "Üyeler sonuçlarını kendi sözleriyle anlatıyor.",
     disclaimer: "Sonuçlar kişiden kişiye değişir. Sonuç; tutarlılık, beslenme ve başlangıç seviyesine bağlıdır.",
   },
   ar: {
     label: "تحولات حقيقية",
     title: "أشخاص حقيقيون. نتائج حقيقية.",
-    sub: "انضم إلى الآلاف الذين يغيرون أجسامهم مع TJFit.",
+    sub: "يصف الأعضاء نتائجهم بكلماتهم الخاصة.",
     disclaimer: "النتائج تختلف. تعتمد النتيجة على الالتزام والتغذية ومستوى البداية.",
   },
   es: {
     label: "Transformaciones reales",
     title: "Personas reales. Resultados reales.",
-    sub: "Unete a miles que ya se transforman con TJFit.",
+    sub: "Los miembros describen sus resultados con sus propias palabras.",
     disclaimer: "Los resultados varian. Dependen de constancia, dieta y nivel inicial.",
   },
   fr: {
     label: "Transformations reelles",
     title: "De vraies personnes. De vrais resultats.",
-    sub: "Rejoignez des milliers de personnes qui se transforment avec TJFit.",
+    sub: "Les membres decrivent leurs resultats avec leurs propres mots.",
     disclaimer: "Les resultats varient selon la regularite, l'alimentation et le niveau initial.",
   },
 };
