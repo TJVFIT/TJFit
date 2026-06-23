@@ -25,7 +25,7 @@ SELECT preserved for the `/ai` entitlement read.
 ## ✅ Confirmed legitimate (no change)
 - `user_discount_codes` (INSERT) — **verified safe.** Checkout honors only `tjfit_discount_codes` (SELECT-only for users; minted by the coin-debiting SECURITY DEFINER redeem RPC). `user_discount_codes` is a secondary log checkout never reads, so a self-insert grants nothing.
 - `progress_milestones` (ALL `auth.uid()=user_id`) — user's own progress logs; correct.
-- `affiliates`, `manual_purchase_requests` — public-apply forms; values (commission rate, approval) live in service-controlled tables. *Verify `affiliates` UPDATE can't self-approve / set commission_rate.*
+- `affiliates`, `manual_purchase_requests` — public-apply forms. **`affiliates` UPDATE verified safe:** a user *can* self-set `status='approved'` / `commission_rate=100`, but **nothing reads those fields for payout** — commissions resolve exclusively from the service-controlled `commission_settings` (`src/lib/gumroad/commission.ts`), and the affiliate-referral payout isn't wired. Harmless today; **harden to service-write on `status`/`commission_rate` if/when the affiliate-referral payout is wired** (secure-by-default).
 
 ## Recommended pattern
 For any table whose rows represent a **granted value/entitlement** (not user-authored
