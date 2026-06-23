@@ -629,7 +629,7 @@ export function ImmersiveHome({
               <span className="bg-gradient-to-r from-[#A855F7] to-[#C4B5FD] bg-clip-text text-transparent">12 weeks</span>
               <span className="text-faint">.</span>
             </h2>
-            <p className="mt-6 text-lg text-muted">{copy.midCta?.sub ?? "Join thousands already training smarter with TJFit."}</p>
+            <p className="mt-6 text-lg text-muted">{copy.midCta?.sub ?? "Start training smarter with TJFit."}</p>
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link
                 href={`/${locale}/signup`}

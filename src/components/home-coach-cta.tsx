@@ -23,7 +23,7 @@ const COPY: Record<
     title: "Monetize Your Expertise.",
     sub: "Publish programs. Coach clients. Earn globally.",
     points: [
-      "Sell programs to thousands of members",
+      "Sell programs to a growing global audience",
       "Available in 10 member languages",
       "You set the price — we handle payments",
     ],
@@ -38,7 +38,7 @@ const COPY: Record<
     title: "Uzmanligini Gelire Donustur.",
     sub: "Program yayinla. Ogrenci calistir. Global kazan.",
     points: [
-      "Programlarini binlerce uyeye sat",
+      "Programlarini buyuyen global bir kitleye sat",
       "Ingilizce, Turkce, Arapca, Ispanyolca ve Fransizca",
       "Fiyati sen belirle — odemeleri biz yonetelim",
     ],
@@ -53,7 +53,7 @@ const COPY: Record<
     title: "حوّل خبرتك إلى دخل.",
     sub: "انشر البرامج. درّب العملاء. اربح عالمياً.",
     points: [
-      "بع برامجك لآلاف الأعضاء",
+      "بع برامجك لجمهور عالمي متنامٍ",
       "بالإنجليزية والتركية والعربية والإسبانية والفرنسية",
       "أنت تضع السعر — نتولى المدفوعات",
     ],
@@ -68,7 +68,7 @@ const COPY: Record<
     title: "Monetiza tu experiencia.",
     sub: "Publica programas. Entrena clientes. Gana en global.",
     points: [
-      "Vende programas a miles de miembros",
+      "Vende programas a una audiencia global en crecimiento",
       "En ingles, turco, arabe, espanol y frances",
       "Tu pones el precio — nosotros los pagos",
     ],
@@ -83,7 +83,7 @@ const COPY: Record<
     title: "Monetisez votre expertise.",
     sub: "Publiez des programmes. Coachez. Gagnez mondialement.",
     points: [
-      "Vendez vos programmes a des milliers de membres",
+      "Vendez vos programmes a une audience mondiale en croissance",
       "EN, TR, AR, ES, FR",
       "Vous fixez le prix — nous gerons les paiements",
     ],
