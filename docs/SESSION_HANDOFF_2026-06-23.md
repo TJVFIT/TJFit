@@ -34,7 +34,7 @@ All missed by the automated advisor; all verified safe + reversible. Detail: `do
 - Quality: full form a11y (quiz/blog/newsletter/coach); `/api/health`; 23 new regression tests (access-control, redirect safety, money-path, intake); marketing reels + a render-ready Remotion project.
 
 ## 🧹 Minor / optional (no rush)
-- **~944 KB of unused hero images** in `public/assets/hero/` — `hero-anatomy.png`, `hero-bicep-curl.png`, `hero-bicep-curl-clean.png` (664 KB), `hero-programs-bg.png` are referenced by no code (only `hero-nexus` + `hero-tjai-core` are used). If they're not staged for an upcoming redesign, say "delete the unused hero images" and I'll remove them. Left in place since they're your design assets. (No user-facing perf impact — orphans never load; this is just repo/deploy hygiene. Image perf overall is healthy: `next/image` optimizes everything served.)
+- **Hero images unused on `main` are NOT safe to delete** — they're staged for an in-progress hero redesign. `public/assets/hero/hero-bicep-curl-clean.png` (664 KB) and `hero-programs-bg.png` are referenced by an alternate `hero-section.tsx` in the `modest-robinson-bfc913` worktree (plus the live `hero-nexus` + `hero-tjai-core`). Only `hero-anatomy.png` + `hero-bicep-curl.png` aren't referenced by any branch I found — but given the redesign is active, **leave all of them** until that branch lands or is abandoned. (Image perf is otherwise healthy: `next/image` optimizes everything served; only 1 raw `<img>` sitewide, the cached logo.)
 
 ## 📚 The other docs
 `AUDIT_AND_2M_PLAN` (roadmap) · `LAUNCH_READINESS_QNA` (can it make money) · `SECURITY_RLS_AUDIT` · `DB_HARDENING_AUDIT` · `MARKETING_REELS`.
