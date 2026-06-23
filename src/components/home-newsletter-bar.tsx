@@ -113,7 +113,7 @@ export function HomeNewsletterBar({ locale }: { locale: Locale }) {
       </span>
       <div className="relative z-[1] mx-auto flex max-w-6xl flex-col gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-16">
         <div className="min-w-0 flex-1 text-center lg:text-start">
-          <h3 className="font-display text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
+          <h3 id="tj-newsletter-title" className="font-display text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
             <span className="tj-title-shimmer">{copy.title}</span>
           </h3>
           <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-muted lg:mx-0">{copy.sub}</p>
@@ -122,6 +122,7 @@ export function HomeNewsletterBar({ locale }: { locale: Locale }) {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
             <input
               type="email"
+              aria-labelledby="tj-newsletter-title"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={copy.placeholder}
