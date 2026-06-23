@@ -105,8 +105,8 @@ export function BecomeCoachApplicationForm({ locale }: { locale: Locale }) {
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <div className="grid gap-4 sm:grid-cols-2">
-        <input className="input" type="number" min={20} value={age} onChange={(e) => setAge(e.target.value)} placeholder={copy.ageQuestion} />
-        <input className="input" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder={copy.fullName} />
+        <input className="input" type="number" min={20} value={age} onChange={(e) => setAge(e.target.value)} placeholder={copy.ageQuestion} aria-label={copy.ageQuestion} />
+        <input className="input" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder={copy.fullName} aria-label={copy.fullName} />
       </div>
       <input
         className="input"
@@ -114,15 +114,17 @@ export function BecomeCoachApplicationForm({ locale }: { locale: Locale }) {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder={EMAIL_PLACEHOLDER[locale]}
+        aria-label={EMAIL_PLACEHOLDER[locale]}
       />
-      <input className="input" value={specialty} onChange={(e) => setSpecialty(e.target.value)} placeholder={copy.specialtyPlaceholder} />
-      <input className="input" value={languages} onChange={(e) => setLanguages(e.target.value)} placeholder={copy.languagesPlaceholder} />
-      <input className="input" value={country} onChange={(e) => setCountry(e.target.value)} placeholder={copy.country} />
+      <input className="input" value={specialty} onChange={(e) => setSpecialty(e.target.value)} placeholder={copy.specialtyPlaceholder} aria-label={copy.specialtyPlaceholder} />
+      <input className="input" value={languages} onChange={(e) => setLanguages(e.target.value)} placeholder={copy.languagesPlaceholder} aria-label={copy.languagesPlaceholder} />
+      <input className="input" value={country} onChange={(e) => setCountry(e.target.value)} placeholder={copy.country} aria-label={copy.country} />
       <textarea
         className="input min-h-[120px] resize-y"
         value={experience}
         onChange={(e) => setExperience(e.target.value)}
         placeholder={copy.certificationsPlaceholder}
+        aria-label={copy.certificationsPlaceholder}
       />
       {error ? <p className="text-sm text-red-300">{error}</p> : null}
       <AsyncButton
