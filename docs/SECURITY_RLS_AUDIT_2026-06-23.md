@@ -34,5 +34,23 @@ fulfillment/RPC paths already use the service role, so this is almost always a s
 non-breaking tightening — but verify "no user-client write" per table first (grep
 `from("<table>").(insert|update|upsert)` + confirm the client) before applying.
 
-*Next loop iterations will work through the 🟠 list highest-risk first, same
-verify-then-fix discipline.*
+## 🔴 SECURITY DEFINER function EXECUTE (separate from RLS)
+The advisor also flagged SECURITY DEFINER RPCs callable by anon/authenticated.
+Most enforce `auth.uid()` internally (verified safe: `get_profile_card`,
+`search_profiles`, `tjfit_toggle_suggestion_vote`, `tjfit_workout_records`).
+
+**Fixed (critical):** `tjfit_award_reaction(uuid,uuid,uuid,integer)` — mints
+TJCOINs, had **no `auth.uid()` check** and a caller-controlled `p_daily_cap`.
+A direct `/rest/v1/rpc` call (`p_author_id=self`, fake `p_reactor_id`s,
+`p_daily_cap=999999`) could **mint unlimited coins**. Fixed by revoking EXECUTE
+from anon/authenticated and granting only `service_role` (migration
+`20260623164000`). The `/api/community/reactions` route (service role) still
+works and sets reactor=session-user, author=real-post, server-constant cap.
+
+**To check next:** other coin/credit RPCs (`tjfit_redeem_discount`,
+`consume_tjai_credit`) — confirm they're either service-only or safely validate
+the caller before granting/spending.
+
+*Pattern: a SECURITY DEFINER function that grants/spends value should either
+enforce `auth.uid()` on every actor param, or have EXECUTE restricted to the
+service role (called only through a trusted server route).*
