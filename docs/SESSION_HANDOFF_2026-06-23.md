@@ -10,7 +10,10 @@ on branch **`feat/tjfit-continuous`** (16 commits ahead of `main`, build green, 
 2. **Keep the DB awake (free):** point UptimeRobot/cron-job.org at `https://tjfit.org/api/health` (~10 min). Fixes the Supabase auto-pause permanently. (Or set `CRON_SECRET` in Vercel so the daily cron runs.)
 3. **Turn on revenue (Phase 0):**
    - Confirm prod env keys: `OPENAI_API_KEY`, Anthropic, `RESEND_API_KEY`, `RESEND_FROM_EMAIL`.
-   - Credits: create 3 Gumroad products → paste the IDs to me, I'll write the `product_gumroad_sync` SQL.
+   - **Credits = THE revenue blocker** (verified: storefront built + priced, but `live_gumroad_links = 0`, so all 3 packs show "Available soon" and nothing is buyable). Create exactly 3 Gumroad products to match the published packs, then paste the IDs to me and I'll write the `product_gumroad_sync` SQL:
+     - **$8** → 1 plan credit (pack `plan-1`)
+     - **$35** → 5 plan credits (pack `plans-5`)
+     - **$65** → 10 plan credits (pack `plans-10`)
    - Subscriptions: set the 4 `NEXT_PUBLIC_GUMROAD_{PRO,APEX}_{MONTHLY,ANNUAL}_URL` env vars (now documented in `.env.example`).
    - One end-to-end test purchase (bundle → PDF email → access).
 4. **One copy decision:** homepage says "10 Languages" / "20+ Programs" but you ship 5 locales / 12 bundles. Tell me "set to 5/12" or "we're shipping the other 5 locales" and I'll execute.
