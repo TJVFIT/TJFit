@@ -229,6 +229,14 @@ export function calculateTJAIMetrics(answers: QuizAnswers): TJAIMetrics {
   const carbFloor = profile.dietStyle === "low_carb" ? 50 : 100;
   carbs = Math.max(carbFloor, carbs);
 
+  // Keep the reported calorie target consistent with the prescribed macros.
+  // When the carb floor raises carbs above the deficit's remainder (common on
+  // aggressive cuts), the food actually delivers more energy than the target —
+  // so report what the macros sum to. This doesn't change the diet, only makes
+  // the number and the split agree and the weight-change projection honest.
+  // Carbs are only ever floored up, so this never drops below the safety floor.
+  calorieTarget = protein * 4 + fat * 9 + carbs * 4;
+
   let water = profile.weightKg * 35;
   water += profile.trainingDays > 0 ? 500 : 0;
   if (profile.activityLevel === "active") water += 300;

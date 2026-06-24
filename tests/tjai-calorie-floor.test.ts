@@ -40,3 +40,33 @@ describe("calculateTJAIMetrics — calorie safety floor", () => {
     expect(normal.calorieTarget).toBeLessThan(3200);
   });
 });
+
+describe("calculateTJAIMetrics — calorie target agrees with the macro split", () => {
+  const consistent = (answers: Record<string, unknown>) => {
+    const m = calculateTJAIMetrics(answers);
+    const macroKcal = m.protein * 4 + m.fat * 9 + m.carbs * 4;
+    // Within per-gram rounding noise; the carb floor used to leave a ~300 kcal gap.
+    expect(Math.abs(m.calorieTarget - macroKcal)).toBeLessThanOrEqual(12);
+  };
+
+  it("holds when the carb floor binds (heavy, low-activity, aggressive cut)", () => {
+    consistent({
+      s1_gender: "male", s1_age: 30, s1_height: 175, s1_weight: 85,
+      s2_goal: "fat_loss", s2_pace: "aggressive", s4_daily_activity: "very_low",
+      s8_hours: 7, s9_stress: "low", s5_days: 2
+    });
+  });
+
+  it("holds for a normal cut and a normal bulk", () => {
+    consistent({
+      s1_gender: "male", s1_age: 30, s1_height: 180, s1_weight: 85,
+      s2_goal: "fat_loss", s2_pace: "moderate", s4_daily_activity: "moderate",
+      s8_hours: 7, s9_stress: "low", s5_days: 4
+    });
+    consistent({
+      s1_gender: "female", s1_age: 28, s1_height: 165, s1_weight: 62,
+      s2_goal: "muscle_gain", s2_pace: "moderate", s4_daily_activity: "low",
+      s8_hours: 8, s9_stress: "low", s5_days: 3
+    });
+  });
+});
