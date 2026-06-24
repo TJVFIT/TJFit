@@ -42,6 +42,8 @@ The entitlement matrix (`getTJAIAccess`) grants **Pro** two things the membershi
 
 Neither misleads (Pro delivers *more* than advertised), but both **under-sell Pro** and mean code + marketing have drifted. Decide the intended tier lines, then either advertise these in Pro's list (`src/lib/membership-tier-copy.ts`, all 5 locales — easy upgrade-value win) **or** restrict the code (`src/lib/tjai-access.ts`) to match. Say which way and I'll align both.
 
+**⚠️ The reverse — an OVER-promise:** the pricing page advertises a **"Daily meal-of-the-day email"** for Pro/Apex, and the entitlement (`canUseDailyMealEmail`) exists — but **no sender is built** (the daily `/api/cron` only settles community challenges; nothing emails a daily meal). So a paying Pro subscriber is promised a feature they won't receive (refund/trust risk). Before charging for Pro: either **build the sender** (a cron that emails opted-in Pro/Apex users their meal-of-the-day — must filter `unsubscribed_at IS NULL`) or **remove the claim** from the pricing copy. Say which and I'll do it.
+
 ## ✅ Newsletter unsubscribe — DONE (CAN-SPAM/GDPR + one-click)
 Built `/api/newsletter/unsubscribe` (token-gated, source-checked, idempotent, branded + 5-locale page; GET link **and** RFC 8058 one-click POST). The welcome email carries the link (90-day token) plus `List-Unsubscribe` + `List-Unsubscribe-Post` headers — satisfies the 2024 Gmail/Yahoo bulk-sender requirement and improves deliverability. Fully compliant; only a preference-centre UI remains as an optional nicety.
 
