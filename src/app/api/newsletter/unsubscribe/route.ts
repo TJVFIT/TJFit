@@ -48,14 +48,27 @@ export async function GET(request: NextRequest) {
     return htmlResponse(page(locale, "bad"), 400);
   }
 
-  const supabase = getSupabaseServerClient();
-  if (supabase) {
-    const nowIso = new Date().toISOString();
-    // Update whichever list the email is on. Both are no-ops if absent, so
-    // repeated clicks are harmless (idempotent).
-    await supabase.from("newsletter_subscribers").update({ unsubscribed_at: nowIso }).eq("email", payload.email);
-    await supabase.from("marketing_subscribers").update({ opted_in: false, updated_at: nowIso }).eq("email", payload.email);
-  }
-
+  await applyUnsubscribe(payload.email);
   return htmlResponse(page(locale, "ok"), 200);
+}
+
+// RFC 8058 one-click: email clients POST here (body `List-Unsubscribe=One-Click`)
+// when the List-Unsubscribe-Post header is present. Same token gate, no page.
+export async function POST(request: NextRequest) {
+  const token = String(request.nextUrl.searchParams.get("token") ?? "");
+  const payload = token ? verifyNewsletterConfirmToken(token) : null;
+  if (!payload || payload.source !== "unsubscribe") {
+    return new NextResponse(null, { status: 400 });
+  }
+  await applyUnsubscribe(payload.email);
+  return new NextResponse(null, { status: 200 });
+}
+
+async function applyUnsubscribe(email: string): Promise<void> {
+  const supabase = getSupabaseServerClient();
+  if (!supabase) return;
+  const nowIso = new Date().toISOString();
+  // Update whichever list the email is on. No-ops if absent (idempotent).
+  await supabase.from("newsletter_subscribers").update({ unsubscribed_at: nowIso }).eq("email", email);
+  await supabase.from("marketing_subscribers").update({ opted_in: false, updated_at: nowIso }).eq("email", email);
 }

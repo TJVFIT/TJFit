@@ -62,7 +62,11 @@ export async function GET(request: NextRequest) {
       await sendEmail({
         to: payload.email,
         subject: "Your Free 3-Day Workout Plan from TJFit",
-        html: EmailTemplates.newsletterPlanWelcome(baseUrl, unsubscribeUrl)
+        html: EmailTemplates.newsletterPlanWelcome(baseUrl, unsubscribeUrl),
+        headers: {
+          "List-Unsubscribe": `<${unsubscribeUrl}>`,
+          "List-Unsubscribe-Post": "List-Unsubscribe=One-Click"
+        }
       });
     }
   } else {

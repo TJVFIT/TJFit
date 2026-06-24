@@ -11,12 +11,15 @@ export async function sendEmail({
   to,
   subject,
   html,
-  attachments
+  attachments,
+  headers
 }: {
   to: string;
   subject: string;
   html: string;
   attachments?: Array<{ filename: string; content: string | Buffer }>;
+  /** Extra SMTP headers, e.g. List-Unsubscribe for marketing email. */
+  headers?: Record<string, string>;
 }) {
   if (!resend) {
     return { ok: false as const, error: "RESEND_API_KEY is not configured" };
@@ -28,7 +31,8 @@ export async function sendEmail({
       to,
       subject,
       html,
-      attachments
+      attachments,
+      headers
     });
     // Resend SDK returns { data, error } — surface the error path explicitly
     // rather than swallowing it as a success.
