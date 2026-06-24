@@ -42,8 +42,8 @@ The entitlement matrix (`getTJAIAccess`) grants **Pro** two things the membershi
 
 Neither misleads (Pro delivers *more* than advertised), but both **under-sell Pro** and mean code + marketing have drifted. Decide the intended tier lines, then either advertise these in Pro's list (`src/lib/membership-tier-copy.ts`, all 5 locales — easy upgrade-value win) **or** restrict the code (`src/lib/tjai-access.ts`) to match. Say which way and I'll align both.
 
-## ✅ Newsletter unsubscribe — DONE (CAN-SPAM/GDPR)
-Built `/api/newsletter/unsubscribe` (token-gated, source-checked, idempotent, branded + 5-locale page); the welcome email now carries the link via a 90-day token. *Optional enhancement left for you:* add a `List-Unsubscribe` header in `src/lib/email.ts` (RFC 8058 one-click) and/or a preference centre — nice-to-haves, not required.
+## ✅ Newsletter unsubscribe — DONE (CAN-SPAM/GDPR + one-click)
+Built `/api/newsletter/unsubscribe` (token-gated, source-checked, idempotent, branded + 5-locale page; GET link **and** RFC 8058 one-click POST). The welcome email carries the link (90-day token) plus `List-Unsubscribe` + `List-Unsubscribe-Post` headers — satisfies the 2024 Gmail/Yahoo bulk-sender requirement and improves deliverability. Fully compliant; only a preference-centre UI remains as an optional nicety.
 
 ## 📦 Paid-bundle fulfillment is deferred (decide before selling paid programs)
 The Gumroad webhook **fulfills credits** (`grant_tjai_credit`, wired ✅) but for **program/diet bundle** sales it only inserts a `sale_commissions` audit row — it does **not** grant in-app access, coins, or run the canonical `src/lib/checkout-fulfill-order.ts` (the code comment notes this is deferred). Today this is moot (the FREE bundles work; paid bundles aren't linked to Gumroad). But **before you sell a paid bundle**, decide the delivery model: (a) attach the content/PDF to the Gumroad product so Gumroad delivers it, or (b) wire `checkout-fulfill-order.ts` into the webhook's `program`/`diet` case for in-app unlock. Credits are unaffected. Say which and I'll wire (b) if you want it.
