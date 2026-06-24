@@ -7,6 +7,7 @@ import { Eye, EyeOff, Upload, Camera, Dumbbell, Flame, Home, Scale, type LucideI
 import { AuthPageFrame } from "@/components/auth-page-frame";
 import { AsyncButton } from "@/components/ui/AsyncButton";
 import { Logo } from "@/components/ui/Logo";
+import { ageFromBirthDate } from "@/lib/age-gate";
 import { mapSupabaseAuthError } from "@/lib/auth-errors";
 import { getSignupGoals, type SignupGoalKey } from "@/lib/auth-signup-content";
 import { getAuthCopy } from "@/lib/launch-copy";
@@ -35,17 +36,6 @@ const DOB_COPY: Record<Locale, { label: string; under13: string }> = {
   es: { label: "Fecha de nacimiento", under13: "Debes tener al menos 13 años para usar TJFit." },
   fr: { label: "Date de naissance", under13: "Vous devez avoir au moins 13 ans pour utiliser TJFit." }
 };
-
-function ageFromBirthDate(value: string): number | null {
-  if (!value) return null;
-  const dob = new Date(value);
-  if (Number.isNaN(dob.getTime())) return null;
-  const now = new Date();
-  let age = now.getFullYear() - dob.getFullYear();
-  const m = now.getMonth() - dob.getMonth();
-  if (m < 0 || (m === 0 && now.getDate() < dob.getDate())) age--;
-  return age;
-}
 
 function SignupForm({ params }: { params: { locale: string } }) {
   const router = useRouter();
