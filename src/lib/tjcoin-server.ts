@@ -37,6 +37,12 @@ export async function awardTJCoin(userId: string, reason: TJCoinRewardReason | s
     .single();
 
   const prevBalance = wallet?.balance ?? 0;
+  // Spends (negative, allowNegative) must not silently clamp an over-spend to
+  // zero — reject if the balance can't cover it. Awards never reach this since
+  // a positive amount on a non-negative balance is always >= 0.
+  if (amount < 0 && prevBalance + amount < 0) {
+    return { ok: false as const, error: "Insufficient TJCOIN balance" };
+  }
   const nextBalance = Math.max(0, prevBalance + amount);
   const earnedDelta = amount > 0 ? amount : 0;
   const spentDelta = amount < 0 ? Math.abs(amount) : 0;
