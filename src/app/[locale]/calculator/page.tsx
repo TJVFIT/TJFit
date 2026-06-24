@@ -31,7 +31,11 @@ export default function CalculatorPage({ params }: { params: { locale: string } 
   }, [submitted]);
 
   const result = useMemo(() => {
-    const bmr = calculateBmr(age, gender, height, weight);
+    // Age is a free number input (min/max are only hints), so clamp it to a
+    // plausible range before the math — otherwise an empty/huge value can drive
+    // BMR negative and show negative calories.
+    const safeAge = Math.min(90, Math.max(14, Number.isFinite(age) && age > 0 ? age : 28));
+    const bmr = calculateBmr(safeAge, gender, height, weight);
     const tdee = Math.round(bmr * activity);
     const calories = goal === "lose" ? tdee - 500 : goal === "gain" ? tdee + 300 : tdee;
     const protein = Math.round(weight * 2.0);
@@ -39,7 +43,7 @@ export default function CalculatorPage({ params }: { params: { locale: string } 
     const remaining = Math.max(0, calories - protein * 4 - fat * 9);
     const carbs = Math.round(remaining / 4);
     const waterMl = Math.round(weight * 35);
-    return { tdee, calories, protein, fat, carbs, waterMl };
+    return { bmr: Math.round(bmr), tdee, calories, protein, fat, carbs, waterMl };
   }, [age, gender, height, weight, activity, goal]);
 
   return (
@@ -116,7 +120,7 @@ export default function CalculatorPage({ params }: { params: { locale: string } 
             </div>
           </div>
           <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted">
-            <span>BMR: <span className="text-white">{calculateBmr(age, gender, height, weight).toFixed(0)} kcal</span></span>
+            <span>BMR: <span className="text-white">{result.bmr} kcal</span></span>
             <span>TDEE: <span className="text-white">{result.tdee} kcal</span></span>
             <span>Water: <span className="text-white">{(result.waterMl / 1000).toFixed(1)}L/day</span></span>
           </div>
