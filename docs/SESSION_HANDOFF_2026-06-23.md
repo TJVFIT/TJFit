@@ -34,6 +34,13 @@ All missed by the automated advisor; all verified safe + reversible. Detail: `do
 - TJAI: chatbot knows the real 12-bundle catalog (was 6 phantom programs); billing/refund guardrail; intake clamps absurd quiz inputs out of the BMR math.
 - Quality: full form a11y (quiz/blog/newsletter/coach); `/api/health`; 23 new regression tests (access-control, redirect safety, money-path, intake); marketing reels + a render-ready Remotion project.
 
+## 💸 Reconcile Pro tier: code vs pricing page (revenue)
+The entitlement matrix (`getTJAIAccess`) grants **Pro** two things the membership pricing page doesn't advertise:
+- **Coach plan reviews** (`canRequestCoachReview` — a real, built feature) — not in Pro's feature list.
+- **Meal swaps, 3/day with a plan** (`canUseMealSwap`) — the page positions meal swaps as Apex-only ("Advanced meal swaps").
+
+Neither misleads (Pro delivers *more* than advertised), but both **under-sell Pro** and mean code + marketing have drifted. Decide the intended tier lines, then either advertise these in Pro's list (`src/lib/membership-tier-copy.ts`, all 5 locales — easy upgrade-value win) **or** restrict the code (`src/lib/tjai-access.ts`) to match. Say which way and I'll align both.
+
 ## 🧹 Minor / optional (no rush)
 - **Auth error fallback shows raw English** to non-EN users: `mapSupabaseAuthError` localizes the 4 common errors but returns the raw Supabase string for anything unmapped (rare edges like rate-limit/server errors). For full multilingual polish, change the fallback to the generic localized `copy.loginFailed`. Left as-is since `return raw` may be deliberate (transparency) and it's auth-adjacent — your call.
 - **Reserve the `tjai` username** (brand/impersonation): `RESERVED_USERNAMES` blocks `tjfit` but not `tjai` (the AI brand). Add it in **both** `src/lib/username.ts` and the `profiles_username_enforce` Supabase migration (they're kept in sync; the migration is the authoritative gate). Left to you since it touches a protected migration + prod DB. Say the word and I'll prep the migration.
