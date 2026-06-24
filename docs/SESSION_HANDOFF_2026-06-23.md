@@ -34,6 +34,7 @@ All missed by the automated advisor; all verified safe + reversible. Detail: `do
 - Quality: full form a11y (quiz/blog/newsletter/coach); `/api/health`; 23 new regression tests (access-control, redirect safety, money-path, intake); marketing reels + a render-ready Remotion project.
 
 ## 🧹 Minor / optional (no rush)
+- **Reserve the `tjai` username** (brand/impersonation): `RESERVED_USERNAMES` blocks `tjfit` but not `tjai` (the AI brand). Add it in **both** `src/lib/username.ts` and the `profiles_username_enforce` Supabase migration (they're kept in sync; the migration is the authoritative gate). Left to you since it touches a protected migration + prod DB. Say the word and I'll prep the migration.
 - **Hero images unused on `main` are NOT safe to delete** — they're staged for an in-progress hero redesign. `public/assets/hero/hero-bicep-curl-clean.png` (664 KB) and `hero-programs-bg.png` are referenced by an alternate `hero-section.tsx` in the `modest-robinson-bfc913` worktree (plus the live `hero-nexus` + `hero-tjai-core`). Only `hero-anatomy.png` + `hero-bicep-curl.png` aren't referenced by any branch I found — but given the redesign is active, **leave all of them** until that branch lands or is abandoned. (Image perf is otherwise healthy: `next/image` optimizes everything served; only 1 raw `<img>` sitewide, the cached logo.)
 
 ## 📚 The other docs
