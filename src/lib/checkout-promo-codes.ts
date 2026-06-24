@@ -6,7 +6,9 @@
  * - CHECKOUT_PROMO_PAIRS — comma-separated CODE:PERCENT (no JSON; reliable on Vercel), e.g. JOSEPH1407:99
  * - CHECKOUT_PROMO_CODE + CHECKOUT_PROMO_PERCENT — single code, e.g. JOSEPH1407 and 99
  *
- * Codes are matched case-insensitively. prepare-session needs PADDLE_WALLET_DISCOUNT_ID (dsc_…) matching that % in Gumroad.
+ * Codes are matched case-insensitively. The resolved % must correspond to a
+ * discount configured on the matching Gumroad product — Gumroad enforces the
+ * actual price reduction at checkout; this map only resolves the percentage.
  */
 
 function parsePercent(value: unknown): number | null {
