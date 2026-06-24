@@ -180,7 +180,7 @@ export function HomeTestimonials({ locale }: { locale: Locale }) {
               type="button"
               onClick={() => setActiveIdx(idx)}
               className={cn(
-                "h-2 rounded-full transition-[width,background-color] duration-300 ease-out",
+                "relative h-2 rounded-full transition-[width,background-color] duration-300 ease-out before:absolute before:left-1/2 before:top-1/2 before:h-6 before:w-6 before:-translate-x-1/2 before:-translate-y-1/2 before:content-['']",
                 idx === activeIdx ? "w-6 bg-accent" : "w-2 border border-[rgba(168,85,247,0.35)] bg-transparent hover:bg-[rgba(168,85,247,0.2)]"
               )}
               aria-label={`Slide ${idx + 1}`}
