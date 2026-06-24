@@ -53,6 +53,10 @@ describe("chat coach system prompt — guardrail regression", () => {
     expect(prompt).toMatch(/qualified professional/i);
   });
 
+  it("keeps a fitness scope boundary (declines off-topic requests)", () => {
+    expect(prompt).toMatch(/not a general-purpose assistant/i);
+  });
+
   it("knows the membership tiers (Core/Pro/Apex) to guide upgrades without quoting prices", () => {
     expect(prompt).toContain("MEMBERSHIP TIERS");
     expect(prompt).toContain("Core");
