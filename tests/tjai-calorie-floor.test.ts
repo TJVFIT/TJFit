@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 
 import { calculateTJAIMetrics } from "@/lib/tjai-science";
+import type { QuizAnswers } from "@/lib/tjai-types";
 
 /**
  * The calorie floor (1200 kcal female / 1500 male) is a hard safety guarantee.
@@ -42,7 +43,7 @@ describe("calculateTJAIMetrics — calorie safety floor", () => {
 });
 
 describe("calculateTJAIMetrics — calorie target agrees with the macro split", () => {
-  const consistent = (answers: Record<string, unknown>) => {
+  const consistent = (answers: QuizAnswers) => {
     const m = calculateTJAIMetrics(answers);
     const macroKcal = m.protein * 4 + m.fat * 9 + m.carbs * 4;
     // Within per-gram rounding noise; the carb floor used to leave a ~300 kcal gap.
