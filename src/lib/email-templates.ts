@@ -34,7 +34,7 @@ export const EmailTemplates = {
       ctaLabel: "Confirm subscription",
       ctaUrl: url
     }),
-  newsletterPlanWelcome: (url: string) =>
+  newsletterPlanWelcome: (url: string, unsubscribeUrl?: string) =>
     renderTemplate({
       title: "Your Free 3-Day Workout Plan from TJFit",
       body: [
@@ -46,7 +46,8 @@ export const EmailTemplates = {
         "Ready for a full 12 weeks? Start free on TJFit."
       ].join("\n"),
       ctaLabel: "Start free on TJFit",
-      ctaUrl: url
+      ctaUrl: url,
+      footerUrl: unsubscribeUrl
     }),
   welcome: (name: string, url: string, unsubscribeUrl: string) =>
     renderTemplate({

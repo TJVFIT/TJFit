@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { sendEmail } from "@/lib/email";
 import { EmailTemplates } from "@/lib/email-templates";
-import { verifyNewsletterConfirmToken } from "@/lib/newsletter-confirmation";
+import { signNewsletterConfirmToken, verifyNewsletterConfirmToken } from "@/lib/newsletter-confirmation";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 export async function GET(request: NextRequest) {
@@ -52,10 +52,17 @@ export async function GET(request: NextRequest) {
 
     if (!alreadyConfirmed) {
       const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://tjfit.org";
+      const unsubToken = signNewsletterConfirmToken({
+        email: payload.email,
+        source: "unsubscribe",
+        locale: payload.locale || "en",
+        ttlMinutes: 60 * 24 * 90 // 90 days — opt-out must keep working long after send
+      });
+      const unsubscribeUrl = `${baseUrl}/api/newsletter/unsubscribe?token=${encodeURIComponent(unsubToken)}`;
       await sendEmail({
         to: payload.email,
         subject: "Your Free 3-Day Workout Plan from TJFit",
-        html: EmailTemplates.newsletterPlanWelcome(baseUrl)
+        html: EmailTemplates.newsletterPlanWelcome(baseUrl, unsubscribeUrl)
       });
     }
   } else {
