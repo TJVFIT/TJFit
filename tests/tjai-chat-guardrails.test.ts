@@ -53,6 +53,13 @@ describe("chat coach system prompt — guardrail regression", () => {
     expect(prompt).toMatch(/qualified professional/i);
   });
 
+  it("knows the membership tiers (Core/Pro/Apex) to guide upgrades without quoting prices", () => {
+    expect(prompt).toContain("MEMBERSHIP TIERS");
+    expect(prompt).toContain("Core");
+    expect(prompt).toContain("Pro");
+    expect(prompt).toContain("Apex");
+  });
+
   it("forces the selected language when a non-default locale is provided", () => {
     const tr = buildChatCoachSystemPrompt({ ...base, locale: "tr" });
     expect(tr).toContain("CRITICAL LANGUAGE RULE");
