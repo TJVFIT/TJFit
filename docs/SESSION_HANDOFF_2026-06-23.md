@@ -14,6 +14,7 @@ on branch **`feat/tjfit-continuous`** (16 commits ahead of `main`, build green, 
      - **$8** → 1 plan credit (pack `plan-1`)
      - **$35** → 5 plan credits (pack `plans-5`)
      - **$65** → 10 plan credits (pack `plans-10`)
+     - **When you wire credits live, also harden idempotency:** the credit grant (`grant_tjai_credit`) dedups only via the webhook's `event_id`, while the program/commission path additionally dedups on `gumroad_sale_id`. Add a unique constraint (or pre-grant check) on the credit ledger's `gumroad_sale_id` so a Gumroad redelivery with a fresh event_id can't double-grant credits. Audited safe otherwise: grant size is tied to the signed product_id (no pay-less-get-more), buyer matched by signed email.
    - Subscriptions: set the 4 `NEXT_PUBLIC_GUMROAD_{PRO,APEX}_{MONTHLY,ANNUAL}_URL` env vars (now documented in `.env.example`).
    - One end-to-end test purchase (bundle → PDF email → access).
 4. **One copy decision:** homepage says "10 Languages" / "20+ Programs" but you ship 5 locales / 12 bundles. (Also inconsistent: the coach-CTA's EN bullet says "10 member languages" while its TR/AR/ES/FR siblings already list the real 5.) Tell me "set to 5/12" or "we're shipping the other 5 locales" and I'll make it consistent everywhere.
