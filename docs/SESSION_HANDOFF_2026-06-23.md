@@ -1,7 +1,7 @@
 # TJFit — Session Handoff (2026-06-23) — START HERE
 
-One page to resume from. A long autonomous session ran design + security + quality work
-on branch **`feat/tjfit-continuous`** (16 commits ahead of `main`, build green, 126 tests passing).
+One page to resume from. A long autonomous session ran design + security + quality + compliance work
+on branch **`feat/tjfit-continuous`** (~55 commits ahead of `main`, build green, 218 tests passing).
 6 critical security fixes are **already live on prod** (applied as migrations); the rest ships when you merge.
 
 ## ✅ Do these first (highest ROI, only you can)
@@ -35,14 +35,20 @@ All missed by the automated advisor; all verified safe + reversible. Detail: `do
 - TJAI: chatbot knows the real 12-bundle catalog (was 6 phantom programs); billing/refund guardrail; intake clamps absurd quiz inputs out of the BMR math.
 - Quality: full form a11y (quiz/blog/newsletter/coach); `/api/health`; 23 new regression tests (access-control, redirect safety, money-path, intake); marketing reels + a render-ready Remotion project.
 
-## 💸 Reconcile Pro tier: code vs pricing page (revenue)
-The entitlement matrix (`getTJAIAccess`) grants **Pro** two things the membership pricing page doesn't advertise:
-- **Coach plan reviews** (`canRequestCoachReview` — a real, built feature) — not in Pro's feature list.
-- **Meal swaps, 3/day with a plan** (`canUseMealSwap`) — the page positions meal swaps as Apex-only ("Advanced meal swaps").
+## 💸 Reconcile the Pro tier before charging for subscriptions (revenue + legal)
+Audited the advertised Pro/Apex features (`src/lib/membership-tier-copy.ts`) against what's actually built (`getTJAIAccess` + the code). Three categories:
 
-Neither misleads (Pro delivers *more* than advertised), but both **under-sell Pro** and mean code + marketing have drifted. Decide the intended tier lines, then either advertise these in Pro's list (`src/lib/membership-tier-copy.ts`, all 5 locales — easy upgrade-value win) **or** restrict the code (`src/lib/tjai-access.ts`) to match. Say which way and I'll align both.
+**✅ Built + advertised:** unlimited TJAI chat, Apex meal swaps, Apex plan regeneration.
 
-**⚠️ The reverse — an OVER-promise:** the pricing page advertises a **"Daily meal-of-the-day email"** for Pro/Apex, and the entitlement (`canUseDailyMealEmail`) exists — but **no sender is built** (the daily `/api/cron` only settles community challenges; nothing emails a daily meal). So a paying Pro subscriber is promised a feature they won't receive (refund/trust risk). Before charging for Pro: either **build the sender** (a cron that emails opted-in Pro/Apex users their meal-of-the-day — must filter `unsubscribed_at IS NULL`) or **remove the claim** from the pricing copy. Say which and I'll do it.
+**🟢 Built but NOT advertised (under-sells Pro — easy upgrade-value win):**
+- Coach plan reviews (`canRequestCoachReview`, real feature) — add to Pro's list.
+- Meal swaps 3/day with a plan (`canUseMealSwap`) — page frames swaps as Apex-only.
+
+**🔴 Advertised but NOT built (OVER-promise — refund/legal risk; fix before charging):**
+- **"Daily meal-of-the-day email"** — entitlement exists, but **no sender** (the daily `/api/cron` only settles challenges).
+- **"Monthly discount code"** — redemption works (`tjfit_discount_codes` at checkout), but **nothing issues or shows Pro members a code** (no monthly issuance, no dashboard display).
+
+For each 🔴: **build it** (the meal-email cron must filter `unsubscribed_at IS NULL`; the discount needs monthly issuance + a member-facing display) **or remove the claim** from the 5-locale pricing copy. The 🟢 items: advertise them or restrict the code to match. Tell me the intended tier lines and I'll align code + marketing in one pass.
 
 ## ✅ Newsletter unsubscribe — DONE (CAN-SPAM/GDPR + one-click)
 Built `/api/newsletter/unsubscribe` (token-gated, source-checked, idempotent, branded + 5-locale page; GET link **and** RFC 8058 one-click POST). The welcome email carries the link (90-day token) plus `List-Unsubscribe` + `List-Unsubscribe-Post` headers — satisfies the 2024 Gmail/Yahoo bulk-sender requirement and improves deliverability. Fully compliant; only a preference-centre UI remains as an optional nicety.
