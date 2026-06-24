@@ -61,6 +61,13 @@ Referrals are a cheap acquisition channel you're 60% of the way to. **Built:** s
 
 > **Pattern to note:** a few surfaced/advertised features aren't fully built — daily meal email, monthly discount code (both in the Pro-tier section above), and referral rewards. Worth a quick "advertised vs. built" pass before launch so nothing sold/shown is hollow.
 
+## 🗄️ DB performance — optimize before scaling (not before launch)
+The Supabase **performance advisor** flags two genuine structural RLS issues (harmless at 7 users, real on large tables):
+- **`auth_rls_initplan` (135 policies):** RLS calls `auth.uid()` per-row. Wrap as `(select auth.uid())` so Postgres evaluates it once per query — semantically identical, can be 10–100× faster on big tables. THE standard Supabase RLS optimization.
+- **`multiple_permissive_policies` (222):** tables with several permissive policies for the same role/action; Postgres evaluates them all. Consolidate where the logic allows.
+
+Both are mechanical but touch **357 prod RLS policies** — do it as a deliberate migration with verification, not blindly. The advisor's remediation SQL is in its output (run `get_advisors type=performance` or the dashboard Advisors tab). **Ignore the 124 `unused_index` flags** — they're false positives on a no-traffic DB (everything looks unused until there's load). Say "do the RLS perf pass" and I'll prep + verify it table-by-table.
+
 ## 🧹 Minor / optional (no rush)
 - **Coach wallet/payout is a stub** (deferred — you have 0 coaches today). `coach-dashboard-view.tsx` hard-codes "0 TRY" available balance and labels tx amounts "TRY", but commissions are logged in **USD** (`sale_commissions.coach_amount_usd`). Before onboarding coaches: wire the wallet to real `sale_commissions` data, add a payout flow, and fix the currency (show USD or convert). Not urgent.
 - **Auth error fallback shows raw English** to non-EN users: `mapSupabaseAuthError` localizes the 4 common errors but returns the raw Supabase string for anything unmapped (rare edges like rate-limit/server errors). For full multilingual polish, change the fallback to the generic localized `copy.loginFailed`. Left as-is since `return raw` may be deliberate (transparency) and it's auth-adjacent — your call.
