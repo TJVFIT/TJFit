@@ -33,9 +33,6 @@ All missed by the automated advisor; all verified safe + reversible. Detail: `do
 - TJAI: chatbot knows the real 12-bundle catalog (was 6 phantom programs); billing/refund guardrail; intake clamps absurd quiz inputs out of the BMR math.
 - Quality: full form a11y (quiz/blog/newsletter/coach); `/api/health`; 23 new regression tests (access-control, redirect safety, money-path, intake); marketing reels + a render-ready Remotion project.
 
-## 🌐 Localize the TDEE calculator (medium value)
-`/[locale]/calculator` is a public, in-sitemap lead-gen tool but is **English-only** — no locale copy, so TR/AR/ES/FR visitors get an all-English page (~28 strings: labels, activity/goal options, results, CTA). Worth a focused localization pass (mirror the credits/coach-CTA pages' 5-locale COPY style; AR is RTL). The math + an age-input edge case are already fixed. Say "localize the calculator" and I'll do it.
-
 ## 🧹 Minor / optional (no rush)
 - **Hero images unused on `main` are NOT safe to delete** — they're staged for an in-progress hero redesign. `public/assets/hero/hero-bicep-curl-clean.png` (664 KB) and `hero-programs-bg.png` are referenced by an alternate `hero-section.tsx` in the `modest-robinson-bfc913` worktree (plus the live `hero-nexus` + `hero-tjai-core`). Only `hero-anatomy.png` + `hero-bicep-curl.png` aren't referenced by any branch I found — but given the redesign is active, **leave all of them** until that branch lands or is abandoned. (Image perf is otherwise healthy: `next/image` optimizes everything served; only 1 raw `<img>` sitewide, the cached logo.)
 
