@@ -308,9 +308,10 @@ export function LogoIntro({
         <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--color-text-muted)]">
           TJFit
         </p>
-        <h1 className="mt-4 font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+        {/* h2, not h1 — the page's single h1 is the hero headline. */}
+        <h2 className="mt-4 font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
           {PICKER_TITLE[locale]}
-        </h1>
+        </h2>
         <div className="mt-10 grid w-full max-w-2xl grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           {supportedLocales.map((code) => {
             const info = LOCALE_META[code];
