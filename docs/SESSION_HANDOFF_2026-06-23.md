@@ -10,6 +10,7 @@ on branch **`feat/tjfit-continuous`** (16 commits ahead of `main`, build green, 
 2. **Keep the DB awake (free):** point UptimeRobot/cron-job.org at `https://tjfit.org/api/health` (~10 min). Fixes the Supabase auto-pause permanently. (Or set `CRON_SECRET` in Vercel so the daily cron runs.)
 3. **Turn on revenue (Phase 0):**
    - Confirm prod env keys: `OPENAI_API_KEY`, Anthropic, `RESEND_API_KEY`, `RESEND_FROM_EMAIL`.
+   - **Set `UPSTASH_REDIS_REST_URL` + `_TOKEN` in Vercel** (free tier fine). The rate limiter on **24 endpoints** falls back to an in-memory no-op without it — and 6 of those are paid TJAI endpoints (chat, PDF, meal-swap, etc.) where unmetered abuse bills *your* OpenAI/Anthropic account. The code's ready; it just needs the env vars to actually throttle in prod.
    - **Credits = THE revenue blocker** (verified: storefront built + priced, but `live_gumroad_links = 0`, so all 3 packs show "Available soon" and nothing is buyable). Create exactly 3 Gumroad products to match the published packs, then paste the IDs to me and I'll write the `product_gumroad_sync` SQL:
      - **$8** → 1 plan credit (pack `plan-1`)
      - **$35** → 5 plan credits (pack `plans-5`)
