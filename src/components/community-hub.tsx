@@ -379,10 +379,10 @@ export function CommunityHub({
   const copy = getCommunityCopy(locale);
   const tabs: { key: TabKey; label: string }[] = [
     { key: "blogs", label: copy.tabs.blogs },
-    { key: "people", label: "People" },
+    { key: "people", label: copy.tabs.people },
     { key: "threads", label: copy.tabs.threads },
     { key: "challenges", label: copy.tabs.challenges },
-    { key: "groups", label: "Groups" },
+    { key: "groups", label: copy.tabs.groups },
     { key: "transformations", label: copy.tabs.transformations }
   ];
 

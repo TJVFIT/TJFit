@@ -205,7 +205,7 @@ export function HeroSection({
         }}
         aria-hidden
       >
-        <div className="tj-hero-kinetic-frame pointer-events-none absolute inset-[8%] hidden lg:block" aria-hidden />
+        <div className="tj-hero-kinetic-frame pointer-events-none absolute inset-[8%]" aria-hidden />
         <TJHeroStage variant="neural" pointerReactive={!reduce} speed={reduce ? 0 : 0.78} intensity={0.95} />
         <HeroSignal icon={Activity} label={copy.signals.model} value={copy.signals.modelValue} className="absolute right-[7%] top-[19%]" />
         <HeroSignal icon={Timer} label={copy.signals.cycle} value={copy.signals.cycleValue} className="absolute bottom-[24%] right-[10%]" />
