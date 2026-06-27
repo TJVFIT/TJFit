@@ -16,6 +16,14 @@ type ProgressCopy = {
   milestonePlaceholder: string;
   milestoneTargetPlaceholder: string;
   done: string;
+  measurementsLabel: string;
+  waistPlaceholder: string;
+  chestPlaceholder: string;
+  hipsPlaceholder: string;
+  setsPlaceholder: string;
+  repsPlaceholder: string;
+  workoutWeightPlaceholder: string;
+  durationPlaceholder: string;
 };
 
 type MessagesCopy = {
@@ -73,7 +81,15 @@ const progressCopy: Record<Locale, ProgressCopy> = {
     exercisePlaceholder: "Exercise",
     milestonePlaceholder: "Milestone",
     milestoneTargetPlaceholder: 'Target (e.g. "Bench 100kg")',
-    done: "Done"
+    done: "Done",
+    measurementsLabel: "Measurements (cm)",
+    waistPlaceholder: "Waist",
+    chestPlaceholder: "Chest",
+    hipsPlaceholder: "Hips",
+    setsPlaceholder: "Sets",
+    repsPlaceholder: "Reps",
+    workoutWeightPlaceholder: "Weight (kg)",
+    durationPlaceholder: "Duration (min)"
   },
   tr: {
     title: "Ilerleme",
@@ -90,7 +106,15 @@ const progressCopy: Record<Locale, ProgressCopy> = {
     exercisePlaceholder: "Egzersiz",
     milestonePlaceholder: "Hedef",
     milestoneTargetPlaceholder: 'Hedef degeri (orn. "Bench 100kg")',
-    done: "Tamamlandi"
+    done: "Tamamlandi",
+    measurementsLabel: "Ölçümler (cm)",
+    waistPlaceholder: "Bel",
+    chestPlaceholder: "Göğüs",
+    hipsPlaceholder: "Kalça",
+    setsPlaceholder: "Set",
+    repsPlaceholder: "Tekrar",
+    workoutWeightPlaceholder: "Ağırlık (kg)",
+    durationPlaceholder: "Süre (dk)"
   },
   ar: {
     title: "التقدم",
@@ -107,7 +131,15 @@ const progressCopy: Record<Locale, ProgressCopy> = {
     exercisePlaceholder: "التمرين",
     milestonePlaceholder: "الهدف",
     milestoneTargetPlaceholder: 'القيمة المستهدفة (مثال: "Bench 100kg")',
-    done: "تم"
+    done: "تم",
+    measurementsLabel: "القياسات (سم)",
+    waistPlaceholder: "الخصر",
+    chestPlaceholder: "الصدر",
+    hipsPlaceholder: "الوركان",
+    setsPlaceholder: "المجموعات",
+    repsPlaceholder: "التكرارات",
+    workoutWeightPlaceholder: "الوزن (كغ)",
+    durationPlaceholder: "المدة (دقيقة)"
   },
   es: {
     title: "Progreso",
@@ -124,7 +156,15 @@ const progressCopy: Record<Locale, ProgressCopy> = {
     exercisePlaceholder: "Ejercicio",
     milestonePlaceholder: "Meta",
     milestoneTargetPlaceholder: 'Objetivo medible (ej. "Bench 100kg")',
-    done: "Hecho"
+    done: "Hecho",
+    measurementsLabel: "Medidas (cm)",
+    waistPlaceholder: "Cintura",
+    chestPlaceholder: "Pecho",
+    hipsPlaceholder: "Caderas",
+    setsPlaceholder: "Series",
+    repsPlaceholder: "Repeticiones",
+    workoutWeightPlaceholder: "Peso (kg)",
+    durationPlaceholder: "Duración (min)"
   },
   fr: {
     title: "Progression",
@@ -141,7 +181,15 @@ const progressCopy: Record<Locale, ProgressCopy> = {
     exercisePlaceholder: "Exercice",
     milestonePlaceholder: "Objectif",
     milestoneTargetPlaceholder: 'Cible mesuree (ex. "Bench 100kg")',
-    done: "Termine"
+    done: "Termine",
+    measurementsLabel: "Mesures (cm)",
+    waistPlaceholder: "Taille",
+    chestPlaceholder: "Poitrine",
+    hipsPlaceholder: "Hanches",
+    setsPlaceholder: "Séries",
+    repsPlaceholder: "Répétitions",
+    workoutWeightPlaceholder: "Poids (kg)",
+    durationPlaceholder: "Durée (min)"
   }
 };
 

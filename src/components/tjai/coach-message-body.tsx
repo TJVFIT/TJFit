@@ -1,8 +1,17 @@
 "use client";
 
 import { Fragment, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
+
+const THINKING_LABEL: Record<string, string> = {
+  en: "TJAI is thinking",
+  tr: "TJAI düşünüyor",
+  ar: "TJAI يفكر",
+  es: "TJAI está pensando",
+  fr: "TJAI réfléchit"
+};
 
 import styles from "./tjai-chat.module.css";
 
@@ -88,11 +97,14 @@ export function CoachMessageBody({ text, className }: { text: string; className?
 }
 
 export function CoachThinkingPulse() {
+  const pathname = usePathname() ?? "";
+  const seg = pathname.split("/").filter(Boolean)[0] ?? "";
+  const thinkingLabel = THINKING_LABEL[seg] ?? THINKING_LABEL.en;
   return (
     <div
       className="flex items-center gap-2.5 py-0.5"
       aria-live="polite"
-      aria-label="TJAI is thinking"
+      aria-label={thinkingLabel}
       role="status"
     >
       <span
@@ -101,7 +113,7 @@ export function CoachThinkingPulse() {
           styles.thinkLabel
         )}
       >
-        TJAI is thinking
+        {thinkingLabel}
       </span>
       <span className="flex items-end gap-[3px] motion-reduce:hidden" aria-hidden>
         {[0, 1, 2].map((d) => (

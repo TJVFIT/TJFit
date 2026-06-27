@@ -138,6 +138,22 @@ type CommunityCopy = {
   arabic: string;
   spanish: string;
   french: string;
+  noActiveChallenges: string;
+  joined: string;
+  joinChallenge: string;
+  dailyValue: string;
+  logToday: string;
+  loggedToday: string;
+  leaderboardTitle: string;
+  yourRank: string;
+  membersLabel: string;
+  searchPeople: string;
+  searchResults: string;
+  topMembersThisWeek: string;
+  activeCoaches: string;
+  newMembers: string;
+  similarGoals: string;
+  openFeed: string;
 };
 
 type FooterCopy = {
@@ -718,7 +734,23 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     turkish: "Turkish",
     arabic: "Arabic",
     spanish: "Spanish",
-    french: "French"
+    french: "French",
+    noActiveChallenges: "No active challenges.",
+    joined: "Joined",
+    joinChallenge: "Join Challenge",
+    dailyValue: "Daily value",
+    logToday: "Log Today",
+    loggedToday: "Logged today",
+    leaderboardTitle: "Leaderboard (Top 10)",
+    yourRank: "Your rank:",
+    membersLabel: "members",
+    searchPeople: "Search people",
+    searchResults: "Search Results",
+    topMembersThisWeek: "Top Members This Week",
+    activeCoaches: "Active Coaches",
+    newMembers: "New Members",
+    similarGoals: "Similar Goals",
+    openFeed: "Open feed"
   },
   tr: {
     badge: "Topluluk",
@@ -757,7 +789,23 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     turkish: "Turkce",
     arabic: "Arapca",
     spanish: "Ispanyolca",
-    french: "Fransizca"
+    french: "Fransizca",
+    noActiveChallenges: "Aktif meydan okuma yok.",
+    joined: "Katılındı",
+    joinChallenge: "Meydan okumaya katıl",
+    dailyValue: "Günlük değer",
+    logToday: "Bugün kaydet",
+    loggedToday: "Bugün kaydedildi",
+    leaderboardTitle: "Liderlik (İlk 10)",
+    yourRank: "Sıralamanız:",
+    membersLabel: "üye",
+    searchPeople: "Kişi ara",
+    searchResults: "Arama sonuçları",
+    topMembersThisWeek: "Bu Haftanın En İyi Üyeleri",
+    activeCoaches: "Aktif Koçlar",
+    newMembers: "Yeni Üyeler",
+    similarGoals: "Benzer Hedefler",
+    openFeed: "Akışı aç"
   },
   ar: {
     badge: "مركز المجتمع",
@@ -796,7 +844,23 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     turkish: "التركية",
     arabic: "العربية",
     spanish: "الاسبانية",
-    french: "الفرنسية"
+    french: "الفرنسية",
+    noActiveChallenges: "لا توجد تحديات نشطة.",
+    joined: "انضممت",
+    joinChallenge: "انضم للتحدي",
+    dailyValue: "القيمة اليومية",
+    logToday: "سجّل اليوم",
+    loggedToday: "تم التسجيل اليوم",
+    leaderboardTitle: "لوحة الصدارة (أعلى 10)",
+    yourRank: "ترتيبك:",
+    membersLabel: "أعضاء",
+    searchPeople: "ابحث عن أشخاص",
+    searchResults: "نتائج البحث",
+    topMembersThisWeek: "أفضل الأعضاء هذا الأسبوع",
+    activeCoaches: "المدربون النشطون",
+    newMembers: "الأعضاء الجدد",
+    similarGoals: "أهداف مشابهة",
+    openFeed: "فتح الخلاصة"
   },
   es: {
     badge: "Centro de Comunidad",
@@ -835,7 +899,23 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     turkish: "Turco",
     arabic: "Arabe",
     spanish: "Espanol",
-    french: "Frances"
+    french: "Frances",
+    noActiveChallenges: "Sin retos activos.",
+    joined: "Unido",
+    joinChallenge: "Unirse al reto",
+    dailyValue: "Valor diario",
+    logToday: "Registrar hoy",
+    loggedToday: "Registrado hoy",
+    leaderboardTitle: "Clasificación (Top 10)",
+    yourRank: "Tu posición:",
+    membersLabel: "miembros",
+    searchPeople: "Buscar personas",
+    searchResults: "Resultados de búsqueda",
+    topMembersThisWeek: "Mejores Miembros Esta Semana",
+    activeCoaches: "Coaches Activos",
+    newMembers: "Nuevos Miembros",
+    similarGoals: "Objetivos Similares",
+    openFeed: "Abrir feed"
   },
   fr: {
     badge: "Centre Communaute",
@@ -874,7 +954,23 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     turkish: "Turc",
     arabic: "Arabe",
     spanish: "Espagnol",
-    french: "Francais"
+    french: "Francais",
+    noActiveChallenges: "Aucun défi actif.",
+    joined: "Rejoint",
+    joinChallenge: "Rejoindre le défi",
+    dailyValue: "Valeur quotidienne",
+    logToday: "Enregistrer aujourd'hui",
+    loggedToday: "Enregistré aujourd'hui",
+    leaderboardTitle: "Classement (Top 10)",
+    yourRank: "Ton rang :",
+    membersLabel: "membres",
+    searchPeople: "Chercher des personnes",
+    searchResults: "Résultats de recherche",
+    topMembersThisWeek: "Meilleurs Membres Cette Semaine",
+    activeCoaches: "Coachs Actifs",
+    newMembers: "Nouveaux Membres",
+    similarGoals: "Objectifs Similaires",
+    openFeed: "Ouvrir le fil"
   }
 };
 

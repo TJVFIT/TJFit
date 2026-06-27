@@ -1,8 +1,19 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 
 type State = "idle" | "loading" | "playing" | "error";
+
+const LABELS = {
+  en: { stop: "Stop", listen: "Listen", stopAudio: "Stop audio", playAudio: "Play audio" },
+  tr: { stop: "Durdur", listen: "Dinle", stopAudio: "Sesi durdur", playAudio: "Sesi oynat" },
+  ar: { stop: "إيقاف", listen: "استمع", stopAudio: "إيقاف الصوت", playAudio: "تشغيل الصوت" },
+  es: { stop: "Detener", listen: "Escuchar", stopAudio: "Detener audio", playAudio: "Reproducir audio" },
+  fr: { stop: "Arrêter", listen: "Écouter", stopAudio: "Arrêter l'audio", playAudio: "Lire l'audio" }
+} as const;
+
+type Locale = keyof typeof LABELS;
 
 const audioCache = new Map<string, string>();
 
@@ -10,6 +21,10 @@ export function SpeakerButton({ text, autoplay = false }: { text: string; autopl
   const [state, setState] = useState<State>("idle");
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const autoplayedRef = useRef(false);
+  const pathname = usePathname() ?? "";
+  const seg = pathname.split("/").filter(Boolean)[0] ?? "";
+  const locale: Locale = (seg === "tr" || seg === "ar" || seg === "es" || seg === "fr") ? seg : "en";
+  const lbl = LABELS[locale];
 
   useEffect(() => {
     return () => {
@@ -64,8 +79,8 @@ export function SpeakerButton({ text, autoplay = false }: { text: string; autopl
     <button
       type="button"
       onClick={play}
-      title={state === "playing" ? "Stop" : "Listen"}
-      aria-label={state === "playing" ? "Stop audio" : "Play audio"}
+      title={state === "playing" ? lbl.stop : lbl.listen}
+      aria-label={state === "playing" ? lbl.stopAudio : lbl.playAudio}
       className={`inline-flex h-6 w-6 items-center justify-center rounded-full border transition-[border-color,background-color,color,box-shadow] duration-200 ${
         state === "playing"
           ? "border-purple-300/55 bg-purple-300/[0.12] text-purple-100 shadow-[0_0_14px_rgba(168,85,247,0.32)]"
