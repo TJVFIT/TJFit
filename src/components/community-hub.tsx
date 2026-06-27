@@ -147,15 +147,17 @@ type DbChallenge = {
 function ChallengesLivePanel({
   items,
   onJoin,
-  onLog
+  onLog,
+  copy
 }: {
   items: DbChallenge[];
   onJoin: (challengeId: string) => void;
   onLog: (challengeId: string, value: number) => void;
+  copy: ReturnType<typeof getCommunityCopy>;
 }) {
   const [logValueById, setLogValueById] = useState<Record<string, string>>({});
   if (items.length === 0) {
-    return <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-muted">No active challenges.</div>;
+    return <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-muted">{copy.noActiveChallenges}</div>;
   }
   return (
     <div className="space-y-4">
@@ -174,7 +176,7 @@ function ChallengesLivePanel({
               onClick={() => onJoin(item.id)}
               className="tj-cta-sheen rounded-full border border-purple-400/35 bg-purple-500/10 px-4 py-2 text-xs font-semibold text-purple-100 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/55 hover:bg-purple-500/15 hover:text-purple-50 hover:shadow-[0_0_18px_rgba(168,85,247,0.18)]"
             >
-              {item.joined ? "Joined" : "Join Challenge"}
+              {item.joined ? copy.joined : copy.joinChallenge}
             </button>
           </div>
           {item.joined ? (
@@ -182,7 +184,7 @@ function ChallengesLivePanel({
               <input
                 value={logValueById[item.id] ?? ""}
                 onChange={(e) => setLogValueById((prev) => ({ ...prev, [item.id]: e.target.value }))}
-                placeholder="Daily value"
+                placeholder={copy.dailyValue}
                 type="number"
                 min={1}
                 className="w-36 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white"
@@ -193,19 +195,19 @@ function ChallengesLivePanel({
                 onClick={() => onLog(item.id, Number(logValueById[item.id] ?? 0))}
                 className="rounded-full border border-white/20 px-3 py-1.5 text-xs text-bright disabled:opacity-50"
               >
-                {item.todayLogged ? `Logged today ${item.todayValue ?? ""}` : "Log Today"}
+                {item.todayLogged ? `${copy.loggedToday} ${item.todayValue ?? ""}` : copy.logToday}
               </button>
             </div>
           ) : null}
           <details className="mt-4 rounded-xl border border-white/10 bg-black/20 p-3">
-            <summary className="cursor-pointer text-sm text-bright">Leaderboard (Top 10)</summary>
+            <summary className="cursor-pointer text-sm text-bright">{copy.leaderboardTitle}</summary>
             <div className="mt-3 space-y-1 text-sm">
               {item.leaderboard.map((row, idx) => (
                 <p key={`${row.userId}-${idx}`} className="text-bright">
                   #{idx + 1} · {row.total}
                 </p>
               ))}
-              {item.myRank ? <p className="mt-2 text-purple-300">Your rank: #{item.myRank}</p> : null}
+              {item.myRank ? <p className="mt-2 text-purple-300">{copy.yourRank} #{item.myRank}</p> : null}
             </div>
           </details>
         </article>
@@ -225,10 +227,12 @@ type DiscoverUser = {
 
 function GroupsPanel({
   groups,
-  onToggle
+  onToggle,
+  copy
 }: {
   groups: DbGroup[];
   onToggle: (groupId: string, action: "join" | "leave") => void;
+  copy: ReturnType<typeof getCommunityCopy>;
 }) {
   return (
     <div className="grid gap-4 md:grid-cols-2">
@@ -236,7 +240,7 @@ function GroupsPanel({
         <article key={group.id} className="rounded-[24px] border border-white/10 bg-white/5 p-5">
           <h3 className="text-lg font-semibold text-white">{group.name}</h3>
           <p className="mt-2 text-sm text-bright">{group.description ?? ""}</p>
-          <p className="mt-2 text-xs text-faint">{group.memberCount} members</p>
+          <p className="mt-2 text-xs text-faint">{group.memberCount} {copy.membersLabel}</p>
           <button
             type="button"
             onClick={() => onToggle(group.id, group.joined ? "leave" : "join")}
@@ -250,7 +254,7 @@ function GroupsPanel({
   );
 }
 
-function PeoplePanel({ locale }: { locale: Locale }) {
+function PeoplePanel({ locale, copy }: { locale: Locale; copy: ReturnType<typeof getCommunityCopy> }) {
   const [query, setQuery] = useState("");
   const [debounced, setDebounced] = useState("");
   const [discover, setDiscover] = useState<{
@@ -309,22 +313,22 @@ function PeoplePanel({ locale }: { locale: Locale }) {
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search people"
+        placeholder={copy.searchPeople}
         className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white"
       />
       {searchResults.length > 0 ? (
-        <Section title="Search Results" users={searchResults} />
+        <Section title={copy.searchResults} users={searchResults} />
       ) : (
         <div className="grid gap-5 md:grid-cols-2">
-          <Section title="Top Members This Week" users={discover.top_earners} />
-          <Section title="Active Coaches" users={discover.coaches} />
-          <Section title="New Members" users={discover.new_members} />
-          <Section title="Similar Goals" users={discover.similar_goal} />
+          <Section title={copy.topMembersThisWeek} users={discover.top_earners} />
+          <Section title={copy.activeCoaches} users={discover.coaches} />
+          <Section title={copy.newMembers} users={discover.new_members} />
+          <Section title={copy.similarGoals} users={discover.similar_goal} />
         </div>
       )}
       <p className="text-xs text-dim">
         <Link href={`/${locale}/feed`} className="text-purple-300">
-          Open feed
+          {copy.openFeed}
         </Link>
       </p>
     </div>
@@ -674,8 +678,8 @@ export function CommunityHub({
               }}
             />
           )}
-          {activeTab === "challenges" && <ChallengesLivePanel items={challengeItems} onJoin={joinChallenge} onLog={logChallenge} />}
-          {activeTab === "groups" && <GroupsPanel groups={groupItems} onToggle={toggleGroup} />}
+          {activeTab === "challenges" && <ChallengesLivePanel items={challengeItems} onJoin={joinChallenge} onLog={logChallenge} copy={copy} />}
+          {activeTab === "groups" && <GroupsPanel groups={groupItems} onToggle={toggleGroup} copy={copy} />}
           {activeTab === "transformations" && (
             <TransformationsPanel
               items={transformations}
@@ -835,7 +839,7 @@ export function CommunityHub({
               )}
             </div>
           )}
-          {activeTab === "people" && <PeoplePanel locale={locale} />}
+          {activeTab === "people" && <PeoplePanel locale={locale} copy={copy} />}
         </div>
       </div>
     </div>

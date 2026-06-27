@@ -350,11 +350,11 @@ export function ProgressView({ locale }: { locale: Locale }) {
               <input className="input" placeholder={t.weightPlaceholder} value={weight} onChange={(e) => setWeight(e.target.value)} type="number" step="0.1" min="0" />
               <input className="input" placeholder={t.bodyFatPlaceholder} value={bodyFat} onChange={(e) => setBodyFat(e.target.value)} type="number" step="0.1" min="0" />
             </div>
-            <p className="text-[11px] font-medium uppercase tracking-widest text-dim">Measurements (cm)</p>
+            <p className="text-[11px] font-medium uppercase tracking-widest text-dim">{t.measurementsLabel}</p>
             <div className="grid grid-cols-3 gap-2">
-              <input className="input text-center text-sm" placeholder="Waist" value={waist} onChange={(e) => setWaist(e.target.value)} type="number" step="0.1" min="0" />
-              <input className="input text-center text-sm" placeholder="Chest" value={chest} onChange={(e) => setChest(e.target.value)} type="number" step="0.1" min="0" />
-              <input className="input text-center text-sm" placeholder="Hips" value={hips} onChange={(e) => setHips(e.target.value)} type="number" step="0.1" min="0" />
+              <input className="input text-center text-sm" placeholder={t.waistPlaceholder} value={waist} onChange={(e) => setWaist(e.target.value)} type="number" step="0.1" min="0" />
+              <input className="input text-center text-sm" placeholder={t.chestPlaceholder} value={chest} onChange={(e) => setChest(e.target.value)} type="number" step="0.1" min="0" />
+              <input className="input text-center text-sm" placeholder={t.hipsPlaceholder} value={hips} onChange={(e) => setHips(e.target.value)} type="number" step="0.1" min="0" />
             </div>
             <button onClick={addMetrics} className="gradient-button rounded-full px-5 py-2 text-sm font-medium text-white">
               {t.save}
@@ -392,12 +392,12 @@ export function ProgressView({ locale }: { locale: Locale }) {
           <div className="mt-4 grid gap-3">
             <input className="input" placeholder={t.exercisePlaceholder} value={exercise} onChange={(e) => setExercise(e.target.value)} />
             <div className="grid grid-cols-2 gap-2">
-              <input className="input text-sm" placeholder="Sets" value={sets} onChange={(e) => setSets(e.target.value)} type="number" min="1" />
-              <input className="input text-sm" placeholder="Reps" value={reps} onChange={(e) => setReps(e.target.value)} type="number" min="1" />
+              <input className="input text-sm" placeholder={t.setsPlaceholder} value={sets} onChange={(e) => setSets(e.target.value)} type="number" min="1" />
+              <input className="input text-sm" placeholder={t.repsPlaceholder} value={reps} onChange={(e) => setReps(e.target.value)} type="number" min="1" />
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <input className="input text-sm" placeholder="Weight (kg)" value={workoutWeight} onChange={(e) => setWorkoutWeight(e.target.value)} type="number" step="0.5" min="0" />
-              <input className="input text-sm" placeholder="Duration (min)" value={duration} onChange={(e) => setDuration(e.target.value)} type="number" min="1" />
+              <input className="input text-sm" placeholder={t.workoutWeightPlaceholder} value={workoutWeight} onChange={(e) => setWorkoutWeight(e.target.value)} type="number" step="0.5" min="0" />
+              <input className="input text-sm" placeholder={t.durationPlaceholder} value={duration} onChange={(e) => setDuration(e.target.value)} type="number" min="1" />
             </div>
             <button onClick={addWorkout} className="gradient-button rounded-full px-5 py-2 text-sm font-medium text-white">
               {t.add}

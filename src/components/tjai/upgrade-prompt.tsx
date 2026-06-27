@@ -1,6 +1,67 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+
+const UP_COPY = {
+  en: {
+    close: "Close",
+    badge: "Unlock TJAI Pro",
+    later: "Later",
+    bullets: [
+      "Unlimited TJAI chat & coaching",
+      "Adaptive plan suggestions every week",
+      "Voice replies, meal swaps, grocery lists",
+      "Long-term memory & coach handoff"
+    ]
+  },
+  tr: {
+    close: "Kapat",
+    badge: "TJAI Pro'yu Aç",
+    later: "Daha Sonra",
+    bullets: [
+      "Sınırsız TJAI sohbet ve koçluk",
+      "Her hafta uyarlanabilir plan önerileri",
+      "Sesli yanıtlar, öğün değişimi, alışveriş listeleri",
+      "Uzun vadeli hafıza ve koç devri"
+    ]
+  },
+  ar: {
+    close: "إغلاق",
+    badge: "افتح TJAI Pro",
+    later: "لاحقاً",
+    bullets: [
+      "دردشة وتدريب TJAI غير محدود",
+      "اقتراحات خطة تكيّفية كل أسبوع",
+      "ردود صوتية، تبديل وجبات، قوائم تسوق",
+      "ذاكرة طويلة الأمد وتحويل المدرب"
+    ]
+  },
+  es: {
+    close: "Cerrar",
+    badge: "Desbloquear TJAI Pro",
+    later: "Más Tarde",
+    bullets: [
+      "Chat y coaching TJAI ilimitado",
+      "Sugerencias de plan adaptativo cada semana",
+      "Respuestas de voz, cambios de comida, listas de compras",
+      "Memoria a largo plazo y traspaso al entrenador"
+    ]
+  },
+  fr: {
+    close: "Fermer",
+    badge: "Débloquer TJAI Pro",
+    later: "Plus Tard",
+    bullets: [
+      "Chat et coaching TJAI illimités",
+      "Suggestions de plan adaptatif chaque semaine",
+      "Réponses vocales, échanges de repas, listes de courses",
+      "Mémoire à long terme et transfert au coach"
+    ]
+  }
+} as const;
+
+type UpLocale = keyof typeof UP_COPY;
 
 type Reason = "first_badge" | "first_plan" | "limit_reached" | "manual";
 
@@ -28,6 +89,10 @@ export function showUpgradePrompt(p: Payload) {
 
 export function UpgradePrompt() {
   const [payload, setPayload] = useState<Payload | null>(null);
+  const pathname = usePathname() ?? "";
+  const seg = pathname.split("/").filter(Boolean)[0] ?? "";
+  const locale: UpLocale = (seg === "tr" || seg === "ar" || seg === "es" || seg === "fr") ? seg : "en";
+  const uc = UP_COPY[locale];
 
   useEffect(() => {
     const handler = (p: Payload) => setPayload(p);
@@ -50,31 +115,24 @@ export function UpgradePrompt() {
           type="button"
           onClick={() => setPayload(null)}
           className="absolute right-3 top-3 text-white/50 hover:text-white"
-          aria-label="Close"
+          aria-label={uc.close}
         >
           ✕
         </button>
 
         <div className="relative">
           <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-purple-300">
-            Unlock TJAI Pro
+            {uc.badge}
           </div>
           <h3 className="mt-1 text-2xl font-semibold tracking-tight text-white">{payload.title}</h3>
           <p className="mt-3 text-sm leading-relaxed text-white/75">{payload.body}</p>
 
           <ul className="mt-5 space-y-2 text-sm text-white/85">
-            <li className="flex items-center gap-2">
-              <span className="text-purple-300">✓</span> Unlimited TJAI chat & coaching
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="text-purple-300">✓</span> Adaptive plan suggestions every week
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="text-purple-300">✓</span> Voice replies, meal swaps, grocery lists
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="text-purple-300">✓</span> Long-term memory & coach handoff
-            </li>
+            {uc.bullets.map((b) => (
+              <li key={b} className="flex items-center gap-2">
+                <span className="text-purple-300">✓</span> {b}
+              </li>
+            ))}
           </ul>
 
           <div className="mt-6 flex gap-2">
@@ -89,7 +147,7 @@ export function UpgradePrompt() {
               onClick={() => setPayload(null)}
               className="rounded-md border border-white/15 px-4 py-2.5 text-sm text-white/70 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.05] hover:text-purple-100 hover:shadow-[0_0_14px_rgba(168,85,247,0.12)]"
             >
-              Later
+              {uc.later}
             </button>
           </div>
         </div>
