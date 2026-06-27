@@ -15,11 +15,11 @@ type NavItem = { label: string; href: string; adminOnly?: boolean; coachOnly?: b
 type NavGroup = { title: string; items: NavItem[] };
 
 const GROUP_TITLES: Record<Locale, string[]> = {
-  en: ["Train", "You", "Community", "Support"],
-  tr: ["Antrenman", "Sen", "Topluluk", "Destek"],
-  ar: ["تدريب", "أنت", "المجتمع", "الدعم"],
-  es: ["Entrenar", "Tú", "Comunidad", "Soporte"],
-  fr: ["Entraînement", "Toi", "Communauté", "Support"]
+  en: ["Train", "TJAI", "You", "Community", "Support"],
+  tr: ["Antrenman", "TJAI", "Sen", "Topluluk", "Destek"],
+  ar: ["تدريب", "TJAI", "أنت", "المجتمع", "الدعم"],
+  es: ["Entrenar", "TJAI", "Tú", "Comunidad", "Soporte"],
+  fr: ["Entraînement", "TJAI", "Toi", "Communauté", "Support"]
 };
 
 const OPEN_LABEL: Record<Locale, string> = {
@@ -55,7 +55,11 @@ const SEARCH_LABEL: Record<Locale, string> = {
 };
 
 const NAV_LABELS: Record<Locale, Record<string, string>> = {
-  en: {},
+  en: {
+    "Generate plan": "Generate plan",
+    "TJAI Chat": "TJAI Chat",
+    "Credit packs": "Credit packs"
+  },
   tr: {
     Coaches: "Koclar",
     Calculator: "Hesaplayici",
@@ -78,7 +82,10 @@ const NAV_LABELS: Record<Locale, Record<string, string>> = {
     Press: "Basin",
     Legal: "Yasal",
     Admin: "Admin",
-    "Coach dashboard": "Koc paneli"
+    "Coach dashboard": "Koc paneli",
+    "Generate plan": "Plan üret",
+    "TJAI Chat": "TJAI Sohbet",
+    "Credit packs": "Kredi paketleri"
   },
   ar: {
     Coaches: "المدربون",
@@ -102,7 +109,10 @@ const NAV_LABELS: Record<Locale, Record<string, string>> = {
     Press: "الصحافة",
     Legal: "القانوني",
     Admin: "المشرف",
-    "Coach dashboard": "لوحة المدرب"
+    "Coach dashboard": "لوحة المدرب",
+    "Generate plan": "أنشئ خطة",
+    "TJAI Chat": "محادثة TJAI",
+    "Credit packs": "حزم الرصيد"
   },
   es: {
     Coaches: "Coaches",
@@ -126,7 +136,10 @@ const NAV_LABELS: Record<Locale, Record<string, string>> = {
     Press: "Prensa",
     Legal: "Legal",
     Admin: "Admin",
-    "Coach dashboard": "Panel de coach"
+    "Coach dashboard": "Panel de coach",
+    "Generate plan": "Generar plan",
+    "TJAI Chat": "TJAI Chat",
+    "Credit packs": "Paquetes de créditos"
   },
   fr: {
     Coaches: "Coachs",
@@ -150,7 +163,10 @@ const NAV_LABELS: Record<Locale, Record<string, string>> = {
     Press: "Presse",
     Legal: "Legal",
     Admin: "Admin",
-    "Coach dashboard": "Tableau coach"
+    "Coach dashboard": "Tableau coach",
+    "Generate plan": "Générer un plan",
+    "TJAI Chat": "TJAI Chat",
+    "Credit packs": "Packs de crédits"
   }
 };
 
@@ -174,6 +190,14 @@ function buildGroups(locale: Locale): NavGroup[] {
     {
       title: titles[1],
       items: [
+        { label: "Generate plan", href: `${base}/tjai` },
+        { label: "TJAI Chat", href: `${base}/ai` },
+        { label: "Credit packs", href: `${base}/tjai/credits` }
+      ]
+    },
+    {
+      title: titles[2],
+      items: [
         { label: "Dashboard", href: `${base}/dashboard`, authOnly: true },
         { label: "Progress", href: `${base}/progress`, authOnly: true },
         { label: "Messages", href: `${base}/messages`, authOnly: true },
@@ -182,7 +206,7 @@ function buildGroups(locale: Locale): NavGroup[] {
       ]
     },
     {
-      title: titles[2],
+      title: titles[3],
       items: [
         { label: "Community", href: `${base}/community` },
         { label: "Challenges", href: `${base}/challenges` },
@@ -194,7 +218,7 @@ function buildGroups(locale: Locale): NavGroup[] {
       ]
     },
     {
-      title: titles[3],
+      title: titles[4],
       items: [
         { label: "Support", href: `${base}/support` },
         { label: "Feedback", href: `${base}/feedback` },
