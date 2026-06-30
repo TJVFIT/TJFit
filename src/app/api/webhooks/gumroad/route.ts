@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { checkGumroadWebhookFreshness, verifyGumroadSeller } from "@/lib/gumroad-webhook-verify";
-import { getSale } from "@/lib/gumroad/client";
+import { getSale, type GumroadSale } from "@/lib/gumroad/client";
 import { fulfillProgramOrderPaid } from "@/lib/checkout-fulfill-order";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
-import { handleSale, type GumroadSalePayload } from "./handlers/sale";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { handleSale, findOrCreateUserByEmail, type GumroadSalePayload } from "./handlers/sale";
 
 export const dynamic = "force-dynamic";
 
@@ -76,6 +77,37 @@ function parseGumroadBody(rawBody: string, contentType: string): GumroadEventBod
     }
   }
   return obj as GumroadEventBody;
+}
+
+/**
+ * Resolve a TJFit bundle slug from the Gumroad product on a confirmed
+ * sale. Matches on the Gumroad product_id first, then falls back to the
+ * permalink embedded in the mapped short_url. Returns null for products
+ * that aren't bundles (e.g. credit packs / diets handled elsewhere).
+ */
+async function resolveBundleSlug(
+  admin: SupabaseClient,
+  sale: GumroadSale
+): Promise<string | null> {
+  const productId = sale.product_id?.trim();
+  if (productId) {
+    const { data } = await admin
+      .from("bundle_gumroad_products")
+      .select("slug")
+      .eq("product_id", productId)
+      .maybeSingle();
+    if (data?.slug) return data.slug;
+  }
+  const permalink = sale.permalink?.trim();
+  if (permalink) {
+    const { data } = await admin
+      .from("bundle_gumroad_products")
+      .select("slug")
+      .ilike("short_url", `%/${permalink}`)
+      .maybeSingle();
+    if (data?.slug) return data.slug;
+  }
+  return null;
 }
 
 function readEventId(body: GumroadEventBody, headers: Headers): string {
@@ -195,14 +227,33 @@ export async function POST(request: NextRequest) {
           break;
         }
 
-        // Bundle / program path. Checkout stamps the program_orders id
-        // onto the Gumroad URL (buildGumroadTrackedUrl); Gumroad echoes
-        // it back in url_params. Flipping that order to paid is what
-        // unlocks the in-app bundle (tracking, program, diet) via
-        // hasPurchasedProgram. fulfillProgramOrderPaid is idempotent, so
-        // webhook re-deliveries are safe.
+        // Resolve which bundle (if any) this confirmed Gumroad product
+        // maps to. Used both to cross-check website orders and to fulfil
+        // direct Gumroad-storefront purchases.
+        const bundleSlug = await resolveBundleSlug(admin, confirmed);
+
+        // Path A — website checkout. Checkout stamps the program_orders
+        // id onto the Gumroad URL (buildGumroadTrackedUrl); Gumroad
+        // echoes it back in url_params. Flipping that order to paid is
+        // what unlocks the in-app bundle via hasPurchasedProgram.
         const orderId = payload.url_params?.tjfit_order_id?.trim();
         if (orderId) {
+          // Integrity check: the order being fulfilled must correspond to
+          // the product actually purchased. Only enforced when we can map
+          // the Gumroad product to a bundle (legacy programs map to null
+          // and are trusted via the unguessable order id alone).
+          if (bundleSlug) {
+            const { data: order } = await admin
+              .from("program_orders")
+              .select("program_slug")
+              .eq("id", orderId)
+              .maybeSingle();
+            if (order && order.program_slug !== bundleSlug) {
+              status = "failed";
+              handlerError = `order_product_mismatch: order ${orderId} is ${order.program_slug} but sale is ${bundleSlug}`;
+              break;
+            }
+          }
           const fulfilled = await fulfillProgramOrderPaid(admin, orderId, { requireLiveOrder: true });
           if (fulfilled.ok) {
             status = "processed";
@@ -213,7 +264,51 @@ export async function POST(request: NextRequest) {
           break;
         }
 
-        // Mapped-product path (TJAI credit packs / diets resolved via
+        // Path B — direct Gumroad-storefront purchase (no website order).
+        // Grant access from the API-confirmed sale email. The buyer
+        // controls that email (they paid with it), and the sale is
+        // already verified against Gumroad, so this is safe. Idempotent
+        // via the unique provider_order_id = sale id.
+        if (bundleSlug) {
+          const buyerEmail = confirmed.email?.trim().toLowerCase();
+          if (!buyerEmail) {
+            status = "failed";
+            handlerError = "direct_purchase: confirmed sale has no email";
+            break;
+          }
+          const resolved = await findOrCreateUserByEmail(admin, buyerEmail, confirmed.full_name);
+          if ("error" in resolved) {
+            status = "failed";
+            handlerError = `direct_purchase_user: ${resolved.error}`;
+            break;
+          }
+          const { error: insErr } = await admin.from("program_orders").insert({
+            user_id: resolved.userId,
+            program_slug: bundleSlug,
+            amount_try: 0,
+            final_amount_try: 0,
+            currency: confirmed.currency ?? "USD",
+            provider: "gumroad",
+            provider_order_id: confirmed.id,
+            status: "paid",
+            paid_at: new Date().toISOString()
+          });
+          if (insErr) {
+            // 23505 = unique violation on provider_order_id: this sale was
+            // already fulfilled. Treat as success.
+            if (insErr.code === "23505") {
+              status = "processed";
+            } else {
+              status = "failed";
+              handlerError = `direct_purchase_insert: ${insErr.message}`;
+            }
+          } else {
+            status = "processed";
+          }
+          break;
+        }
+
+        // Path C — mapped product (TJAI credit packs / diets resolved via
         // product_gumroad_sync by Gumroad product id).
         const salePayload: GumroadSalePayload = {
           resource_name: "sale",

@@ -49,7 +49,7 @@ function asCents(value: string | number | undefined): number {
   return Number.isFinite(n) ? n : 0;
 }
 
-async function findOrCreateUserByEmail(
+export async function findOrCreateUserByEmail(
   admin: SupabaseClient,
   email: string,
   fullName?: string
