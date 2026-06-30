@@ -9,6 +9,11 @@ import { handleSale, findOrCreateUserByEmail, type GumroadSalePayload } from "./
 
 export const dynamic = "force-dynamic";
 
+// Real program_orders ids are UUIDs. The TJAI credits storefront stamps a
+// non-UUID sentinel (e.g. "credits-plan-1") as tjfit_order_id, which must
+// NOT be treated as an order to fulfil — it routes by product instead.
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 // Gumroad webhook endpoint.
 //
 // Per founder direction: Gumroad is the primary merchant of record
@@ -235,33 +240,38 @@ export async function POST(request: NextRequest) {
         // Path A — website checkout. Checkout stamps the program_orders
         // id onto the Gumroad URL (buildGumroadTrackedUrl); Gumroad
         // echoes it back in url_params. Flipping that order to paid is
-        // what unlocks the in-app bundle via hasPurchasedProgram.
-        const orderId = payload.url_params?.tjfit_order_id?.trim();
+        // what unlocks the in-app bundle via hasPurchasedProgram. Only a
+        // real (UUID) order that actually exists is handled here; anything
+        // else (e.g. the "credits-*" sentinel) falls through to product
+        // routing below.
+        const rawOrderId = payload.url_params?.tjfit_order_id?.trim();
+        const orderId = rawOrderId && UUID_RE.test(rawOrderId) ? rawOrderId : null;
         if (orderId) {
-          // Integrity check: the order being fulfilled must correspond to
-          // the product actually purchased. Only enforced when we can map
-          // the Gumroad product to a bundle (legacy programs map to null
-          // and are trusted via the unguessable order id alone).
-          if (bundleSlug) {
-            const { data: order } = await admin
-              .from("program_orders")
-              .select("program_slug")
-              .eq("id", orderId)
-              .maybeSingle();
-            if (order && order.program_slug !== bundleSlug) {
+          const { data: order } = await admin
+            .from("program_orders")
+            .select("program_slug")
+            .eq("id", orderId)
+            .maybeSingle();
+          if (order) {
+            // Integrity check: the order being fulfilled must correspond
+            // to the product actually purchased. Only enforced when we can
+            // map the Gumroad product to a bundle (legacy programs map to
+            // null and are trusted via the unguessable order id alone).
+            if (bundleSlug && order.program_slug !== bundleSlug) {
               status = "failed";
               handlerError = `order_product_mismatch: order ${orderId} is ${order.program_slug} but sale is ${bundleSlug}`;
               break;
             }
+            const fulfilled = await fulfillProgramOrderPaid(admin, orderId, { requireLiveOrder: true });
+            if (fulfilled.ok) {
+              status = "processed";
+            } else {
+              status = "failed";
+              handlerError = `fulfill_order[${orderId}]: ${fulfilled.error}`;
+            }
+            break;
           }
-          const fulfilled = await fulfillProgramOrderPaid(admin, orderId, { requireLiveOrder: true });
-          if (fulfilled.ok) {
-            status = "processed";
-          } else {
-            status = "failed";
-            handlerError = `fulfill_order[${orderId}]: ${fulfilled.error}`;
-          }
-          break;
+          // UUID but no such order — fall through to product routing.
         }
 
         // Path B — direct Gumroad-storefront purchase (no website order).
