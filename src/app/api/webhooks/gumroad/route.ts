@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { checkGumroadWebhookFreshness, verifyGumroadSeller } from "@/lib/gumroad-webhook-verify";
 import { getSale } from "@/lib/gumroad/client";
+import { fulfillProgramOrderPaid } from "@/lib/checkout-fulfill-order";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { handleSale, type GumroadSalePayload } from "./handlers/sale";
 
@@ -194,6 +195,26 @@ export async function POST(request: NextRequest) {
           break;
         }
 
+        // Bundle / program path. Checkout stamps the program_orders id
+        // onto the Gumroad URL (buildGumroadTrackedUrl); Gumroad echoes
+        // it back in url_params. Flipping that order to paid is what
+        // unlocks the in-app bundle (tracking, program, diet) via
+        // hasPurchasedProgram. fulfillProgramOrderPaid is idempotent, so
+        // webhook re-deliveries are safe.
+        const orderId = payload.url_params?.tjfit_order_id?.trim();
+        if (orderId) {
+          const fulfilled = await fulfillProgramOrderPaid(admin, orderId, { requireLiveOrder: true });
+          if (fulfilled.ok) {
+            status = "processed";
+          } else {
+            status = "failed";
+            handlerError = `fulfill_order[${orderId}]: ${fulfilled.error}`;
+          }
+          break;
+        }
+
+        // Mapped-product path (TJAI credit packs / diets resolved via
+        // product_gumroad_sync by Gumroad product id).
         const salePayload: GumroadSalePayload = {
           resource_name: "sale",
           sale_id: confirmed.id,
