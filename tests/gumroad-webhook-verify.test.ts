@@ -4,6 +4,7 @@ import { describe, it, expect } from "vitest";
 
 import {
   verifyGumroadWebhookSignature,
+  verifyGumroadSeller,
   checkGumroadWebhookFreshness,
   MAX_AGE_SEC
 } from "@/lib/gumroad-webhook-verify";
@@ -41,6 +42,29 @@ describe("verifyGumroadWebhookSignature", () => {
 
   it("rejects a wrong-length signature without throwing", () => {
     expect(verifyGumroadWebhookSignature(body, "deadbeef", secret)).toBe(false);
+  });
+});
+
+describe("verifyGumroadSeller", () => {
+  const expected = "h8_Y4JLPWq9Pm3yj4QSVIA==";
+
+  it("accepts a matching seller_id", () => {
+    expect(verifyGumroadSeller(expected, expected)).toBe(true);
+  });
+
+  it("rejects a mismatched seller_id", () => {
+    expect(verifyGumroadSeller("someone_elses_id", expected)).toBe(false);
+  });
+
+  it("rejects missing seller_id or expected (fails closed)", () => {
+    expect(verifyGumroadSeller(null, expected)).toBe(false);
+    expect(verifyGumroadSeller(undefined, expected)).toBe(false);
+    expect(verifyGumroadSeller(expected, "")).toBe(false);
+    expect(verifyGumroadSeller(expected, undefined)).toBe(false);
+  });
+
+  it("rejects a different-length id without throwing", () => {
+    expect(verifyGumroadSeller("short", expected)).toBe(false);
   });
 });
 

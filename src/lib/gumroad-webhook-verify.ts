@@ -15,6 +15,34 @@ import crypto from "node:crypto";
 
 export const MAX_AGE_SEC = 300; // 5 minutes — match Gumroad equivalent.
 
+/**
+ * Verify a Gumroad webhook by its `seller_id`.
+ *
+ * Gumroad's Ping / Resource-Subscription webhooks are NOT HMAC-signed
+ * (unlike Stripe/Paddle). Instead every payload carries the account's
+ * `seller_id`, which Gumroad surfaces in Settings → Advanced ("For
+ * external services, your seller_id is ..."). We compare it against the
+ * expected value (env: GUMROAD_SELLER_ID) with a timing-safe equality.
+ *
+ * NOTE: seller_id is only semi-secret, so this is the FIRST gate only.
+ * Anything that grants value (credits, access) must additionally be
+ * confirmed against the Gumroad API via the sale_id — see the route.
+ */
+export function verifyGumroadSeller(
+  sellerId: string | null | undefined,
+  expected: string | null | undefined
+): boolean {
+  if (!sellerId || !expected) return false;
+  const a = Buffer.from(sellerId, "utf8");
+  const b = Buffer.from(expected, "utf8");
+  if (a.length !== b.length) return false;
+  try {
+    return crypto.timingSafeEqual(a, b);
+  } catch {
+    return false;
+  }
+}
+
 export function verifyGumroadWebhookSignature(
   rawBody: string,
   signature: string | null | undefined,
