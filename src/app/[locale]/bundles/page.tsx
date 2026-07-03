@@ -1,5 +1,6 @@
 import { BundleGrid } from "./bundle-grid";
 
+import { TJHeroStage } from "@/components/3d/hero-stage";
 import { AmbientOrbs } from "@/components/effects/ambient-orbs";
 import { BUNDLES } from "@/lib/bundles";
 import { bundlesItemListJsonLd } from "@/lib/bundle-jsonld";
@@ -39,6 +40,18 @@ export default function BundlesPage({ params }: { params: { locale: string } }) 
       />
 
       <AmbientOrbs />
+      {/* 3D dumbbell stage behind the header — same brand vocabulary as the
+          home/TJAI/membership heroes. Desktop only; masked toward the text. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-8 end-0 hidden h-[380px] w-full max-w-[560px] opacity-70 lg:block"
+        style={{
+          maskImage: "linear-gradient(90deg, transparent 0%, #000 40%, #000 85%, transparent 100%)",
+          WebkitMaskImage: "linear-gradient(90deg, transparent 0%, #000 40%, #000 85%, transparent 100%)"
+        }}
+      >
+        <TJHeroStage variant="dumbbell" pointerReactive={false} speed={0.55} intensity={0.7} />
+      </div>
       <div className="relative max-w-2xl">
         {/* Slow-drifting conic-gradient halo behind the title — pure CSS, motion-safe gated via Tailwind variant */}
         <div

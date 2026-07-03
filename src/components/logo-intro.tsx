@@ -27,6 +27,22 @@ const PICKER_TITLE: Record<Locale, string> = {
   fr: "Choisissez votre langue"
 };
 
+const STATUS_LINES: Record<Locale, [string, string, string]> = {
+  en: ["loading brand system", "syncing locale", "opening platform"],
+  tr: ["marka sistemi yükleniyor", "dil eşitleniyor", "platform açılıyor"],
+  ar: ["جارٍ تحميل نظام العلامة", "جارٍ مزامنة اللغة", "جارٍ فتح المنصة"],
+  es: ["cargando sistema de marca", "sincronizando idioma", "abriendo plataforma"],
+  fr: ["chargement du système", "synchronisation de la langue", "ouverture de la plateforme"]
+};
+
+const PICKER_FOOTNOTE: Record<Locale, string> = {
+  en: "You can change your language later in Profile > Settings > Region.",
+  tr: "Dilini daha sonra Profil > Ayarlar > Bölge'den değiştirebilirsin.",
+  ar: "يمكنك تغيير لغتك لاحقاً من الملف الشخصي > الإعدادات > المنطقة.",
+  es: "Puedes cambiar el idioma más tarde en Perfil > Ajustes > Región.",
+  fr: "Vous pourrez changer de langue plus tard dans Profil > Paramètres > Région."
+};
+
 /** ~1500ms automated brand runway before language picker. Eased out from the
  * old ~740ms sequence which read as a fast flicker — each phase now has real
  * breathing room so the monogram draw is legible before the picker appears. */
@@ -100,21 +116,30 @@ export function LogoIntro({
     canvas.width = W;
     canvas.height = H;
 
-    const nodeCount = W < 768 ? 14 : 24;
-    type Node = { x: number; y: number; vx: number; vy: number; alpha: number };
-    const nodes: Node[] = Array.from({ length: nodeCount }, () => ({
+    const nodeCount = W < 768 ? 14 : 26;
+    type Node = { x: number; y: number; vx: number; vy: number; alpha: number; tone: 0 | 1; r: number };
+    const nodes: Node[] = Array.from({ length: nodeCount }, (_, i) => ({
       x: W * 0.2 + Math.random() * W * 0.6,
       y: H * 0.15 + Math.random() * H * 0.7,
       vx: (Math.random() - 0.5) * 0.35,
       vy: (Math.random() - 0.5) * 0.35,
-      alpha: 0.08 + Math.random() * 0.32
+      alpha: 0.08 + Math.random() * 0.32,
+      // Every 4th node renders pale lavender for depth; rest stay violet.
+      tone: i % 4 === 0 ? 1 : 0,
+      r: 1.6 + Math.random() * 1.4
     }));
 
+    const cx = W / 2;
+    const cy = H / 2;
     const maxDist = 190;
     let frame = 0;
     const draw = () => {
       ctx.clearRect(0, 0, W, H);
       for (const n of nodes) {
+        // Gentle gravitational drift toward the monogram so the field
+        // reads as orbiting the brand, not floating at random.
+        n.vx += (cx - n.x) * 0.0000115;
+        n.vy += (cy - n.y) * 0.0000115;
         n.x += n.vx;
         n.y += n.vy;
         if (n.x < 0 || n.x > W) n.vx *= -1;
@@ -138,8 +163,11 @@ export function LogoIntro({
       for (const n of nodes) {
         const pulse = 0.5 + 0.5 * Math.sin(frame * 0.04 + n.x);
         ctx.beginPath();
-        ctx.arc(n.x, n.y, 2.2, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(168,85,247,${n.alpha * pulse})`;
+        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        ctx.fillStyle =
+          n.tone === 1
+            ? `rgba(216,202,255,${n.alpha * pulse * 0.9})`
+            : `rgba(168,85,247,${n.alpha * pulse})`;
         ctx.fill();
       }
       frame++;
@@ -189,7 +217,9 @@ export function LogoIntro({
       className="tj-intro-root fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-background"
       style={{
         opacity: isExiting ? 0 : 1,
-        transition: isExiting ? `opacity 340ms ${PHASE_EASE}` : "none"
+        // Slight zoom on exit so the site appears to push through the intro.
+        transform: isExiting ? "scale(1.045)" : "scale(1)",
+        transition: isExiting ? `opacity 340ms ${PHASE_EASE}, transform 380ms ${PHASE_EASE}` : "none"
       }}
       aria-hidden={done}
     >
@@ -242,7 +272,8 @@ export function LogoIntro({
                 fontSize: "clamp(90px, 15vw, 160px)",
                 opacity: showImage ? 0 : showT ? 1 : 0,
                 transform: showT ? "translateY(0) scale(1)" : "translateY(16px) scale(0.95)",
-                transition: `opacity 360ms ${PHASE_EASE}, transform 380ms ${PHASE_EASE}`,
+                filter: showT ? "blur(0px)" : "blur(16px)",
+                transition: `opacity 360ms ${PHASE_EASE}, transform 380ms ${PHASE_EASE}, filter 420ms ${PHASE_EASE}`,
                 textShadow: "0 0 24px rgba(168,85,247,0.6), 0 0 72px rgba(168,85,247,0.25)"
               }}
             >
@@ -254,7 +285,8 @@ export function LogoIntro({
                 fontSize: "clamp(90px, 15vw, 160px)",
                 opacity: showImage ? 0 : showJ ? 1 : 0,
                 transform: showJ ? "translateY(0) scale(1)" : "translateY(36px) scale(0.95)",
-                transition: `opacity 400ms ${PHASE_EASE}, transform 440ms cubic-bezier(0.2, 0.8, 0.2, 1)`,
+                filter: showJ ? "blur(0px)" : "blur(16px)",
+                transition: `opacity 400ms ${PHASE_EASE}, transform 440ms cubic-bezier(0.2, 0.8, 0.2, 1), filter 460ms ${PHASE_EASE}`,
                 textShadow: "0 0 24px rgba(168,85,247,0.6), 0 0 72px rgba(168,85,247,0.25)",
                 marginInlineStart: "-0.04em"
               }}
@@ -279,7 +311,7 @@ export function LogoIntro({
           </div>
 
           <div className="mt-10 grid w-full max-w-xl gap-2 text-left sm:grid-cols-3">
-            {["loading brand system", "syncing locale", "opening platform"].map((line, index) => (
+            {(STATUS_LINES[locale] ?? STATUS_LINES.en).map((line, index) => (
               <div
                 key={line}
                 className="tj-intro-status rounded-xl border border-white/[0.07] bg-white/[0.025] px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--color-text-muted)]"
@@ -336,7 +368,7 @@ export function LogoIntro({
           })}
         </div>
         <p className="mt-8 max-w-sm text-center text-xs text-[var(--color-text-muted)]">
-          You can change your language later in Profile &gt; Settings &gt; Region.
+          {PICKER_FOOTNOTE[locale] ?? PICKER_FOOTNOTE.en}
         </p>
       </div>
     </div>
