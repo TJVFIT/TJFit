@@ -89,7 +89,15 @@ export async function syncProductToGumroad(
     .maybeSingle();
 
   const priceCents = Math.round(input.priceUsd * 100);
-  let action: "create" | "update" = existing?.gumroad_product_id ? "update" : "create";
+  // A `test_`-prefixed id is a simulate-purchase fixture, not a real
+  // Gumroad product. Treat it as absent so we create a real product
+  // instead of issuing an update against a non-existent one (which
+  // returns no product and crashes).
+  const existingGumroadId =
+    existing?.gumroad_product_id && !String(existing.gumroad_product_id).startsWith("test_")
+      ? (existing.gumroad_product_id as string)
+      : null;
+  const action: "create" | "update" = existingGumroadId ? "update" : "create";
 
   try {
     let gumroadProduct: GumroadProduct;
@@ -101,12 +109,16 @@ export async function syncProductToGumroad(
         published: input.isPublished
       });
     } else {
-      gumroadProduct = await updateProduct(existing!.gumroad_product_id as string, {
+      gumroadProduct = await updateProduct(existingGumroadId as string, {
         name: input.name,
         priceCents,
         description: input.description,
         published: input.isPublished
       });
+    }
+
+    if (!gumroadProduct?.id) {
+      throw new Error(`Gumroad ${action} returned no product`);
     }
 
     await supabase
