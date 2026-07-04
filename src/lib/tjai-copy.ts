@@ -1,5 +1,6 @@
 import type { Locale } from "@/lib/i18n";
 import type { QuizStep, TJAICopy } from "@/lib/tjai-types";
+import { GENERIC_MARKETS, TJAI_COUNTRY_OPTIONS } from "@/lib/tjai/market-data";
 
 const SECTION_TITLES: Record<Locale, string[]> = {
   en: ["The Basics", "Your Body", "Your Lifestyle", "Your Training", "Your Nutrition", "Finishing Up"],
@@ -508,6 +509,19 @@ const BASE_STEPS: BaseStep[] = [
     max: 220,
     required: false
   },
+  {
+    id: "s7_diet_history", sectionIdx: 1,
+    question: "Have you tried structured dieting before?",
+    sub: "Your dieting history changes how aggressive TJAI should be with calories.",
+    type: "single",
+    options: [
+      opt("No — this is my first structured plan", "first_plan"),
+      opt("Yes — and I mostly kept the results", "kept_results"),
+      opt("Yes — but I regained the weight after", "regained"),
+      opt("Many times — I lose and regain in cycles", "yo_yo")
+    ],
+    required: true
+  },
 
   {
     id: "s4_daily_activity", sectionIdx: 2,
@@ -519,6 +533,31 @@ const BASE_STEPS: BaseStep[] = [
       opt("Low — Some walking, mostly sedentary", "low"),
       opt("Moderate — Regular movement, active lifestyle", "moderate"),
       opt("Active — Physical job or very active daily routine", "active")
+    ],
+    required: true
+  },
+  {
+    id: "s4_job_type", sectionIdx: 2,
+    question: "What kind of work do you do most days?",
+    sub: "Your job is the biggest driver of calories burned outside training.",
+    type: "single",
+    options: [
+      opt("Desk work — sitting most of the day", "desk"),
+      opt("Mixed — on my feet part of the day", "mixed"),
+      opt("Physical — manual labor or constantly moving", "physical")
+    ],
+    required: true
+  },
+  {
+    id: "s4_daily_steps", sectionIdx: 2,
+    question: "Roughly how many steps do you take on a normal day?",
+    sub: "Check your phone if you're not sure — daily steps sharpen your calorie math.",
+    type: "single",
+    options: [
+      opt("Under 4,000 — mostly sedentary", "under_4k"),
+      opt("4,000–8,000 — light movement", "4k_8k"),
+      opt("8,000–12,000 — solidly active", "8k_12k"),
+      opt("Over 12,000 — always on the move", "over_12k")
     ],
     required: true
   },
@@ -537,6 +576,18 @@ const BASE_STEPS: BaseStep[] = [
     required: true
   },
   {
+    id: "s8_sleep_quality", sectionIdx: 2,
+    question: "How would you describe the quality of that sleep?",
+    sub: "Hours matter, but restless sleep changes recovery just as much.",
+    type: "single",
+    options: [
+      opt("Restorative — I fall asleep easily and wake up rested", "restorative"),
+      opt("Restless — I wake up during the night or wake up tired", "restless"),
+      opt("Poor — trouble falling asleep, staying asleep, or both", "poor")
+    ],
+    required: true
+  },
+  {
     id: "s9_stress", sectionIdx: 2,
     question: "What is your current overall stress level?",
     sub: "High stress changes recovery, appetite, and how aggressive TJAI should be.",
@@ -547,6 +598,20 @@ const BASE_STEPS: BaseStep[] = [
       opt("Moderate — Regular work or life pressure", "moderate"),
       opt("High — Frequently stressed", "high"),
       opt("Very High — Overwhelmed regularly", "very_high")
+    ],
+    required: true
+  },
+  {
+    id: "s10_drinks", sectionIdx: 2,
+    question: "What do you drink on a typical day besides water?",
+    sub: "Select all that apply — liquid calories are the most common hidden progress killer.",
+    type: "multi",
+    options: [
+      opt("Mostly water, tea, or black coffee", "mostly_water"),
+      opt("Sugary drinks — soda, juice, sweetened coffee", "sugary_drinks"),
+      opt("Diet / zero-sugar drinks", "diet_soda"),
+      opt("Alcohol most weeks", "alcohol"),
+      opt("Energy drinks", "energy_drinks")
     ],
     required: true
   },
@@ -684,6 +749,23 @@ const BASE_STEPS: BaseStep[] = [
   },
 
   {
+    id: "s20_country", sectionIdx: 4,
+    question: "Which country do you live in?",
+    sub: "TJAI localizes your meals and grocery list to what's actually sold near you.",
+    type: "single",
+    options: TJAI_COUNTRY_OPTIONS,
+    required: true
+  },
+  {
+    id: "s20_market", sectionIdx: 4,
+    question: "Where do you usually buy your groceries?",
+    sub: "Pick the store closest to you — your grocery list will be built for it.",
+    type: "single",
+    dynamicOptions: "markets_by_country",
+    options: GENERIC_MARKETS,
+    required: true
+  },
+  {
     id: "s12_diet_style", sectionIdx: 4,
     question: "Which nutrition style fits you best right now?",
     sub: "TJAI will use this to choose a structure you can actually stick to.",
@@ -781,6 +863,19 @@ const BASE_STEPS: BaseStep[] = [
     required: true
   },
   {
+    id: "s11_eating_out", sectionIdx: 4,
+    question: "How often do you eat out or order delivery?",
+    sub: "TJAI plans around your real life instead of pretending every meal is home-cooked.",
+    type: "single",
+    options: [
+      opt("Rarely — almost everything is home-made", "rarely"),
+      opt("Once or twice a week", "weekly"),
+      opt("3–5 times a week", "several_weekly"),
+      opt("Most days", "daily")
+    ],
+    required: true
+  },
+  {
     id: "s16_which_supps", sectionIdx: 4,
     question: "What supplements are you already taking, if any?",
     sub: "Select all that apply. TJAI will avoid duplicating what you already use.",
@@ -797,6 +892,18 @@ const BASE_STEPS: BaseStep[] = [
     required: true
   },
 
+  {
+    id: "s15_weekend_consistency", sectionIdx: 5,
+    question: "What happens to your eating on weekends?",
+    sub: "Weekends decide most diets — two loose days can erase five careful ones.",
+    type: "single",
+    options: [
+      opt("Same as weekdays — I stay consistent", "consistent"),
+      opt("Slightly looser, but roughly on track", "slightly_off"),
+      opt("Weekends usually undo my week", "derails")
+    ],
+    required: true
+  },
   {
     id: "s18_biggest_problem", sectionIdx: 5,
     question: "What usually knocks you off track?",

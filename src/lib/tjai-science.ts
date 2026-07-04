@@ -30,6 +30,20 @@ function activityMultiplier(activity: TjaiUserProfile["activityLevel"]): number 
   return 1.725;
 }
 
+/** Refine the self-reported activity factor with job type and measured daily
+ * steps (NEAT). Steps are the strongest single predictor of non-training
+ * expenditure, so they can move the factor in both directions; clamped so the
+ * combination can never leave the physiological 1.2–1.9 band. */
+function refinedActivityFactor(profile: TjaiUserProfile): number {
+  let factor = activityMultiplier(profile.activityLevel);
+  if (profile.jobType === "physical") factor += 0.1;
+  else if (profile.jobType === "mixed") factor += 0.05;
+  if (profile.dailySteps === "under_4k") factor -= 0.05;
+  if (profile.dailySteps === "8k_12k") factor += 0.05;
+  if (profile.dailySteps === "over_12k") factor += 0.1;
+  return Math.min(1.9, Math.max(1.2, factor));
+}
+
 function trainingDaysAdjustment(days: number, bmr: number): number {
   if (days <= 2) return bmr * 0.05;
   if (days <= 4) return bmr * 0.1;
@@ -100,6 +114,7 @@ export function classifyMetabolicType(profile: TjaiUserProfile): MetabolicType {
   if (profile.goal === "fat_loss" && (profile.bodyType === "overweight" || profile.bodyType === "obese")) slowScore += 2;
   if (profile.goal === "recomposition") slowScore += 1;
   if (profile.scheduleConstraint === "short_sessions" || profile.scheduleConstraint === "family_load") slowScore += 1;
+  if (profile.dietHistory === "regained" || profile.dietHistory === "yo_yo") slowScore += 2;
 
   if (profile.stressLevel === "high" || profile.stressLevel === "very_high") stressScore += 3;
   if (profile.sleepHours < 6) stressScore += 2;
@@ -123,6 +138,15 @@ export function classifyMetabolicType(profile: TjaiUserProfile): MetabolicType {
 }
 
 export function detectReverseDietNeeded(profile: TjaiUserProfile): boolean {
+  // Chronic yo-yo dieters carrying meaningful body fat show metabolic
+  // adaptation — start them with a reverse phase regardless of chosen pace.
+  if (
+    profile.goal === "fat_loss" &&
+    profile.dietHistory === "yo_yo" &&
+    (profile.bodyType === "overweight" || profile.bodyType === "obese")
+  ) {
+    return true;
+  }
   return (
     profile.goal === "fat_loss" &&
     profile.pace === "aggressive" &&
@@ -179,12 +203,21 @@ export function calculateTJAIMetrics(answers: QuizAnswers): TJAIMetrics {
         ? femaleBmr
         : (maleBmr + femaleBmr) / 2;
 
-  let tdee = bmr * activityMultiplier(profile.activityLevel);
+  let tdee = bmr * refinedActivityFactor(profile);
   tdee += trainingDaysAdjustment(profile.trainingDays, bmr);
   tdee += scheduleAdjustment(profile);
 
-  let calorieTarget = applyGoalCalories(tdee, profile.goal, profile.pace, profile.sex);
-  calorieTarget = applyStressSleepAdjustment(calorieTarget, profile.stressLevel, profile.sleepHours);
+  // Rebound-prone dieters (regained / yo-yo) get their aggressive cut capped
+  // at a moderate deficit — the fastest path for them is the one they keep.
+  const reboundProne = profile.dietHistory === "regained" || profile.dietHistory === "yo_yo";
+  const effectivePace =
+    reboundProne && profile.goal === "fat_loss" && profile.pace === "aggressive" ? "moderate" : profile.pace;
+
+  // Poor sleep quality blunts recovery like short sleep does, even at 7-8h.
+  const effectiveSleepHours = profile.sleepQuality === "poor" ? Math.min(profile.sleepHours, 5.5) : profile.sleepHours;
+
+  let calorieTarget = applyGoalCalories(tdee, profile.goal, effectivePace, profile.sex);
+  calorieTarget = applyStressSleepAdjustment(calorieTarget, profile.stressLevel, effectiveSleepHours);
 
   const estimatedBodyFat = profile.estimatedBodyFat;
   const leanMass = profile.weightKg * (1 - estimatedBodyFat / 100);
@@ -282,7 +315,9 @@ export function calculateTJAIMetrics(answers: QuizAnswers): TJAIMetrics {
     profile.likedFoods.length > 0,
     profile.avoidedFoods.length > 0,
     profile.dailyRoutine.length > 15,
-    Boolean(profile.targetWeightKg)
+    Boolean(profile.targetWeightKg),
+    profile.country !== "other",
+    profile.groceryMarket !== "other_market"
   ].filter(Boolean).length;
   const confidenceScore = Math.min(100, 70 + confidenceSignals * 5);
 

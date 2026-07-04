@@ -155,7 +155,7 @@ export function TJAIResult({
       const response = await fetch("/api/tjai/grocery-list", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ week: activeDietPhase })
+        body: JSON.stringify({ week: activeDietPhase, country: answers.s20_country, market: answers.s20_market })
       });
       const data = await response.json();
       setGrocery({ categories: data.categories ?? [] });

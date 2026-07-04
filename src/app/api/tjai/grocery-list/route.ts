@@ -5,6 +5,7 @@ import { isAdminEmail } from "@/lib/auth-utils";
 // for grocery-list extraction; the rest of TJAI runs on OpenAI.
 // Requires ANTHROPIC_API_KEY in env (see .env.example).
 import { callClaude, extractJsonBlock } from "@/lib/tjai-anthropic";
+import { buildShoppingContext, normalizeCountry, normalizeMarket } from "@/lib/tjai/market-data";
 import { isAnthropicConfigured, providerUnavailableBody } from "@/lib/tjai/provider-policy";
 import { rateLimit } from "@/lib/rate-limit";
 import { requireAuth } from "@/lib/require-auth";
@@ -70,6 +71,12 @@ export async function POST(request: Request) {
     return NextResponse.json(providerUnavailableBody(), { status: 503 });
   }
 
+  // Localize the list to the user's country + store. Client-sent values are
+  // whitelisted against the market dataset (unknown input degrades to the
+  // generic "other" context), so nothing untrusted reaches the prompt.
+  const country = normalizeCountry(body?.country);
+  const market = normalizeMarket(country, body?.market);
+
   try {
     const text = await callClaude({
       maxTokens: 2000,
@@ -79,6 +86,12 @@ export async function POST(request: Request) {
       system: "You are TJAI. Return JSON only.",
       user: `Extract ingredients from these meals, combine duplicates, total quantities for one week.
 Organize categories: proteins, carbs_and_grains, vegetables_and_fruits, dairy_and_eggs, pantry_and_condiments, supplements.
+
+${buildShoppingContext(country, market)}
+- Name each item the way it appears on shelves at that store (local product names/forms).
+- Where a meal ingredient is hard to find there, substitute the closest regional staple and keep macros equivalent.
+- For each category, order items so the regional staples come first.
+
 Return JSON:
 {"categories":[{"name":"Proteins","items":[{"name":"Chicken breast","quantity":"1.2","unit":"kg"}]}]}
 Meals:

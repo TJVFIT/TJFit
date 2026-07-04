@@ -1,4 +1,5 @@
 import type { QuizAnswers, QuizOptionValue, TjaiUserProfile } from "@/lib/tjai-types";
+import { normalizeCountry, normalizeMarket } from "@/lib/tjai/market-data";
 
 const bodyTypeToBodyFat: Record<TjaiUserProfile["bodyType"], number> = {
   very_lean: 10,
@@ -254,6 +255,94 @@ function normalizeTrainingPreference(value: unknown, goal: TjaiUserProfile["goal
   return "mixed";
 }
 
+function normalizeJobType(value: unknown): TjaiUserProfile["jobType"] {
+  return matchFromMap(
+    value,
+    [
+      ["desk", "desk"],
+      ["sitting", "desk"],
+      ["mixed", "mixed"],
+      ["on my feet", "mixed"],
+      ["physical", "physical"],
+      ["manual", "physical"]
+    ],
+    "desk"
+  );
+}
+
+function normalizeDailySteps(value: unknown): TjaiUserProfile["dailySteps"] {
+  return matchFromMap(
+    value,
+    [
+      ["under_4k", "under_4k"],
+      ["4k_8k", "4k_8k"],
+      ["8k_12k", "8k_12k"],
+      ["over_12k", "over_12k"]
+    ],
+    "4k_8k"
+  );
+}
+
+function normalizeDietHistory(value: unknown): TjaiUserProfile["dietHistory"] {
+  return matchFromMap(
+    value,
+    [
+      ["first_plan", "first_plan"],
+      ["first", "first_plan"],
+      ["kept_results", "kept_results"],
+      ["kept", "kept_results"],
+      ["regained", "regained"],
+      ["yo_yo", "yo_yo"],
+      ["yo-yo", "yo_yo"],
+      ["cycles", "yo_yo"]
+    ],
+    "first_plan"
+  );
+}
+
+function normalizeSleepQuality(value: unknown): TjaiUserProfile["sleepQuality"] {
+  return matchFromMap(
+    value,
+    [
+      ["restorative", "restorative"],
+      ["rested", "restorative"],
+      ["restless", "restless"],
+      ["poor", "poor"],
+      ["insomnia", "poor"]
+    ],
+    "restless"
+  );
+}
+
+function normalizeEatingOut(value: unknown): TjaiUserProfile["eatingOutFrequency"] {
+  return matchFromMap(
+    value,
+    [
+      ["rarely", "rarely"],
+      ["several_weekly", "several_weekly"],
+      ["weekly", "weekly"],
+      ["daily", "daily"],
+      ["most days", "daily"]
+    ],
+    "rarely"
+  );
+}
+
+function normalizeWeekendConsistency(value: unknown): TjaiUserProfile["weekendConsistency"] {
+  return matchFromMap(
+    value,
+    [
+      ["consistent", "consistent"],
+      ["same", "consistent"],
+      ["slightly_off", "slightly_off"],
+      ["looser", "slightly_off"],
+      ["derails", "derails"],
+      ["undo", "derails"]
+    ],
+    "slightly_off"
+  );
+}
+
 function normalizeSuccessVision(value: unknown): TjaiUserProfile["successVision"] {
   return matchFromMap(
     value,
@@ -392,9 +481,13 @@ export function normalizeQuizAnswers(raw: Record<string, unknown>): QuizAnswers 
     s3_body_silhouette: normalizeBodyType(raw.s3_body_silhouette ?? raw.s3_body_type),
     s3_body_type: normalizeBodyType(raw.s3_body_silhouette ?? raw.s3_body_type),
     s3_estimated_bf: coerceNumberAnswer(raw.s3_estimated_bf, bodyTypeToBodyFat[normalizeBodyType(raw.s3_body_silhouette ?? raw.s3_body_type)]),
+    // "none" must survive here — the quiz UI has a required "None" option and
+    // re-normalizes on every click; stripping it made the step impassable.
+    // buildTjaiUserProfile still uses the strict list, so profile.injuries
+    // correctly ends up [] when "none" is selected.
     s17_injuries: normalizeMulti(
       raw.s17_injuries,
-      ["knee", "lower_back", "shoulder", "hip", "wrist_elbow", "recent_surgery", "chronic_condition"] as const,
+      ["none", "knee", "lower_back", "shoulder", "hip", "wrist_elbow", "recent_surgery", "chronic_condition"] as const,
       injuryLegacyMap
     ),
     s17_conditions: asString(raw.s17_conditions).trim(),
@@ -444,7 +537,19 @@ export function normalizeQuizAnswers(raw: Record<string, unknown>): QuizAnswers 
     ),
     s19_success_vision: normalizeSuccessVision(raw.s19_success_vision),
     s19_daily_routine: asString(raw.s19_daily_routine).trim(),
-    s19_target_weight: parseMaybeNumber(raw.s19_target_weight)
+    s19_target_weight: parseMaybeNumber(raw.s19_target_weight),
+    s20_country: normalizeCountry(raw.s20_country),
+    s20_market: normalizeMarket(raw.s20_country, raw.s20_market),
+    s4_job_type: normalizeJobType(raw.s4_job_type),
+    s4_daily_steps: normalizeDailySteps(raw.s4_daily_steps),
+    s7_diet_history: normalizeDietHistory(raw.s7_diet_history),
+    s8_sleep_quality: normalizeSleepQuality(raw.s8_sleep_quality),
+    s10_drinks: normalizeMulti(
+      raw.s10_drinks,
+      ["mostly_water", "sugary_drinks", "diet_soda", "alcohol", "energy_drinks"] as const
+    ),
+    s11_eating_out: normalizeEatingOut(raw.s11_eating_out),
+    s15_weekend_consistency: normalizeWeekendConsistency(raw.s15_weekend_consistency)
   };
 
   const restrictions = asStringArray(normalized.s13_allergies);
@@ -536,6 +641,21 @@ export function buildTjaiUserProfile(rawAnswers: Record<string, unknown>): TjaiU
     monthlyFoodBudget: oneOf(asString(answers.s14_budget), ["budget", "moderate", "premium"] as const, "moderate"),
     cookingStyle: oneOf(asString(answers.s14_time), ["minimal", "simple", "batch"] as const, "simple"),
     mealsPerDay: coerceNumberAnswer(answers.s11_meals, 4),
+    country: normalizeCountry(answers.s20_country),
+    groceryMarket: normalizeMarket(answers.s20_country, answers.s20_market),
+    jobType: normalizeJobType(answers.s4_job_type),
+    dailySteps: normalizeDailySteps(answers.s4_daily_steps),
+    dietHistory: normalizeDietHistory(answers.s7_diet_history),
+    sleepQuality: normalizeSleepQuality(answers.s8_sleep_quality),
+    drinkHabits: (() => {
+      const values = normalizeMulti(
+        answers.s10_drinks,
+        ["mostly_water", "sugary_drinks", "diet_soda", "alcohol", "energy_drinks"] as const
+      );
+      return values.length > 0 ? values : (["mostly_water"] as const).slice();
+    })(),
+    eatingOutFrequency: normalizeEatingOut(answers.s11_eating_out),
+    weekendConsistency: normalizeWeekendConsistency(answers.s15_weekend_consistency),
     supplements: normalizeMulti(
       answers.s16_which_supps,
       ["none", "protein", "creatine", "omega3", "vitamin_d", "magnesium", "preworkout"] as const
@@ -565,6 +685,8 @@ export function summarizeProfile(profile: TjaiUserProfile): string[] {
     `Experience: ${profile.experienceLevel}`,
     `Diet style: ${profile.dietStyle}`,
     `Restrictions: ${profile.dietaryRestrictions.join(", ") || "none"}${profile.restrictionNotes ? ` (${profile.restrictionNotes})` : ""}`,
-    `Obstacles: ${profile.biggestObstacles.join(", ") || "none"}`
+    `Obstacles: ${profile.biggestObstacles.join(", ") || "none"}`,
+    `Shops at: ${profile.groceryMarket} (${profile.country})`,
+    `Diet history: ${profile.dietHistory}`
   ];
 }

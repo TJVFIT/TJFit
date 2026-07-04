@@ -1,3 +1,4 @@
+import { buildShoppingContext } from "@/lib/tjai/market-data";
 import { composeCoachingPolicies } from "@/lib/tjai/prompts/policies";
 import type { TJAIMetrics, TjaiMemorySnapshot, TjaiUserProfile } from "@/lib/tjai-types";
 
@@ -158,6 +159,16 @@ Rules:
   if (poorSleep) coachWarnings.push("Sleep deprivation detected. Add sleep optimization protocol. Reduce volume on day 1 of each week.");
   if (highStress && poorSleep) coachWarnings.push("Compounding recovery risk. Include mandatory deload in weeks 4, 8. Cortisol management is priority.");
   if (isBeginnerLevel) coachWarnings.push("Beginner detected. Use 2-week adaptation phase. Teach RPE scale. Simpler exercises. More education notes.");
+  if (profile.dietHistory === "regained" || profile.dietHistory === "yo_yo")
+    coachWarnings.push("Rebound dieting history. The deficit has been capped at moderate — explain WHY in the plan. Teach maintenance skills during the plan, schedule diet-break guidance, and include a dedicated 'After Week 12: keeping the results' section.");
+  if (profile.sleepQuality === "poor")
+    coachWarnings.push("Poor sleep QUALITY (independent of hours). Include a wind-down protocol (screens, caffeine cutoff time, room temperature) and treat recovery capacity as reduced.");
+  if (profile.drinkHabits.includes("sugary_drinks") || profile.drinkHabits.includes("alcohol") || profile.drinkHabits.includes("energy_drinks"))
+    coachWarnings.push(`Liquid calories detected (${profile.drinkHabits.join(", ")}). Add a "Liquid Calories" subsection: quantify the typical weekly damage, give direct swaps, and if alcohol is present set explicit weekly limits with training-day rules.`);
+  if (profile.eatingOutFrequency === "several_weekly" || profile.eatingOutFrequency === "daily")
+    coachWarnings.push("Eats out often. Add an 'Eating Out Survival Guide': how to order for their macros at common restaurant types, and design the meal plan so restaurant meals slot in rather than break the plan.");
+  if (profile.weekendConsistency === "derails")
+    coachWarnings.push("Weekends derail this person. Add a 'Weekend Protocol': slightly lower weekday calories to bank a weekend buffer, plan ONE flexible meal per weekend day, and give a Monday reset routine. Never leave weekends unplanned.");
 
   const memoryBlock = memory
     ? `== TJAI MEMORY ==
@@ -215,7 +226,11 @@ Goal: ${pretty.goal} | Goal detail: ${pretty.goalDetail} | Pace: ${pretty.pace}
 Target weight: ${profile.targetWeightKg ?? "not specified"}kg
 Body type: ${pretty.bodyType} | Estimated body fat: ${profile.estimatedBodyFat}%
 Activity level: ${pretty.activityLevel}
-Sleep: ${profile.sleepHours} hours | Stress: ${pretty.stressLevel}
+Job type: ${titleCase(profile.jobType)} | Daily steps: ${profile.dailySteps.replace(/_/g, " ")}
+Sleep: ${profile.sleepHours} hours (${titleCase(profile.sleepQuality)} quality) | Stress: ${pretty.stressLevel}
+Diet history: ${titleCase(profile.dietHistory)}
+Drinks besides water: ${fmtArray(profile.drinkHabits.map(titleCase))}
+Eats out: ${titleCase(profile.eatingOutFrequency)} | Weekend pattern: ${titleCase(profile.weekendConsistency)}
 Training level: ${pretty.experienceLevel}
 Training location: ${pretty.trainingLocation}
 Training days/week: ${profile.trainingDays}
@@ -269,6 +284,11 @@ ${injuryBlock || "No injury-specific substitutions required."}
 
 == BUDGET MODE ==
 ${budgetBlock || "Standard budget mode."}
+
+== SHOPPING & FOOD ENVIRONMENT ==
+${buildShoppingContext(profile.country, profile.groceryMarket)}
+- Every meal in the plan must be buildable from a normal shopping trip to that store.
+- When two foods are nutritionally equivalent, always pick the one from the regional staples list.
 
 == SUPPLEMENT STACK ==
 Generate tiers:

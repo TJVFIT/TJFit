@@ -23,6 +23,9 @@ function profile(overrides: Partial<TjaiUserProfile> = {}): TjaiUserProfile {
     monthlyFoodBudget: "moderate", cookingStyle: "simple", mealsPerDay: 4,
     supplements: ["none"], biggestObstacles: [], successVision: "look_different",
     dailyRoutine: "",
+    country: "other", groceryMarket: "other_market", jobType: "desk",
+    dailySteps: "4k_8k", dietHistory: "first_plan", sleepQuality: "restless",
+    drinkHabits: ["mostly_water"], eatingOutFrequency: "rarely", weekendConsistency: "slightly_off",
     ...overrides
   };
 }

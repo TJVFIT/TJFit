@@ -46,6 +46,15 @@ function baseProfile(overrides: Partial<TjaiUserProfile> = {}): TjaiUserProfile 
     biggestObstacles: [],
     successVision: "look_different",
     dailyRoutine: "",
+    country: "other",
+    groceryMarket: "other_market",
+    jobType: "desk",
+    dailySteps: "4k_8k",
+    dietHistory: "first_plan",
+    sleepQuality: "restless",
+    drinkHabits: ["mostly_water"],
+    eatingOutFrequency: "rarely",
+    weekendConsistency: "slightly_off",
     ...overrides
   };
 }

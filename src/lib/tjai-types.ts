@@ -33,6 +33,8 @@ export type QuizStep = {
   step?: number;
   defaultValue?: number;
   required: boolean;
+  /** Options resolved at render time from another answer (e.g. markets for the chosen country). Wins over `options`. */
+  dynamicOptions?: "markets_by_country";
   showIf?: {
     mode?: "all" | "any";
     conditions: QuizCondition[];
@@ -88,6 +90,17 @@ export type TjaiUserProfile = {
   monthlyFoodBudget: "budget" | "moderate" | "premium";
   cookingStyle: "minimal" | "simple" | "batch";
   mealsPerDay: number;
+  /** Country slug from market-data (or "other"). Grounds grocery localization. */
+  country: string;
+  /** Market slug valid for `country` per market-data (or "other_market"). */
+  groceryMarket: string;
+  jobType: "desk" | "mixed" | "physical";
+  dailySteps: "under_4k" | "4k_8k" | "8k_12k" | "over_12k";
+  dietHistory: "first_plan" | "kept_results" | "regained" | "yo_yo";
+  sleepQuality: "restorative" | "restless" | "poor";
+  drinkHabits: Array<"mostly_water" | "sugary_drinks" | "diet_soda" | "alcohol" | "energy_drinks">;
+  eatingOutFrequency: "rarely" | "weekly" | "several_weekly" | "daily";
+  weekendConsistency: "consistent" | "slightly_off" | "derails";
   supplements: Array<"none" | "protein" | "creatine" | "omega3" | "vitamin_d" | "magnesium" | "preworkout">;
   biggestObstacles: Array<"motivation" | "consistency" | "time" | "food_cravings" | "training_knowledge" | "stress" | "recovery">;
   successVision:

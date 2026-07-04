@@ -6,6 +6,7 @@ import { BodySilhouetteSelector } from "@/components/tjai/body-silhouette-select
 import { useMagneticButton } from "@/hooks/useMagneticButton";
 import type { Locale } from "@/lib/i18n";
 import { normalizeQuizAnswers } from "@/lib/tjai-intake";
+import { getMarketQuizOptions } from "@/lib/tjai/market-data";
 import { calculateTJAIMetrics } from "@/lib/tjai-science";
 import { cn } from "@/lib/utils";
 import type { QuizAnswers, QuizStep, TJAICopy } from "@/lib/tjai-types";
@@ -423,7 +424,12 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
     }
 
     if (step.type === "single") {
-      const singleOptions = Array.isArray(step.options) ? step.options : [];
+      const singleOptions =
+        step.dynamicOptions === "markets_by_country"
+          ? getMarketQuizOptions(answers.s20_country)
+          : Array.isArray(step.options)
+            ? step.options
+            : [];
       if (singleOptions.length === 0) {
         return (
           <div className="rounded-[10px] border border-divider bg-surface p-4 text-sm text-muted">
