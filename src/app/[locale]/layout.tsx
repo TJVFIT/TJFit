@@ -61,7 +61,9 @@ export function generateMetadata({ params }: { params: { locale?: string } }): M
   languages["x-default"] = `${SITE_URL}/en`;
 
   return {
-    title,
+    // absolute: TITLES are already branded; stops the root "%s | TJFit"
+    // template double-branding the homepage (child pages still use it)
+    title: { absolute: title },
     description,
     alternates: {
       canonical: `${SITE_URL}/${routing}`,
