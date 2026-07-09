@@ -33,7 +33,8 @@ export function SiteShell({
   return (
     <DynamicIslandProvider>
       <PendingNotificationPoller />
-      <div className="min-h-screen overflow-x-hidden bg-background text-text">
+      {/* transparent: the fixed WarpBackground (root layout) is the site base */}
+      <div className="min-h-screen overflow-x-hidden text-text">
         {!introDone ? <LogoIntro locale={locale} onComplete={handleIntroComplete} /> : null}
         <ScrollToTop />
         <ScrollProgressBar />

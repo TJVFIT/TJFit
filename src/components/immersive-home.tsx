@@ -302,7 +302,7 @@ export function ImmersiveHome({
 
   return (
     <div
-      className="relative min-h-screen bg-background text-white"
+      className="relative min-h-screen text-white"
       dir={direction}
       style={{ "--tj-reveal-distance": "40px" } as CSSProperties}
     >
@@ -436,7 +436,7 @@ export function ImmersiveHome({
       <SplineShowcase />
 
       {/* Stats — restrained, no neon scoreboard */}
-      <section className="reveal-section border-y border-divider bg-background py-16 lg:py-20">
+      <section className="reveal-section border-y border-divider bg-background/60 py-16 lg:py-20">
         <MotionReveal reducedMotion={reduce} className="mx-auto max-w-5xl px-6 lg:px-12">
           <div className="flex flex-col divide-y divide-[#1E2028] lg:flex-row lg:divide-x lg:divide-y-0">
             <CountUp target={BUNDLES.length} label={sectionsCopy.stats.bundles} />

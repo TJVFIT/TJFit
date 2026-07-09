@@ -41,7 +41,7 @@ export function WarpBackground() {
         speed={reduced ? 0 : 0.6}
       />
       )}
-      <div className="absolute inset-0 bg-[#09090b]/55" />
+      <div className="absolute inset-0 bg-[#09090b]/40" />
     </div>
   );
 }
