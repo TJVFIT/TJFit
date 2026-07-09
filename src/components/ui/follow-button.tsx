@@ -56,8 +56,8 @@ export function FollowButton({ targetUserId, initialFollowing, initialCount, onC
         onClick={toggle}
         className={
           following
-            ? `rounded-full px-5 py-2 text-sm font-semibold transition-[border-color,background-color,color,box-shadow] duration-200 ${hovering ? "border border-red-400/40 bg-red-500/12 text-red-200 shadow-[0_0_18px_rgba(239,68,68,0.14)]" : "border border-purple-300/45 bg-purple-500/12 text-purple-100 shadow-[0_0_18px_rgba(168,85,247,0.16)]"}`
-            : "tj-cta-sheen rounded-full border border-white/20 bg-transparent px-5 py-2 text-sm font-semibold text-white transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/45 hover:bg-purple-300/[0.06] hover:text-purple-50 hover:shadow-[0_0_22px_rgba(168,85,247,0.18)]"
+            ? `!overflow-hidden rounded-full px-5 py-2 text-sm font-semibold transition-[border-color,background-color,color,box-shadow] duration-200 ${hovering ? "border border-red-400/40 bg-red-500/12 text-red-200 shadow-[0_0_18px_rgba(239,68,68,0.14)]" : "border border-purple-300/45 bg-purple-500/12 text-purple-100 shadow-[0_0_18px_rgba(168,85,247,0.16)]"}`
+            : "tj-cta-sheen !overflow-hidden rounded-full border border-white/20 bg-transparent px-5 py-2 text-sm font-semibold text-white transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/45 hover:bg-purple-300/[0.06] hover:text-purple-50 hover:shadow-[0_0_22px_rgba(168,85,247,0.18)]"
         }
       >
         {label}

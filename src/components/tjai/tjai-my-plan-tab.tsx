@@ -199,7 +199,14 @@ export function TJAIMyPlanTab({ locale }: { locale: Locale }) {
           </div>
           <h3 className="mt-4 text-2xl font-bold text-white">{t.buildTitle}</h3>
           <p className="mt-2 text-sm text-muted">{t.buildSub}</p>
-          <button type="button" onClick={() => setShowBuilder(true)} className="mt-5 tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 py-2 text-sm font-semibold text-[#09090B]">
+          <button type="button" onClick={() => setShowBuilder(true)} className="mt-5 gooey-cta rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 py-2 text-sm font-semibold text-[#09090B]">
+            <span className="bubbles" aria-hidden>
+              <span />
+              <span />
+              <span />
+              <span />
+              <span />
+            </span>
             {t.start}
           </button>
           <a href={`/${locale}/membership?tjai_onetime=1`} className="mt-3 inline-flex rounded-full border border-divider px-4 py-2 text-xs text-bright">

@@ -496,8 +496,15 @@ function SignupForm({ params }: { params: { locale: string } }) {
                   setError(null);
                   setStep((s) => Math.min(4, s + 1));
                 }}
-                className="tj-cta-sheen gradient-button min-h-[48px] flex-1 rounded-full px-5 py-3 text-base font-semibold text-[#09090B]"
+                className="gooey-cta gradient-button min-h-[48px] flex-1 rounded-full px-5 py-3 text-base font-semibold text-[#09090B]"
               >
+                <span className="bubbles" aria-hidden>
+                  <span />
+                  <span />
+                  <span />
+                  <span />
+                  <span />
+                </span>
                 {copy.signupContinue}
               </button>
             ) : (
@@ -506,7 +513,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
                 fullWidth
                 loading={loading}
                 loadingText={copy.creatingAccount}
-                className="tj-cta-sheen gradient-button flex min-h-[48px] w-full touch-manipulation items-center justify-center gap-2 rounded-full px-5 py-3 text-base font-semibold text-[#09090B] transition hover:brightness-105"
+                className="gradient-button flex min-h-[48px] w-full touch-manipulation items-center justify-center gap-2 rounded-full px-5 py-3 text-base font-semibold text-[#09090B] transition hover:brightness-105"
                 onClick={() => submitSignup()}
               >
                 {copy.signupFinish}

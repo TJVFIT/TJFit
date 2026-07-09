@@ -33,7 +33,14 @@ export function AuthRequiredPanel({
       <p className="tj-section-title mt-6 text-xl sm:text-2xl">{s.loginRequiredTitle}</p>
       <p className="tj-prose-muted mx-auto mt-3 max-w-sm">{s.loginRequiredBody}</p>
       <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-        <Link href={`/${loc}/login${loginQs}`} className="lux-btn-primary inline-flex min-h-[48px] justify-center rounded-full px-8 py-3 text-sm font-semibold text-[#05080a]">
+        <Link href={`/${loc}/login${loginQs}`} className="gooey-cta lux-btn-primary inline-flex min-h-[48px] justify-center rounded-full px-8 py-3 text-sm font-semibold text-[#05080a]">
+          <span className="bubbles" aria-hidden>
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+          </span>
           {nav.loginLabel}
         </Link>
         <Link href={`/${loc}/signup${signupQs}`} className="lux-btn-secondary inline-flex min-h-[48px] justify-center rounded-full px-8 py-3 text-sm font-medium text-bright">

@@ -4303,3 +4303,197 @@ button[aria-disabled="true"],
 @media (prefers-reduced-motion: reduce) {
   .tj-cta-sheen:hover::before { animation: none; }
 }
+
+/* ── Gooey CTA ─────────────────────────────────────────────────────────
+   Bubbles that melt out of the primary pill on hover, driven by the SVG
+   #gooey filter mounted once in the root layout (see gooey-button.tsx).
+   `.gooey-cta` is the effect host used by <Button variant="primary">; it
+   replaces .btn-primary-shimmer there because the bubbles must overflow
+   the pill and shimmer forces `overflow: hidden`. Glow shadows are kept
+   identical to the shimmer tier. `.gooey-button` is the standalone
+   component from gooey-button.tsx. Bubble sizes stay >=22px: the goo
+   threshold (alpha x18-7 after 10px blur) erases smaller blobs. */
+.gooey-cta {
+  position: relative;
+  isolation: isolate;
+  overflow: visible;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.12) inset,
+    0 14px 34px rgba(0, 0, 0, 0.28),
+    0 0 30px rgba(168, 85, 247, 0.12);
+}
+
+.gooey-cta:hover {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.18) inset,
+    0 18px 42px rgba(0, 0, 0, 0.32),
+    0 0 38px rgba(168, 85, 247, 0.18);
+}
+
+.gooey-button {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.75rem 2.5rem;
+  border: 0;
+  border-radius: 9999px;
+  background: var(--gradient-btn-primary);
+  color: #09090b;
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.12) inset,
+    0 14px 34px rgba(0, 0, 0, 0.28),
+    0 0 30px rgba(168, 85, 247, 0.12);
+  transition: box-shadow 200ms ease, transform 200ms ease;
+}
+
+.gooey-button:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.18) inset,
+    0 18px 42px rgba(0, 0, 0, 0.32),
+    0 0 38px rgba(168, 85, 247, 0.18);
+}
+
+.gooey-button:active {
+  transform: scale(0.98);
+}
+
+/* Hidden at rest: negative-z children paint ABOVE the host's own
+   background, so the goo body must never sit there while idle — it would
+   repaint hosts whose gradient/radius differ from the default. Hover-only
+   also keeps the SVG-filtered surface from costing GPU on CTA grids. */
+.gooey-cta .bubbles,
+.gooey-button .bubbles {
+  position: absolute;
+  top: -44px;
+  right: -16px;
+  bottom: -8px;
+  left: -16px;
+  z-index: -1;
+  display: block;
+  pointer-events: none;
+  filter: url(#gooey);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.gooey-cta:hover .bubbles,
+.gooey-cta:active .bubbles,
+.gooey-cta:focus-visible .bubbles,
+.gooey-button:hover .bubbles,
+.gooey-button:active .bubbles,
+.gooey-button:focus-visible .bubbles {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Goo body the bubbles merge with, overlaying the real pill during hover.
+   Hosts whose surface differs from the default purple pill declare
+   --goo-body / --goo-radius so the body replicates them exactly. */
+.gooey-cta .bubbles::before,
+.gooey-button .bubbles::before {
+  content: "";
+  position: absolute;
+  inset: 44px 16px 8px 16px;
+  border-radius: var(--goo-radius, 9999px);
+  background: var(--goo-body, var(--gradient-btn-primary));
+}
+
+.gooey-cta .bubbles span,
+.gooey-button .bubbles span {
+  position: absolute;
+  bottom: 14px;
+  border-radius: 50%;
+  transform: translateY(0) scale(0);
+}
+
+.gooey-cta .bubbles span:nth-child(1),
+.gooey-button .bubbles span:nth-child(1) {
+  left: 8%;
+  width: 22px;
+  height: 22px;
+  background: #a855f7;
+  --bubble-delay: 0.12s;
+  --bubble-duration: 1.15s;
+}
+
+.gooey-cta .bubbles span:nth-child(2),
+.gooey-button .bubbles span:nth-child(2) {
+  left: 28%;
+  width: 26px;
+  height: 26px;
+  background: #8b5cf6;
+  --bubble-delay: 0.5s;
+  --bubble-duration: 1.4s;
+}
+
+.gooey-cta .bubbles span:nth-child(3),
+.gooey-button .bubbles span:nth-child(3) {
+  left: 48%;
+  width: 23px;
+  height: 23px;
+  background: #a855f7;
+  --bubble-delay: 0s;
+  --bubble-duration: 1.25s;
+}
+
+.gooey-cta .bubbles span:nth-child(4),
+.gooey-button .bubbles span:nth-child(4) {
+  left: 66%;
+  width: 28px;
+  height: 28px;
+  background: #7c3aed;
+  --bubble-delay: 0.65s;
+  --bubble-duration: 1.5s;
+}
+
+.gooey-cta .bubbles span:nth-child(5),
+.gooey-button .bubbles span:nth-child(5) {
+  left: 84%;
+  width: 22px;
+  height: 22px;
+  background: #9333ea;
+  --bubble-delay: 0.3s;
+  --bubble-duration: 1.2s;
+}
+
+.gooey-cta:hover .bubbles span,
+.gooey-cta:active .bubbles span,
+.gooey-cta:focus-visible .bubbles span,
+.gooey-button:hover .bubbles span,
+.gooey-button:active .bubbles span,
+.gooey-button:focus-visible .bubbles span {
+  animation: gooey-bubble-rise var(--bubble-duration, 1.3s) ease-in infinite;
+  animation-delay: var(--bubble-delay, 0s);
+}
+
+@keyframes gooey-bubble-rise {
+  0% {
+    transform: translateY(0) scale(0);
+  }
+  50% {
+    transform: translateY(-26px) scale(1);
+  }
+  100% {
+    transform: translateY(-46px) scale(0.15);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gooey-cta:hover .bubbles span,
+  .gooey-cta:active .bubbles span,
+  .gooey-cta:focus-visible .bubbles span,
+  .gooey-button:hover .bubbles span,
+  .gooey-button:active .bubbles span,
+  .gooey-button:focus-visible .bubbles span {
+    animation: none;
+  }
+}

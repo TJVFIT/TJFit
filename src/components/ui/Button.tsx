@@ -42,12 +42,27 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   { variant = "primary", size = "md", className, children, href, type = "button", ...props },
   ref
 ) {
-  const cls = cn(base, variants[variant], variant !== "link" && sizes[size], variant === "primary" && "btn-primary-shimmer", className);
+  const cls = cn(base, variants[variant], variant !== "link" && sizes[size], variant === "primary" && "gooey-cta", className);
   const magneticLinkRef = useMagneticButton<HTMLAnchorElement>(0.3);
+
+  // Gooey hover effect: bubbles melt out of the primary pill via the SVG
+  // #gooey filter mounted in the root layout. Spans (not divs) so the
+  // markup stays valid inside both <button> and <a>.
+  const bubbles =
+    variant === "primary" ? (
+      <span className="bubbles" aria-hidden>
+        <span />
+        <span />
+        <span />
+        <span />
+        <span />
+      </span>
+    ) : null;
 
   if (href) {
     return (
       <Link href={href} className={cls} ref={variant === "primary" ? magneticLinkRef : undefined}>
+        {bubbles}
         {children}
       </Link>
     );
@@ -55,6 +70,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
 
   return (
     <button ref={ref} type={type} className={cls} {...props}>
+      {bubbles}
       {children}
     </button>
   );

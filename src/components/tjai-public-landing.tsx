@@ -386,8 +386,15 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
         <h2 className="text-3xl font-extrabold text-white">{copy.finalTitle}</h2>
         <Link
           href={`/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`}
-          className="mt-5 inline-flex min-h-[52px] items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-10 text-base font-bold text-[#09090B]"
+          className="mt-5 inline-flex min-h-[52px] items-center justify-center gooey-cta rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-10 text-base font-bold text-[#09090B]"
         >
+          <span className="bubbles" aria-hidden>
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+          </span>
           {copy.finalCta}
           <ArrowRight className="ms-2 h-4 w-4" aria-hidden />
         </Link>

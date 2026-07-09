@@ -89,8 +89,8 @@ export function LeadCaptureForm({
 
   const btnCls =
     variant === "footer"
-      ? "lux-btn-primary inline-flex min-h-[48px] w-full shrink-0 touch-manipulation items-center justify-center rounded-full px-6 text-base font-semibold text-[#05080a] disabled:opacity-60 sm:w-auto sm:text-sm"
-      : "lux-btn-primary inline-flex min-h-[52px] w-full shrink-0 touch-manipulation items-center justify-center rounded-full px-8 text-base font-semibold text-[#05080a] disabled:opacity-60 sm:w-auto sm:min-h-[48px] sm:text-sm";
+      ? "gooey-cta lux-btn-primary inline-flex min-h-[48px] w-full shrink-0 touch-manipulation items-center justify-center rounded-full px-6 text-base font-semibold text-[#05080a] disabled:opacity-60 sm:w-auto sm:text-sm"
+      : "gooey-cta lux-btn-primary inline-flex min-h-[52px] w-full shrink-0 touch-manipulation items-center justify-center rounded-full px-8 text-base font-semibold text-[#05080a] disabled:opacity-60 sm:w-auto sm:min-h-[48px] sm:text-sm";
 
   return (
     <form onSubmit={submit} className={`${wrap} ${className}`.trim()}>
@@ -114,6 +114,13 @@ export function LeadCaptureForm({
         <p className="mt-2 text-[11px] text-dim sm:text-xs">{copy.privacyNote}</p>
       </div>
       <button type="submit" disabled={working} className={btnCls}>
+        <span className="bubbles" aria-hidden>
+          <span />
+          <span />
+          <span />
+          <span />
+          <span />
+        </span>
         {working ? copy.submitting : copy.submit}
       </button>
     </form>

@@ -187,8 +187,15 @@ export default async function BundleDetailPage({
             {owns ? (
               <Link
                 href={programHref}
-                className="tj-cta-sheen relative inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-5 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(168,85,247,0.22)] hover:brightness-110 hover:shadow-[0_0_36px_rgba(168,85,247,0.36)] motion-safe:active:scale-[0.97] sm:flex-none"
+                className="gooey-cta relative inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-5 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(168,85,247,0.22)] hover:brightness-110 hover:shadow-[0_0_36px_rgba(168,85,247,0.36)] motion-safe:active:scale-[0.97] sm:flex-none"
               >
+                <span className="bubbles" aria-hidden>
+                  <span />
+                  <span />
+                  <span />
+                  <span />
+                  <span />
+                </span>
                 Start Program
                 <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
               </Link>
@@ -392,8 +399,15 @@ export default async function BundleDetailPage({
           </div>
           <Link
             href={programHref}
-            className="tj-cta-sheen inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(168,85,247,0.22)] hover:brightness-110 sm:w-auto"
+            className="gooey-cta inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(168,85,247,0.22)] hover:brightness-110 sm:w-auto"
           >
+            <span className="bubbles" aria-hidden>
+              <span />
+              <span />
+              <span />
+              <span />
+              <span />
+            </span>
             Start Program
             <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
           </Link>

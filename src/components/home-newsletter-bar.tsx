@@ -132,8 +132,15 @@ export function HomeNewsletterBar({ locale }: { locale: Locale }) {
             <button
               type="submit"
               disabled={busy || done}
-              className="tj-cta-sheen min-h-[48px] shrink-0 rounded-[10px] bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-6 text-sm font-extrabold text-[#09090B] shadow-[0_12px_40px_rgba(168,85,247,0.22)] transition-[filter,transform,box-shadow] duration-200 hover:brightness-110 hover:shadow-[0_16px_48px_rgba(168,85,247,0.34)] hover:-translate-y-0.5 disabled:opacity-60 sm:px-8"
+              className="gooey-cta [--goo-radius:10px] min-h-[48px] shrink-0 rounded-[10px] bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-6 text-sm font-extrabold text-[#09090B] shadow-[0_12px_40px_rgba(168,85,247,0.22)] transition-[filter,transform,box-shadow] duration-200 hover:brightness-110 hover:shadow-[0_16px_48px_rgba(168,85,247,0.34)] hover:-translate-y-0.5 disabled:opacity-60 sm:px-8"
             >
+              <span className="bubbles" aria-hidden>
+                <span />
+                <span />
+                <span />
+                <span />
+                <span />
+              </span>
               {busy ? "…" : copy.cta}
             </button>
           </div>

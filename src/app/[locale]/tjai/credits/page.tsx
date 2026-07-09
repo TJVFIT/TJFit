@@ -284,12 +284,19 @@ export default async function TjaiCreditsPage({ params }: { params: { locale: st
                 ) : (
                   <a
                     href={trackedUrl ?? sync.gumroad_permalink ?? "#"}
-                    className={`tj-cta-sheen block rounded-full px-5 py-3 text-center text-sm font-bold text-white transition-[transform,box-shadow,filter] duration-200 hover:scale-[1.02] hover:brightness-110 ${
+                    className={`gooey-cta block rounded-full px-5 py-3 text-center text-sm font-bold text-white transition-[transform,box-shadow,filter] duration-200 hover:scale-[1.02] hover:brightness-110 ${
                       isPopular
                         ? "bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_28px_rgba(168,85,247,0.25)]"
-                        : "bg-[linear-gradient(135deg,#7C3AED,#5B21B6)] shadow-[0_0_18px_rgba(124,58,237,0.20)]"
+                        : "bg-[linear-gradient(135deg,#7C3AED,#5B21B6)] shadow-[0_0_18px_rgba(124,58,237,0.20)] [--goo-body:linear-gradient(135deg,#7C3AED,#5B21B6)]"
                     }`}
                   >
+                    <span className="bubbles" aria-hidden>
+                      <span />
+                      <span />
+                      <span />
+                      <span />
+                      <span />
+                    </span>
                     {copy.buy}
                   </a>
                 )}

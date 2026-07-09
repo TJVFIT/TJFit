@@ -73,7 +73,14 @@ export default function EquipmentPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            <button type="submit" disabled={submitting} className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 py-2.5 text-sm font-bold text-[#09090B] disabled:opacity-50">
+            <button type="submit" disabled={submitting} className="gooey-cta rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 py-2.5 text-sm font-bold text-[#09090B] disabled:opacity-50">
+              <span className="bubbles" aria-hidden>
+                <span />
+                <span />
+                <span />
+                <span />
+                <span />
+              </span>
               {submitting ? "Adding..." : "Notify Me"}
             </button>
           </form>

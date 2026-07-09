@@ -19,7 +19,7 @@ type GlowButtonProps = {
 export function GlowButton({ href, variant, className = "", children, reducedMotion, onPress }: GlowButtonProps) {
   const base =
     variant === "primary"
-      ? "lux-btn-primary group relative inline-flex min-h-[50px] items-center justify-center overflow-hidden rounded-full px-8 py-3.5 text-sm font-semibold tracking-tight text-[#05080a] shadow-none sm:min-h-[52px] sm:text-[15px]"
+      ? "lux-btn-primary gooey-cta group relative inline-flex min-h-[50px] items-center justify-center rounded-full px-8 py-3.5 text-sm font-semibold tracking-tight text-[#05080a] shadow-none sm:min-h-[52px] sm:text-[15px]"
       : "lux-btn-secondary group relative inline-flex min-h-[50px] items-center justify-center overflow-hidden rounded-full px-8 py-3.5 text-sm font-medium tracking-tight text-bright sm:min-h-[52px] sm:text-[15px]";
 
   const motionCls =
@@ -30,6 +30,15 @@ export function GlowButton({ href, variant, className = "", children, reducedMot
   return (
     <div className={cn("flex w-full justify-center sm:inline-flex sm:w-auto sm:justify-start", className)}>
       <Link href={href} className={cn(base, motionCls, "w-full max-w-md sm:max-w-none sm:w-auto")} onClick={() => onPress?.()}>
+        {variant === "primary" ? (
+          <span className="bubbles" aria-hidden>
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+          </span>
+        ) : null}
         {variant === "primary" && reducedMotion !== true ? (
           <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-full" aria-hidden>
             <span className="absolute inset-0 translate-x-[-120%] skew-x-[-18deg] bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 transition-[transform,opacity] duration-700 ease-out group-hover:translate-x-[120%] group-hover:opacity-100" />

@@ -249,7 +249,14 @@ export function CoachProfileView({ locale, slug }: { locale: string; slug: strin
         <p className="text-xs uppercase tracking-[0.14em] text-faint">{c.featuredEyebrow}</p>
         <h3 className="mt-2 text-lg font-semibold text-white">{coach.featured_program_id ? `${c.programLabel} ${coach.featured_program_id}` : c.noFeatured}</h3>
         {coach.featured_program_id ? (
-          <Link href={`/${locale}/bundles`} className="mt-3 inline-flex tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2 text-sm font-semibold text-[#09090B]">
+          <Link href={`/${locale}/bundles`} className="mt-3 inline-flex gooey-cta rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2 text-sm font-semibold text-[#09090B]">
+            <span className="bubbles" aria-hidden>
+              <span />
+              <span />
+              <span />
+              <span />
+              <span />
+            </span>
             {c.viewBundles}
           </Link>
         ) : null}

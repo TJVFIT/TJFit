@@ -656,8 +656,15 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
                   setIdx(resumePrompt.currentStep);
                   setResumePrompt(null);
                 }}
-                className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-4 py-2 text-xs font-semibold text-[#09090B] shadow-[0_0_18px_rgba(168,85,247,0.22)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] hover:shadow-[0_0_28px_rgba(168,85,247,0.35)]"
+                className="gooey-cta rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-4 py-2 text-xs font-semibold text-[#09090B] shadow-[0_0_18px_rgba(168,85,247,0.22)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] hover:shadow-[0_0_28px_rgba(168,85,247,0.35)]"
               >
+                <span className="bubbles" aria-hidden>
+                  <span />
+                  <span />
+                  <span />
+                  <span />
+                  <span />
+                </span>
                 {uiCopy.resume}
               </button>
               <button
@@ -732,13 +739,20 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
                 onClick={goNext}
                 disabled={!canContinue}
                 className={cn(
-                  "tj-cta-sheen min-h-11 rounded-full px-5 text-sm font-bold text-[#09090B] transition-all disabled:cursor-not-allowed disabled:opacity-40",
+                  "gooey-cta min-h-11 rounded-full px-5 text-sm font-bold text-[#09090B] transition-all disabled:cursor-not-allowed disabled:opacity-40",
                   safeIdx === total - 1
                     ? "bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_24px_rgba(168,85,247,0.25)] hover:scale-[1.02] motion-safe:animate-[tjai-pulse_1.8s_ease-in-out_infinite]"
                     : "bg-[linear-gradient(135deg,#A855F7,#7C3AED)] hover:scale-[1.02]",
                   shake && "animate-[tjai-shake_300ms_ease]"
                 )}
               >
+                <span className="bubbles" aria-hidden>
+                  <span />
+                  <span />
+                  <span />
+                  <span />
+                  <span />
+                </span>
                 {safeIdx === total - 1 ? copy.nav.generate : copy.nav.continue}
               </button>
             </div>

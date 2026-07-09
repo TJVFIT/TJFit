@@ -636,7 +636,7 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
             size="sm"
             loading={sending}
             disabled={!showComposer || !messageText.trim()}
-            className="tj-cta-sheen flex h-12 w-12 shrink-0 touch-manipulation !min-h-[48px] !min-w-[48px] !rounded-xl !bg-[linear-gradient(135deg,#A855F7,#7C3AED)] !px-0 !text-[#05080a] !shadow-[0_0_18px_rgba(168,85,247,0.22)] hover:!scale-100 hover:!shadow-[0_0_26px_rgba(168,85,247,0.35)] hover:!brightness-110 hover:!opacity-100 sm:h-11 sm:w-11 sm:!min-h-[44px] sm:!min-w-[44px]"
+            className="flex h-12 w-12 shrink-0 touch-manipulation !min-h-[48px] !min-w-[48px] !rounded-xl !bg-[linear-gradient(135deg,#A855F7,#7C3AED)] !px-0 !text-[#05080a] !shadow-[0_0_18px_rgba(168,85,247,0.22)] hover:!scale-100 hover:!shadow-[0_0_26px_rgba(168,85,247,0.35)] hover:!brightness-110 hover:!opacity-100 sm:h-11 sm:w-11 sm:!min-h-[44px] sm:!min-w-[44px] [--goo-radius:0.75rem]"
             aria-label={t.send}
             onClick={() => void sendText()}
           >

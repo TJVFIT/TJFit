@@ -4,6 +4,8 @@ import { JetBrains_Mono, Manrope, Space_Grotesk } from "next/font/google";
 import { AuthProvider } from "@/components/auth-provider";
 import { TrackingScripts } from "@/components/marketing/tracking-scripts";
 import { BrandOrganizationJsonLd } from "@/components/brand-organization-json-ld";
+import { GooeyFilter } from "@/components/ui/gooey-button";
+import { WarpBackground } from "@/components/ui/warp-background";
 import { BRAND } from "@/lib/brand-assets";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
@@ -110,6 +112,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${manrope.variable} ${spaceGrotesk.variable} ${jetbrains.variable}`}>
       <body className="tj-grain font-sans antialiased">
+        <GooeyFilter />
+        <WarpBackground />
         <BrandOrganizationJsonLd />
         <TrackingScripts />
         <AuthProvider>{children}</AuthProvider>

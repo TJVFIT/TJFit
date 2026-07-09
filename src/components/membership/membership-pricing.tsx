@@ -223,7 +223,7 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
             $<span className="tabular-nums">{apexPriceDisplay}</span>{" "}
             <span className="text-sm font-medium text-muted">{mode === "monthly" ? copy.perMonthSuffix : copy.perYearSuffix}</span>
           </p>
-          <Button className="tj-cta-sheen mt-4 w-full bg-gradient-to-r from-purple-400 to-violet-500 font-bold text-white shadow-[0_0_24px_rgba(168,85,247,0.22)] transition-[transform,box-shadow,filter] duration-200 hover:scale-[1.01] hover:shadow-[0_0_36px_rgba(168,85,247,0.35)] hover:brightness-110" disabled={working !== null || !apexConfigured} onClick={() => checkout("apex")}>
+          <Button className="mt-4 w-full bg-gradient-to-r from-purple-400 to-violet-500 font-bold text-white shadow-[0_0_24px_rgba(168,85,247,0.22)] transition-[transform,box-shadow,filter] duration-200 hover:scale-[1.01] hover:shadow-[0_0_36px_rgba(168,85,247,0.35)] hover:brightness-110 [--goo-body:linear-gradient(90deg,#c084fc,#8b5cf6)]" disabled={working !== null || !apexConfigured} onClick={() => checkout("apex")}>
             {working === "apex" ? "..." : copy.cards.apex.cta}
           </Button>
           {!apexConfigured ? (

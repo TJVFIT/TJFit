@@ -195,8 +195,15 @@ export function StartFunnelClient({ locale }: { locale: Locale }) {
             </ul>
             <Link
               href={`/${locale}/bundles`}
-              className="mt-5 inline-flex min-h-[46px] w-full items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 text-sm font-bold text-[#09090B]"
+              className="mt-5 inline-flex min-h-[46px] w-full items-center justify-center gooey-cta rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 text-sm font-bold text-[#09090B]"
             >
+              <span className="bubbles" aria-hidden>
+                <span />
+                <span />
+                <span />
+                <span />
+                <span />
+              </span>
               {copy.browsePrograms}
             </Link>
           </article>
@@ -216,8 +223,15 @@ export function StartFunnelClient({ locale }: { locale: Locale }) {
             </div>
             <Link
               href={`/${locale}/tjai`}
-              className="mt-5 inline-flex min-h-[46px] w-full items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 text-sm font-bold text-[#09090B]"
+              className="mt-5 inline-flex min-h-[46px] w-full items-center justify-center gooey-cta rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 text-sm font-bold text-[#09090B]"
             >
+              <span className="bubbles" aria-hidden>
+                <span />
+                <span />
+                <span />
+                <span />
+                <span />
+              </span>
               {copy.startTjai}
             </Link>
           </article>
@@ -234,8 +248,15 @@ export function StartFunnelClient({ locale }: { locale: Locale }) {
             </div>
             <Link
               href={`/${locale}/calculator`}
-              className="mt-5 inline-flex min-h-[46px] w-full items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 text-sm font-bold text-[#09090B]"
+              className="mt-5 inline-flex min-h-[46px] w-full items-center justify-center gooey-cta rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 text-sm font-bold text-[#09090B]"
             >
+              <span className="bubbles" aria-hidden>
+                <span />
+                <span />
+                <span />
+                <span />
+                <span />
+              </span>
               {copy.calcTdee}
             </Link>
           </article>
@@ -254,8 +275,15 @@ export function StartFunnelClient({ locale }: { locale: Locale }) {
             </Link>
             <Link
               href={`/${locale}/membership?tier=apex`}
-              className="inline-flex min-h-[46px] items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 text-sm font-bold text-[#09090B]"
+              className="inline-flex min-h-[46px] items-center justify-center gooey-cta rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 text-sm font-bold text-[#09090B]"
             >
+              <span className="bubbles" aria-hidden>
+                <span />
+                <span />
+                <span />
+                <span />
+                <span />
+              </span>
               {copy.getApex}
             </Link>
           </div>

@@ -281,13 +281,23 @@ export function HeroSection({
             <MagneticLink
               href={`/${locale}/start`}
               onClick={() => trackMarketingEvent("hero_cta_click", { cta: "start", surface: "immersive-hero" })}
-              className="tj-premium-primary-cta tj-cta-sheen inline-flex min-h-[54px] min-w-[44px] flex-1 items-center justify-center gap-2 rounded-[14px] px-7 py-3.5 text-[15px] font-extrabold transition-[transform,filter,box-shadow] duration-200 hover:brightness-110 sm:flex-none"
+              className="tj-premium-primary-cta gooey-cta inline-flex min-h-[54px] min-w-[44px] flex-1 items-center justify-center gap-2 rounded-[14px] px-7 py-3.5 text-[15px] font-extrabold transition-[transform,filter,box-shadow] duration-200 hover:brightness-110 sm:flex-none"
               style={{
                 background: `linear-gradient(180deg, ${TJ_PALETTE.accentHi}, ${TJ_PALETTE.accent})`,
                 color: TJ_PALETTE.obsidian,
-                boxShadow: "0 18px 44px rgba(0,0,0,0.3), 0 0 34px rgba(168,85,247,0.18)"
-              }}
+                boxShadow: "0 18px 44px rgba(0,0,0,0.3), 0 0 34px rgba(168,85,247,0.18)",
+                // goo body must replicate this non-default surface exactly
+                "--goo-body": `linear-gradient(180deg, ${TJ_PALETTE.accentHi}, ${TJ_PALETTE.accent})`,
+                "--goo-radius": "14px"
+              } as CSSProperties}
             >
+              <span className="bubbles" aria-hidden>
+                <span />
+                <span />
+                <span />
+                <span />
+                <span />
+              </span>
               {ctaPrimary}
               <ArrowRight className="h-4 w-4 shrink-0" />
             </MagneticLink>

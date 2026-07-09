@@ -209,8 +209,15 @@ function QuickLogWidget({ locale }: { locale: Locale }) {
                   type="button"
                   onClick={() => void submit()}
                   disabled={saving || !exercise.trim()}
-                  className="tj-cta-sheen inline-flex min-h-[44px] items-center justify-center rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-5 text-sm font-bold text-black shadow-[0_0_18px_rgba(168,85,247,0.22)] transition-[transform,box-shadow,opacity] duration-200 hover:scale-[1.02] hover:shadow-[0_0_28px_rgba(168,85,247,0.35)] disabled:opacity-50"
+                  className="gooey-cta inline-flex min-h-[44px] items-center justify-center rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-5 text-sm font-bold text-black shadow-[0_0_18px_rgba(168,85,247,0.22)] transition-[transform,box-shadow,opacity] duration-200 hover:scale-[1.02] hover:shadow-[0_0_28px_rgba(168,85,247,0.35)] disabled:opacity-50"
                 >
+                  <span className="bubbles" aria-hidden>
+                    <span />
+                    <span />
+                    <span />
+                    <span />
+                    <span />
+                  </span>
                   {saving ? "Logging…" : "Log workout"}
                 </button>
                 <Link href={`/${locale}/progress`} className="text-xs text-faint hover:text-bright">
@@ -372,8 +379,15 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
           <p className="tj-empty-state__text mt-2 max-w-[300px] text-sm text-[var(--color-text-muted)]">{t.emptySub}</p>
           <Link
             href={`/${locale}/bundles`}
-            className="lux-btn-primary mt-6 inline-flex min-h-[44px] items-center justify-center rounded-full px-8 py-2.5 text-sm font-bold text-[#09090B]"
+            className="lux-btn-primary gooey-cta mt-6 inline-flex min-h-[44px] items-center justify-center rounded-full px-8 py-2.5 text-sm font-bold text-[#09090B]"
           >
+            <span className="bubbles" aria-hidden>
+              <span />
+              <span />
+              <span />
+              <span />
+              <span />
+            </span>
             {t.emptyCta}
           </Link>
         </div>

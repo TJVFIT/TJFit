@@ -140,7 +140,7 @@ function BundleTeaserCTA({ href, label }: { href: string; label: string }) {
     <a
       ref={ref}
       href={href}
-      className="group/cta tj-cta-sheen relative inline-flex min-h-[52px] shrink-0 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-7 py-3 text-sm font-bold text-background shadow-[0_4px_24px_rgba(168,85,247,0.35)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] hover:shadow-[0_8px_44px_rgba(168,85,247,0.55)]"
+      className="group/cta gooey-cta relative inline-flex min-h-[52px] shrink-0 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-7 py-3 text-sm font-bold text-background shadow-[0_4px_24px_rgba(168,85,247,0.35)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] hover:shadow-[0_8px_44px_rgba(168,85,247,0.55)]"
       style={
         {
           "--mag-x": "0px",
@@ -151,6 +151,13 @@ function BundleTeaserCTA({ href, label }: { href: string; label: string }) {
         } as React.CSSProperties
       }
     >
+      <span className="bubbles" aria-hidden>
+        <span />
+        <span />
+        <span />
+        <span />
+        <span />
+      </span>
       <span className="relative">{label}</span>
       <ArrowRight
         className="relative h-4 w-4 transition-transform rtl:rotate-180 motion-safe:group-hover/cta:translate-x-1 rtl:motion-safe:group-hover/cta:-translate-x-1"
@@ -340,8 +347,15 @@ export function ImmersiveHome({
           </div>
           <Link
             href={`/${locale}/tjai`}
-            className="lux-btn-primary inline-flex min-h-[48px] shrink-0 items-center justify-center gap-2 tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-6 py-3 text-sm font-bold text-background shadow-[0_4px_24px_rgba(168,85,247,0.35)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02]"
+            className="lux-btn-primary inline-flex min-h-[48px] shrink-0 items-center justify-center gap-2 gooey-cta rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-6 py-3 text-sm font-bold text-background shadow-[0_4px_24px_rgba(168,85,247,0.35)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02]"
           >
+            <span className="bubbles" aria-hidden>
+              <span />
+              <span />
+              <span />
+              <span />
+              <span />
+            </span>
             {sectionsCopy.tjai.cta} <ArrowRight className="h-4 w-4 rtl:rotate-180" />
           </Link>
         </div>
@@ -633,8 +647,15 @@ export function ImmersiveHome({
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link
                 href={`/${locale}/signup`}
-                className="tj-cta-glow-hover inline-flex min-h-[56px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#A855F7] to-[#7C3AED] px-10 py-4 text-base font-bold text-[#0A0A0B] shadow-[0_0_40px_rgba(168,85,247,0.5),0_0_80px_rgba(168,85,247,0.2)] transition-transform hover:scale-[1.04]"
+                className="tj-cta-glow-hover gooey-cta inline-flex min-h-[56px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#A855F7] to-[#7C3AED] px-10 py-4 text-base font-bold text-[#0A0A0B] shadow-[0_0_40px_rgba(168,85,247,0.5),0_0_80px_rgba(168,85,247,0.2)] transition-transform hover:scale-[1.04] [--goo-body:linear-gradient(90deg,#A855F7,#7C3AED)]"
               >
+                <span className="bubbles" aria-hidden>
+                  <span />
+                  <span />
+                  <span />
+                  <span />
+                  <span />
+                </span>
                 {navChrome.joinLabel} — It&apos;s Free
               </Link>
               <Link

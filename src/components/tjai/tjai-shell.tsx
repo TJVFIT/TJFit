@@ -273,7 +273,14 @@ export function TJAIShell({
               </div>
               <p className="mt-2 text-sm text-muted">{accessCopy.moderateBody}</p>
               <p className="mt-2 text-xs text-faint">{moderate.weeklyWeightChange} kg/week expected</p>
-              <button type="button" className="mt-4 w-full tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2.5 text-sm font-bold text-[#09090B]" onClick={() => void handleGenerate(normalizedDraft, "moderate")}>
+              <button type="button" className="mt-4 w-full gooey-cta rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2.5 text-sm font-bold text-[#09090B]" onClick={() => void handleGenerate(normalizedDraft, "moderate")}>
+                <span className="bubbles" aria-hidden>
+                  <span />
+                  <span />
+                  <span />
+                  <span />
+                  <span />
+                </span>
                 {accessCopy.moderateCta}
               </button>
             </article>
@@ -304,7 +311,14 @@ export function TJAIShell({
               <h3 className="text-xl font-semibold text-white">{accessCopy.upgrade.title}</h3>
               <p className="mt-2 text-sm text-muted">{accessCopy.upgrade.body}</p>
               <div className="mt-5 grid gap-2">
-                <a href={`/${locale}/membership?tjai_onetime=1`} className="btn-primary-shimmer inline-flex min-h-[44px] items-center justify-center rounded-full bg-gradient-to-br from-[#A855F7] to-[#7C3AED] px-4 py-2 text-sm font-bold text-[#09090B]">
+                <a href={`/${locale}/membership?tjai_onetime=1`} className="gooey-cta inline-flex min-h-[44px] items-center justify-center rounded-full bg-gradient-to-br from-[#A855F7] to-[#7C3AED] px-4 py-2 text-sm font-bold text-[#09090B]">
+                  <span className="bubbles" aria-hidden>
+                    <span />
+                    <span />
+                    <span />
+                    <span />
+                    <span />
+                  </span>
                   {accessCopy.upgrade.oneTime.replace("{price}", String(TJAI_ONE_TIME_PRICE_USD))}
                 </a>
                 <a href={`/${locale}/membership?tier=pro`} className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-accent px-4 py-2 text-sm font-semibold text-bright">
@@ -346,18 +360,32 @@ export function TJAIShell({
                 {outOfCredits ? (
                   <a
                     href={`/${locale}/tjai/credits`}
-                    className="w-full tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 py-2.5 text-sm font-bold text-black"
+                    className="w-full gooey-cta rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 py-2.5 text-sm font-bold text-black"
                   >
+                    <span className="bubbles" aria-hidden>
+                      <span />
+                      <span />
+                      <span />
+                      <span />
+                      <span />
+                    </span>
                     {(OUT_OF_CREDITS_COPY[locale] ?? OUT_OF_CREDITS_COPY.en).cta}
                   </a>
                 ) : (
                 <button
                   type="button"
-                  className="w-full tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 py-2.5 text-sm font-bold text-black"
+                  className="w-full gooey-cta rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 py-2.5 text-sm font-bold text-black"
                   onClick={() => {
                     if (pendingAnswers) void handleGenerate(pendingAnswers, pendingPace);
                   }}
                 >
+                  <span className="bubbles" aria-hidden>
+                    <span />
+                    <span />
+                    <span />
+                    <span />
+                    <span />
+                  </span>
                   Try Again
                 </button>
                 )}

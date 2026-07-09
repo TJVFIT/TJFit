@@ -94,8 +94,15 @@ export function DelayedEarlyAccessPopup({ locale }: Props) {
         <Link
           href={`/${activeLocale}/signup?from=early-access-popup`}
           onClick={onCtaClick}
-          className="lux-btn-primary inline-flex min-h-[48px] w-full touch-manipulation items-center justify-center rounded-full px-6 text-center text-sm font-semibold text-[#05080a] sm:w-auto"
+          className="gooey-cta lux-btn-primary inline-flex min-h-[48px] w-full touch-manipulation items-center justify-center rounded-full px-6 text-center text-sm font-semibold text-[#05080a] sm:w-auto"
         >
+          <span className="bubbles" aria-hidden>
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+          </span>
           {copy.cta}
         </Link>
         <Link
