@@ -99,7 +99,7 @@ export function MembershipPricing({ locale }: { locale: Locale }) {
   return (
     <section className="mt-8">
       {/* Header + billing toggle */}
-      <div className="rounded-2xl border border-divider bg-surface p-6 sm:p-8" style={{ backdropFilter: "blur(24px)" }}>
+      <div className="rounded-2xl border border-divider bg-surface/70 p-6 sm:p-8" style={{ backdropFilter: "blur(24px)" }}>
         <h1 className="text-3xl font-extrabold text-white">{copy.title}</h1>
         <p className="mt-2 text-sm text-muted">{copy.sub}</p>
 

@@ -163,7 +163,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
         style={{
           borderColor: TJ_PALETTE.hairline,
           background:
-            `radial-gradient(ellipse 70% 60% at 70% 20%, rgba(168,85,247,0.14), transparent 62%), radial-gradient(ellipse 44% 40% at 12% 100%, rgba(246,243,237,0.05), transparent 68%), ${TJ_PALETTE.obsidian}`
+            `radial-gradient(ellipse 70% 60% at 70% 20%, rgba(168,85,247,0.14), transparent 62%), radial-gradient(ellipse 44% 40% at 12% 100%, rgba(246,243,237,0.05), transparent 68%), rgba(5,5,7,0.55)`
         }}
       >
         <div
@@ -263,7 +263,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
         </div>
       </section>
 
-      <section className="mt-10 rounded-2xl border border-divider bg-surface p-6">
+      <section className="mt-10 rounded-2xl border border-divider bg-surface/70 p-6 backdrop-blur-sm">
         <h2 className="text-2xl font-bold text-white">{copy.previewTitle}</h2>
         <div className="mt-4 inline-flex gap-2 rounded-xl border border-divider bg-[#0D1015] p-1">
           {(["training", "nutrition", "macros"] as TabKey[]).map((key) => (
@@ -371,7 +371,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
         </div>
       </section>
 
-      <section className="mt-10 rounded-2xl border border-divider bg-surface p-6">
+      <section className="mt-10 rounded-2xl border border-divider bg-surface/70 p-6 backdrop-blur-sm">
         <h2 className="text-2xl font-bold text-white">{copy.faqTitle}</h2>
         <div className="mt-4 space-y-3">
           {FAQ.map((q) => (
@@ -382,7 +382,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
         </div>
       </section>
 
-      <section className="reveal-section tj-whirl mt-10 rounded-3xl border border-divider bg-[linear-gradient(180deg,#111215_0%,#0D1015_100%)] p-8 text-center">
+      <section className="reveal-section tj-whirl mt-10 rounded-3xl border border-divider bg-[linear-gradient(180deg,rgba(17,18,21,0.75)_0%,rgba(13,16,21,0.75)_100%)] p-8 text-center backdrop-blur-sm">
         <h2 className="text-3xl font-extrabold text-white">{copy.finalTitle}</h2>
         <Link
           href={`/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`}

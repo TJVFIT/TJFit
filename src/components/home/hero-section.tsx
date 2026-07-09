@@ -38,7 +38,7 @@ function MagneticLink({
 function HeroMetric({ label, value, hint }: { label: string; value: string; hint: string }) {
   return (
     <div className="group/metric relative border-t border-white/[0.08] pt-4 transition-[border-color] duration-300 hover:border-purple-300/30">
-      {/* Cyan glow that follows the top hairline only on hover. */}
+      {/* Violet glow that follows the top hairline only on hover. */}
       <span
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-0 transition-opacity duration-300 group-hover/metric:opacity-100"
@@ -174,12 +174,12 @@ export function HeroSection({
     <section
       ref={sectionRef}
       className="tj-hero-premium-stage relative flex min-h-[100dvh] flex-col justify-center overflow-hidden px-5 pb-16 pt-24 sm:px-7 lg:px-12"
-      style={{ minHeight: "max(760px, 100dvh)", background: TJ_PALETTE.obsidian }}
+      style={{ minHeight: "max(760px, 100dvh)" }}
     >
       <div
         className="pointer-events-none absolute inset-0 z-0"
         style={{
-          background: `radial-gradient(ellipse 92% 72% at 78% 36%, rgba(168,85,247,0.16), transparent 60%), radial-gradient(ellipse 60% 50% at 70% 30%, rgba(124,58,237,0.10), transparent 52%), radial-gradient(ellipse 70% 60% at 8% 88%, rgba(246,243,237,0.05), transparent 55%), ${TJ_PALETTE.obsidian}`
+          background: `radial-gradient(ellipse 92% 72% at 78% 36%, rgba(168,85,247,0.16), transparent 60%), radial-gradient(ellipse 60% 50% at 70% 30%, rgba(124,58,237,0.10), transparent 52%), radial-gradient(ellipse 70% 60% at 8% 88%, rgba(246,243,237,0.05), transparent 55%), rgba(10,9,14,0.45)`
         }}
         aria-hidden
       />
@@ -216,7 +216,7 @@ export function HeroSection({
         className="pointer-events-none absolute inset-0 z-[2]"
         style={{
           background: [
-            `linear-gradient(90deg, ${TJ_PALETTE.obsidian} 0%, rgba(8,8,10,0.98) 36%, rgba(8,8,10,0.72) 58%, rgba(8,8,10,0.18) 80%, transparent 100%)`,
+            "linear-gradient(90deg, rgba(5,5,7,0.88) 0%, rgba(8,8,10,0.78) 36%, rgba(8,8,10,0.55) 58%, rgba(8,8,10,0.16) 80%, transparent 100%)",
             "radial-gradient(ellipse 70% 86% at 14% 48%, rgba(8,8,10,0.64) 0%, transparent 58%)"
           ].join(", ")
         }}

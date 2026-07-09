@@ -85,7 +85,7 @@ export default function ProPage({ params }: { params: { locale: string } }) {
         className="relative overflow-hidden rounded-3xl border px-6 py-14 sm:px-10 sm:py-16"
         style={{
           borderColor: TJ_PALETTE.hairline,
-          background: `radial-gradient(ellipse 80% 70% at 50% 0%, rgba(124,58,237,0.10), transparent 62%), ${TJ_PALETTE.obsidian}`
+          background: `radial-gradient(ellipse 80% 70% at 50% 0%, rgba(124,58,237,0.10), transparent 62%), rgba(5,5,7,0.55)`
         }}
       >
         <div

@@ -3824,7 +3824,7 @@ button[aria-disabled="true"],
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 48% 36% at 76% 32%, rgba(103, 232, 249, 0.13), transparent 64%),
+    radial-gradient(ellipse 48% 36% at 76% 32%, rgba(168, 85, 247, 0.13), transparent 64%),
     radial-gradient(ellipse 34% 24% at 54% 72%, rgba(246, 243, 237, 0.045), transparent 68%);
   mix-blend-mode: screen;
 }

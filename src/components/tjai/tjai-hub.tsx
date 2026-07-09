@@ -103,7 +103,6 @@ export function TJAIHub({ locale }: { locale: Locale }) {
     <div
       dir={direction}
       className="relative min-h-[100svh] overflow-hidden"
-      style={{ background: TJ_PALETTE.obsidian }}
     >
       <div
         className="pointer-events-none absolute inset-0 z-0 opacity-[0.55]"
