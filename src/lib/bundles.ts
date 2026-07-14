@@ -97,6 +97,17 @@ export type Bundle = {
   recipes?: BundleRecipe[];
   /** Weekly grocery list, categorized. */
   groceryList?: BundleGroceryCategory[];
+  /** Honest 1-5 rating derived from the actual programming (1 = easiest). */
+  difficulty?: 1 | 2 | 3 | 4 | 5;
+  difficultyLabel?: "beginner" | "intermediate" | "advanced";
+  /** Where the program is designed to be run. */
+  setting?: "gym" | "home" | "hybrid";
+  /** Who the bundle genuinely fits — derived from its programming. */
+  whoFor?: string[];
+  /** Who should pick a different bundle instead. */
+  whoNotFor?: string[];
+  /** Factual Q&A about what the bundle actually contains. */
+  faq?: Array<{ q: string; a: string }>;
 };
 
 export const BUNDLES: Bundle[] = [
@@ -668,12 +679,13 @@ export const BUNDLES: Bundle[] = [
   }
 ];
 
-import { BUNDLE_CONTENT } from "@/lib/bundle-content";
+import { BUNDLE_AUDIENCE, BUNDLE_CONTENT } from "@/lib/bundle-content";
 
 function enrich(b: Bundle): Bundle {
   const content = BUNDLE_CONTENT[b.slug];
-  if (!content) return b;
-  return { ...b, ...content };
+  const audience = BUNDLE_AUDIENCE[b.slug];
+  if (!content && !audience) return b;
+  return { ...b, ...content, ...audience };
 }
 
 /** Lookup a bundle by slug. Returns undefined if not found. */

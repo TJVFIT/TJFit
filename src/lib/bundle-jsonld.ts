@@ -27,6 +27,16 @@ export type ProductJsonLd = {
   };
 };
 
+export type FaqPageJsonLd = {
+  "@context": "https://schema.org";
+  "@type": "FAQPage";
+  mainEntity: Array<{
+    "@type": "Question";
+    name: string;
+    acceptedAnswer: { "@type": "Answer"; text: string };
+  }>;
+};
+
 export type ItemListJsonLd = {
   "@context": "https://schema.org";
   "@type": "ItemList";
@@ -61,6 +71,20 @@ export function bundleProductJsonLd(bundle: Bundle, locale: string): ProductJson
       price: "0.00",
       availability: "https://schema.org/InStock"
     }
+  };
+}
+
+/** Schema.org/FAQPage blob for a bundle's factual FAQ — null when it has none. */
+export function bundleFaqJsonLd(bundle: Bundle): FaqPageJsonLd | null {
+  if (!bundle.faq?.length) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: bundle.faq.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a }
+    }))
   };
 }
 

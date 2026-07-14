@@ -1947,3 +1947,401 @@ export const BUNDLE_CONTENT: Record<string, BundleContent> = {
     ]
   }
 };
+
+/* ─── Audience layer ───────────────────────────────────────────────────
+ * Difficulty, setting, fit, and FAQ per bundle — derived from the actual
+ * programming above (sessions per week, equipment, exercise complexity,
+ * diet aggressiveness). Merged into Bundle by getBundle() like content.
+ */
+
+export type BundleAudience = {
+  difficulty: 1 | 2 | 3 | 4 | 5;
+  difficultyLabel: "beginner" | "intermediate" | "advanced";
+  setting: "gym" | "home" | "hybrid";
+  whoFor: string[];
+  whoNotFor: string[];
+  faq: Array<{ q: string; a: string }>;
+};
+
+export const BUNDLE_AUDIENCE: Record<string, BundleAudience> = {
+  "fat-loss": {
+    difficulty: 3,
+    difficultyLabel: "intermediate",
+    setting: "gym",
+    whoFor: [
+      "Lifters who want to cut without losing muscle",
+      "People with gym access five days a week",
+      "Anyone already comfortable with barbell basics"
+    ],
+    whoNotFor: [
+      "Complete beginners — start with Beginner Foundations",
+      "Home-only training — see the Home Starter Bundle"
+    ],
+    faq: [
+      {
+        q: "How many days a week do I train?",
+        a: "Five: push, pull, and legs sessions, then a push/conditioning day and a posterior-chain day. Every session is written out in the weekly template."
+      },
+      {
+        q: "Do I need a full gym?",
+        a: "Yes. The plan uses a barbell, rack, dumbbells, a cable stack, and a pull-up bar."
+      },
+      {
+        q: "What does the diet look like?",
+        a: "A clean cut about 15% below maintenance at 1.0 g protein per lb, with two refeed weeks, six recipes, and a categorized grocery list."
+      },
+      {
+        q: "Is this bundle really free?",
+        a: "Yes. The full 12-week PDF dossier is free to download."
+      }
+    ]
+  },
+
+  "lean-bulk": {
+    difficulty: 3,
+    difficultyLabel: "intermediate",
+    setting: "gym",
+    whoFor: [
+      "Lifters who want to add muscle with minimal fat",
+      "People who can train five days a week",
+      "Anyone comfortable with heavy compound lifts"
+    ],
+    whoNotFor: [
+      "Anyone whose first priority is losing fat",
+      "New lifters still learning the main barbell lifts"
+    ],
+    faq: [
+      {
+        q: "What split does it use?",
+        a: "A five-day push/pull/legs structure: two push days, two pull-and-posterior days, and a quad-focused leg day."
+      },
+      {
+        q: "How big is the calorie surplus?",
+        a: "About 10% above maintenance, targeting 0.5-1 lb of gain per week, re-baselined every four weeks."
+      },
+      {
+        q: "What equipment do I need?",
+        a: "A full gym: barbell and plates, rack and bench, dumbbells, cable stack, and a pull-up bar."
+      },
+      {
+        q: "Is this bundle really free?",
+        a: "Yes. The full 12-week PDF dossier is free to download."
+      }
+    ]
+  },
+
+  "home-starter": {
+    difficulty: 1,
+    difficultyLabel: "beginner",
+    setting: "home",
+    whoFor: [
+      "People starting their first structured plan",
+      "Anyone training at home with no equipment",
+      "Busy schedules — four short sessions a week"
+    ],
+    whoNotFor: [
+      "Experienced lifters who want heavy barbell work",
+      "Anyone who prefers training in a gym"
+    ],
+    faq: [
+      {
+        q: "Do I need any equipment?",
+        a: "No weights. A mat, a sturdy chair or table, and a filled water bottle cover it; a doorway pull-up bar and band are optional."
+      },
+      {
+        q: "What does a week look like?",
+        a: "Three full-body bodyweight sessions plus one active-recovery day of walking and mobility."
+      },
+      {
+        q: "Do I have to count calories?",
+        a: "Not at first. The diet uses plate-based portions — no weighing required for the first four weeks."
+      },
+      {
+        q: "How does it get harder over 12 weeks?",
+        a: "Reps and tempo increase in weeks 5-8, then a fourth circuit round and unilateral variants arrive in weeks 9-12."
+      }
+    ]
+  },
+
+  definition: {
+    difficulty: 4,
+    difficultyLabel: "advanced",
+    setting: "gym",
+    whoFor: [
+      "Lifters who already have muscle and want to see it",
+      "People used to tracking macros",
+      "Anyone who can commit to five gym days a week"
+    ],
+    whoNotFor: [
+      "New lifters — the deficit and volume are aggressive",
+      "Anyone unwilling to track food"
+    ],
+    faq: [
+      {
+        q: "How aggressive is the cut?",
+        a: "About 20% below maintenance at 1.2 g protein per lb, with a weekly refeed day and carbs placed around training."
+      },
+      {
+        q: "How much cardio is there?",
+        a: "Steady-state blocks are built into two sessions (Zone 2 and Stairmaster); phase two adds one more cardio block."
+      },
+      {
+        q: "What intensity techniques does it use?",
+        a: "Drop sets from phase two onward, and supersets on arms and delts in the final phase."
+      },
+      {
+        q: "What equipment do I need?",
+        a: "A full gym with barbell, dumbbells, machines, and a cable stack."
+      }
+    ]
+  },
+
+  recomp: {
+    difficulty: 4,
+    difficultyLabel: "advanced",
+    setting: "gym",
+    whoFor: [
+      "Lifters who want to gain muscle and lose fat slowly",
+      "People willing to log every set and meal",
+      "Anyone training five days a week at maintenance calories"
+    ],
+    whoNotFor: [
+      "Anyone who wants fast visible results",
+      "People not ready to track food consistently"
+    ],
+    faq: [
+      {
+        q: "How do the calories work?",
+        a: "You eat at maintenance with carb cycling — higher carbs on lifting days, moderate on rest days — after calibrating your true maintenance in weeks 1-4."
+      },
+      {
+        q: "What is the training split?",
+        a: "Upper and lower strength days, upper and lower hypertrophy days, plus one Zone 2 conditioning and core day."
+      },
+      {
+        q: "Why is recomp called the hardest plan?",
+        a: "Progress is slower and depends on precision: strength must climb at maintenance calories, and weeks 9-11 run a small mini-cut before a retest."
+      },
+      {
+        q: "What equipment do I need?",
+        a: "A full gym: barbell, rack, dumbbells, machines, and a cable stack."
+      }
+    ]
+  },
+
+  powerbuilding: {
+    difficulty: 4,
+    difficultyLabel: "advanced",
+    setting: "gym",
+    whoFor: [
+      "Lifters who want strength on the big four plus size",
+      "People who prefer four focused sessions a week",
+      "Anyone with access to a barbell and rack"
+    ],
+    whoNotFor: [
+      "Beginners still learning squat, bench, and deadlift",
+      "Home training without a barbell"
+    ],
+    faq: [
+      {
+        q: "How is the week organized?",
+        a: "Four days, one per main lift: squat, bench, deadlift, and overhead press, each followed by hypertrophy accessories."
+      },
+      {
+        q: "How does the strength progression work?",
+        a: "5×5 at 70% in weeks 1-4, 5×5 at 80% in weeks 5-8, then triples and doubles up to 90% with heavy singles in week 12."
+      },
+      {
+        q: "What does the diet look like?",
+        a: "A slight surplus of about 5% above maintenance at 1.0 g protein per lb, with pre-workout carbs prioritized."
+      }
+    ]
+  },
+
+  calisthenics: {
+    difficulty: 4,
+    difficultyLabel: "advanced",
+    setting: "hybrid",
+    whoFor: [
+      "People with solid pull-ups chasing the muscle-up",
+      "Anyone who trains at a park, at home, or in a gym",
+      "Lifters who value skill work as much as strength"
+    ],
+    whoNotFor: [
+      "Anyone who cannot yet do strict pull-ups and dips",
+      "People whose main goal is maximum muscle mass"
+    ],
+    faq: [
+      {
+        q: "Do I need a gym?",
+        a: "No. A pull-up bar, parallel bars or sturdy chairs, resistance bands, and wall space cover it; rings are optional."
+      },
+      {
+        q: "Which skills does it build toward?",
+        a: "Muscle-up transitions, freestanding handstand work, and pistol squat progressions across three four-week phases."
+      },
+      {
+        q: "How many sessions per week?",
+        a: "Four: pull/push skill, push/core, lower/explosive, and a dedicated skill-practice day."
+      },
+      {
+        q: "What does the diet look like?",
+        a: "Maintenance calories at 0.9 g protein per lb — staying light matters for bodyweight skills."
+      }
+    ]
+  },
+
+  "athlete-conditioning": {
+    difficulty: 3,
+    difficultyLabel: "intermediate",
+    setting: "hybrid",
+    whoFor: [
+      "In-season athletes who need engine and work capacity",
+      "Runners and mixed-modal athletes",
+      "Anyone who wants to keep strength while conditioning climbs"
+    ],
+    whoNotFor: [
+      "People whose main goal is muscle size",
+      "Anyone who cannot fit five sessions a week"
+    ],
+    faq: [
+      {
+        q: "What does a training week contain?",
+        a: "Two Zone 2 aerobic days, one threshold interval day, one sprint and power day, and one strength maintenance day."
+      },
+      {
+        q: "What equipment do I need?",
+        a: "Running shoes, a bike or rower, a barbell for the strength day, a med ball, and ideally a HR monitor."
+      },
+      {
+        q: "How is the diet different?",
+        a: "Carb-forward fueling that scales with training load, at or slightly above maintenance, with a hydration plan included."
+      }
+    ]
+  },
+
+  "beginner-foundations": {
+    difficulty: 1,
+    difficultyLabel: "beginner",
+    setting: "gym",
+    whoFor: [
+      "People who have never lifted seriously before",
+      "Anyone who can train three days a week",
+      "Those who want technique before load"
+    ],
+    whoNotFor: [
+      "Experienced lifters — the loads start light on purpose",
+      "Home-only training — see the Home Starter Bundle"
+    ],
+    faq: [
+      {
+        q: "Is three days a week enough?",
+        a: "Yes for a first cycle. Three full-body sessions cover squat, hinge, push, pull, and core, with load added from week five when sets feel easy."
+      },
+      {
+        q: "Do I have to track calories?",
+        a: "No. The nutrition system uses a plate-based portion guide with no weighing or logging required."
+      },
+      {
+        q: "What equipment do I need?",
+        a: "Dumbbells, a bench, and basic gym machines like the lat pulldown; a pull-up bar is optional."
+      },
+      {
+        q: "What happens after week 12?",
+        a: "Week 11 is a deload and week 12 retests your lifts, so you finish with measured strength gains and a base for any other bundle."
+      }
+    ]
+  },
+
+  "womens-sculpt": {
+    difficulty: 3,
+    difficultyLabel: "intermediate",
+    setting: "gym",
+    whoFor: [
+      "Women who want a glute and lower-body emphasis",
+      "Lifters who still want balanced upper-body work",
+      "Anyone who can train four days a week in a gym"
+    ],
+    whoNotFor: [
+      "Home-only training — the plan leans on barbell and cables",
+      "Anyone chasing a hard calorie deficit — this runs at maintenance"
+    ],
+    faq: [
+      {
+        q: "How is the week split?",
+        a: "Two glute-focused lower days, one balanced upper day, and one quad-focused day, with cardio attached to the Saturday session."
+      },
+      {
+        q: "What does the nutrition look like?",
+        a: "Maintenance calories with a slight surplus on lifting days, 0.9 g protein per lb, and iron, calcium, and cycle-aware notes included."
+      },
+      {
+        q: "What equipment do I need?",
+        a: "Barbell and plates, a hip thrust bench or box, dumbbells, bands, and a cable stack; the Stairmaster is optional."
+      }
+    ]
+  },
+
+  "senior-strength": {
+    difficulty: 2,
+    difficultyLabel: "beginner",
+    setting: "gym",
+    whoFor: [
+      "Lifters 50+ who want joint-friendly strength",
+      "Anyone returning to training after time away",
+      "People who prefer machines and dumbbells to barbells"
+    ],
+    whoNotFor: ["Lifters chasing heavy barbell maxes"],
+    faq: [
+      {
+        q: "Is it barbell-heavy?",
+        a: "No. Sessions are built on machines, cables, and dumbbells with controlled tempos; there are no barbell lifts."
+      },
+      {
+        q: "Is mobility included?",
+        a: "Yes. Mobility and balance work sit inside every session, plus a dedicated mobility-and-strength day each week."
+      },
+      {
+        q: "How many days a week?",
+        a: "Three full-body sessions, each with a joint-friendly warm-up and cool-down written out."
+      },
+      {
+        q: "What does the diet emphasize?",
+        a: "Protein spread across four meals at 1.0 g per lb, with vitamin D and omega-3 sources on the grocery list."
+      }
+    ]
+  },
+
+  "cutting-peak": {
+    difficulty: 5,
+    difficultyLabel: "advanced",
+    setting: "gym",
+    whoFor: [
+      "Experienced lifters with a real muscle base",
+      "Anyone who wants a contest-style finish",
+      "People who can commit to six training days plus cardio"
+    ],
+    whoNotFor: [
+      "Beginners — the deficit and volume are the most aggressive on TJFit",
+      "Anyone unwilling to track macros strictly for 12 weeks"
+    ],
+    faq: [
+      {
+        q: "How aggressive is the diet?",
+        a: "Up to 25% below maintenance at 1.3 g protein per lb, with weekly refeeds and a diet break in week one."
+      },
+      {
+        q: "What is peak week?",
+        a: "Week 12: a written carb-load and water-manipulation protocol with reduced training volume and extra posing practice."
+      },
+      {
+        q: "How much training is there?",
+        a: "Six days a week — five lifting sessions with drop sets, plus a conditioning and posing day, with cardio added through the middle phase."
+      },
+      {
+        q: "Who should not run this?",
+        a: "Anyone new to lifting or dieting. The plan itself says it: not for beginners."
+      }
+    ]
+  }
+};

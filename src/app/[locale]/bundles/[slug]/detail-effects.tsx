@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, ChevronDown, Clock, Dumbbell, FileDown, Flame, ShoppingCart, Share2 } from "lucide-react";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 
 import { useParallax, useReveal, useTilt } from "@/components/effects/use-3d";
 import { useMagnetic, useMergedRef, useRipple } from "@/components/effects/use-magnetic";
@@ -383,17 +383,7 @@ export function ShareButton({
  * fights the in-page "Ready to start" CTA. Mobile only (md:hidden); the
  * slide is motion-safe gated (reduced-motion users get an instant snap).
  */
-export function StickyBuyBar({
-  name,
-  href,
-  label,
-  ariaLabel
-}: {
-  name: string;
-  href: string;
-  label: string;
-  ariaLabel: string;
-}) {
+function useStickyBarShown() {
   const [shown, setShown] = useState(false);
 
   useEffect(() => {
@@ -411,6 +401,22 @@ export function StickyBuyBar({
       window.removeEventListener("resize", onScroll);
     };
   }, []);
+
+  return shown;
+}
+
+export function StickyBuyBar({
+  name,
+  href,
+  label,
+  ariaLabel
+}: {
+  name: string;
+  href: string;
+  label: string;
+  ariaLabel: string;
+}) {
+  const shown = useStickyBarShown();
 
   return (
     <div
@@ -432,6 +438,56 @@ export function StickyBuyBar({
           className="tj-cta-sheen inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(168,85,247,0.26)] hover:brightness-110 motion-safe:active:scale-[0.97]"
         >
           <FileDown className="h-4 w-4" aria-hidden />
+          {label}
+        </a>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Non-owner sticky bar. Same slide-up behaviour as StickyBuyBar, but instead
+ * of duplicating the purchase logic it shows the bundle name + owner-set
+ * price label and scrolls back to the hero CTA (the single BundleCta on the
+ * page). Mobile only, like the owner bar.
+ */
+export function StickyOfferBar({
+  name,
+  priceLabel,
+  targetId,
+  label,
+  ariaLabel
+}: {
+  name: string;
+  priceLabel: string;
+  targetId: string;
+  label: string;
+  ariaLabel: string;
+}) {
+  const shown = useStickyBarShown();
+
+  return (
+    <div
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-purple-400/20 bg-[#0A0A0B]/92 backdrop-blur-md ease-[cubic-bezier(0.2,1,0.3,1)] motion-safe:transition-[transform,opacity] motion-safe:duration-300 md:hidden"
+      style={{
+        paddingBottom: "max(0.625rem, env(safe-area-inset-bottom))",
+        transform: shown ? "translateY(0)" : "translateY(110%)",
+        opacity: shown ? 1 : 0,
+        pointerEvents: shown ? "auto" : "none"
+      }}
+      aria-hidden={!shown}
+    >
+      <div className="flex items-center gap-3 px-4 pt-2.5">
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-semibold text-white">{name}</p>
+          <p className="text-xs font-bold text-purple-200">{priceLabel}</p>
+        </div>
+        <a
+          href={`#${targetId}`}
+          aria-label={ariaLabel}
+          tabIndex={shown ? 0 : -1}
+          className="tj-cta-sheen inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(168,85,247,0.26)] hover:brightness-110 motion-safe:active:scale-[0.97]"
+        >
           {label}
         </a>
       </div>
@@ -919,6 +975,147 @@ export function GroceryList({ groups }: { groups: BundleGroceryCategory[] }) {
           </ul>
         </div>
       ))}
+    </div>
+  );
+}
+
+/**
+ * "What's inside" trust strip — one tile per real computed count from
+ * bundleInsideStats. Numbers count up on reveal; reduced-motion users get
+ * the final value immediately.
+ */
+export function InsideStatTiles({
+  stats
+}: {
+  stats: Array<{ label: string; value: number }>;
+}) {
+  const reveal = useReveal<HTMLDivElement>({ threshold: 0.2 });
+
+  return (
+    <div ref={reveal.ref} className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+      {stats.map((stat, i) => (
+        <InsideStatTile key={stat.label} label={stat.label} value={stat.value} shown={reveal.shown} index={i} />
+      ))}
+    </div>
+  );
+}
+
+function InsideStatTile({
+  label,
+  value,
+  shown,
+  index
+}: {
+  label: string;
+  value: number;
+  shown: boolean;
+  index: number;
+}) {
+  const [display, setDisplay] = useState(0);
+  const delay = `${index * 70}ms`;
+
+  useEffect(() => {
+    if (!shown) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setDisplay(value);
+      return;
+    }
+    let raf = 0;
+    const start = performance.now();
+    const duration = 900;
+    const tick = (t: number) => {
+      const p = Math.min(1, (t - start) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setDisplay(Math.round(eased * value));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [shown, value]);
+
+  return (
+    <div
+      className="group/inside relative overflow-hidden rounded-xl border border-white/[0.06] bg-black/20 p-4 transition-[border-color,background-color,box-shadow] duration-300 hover:border-purple-300/35 hover:bg-purple-300/[0.04] hover:shadow-[0_0_28px_rgba(168,85,247,0.10)]"
+      style={{
+        opacity: shown ? 1 : 0,
+        transform: shown ? "translateY(0)" : "translateY(12px)",
+        transition: `opacity 520ms cubic-bezier(0.2,1,0.3,1) ${delay}, transform 520ms cubic-bezier(0.2,1,0.3,1) ${delay}, border-color 300ms, background-color 300ms, box-shadow 300ms`
+      }}
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-60 transition-opacity duration-300 group-hover/inside:opacity-100"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent, rgba(168,85,247,0.55) 30%, rgba(237,233,254,0.9) 50%, rgba(168,85,247,0.55) 70%, transparent)"
+        }}
+      />
+      <p className="font-display text-2xl font-extrabold tabular-nums leading-none text-white sm:text-3xl">
+        {display}
+      </p>
+      <p className="mt-2 text-[10px] font-mono font-bold uppercase tracking-[0.16em] text-purple-200/80">
+        {label}
+      </p>
+    </div>
+  );
+}
+
+/**
+ * Per-bundle FAQ — same disclosure pattern as RecipeCard (button with
+ * aria-expanded/aria-controls + grid-rows collapse), no extra deps.
+ */
+export function FaqList({ items }: { items: Array<{ q: string; a: string }> }) {
+  return (
+    <div className="mt-6 space-y-3">
+      {items.map((item, i) => (
+        <FaqItem key={item.q} item={item} index={i} />
+      ))}
+    </div>
+  );
+}
+
+function FaqItem({ item, index }: { item: { q: string; a: string }; index: number }) {
+  const [open, setOpen] = useState(false);
+  const reveal = useReveal<HTMLDivElement>();
+  const panelId = useId();
+  const delay = `${index * 70}ms`;
+
+  return (
+    <div
+      ref={reveal.ref}
+      style={{
+        opacity: reveal.shown ? 1 : 0,
+        transform: reveal.shown ? "translateY(0)" : "translateY(12px)",
+        transition: `opacity 520ms cubic-bezier(0.2,1,0.3,1) ${delay}, transform 520ms cubic-bezier(0.2,1,0.3,1) ${delay}`
+      }}
+      className="overflow-hidden rounded-2xl border border-divider bg-surface/40 transition-[border-color,box-shadow] duration-300 hover:border-purple-300/40 hover:shadow-[0_0_28px_rgba(168,85,247,0.10)]"
+    >
+      <h3>
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-controls={panelId}
+          className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left"
+        >
+          <span className="text-sm font-semibold leading-snug text-white">{item.q}</span>
+          <ChevronDown
+            className={`h-4 w-4 shrink-0 text-purple-300/70 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+            aria-hidden
+          />
+        </button>
+      </h3>
+      <div
+        id={panelId}
+        className="grid transition-[grid-template-rows] duration-400 ease-out"
+        style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
+      >
+        <div className="overflow-hidden">
+          <p className="border-t border-white/[0.06] px-5 py-4 text-sm leading-relaxed text-bright/85">
+            {item.a}
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

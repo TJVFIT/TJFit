@@ -1,9 +1,13 @@
 import { BundleGrid } from "./bundle-grid";
 
 import { TJHeroStage } from "@/components/3d/hero-stage";
+import { BundleCompare, type BundleFacts } from "@/components/bundles/bundle-compare";
+import { BundleFinder } from "@/components/bundles/bundle-finder";
 import { AmbientOrbs } from "@/components/effects/ambient-orbs";
-import { BUNDLES } from "@/lib/bundles";
+import { BUNDLES, listBundles } from "@/lib/bundles";
+import { bundleInsideStats } from "@/lib/bundle-insights";
 import { bundlesItemListJsonLd } from "@/lib/bundle-jsonld";
+import { localizeBundle } from "@/lib/bundle-localization";
 import { getBundlesCopy } from "@/lib/bundles-copy";
 import { supportedLocales } from "@/lib/i18n";
 import { requireLocaleParam } from "@/lib/require-locale";
@@ -32,6 +36,24 @@ export function generateMetadata({ params }: { params: { locale: string } }) {
 export default function BundlesPage({ params }: { params: { locale: string } }) {
   const locale = requireLocaleParam(params.locale);
   const copy = getBundlesCopy(locale);
+  // Serializable facts for the client-side finder quiz + comparison table —
+  // real catalogue metadata only, prices straight from priceUsd.
+  const bundleFacts: BundleFacts[] = listBundles().map((b) => {
+    const prose = localizeBundle(b, locale);
+    return {
+      slug: b.slug,
+      name: prose.name,
+      goal: b.goal,
+      goalLabel: prose.goalLabel,
+      weeks: b.weeks,
+      sessionsPerWeek: b.sessionsPerWeek,
+      priceUsd: b.priceUsd,
+      difficulty: b.difficulty ?? 3,
+      difficultyLabel: b.difficultyLabel ?? "intermediate",
+      setting: b.setting ?? "gym",
+      recipes: bundleInsideStats(b.slug).recipes
+    };
+  });
   return (
     <section className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       <script
@@ -86,6 +108,10 @@ export default function BundlesPage({ params }: { params: { locale: string } }) 
       </div>
 
       <BundleGrid bundles={BUNDLES} locale={locale} />
+
+      <BundleFinder bundles={bundleFacts} locale={locale} />
+
+      <BundleCompare bundles={bundleFacts} locale={locale} />
 
       <div className="relative mt-14 overflow-hidden rounded-2xl border border-divider bg-surface/40 p-6 transition-[border-color,box-shadow] duration-300 hover:border-purple-300/30 hover:shadow-[0_0_40px_rgba(168,85,247,0.10)] sm:p-8">
         {/* Top hairline — drawn cyan accent that signals "this is brand-tier content" */}
