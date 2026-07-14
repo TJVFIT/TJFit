@@ -74,6 +74,9 @@ export type OpenLLMConfig = {
   presetName: string;
 };
 
+/** Hosted presets 401 without a key — half-set env must not hijack routing. */
+const KEY_REQUIRED_PRESETS: ReadonlySet<string> = new Set(["groq", "openrouter", "together"]);
+
 /** Resolve gateway config from env; null when the gateway is not configured. */
 export function resolveOpenLLMConfig(): OpenLLMConfig | null {
   const presetName = (process.env.TJAI_LLM_PRESET ?? "").trim().toLowerCase();
@@ -81,6 +84,9 @@ export function resolveOpenLLMConfig(): OpenLLMConfig | null {
 
   const baseUrl = (process.env.TJAI_LLM_BASE_URL ?? preset?.baseUrl ?? "").trim().replace(/\/+$/, "");
   if (!baseUrl) return null;
+
+  const apiKey = (process.env.TJAI_LLM_API_KEY ?? "").trim() || null;
+  if (KEY_REQUIRED_PRESETS.has(presetName) && !process.env.TJAI_LLM_BASE_URL && !apiKey) return null;
 
   const defaultModel = (process.env.TJAI_LLM_MODEL ?? "").trim();
   const kindModel = (kind: OpenLLMKind, envKey: string): string =>
@@ -96,7 +102,7 @@ export function resolveOpenLLMConfig(): OpenLLMConfig | null {
 
   return {
     baseUrl,
-    apiKey: (process.env.TJAI_LLM_API_KEY ?? "").trim() || null,
+    apiKey,
     models,
     presetName: presetName || "custom"
   };

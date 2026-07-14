@@ -101,6 +101,17 @@ describe("availability tracks env keys", () => {
     delete process.env.TJAI_LLM_API_KEY;
   });
 
+  it("ignores a hosted preset with no API key (half-set env must not hijack routing)", () => {
+    clearOpenGateway();
+    delete process.env.TJAI_LLM_API_KEY;
+    process.env.TJAI_LLM_PRESET = "groq";
+    process.env.OPENAI_API_KEY = "sk-test";
+    expect(resolveTaskProvider("chat_stream")).toBe("openai");
+    // Local/self-host presets need no key.
+    process.env.TJAI_LLM_PRESET = "ollama";
+    expect(resolveTaskProvider("chat_stream")).toBe("open");
+  });
+
   it("never rescues streaming tasks with Anthropic (no streaming support)", () => {
     clearOpenGateway();
     delete process.env.OPENAI_API_KEY;

@@ -7,7 +7,10 @@ function dob(years: number, dayOffset = 0): string {
   const d = new Date();
   d.setFullYear(d.getFullYear() - years);
   d.setDate(d.getDate() + dayOffset);
-  return d.toISOString().slice(0, 10);
+  // Serialize from LOCAL components — toISOString() is UTC and shifts the
+  // calendar day when the local clock is between midnight and the UTC offset.
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
 // Mirrors the signup gate: allowed iff a real age >= 13.
