@@ -8,6 +8,7 @@ import { useMagnetic, useMergedRef, useRipple } from "@/components/effects/use-m
 
 import { TJ_PALETTE } from "@/components/3d/palette";
 import { TJHeroStage } from "@/components/3d/hero-stage";
+import { GrainOverlay } from "@/components/ui/grain-overlay";
 import { useMagneticButton } from "@/hooks/useMagneticButton";
 import { trackMarketingEvent } from "@/lib/analytics-events";
 import type { HomeLuxuryCopy } from "@/lib/home-luxury-copy";
@@ -222,6 +223,8 @@ export function HeroSection({
         }}
         aria-hidden
       />
+
+      <GrainOverlay className="z-[3]" vignette={false} />
 
       <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-12 xl:grid-cols-[minmax(0,0.98fr)_minmax(20rem,0.56fr)] xl:gap-8">
         <div className={cn("max-w-[45rem]", direction === "rtl" ? "text-right lg:ms-auto" : "text-left")}>

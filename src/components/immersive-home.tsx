@@ -35,6 +35,8 @@ import { HeroTjaiBrainDeco } from "@/components/hero-tjai-brain-deco";
 import { CinematicHowItWorks, CinematicTransformation } from "@/components/home/cinematic-sections";
 import { Cinematic3DAct } from "@/components/home/cinematic-3d-act";
 import { SplineShowcase } from "@/components/home/spline-showcase";
+import { GrainOverlay } from "@/components/ui/grain-overlay";
+import { WordReveal } from "@/components/ui/word-reveal";
 import { useMagneticButton } from "@/hooks/useMagneticButton";
 
 function useReducedMotion() {
@@ -332,18 +334,18 @@ export function ImmersiveHome({
           <div className="max-w-xl">
             <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent">TJAI</p>
             <h2 className="mt-3 font-display text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-              {sectionsCopy.tjai.heading}
+              {reduce ? sectionsCopy.tjai.heading : <WordReveal text={sectionsCopy.tjai.heading} />}
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-[var(--color-text-secondary)] sm:text-base">
               {sectionsCopy.tjai.body}
             </p>
           </div>
-          <Link
+          <TjaiMagneticPrimary
             href={`/${locale}/tjai`}
-            className="lux-btn-primary inline-flex min-h-[48px] shrink-0 items-center justify-center gap-2 tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-6 py-3 text-sm font-bold text-background shadow-[0_4px_24px_rgba(168,85,247,0.35)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02]"
+            className="tj-cta-sheen inline-flex min-h-[48px] shrink-0 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-6 py-3 text-sm font-bold text-background shadow-[0_4px_24px_rgba(168,85,247,0.35)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] hover:shadow-[0_8px_44px_rgba(168,85,247,0.55)]"
           >
             {sectionsCopy.tjai.cta} <ArrowRight className="h-4 w-4 rtl:rotate-180" />
-          </Link>
+          </TjaiMagneticPrimary>
         </div>
       </section>
 
@@ -398,8 +400,22 @@ export function ImmersiveHome({
           <MotionReveal reducedMotion={reduce} className="max-w-2xl">
             <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-dim">{sectionsCopy.platformSpec.eyebrow}</p>
             <h2 className="mt-5 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-[2.65rem] lg:leading-[1.12]">
-              {sectionsCopy.platformSpec.headingLead}
-              <span className="text-faint">{sectionsCopy.platformSpec.headingTail}</span>
+              {reduce ? (
+                <>
+                  {sectionsCopy.platformSpec.headingLead}
+                  <span className="text-faint">{sectionsCopy.platformSpec.headingTail}</span>
+                </>
+              ) : (
+                <>
+                  <WordReveal text={sectionsCopy.platformSpec.headingLead} />
+                  <span className="text-faint">
+                    <WordReveal
+                      text={sectionsCopy.platformSpec.headingTail}
+                      delay={sectionsCopy.platformSpec.headingLead.split(" ").length * 80}
+                    />
+                  </span>
+                </>
+              )}
             </h2>
             <p className="mt-5 text-sm leading-relaxed text-muted">
               {sectionsCopy.platformSpec.body}
@@ -459,6 +475,8 @@ export function ImmersiveHome({
           <HeroTjaiBrainDeco reduce={reduce} active={tjaiInView} />
         </div>
 
+        <GrainOverlay className="z-[2]" />
+
         <div
           className="relative z-10 mx-auto grid max-w-6xl gap-12 px-6 py-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-center lg:gap-16 lg:px-12 lg:py-28"
         >
@@ -482,7 +500,7 @@ export function ImmersiveHome({
           <MotionReveal reducedMotion={reduce}>
             <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-accent">AI transformation engine</p>
             <h2 className="mt-4 font-display text-[clamp(2rem,5vw,3.25rem)] font-extrabold leading-[1.05] tracking-[-0.02em] text-white">
-              Meet TJAI.
+              {reduce ? "Meet TJAI." : <WordReveal text="Meet TJAI." />}
             </h2>
             <p className="mt-4 max-w-xl text-base leading-relaxed text-muted">
               Complete an adaptive intake and get a complete 12-week plan in minutes — training blocks, meals, macros, and progression tuned to your metabolism, schedule, and feedback.
@@ -619,6 +637,8 @@ export function ImmersiveHome({
           </svg>
           </ParallaxLayer>
         )}
+
+        <GrainOverlay className="z-[5]" />
 
         {/* CTA content */}
         <div className="relative z-10 mx-auto max-w-3xl">

@@ -3,6 +3,8 @@
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 
+import { GrainOverlay } from "@/components/ui/grain-overlay";
+
 const Cinematic3DSceneImpl = dynamic(
   () => import("./cinematic-3d-impl").then((m) => m.Cinematic3DSceneImpl),
   {
@@ -65,6 +67,7 @@ export function Cinematic3DAct() {
         className="pointer-events-none absolute inset-0 z-[2] bg-[radial-gradient(ellipse_at_center,transparent_28%,rgba(0,0,0,0.62)_100%)]"
         aria-hidden
       />
+      <GrainOverlay className="z-[3]" vignette={false} />
 
       <div className="relative z-10 mx-auto max-w-5xl">
         <p
