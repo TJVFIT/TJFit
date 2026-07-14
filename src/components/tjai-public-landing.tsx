@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Activity, ArrowRight, BarChart3, CalendarDays, RefreshCw } from "lucide-react";
+import type { CSSProperties } from "react";
+import { Activity, ArrowRight, BarChart3, CalendarDays, ChevronDown, RefreshCw } from "lucide-react";
 import type { Locale } from "@/lib/i18n";
 import { TJAI_ONE_TIME_PRICE_USD, TJAI_SUBSCRIPTION_PRICES_USD } from "@/lib/tjai-pricing";
 import { TJHeroStage } from "@/components/3d/hero-stage";
 import { TJ_PALETTE } from "@/components/3d/palette";
+import { useMagnetic, useMergedRef, useRipple } from "@/components/effects/use-magnetic";
 
 import styles from "./tjai-landing.module.css";
 
@@ -42,7 +44,87 @@ function HeroTitle({ text, locale }: { text: string; locale: Locale }) {
   );
 }
 
+function MagneticCta({
+  href,
+  className,
+  style,
+  children
+}: {
+  href: string;
+  className: string;
+  style?: CSSProperties;
+  children: React.ReactNode;
+}) {
+  const magnetic = useMagnetic<HTMLAnchorElement>({ strength: 6, max: 8 });
+  const ripple = useRipple<HTMLAnchorElement>();
+  const ref = useMergedRef<HTMLAnchorElement>(magnetic, ripple);
+  return (
+    <Link
+      ref={ref}
+      href={href}
+      className={`tj-cta-sheen ${className}`}
+      style={
+        {
+          "--mag-x": "0px",
+          "--mag-y": "0px",
+          transform: "translate3d(var(--mag-x), var(--mag-y), 0)",
+          transition:
+            "transform 220ms cubic-bezier(0.2, 1, 0.3, 1), filter 200ms, box-shadow 220ms",
+          ...style
+        } as CSSProperties
+      }
+    >
+      {children}
+    </Link>
+  );
+}
+
+function StreamShimmer({ className }: { className?: string }) {
+  return (
+    <div className={`${styles.previewLine} ${className ?? ""}`} style={{ animationDelay: "420ms" }} aria-hidden>
+      <span className={styles.previewDot} />
+      <span className="relative z-[1] h-2 w-2/5 rounded-full bg-white/[0.08]" />
+    </div>
+  );
+}
+
+function FaqItem({ id, question, answer }: { id: string; question: string; answer: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="tj-surface-card overflow-hidden transition-[border-color,box-shadow] duration-300 hover:border-purple-300/25 hover:shadow-[0_0_24px_rgba(168,85,247,0.08)]">
+      <button
+        type="button"
+        id={`${id}-button`}
+        aria-expanded={open}
+        aria-controls={`${id}-panel`}
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-between gap-3 p-4 text-start text-sm font-semibold text-bright transition-colors duration-200 hover:text-purple-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/60"
+      >
+        {question}
+        <ChevronDown
+          className={`h-4 w-4 shrink-0 text-purple-300 transition-transform duration-300 motion-reduce:transition-none ${open ? "rotate-180" : ""}`}
+          aria-hidden
+        />
+      </button>
+      <div
+        id={`${id}-panel`}
+        role="region"
+        aria-labelledby={`${id}-button`}
+        aria-hidden={!open}
+        className="grid transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none"
+        style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
+      >
+        <div className="overflow-hidden">
+          <p className="border-t border-white/[0.06] px-4 pb-4 pt-3 text-sm leading-relaxed text-muted">{answer}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 type TabKey = "training" | "nutrition" | "macros";
+
+const TAB_KEYS: TabKey[] = ["training", "nutrition", "macros"];
 
 const FEATURE_ROWS = [
   {
@@ -152,9 +234,62 @@ const FAQ = [
   "How is TJAI different from MyFitnessPal / other apps?"
 ];
 
+const FAQ_ANSWERS: Record<Locale, string[]> = {
+  en: [
+    "TJAI builds every plan on established sports-science formulas — Mifflin-St Jeor BMR, TDEE activity multipliers, and evidence-based macro splits — then adapts the numbers as your progress data comes in.",
+    "TJAI works in English, Turkish, Arabic, Spanish, and French — the full assessment, plan, and chat.",
+    "No. TJAI delivers structured, adaptive programming, but it does not replace medical advice or the hands-on judgment of a qualified coach.",
+    "Yes. The assessment covers allergies, restrictions, and food preferences, and your meal structure is built around them.",
+    "Trackers log what you already did. TJAI generates the plan itself — training split, meals, and targets — and adjusts it when your progress stalls."
+  ],
+  tr: [
+    "TJAI her planı kanıtlanmış spor bilimi formülleri üzerine kurar — Mifflin-St Jeor BMR, TDEE aktivite çarpanları ve kanıta dayalı makro dağılımları — ve ilerleme verilerin geldikçe sayıları uyarlar.",
+    "TJAI İngilizce, Türkçe, Arapça, İspanyolca ve Fransızca çalışır — değerlendirme, plan ve sohbetin tamamı.",
+    "Hayır. TJAI yapılandırılmış ve uyarlanabilir programlar sunar; ancak tıbbi tavsiyenin veya nitelikli bir koçun birebir değerlendirmesinin yerini tutmaz.",
+    "Evet. Değerlendirme alerjileri, kısıtlamaları ve yemek tercihlerini kapsar; öğün düzenin buna göre kurulur.",
+    "Takip uygulamaları yaptıklarını kaydeder. TJAI planın kendisini üretir — antrenman bölünmesi, öğünler ve hedefler — ve ilerlemen durduğunda planı günceller."
+  ],
+  ar: [
+    "يبني TJAI كل خطة على معادلات علمية راسخة — معادلة Mifflin-St Jeor لمعدل الأيض الأساسي، ومضاعفات النشاط لحساب TDEE، وتوزيعات ماكرو قائمة على الأدلة — ثم يكيّف الأرقام مع بيانات تقدمك.",
+    "يعمل TJAI بالإنجليزية والتركية والعربية والإسبانية والفرنسية — التقييم والخطة والمحادثة بالكامل.",
+    "لا. يقدم TJAI برامج منظمة وقابلة للتكيف، لكنه لا يغني عن الاستشارة الطبية أو إشراف مدرب مؤهل.",
+    "نعم. يغطي التقييم الحساسيات والقيود الغذائية وتفضيلات الطعام، وتُبنى وجباتك وفقاً لها.",
+    "تطبيقات التتبع تسجل ما فعلته. أما TJAI فيولّد الخطة نفسها — تقسيم التدريب والوجبات والأهداف — ويعدّلها عندما يتباطأ تقدمك."
+  ],
+  es: [
+    "TJAI construye cada plan sobre fórmulas consolidadas de la ciencia del deporte — BMR de Mifflin-St Jeor, multiplicadores de actividad para el TDEE y repartos de macros basados en evidencia — y ajusta los números según tus datos de progreso.",
+    "TJAI funciona en inglés, turco, árabe, español y francés — la evaluación, el plan y el chat completos.",
+    "No. TJAI ofrece programación estructurada y adaptativa, pero no sustituye el consejo médico ni el criterio de un entrenador cualificado.",
+    "Sí. La evaluación cubre alergias, restricciones y preferencias alimentarias, y tu estructura de comidas se construye en torno a ellas.",
+    "Las apps de registro anotan lo que ya hiciste. TJAI genera el plan en sí — división de entrenamiento, comidas y objetivos — y lo ajusta cuando tu progreso se estanca."
+  ],
+  fr: [
+    "TJAI construit chaque plan sur des formules éprouvées de science du sport — BMR de Mifflin-St Jeor, multiplicateurs d'activité pour le TDEE et répartitions de macros fondées sur les preuves — puis ajuste les chiffres selon tes données de progression.",
+    "TJAI fonctionne en anglais, turc, arabe, espagnol et français — l'évaluation, le plan et le chat au complet.",
+    "Non. TJAI fournit une programmation structurée et adaptative, mais il ne remplace ni un avis médical ni le regard d'un coach qualifié.",
+    "Oui. L'évaluation couvre les allergies, les restrictions et les préférences alimentaires, et la structure de tes repas est construite autour d'elles.",
+    "Les applications de suivi enregistrent ce que tu as déjà fait. TJAI génère le plan lui-même — répartition d'entraînement, repas et objectifs — et l'ajuste quand ta progression stagne."
+  ]
+};
+
 export function TjaiPublicLanding({ locale }: { locale: Locale }) {
   const copy = COPY[locale] ?? COPY.en;
+  const faqAnswers = FAQ_ANSWERS[locale] ?? FAQ_ANSWERS.en;
   const [tab, setTab] = useState<TabKey>("training");
+  const isRtl = locale === "ar";
+  const tabIndex = TAB_KEYS.indexOf(tab);
+
+  const onTabKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
+    let next = -1;
+    if (event.key === "ArrowRight") next = (index + (isRtl ? -1 : 1) + TAB_KEYS.length) % TAB_KEYS.length;
+    else if (event.key === "ArrowLeft") next = (index + (isRtl ? 1 : -1) + TAB_KEYS.length) % TAB_KEYS.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = TAB_KEYS.length - 1;
+    if (next === -1) return;
+    event.preventDefault();
+    setTab(TAB_KEYS[next]);
+    document.getElementById(`tjai-tab-${TAB_KEYS[next]}`)?.focus();
+  };
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
@@ -183,9 +318,9 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
             <p className="mt-5 max-w-xl text-sm leading-relaxed sm:text-base" style={{ color: TJ_PALETTE.textMuted }}>
               {copy.heroSub}
             </p>
-            <Link
+            <MagneticCta
               href={`/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`}
-              className={`mt-7 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-full px-8 text-sm font-bold transition-[filter,transform] duration-200 hover:-translate-y-0.5 hover:brightness-110 ${styles.ctaGlow}`}
+              className={`mt-7 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-full px-8 text-sm font-bold hover:brightness-110 ${styles.ctaGlow}`}
               style={{
                 background: `linear-gradient(180deg, ${TJ_PALETTE.accentHi}, ${TJ_PALETTE.accent})`,
                 color: TJ_PALETTE.obsidian
@@ -193,7 +328,7 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
             >
               {copy.heroCta}
               <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
+            </MagneticCta>
             <p className="mt-3 text-xs" style={{ color: TJ_PALETTE.textSubtle }}>
               {copy.noCard}
             </p>
@@ -263,57 +398,101 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
         </div>
       </section>
 
-      <section className="mt-10 rounded-2xl border border-divider bg-surface p-6">
+      <section className="reveal-section tj-whirl tj-whirl-alt mt-10 rounded-2xl border border-divider bg-surface p-6">
         <h2 className="text-2xl font-bold text-white">{copy.previewTitle}</h2>
-        <div className="mt-4 inline-flex gap-2 rounded-xl border border-divider bg-[#0D1015] p-1">
-          {(["training", "nutrition", "macros"] as TabKey[]).map((key) => (
+        <div
+          role="tablist"
+          aria-label={copy.previewTitle}
+          className="relative mt-4 grid w-full max-w-md grid-cols-3 rounded-xl border border-divider bg-[#0D1015] p-1"
+        >
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-y-1 start-1 rounded-lg border border-purple-300/25 bg-purple-400/15 shadow-[0_0_18px_rgba(168,85,247,0.16)] transition-transform duration-300 ease-[cubic-bezier(0.2,1,0.3,1)] motion-reduce:transition-none"
+            style={{
+              width: "calc((100% - 0.5rem) / 3)",
+              transform: `translateX(${(isRtl ? -1 : 1) * tabIndex * 100}%)`
+            }}
+          />
+          {TAB_KEYS.map((key, index) => (
             <button
               key={key}
+              type="button"
+              role="tab"
+              id={`tjai-tab-${key}`}
+              aria-selected={tab === key}
+              aria-controls={`tjai-panel-${key}`}
+              tabIndex={tab === key ? 0 : -1}
               onClick={() => setTab(key)}
-              className={`rounded-lg px-4 py-2 text-sm ${tab === key ? "bg-purple-400/15 text-purple-300" : "text-muted"}`}
+              onKeyDown={(event) => onTabKeyDown(event, index)}
+              className={`relative z-[1] rounded-lg px-4 py-2 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/60 ${
+                tab === key ? "text-purple-200" : "text-muted hover:text-bright"
+              }`}
             >
               {key[0].toUpperCase() + key.slice(1)}
             </button>
           ))}
         </div>
         {tab === "training" ? (
-          <div className="mt-4 overflow-x-auto rounded-xl border border-divider">
-            <table className="min-w-full text-sm">
-              <thead className="bg-[#0D1015] text-muted">
-                <tr>
-                  <th className="px-3 py-2 text-left">Day</th>
-                  <th className="px-3 py-2 text-left">Workout</th>
-                  <th className="px-3 py-2 text-left">Exercises</th>
-                  <th className="px-3 py-2 text-left">Duration</th>
-                </tr>
-              </thead>
-              <tbody className="text-bright">
-                <tr><td className="px-3 py-2">Monday</td><td className="px-3 py-2">Push Day</td><td className="px-3 py-2">Bench, OHP, Dips</td><td className="px-3 py-2">45 min</td></tr>
-                <tr><td className="px-3 py-2">Tuesday</td><td className="px-3 py-2">Pull Day</td><td className="px-3 py-2">Deadlift, Rows, Curls</td><td className="px-3 py-2">45 min</td></tr>
-                <tr><td className="px-3 py-2">Wednesday</td><td className="px-3 py-2">Legs</td><td className="px-3 py-2">Squat, RDL, Split Squat</td><td className="px-3 py-2">50 min</td></tr>
-              </tbody>
-            </table>
+          <div
+            id="tjai-panel-training"
+            role="tabpanel"
+            aria-labelledby="tjai-tab-training"
+            className="tj-surface-card mt-4 overflow-hidden"
+          >
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-sm">
+                <thead className="text-muted">
+                  <tr className="border-b border-white/[0.06] bg-white/[0.02]">
+                    <th className="px-3 py-2 text-left">Day</th>
+                    <th className="px-3 py-2 text-left">Workout</th>
+                    <th className="px-3 py-2 text-left">Exercises</th>
+                    <th className="px-3 py-2 text-left">Duration</th>
+                  </tr>
+                </thead>
+                <tbody className="text-bright">
+                  <tr className={`${styles.sectionRise} border-b border-white/[0.04]`}><td className="px-3 py-2">Monday</td><td className="px-3 py-2">Push Day</td><td className="px-3 py-2">Bench, OHP, Dips</td><td className="px-3 py-2">45 min</td></tr>
+                  <tr className={`${styles.sectionRise} border-b border-white/[0.04]`} style={{ animationDelay: "110ms" }}><td className="px-3 py-2">Tuesday</td><td className="px-3 py-2">Pull Day</td><td className="px-3 py-2">Deadlift, Rows, Curls</td><td className="px-3 py-2">45 min</td></tr>
+                  <tr className={styles.sectionRise} style={{ animationDelay: "220ms" }}><td className="px-3 py-2">Wednesday</td><td className="px-3 py-2">Legs</td><td className="px-3 py-2">Squat, RDL, Split Squat</td><td className="px-3 py-2">50 min</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <StreamShimmer className="mx-2 mb-2 mt-1" />
           </div>
         ) : null}
         {tab === "nutrition" ? (
-          <div className="mt-4 rounded-xl border border-divider bg-[#0D1015] p-4 text-sm text-bright">
-            <p>Meal 1 (8am): Oats + Protein + Banana — 520 kcal / P38 C65 F8</p>
-            <p className="mt-2">Meal 2 (11am): Greek Yogurt + Berries — 220 kcal / P20 C25 F3</p>
-            <p className="mt-2">Meal 3 (2pm): Chicken + Rice + Veg — 610 kcal / P48 C62 F14</p>
+          <div
+            id="tjai-panel-nutrition"
+            role="tabpanel"
+            aria-labelledby="tjai-tab-nutrition"
+            className="tj-surface-card mt-4 p-4 text-sm text-bright"
+          >
+            <p className={styles.sectionRise}>Meal 1 (8am): Oats + Protein + Banana — 520 kcal / P38 C65 F8</p>
+            <p className={`${styles.sectionRise} mt-2`} style={{ animationDelay: "110ms" }}>Meal 2 (11am): Greek Yogurt + Berries — 220 kcal / P20 C25 F3</p>
+            <p className={`${styles.sectionRise} mt-2`} style={{ animationDelay: "220ms" }}>Meal 3 (2pm): Chicken + Rice + Veg — 610 kcal / P48 C62 F14</p>
+            <StreamShimmer className="mt-3 -mx-2" />
           </div>
         ) : null}
         {tab === "macros" ? (
-          <div className="mt-4 rounded-xl border border-divider bg-[#0D1015] p-4 text-sm text-bright">
-            <p>Protein 35% · Carbs 45% · Fat 20%</p>
-            <p className="mt-1 text-muted">Daily total: 2,150 kcal</p>
+          <div
+            id="tjai-panel-macros"
+            role="tabpanel"
+            aria-labelledby="tjai-tab-macros"
+            className="tj-surface-card mt-4 p-4 text-sm text-bright"
+          >
+            <p className={styles.sectionRise}>Protein 35% · Carbs 45% · Fat 20%</p>
+            <p className={`${styles.sectionRise} mt-1 text-muted`} style={{ animationDelay: "110ms" }}>Daily total: 2,150 kcal</p>
+            <StreamShimmer className="mt-3 -mx-2" />
           </div>
         ) : null}
-        <Link href={`/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`} className="mt-4 inline-flex text-sm font-semibold text-purple-300">
-          Unlock full plan at checkout <ArrowRight className="ms-1 h-4 w-4" aria-hidden />
+        <Link
+          href={`/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`}
+          className="group mt-4 inline-flex text-sm font-semibold text-purple-300 transition-colors hover:text-purple-200"
+        >
+          Unlock full plan at checkout <ArrowRight className="ms-1 h-4 w-4 transition-transform motion-safe:group-hover:translate-x-0.5" aria-hidden />
         </Link>
       </section>
 
-      <section className="reveal-section tj-whirl tj-whirl-alt mt-10">
+      <section className="reveal-section tj-whirl mt-10">
         <h2 className="text-2xl font-bold text-white">{copy.pricingTitle}</h2>
         <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {[
@@ -371,26 +550,24 @@ export function TjaiPublicLanding({ locale }: { locale: Locale }) {
         </div>
       </section>
 
-      <section className="mt-10 rounded-2xl border border-divider bg-surface p-6">
+      <section className="reveal-section tj-whirl tj-whirl-alt mt-10 rounded-2xl border border-divider bg-surface p-6">
         <h2 className="text-2xl font-bold text-white">{copy.faqTitle}</h2>
         <div className="mt-4 space-y-3">
-          {FAQ.map((q) => (
-            <div key={q} className="rounded-xl border border-divider bg-[#0D1015] p-3 text-sm text-bright">
-              {q}
-            </div>
+          {FAQ.map((q, index) => (
+            <FaqItem key={q} id={`tjai-faq-${index}`} question={q} answer={faqAnswers[index] ?? ""} />
           ))}
         </div>
       </section>
 
       <section className="reveal-section tj-whirl mt-10 rounded-3xl border border-divider bg-[linear-gradient(180deg,#111215_0%,#0D1015_100%)] p-8 text-center">
         <h2 className="text-3xl font-extrabold text-white">{copy.finalTitle}</h2>
-        <Link
+        <MagneticCta
           href={`/${locale}/login?redirect=${encodeURIComponent(`/${locale}/ai`)}`}
-          className="mt-5 inline-flex min-h-[52px] items-center justify-center tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-10 text-base font-bold text-[#09090B]"
+          className="mt-5 inline-flex min-h-[52px] items-center justify-center rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-10 text-base font-bold text-[#09090B] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)]"
         >
           {copy.finalCta}
           <ArrowRight className="ms-2 h-4 w-4" aria-hidden />
-        </Link>
+        </MagneticCta>
       </section>
 
     </main>

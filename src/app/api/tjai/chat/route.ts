@@ -21,6 +21,7 @@ import {
   type ChatCoachProgressEntry,
   type ChatCoachWorkoutLog
 } from "@/lib/tjai";
+import { buildCatalogBlock } from "@/lib/tjai/catalog-context";
 import { buildReadinessProfile } from "@/lib/tjai/readiness";
 import { buildTjaiUserProfile } from "@/lib/tjai-intake";
 import { isSupportedLocale } from "@/lib/i18n";
@@ -287,7 +288,8 @@ export async function POST(request: NextRequest) {
       locale: isSupportedLocale(locale) ? locale : "en",
       persona: userSettings.persona,
       longMemoryBlock,
-      coachStateBlock
+      coachStateBlock,
+      catalogBlock: buildCatalogBlock(message, typedPlanRow?.goal ?? undefined)
     });
 
     const messages = [

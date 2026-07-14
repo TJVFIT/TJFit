@@ -15,16 +15,35 @@ import {
   isProviderConfigured,
   isTaskAvailable,
   providerUnavailableBody,
+  resolveTaskProvider,
   type TjaiAiTask
 } from "@/lib/tjai/provider-policy";
 
 const ORIGINAL_OPENAI = process.env.OPENAI_API_KEY;
 const ORIGINAL_ANTHROPIC = process.env.ANTHROPIC_API_KEY;
+const ORIGINAL_LLM_PRESET = process.env.TJAI_LLM_PRESET;
+const ORIGINAL_LLM_BASE_URL = process.env.TJAI_LLM_BASE_URL;
+const ORIGINAL_LLM_MODEL = process.env.TJAI_LLM_MODEL;
+
+function restoreEnv(key: string, value: string | undefined) {
+  if (value === undefined) delete process.env[key];
+  else process.env[key] = value;
+}
 
 afterEach(() => {
-  process.env.OPENAI_API_KEY = ORIGINAL_OPENAI;
-  process.env.ANTHROPIC_API_KEY = ORIGINAL_ANTHROPIC;
+  restoreEnv("OPENAI_API_KEY", ORIGINAL_OPENAI);
+  restoreEnv("ANTHROPIC_API_KEY", ORIGINAL_ANTHROPIC);
+  restoreEnv("TJAI_LLM_PRESET", ORIGINAL_LLM_PRESET);
+  restoreEnv("TJAI_LLM_BASE_URL", ORIGINAL_LLM_BASE_URL);
+  restoreEnv("TJAI_LLM_MODEL", ORIGINAL_LLM_MODEL);
 });
+
+/** Tests below reason about legacy keys only — silence any open-gateway env. */
+function clearOpenGateway() {
+  delete process.env.TJAI_LLM_PRESET;
+  delete process.env.TJAI_LLM_BASE_URL;
+  delete process.env.TJAI_LLM_MODEL;
+}
 
 describe("provider policy map", () => {
   it("has a decision for every task constant", () => {
@@ -56,12 +75,39 @@ describe("availability tracks env keys", () => {
   });
 
   it("reflects Anthropic key presence and gates anthropic tasks", () => {
+    clearOpenGateway();
     process.env.ANTHROPIC_API_KEY = "sk-ant-test";
     expect(isAnthropicConfigured()).toBe(true);
     expect(isTaskAvailable("grocery_list")).toBe(true);
+    // With no key anywhere the task is truly unavailable...
     delete process.env.ANTHROPIC_API_KEY;
+    delete process.env.OPENAI_API_KEY;
     expect(isAnthropicConfigured()).toBe(false);
     expect(isTaskAvailable("grocery_list")).toBe(false);
+    // ...but any configured LLM beats a 503: OpenAI rescues an anthropic task.
+    process.env.OPENAI_API_KEY = "sk-test";
+    expect(isTaskAvailable("grocery_list")).toBe(true);
+    expect(resolveTaskProvider("grocery_list")).toBe("openai");
+  });
+
+  it("routes everything to the open gateway when configured", () => {
+    clearOpenGateway();
+    process.env.TJAI_LLM_PRESET = "groq";
+    process.env.TJAI_LLM_API_KEY = "gsk-test";
+    expect(resolveTaskProvider("plan_generate")).toBe("open");
+    expect(resolveTaskProvider("grocery_list")).toBe("open");
+    expect(resolveTaskProvider("chat_stream")).toBe("open");
+    expect(isTaskAvailable("chat_stream")).toBe(true);
+    delete process.env.TJAI_LLM_API_KEY;
+  });
+
+  it("never rescues streaming tasks with Anthropic (no streaming support)", () => {
+    clearOpenGateway();
+    delete process.env.OPENAI_API_KEY;
+    process.env.ANTHROPIC_API_KEY = "sk-ant-test";
+    expect(resolveTaskProvider("chat_stream")).toBe("none");
+    expect(isTaskAvailable("chat_stream")).toBe(false);
+    expect(resolveTaskProvider("eval_chat")).toBe("none");
   });
 
   it("treats guard/none providers as always configured", () => {

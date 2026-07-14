@@ -10,6 +10,7 @@ import { TJAIChatStandalone } from "@/components/tjai/tjai-chat-standalone";
 import { TJAIMealSwapTab } from "@/components/tjai/tjai-meal-swap-tab";
 import { TJAIMyPlanTab } from "@/components/tjai/tjai-my-plan-tab";
 import { TJAIProgressTab } from "@/components/tjai/tjai-progress-tab";
+import { WhatIfPanel } from "@/components/tjai/what-if-panel";
 import { getDirection, type Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -95,7 +96,12 @@ export function TJAIHub({ locale }: { locale: Locale }) {
     if (tab === "my-plan") return <TJAIMyPlanTab locale={locale} />;
     if (tab === "chat") return <TJAIChatStandalone locale={locale} />;
     if (tab === "meal-swap") return <TJAIMealSwapTab locale={locale} />;
-    return <TJAIProgressTab locale={locale} />;
+    return (
+      <div className="space-y-4">
+        <TJAIProgressTab locale={locale} />
+        <WhatIfPanel locale={locale} />
+      </div>
+    );
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale, tab]);
 

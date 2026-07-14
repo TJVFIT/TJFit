@@ -6,6 +6,12 @@ export function getCoachThinkingDelayMs(): number {
   return 360;
 }
 
+/** Loose multilingual topic hints used to pick context-aware suggestion chips. */
+export const COACH_NUTRITION_HINT_RE =
+  /protein|prot[eé]in|prote[íi]na|meal|kcal|calorie|calor[íi]a|carb|macro|öğün|kalori|yemek|بروتين|وجبة|سعرة|repas/i;
+export const COACH_TRAINING_HINT_RE =
+  /workout|training|\bsets?\b|\breps?\b|exercise|deload|antrenman|egzersiz|تمرين|تدريب|entrenamiento|ejercicio|entra[îi]nement|s[eé]ance/i;
+
 export const COACH_FOLLOW_UP_PROMPTS = {
   simplify: "Please answer in fewer bullet points and shorter sentences.",
   deeper: "Give me a more detailed breakdown with concrete examples.",

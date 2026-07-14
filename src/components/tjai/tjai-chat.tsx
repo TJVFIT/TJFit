@@ -14,7 +14,12 @@ import { UpgradePrompt, showUpgradePrompt } from "@/components/tjai/upgrade-prom
 import type { Locale } from "@/lib/i18n";
 import { getTJAIChatCopy } from "@/lib/tjai-chat-copy";
 import type { QuizAnswers, TJAIMetrics, TJAIPlan } from "@/lib/tjai-types";
-import { COACH_FOLLOW_UP_PROMPTS, getCoachThinkingDelayMs } from "@/lib/tjai/chat-client-utils";
+import {
+  COACH_FOLLOW_UP_PROMPTS,
+  COACH_NUTRITION_HINT_RE,
+  COACH_TRAINING_HINT_RE,
+  getCoachThinkingDelayMs
+} from "@/lib/tjai/chat-client-utils";
 import { cn } from "@/lib/utils";
 
 import styles from "./tjai-chat.module.css";
@@ -275,6 +280,12 @@ export function TJAIChat({
     history.length > 0 &&
     lastAssistantIdx !== undefined &&
     (history[lastAssistantIdx]?.content?.length ?? 0) > 12;
+  const lastAssistantText = lastAssistantIdx !== undefined ? history[lastAssistantIdx]?.content ?? "" : "";
+  const contextPrompts = COACH_NUTRITION_HINT_RE.test(lastAssistantText)
+    ? copy.ongoing.nutrition
+    : COACH_TRAINING_HINT_RE.test(lastAssistantText)
+      ? copy.ongoing.training
+      : [];
 
   return (
     <section className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0D0F12]/85 p-5 shadow-[0_0_0_1px_rgba(168,85,247,0.05),0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-md">
@@ -402,9 +413,7 @@ export function TJAIChat({
                 <p className="whitespace-pre-wrap leading-relaxed">{m.content}</p>
               )}
               {loading && !thinking && m.role === "assistant" && i === history.length - 1 && m.content ? (
-                <span className="ms-1 inline-block animate-pulse text-accent" aria-hidden>
-                  ▋
-                </span>
+                <span className={styles.streamCaret} aria-hidden />
               ) : null}
               {m.role === "assistant" && m.content && !(loading && i === history.length - 1) ? (
                 <div className="mt-2 flex justify-end">
@@ -447,6 +456,16 @@ export function TJAIChat({
                 className="rounded-full border border-white/[0.08] bg-[#15171c] px-3 py-1.5 text-xs font-medium text-bright transition-all hover:border-accent/40 hover:text-white active:scale-[0.98]"
               >
                 {copy.followUps[k]}
+              </button>
+            ))}
+            {contextPrompts.map((q) => (
+              <button
+                key={q}
+                type="button"
+                onClick={() => void ask(q)}
+                className="rounded-full border border-accent/25 bg-[rgba(168,85,247,0.07)] px-3 py-1.5 text-xs font-medium text-purple-100 transition-all hover:border-accent/45 hover:text-white active:scale-[0.98]"
+              >
+                {q}
               </button>
             ))}
           </div>

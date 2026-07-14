@@ -14,13 +14,18 @@
   }
 }
 
-@keyframes thinkLabelShimmer {
-  0%,
-  100% {
-    opacity: 0.55;
+@keyframes thinkShimmerSweep {
+  from {
+    background-position: 130% 0;
   }
+  to {
+    background-position: -130% 0;
+  }
+}
+
+@keyframes caretBlink {
   50% {
-    opacity: 1;
+    opacity: 0;
   }
 }
 
@@ -54,7 +59,31 @@
 }
 
 .thinkLabel {
-  animation: thinkLabelShimmer 2.6s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    rgba(216, 180, 254, 0.45) 0%,
+    rgba(216, 180, 254, 0.45) 38%,
+    #f3e8ff 50%,
+    rgba(216, 180, 254, 0.45) 62%,
+    rgba(216, 180, 254, 0.45) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: thinkShimmerSweep 1.9s linear infinite;
+}
+
+.streamCaret {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-inline-start: 3px;
+  vertical-align: text-bottom;
+  border-radius: 1px;
+  background: linear-gradient(180deg, #c084fc, #7c3aed);
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.55);
+  animation: caretBlink 900ms steps(2, start) infinite;
 }
 
 .messageEnter {
@@ -76,6 +105,14 @@
   .thinkLabel,
   .messageEnter {
     animation: none;
+  }
+  .thinkLabel {
+    background: none;
+    -webkit-text-fill-color: currentColor;
+  }
+  .streamCaret {
+    animation: none;
+    opacity: 0.7;
   }
   .composer:focus-within {
     animation: none;

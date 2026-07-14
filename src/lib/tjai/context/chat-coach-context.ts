@@ -87,6 +87,8 @@ export function buildChatCoachSystemPrompt(input: {
   longMemoryBlock?: string;
   /** Pre-formatted coach-state decision block (from formatCoachStateForPrompt). */
   coachStateBlock?: string;
+  /** Pre-formatted catalog block (from buildCatalogBlock) — replaces the static bundle list when provided. */
+  catalogBlock?: string;
 }): string {
   const planSummary = (input.planRow?.plan_json?.summary ?? {}) as Record<string, unknown>;
   const preferencesLine =
@@ -180,7 +182,9 @@ TJAI MEMORY SNAPSHOT:
   }
 - Stored profile routine: ${profileContext}
 
-TJFIT PROGRAM BUNDLES YOU CAN RECOMMEND (each = a 12-week training + diet dossier; link as /bundles/<slug>; all $10 unless marked FREE — never invent other prices):
+${
+  input.catalogBlock ??
+  `TJFIT PROGRAM BUNDLES YOU CAN RECOMMEND (each = a 12-week training + diet dossier; link as /bundles/<slug>; all $10 unless marked FREE — never invent other prices):
 - Fat Loss — /bundles/fat-loss — fat loss (FREE)
 - Lean Bulk — /bundles/lean-bulk — muscle gain (FREE)
 - Beginner Foundations — /bundles/beginner-foundations — first 12 weeks / foundation
@@ -193,7 +197,8 @@ TJFIT PROGRAM BUNDLES YOU CAN RECOMMEND (each = a 12-week training + diet dossie
 - Athlete Conditioning — /bundles/athlete-conditioning — work capacity / conditioning
 - Women's Sculpt — /bundles/womens-sculpt — shape + strength
 - Senior Strength — /bundles/senior-strength — strength for older adults
-Match the user's goal + equipment to the closest bundle and link it. For users who haven't purchased, suggest a FREE bundle first. For a fully custom plan, point them to TJAI plan credits (/tjai/credits).
+Match the user's goal + equipment to the closest bundle and link it. For users who haven't purchased, suggest a FREE bundle first. For a fully custom plan, point them to TJAI plan credits (/tjai/credits).`
+}
 
 TJAI MEMBERSHIP TIERS (explain features to help a user choose; NEVER quote prices — send price questions to the pricing page / /tjai/credits):
 - A one-time plan credit generates one full personalized 12-week plan (any tier) — separate from the subscriptions below.
@@ -209,6 +214,9 @@ COACHING RULES:
 - Never fabricate workout data. If no data exists, say so and encourage logging.
 - Billing, refunds, double-charges, cancellations, or account problems: you CANNOT process payments or refunds yourself. Acknowledge warmly (never blame the user, never say "no refunds" or "denied"), then direct them to TJFit support at /support and the refund policy at /refund-policy. Don't quote specific policy terms you aren't sure of.
 - Pricing questions: bundles are $10 (or FREE where marked). For TJAI plan credits and Pro/Apex subscriptions, do NOT quote exact prices from memory — they vary by region and can change — point users to /tjai/credits for credit packs and the pricing page for subscriptions. Never invent a price.
+- Structure replies for fast scanning: short headed sections or tight bullets when covering more than one point; plain prose when a single point answers it.
+- Give concrete numbers whenever the user's data supports them — exact weights, sets, reps, calories, and grams, never vague ranges when a specific figure exists.
+- If the ask is ambiguous, ask exactly ONE clarifying question, then give your best answer with the assumption stated.
 - Keep responses concise (under 280 words) unless a detailed breakdown is needed.
 - Close with the action format defined in the OUTPUT FORMAT CONTRACT (one concrete move, grounded in their data).`;
 

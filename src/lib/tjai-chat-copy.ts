@@ -20,6 +20,10 @@ export type TJAIChatCopy = {
     timeCrunch: string;
     deload: string;
   };
+  ongoing: {
+    nutrition: string[];
+    training: string[];
+  };
   composerHint: string;
   fallbackReply: string;
   connectionLost: string;
@@ -64,6 +68,10 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
       protein: "Protein",
       timeCrunch: "35 min",
       deload: "Deload"
+    },
+    ongoing: {
+      nutrition: ["Turn this into a grocery list", "Fit this to my calories"],
+      training: ["Plan my next session", "Add progression for next week"]
     },
     composerHint: "Enter to send · Shift + Enter for newline",
     fallbackReply: "TJAI couldn't pick that up — mind asking again?",
@@ -110,6 +118,10 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
       timeCrunch: "35 dk",
       deload: "Deload"
     },
+    ongoing: {
+      nutrition: ["Bunu alışveriş listesine çevir", "Bunu kalorilerime uyarla"],
+      training: ["Sonraki seansımı planla", "Gelecek hafta için ilerleme ekle"]
+    },
     composerHint: "Göndermek için Enter · Yeni satır için Shift + Enter",
     fallbackReply: "TJAI bunu tam alamadı — tekrar sorar mısın?",
     connectionLost: "Bağlantı düşünürken koptu — tekrar dener misin?",
@@ -154,6 +166,10 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
       protein: "بروتين",
       timeCrunch: "35 دقيقة",
       deload: "تخفيف الحمل"
+    },
+    ongoing: {
+      nutrition: ["حوّل هذا إلى قائمة تسوق", "وافق هذا مع سعراتي"],
+      training: ["خطط لحصتي القادمة", "أضف تدرجاً للأسبوع القادم"]
     },
     composerHint: "Enter للإرسال · Shift + Enter لسطر جديد",
     fallbackReply: "لم يلتقط TJAI ذلك — هل تسأل مرة أخرى؟",
@@ -200,6 +216,10 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
       timeCrunch: "35 min",
       deload: "Deload"
     },
+    ongoing: {
+      nutrition: ["Convierte esto en lista de la compra", "Ajusta esto a mis calorías"],
+      training: ["Planifica mi próxima sesión", "Añade progresión para la próxima semana"]
+    },
     composerHint: "Enter para enviar · Shift + Enter para salto de línea",
     fallbackReply: "TJAI no captó eso — ¿lo preguntas de nuevo?",
     connectionLost: "Se perdió la conexión a mitad de la idea — ¿lo intentas de nuevo?",
@@ -244,6 +264,10 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
       protein: "Protéines",
       timeCrunch: "35 min",
       deload: "Deload"
+    },
+    ongoing: {
+      nutrition: ["Transforme ceci en liste de courses", "Ajuste ceci à mes calories"],
+      training: ["Planifie ma prochaine séance", "Ajoute une progression pour la semaine prochaine"]
     },
     composerHint: "Entrée pour envoyer · Maj + Entrée pour un saut de ligne",
     fallbackReply: "TJAI n'a pas bien saisi — peux-tu redemander ?",

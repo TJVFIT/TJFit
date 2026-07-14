@@ -6,10 +6,17 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { CoachMessageBody, CoachThinkingPulse } from "@/components/tjai/coach-message-body";
 import { useDynamicIsland } from "@/components/ui/dynamic-island";
-import { COACH_FOLLOW_UP_PROMPTS, getCoachThinkingDelayMs } from "@/lib/tjai/chat-client-utils";
+import {
+  COACH_FOLLOW_UP_PROMPTS,
+  COACH_NUTRITION_HINT_RE,
+  COACH_TRAINING_HINT_RE,
+  getCoachThinkingDelayMs
+} from "@/lib/tjai/chat-client-utils";
 import { getTJAIAccess } from "@/lib/tjai-access";
 import { isSupportedLocale, type Locale, type SupportedLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+
+import styles from "./tjai-chat.module.css";
 
 /**
  * Detect the routing locale from the URL (can be any of the 10 supported locales),
@@ -34,6 +41,48 @@ type ConversationPreview = {
   starter: string;
   created_at: string;
 };
+
+type SourceChipKey = "plan" | "grocery" | "swap" | "progress" | "bundle";
+type SourceChip = { key: SourceChipKey; href: string };
+
+const BUNDLE_PATH_RE = /\/bundles\/([a-z0-9][a-z0-9-]{1,63})/i;
+
+const SOURCE_CHIP_TESTS: Array<{ key: Exclude<SourceChipKey, "bundle">; re: RegExp; tab: string }> = [
+  {
+    key: "grocery",
+    re: /grocer|shopping list|alışveriş listesi|market listesi|قائمة التسوق|قائمة البقالة|lista de (?:la )?compras?|liste de courses/i,
+    tab: "my-plan"
+  },
+  {
+    key: "swap",
+    re: /meal swap|swap (?:a |the |that )?meal|öğün değişimi|öğünü değiştir|تبديل الوجبة|بديل الوجبة|cambio de comida|cambiar (?:una |la )?comida|remplacer (?:un |le )?repas/i,
+    tab: "meal-swap"
+  },
+  {
+    key: "progress",
+    re: /progress|check-?in|ilerleme|التقدم|progreso|progression/i,
+    tab: "progress"
+  },
+  {
+    key: "plan",
+    re: /\bplan|خطتك|خطة/i,
+    tab: "my-plan"
+  }
+];
+
+// Client-side detection over the FINAL assistant text only. Hub tabs and
+// bundle slugs are the only allowed targets — nothing external.
+function detectSourceChips(text: string, locale: Locale): SourceChip[] {
+  const chips: SourceChip[] = [];
+  const bundle = BUNDLE_PATH_RE.exec(text);
+  if (bundle) chips.push({ key: "bundle", href: `/${locale}/bundles/${bundle[1].toLowerCase()}` });
+  for (const { key, re, tab } of SOURCE_CHIP_TESTS) {
+    if (chips.length >= 3) break;
+    const href = `/${locale}/ai?tab=${tab}`;
+    if (re.test(text) && !chips.some((c) => c.href === href)) chips.push({ key, href });
+  }
+  return chips;
+}
 
 const COPY = {
   en: {
@@ -81,6 +130,23 @@ const COPY = {
       "Cut 200 kcal",
       "Add a 20-min finisher"
     ],
+    ongoingNutrition: [
+      "Build me a high-protein day",
+      "Turn this into a grocery list",
+      "Fit this to my calories"
+    ],
+    ongoingTraining: [
+      "Plan my next session",
+      "Make this joint-friendly",
+      "Add progression for next week"
+    ],
+    sources: {
+      plan: "Open My Plan",
+      grocery: "Grocery list",
+      swap: "Meal Swap",
+      progress: "Progress",
+      bundle: "View bundle"
+    },
     composerEmptyHint: "Or type any fitness question below after choosing a starter."
   },
   tr: {
@@ -128,6 +194,23 @@ const COPY = {
       "200 kcal azalt",
       "20 dakikalık bitirici ekle"
     ],
+    ongoingNutrition: [
+      "Yüksek proteinli bir gün oluştur",
+      "Bunu alışveriş listesine çevir",
+      "Bunu kalorilerime uyarla"
+    ],
+    ongoingTraining: [
+      "Sonraki seansımı planla",
+      "Bunu eklem dostu yap",
+      "Gelecek hafta için ilerleme ekle"
+    ],
+    sources: {
+      plan: "Planımı aç",
+      grocery: "Alışveriş listesi",
+      swap: "Öğün değiştir",
+      progress: "İlerleme",
+      bundle: "Paketi gör"
+    },
     composerEmptyHint:
       "Veya bir başlangıç seçtikten sonra aşağıya herhangi bir fitness sorusu yaz."
   },
@@ -176,6 +259,23 @@ const COPY = {
       "قلّل 200 سعرة",
       "أضف تمريناً ختامياً 20 دقيقة"
     ],
+    ongoingNutrition: [
+      "جهّز لي يوماً عالي البروتين",
+      "حوّل هذا إلى قائمة تسوق",
+      "وافق هذا مع سعراتي"
+    ],
+    ongoingTraining: [
+      "خطط لحصتي القادمة",
+      "اجعل هذا مناسباً للمفاصل",
+      "أضف تدرجاً للأسبوع القادم"
+    ],
+    sources: {
+      plan: "افتح خطتي",
+      grocery: "قائمة التسوق",
+      swap: "تبديل الوجبة",
+      progress: "التقدم",
+      bundle: "عرض الباقة"
+    },
     composerEmptyHint: "أو اكتب أي سؤال عن اللياقة أدناه بعد اختيار بداية."
   },
   es: {
@@ -223,6 +323,23 @@ const COPY = {
       "Recorta 200 kcal",
       "Añade un finisher de 20 min"
     ],
+    ongoingNutrition: [
+      "Crea un día alto en proteína",
+      "Convierte esto en lista de la compra",
+      "Ajusta esto a mis calorías"
+    ],
+    ongoingTraining: [
+      "Planifica mi próxima sesión",
+      "Hazlo apto para articulaciones",
+      "Añade progresión para la próxima semana"
+    ],
+    sources: {
+      plan: "Abrir mi plan",
+      grocery: "Lista de la compra",
+      swap: "Cambiar comida",
+      progress: "Progreso",
+      bundle: "Ver paquete"
+    },
     composerEmptyHint:
       "O escribe cualquier pregunta de fitness abajo tras elegir un inicio."
   },
@@ -272,6 +389,23 @@ const COPY = {
       "Réduis de 200 kcal",
       "Ajoute un finisher de 20 min"
     ],
+    ongoingNutrition: [
+      "Prépare une journée riche en protéines",
+      "Transforme ceci en liste de courses",
+      "Ajuste ceci à mes calories"
+    ],
+    ongoingTraining: [
+      "Planifie ma prochaine séance",
+      "Rends ceci doux pour les articulations",
+      "Ajoute une progression pour la semaine prochaine"
+    ],
+    sources: {
+      plan: "Ouvrir mon plan",
+      grocery: "Liste de courses",
+      swap: "Changer le repas",
+      progress: "Progression",
+      bundle: "Voir le pack"
+    },
     composerEmptyHint:
       "Ou tape n'importe quelle question fitness ci-dessous après avoir choisi un démarrage."
   }
@@ -364,6 +498,12 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
     !isThinking &&
     messages.length > 0 &&
     (lastAssistant?.content?.length ?? 0) > 12;
+  const lastAssistantText = lastAssistant?.content ?? "";
+  const ongoingPrompts = COACH_NUTRITION_HINT_RE.test(lastAssistantText)
+    ? t.ongoingNutrition
+    : COACH_TRAINING_HINT_RE.test(lastAssistantText)
+      ? t.ongoingTraining
+      : t.quickPrompts;
 
   const loadConversation = async (id: string) => {
     const res = await fetch(`/api/tjai/chat/conversations?conversationId=${encodeURIComponent(id)}`, {
@@ -579,11 +719,18 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
               ))}
             </div>
           ) : null}
-          {messages.map((message) => (
+          {messages.map((message) => {
+            const isLast = message.id === messages[messages.length - 1]?.id;
+            const chips =
+              message.role === "assistant" && message.content && !((isStreaming || isThinking) && isLast)
+                ? detectSourceChips(message.content, locale)
+                : [];
+            return (
             <article
               key={message.id}
               className={cn(
                 "group relative max-w-[min(92%,28rem)] rounded-2xl px-4 py-3 text-sm shadow-sm transition-[transform,box-shadow] duration-200",
+                styles.messageEnter,
                 message.role === "user"
                   ? "ms-auto bg-gradient-to-br from-[#A855F7] to-[#7C3AED] text-[#0A0A0B]"
                   : "me-auto border border-white/[0.07] bg-surface/95 text-white"
@@ -608,14 +755,26 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
               ) : (
                 <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
               )}
-              {isStreaming && message.role === "assistant" && message.id === messages[messages.length - 1]?.id && message.content ? (
-                <span className="ms-1 inline-block animate-pulse text-accent" aria-hidden>
-                  ▋
-                </span>
+              {isStreaming && message.role === "assistant" && isLast && message.content ? (
+                <span className={styles.streamCaret} aria-hidden />
+              ) : null}
+              {chips.length > 0 ? (
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {chips.map((chip) => (
+                    <a
+                      key={`${chip.key}-${chip.href}`}
+                      href={chip.href}
+                      className="inline-flex items-center rounded-full border border-accent/25 bg-[rgba(168,85,247,0.08)] px-2.5 py-1 text-[11px] font-medium text-purple-200 transition-colors hover:border-accent/50 hover:text-white"
+                    >
+                      {t.sources[chip.key]}
+                    </a>
+                  ))}
+                </div>
               ) : null}
               <p className="mt-1 text-[10px] text-faint">{message.created_at ? new Date(message.created_at).toLocaleTimeString(locale) : ""}</p>
             </article>
-          ))}
+            );
+          })}
         </div>
 
         <div className="relative z-[1] border-t border-white/[0.06] px-3 py-3">
@@ -637,12 +796,22 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
                   {t.followUps[k]}
                 </button>
               ))}
+              {ongoingPrompts.slice(0, 2).map((q) => (
+                <button
+                  key={q}
+                  type="button"
+                  onClick={() => void sendMessage(q)}
+                  className="rounded-full border border-accent/25 bg-[rgba(168,85,247,0.07)] px-3 py-1.5 text-xs font-medium text-purple-100 transition-all hover:border-accent/45 hover:text-white active:scale-[0.98]"
+                >
+                  {q}
+                </button>
+              ))}
             </div>
           ) : null}
           {messages.length > 0 && !showFollowUps ? (
             <div className="mb-3 flex flex-wrap gap-2">
               <span className="w-full text-[10px] font-semibold uppercase tracking-[0.14em] text-dim">{t.tryLabel}</span>
-              {t.quickPrompts.map((q) => (
+              {ongoingPrompts.map((q) => (
                 <button
                   key={q}
                   type="button"
