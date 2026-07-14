@@ -13,13 +13,13 @@
  *   - skips plan retrieval (passes planRow: null and a synthetic profile note)
  *   - skips trial-credit accounting (eval is offline)
  *
- * This is dev-only — `OPENAI_API_KEY` must be set or the caller is told
- * to switch to dry-run.
+ * This is dev-only — an LLM backend must be configured (see
+ * isTaskAvailable("eval_chat")) or the caller is told to switch to dry-run.
  */
 
 import { buildChatCoachSystemPrompt } from "@/lib/tjai/context/chat-coach-context";
+import { llmCall } from "@/lib/tjai/llm";
 import type { TjaiPersona } from "@/lib/tjai/persona";
-import { callOpenAI } from "@/lib/tjai-openai";
 
 export type EvalProfile = {
   goal?: string;
@@ -41,8 +41,8 @@ export type EvalRunInput = {
 };
 
 /**
- * Returns the assistant reply as a single string. Throws if OPENAI_API_KEY
- * is missing — call sites should switch to dry-run mode first.
+ * Returns the assistant reply as a single string. Throws if no LLM backend
+ * is configured — call sites should switch to dry-run mode first.
  */
 export async function runEvalCase(input: EvalRunInput): Promise<string> {
   const supportedLocale = (["en", "tr", "ar", "es", "fr"] as const).includes(input.locale as never)
@@ -91,10 +91,12 @@ export async function runEvalCase(input: EvalRunInput): Promise<string> {
     ? `[EVAL CONTEXT — fake profile for evaluation only]\n${profileNote}\n\nUser message:\n${input.prompt}`
     : input.prompt;
 
-  return callOpenAI({
+  return llmCall({
+    task: "eval_chat",
     system: systemPrompt,
     user: userPrompt,
-    maxTokens: 700
+    maxTokens: 700,
+    route: "tjai/eval"
   });
 }
 

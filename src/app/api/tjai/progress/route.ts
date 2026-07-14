@@ -3,7 +3,8 @@ import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/require-auth";
 import { getLatestTjaiPlan } from "@/lib/tjai-plan-store";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
-import { callOpenAI } from "@/lib/tjai-openai";
+import { llmCall } from "@/lib/tjai/llm";
+import { isTaskAvailable } from "@/lib/tjai/provider-policy";
 
 function weekStartIso() {
   const now = new Date();
@@ -70,12 +71,15 @@ PLAN TARGETS:
 
 Write 1 insight. No intro phrase like "Great job" or "Here's your insight". Start directly.`;
 
-      if (process.env.OPENAI_API_KEY) {
-        weeklyInsight = await callOpenAI({
+      if (isTaskAvailable("progress_evaluate")) {
+        weeklyInsight = await llmCall({
+          task: "progress_evaluate",
           system: "You are TJAI, a precision AI fitness coach. Be brief, specific, actionable.",
           user: insightPrompt,
           maxTokens: 150,
-          jsonMode: false
+          jsonMode: false,
+          route: "tjai/progress",
+          userId: auth.user.id
         });
       } else {
         weeklyInsight = "Log your workouts and body weight this week to unlock your personalized AI insight.";

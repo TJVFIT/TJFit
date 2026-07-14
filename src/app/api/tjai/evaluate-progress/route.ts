@@ -5,7 +5,7 @@ import { rateLimit } from "@/lib/rate-limit";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { getTJAIAccess } from "@/lib/tjai-access";
-import { callOpenAI } from "@/lib/tjai-openai";
+import { llmCall } from "@/lib/tjai/llm";
 import { getLatestTjaiPlan, saveAdaptiveCheckpoint } from "@/lib/tjai-plan-store";
 
 export const dynamic = "force-dynamic";
@@ -160,7 +160,8 @@ Rules:
 
   let evaluation: EvaluationResult | null = null;
   try {
-    const raw = await callOpenAI({
+    const raw = await llmCall({
+      task: "progress_evaluate",
       system: "You are TJAI. Return strict JSON only. No markdown.",
       user: evaluationPrompt,
       maxTokens: 600,
@@ -168,7 +169,9 @@ Rules:
       // gpt-4o-mini handles bounded structured-JSON extraction fine and is
       // ~95% cheaper than gpt-4o for this size of input. Same pattern as the
       // preference-extraction call in tjai/chat.
-      model: "gpt-4o-mini"
+      openaiModel: "gpt-4o-mini",
+      route: "tjai/evaluate-progress",
+      userId: uid
     });
     evaluation = JSON.parse(raw) as EvaluationResult;
   } catch (err) {

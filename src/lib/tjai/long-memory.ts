@@ -1,9 +1,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-// Anthropic-backed (dual-provider). Uses Claude via @/lib/tjai-anthropic
-// for long-memory consolidation/extraction; the rest of TJAI runs on
-// OpenAI. Requires ANTHROPIC_API_KEY in env (see .env.example).
-import { callClaude, extractJsonBlock } from "@/lib/tjai-anthropic";
+// Extraction routes through the unified LLM router (open-source gateway
+// when configured, else the task's legacy provider per provider-policy).
+import { extractJsonBlock } from "@/lib/tjai-anthropic";
+import { llmCall } from "@/lib/tjai/llm";
 
 export type LongMemoryCategory =
   | "goal"
@@ -71,11 +71,11 @@ export async function extractFactsFromMessage(message: string, userId: string): 
   const wordCount = message.trim().split(/\s+/).filter(Boolean).length;
   if (wordCount < 6) return [];
   try {
-    const text = await callClaude({
+    const text = await llmCall({
+      task: "long_memory_extract",
       system: EXTRACTION_SYSTEM,
       user: message,
       maxTokens: 400,
-      task: "extract",
       route: "tjai/long-memory-extract",
       userId
     });

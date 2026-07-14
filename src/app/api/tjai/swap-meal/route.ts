@@ -1,11 +1,9 @@
 import { NextResponse } from "next/server";
 
 import { isAdminEmail } from "@/lib/auth-utils";
-// Anthropic-backed (dual-provider). Uses Claude via @/lib/tjai-anthropic
-// for fast structured meal-swap reasoning; the rest of TJAI runs on
-// OpenAI. Requires ANTHROPIC_API_KEY in env (see .env.example).
-import { callClaude, extractJsonBlock } from "@/lib/tjai-anthropic";
-import { isAnthropicConfigured, providerUnavailableBody } from "@/lib/tjai/provider-policy";
+import { extractJsonBlock } from "@/lib/tjai-anthropic";
+import { llmCall } from "@/lib/tjai/llm";
+import { isTaskAvailable, providerUnavailableBody } from "@/lib/tjai/provider-policy";
 import { rateLimit } from "@/lib/rate-limit";
 import { getTJAIAccess } from "@/lib/tjai-access";
 import { requireAuth } from "@/lib/require-auth";
@@ -61,14 +59,14 @@ export async function POST(request: Request) {
   const planContext = body?.planContext;
   if (!originalMeal || !planContext) return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
 
-  if (!isAnthropicConfigured()) {
+  if (!isTaskAvailable("meal_swap")) {
     return NextResponse.json(providerUnavailableBody(), { status: 503 });
   }
 
   try {
-    const text = await callClaude({
+    const text = await llmCall({
       maxTokens: 1500,
-      task: "swap",
+      task: "meal_swap",
       route: "tjai/swap-meal",
       userId: auth.user.id,
       system: "You are TJAI. Generate 3 alternative meals. Return JSON only.",
@@ -89,7 +87,7 @@ MealObject fields: name,time,foods,calories,protein,carbs,fat,prepNote,recipe`
     const parsed = JSON.parse(json);
     return NextResponse.json({ alternatives: parsed.alternatives ?? [] });
   } catch (error) {
-    // Don't leak raw Claude/network error text to clients.
+    // Don't leak raw provider/network error text to clients.
     console.error("[tjai/swap-meal] generation failed", error);
     return NextResponse.json({ error: "Swap generation failed" }, { status: 500 });
   }

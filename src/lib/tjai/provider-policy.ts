@@ -8,9 +8,16 @@
  * drifting on ad-hoc provider/model strings, and it defines how each task degrades
  * when its provider key is absent — a missing optional key must never break core
  * chat or plan generation.
+ *
+ * 2026-07-14 (owner directive): an open-source gateway (llm-gateway.ts — Ollama /
+ * vLLM / Groq / OpenRouter / any OpenAI-compatible server running open-weight
+ * models) now outranks BOTH legacy providers for every task when configured.
+ * Legacy keys remain a fallback so production never breaks during the switch.
  */
 
-export type TjaiProvider = "openai" | "anthropic" | "guard" | "none";
+import { isOpenLLMConfigured } from "./llm-gateway";
+
+export type TjaiProvider = "open" | "openai" | "anthropic" | "guard" | "none";
 
 export type TjaiAiTask =
   | "plan_generate"
@@ -82,14 +89,31 @@ export function isAnthropicConfigured(): boolean {
 }
 
 export function isProviderConfigured(provider: TjaiProvider): boolean {
+  if (provider === "open") return isOpenLLMConfigured();
   if (provider === "openai") return isOpenAIConfigured();
   if (provider === "anthropic") return isAnthropicConfigured();
   return true;
 }
 
+/**
+ * The provider that will actually serve a task right now: the open-source
+ * gateway when configured, else the task's legacy policy provider, else the
+ * other legacy provider as a last resort (any configured LLM beats a 503).
+ */
+export function resolveTaskProvider(task: TjaiAiTask): TjaiProvider {
+  if (isOpenLLMConfigured()) return "open";
+  const legacy = PROVIDER_POLICY[task].provider;
+  if (isProviderConfigured(legacy)) return legacy;
+  // Streaming is only implemented for open + openai; Anthropic can't rescue chat.
+  const streamingTask = task === "chat_stream" || task === "eval_chat";
+  if (legacy === "openai" && !streamingTask && isAnthropicConfigured()) return "anthropic";
+  if (legacy === "anthropic" && isOpenAIConfigured()) return "openai";
+  return "none";
+}
+
 /** Whether a task can run given current env, per the routing policy. */
 export function isTaskAvailable(task: TjaiAiTask): boolean {
-  return isProviderConfigured(PROVIDER_POLICY[task].provider);
+  return resolveTaskProvider(task) !== "none";
 }
 
 /** Standard JSON body for a shaped 503 when a task's provider is unavailable. */

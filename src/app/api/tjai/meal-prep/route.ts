@@ -1,11 +1,9 @@
 import { NextResponse } from "next/server";
 
 import { isAdminEmail } from "@/lib/auth-utils";
-// Anthropic-backed (dual-provider). Uses Claude via @/lib/tjai-anthropic
-// for structured meal-prep extraction; the rest of TJAI runs on OpenAI.
-// Requires ANTHROPIC_API_KEY in env (see .env.example).
-import { callClaude, extractJsonBlock } from "@/lib/tjai-anthropic";
-import { isAnthropicConfigured, providerUnavailableBody } from "@/lib/tjai/provider-policy";
+import { extractJsonBlock } from "@/lib/tjai-anthropic";
+import { llmCall } from "@/lib/tjai/llm";
+import { isTaskAvailable, providerUnavailableBody } from "@/lib/tjai/provider-policy";
 import { rateLimit } from "@/lib/rate-limit";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
@@ -59,14 +57,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Week payload too large." }, { status: 413 });
   }
 
-  if (!isAnthropicConfigured()) {
+  if (!isTaskAvailable("meal_prep")) {
     return NextResponse.json(providerUnavailableBody(), { status: 503 });
   }
 
   try {
-    const text = await callClaude({
+    const text = await llmCall({
       maxTokens: 2000,
-      task: "extract",
+      task: "meal_prep",
       route: "tjai/meal-prep",
       userId: auth.user.id,
       system: "You are TJAI. Return JSON only.",

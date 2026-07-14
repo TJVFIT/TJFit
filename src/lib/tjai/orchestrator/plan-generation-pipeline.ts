@@ -12,7 +12,9 @@ import { runEnhancedPlanCoherenceChecks } from "@/lib/tjai/validation/enhanced-p
 import { formatValidationIssuesForRepair, validateTjaiPlanSemantics } from "@/lib/tjai/validation/semantic-plan-checks";
 import { validateTjaiPlan } from "@/lib/tjai-plan-validation";
 import { buildTjaiMemorySnapshot, saveTjaiStructuredMemory } from "@/lib/tjai-plan-store";
-import { callOpenAI, safeParseJSON } from "@/lib/tjai-openai";
+import { llmCall } from "@/lib/tjai/llm";
+import { isTaskAvailable } from "@/lib/tjai/provider-policy";
+import { safeParseJSON } from "@/lib/tjai-openai";
 import type { QuizAnswers, TJAIPlan, TJAIMetrics, TjaiUserProfile } from "@/lib/tjai-types";
 
 export type PlanGenerationPipelineInput = {
@@ -42,9 +44,9 @@ export async function runPlanGenerationPipeline(input: PlanGenerationPipelineInp
   pushStage(trace, "received", { userId: input.userId });
   pushStage(trace, "classified", { skill: TJAI_SKILL_IDS.CREATE_PROGRAM });
 
-  if (!process.env.OPENAI_API_KEY) {
-    pushStage(trace, "failed", { reason: "no_openai_key" });
-    appendTraceError(trace, "OPENAI_API_KEY is not set");
+  if (!isTaskAvailable("plan_generate")) {
+    pushStage(trace, "failed", { reason: "no_llm_provider" });
+    appendTraceError(trace, "No LLM provider configured for plan_generate");
     logPipelineTrace(input.userId, trace);
     return { ok: false, status: 503, error: "AI not configured. Please contact support.", trace };
   }
@@ -99,11 +101,14 @@ export async function runPlanGenerationPipeline(input: PlanGenerationPipelineInp
     let rawText: string;
     try {
       rawText = await withTiming(trace, attempt === 1 ? "openai_plan_json" : "openai_plan_json_retry", () =>
-        callOpenAI({
+        llmCall({
+          task: "plan_generate",
           system: systemPrompt,
           user: attempt === 1 ? userPrompt : userPrompt + "\n\n" + repairHint,
           maxTokens: 16000,
           jsonMode: true,
+          route: "tjai/generate",
+          userId: input.userId,
           onUsage: (usage) => {
             trace.tokenUsage = usage;
           }

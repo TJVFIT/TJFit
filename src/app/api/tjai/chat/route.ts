@@ -29,7 +29,8 @@ import { buildTjaiMemorySnapshot, getLatestTjaiPlan } from "@/lib/tjai-plan-stor
 import { rateLimit } from "@/lib/rate-limit";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
-import { callOpenAI, streamOpenAI } from "@/lib/tjai-openai";
+import { llmCall, llmStream } from "@/lib/tjai/llm";
+import { isTaskAvailable } from "@/lib/tjai/provider-policy";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -40,14 +41,16 @@ async function extractPreference(message: string): Promise<{ key: string | null;
   const wordCount = message.split(/\s+/).filter(Boolean).length;
   if (wordCount < 10) return { key: null, value: null };
   try {
-    const raw = await callOpenAI({
+    const raw = await llmCall({
+      task: "chat_preference_extract",
       system: 'Extract user food/training preferences only. Return strict JSON: {"key":"...","value":"..."} or {"key":null}. No markdown.',
       user: message,
       maxTokens: 120,
       jsonMode: true,
       // Cheap utility extraction — gpt-4o-mini is ~95% cheaper than gpt-4o
       // for a task this simple. The chat reply itself still uses gpt-4o.
-      model: "gpt-4o-mini"
+      openaiModel: "gpt-4o-mini",
+      route: "tjai/chat"
     });
     const parsed = JSON.parse(raw) as { key?: string | null; value?: string | null };
     return {
@@ -180,8 +183,9 @@ export async function POST(request: NextRequest) {
     // redirect. The medical-safety guard above still runs first, and the
     // system prompt keeps TJAI's coaching persona for on-brand replies.
 
-    if (!process.env.OPENAI_API_KEY) {
-      console.error("[TJAI chat] OPENAI_API_KEY is not set — aborting with 503.");
+    // TJAI is offline when no LLM provider is configured for chat streaming.
+    if (!isTaskAvailable("chat_stream")) {
+      console.error("[TJAI chat] No LLM provider configured for chat_stream — aborting with 503.");
       return new Response(
         JSON.stringify({
           error: "TJAI is temporarily offline. Please try again shortly.",
@@ -292,7 +296,7 @@ export async function POST(request: NextRequest) {
     ];
 
     try {
-      const upstream = await streamOpenAI({ system: systemPrompt, messages, maxTokens: 700 });
+      const upstream = await llmStream({ task: "chat_stream", system: systemPrompt, messages, maxTokens: 700 });
 
       // OpenAI accepted the request (we have a 200 stream). Atomically consume
       // a trial credit now — if we lost the race against another concurrent

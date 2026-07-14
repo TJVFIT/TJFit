@@ -3,10 +3,7 @@ import { jsPDF } from "jspdf";
 import { sendEmail } from "@/lib/email";
 import { signUnsubscribeToken } from "@/lib/email-preferences";
 import { EmailTemplates } from "@/lib/email-templates";
-// Anthropic-backed (dual-provider). Uses Claude via @/lib/tjai-anthropic
-// for personalized renewal-email copy; the rest of TJAI runs on OpenAI.
-// Requires ANTHROPIC_API_KEY in env (see .env.example).
-import { callClaude } from "@/lib/tjai-anthropic";
+import { llmCall } from "@/lib/tjai/llm";
 
 type RenewalInput = {
   userId: string;
@@ -72,11 +69,11 @@ export async function sendProMonthlyProgramEmail(input: RenewalInput) {
   const month = new Date().toLocaleString("en-US", { month: "long", year: "numeric" });
   const answers = input.answers && Object.keys(input.answers).length > 0 ? input.answers : defaultAnswers();
   const system = "You are TJAI coach. Build practical progressive training plans.";
-  const text = await callClaude({
+  const text = await llmCall({
+    task: "pro_renewal_email",
     system,
     user: buildProgramPrompt(answers),
     maxTokens: 3500,
-    task: "plan",
     route: "pro-renewal-email",
     userId: input.userId
   });

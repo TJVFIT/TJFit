@@ -1,9 +1,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-// Anthropic-backed (dual-provider). Uses Claude via @/lib/tjai-anthropic
-// for adaptive suggestion classification; the rest of TJAI runs on
-// OpenAI. Requires ANTHROPIC_API_KEY in env (see .env.example).
-import { callClaude, extractJsonBlock } from "@/lib/tjai-anthropic";
+// Suggestion synthesis goes through the unified LLM router (open-source
+// gateway when configured, legacy provider otherwise).
+import { extractJsonBlock } from "@/lib/tjai-anthropic";
+import { llmCall } from "@/lib/tjai/llm";
 
 export type SuggestionKind =
   | "deload"
@@ -143,11 +143,11 @@ export async function generateSuggestion(
 Propose ONE adjustment.`;
 
   try {
-    const text = await callClaude({
+    const text = await llmCall({
+      task: "adaptive_suggestion",
       system: SUGGESTION_SYSTEM,
       user: userPrompt,
       maxTokens: 600,
-      task: "plan",
       route: "tjai/suggestions-generate",
       userId
     });

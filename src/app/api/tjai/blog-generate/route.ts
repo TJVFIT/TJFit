@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Anthropic-backed (dual-provider). Uses Claude via @/lib/tjai-anthropic
-// because long-form blog generation routes to Opus (see tjai-anthropic
-// task-tiering). The rest of TJAI runs on OpenAI. Requires
-// ANTHROPIC_API_KEY in env (see .env.example).
-import { callClaude } from "@/lib/tjai-anthropic";
-import { isAnthropicConfigured, providerUnavailableBody } from "@/lib/tjai/provider-policy";
+// Long-form blog generation dispatches through the unified LLM router
+// (open-source gateway when configured, else the task's legacy provider).
+import { llmCall } from "@/lib/tjai/llm";
+import { isTaskAvailable, providerUnavailableBody } from "@/lib/tjai/provider-policy";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
@@ -22,7 +20,7 @@ export async function POST(request: NextRequest) {
   const keyword = String(body?.keyword ?? "").trim();
   if (!topic || !keyword) return NextResponse.json({ error: "topic and keyword required" }, { status: 400 });
 
-  if (!isAnthropicConfigured()) {
+  if (!isTaskAvailable("blog_generate")) {
     return NextResponse.json(providerUnavailableBody(), { status: 503 });
   }
 
@@ -32,11 +30,11 @@ Target keyword: ${keyword}
 Include: introduction, 5-7 subheadings with content, practical tips, conclusion, meta description.
 Tone: expert but accessible. Length: ~1200 words.`;
 
-  const content = await callClaude({
+  const content = await llmCall({
+    task: "blog_generate",
     system,
     user,
     maxTokens: 4500,
-    task: "blog",
     route: "tjai/blog-generate",
     userId: auth.user.id
   });
