@@ -1,8 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 
-import { ChevronDown } from "lucide-react";
+import {
+  ChevronDown,
+  Dumbbell,
+  HeartPulse,
+  Repeat2,
+  Send,
+  Sparkles,
+  Square,
+  TrendingUp,
+  Utensils
+} from "lucide-react";
 
 import { BadgeUnlockToast } from "@/components/tjai/badge-unlock-toast";
 import { CoachMessageBody, CoachThinkingPulse } from "@/components/tjai/coach-message-body";
@@ -11,6 +21,7 @@ import { SpeakerButton } from "@/components/tjai/speaker-button";
 import { StreakBanner } from "@/components/tjai/streak-banner";
 import { SuggestionCards } from "@/components/tjai/suggestion-cards";
 import { UpgradePrompt, showUpgradePrompt } from "@/components/tjai/upgrade-prompt";
+import { GrainOverlay } from "@/components/ui/grain-overlay";
 import type { Locale } from "@/lib/i18n";
 import { getTJAIChatCopy } from "@/lib/tjai-chat-copy";
 import type { QuizAnswers, TJAIMetrics, TJAIPlan } from "@/lib/tjai-types";
@@ -30,6 +41,8 @@ function getChatLocale(): Locale {
   const segment = window.location.pathname.split("/").filter(Boolean)[0];
   return segment === "tr" || segment === "ar" || segment === "es" || segment === "fr" ? segment : "en";
 }
+
+const SUGGESTION_ICONS = [Sparkles, Utensils, Dumbbell, Repeat2, HeartPulse, TrendingUp] as const;
 
 export function TJAIChat({
   plan: _plan,
@@ -288,26 +301,36 @@ export function TJAIChat({
       : [];
 
   return (
-    <section className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0D0F12]/85 p-5 shadow-[0_0_0_1px_rgba(168,85,247,0.05),0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-md">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.5]"
-        style={{
-          background:
-            "radial-gradient(ellipse 80% 50% at 0% 0%, rgba(168,85,247,0.07), transparent 55%), radial-gradient(ellipse 60% 40% at 100% 100%, rgba(124,58,237,0.06), transparent 50%)"
-        }}
-        aria-hidden
-      />
-      <div className="relative">
+    <section
+      className={cn(
+        styles.panelBorder,
+        "relative overflow-hidden rounded-2xl bg-[#0B0C10]/95 p-5 shadow-[0_20px_70px_rgba(0,0,0,0.4)] backdrop-blur-md"
+      )}
+    >
+      <div className={styles.panelGlow} aria-hidden />
+      <GrainOverlay vignette={false} opacity={0.04} className="z-[2]" />
+      <div className="relative z-[1]">
         <div className="flex items-start justify-between gap-3">
-          <div>
-            <h3 className="text-lg font-semibold tracking-tight text-white">{copy.askTitle}</h3>
-            <p className="mt-1 max-w-xl text-sm leading-relaxed text-muted">
-              {copy.askBody}
-            </p>
+          <div className="flex min-w-0 items-start gap-3">
+            <span className={cn(styles.avatarOrb, styles.orbBreathe, "mt-0.5 h-9 w-9 text-[10px]")} aria-hidden>
+              TJ
+            </span>
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-lg font-semibold tracking-tight text-white">{copy.askTitle}</h3>
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.07] bg-white/[0.03] px-2 py-0.5 text-[10px] text-muted">
+                  <span className={styles.statusDot} aria-hidden />
+                  {copy.online}
+                </span>
+              </div>
+              <p className="mt-1 max-w-xl text-sm leading-relaxed text-muted">
+                {copy.askBody}
+              </p>
+            </div>
           </div>
           <a
             href={typeof window !== "undefined" ? `${window.location.pathname.replace(/\/$/, "")}/memory` : "./memory"}
-            className="shrink-0 rounded-md border border-white/10 px-3 py-1.5 text-[11px] uppercase tracking-wide text-white/60 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/35 hover:bg-purple-300/[0.05] hover:text-purple-100 hover:shadow-[0_0_12px_rgba(168,85,247,0.1)]"
+            className="shrink-0 rounded-full border border-white/10 px-3 py-1.5 text-[11px] uppercase tracking-wide text-white/60 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/35 hover:bg-purple-300/[0.05] hover:text-purple-100 hover:shadow-[0_0_12px_rgba(168,85,247,0.1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
           >
             {copy.memory}
           </a>
@@ -327,7 +350,7 @@ export function TJAIChat({
                 })
               }
               className={cn(
-                "text-[11px] font-medium uppercase tracking-[0.14em] transition",
+                "rounded-full text-[11px] font-medium uppercase tracking-[0.14em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40",
                 trialRemaining <= 1
                   ? "text-purple-200 underline-offset-4 hover:underline"
                   : "text-white/60 hover:text-purple-200"
@@ -351,7 +374,7 @@ export function TJAIChat({
               type="button"
               onClick={retry}
               disabled={loading}
-              className="shrink-0 rounded-full border border-red-300/40 px-3 py-1 font-semibold text-red-100 transition hover:bg-red-400/15 disabled:opacity-40"
+              className="shrink-0 rounded-full border border-red-300/40 px-3 py-1 font-semibold text-red-100 transition hover:bg-red-400/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300/50 disabled:opacity-40"
             >
               {copy.retry}
             </button>
@@ -366,65 +389,86 @@ export function TJAIChat({
         </div>
 
         {history.length === 0 ? (
-          <div className="mt-5 grid gap-2 sm:grid-cols-2">
-            {suggestions.map((s) => (
-              <button
-                key={s.label}
-                type="button"
-                onClick={() => void ask(s.prompt)}
-                className="group rounded-xl border border-white/[0.06] bg-surface/90 px-4 py-3.5 text-start text-sm text-white/95 shadow-sm transition-[border-color,background-color,transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-[rgba(168,85,247,0.06)] hover:shadow-[0_0_28px_rgba(168,85,247,0.1)] active:translate-y-0 active:scale-[0.99]"
-              >
-                <span className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-purple-200/70 transition-colors group-hover:text-purple-200">
-                  {s.label}
-                </span>
-                <span className="mt-1.5 line-clamp-2 block text-[13px] font-medium leading-snug text-bright/95">
-                  {s.prompt}
-                </span>
-              </button>
-            ))}
+          <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
+            {suggestions.map((s, index) => {
+              const Icon = SUGGESTION_ICONS[index] ?? Sparkles;
+              return (
+                <button
+                  key={s.label}
+                  type="button"
+                  onClick={() => void ask(s.prompt)}
+                  className={cn(
+                    styles.suggestionCard,
+                    styles.riseIn,
+                    "group flex items-start gap-3 px-4 py-3.5 text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-[0.99] motion-reduce:active:scale-100"
+                  )}
+                  style={{ "--rise-delay": `${index * 70}ms` } as CSSProperties}
+                >
+                  <span className="mt-0.5 flex h-8 w-8 flex-none items-center justify-center rounded-lg border border-accent/20 bg-[rgba(168,85,247,0.08)] text-[#C4B5FD]">
+                    <Icon className="h-4 w-4" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-purple-200/70 transition-colors group-hover:text-purple-200 motion-reduce:transition-none">
+                      {s.label}
+                    </span>
+                    <span className="mt-0.5 line-clamp-2 block text-[13px] font-medium leading-snug text-bright/95">
+                      {s.prompt}
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
           </div>
         ) : null}
 
         <div className="relative mt-5">
         <div
           ref={threadRef}
-          className="max-h-[min(420px,52vh)] space-y-3 overflow-y-auto pe-1"
+          className="max-h-[min(420px,52vh)] space-y-4 overflow-y-auto pe-1"
           aria-live="polite"
           aria-relevant="additions"
         >
-          {history.map((m, i) => (
-            <div
-              key={`${m.role}-${i}`}
-              className={cn(
-                "max-w-[min(92%,28rem)] rounded-2xl px-4 py-3 text-sm shadow-sm transition-[transform,box-shadow] duration-200",
-                styles.messageEnter,
-                m.role === "user"
-                  ? "chat-bubble-user ms-auto rounded-br-md border border-[rgba(168,85,247,0.22)] bg-gradient-to-br from-[rgba(168,85,247,0.14)] to-[rgba(168,85,247,0.06)] text-white"
-                  : "chat-bubble-ai me-auto rounded-bl-md border border-white/[0.07] bg-surface/95 text-bright"
-              )}
-            >
-              {m.role === "assistant" ? (
-                !m.content && (thinking || loading) ? (
-                  <CoachThinkingPulse />
-                ) : m.content ? (
-                  <CoachMessageBody text={m.content} />
-                ) : null
-              ) : (
-                <p className="whitespace-pre-wrap leading-relaxed">{m.content}</p>
-              )}
-              {loading && !thinking && m.role === "assistant" && i === history.length - 1 && m.content ? (
-                <span className={styles.streamCaret} aria-hidden />
-              ) : null}
-              {m.role === "assistant" && m.content && !(loading && i === history.length - 1) ? (
-                <div className="mt-2 flex justify-end">
-                  <SpeakerButton
-                    text={m.content}
-                    autoplay={ttsAutoplay && i === history.length - 1}
-                  />
+          {history.map((m, i) =>
+            m.role === "user" ? (
+              <div key={`${m.role}-${i}`} className={cn("flex flex-col items-end", styles.messageEnter)}>
+                <div className="max-w-[min(88%,26rem)] rounded-2xl border border-accent/20 bg-[rgba(168,85,247,0.10)] px-4 py-3 text-sm text-white shadow-sm">
+                  <p className="whitespace-pre-wrap leading-relaxed">{m.content}</p>
                 </div>
-              ) : null}
-            </div>
-          ))}
+              </div>
+            ) : (
+              <div key={`${m.role}-${i}`} className={cn("group flex gap-3", styles.messageEnter)}>
+                <span className={cn(styles.avatarOrb, "mt-0.5 h-7 w-7 text-[9px]")} aria-hidden>
+                  TJ
+                </span>
+                <div className="min-w-0 flex-1 border-s border-white/[0.04] ps-3 text-sm leading-7 text-bright sm:ps-4">
+                  {!m.content && (thinking || loading) ? (
+                    <CoachThinkingPulse />
+                  ) : m.content ? (
+                    <CoachMessageBody text={m.content} />
+                  ) : null}
+                  {loading && !thinking && i === history.length - 1 && m.content ? (
+                    <span className={styles.streamCaret} aria-hidden />
+                  ) : null}
+                  {m.content && !(loading && i === history.length - 1) ? (
+                    <div className="mt-1.5 flex items-center gap-2 opacity-0 transition-opacity duration-200 focus-within:opacity-100 group-hover:opacity-100 motion-reduce:transition-none">
+                      <button
+                        type="button"
+                        onClick={() => navigator.clipboard.writeText(m.content)}
+                        aria-label={copy.copyLabel}
+                        className="inline-flex items-center rounded-md border border-white/[0.08] bg-[#0E1014]/90 px-1.5 py-0.5 text-[10px] text-muted backdrop-blur transition-colors hover:border-accent/40 hover:text-white focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+                      >
+                        {copy.copyLabel}
+                      </button>
+                      <SpeakerButton
+                        text={m.content}
+                        autoplay={ttsAutoplay && i === history.length - 1}
+                      />
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            )
+          )}
           <div ref={messagesEndRef} />
         </div>
           {!atBottom && history.length > 0 ? (
@@ -436,7 +480,7 @@ export function TJAIChat({
                 messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
               }}
               aria-label={copy.jumpToLatest}
-              className="absolute bottom-2 end-3 z-[5] inline-flex h-9 w-9 items-center justify-center rounded-full border border-purple-300/40 bg-[#0E1014]/95 text-purple-100 shadow-[0_0_18px_rgba(168,85,247,0.25)] backdrop-blur transition-[transform,border-color,box-shadow] duration-200 hover:scale-105 hover:border-purple-300/60 hover:shadow-[0_0_26px_rgba(168,85,247,0.4)] motion-safe:animate-[tj-fade-up_220ms_ease-out]"
+              className="absolute bottom-2 end-3 z-[5] inline-flex h-9 w-9 items-center justify-center rounded-full border border-purple-300/40 bg-[#0E1014]/95 text-purple-100 shadow-[0_0_18px_rgba(168,85,247,0.25)] backdrop-blur transition-[transform,border-color,box-shadow] duration-200 hover:scale-105 hover:border-purple-300/60 hover:shadow-[0_0_26px_rgba(168,85,247,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 motion-safe:animate-[tj-fade-up_220ms_ease-out] motion-reduce:hover:scale-100"
             >
               <ChevronDown className="h-4 w-4" aria-hidden />
             </button>
@@ -444,38 +488,37 @@ export function TJAIChat({
         </div>
 
         {showFollowUps ? (
-          <div className="relative mt-4 flex flex-wrap gap-2">
-            <span className="w-full text-[10px] font-semibold uppercase tracking-[0.14em] text-dim">{copy.refine}</span>
-            {(
-              ["simplify", "deeper", "nextStep", "protein", "timeCrunch", "deload"] as const
-            ).map((k) => (
-              <button
-                key={k}
-                type="button"
-                onClick={() => void ask(COACH_FOLLOW_UP_PROMPTS[k])}
-                className="rounded-full border border-white/[0.08] bg-[#15171c] px-3 py-1.5 text-xs font-medium text-bright transition-all hover:border-accent/40 hover:text-white active:scale-[0.98]"
-              >
-                {copy.followUps[k]}
-              </button>
-            ))}
-            {contextPrompts.map((q) => (
-              <button
-                key={q}
-                type="button"
-                onClick={() => void ask(q)}
-                className="rounded-full border border-accent/25 bg-[rgba(168,85,247,0.07)] px-3 py-1.5 text-xs font-medium text-purple-100 transition-all hover:border-accent/45 hover:text-white active:scale-[0.98]"
-              >
-                {q}
-              </button>
-            ))}
+          <div className="mt-4">
+            <span className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-dim">{copy.refine}</span>
+            <div className="mt-1.5 flex gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0">
+              {(
+                ["simplify", "deeper", "nextStep", "protein", "timeCrunch", "deload"] as const
+              ).map((k) => (
+                <button
+                  key={k}
+                  type="button"
+                  onClick={() => void ask(COACH_FOLLOW_UP_PROMPTS[k])}
+                  className="flex-none whitespace-nowrap rounded-full border border-white/[0.08] bg-[#15171c] px-3.5 py-2 text-xs font-medium text-bright transition-all hover:border-accent/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-[0.98] motion-reduce:transition-none motion-reduce:active:scale-100"
+                >
+                  {copy.followUps[k]}
+                </button>
+              ))}
+              {contextPrompts.map((q) => (
+                <button
+                  key={q}
+                  type="button"
+                  onClick={() => void ask(q)}
+                  className="flex-none whitespace-nowrap rounded-full border border-accent/25 bg-[rgba(168,85,247,0.07)] px-3.5 py-2 text-xs font-medium text-purple-100 transition-all hover:border-accent/45 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-[0.98] motion-reduce:transition-none motion-reduce:active:scale-100"
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
           </div>
         ) : null}
 
         <form
-          className={cn(
-            "relative mt-5 flex items-end gap-2 rounded-2xl border border-white/[0.08] bg-[#0E1014]/95 p-1.5",
-            styles.composer
-          )}
+          className={cn("relative mt-5", styles.promptBox)}
           onSubmit={(e) => {
             e.preventDefault();
             submitComposer();
@@ -494,31 +537,38 @@ export function TJAIChat({
             placeholder={copy.emptyPrompt}
             aria-label={copy.askTitle}
             rows={1}
-            className="tj-chat-input-premium min-h-11 max-h-[168px] flex-1 resize-none bg-transparent px-3.5 py-2.5 text-sm leading-snug text-white outline-none placeholder:text-dim"
+            className="max-h-[168px] min-h-11 w-full resize-none bg-transparent px-4 pt-3 text-sm leading-snug text-white outline-none placeholder:text-dim"
           />
-          {loading || thinking ? (
-            <button
-              type="button"
-              onClick={stop}
-              aria-label={copy.stop}
-              className="inline-flex h-10 min-w-[44px] items-center justify-center rounded-xl border border-white/15 bg-white/5 px-4 text-sm font-bold text-white transition-[transform,background-color] duration-150 hover:bg-white/10 active:scale-[0.94]"
-            >
-              {copy.stop}
-            </button>
-          ) : (
-            <button
-              type="submit"
-              aria-label={copy.send}
-              disabled={!message.trim()}
-              className="tj-cta-sheen inline-flex h-10 min-w-[44px] items-center justify-center rounded-xl bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-4 text-sm font-bold text-[#0A0A0B] shadow-[0_0_20px_rgba(168,85,247,0.22)] transition-[transform,filter,box-shadow,opacity] duration-150 hover:brightness-110 hover:shadow-[0_0_28px_rgba(168,85,247,0.28)] active:scale-[0.94] disabled:pointer-events-none disabled:opacity-40"
-            >
-              {copy.send}
-            </button>
-          )}
+          <div className="flex items-center gap-2 px-2.5 pb-2.5">
+            <p className="min-w-0 flex-1 truncate text-[10px] uppercase tracking-[0.14em] text-faint">
+              {copy.composerHint}
+            </p>
+            {loading || thinking ? (
+              <button
+                type="button"
+                onClick={stop}
+                aria-label={copy.stop}
+                className="inline-flex h-10 w-10 flex-none items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition-[transform,background-color] duration-150 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 active:scale-[0.94] motion-reduce:transition-none motion-reduce:active:scale-100"
+              >
+                <Square className="h-3.5 w-3.5 fill-current" aria-hidden />
+              </button>
+            ) : (
+              <button
+                type="submit"
+                aria-label={copy.send}
+                disabled={!message.trim()}
+                className={cn(
+                  "tj-cta-sheen inline-flex h-10 w-10 flex-none items-center justify-center rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] text-[#0A0A0B] transition-[transform,filter,box-shadow,opacity] duration-200 hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 active:scale-[0.95] disabled:pointer-events-none disabled:opacity-40 motion-reduce:transition-none motion-reduce:active:scale-100",
+                  message.trim()
+                    ? "shadow-[0_0_26px_rgba(168,85,247,0.45)]"
+                    : "opacity-70 shadow-[0_0_12px_rgba(168,85,247,0.15)]"
+                )}
+              >
+                <Send className="h-4 w-4" aria-hidden />
+              </button>
+            )}
+          </div>
         </form>
-        <p className="mt-2 text-center text-[10px] uppercase tracking-[0.18em] text-dim">
-          {copy.composerHint}
-        </p>
       </div>
     </section>
   );

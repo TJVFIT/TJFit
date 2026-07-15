@@ -38,7 +38,7 @@ function parseInline(text: string): ReactNode {
       return (
         <code
           key={i}
-          className="rounded border border-white/[0.08] bg-white/[0.06] px-1 py-px font-mono text-[0.85em] text-purple-100"
+          className="rounded-md border border-accent/20 bg-[rgba(168,85,247,0.10)] px-1.5 py-px font-mono text-[0.85em] text-purple-100"
         >
           {part.slice(1, -1)}
         </code>
@@ -52,7 +52,7 @@ function parseInline(text: string): ReactNode {
           <a
             key={i}
             href={target}
-            className="font-medium text-purple-200 underline decoration-purple-300/40 underline-offset-2 transition-colors hover:text-white hover:decoration-purple-200"
+            className="rounded-sm font-medium text-purple-200 underline decoration-purple-300/50 underline-offset-[3px] transition-colors hover:text-white hover:decoration-purple-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
           >
             {label}
           </a>
@@ -91,7 +91,10 @@ export function CoachMessageBody({ text, className }: { text: string; className?
 
     if (t.startsWith("### ")) {
       blocks.push(
-        <h4 key={`h-${k++}`} className="text-[11px] font-bold uppercase tracking-[0.16em] text-purple-300/90">
+        <h4
+          key={`h-${k++}`}
+          className="pt-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-purple-300/95 first:pt-0"
+        >
           {parseInline(t.slice(4))}
         </h4>
       );
@@ -100,7 +103,10 @@ export function CoachMessageBody({ text, className }: { text: string; className?
     }
     if (t.startsWith("## ")) {
       blocks.push(
-        <h3 key={`h3-${k++}`} className="text-sm font-semibold tracking-tight text-white">
+        <h3
+          key={`h3-${k++}`}
+          className="pt-2.5 text-base font-semibold leading-snug tracking-[-0.01em] text-white first:pt-0"
+        >
           {parseInline(t.slice(3))}
         </h3>
       );
@@ -116,10 +122,10 @@ export function CoachMessageBody({ text, className }: { text: string; className?
         i++;
       }
       blocks.push(
-        <div key={`tbl-${k++}`} className="my-2 overflow-x-auto rounded-lg border border-white/[0.08] bg-white/[0.02]">
+        <div key={`tbl-${k++}`} className="my-2 overflow-x-auto rounded-lg border border-white/[0.06] bg-white/[0.02]">
           <table className="w-full min-w-max border-collapse text-[13px]">
             <thead>
-              <tr className="border-b border-white/[0.1] bg-[rgba(168,85,247,0.06)]">
+              <tr className="border-b border-white/[0.08] bg-[rgba(168,85,247,0.08)]">
                 {header.map((cell, j) => (
                   <th
                     key={j}
@@ -132,9 +138,9 @@ export function CoachMessageBody({ text, className }: { text: string; className?
             </thead>
             <tbody>
               {rows.map((row, ri) => (
-                <tr key={ri} className="border-b border-white/[0.05] last:border-0">
+                <tr key={ri} className="border-b border-white/[0.05] even:bg-white/[0.025] last:border-0">
                   {header.map((_, j) => (
-                    <td key={j} className="px-3 py-2 align-top text-bright [&_strong]:text-white">
+                    <td key={j} className="px-3 py-1.5 align-top leading-[1.6] text-bright [&_strong]:text-white">
                       {parseInline(row[j] ?? "")}
                     </td>
                   ))}
@@ -156,9 +162,9 @@ export function CoachMessageBody({ text, className }: { text: string; className?
         } else break;
       }
       blocks.push(
-        <ul key={`ul-${k++}`} className="my-1 list-disc space-y-1 ps-4 marker:text-accent/55">
+        <ul key={`ul-${k++}`} className="my-1 list-disc space-y-1.5 ps-5 marker:text-accent/70">
           {items.map((item, j) => (
-            <li key={j} className="text-bright [&_strong]:text-white">
+            <li key={j} className="leading-[1.7] text-bright [&_strong]:text-white">
               {parseInline(item)}
             </li>
           ))}
@@ -172,14 +178,14 @@ export function CoachMessageBody({ text, className }: { text: string; className?
       continue;
     }
     blocks.push(
-      <p key={`p-${k++}`} className="text-bright leading-relaxed [&_strong]:text-white">
+      <p key={`p-${k++}`} className="leading-[1.7] text-bright [&_strong]:text-white">
         {parseInline(line)}
       </p>
     );
     i++;
   }
 
-  return <div className={cn("tj-prose-coach space-y-1.5 text-sm", className)}>{blocks}</div>;
+  return <div className={cn("tj-prose-coach space-y-2 text-sm", className)}>{blocks}</div>;
 }
 
 export function CoachThinkingPulse() {
@@ -188,7 +194,7 @@ export function CoachThinkingPulse() {
   const thinkingLabel = THINKING_LABEL[seg] ?? THINKING_LABEL.en;
   return (
     <div
-      className="flex items-center gap-2.5 py-0.5"
+      className="flex items-center gap-2.5 py-1"
       aria-live="polite"
       aria-label={thinkingLabel}
       role="status"
@@ -201,12 +207,12 @@ export function CoachThinkingPulse() {
       >
         {thinkingLabel}
       </span>
-      <span className="flex items-end gap-[3px] motion-reduce:hidden" aria-hidden>
+      <span className="flex items-center gap-1 motion-reduce:hidden" aria-hidden>
         {[0, 1, 2].map((d) => (
           <span
             key={d}
             className={cn(
-              "inline-block h-1.5 w-1.5 rounded-full bg-purple-300/90",
+              "inline-block h-[5px] w-[5px] rounded-full bg-purple-300/90",
               styles.thinkDot
             )}
             style={{ animationDelay: `${d * 180}ms` }}

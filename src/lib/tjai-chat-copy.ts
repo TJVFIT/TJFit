@@ -6,6 +6,8 @@ export type TJAIChatCopy = {
   askTitle: string;
   askBody: string;
   memory: string;
+  online: string;
+  copyLabel: string;
   tapToAsk: string;
   refine: string;
   send: string;
@@ -55,6 +57,8 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
     askTitle: "Ask TJAI",
     askBody: "Your coach knows your plan and your logged sessions. Ask with specifics for sharper answers.",
     memory: "Memory",
+    online: "Online",
+    copyLabel: "Copy",
     tapToAsk: "Tap to ask",
     refine: "Refine",
     send: "Send",
@@ -104,6 +108,8 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
     askTitle: "TJAI'ye sor",
     askBody: "Koçun planını ve kayıtlı seanslarını bilir. Daha keskin cevaplar için net sorular sor.",
     memory: "Hafıza",
+    online: "Çevrimiçi",
+    copyLabel: "Kopyala",
     tapToAsk: "Sormak için dokun",
     refine: "Netleştir",
     send: "Gönder",
@@ -153,6 +159,8 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
     askTitle: "اسأل TJAI",
     askBody: "مدربك يعرف خطتك وحصصك المسجلة. اسأل بتفاصيل لتحصل على إجابات أدق.",
     memory: "الذاكرة",
+    online: "متصل",
+    copyLabel: "نسخ",
     tapToAsk: "اضغط للسؤال",
     refine: "حسّن السؤال",
     send: "إرسال",
@@ -202,6 +210,8 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
     askTitle: "Pregunta a TJAI",
     askBody: "Tu coach conoce tu plan y tus sesiones registradas. Pregunta con detalles para respuestas más precisas.",
     memory: "Memoria",
+    online: "En línea",
+    copyLabel: "Copiar",
     tapToAsk: "Toca para preguntar",
     refine: "Refinar",
     send: "Enviar",
@@ -251,6 +261,8 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
     askTitle: "Demander à TJAI",
     askBody: "Ton coach connaît ton plan et tes séances enregistrées. Donne des détails pour des réponses plus nettes.",
     memory: "Mémoire",
+    online: "En ligne",
+    copyLabel: "Copier",
     tapToAsk: "Appuyer pour demander",
     refine: "Affiner",
     send: "Envoyer",
