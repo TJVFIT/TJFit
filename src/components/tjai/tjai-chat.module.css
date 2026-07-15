@@ -100,6 +100,251 @@
   animation: composerFocusGlow 220ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
+/* ---------------------------------------------------------------- */
+/* Premium chat shell system — shared by standalone + embedded chat */
+/* ---------------------------------------------------------------- */
+
+@property --tjPanelAngle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes panelSpin {
+  to {
+    --tjPanelAngle: 360deg;
+  }
+}
+
+/* Animated 1px conic border shimmer (padding + mask trick). */
+.panelBorder {
+  position: relative;
+}
+
+.panelBorder::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--tjPanelAngle),
+    rgba(168, 85, 247, 0.42),
+    rgba(124, 58, 237, 0.07) 25%,
+    rgba(196, 181, 253, 0.36) 50%,
+    rgba(124, 58, 237, 0.07) 75%,
+    rgba(168, 85, 247, 0.42)
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: panelSpin 9s linear infinite;
+  pointer-events: none;
+}
+
+/* Soft violet bloom behind the panel top. */
+.panelGlow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 62% 36% at 50% 0%, rgba(168, 85, 247, 0.1), transparent 62%),
+    radial-gradient(ellipse 70% 45% at 0% 0%, rgba(168, 85, 247, 0.07), transparent 50%),
+    radial-gradient(ellipse 50% 40% at 100% 100%, rgba(124, 58, 237, 0.06), transparent 45%);
+}
+
+/* Gradient TJ avatar orb. Size via utility classes. */
+.avatarOrb {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  border-radius: 9999px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #0a0a0b;
+  user-select: none;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.55), transparent 44%),
+    linear-gradient(135deg, #c4b5fd 0%, #a855f7 45%, #7c3aed 100%);
+  box-shadow:
+    0 0 14px rgba(168, 85, 247, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+@keyframes orbBreathe {
+  0%,
+  100% {
+    box-shadow:
+      0 0 18px rgba(168, 85, 247, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow:
+      0 0 36px rgba(168, 85, 247, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    transform: scale(1.04);
+  }
+}
+
+.orbBreathe {
+  animation: orbBreathe 3.8s ease-in-out infinite;
+}
+
+@keyframes statusPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.45);
+    opacity: 1;
+  }
+  70% {
+    box-shadow: 0 0 0 5px rgba(168, 85, 247, 0);
+    opacity: 0.75;
+  }
+}
+
+.statusDot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: #a855f7;
+  box-shadow: 0 0 6px rgba(168, 85, 247, 0.6);
+  animation: statusPulse 2.2s ease-in-out infinite;
+}
+
+/* Staggered fade-up entrance; delay via --rise-delay. */
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.riseIn {
+  animation: riseIn 560ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: var(--rise-delay, 0ms);
+}
+
+/* Empty-state glass suggestion cards. */
+.suggestionCard {
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015));
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transition:
+    transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.suggestionCard:hover {
+  transform: translateY(-2px);
+  border-color: rgba(168, 85, 247, 0.4);
+  box-shadow:
+    0 8px 26px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(168, 85, 247, 0.12),
+    0 0 22px rgba(168, 85, 247, 0.14);
+}
+
+/* Signature glass prompt box; focus-within violet glow ring. */
+.promptBox {
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(14, 16, 20, 0.9);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    inset 0 -10px 26px rgba(0, 0, 0, 0.22);
+  transition:
+    border-color 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.promptBox:focus-within {
+  border-color: rgba(168, 85, 247, 0.5);
+  box-shadow:
+    0 0 0 3px rgba(168, 85, 247, 0.12),
+    0 0 28px rgba(168, 85, 247, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* Gradient-border pill (sidebar "New chat"). */
+.newChatBtn {
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  background:
+    linear-gradient(#101016, #101016) padding-box,
+    linear-gradient(
+        135deg,
+        rgba(168, 85, 247, 0.75),
+        rgba(124, 58, 237, 0.25) 45%,
+        rgba(196, 181, 253, 0.65)
+      )
+      border-box;
+  transition:
+    box-shadow 200ms ease,
+    filter 200ms ease;
+}
+
+.newChatBtn:hover {
+  box-shadow: 0 0 18px rgba(168, 85, 247, 0.25);
+  filter: brightness(1.12);
+}
+
+/* Mobile conversations slide-over sheet (RTL-aware). */
+@keyframes sheetIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes sheetInRtl {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes backdropIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.sheet {
+  animation: sheetIn 280ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+:global([dir="rtl"]) .sheet {
+  animation-name: sheetInRtl;
+}
+
+.sheetBackdrop {
+  animation: backdropIn 200ms ease-out both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .thinkDot,
   .thinkLabel,
@@ -119,5 +364,24 @@
     box-shadow:
       0 0 0 2px rgba(168, 85, 247, 0.4),
       inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+  .panelBorder::before {
+    animation: none;
+    background: rgba(168, 85, 247, 0.28);
+  }
+  .orbBreathe,
+  .statusDot,
+  .riseIn,
+  .sheet,
+  .sheetBackdrop {
+    animation: none;
+  }
+  .suggestionCard,
+  .promptBox,
+  .newChatBtn {
+    transition: none;
+  }
+  .suggestionCard:hover {
+    transform: none;
   }
 }
