@@ -215,6 +215,28 @@ export function buildTjaiPdf(args: TjaiPdfArgs): jsPDF {
 
   (plan.diet?.weeks ?? []).forEach((week) => {
     let dy = newDietPage(week);
+
+    const dietRationale = sanitize(week.coachRationale ?? "");
+    if (dietRationale) {
+      setText(pdf, PDF_THEME.accent);
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8);
+      pdf.text("COACH'S NOTE", PAGE.margin, dy);
+      dy += 12;
+      setText(pdf, PDF_THEME.textMuted);
+      pdf.setFont("helvetica", "italic");
+      pdf.setFontSize(9);
+      wrapText(pdf, dietRationale, contentWidth).forEach((line) => {
+        dy = requirePage(pdf, dy, () => {
+          drawFooter(pdf, pageNum++, "TJAI · Diet");
+          return newDietPage(week);
+        });
+        pdf.text(line, PAGE.margin, dy);
+        dy += 12;
+      });
+      dy += 8;
+    }
+
     (week.days ?? []).forEach((day) => {
       dy = requirePage(pdf, dy, () => {
         drawFooter(pdf, pageNum++, "TJAI · Diet");
@@ -288,6 +310,36 @@ export function buildTjaiPdf(args: TjaiPdfArgs): jsPDF {
 
   (plan.program?.weeks ?? []).forEach((week) => {
     let py = newProgramPage(week);
+
+    const programRationale = [
+      week.isDeload && week.deloadGuidance ? `Deload: ${week.deloadGuidance}` : "",
+      week.coachRationale ?? ""
+    ]
+      .map((part) => sanitize(part))
+      .filter(Boolean);
+    if (programRationale.length) {
+      setText(pdf, PDF_THEME.accent);
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8);
+      pdf.text("COACH'S NOTE", PAGE.margin, py);
+      py += 12;
+      setText(pdf, PDF_THEME.textMuted);
+      pdf.setFont("helvetica", "italic");
+      pdf.setFontSize(9);
+      programRationale.forEach((paragraph) => {
+        wrapText(pdf, paragraph, contentWidth).forEach((line) => {
+          py = requirePage(pdf, py, () => {
+            drawFooter(pdf, pageNum++, "TJAI · Program");
+            return newProgramPage(week);
+          });
+          pdf.text(line, PAGE.margin, py);
+          py += 12;
+        });
+        py += 4;
+      });
+      py += 4;
+    }
+
     (week.days ?? []).forEach((day) => {
       py = requirePage(pdf, py, () => {
         drawFooter(pdf, pageNum++, "TJAI · Program");
@@ -299,6 +351,20 @@ export function buildTjaiPdf(args: TjaiPdfArgs): jsPDF {
       pdf.setFontSize(11);
       pdf.text(sanitize(`${day.day ?? ""} — ${day.label ?? ""}`), PAGE.margin, py);
       py += 16;
+
+      const dayMeta = [
+        day.focus ? `Focus: ${day.focus}` : null,
+        typeof day.estimatedMinutes === "number" ? `~${day.estimatedMinutes} min` : null
+      ]
+        .filter(Boolean)
+        .join(" · ");
+      if (dayMeta) {
+        setText(pdf, PDF_THEME.textMuted);
+        pdf.setFont("helvetica", "italic");
+        pdf.setFontSize(9);
+        pdf.text(sanitize(dayMeta), PAGE.margin, py);
+        py += 13;
+      }
 
       (day.exercises ?? []).forEach((ex) => {
         py = requirePage(pdf, py, () => {
@@ -320,6 +386,25 @@ export function buildTjaiPdf(args: TjaiPdfArgs): jsPDF {
           { align: "right" }
         );
         py += 13;
+
+        const exDetail = [
+          ex.tempo ? `Tempo ${ex.tempo}` : null,
+          typeof ex.rpe === "number" ? `RPE ${ex.rpe}` : null,
+          typeof ex.restSeconds === "number" && !ex.rest ? `Rest ${ex.restSeconds}s` : null,
+          ex.warmupSets ? `Warm-up: ${ex.warmupSets}` : null
+        ]
+          .filter(Boolean)
+          .join(" · ");
+        if (exDetail) {
+          wrapText(pdf, sanitize(exDetail), contentWidth - 24).forEach((line) => {
+            py = requirePage(pdf, py, () => {
+              drawFooter(pdf, pageNum++, "TJAI · Program");
+              return newProgramPage(week);
+            });
+            pdf.text(line, PAGE.margin + 16, py);
+            py += 11;
+          });
+        }
 
         if (ex.note) {
           wrapText(pdf, sanitize(ex.note), contentWidth - 24).forEach((line) => {
@@ -351,6 +436,49 @@ export function buildTjaiPdf(args: TjaiPdfArgs): jsPDF {
       drawFooter(pdf, pageNum++, "TJAI · Program");
     }
   });
+
+  // ── Progression model (if present) ──────────────────────────────────
+  const progressionText = sanitize(plan.program?.progressionModel ?? "");
+  const testWeekText = sanitize(plan.program?.testWeekGuidance ?? "");
+  if (progressionText || testWeekText) {
+    pdf.addPage();
+    fillPage(pdf, PDF_THEME.paper);
+    drawInteriorHeader(pdf, "Progression", "How your training advances week to week");
+    let gy = 130;
+    const renderProgressionBlock = (label: string, text: string) => {
+      if (!text) return;
+      gy = requirePage(pdf, gy, () => {
+        drawFooter(pdf, pageNum++, "TJAI · Progression");
+        pdf.addPage();
+        fillPage(pdf, PDF_THEME.paper);
+        drawInteriorHeader(pdf, "Progression", "(cont.)");
+        return 130;
+      });
+      setText(pdf, PDF_THEME.accent);
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(10);
+      pdf.text(label, PAGE.margin, gy);
+      gy += 16;
+      setText(pdf, PDF_THEME.ink);
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(10);
+      wrapText(pdf, text, contentWidth).forEach((line) => {
+        gy = requirePage(pdf, gy, () => {
+          drawFooter(pdf, pageNum++, "TJAI · Progression");
+          pdf.addPage();
+          fillPage(pdf, PDF_THEME.paper);
+          drawInteriorHeader(pdf, "Progression", "(cont.)");
+          return 130;
+        });
+        pdf.text(line, PAGE.margin, gy);
+        gy += 14;
+      });
+      gy += 14;
+    };
+    renderProgressionBlock("PROGRESSION MODEL", progressionText);
+    renderProgressionBlock("TEST WEEK", testWeekText);
+    drawFooter(pdf, pageNum++, "TJAI · Progression");
+  }
 
   // ── Supplements (if present) ────────────────────────────────────────
   const supps = plan.diet?.supplements;

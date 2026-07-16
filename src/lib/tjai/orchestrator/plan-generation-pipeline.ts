@@ -13,6 +13,7 @@ import { formatValidationIssuesForRepair, validateTjaiPlanSemantics } from "@/li
 import { validateTjaiPlan } from "@/lib/tjai-plan-validation";
 import { buildTjaiMemorySnapshot, saveTjaiStructuredMemory } from "@/lib/tjai-plan-store";
 import { llmCall } from "@/lib/tjai/llm";
+import { pushRefineStage, runPlanRefineStage, type PlanRefineResult } from "@/lib/tjai/orchestrator/plan-refine";
 import { isTaskAvailable } from "@/lib/tjai/provider-policy";
 import { safeParseJSON } from "@/lib/tjai-openai";
 import type { QuizAnswers, TJAIPlan, TJAIMetrics, TjaiUserProfile } from "@/lib/tjai-types";
@@ -40,6 +41,7 @@ export type PlanGenerationPipelineResult =
  * Central orchestration for 12-week plan generation — stages, timings, optional strict checks.
  */
 export async function runPlanGenerationPipeline(input: PlanGenerationPipelineInput): Promise<PlanGenerationPipelineResult> {
+  const startedAtMs = Date.now();
   const trace = createRunTrace(TJAI_SKILL_IDS.CREATE_PROGRAM, TJAI_PROMPT_VERSION);
   pushStage(trace, "received", { userId: input.userId });
   pushStage(trace, "classified", { skill: TJAI_SKILL_IDS.CREATE_PROGRAM });
@@ -91,6 +93,8 @@ export async function runPlanGenerationPipeline(input: PlanGenerationPipelineInp
     "no markdown fences, no commentary, every required field populated.";
 
   let plan: unknown = null;
+  let successAttempt = 0;
+  let draftChars = 0;
   let lastFailPhase: "json_parse" | "structural_validation" | "semantic_validation" | null = null;
   let lastSemanticCodes: string[] = [];
   // The retry's correction hint: generic for parse/shape failures, or specific
@@ -155,7 +159,9 @@ export async function runPlanGenerationPipeline(input: PlanGenerationPipelineInp
     }
 
     plan = parsed;
+    draftChars = rawText.length;
     lastFailPhase = null;
+    successAttempt = attempt;
     break;
   }
 
@@ -193,6 +199,51 @@ export async function runPlanGenerationPipeline(input: PlanGenerationPipelineInp
       error: "Plan failed quality checks against your profile. Please try again.",
       trace
     };
+  }
+
+  // Critique-and-refine pass (fail-open): only when the draft landed on the
+  // first attempt with enough wall-clock headroom, and small enough that the
+  // refine call can re-emit the full plan within its own token budget. The
+  // Promise.race deadline is the hard backstop: a slow or retrying provider
+  // must never push this function past the route's 90s maxDuration with a
+  // validated paid plan still unsaved.
+  let planRefined = false;
+  const draftLlmMs = trace.timingsMs["openai_plan_json"] ?? 0;
+  const elapsedMs = Date.now() - startedAtMs;
+  if (process.env.TJAI_PLAN_REFINE === "0") {
+    pushRefineStage(trace, "refine_skipped", { reason: "env_disabled" });
+  } else if (successAttempt !== 1) {
+    pushRefineStage(trace, "refine_skipped", { reason: "draft_needed_repair" });
+  } else if (draftLlmMs > 35_000) {
+    pushRefineStage(trace, "refine_skipped", { reason: "draft_too_slow", draftMs: draftLlmMs });
+  } else if (elapsedMs > 45_000) {
+    pushRefineStage(trace, "refine_skipped", { reason: "elapsed_budget", elapsedMs });
+  } else if (draftChars > 36_000) {
+    // ~12k output tokens — refine must re-emit the whole plan within its cap.
+    pushRefineStage(trace, "refine_skipped", { reason: "draft_too_large", draftChars });
+  } else {
+    pushRefineStage(trace, "refine_started");
+    const REFINE_DEADLINE_MS = 20_000;
+    const refineResult = await Promise.race([
+      runPlanRefineStage({
+        plan: plan as TJAIPlan,
+        profile: input.profile,
+        metrics: input.metrics,
+        readiness,
+        userId: input.userId,
+        trace
+      }),
+      new Promise<PlanRefineResult>((resolve) =>
+        setTimeout(() => resolve({ plan: plan as TJAIPlan, refined: false, reason: "deadline_exceeded" }), REFINE_DEADLINE_MS)
+      )
+    ]);
+    if (refineResult.refined) {
+      plan = refineResult.plan;
+      planRefined = true;
+      pushRefineStage(trace, "refined");
+    } else {
+      pushRefineStage(trace, "refine_skipped", { reason: refineResult.reason });
+    }
   }
 
   pushStage(trace, "validated");
@@ -256,7 +307,8 @@ export async function runPlanGenerationPipeline(input: PlanGenerationPipelineInp
       injury_risk: readiness.injuryRisk,
       adherence_risk: readiness.adherenceRisk,
       training_days: input.profile.trainingDays,
-      warn_codes: lastSemanticCodes.join(",")
+      warn_codes: lastSemanticCodes.join(","),
+      refined: planRefined
     }
   });
 

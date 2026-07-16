@@ -95,13 +95,50 @@ export function buildTJAIUserPrompt(
 - Label each refeed week clearly and explain this is strategic, not a cheat week.`
     : "REFEED WEEKS: Not needed for this goal.";
 
+  const injurySeverityRules: Record<string, string> = {
+    mild_discomfort:
+      "Severity: mild discomfort. Keep the movement pattern but choose joint-friendly variations, cap RPE at 8 on lifts loading the affected area, and give a pain-monitoring note.",
+    working_around:
+      "Severity: working around it. EXCLUDE direct high-load movements for the affected areas, program substitutions as the primary exercise, cap RPE at 7 on anything adjacent, and rebuild gradually.",
+    recovering:
+      "Severity: recovering. Treat affected areas as rehab-adjacent: start their patterns at RPE 6 with slow tempo (e.g. 3-1-1), tiny load jumps, and explicit stop rules if pain exceeds 3/10."
+  };
+  const injuryAreaContraindications: Record<string, string> = {
+    knee: "knee: avoid deep loaded knee flexion, jumping and high-impact lockouts early; prefer box squats, leg press to comfortable depth, hip hinges",
+    shoulder: "shoulder: avoid barbell overhead pressing, dips and wide-grip bench early; prefer landmine press, neutral-grip DB press, cable work",
+    lower_back: "lower back: avoid loaded spinal flexion and heavy hinging early; prefer supported rows, hip thrusts, split squats, McGill-style core work",
+    wrist: "wrist: avoid loaded wrist extension (front rack, flat-palm pushups); prefer neutral-grip dumbbells, straps or pushup handles",
+    ankle: "ankle: avoid jumping, running and unstable single-leg landings early; prefer bikes, sleds, supported calf and stability work",
+    hip: "hip: avoid deep loaded hip flexion and aggressive stretching under load; prefer partial-range squats, glute bridges, controlled abduction",
+    neck: "neck: avoid loaded bridging, heavy shrug volume and anything compressing the cervical spine; keep head neutral on all lifts",
+    other: "other/unspecified area: default to conservative machine or bodyweight variations and add a note to train around pain, never through it"
+  };
+  const injuryDetail =
+    profile.injuryAreas && profile.injuryAreas.length > 0
+      ? `\nAffected areas (from follow-up): ${profile.injuryAreas.map(titleCase).join(", ")}.
+${profile.injuryAreas.map((area) => `- ${injuryAreaContraindications[area] ?? injuryAreaContraindications.other}`).join("\n")}
+${profile.injurySeverity ? injurySeverityRules[profile.injurySeverity] ?? "" : ""}
+Every substituted exercise's "substitutions" list must ALSO be safe for these areas.`
+      : "";
   const injuryBlock = profile.injuries.length > 0
     ? `INJURY MODIFICATIONS (required): User reported "${injuries}".
 Rules:
 1) Remove exercises that stress injured area.
 2) Replace with safe alternatives for same muscle group.
-3) Add section: "Exercises Modified for Your Injury".`
+3) Add section: "Exercises Modified for Your Injury".${injuryDetail}`
     : "";
+
+  const sessionCapMinutes = profile.sessionLengthMinutes ?? profile.sessionMinutes;
+  const dislikedBlock =
+    profile.dislikedExercises && profile.dislikedExercises.length > 0
+      ? `BANNED EXERCISES (hard rule): ${profile.dislikedExercises.map(titleCase).join(", ")}.
+Never program these or close variants anywhere in the plan. Substitute equally effective alternatives for the same movement pattern and muscles, using their available equipment. Do not mention the banned exercise in notes.`
+      : "";
+  const splitBlock =
+    profile.preferredSplit && profile.preferredSplit !== "no_preference"
+      ? `REQUESTED SPLIT: ${titleCase(profile.preferredSplit)}.
+Honor it if it fits ${profile.trainingDays} training days/week and the ${profile.goal} goal. If incompatible (e.g. push/pull/legs on 2 days), use the closest effective split and explain the trade-off in one sentence inside program.philosophy.`
+      : "";
 
   const budgetBlock =
     profile.monthlyFoodBudget === "budget"
@@ -169,6 +206,8 @@ Rules:
     coachWarnings.push("Eats out often. Add an 'Eating Out Survival Guide': how to order for their macros at common restaurant types, and design the meal plan so restaurant meals slot in rather than break the plan.");
   if (profile.weekendConsistency === "derails")
     coachWarnings.push("Weekends derail this person. Add a 'Weekend Protocol': slightly lower weekday calories to bank a weekend buffer, plan ONE flexible meal per weekend day, and give a Monday reset routine. Never leave weekends unplanned.");
+  if (highStress || poorSleep || profile.sleepQuality === "poor")
+    coachWarnings.push("Recovery capacity is reduced (sleep/stress). Moderate training volume: keep weekly hard sets per muscle at the lower effective end (10-12), keep average rpe at or below 8 in weeks 1-2, and prefer an extra rest day over junk volume.");
 
   const memoryBlock = memory
     ? `== TJAI MEMORY ==
@@ -234,9 +273,19 @@ Eats out: ${titleCase(profile.eatingOutFrequency)} | Weekend pattern: ${titleCas
 Training level: ${pretty.experienceLevel}
 Training location: ${pretty.trainingLocation}
 Training days/week: ${profile.trainingDays}
-Session duration: ${profile.sessionMinutes} min
+Session duration: ${profile.sessionMinutes} min${
+    profile.sessionLengthMinutes && profile.sessionLengthMinutes !== profile.sessionMinutes
+      ? ` (preferred length: ${profile.sessionLengthMinutes} min)`
+      : ""
+  }
 Equipment: ${equipment}
-Training preference: ${pretty.trainingPreference}
+Training preference: ${pretty.trainingPreference}${
+    profile.preferredSplit ? `\nPreferred split: ${titleCase(profile.preferredSplit)}` : ""
+  }${
+    profile.dislikedExercises && profile.dislikedExercises.length > 0
+      ? `\nExercises to avoid: ${profile.dislikedExercises.map(titleCase).join(", ")}`
+      : ""
+  }
 Meals per day: ${profile.mealsPerDay}
 Diet style: ${pretty.dietStyle}
 Foods they enjoy: ${likedFoods}
@@ -248,7 +297,13 @@ Schedule constraint: ${titleCase(profile.scheduleConstraint)}
 Schedule notes: ${profile.scheduleNotes ?? "None"}
 Biggest obstacles: ${biggestProblem}
 Success vision: ${pretty.successVision}
-Injuries/limitations: ${injuries}
+Injuries/limitations: ${injuries}${
+    profile.injuryAreas && profile.injuryAreas.length > 0
+      ? `\nAffected areas: ${profile.injuryAreas.map(titleCase).join(", ")}${
+          profile.injurySeverity ? ` (severity: ${titleCase(profile.injurySeverity)})` : ""
+        }`
+      : ""
+  }
 Medical notes: ${profile.injuryNotes ?? "None"}
 Supplements already using: ${supplements}
 Restriction notes: ${profile.restrictionNotes ?? "None"}
@@ -280,7 +335,31 @@ ${calorieCyclingBlock}
 ${refeedBlock}
 
 == INJURY SUBSTITUTIONS ==
-${injuryBlock || "No injury-specific substitutions required."}
+${injuryBlock || (injuryDetail ? `INJURY MODIFICATIONS (required):${injuryDetail}` : "No injury-specific substitutions required.")}
+
+== SESSION LENGTH CAP ==
+Hard cap: ${sessionCapMinutes} minutes per training session, warmup included.
+- Every day's estimatedMinutes must be <= ${sessionCapMinutes} and must be realistic: warmup + sum of (sets x restSeconds) + working time.
+- If a day would run long, superset isolation work or trim isolation sets — never cut the main compounds.
+
+== BANNED EXERCISES ==
+${dislikedBlock || "No banned exercises."}
+
+== TRAINING SPLIT ==
+${splitBlock || "No split preference — choose the most effective split for their days and goal."}
+
+== PROFESSIONAL PROGRAMMING DETAIL (required) ==
+Populate these fields on EVERY exercise (terse strings — this must not bloat the JSON):
+- tempo: eccentric-pause-concentric notation, e.g. "3-1-1" ("X" for explosive concentric).
+- rpe: number 6-10 (working effort; deloads 6, top sets up to 9, beginners <= 8).
+- restSeconds: number — heavy compounds 120-180, isolation 60-90, conditioning 30-60.
+- warmupSets: ONLY on the first compound lift of each day (max 8 words, e.g. "2 ramp sets at 50/75%"). Omit elsewhere.
+- substitutions: 1-2 alternates for the same pattern/muscles, max 6 words each, using ONLY their equipment and safe for their injuries.
+- formCues: max 2 cues, max 7 words each. Skip formCues on simple machine/isolation moves.
+Populate on EVERY program day: focus (max 6 words) and estimatedMinutes (integer, respects the session cap).
+Populate on EVERY program week: coachRationale — 2-3 sentences in first-person coach voice that reference THIS user's actual numbers (their age, training days, calories, sleep, stress, injuries). Never generic. Deload weeks (isDeload true) also include deloadGuidance: one sentence with exact volume/load cuts.
+Populate on EVERY diet week: coachRationale — 2-3 sentences on why this phase's calories/adjustment fit their metabolism and life, citing real numbers.
+Populate once on program: progressionModel (one paragraph, max 80 words, exact rules for adding load/reps week to week) and testWeekGuidance (max 60 words: what to test in the final week and how to read the results).
 
 == BUDGET MODE ==
 ${budgetBlock || "Standard budget mode."}
@@ -366,6 +445,7 @@ Respond in this EXACT JSON structure:
         "isRefeed": boolean,
         "isPlateauBreaker": boolean,
         "adjustment": "What changes and why",
+        "coachRationale": "2-3 coach-voice sentences citing their real numbers",
         "days": [
           {
             "label": "Training Day Meal Plan",
@@ -420,17 +500,27 @@ Respond in this EXACT JSON structure:
         "weekRange": "Weeks 1–4",
         "phase": "Foundation",
         "isDeload": false,
+        "deloadGuidance": "only when isDeload: one sentence with exact volume/load cuts",
         "focus": "What this phase builds",
+        "coachRationale": "2-3 coach-voice sentences citing their real numbers",
         "days": [
           {
             "day": "Monday",
             "label": "Upper Body — Push",
+            "focus": "max 6 words",
+            "estimatedMinutes": number,
             "exercises": [
               {
                 "name": "Exercise name",
                 "sets": number,
                 "reps": "8–10 or AMRAP",
                 "rest": "90s",
+                "tempo": "3-1-1",
+                "rpe": number,
+                "restSeconds": number,
+                "warmupSets": "only on first compound of the day",
+                "substitutions": ["1-2 short alternates"],
+                "formCues": ["max 2 short cues"],
                 "note": "Form cue or coaching note",
                 "educationNote": "optional short beginner note"
               }
@@ -443,6 +533,8 @@ Respond in this EXACT JSON structure:
       }
     ],
     "progressionRules": ["How to add weight/reps each week"],
+    "progressionModel": "one paragraph, max 80 words",
+    "testWeekGuidance": "max 60 words",
     "cardioRecommendation": "Specific cardio plan based on their answers",
     "injuryModifications": "If injuries noted: what to avoid and alternatives"
   },
@@ -468,6 +560,8 @@ If they have religious restrictions, respect them strictly.
 If budget is low: use affordable staples (oats, eggs, rice, canned tuna, chicken).
 If time is low: batch cooking meals, simple 3-ingredient options.
 If injuries noted: remove affected exercises and add alternatives.
+If they listed exercises to avoid: never program them — substitute equally effective alternatives.
+Every training day's estimatedMinutes must respect the ${sessionCapMinutes}-minute session cap.
 `;
 }
 

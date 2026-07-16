@@ -110,6 +110,15 @@ export type TjaiUserProfile = {
     | "lift_heavier"
     | "build_routine";
   dailyRoutine: string;
+  /** Adaptive intake follow-ups — all optional; absent on legacy quiz submissions. */
+  injuryAreas?: Array<"knee" | "shoulder" | "lower_back" | "wrist" | "ankle" | "hip" | "neck" | "other">;
+  injurySeverity?: "mild_discomfort" | "working_around" | "recovering";
+  /** Preferred workout length bucket (30/45/60/75/90). Mirrors s5_duration when no override answer exists. */
+  sessionLengthMinutes?: number;
+  dislikedExercises?: Array<
+    "burpees" | "running" | "jumping" | "overhead_press" | "deep_squats" | "deadlifts" | "pull_ups" | "planks"
+  >;
+  preferredSplit?: "full_body" | "upper_lower" | "push_pull_legs" | "no_preference";
 };
 
 export type TjaiReadinessFlag = {
@@ -245,6 +254,8 @@ export type TJAIPlan = {
       adjustment: string;
       isRefeed?: boolean;
       isPlateauBreaker?: boolean;
+      /** 2-3 coach-voice sentences explaining why this phase's nutrition looks the way it does. */
+      coachRationale?: string;
       days: Array<{
         label: string;
         meals: TJAIMeal[];
@@ -268,9 +279,17 @@ export type TJAIPlan = {
       phase: string;
       focus: string;
       isDeload?: boolean;
+      /** Short instruction on how to execute the deload (volume/load cuts). Only meaningful when isDeload. */
+      deloadGuidance?: string;
+      /** 2-3 coach-voice sentences tying this phase to the user's actual profile numbers. */
+      coachRationale?: string;
       days: Array<{
         day: string;
         label: string;
+        /** Primary training emphasis of the session, e.g. "Horizontal push + quads". */
+        focus?: string;
+        /** Realistic total session time including warmup, in minutes. */
+        estimatedMinutes?: number;
         exercises: Array<{
           name: string;
           sets: number;
@@ -278,6 +297,18 @@ export type TJAIPlan = {
           rest: string;
           note?: string;
           educationNote?: string;
+          /** Eccentric-pause-concentric notation, e.g. "3-1-1". */
+          tempo?: string;
+          /** Target effort on the RPE scale (6-10). */
+          rpe?: number;
+          /** Rest between working sets in seconds. */
+          restSeconds?: number;
+          /** Short warm-up set prescription for this lift, e.g. "2 ramp sets at 50/75%". */
+          warmupSets?: string;
+          /** 1-2 equally effective alternates honoring the user's equipment and injuries. */
+          substitutions?: string[];
+          /** Max 2 short execution cues. */
+          formCues?: string[];
         }>;
         warmup?: string;
         cooldown?: string;
@@ -288,6 +319,10 @@ export type TJAIPlan = {
     progressionRules?: string[];
     cardioRecommendation?: string;
     injuryModifications?: string;
+    /** One paragraph describing how load/reps progress across the 12 weeks. */
+    progressionModel?: string;
+    /** How to test strength/fitness markers in the final week and what to do with the results. */
+    testWeekGuidance?: string;
   };
   mindset?: {
     weeklyCheckin?: string;

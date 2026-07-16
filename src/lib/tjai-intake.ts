@@ -453,6 +453,21 @@ const obstacleLegacyMap: Record<string, TjaiUserProfile["biggestObstacles"][numb
   "not knowing what to do": "training_knowledge"
 };
 
+const INJURY_AREA_VALUES = ["knee", "shoulder", "lower_back", "wrist", "ankle", "hip", "neck", "other"] as const;
+const INJURY_SEVERITY_VALUES = ["mild_discomfort", "working_around", "recovering"] as const;
+const DISLIKED_EXERCISE_VALUES = [
+  "burpees",
+  "running",
+  "jumping",
+  "overhead_press",
+  "deep_squats",
+  "deadlifts",
+  "pull_ups",
+  "planks"
+] as const;
+const PREFERRED_SPLIT_VALUES = ["full_body", "upper_lower", "push_pull_legs", "no_preference"] as const;
+const SESSION_LENGTH_VALUES = [30, 45, 60, 75, 90];
+
 function coerceNumberAnswer(value: unknown, fallback: number): number {
   const parsed = parseMaybeNumber(value);
   return parsed && parsed > 0 ? parsed : fallback;
@@ -574,6 +589,25 @@ export function normalizeQuizAnswers(raw: Record<string, unknown>): QuizAnswers 
     normalized.s12_foods_avoid = avoidedFoods.filter((item) => item !== "nothing_specific");
   }
 
+  // Adaptive follow-up answers are strictly additive: only normalize keys that
+  // exist in the raw payload so legacy submissions keep their exact shape.
+  if (raw.s17_injury_areas != null) {
+    normalized.s17_injury_areas = normalizeMulti(raw.s17_injury_areas, INJURY_AREA_VALUES);
+  }
+  if (raw.s17_injury_severity != null) {
+    normalized.s17_injury_severity = oneOf(asString(raw.s17_injury_severity), INJURY_SEVERITY_VALUES, "mild_discomfort");
+  }
+  if (raw.s6_disliked_exercises != null) {
+    normalized.s6_disliked_exercises = normalizeMulti(raw.s6_disliked_exercises, DISLIKED_EXERCISE_VALUES);
+  }
+  if (raw.s6_preferred_split != null) {
+    normalized.s6_preferred_split = oneOf(asString(raw.s6_preferred_split), PREFERRED_SPLIT_VALUES, "no_preference");
+  }
+  if (raw.s5_session_length != null) {
+    const sessionLength = parseMaybeNumber(raw.s5_session_length);
+    if (sessionLength != null) normalized.s5_session_length = sessionLength;
+  }
+
   return normalized;
 }
 
@@ -672,11 +706,27 @@ export function buildTjaiUserProfile(rawAnswers: Record<string, unknown>): TjaiU
     dailyRoutine: asString(answers.s19_daily_routine).trim()
   };
 
+  // Adaptive follow-ups (optional): only attach when actually answered, and only
+  // keep injury detail when an injury is still indicated (stale branch answers
+  // from an edited quiz run must not leak into the profile).
+  if (profile.injuries.length > 0) {
+    const injuryAreas = normalizeMulti(answers.s17_injury_areas, INJURY_AREA_VALUES);
+    if (injuryAreas.length > 0) profile.injuryAreas = injuryAreas;
+    const injurySeverity = asString(answers.s17_injury_severity);
+    if (injurySeverity) profile.injurySeverity = oneOf(injurySeverity, INJURY_SEVERITY_VALUES, "mild_discomfort");
+  }
+  const dislikedExercises = normalizeMulti(answers.s6_disliked_exercises, DISLIKED_EXERCISE_VALUES);
+  if (dislikedExercises.length > 0) profile.dislikedExercises = dislikedExercises;
+  const preferredSplit = asString(answers.s6_preferred_split);
+  if (preferredSplit) profile.preferredSplit = oneOf(preferredSplit, PREFERRED_SPLIT_VALUES, "no_preference");
+  const sessionLength = parseMaybeNumber(answers.s5_session_length) ?? profile.sessionMinutes;
+  if (SESSION_LENGTH_VALUES.includes(sessionLength)) profile.sessionLengthMinutes = sessionLength;
+
   return profile;
 }
 
 export function summarizeProfile(profile: TjaiUserProfile): string[] {
-  return [
+  const lines = [
     `Goal: ${profile.goal}`,
     `Goal detail: ${profile.goalDetail}`,
     `Pace: ${profile.pace}`,
@@ -689,4 +739,14 @@ export function summarizeProfile(profile: TjaiUserProfile): string[] {
     `Shops at: ${profile.groceryMarket} (${profile.country})`,
     `Diet history: ${profile.dietHistory}`
   ];
+  if (profile.injuryAreas && profile.injuryAreas.length > 0) {
+    lines.push(`Injury areas: ${profile.injuryAreas.join(", ")}${profile.injurySeverity ? ` (${profile.injurySeverity})` : ""}`);
+  }
+  if (profile.dislikedExercises && profile.dislikedExercises.length > 0) {
+    lines.push(`Disliked exercises: ${profile.dislikedExercises.join(", ")}`);
+  }
+  if (profile.preferredSplit && profile.preferredSplit !== "no_preference") {
+    lines.push(`Preferred split: ${profile.preferredSplit}`);
+  }
+  return lines;
 }

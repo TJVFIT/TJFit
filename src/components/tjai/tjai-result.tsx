@@ -26,6 +26,100 @@ import type { QuizAnswers, TJAICopy, TJAIGroceryList, TJAIMeal, TJAIMealPrepTask
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Tooltip, Legend, Filler);
 
+type ResultExtraCopy = {
+  tempo: string;
+  rpe: string;
+  rest: string;
+  warmupSets: string;
+  substitutions: string;
+  formCues: string;
+  focus: string;
+  minutesSuffix: string;
+  details: string;
+  coachNote: string;
+  deloadBadge: string;
+  progressionTitle: string;
+  testWeekTitle: string;
+};
+
+const RESULT_EXTRA_COPY: Record<"en" | "tr" | "ar" | "es" | "fr", ResultExtraCopy> = {
+  en: {
+    tempo: "Tempo",
+    rpe: "RPE",
+    rest: "Rest",
+    warmupSets: "Warm-up sets",
+    substitutions: "Alternatives",
+    formCues: "Form cues",
+    focus: "Focus",
+    minutesSuffix: "min",
+    details: "Details",
+    coachNote: "Coach's note",
+    deloadBadge: "Deload week",
+    progressionTitle: "Progression Model",
+    testWeekTitle: "Test Week"
+  },
+  tr: {
+    tempo: "Tempo",
+    rpe: "RPE",
+    rest: "Dinlenme",
+    warmupSets: "Isınma setleri",
+    substitutions: "Alternatifler",
+    formCues: "Form ipuçları",
+    focus: "Odak",
+    minutesSuffix: "dk",
+    details: "Detaylar",
+    coachNote: "Koç notu",
+    deloadBadge: "Deload haftası",
+    progressionTitle: "İlerleme Modeli",
+    testWeekTitle: "Test Haftası"
+  },
+  ar: {
+    tempo: "الإيقاع",
+    rpe: "RPE",
+    rest: "الراحة",
+    warmupSets: "مجموعات الإحماء",
+    substitutions: "بدائل",
+    formCues: "إرشادات الأداء",
+    focus: "التركيز",
+    minutesSuffix: "دقيقة",
+    details: "التفاصيل",
+    coachNote: "ملاحظة المدرب",
+    deloadBadge: "أسبوع تخفيف الحمل",
+    progressionTitle: "نموذج التقدم",
+    testWeekTitle: "أسبوع الاختبار"
+  },
+  es: {
+    tempo: "Tempo",
+    rpe: "RPE",
+    rest: "Descanso",
+    warmupSets: "Series de calentamiento",
+    substitutions: "Alternativas",
+    formCues: "Claves de técnica",
+    focus: "Enfoque",
+    minutesSuffix: "min",
+    details: "Detalles",
+    coachNote: "Nota del coach",
+    deloadBadge: "Semana de descarga",
+    progressionTitle: "Modelo de progresión",
+    testWeekTitle: "Semana de prueba"
+  },
+  fr: {
+    tempo: "Tempo",
+    rpe: "RPE",
+    rest: "Repos",
+    warmupSets: "Séries d'échauffement",
+    substitutions: "Alternatives",
+    formCues: "Repères techniques",
+    focus: "Objectif",
+    minutesSuffix: "min",
+    details: "Détails",
+    coachNote: "Note du coach",
+    deloadBadge: "Semaine de décharge",
+    progressionTitle: "Modèle de progression",
+    testWeekTitle: "Semaine de test"
+  }
+};
+
 type Props = {
   locale: Locale;
   copy: TJAICopy;
@@ -80,6 +174,7 @@ export function TJAIResult({
   const activeDietPhase = mutablePlan.diet.weeks[dietTab];
   const activeDietDay = activeDietPhase?.days?.[dietDayTab];
   const activeProgramPhase = mutablePlan.program.weeks[programTab];
+  const extra = RESULT_EXTRA_COPY[locale as keyof typeof RESULT_EXTRA_COPY] ?? RESULT_EXTRA_COPY.en;
 
   const summaryCards = useMemo(
     () => [
@@ -431,6 +526,12 @@ export function TJAIResult({
               </button>
             ))}
           </div>
+          {activeDietPhase?.coachRationale ? (
+            <div className="rounded-xl border border-[rgba(168,85,247,0.2)] border-s-2 border-s-accent bg-[rgba(168,85,247,0.05)] p-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-accent">{extra.coachNote}</p>
+              <p className="mt-1.5 text-sm leading-6 text-bright">{activeDietPhase.coachRationale}</p>
+            </div>
+          ) : null}
           <div className="flex flex-wrap gap-2">
             {(activeDietPhase?.days ?? []).map((day, i) => (
               <button
@@ -533,21 +634,92 @@ export function TJAIResult({
               </button>
             ))}
           </div>
+          {activeProgramPhase?.isDeload && activeProgramPhase?.deloadGuidance ? (
+            <div className="rounded-xl border border-[rgba(124,58,237,0.25)] bg-[rgba(124,58,237,0.06)] p-4">
+              <span className="inline-flex rounded-full border border-[rgba(168,85,247,0.35)] bg-[rgba(168,85,247,0.1)] px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-accent">
+                {extra.deloadBadge}
+              </span>
+              <p className="mt-2 text-sm leading-6 text-bright">{activeProgramPhase.deloadGuidance}</p>
+            </div>
+          ) : null}
+          {activeProgramPhase?.coachRationale ? (
+            <div className="rounded-xl border border-[rgba(168,85,247,0.2)] border-s-2 border-s-accent bg-[rgba(168,85,247,0.05)] p-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-accent">{extra.coachNote}</p>
+              <p className="mt-1.5 text-sm leading-6 text-bright">{activeProgramPhase.coachRationale}</p>
+            </div>
+          ) : null}
           <div className="space-y-3">
             {(activeProgramPhase?.days ?? []).map((day, i) => (
               <article key={`${day.day}-${i}`} className={cn("rounded-xl border border-divider bg-surface p-5", activeProgramPhase?.isDeload && "bg-[rgba(168,85,247,0.03)]")}>
                 <h3 className="text-lg font-semibold text-accent">
                   {day.day} — {day.label}
                 </h3>
+                {day.focus || typeof day.estimatedMinutes === "number" ? (
+                  <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
+                    {day.focus ? (
+                      <span>
+                        {extra.focus}: {day.focus}
+                      </span>
+                    ) : null}
+                    {typeof day.estimatedMinutes === "number" ? (
+                      <span className="rounded-full border border-divider px-2 py-0.5">
+                        ~{day.estimatedMinutes} {extra.minutesSuffix}
+                      </span>
+                    ) : null}
+                  </p>
+                ) : null}
                 <div className="mt-3 space-y-2">
                   {(day.exercises ?? []).map((ex) => (
                     <div key={`${ex.name}-${ex.reps}`} className="rounded-lg px-3 py-2 transition-colors hover:bg-[rgba(255,255,255,0.02)]">
                       <div className="text-[15px] font-semibold text-white">{ex.name}</div>
                       <div className="text-xs text-muted">
-                        {ex.sets} × {ex.reps} · {ex.rest}
+                        {ex.sets} × {ex.reps}
+                        {typeof ex.restSeconds === "number" ? "" : ` · ${ex.rest}`}
                       </div>
+                      {ex.tempo || typeof ex.rpe === "number" || typeof ex.restSeconds === "number" ? (
+                        <div className="mt-1.5 flex flex-wrap gap-1.5">
+                          {ex.tempo ? (
+                            <span className="rounded-full border border-divider px-2 py-0.5 text-[10px] uppercase tracking-[0.08em] text-muted">
+                              {extra.tempo} {ex.tempo}
+                            </span>
+                          ) : null}
+                          {typeof ex.rpe === "number" ? (
+                            <span className="rounded-full border border-[rgba(168,85,247,0.3)] bg-[rgba(168,85,247,0.08)] px-2 py-0.5 text-[10px] uppercase tracking-[0.08em] text-accent">
+                              {extra.rpe} {ex.rpe}
+                            </span>
+                          ) : null}
+                          {typeof ex.restSeconds === "number" ? (
+                            <span className="rounded-full border border-divider px-2 py-0.5 text-[10px] uppercase tracking-[0.08em] text-muted">
+                              {extra.rest} {ex.restSeconds}s
+                            </span>
+                          ) : null}
+                        </div>
+                      ) : null}
                       {ex.note ? <div className="mt-1 text-xs italic text-dim">{ex.note}</div> : null}
                       {ex.educationNote ? <div className="mt-1 text-xs text-muted">? {ex.educationNote}</div> : null}
+                      {ex.warmupSets || (ex.substitutions ?? []).length > 0 || (ex.formCues ?? []).length > 0 ? (
+                        <details className="mt-1.5">
+                          <summary className="cursor-pointer text-[11px] text-muted hover:text-white">{extra.details}</summary>
+                          <div className="mt-2 space-y-1.5 rounded-lg border border-divider bg-[#0f1116] p-3">
+                            {ex.warmupSets ? (
+                              <p className="text-xs text-muted">
+                                <span className="font-semibold text-bright">{extra.warmupSets}:</span> {ex.warmupSets}
+                              </p>
+                            ) : null}
+                            {(ex.substitutions ?? []).length > 0 ? (
+                              <p className="text-xs text-muted">
+                                <span className="font-semibold text-bright">{extra.substitutions}:</span>{" "}
+                                {(ex.substitutions ?? []).join(" · ")}
+                              </p>
+                            ) : null}
+                            {(ex.formCues ?? []).length > 0 ? (
+                              <p className="text-xs text-muted">
+                                <span className="font-semibold text-bright">{extra.formCues}:</span> {(ex.formCues ?? []).join(" · ")}
+                              </p>
+                            ) : null}
+                          </div>
+                        </details>
+                      ) : null}
                     </div>
                   ))}
                 </div>
@@ -559,6 +731,22 @@ export function TJAIResult({
               </article>
             ))}
           </div>
+          {mutablePlan.program.progressionModel || mutablePlan.program.testWeekGuidance ? (
+            <div className="grid gap-4 md:grid-cols-2">
+              {mutablePlan.program.progressionModel ? (
+                <article className="rounded-xl border border-divider bg-surface p-5">
+                  <h3 className="text-lg font-semibold text-white">{extra.progressionTitle}</h3>
+                  <p className="mt-3 text-sm leading-6 text-bright">{mutablePlan.program.progressionModel}</p>
+                </article>
+              ) : null}
+              {mutablePlan.program.testWeekGuidance ? (
+                <article className="rounded-xl border border-divider bg-surface p-5">
+                  <h3 className="text-lg font-semibold text-white">{extra.testWeekTitle}</h3>
+                  <p className="mt-3 text-sm leading-6 text-bright">{mutablePlan.program.testWeekGuidance}</p>
+                </article>
+              ) : null}
+            </div>
+          ) : null}
         </div>
 
         <div ref={extrasRef} className={cn("grid gap-4 md:grid-cols-2 reveal-up", inExtras && "is-in")}>
