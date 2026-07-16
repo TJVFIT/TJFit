@@ -7,6 +7,9 @@ export type ExecutionStage =
   | "semantic_validation_failed"
   | "repair_attempted"
   | "validated"
+  | "refine_started"
+  | "refined"
+  | "refine_skipped"
   | "delivered"
   | "failed";
 

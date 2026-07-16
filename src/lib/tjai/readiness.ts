@@ -15,7 +15,8 @@ const LOADED_INJURY_REGIONS = new Set(["lower_back", "knee", "shoulder"]);
 const PROTEIN_LIKED_FOODS = new Set(["chicken", "beef", "fish", "eggs", "greek_yogurt", "legumes"]);
 
 function classifyRecoveryRisk(profile: TjaiUserProfile): "low" | "medium" | "high" {
-  const poorSleep = profile.sleepHours < 6;
+  // Poor sleep *quality* is treated like short sleep: absent/normal values change nothing.
+  const poorSleep = profile.sleepHours < 6 || profile.sleepQuality === "poor";
   const highStress = profile.stressLevel === "high" || profile.stressLevel === "very_high";
   const recoveryObstacle =
     profile.biggestObstacles.includes("recovery") || profile.biggestObstacles.includes("stress");
@@ -38,9 +39,13 @@ function classifyAdherenceRisk(profile: TjaiUserProfile): "low" | "medium" | "hi
     profile.biggestObstacles.includes("consistency") ||
     profile.biggestObstacles.includes("time") ||
     profile.biggestObstacles.includes("motivation");
+  // Gentle lifestyle modifier: poor sleep quality combined with high stress makes
+  // sustained adherence harder even with a friendly schedule.
+  const lifestyleLoad =
+    profile.sleepQuality === "poor" && (profile.stressLevel === "high" || profile.stressLevel === "very_high");
 
   if (beginnerHighFreq || constraintPlusAggressive || shortSessionConflict) return "high";
-  if (constrainedSchedule || motivationObstacle) return "medium";
+  if (constrainedSchedule || motivationObstacle || lifestyleLoad) return "medium";
   return "low";
 }
 
@@ -157,6 +162,17 @@ export function buildReadinessProfile(profile: TjaiUserProfile): TjaiReadinessPr
       message: "Requested training time exceeds realistic weekly availability.",
       promptInstruction:
         "Fit the plan into the realistic weekly time budget and offer a minimum-viable week fallback."
+    });
+  }
+  const lifestyleStrain =
+    profile.sleepQuality === "poor" || profile.stressLevel === "high" || profile.stressLevel === "very_high";
+  if (lifestyleStrain && recoveryRisk !== "high") {
+    flags.push({
+      code: "lifestyle_load",
+      severity: "info",
+      message: "Intake reports poor sleep quality and/or elevated stress.",
+      promptInstruction:
+        "Bias toward recovery-friendly volume, weave sleep-hygiene and stress-management habits into coaching notes, and avoid stacking intensity increases in consecutive weeks."
     });
   }
 

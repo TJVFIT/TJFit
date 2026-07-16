@@ -22,6 +22,7 @@ import {
   type ChatCoachWorkoutLog
 } from "@/lib/tjai";
 import { buildCatalogBlock } from "@/lib/tjai/catalog-context";
+import { coachIntentMaxTokens } from "@/lib/tjai/orchestrator/chat-intent";
 import { buildReadinessProfile } from "@/lib/tjai/readiness";
 import { buildTjaiUserProfile } from "@/lib/tjai-intake";
 import { isSupportedLocale } from "@/lib/i18n";
@@ -37,6 +38,28 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 type HistoryRow = { role: "user" | "assistant"; content: string };
+
+// Deterministic digest of conversation turns older than the verbatim window:
+// one role-tagged bullet per message (first ~110 chars), hard-capped at 20
+// lines / 1600 chars so long chats keep continuity without extra LLM calls.
+const DIGEST_MAX_LINES = 20;
+const DIGEST_MAX_CHARS = 1600;
+const DIGEST_SNIPPET_CHARS = 110;
+
+function buildEarlierConversationDigest(earlier: HistoryRow[]): string {
+  if (earlier.length === 0) return "";
+  const lines: string[] = [];
+  let chars = 0;
+  for (const turn of earlier.slice(-DIGEST_MAX_LINES)) {
+    const snippet = turn.content.replace(/\s+/g, " ").trim().slice(0, DIGEST_SNIPPET_CHARS);
+    if (!snippet) continue;
+    const line = `- ${turn.role === "user" ? "User" : "Coach"}: ${snippet}`;
+    if (chars + line.length + 1 > DIGEST_MAX_CHARS) break;
+    lines.push(line);
+    chars += line.length + 1;
+  }
+  return lines.join("\n");
+}
 
 async function extractPreference(message: string): Promise<{ key: string | null; value: string | null }> {
   const wordCount = message.split(/\s+/).filter(Boolean).length;
@@ -214,7 +237,7 @@ export async function POST(request: NextRequest) {
         .eq("user_id", auth.user.id)
         .eq("conversation_id", conversationId)
         .order("created_at", { ascending: false })
-        .limit(20),
+        .limit(40),
       auth.supabase
         .from("user_chat_preferences")
         .select("preference_key,preference_value")
@@ -289,7 +312,8 @@ export async function POST(request: NextRequest) {
       persona: userSettings.persona,
       longMemoryBlock,
       coachStateBlock,
-      catalogBlock: buildCatalogBlock(message, typedPlanRow?.goal ?? undefined)
+      catalogBlock: buildCatalogBlock(message, typedPlanRow?.goal ?? undefined),
+      earlierConversationDigest: buildEarlierConversationDigest(history.slice(0, -12))
     });
 
     const messages = [
@@ -297,8 +321,10 @@ export async function POST(request: NextRequest) {
       { role: "user" as const, content: message }
     ];
 
+    const maxTokens = coachIntentMaxTokens(coachIntent, message);
+
     try {
-      const upstream = await llmStream({ task: "chat_stream", system: systemPrompt, messages, maxTokens: 700 });
+      const upstream = await llmStream({ task: "chat_stream", system: systemPrompt, messages, maxTokens });
 
       // OpenAI accepted the request (we have a 200 stream). Atomically consume
       // a trial credit now — if we lost the race against another concurrent

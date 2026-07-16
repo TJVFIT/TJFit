@@ -106,14 +106,83 @@ export async function extractFactsFromMessage(message: string, userId: string): 
   }
 }
 
+// Write-time dedupe: never store a fact that is (near-)identical to one the
+// user already has, and never let a user exceed the stored-fact cap. Existing
+// rows are never deleted or modified — inserts are skipped instead.
+const LONG_MEMORY_FACT_CAP = 80;
+
+function normalizeFactText(fact: string): string {
+  return fact
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[.,!?;:'"()\[\]{}\-–—_/\\+*&%$#@^~`|<>«»“”‘’]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function tokenSet(normalized: string): Set<string> {
+  return new Set(normalized.split(" ").filter(Boolean));
+}
+
+function jaccardOverlap(a: Set<string>, b: Set<string>): number {
+  if (a.size === 0 || b.size === 0) return 0;
+  let intersection = 0;
+  for (const token of a) {
+    if (b.has(token)) intersection += 1;
+  }
+  return intersection / (a.size + b.size - intersection);
+}
+
 export async function persistFacts(
   supabase: SupabaseClient,
   userId: string,
   facts: ExtractedFact[]
 ): Promise<void> {
   if (facts.length === 0) return;
+
+  const { data: existingRows } = await supabase
+    .from("tjai_long_memory")
+    .select("id,fact")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: true })
+    .limit(LONG_MEMORY_FACT_CAP + 40);
+  const rows = ((existingRows ?? []) as Array<{ id: string; fact: string | null }>).filter(
+    (row) => normalizeFactText(String(row.fact ?? "")).length > 0
+  );
+  const known = rows.map((row) => normalizeFactText(String(row.fact ?? "")));
+
+  const knownSets = known.map(tokenSet);
+  const accepted: ExtractedFact[] = [];
+  for (const candidate of facts) {
+    const normalized = normalizeFactText(candidate.fact);
+    if (!normalized) continue;
+    const candidateSet = tokenSet(normalized);
+    // A candidate that merely EXTENDS a stored fact (strict superset) is new
+    // information and must be stored; only skip when it adds nothing.
+    const isDuplicate = known.some(
+      (existing, i) =>
+        existing === normalized ||
+        existing.includes(normalized) ||
+        jaccardOverlap(candidateSet, knownSets[i]) > 0.8
+    );
+    if (isDuplicate) continue;
+    accepted.push(candidate);
+    known.push(normalized);
+    knownSets.push(candidateSet);
+  }
+  if (accepted.length === 0) return;
+
+  // Keep memory bounded by evicting the OLDEST facts, never by rejecting new
+  // ones — otherwise a full store would freeze the coach's memory forever.
+  const overflow = rows.length + accepted.length - LONG_MEMORY_FACT_CAP;
+  if (overflow > 0) {
+    const oldestIds = rows.slice(0, overflow).map((row) => row.id);
+    await supabase.from("tjai_long_memory").delete().eq("user_id", userId).in("id", oldestIds);
+  }
+
   await supabase.from("tjai_long_memory").insert(
-    facts.map((f) => ({
+    accepted.map((f) => ({
       user_id: userId,
       fact: f.fact,
       category: f.category,
