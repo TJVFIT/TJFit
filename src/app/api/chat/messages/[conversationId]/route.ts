@@ -15,16 +15,17 @@ function isValidMessageType(value: unknown) {
   return value === "text" || value === "image" || value === "file" || value === "link" || value === "call_event";
 }
 
-export async function GET(_: NextRequest, { params }: { params: { conversationId: string } }) {
+export async function GET(_: NextRequest, { params }: { params: Promise<{ conversationId: string }> }) {
   const auth = await requireAuth();
   if (!auth.ok) return auth.response;
+  const { conversationId } = await params;
 
   // Merged what was two sequential SELECTs against conversation_participants
   // (membership check + key fetch) into one round-trip.
   const { data: participant } = await auth.supabase
     .from("conversation_participants")
     .select("conversation_id, encrypted_conversation_key")
-    .eq("conversation_id", params.conversationId)
+    .eq("conversation_id", conversationId)
     .eq("user_id", auth.user.id)
     .maybeSingle();
 
@@ -39,7 +40,7 @@ export async function GET(_: NextRequest, { params }: { params: { conversationId
   let query = auth.supabase
     .from("messages")
     .select("id, sender_id, message_type, ciphertext, nonce, metadata, created_at, read_at")
-    .eq("conversation_id", params.conversationId)
+    .eq("conversation_id", conversationId)
     .order("created_at", { ascending: false })
     .limit(limit);
   if (before) {
@@ -59,9 +60,10 @@ export async function GET(_: NextRequest, { params }: { params: { conversationId
   });
 }
 
-export async function POST(request: NextRequest, { params }: { params: { conversationId: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ conversationId: string }> }) {
   const auth = await requireAuth();
   if (!auth.ok) return auth.response;
+  const { conversationId } = await params;
 
   // Key by user_id rather than IP — chat is auth-gated and a malicious peer
   // can't share an IP with their target. request.ip was deprecated in Next 14.
@@ -93,7 +95,7 @@ export async function POST(request: NextRequest, { params }: { params: { convers
   const { data: membership } = await auth.supabase
     .from("conversation_participants")
     .select("conversation_id")
-    .eq("conversation_id", params.conversationId)
+    .eq("conversation_id", conversationId)
     .eq("user_id", auth.user.id)
     .single();
 
@@ -104,7 +106,7 @@ export async function POST(request: NextRequest, { params }: { params: { convers
   const { data, error } = await auth.supabase
     .from("messages")
     .insert({
-      conversation_id: params.conversationId,
+      conversation_id: conversationId,
       sender_id: auth.user.id,
       message_type: body.message_type ?? "text",
       ciphertext: body.ciphertext,

@@ -16,6 +16,7 @@ import {
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getProgramManagementCopy } from "@/lib/program-management-copy";
+import { hasPurchasedProgram } from "@/lib/purchases";
 
 function getProgramTheme(category: string) {
   const base = category.toLowerCase();
@@ -71,15 +72,8 @@ export default async function ProgramDetailPage({
     } = await accountClient.auth.getUser();
 
     if (user) {
-      const [{ data: entitlement }, { data: profile }] = await Promise.all([
-        accountClient
-          .from("program_entitlements")
-          .select("order_id")
-          .eq("user_id", user.id)
-          .eq("program_slug", slug)
-          .eq("status", "active")
-          .limit(1)
-          .maybeSingle(),
+      const [purchased, { data: profile }] = await Promise.all([
+        hasPurchasedProgram(accountClient, user.id, slug),
         accountClient
           .from("profiles")
           .select("role")
@@ -88,7 +82,7 @@ export default async function ProgramDetailPage({
       ]);
 
       hasProgramAccess =
-        Boolean(entitlement) ||
+        purchased ||
         profile?.role === "admin" ||
         customProgramRow?.uploaded_by === user.id;
     }

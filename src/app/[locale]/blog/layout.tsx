@@ -5,21 +5,25 @@ import type { ReactNode } from "react";
 import { getDirection, isLocale, type Locale } from "@/lib/i18n";
 import { getRouteSeo } from "@/lib/route-seo";
 
-export function generateMetadata({ params }: { params: { locale?: string } }): Metadata {
-  const raw = params?.locale;
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale: raw } = await params;
   if (typeof raw !== "string" || !isLocale(raw)) return {};
   const locale = raw as Locale;
   return getRouteSeo(locale, "blog");
 }
 
-export default function BlogLayout({
+export default async function BlogLayout({
   children,
   params
 }: {
   children: ReactNode;
-  params: { locale?: string };
+  params: Promise<{ locale: string }>;
 }) {
-  const raw = params?.locale;
+  const { locale: raw } = await params;
   if (typeof raw !== "string" || !isLocale(raw)) {
     notFound();
   }

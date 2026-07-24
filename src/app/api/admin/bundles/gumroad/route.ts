@@ -122,7 +122,6 @@ export async function PATCH(request: NextRequest) {
 
   try {
     // Validate it's a real URL before storing.
-    // eslint-disable-next-line no-new
     new URL(shortUrl);
   } catch {
     return NextResponse.json({ error: "Invalid URL" }, { status: 400 });

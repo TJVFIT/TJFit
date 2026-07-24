@@ -3,7 +3,7 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isValidUsername } from "@/lib/username";
 import { isMissingSchemaMigrationError, jsonSchemaNotReady } from "@/lib/supabase-rpc-errors";
 
-export async function GET(_: Request, { params }: { params: { username: string } }) {
+export async function GET(_: Request, { params }: { params: Promise<{ username: string }> }) {
   let supabase: ReturnType<typeof createServerSupabaseClient>;
   try {
     supabase = createServerSupabaseClient();
@@ -11,7 +11,8 @@ export async function GET(_: Request, { params }: { params: { username: string }
     return NextResponse.json({ error: "Service temporarily unavailable." }, { status: 503 });
   }
 
-  const raw = decodeURIComponent(params.username ?? "").trim();
+  const { username } = await params;
+  const raw = decodeURIComponent(username ?? "").trim();
   if (!raw || !isValidUsername(raw)) {
     return NextResponse.json({ error: "Invalid username." }, { status: 400 });
   }

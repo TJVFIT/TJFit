@@ -2,9 +2,28 @@
 
 import { useEffect, useState } from "react";
 
+type CoachAnalytics = {
+  weekly: {
+    profile_views: number;
+    program_sales: number;
+    revenue: number | string | null;
+    blog_views: number;
+  };
+  all_time: {
+    total_students: number;
+    total_earnings: number | string | null;
+    average_rating: number;
+    programs_created: number;
+  };
+  top_program: {
+    slug: string;
+    sales: number;
+  } | null;
+};
+
 export function CoachAnalyticsWidget() {
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<CoachAnalytics | null>(null);
 
   useEffect(() => {
     void fetch("/api/coach/analytics", { credentials: "include", cache: "no-store" })

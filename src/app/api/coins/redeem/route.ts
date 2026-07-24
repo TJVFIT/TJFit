@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
   const auth = await requireAuth();
   if (!auth.ok) return auth.response;
 
-  const limiter = rateLimit({
+  const limiter = await rateLimit({
     key: `coin-redeem:${auth.user.id}`,
     limit: 10,
     windowMs: 60_000

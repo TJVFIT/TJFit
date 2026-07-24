@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
   const auth = await requireCoachOrAdmin();
   if (!auth.ok) return auth.response;
 
-  const limiter = rateLimit({
+  const limiter = await rateLimit({
     key: `program-upload:${auth.userId}`,
     limit: 5,
     windowMs: 60 * 60_000

@@ -1,3 +1,6 @@
+// Active routing locales. Five more (de, hi, id, pt, ru) have translations
+// under messages/ but are not wired yet — to enable any of them, add the
+// code here AND add the matching LOCALE_META + BCP47 entries below.
 export const locales = ["en", "tr", "ar", "es", "fr"] as const;
 
 export type Locale = (typeof locales)[number];
@@ -7,6 +10,7 @@ export type Dictionary = {
     home: string;
     coaches: string;
     programs: string;
+    diets: string;
     store: string;
     transformations: string;
     community: string;
@@ -21,6 +25,7 @@ export type Dictionary = {
     loginAsCoach: string;
     progress: string;
     messages: string;
+    profile: string;
     logout: string;
   };
   hero: {
@@ -126,6 +131,9 @@ export type Dictionary = {
     subtitle: string;
     storeDescription: string;
   };
+  becomeCoachPage: {
+    description: string;
+  };
   feedback: {
     title: string;
     subtitle: string;
@@ -151,6 +159,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       home: "Home",
       coaches: "Find a Coach",
       programs: "Programs",
+      diets: "Diets",
       store: "Store",
       transformations: "Transformations",
       community: "Community",
@@ -161,10 +170,11 @@ export const dictionaries: Record<Locale, Dictionary> = {
       dashboard: "Dashboard",
       admin: "Admin",
       feedback: "Support",
-      login: "Login",
+      login: "Sign in",
       loginAsCoach: "Log in as a coach",
       progress: "Progress",
       messages: "Messages",
+      profile: "Profile",
       logout: "Log out"
     },
     hero: {
@@ -199,6 +209,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
       title: "Coming Soon",
       subtitle: "Our equipment store is on its way.",
       storeDescription: "Training and recovery tools, resistance bands, dumbbells, and more. Connect with our future dropshipping store."
+    },
+    becomeCoachPage: {
+      description:
+        "We are onboarding coaches privately. Public applications are not open yet. Browse programs or find a coach in the meantime."
     },
     becomeCoach: {
       badge: "Become a Coach",
@@ -292,167 +306,178 @@ export const dictionaries: Record<Locale, Dictionary> = {
   },
   tr: {
     nav: {
-      home: "Ana Sayfa",
-      coaches: "Koç Bul",
+      home: "Ana sayfa",
+      coaches: "Koçlar",
       programs: "Programlar",
-      store: "Magaza",
-      transformations: "Donusumler",
+      diets: "Diyetler",
+      store: "Mağaza",
+      transformations: "Dönüşümler",
       community: "Topluluk",
-      challenges: "Meydan Okumalar",
-      live: "Canli",
-      membership: "Abonelik",
-      becomeCoach: "Koç Ol",
+      challenges: "Meydan okuma",
+      live: "Canlı",
+      membership: "Üyelik",
+      becomeCoach: "Koç ol",
       dashboard: "Panel",
-      admin: "Yonetim",
-      feedback: "Destek",
-      login: "Giris",
-      loginAsCoach: "Koç olarak giris yap",
-      progress: "Ilerleme",
+      admin: "Yönetim",
+      feedback: "Yardım",
+      login: "Giriş",
+      loginAsCoach: "Koç girişi",
+      progress: "İlerleme",
       messages: "Mesajlar",
-      logout: "Cikis yap"
+      profile: "Profil",
+      logout: "Çıkış"
     },
     hero: {
-      badge: "Global Online Kocluk Platformu",
-      title: "Dunya Seviyesinde Kocluk. Evinden.",
+      badge: "Global online koçluk",
+      title: "Dünya standartında koçluk. Evinden.",
       subtitle:
-        "Fitness, performans, beslenme, fizyoterapi ve rehabilitasyon alanlarinda sertifikali koçlari Ingilizce, Turkce ve Arapca olarak bulun.",
-      primaryCta: "Koç Bul",
-      secondaryCta: "Koç Ol"
+        "Fitness, performans, beslenme, fizyoterapi ve rehabilitasyon için sertifikalı koçlar — Türkçe, İngilizce, Arapça, İspanyolca ve Fransızca.",
+      primaryCta: "Koç bul",
+      secondaryCta: "Koç ol"
     },
-    steps: ["Koçunu sec", "Online antrenmana basla", "Evden gelisim sagla"],
+    steps: ["Koçunu seç", "Online antrenmana başla", "Evden ilerle"],
     cta: {
-      title: "Bugun Basla.",
+      title: "Bugün başla.",
       subtitle:
-        "Premium kocluk deneyimi, guvenilir uzmanlar ve hizli rezervasyon akisiyla daha hizli buyu.",
-      button: "Ilk Seansini Rezerve Et"
+        "Premium koçluk, güvenilir uzmanlar ve sade rezervasyon — hızlı başla, yavaş yorma.",
+      button: "İlk seansını ayarla"
     },
     common: {
-      featuredCoaches: "One Cikan Koçlar",
-      marketplace: "Program Pazari",
-      equipment: "Ekipman Magazasi",
-      testimonials: "Yorumlar",
-      socialProof: "Canli Hareketler"
+      featuredCoaches: "Öne çıkan koçlar",
+      marketplace: "Programlar",
+      equipment: "Ekipman mağazası",
+      testimonials: "Deneyimler",
+      socialProof: "Canlı hareket"
     },
     launchingSoon: {
-      badge: "Yakinda",
-      title: "Yakinda Aciliyor",
-      subtitle: "Fitness, performans, beslenme ve rehabilitasyon icin premium online kocluk. Ingilizce, Turkce, Arapca, Ispanyolca ve Fransizca destegi.",
-      cta: "Koç olarak giris yap"
+      badge: "Çok yakında",
+      title: "Çok yakında açılıyor",
+      subtitle:
+        "Fitness, performans, beslenme ve toparlanma için premium online koçluk. Türkçe, İngilizce, Arapça, İspanyolca ve Fransızca.",
+      cta: "Koç girişi"
     },
     comingSoon: {
-      title: "Yakinda",
-      subtitle: "Ekipman magazamiz yolda.",
-      storeDescription: "Antrenman ve toparlanma araclari, direnc bantlari, dumbellar ve daha fazlasi. Gelecekteki dropshipping magazamizla baglanti."
+      title: "Çok yakında",
+      subtitle: "Ekipman mağazamız yolda.",
+      storeDescription:
+        "Antrenman ve toparlanma ekipmanları, direnç bantları, dambıllar ve daha fazlası — yakında tek mağazada."
+    },
+    becomeCoachPage: {
+      description:
+        "Koçları şu an davetle ekliyoruz. Herkese açık başvuru henüz yok — programlara göz at veya bir koç seç."
     },
     becomeCoach: {
-      badge: "Koç Ol",
-      title: "Koç kazancini artirmak icin tasarlanmis premium kocluk pazarina katilin.",
-      subtitle: "TJFit, yuksek guven profilleri, cok dilli konumlandirma, sirali gorunurluk, tavsiyeler ve premium musteri deneyimi ile koçlari cezbeder.",
-      magnetTitle: "Koç mıknatıs sistemi",
-      magnetSubtitle: "Daha yuksek sıra, daha iyi gorunurluk, daha fazla guven, daha fazla musteri ve daha guclu pazar momentumu anlamina gelir.",
-      applicationTitle: "Koç basvurusu",
-      feature1: "Yuksek performans gosterenler icin one cikan yerlesim",
-      feature2: "Tavsiye kodlari ve tekrarlayan gelir",
-      feature3: "Rezervasyonlar ve kazanclar icin koç paneli",
-      feature4: "Ingilizce, Turkce ve Arapca destegi ile kuresel kitle",
-      ageQuestion: "Kac yasindasiniz?",
-      fullName: "Ad Soyad",
-      specialty: "Uzmanlik",
-      specialtyPlaceholder: "ornegin fitness, beslenme, rehabilitasyon",
-      languages: "Konustugunuz diller",
-      languagesPlaceholder: "ornegin Ingilizce, Turkce",
-      country: "Ulke",
-      certifications: "Sertifikalar ve kocluk tarziniz hakkinda bilgi verin",
-      certificationsPlaceholder: "Sertifikalar, deneyim ve kocluk yaklasiminiz...",
-      ageError: "Basvuru icin 20 yas veya uzeri olmalisiniz.",
-      next: "Ileri",
+      badge: "Koç ol",
+      title: "Kazancını büyütmek için tasarlanmış premium koçluk pazarına katıl.",
+      subtitle:
+        "TJFit; güçlü profiller, çok dilli görünürlük, sıralama, tavsiyeler ve sakin bir üye deneyimiyle koçları bir araya getirir.",
+      magnetTitle: "Koç görünürlük sistemi",
+      magnetSubtitle: "Daha yüksek sıra; daha çok güven, daha çok görünürlük ve daha güçlü momentum demek.",
+      applicationTitle: "Koç başvurusu",
+      feature1: "Yüksek performansa özel vitrin",
+      feature2: "Tavsiye kodları ve tekrarlayan gelir",
+      feature3: "Rezervasyon ve kazanç için koç paneli",
+      feature4: "Küresel kitle — Türkçe, İngilizce ve Arapça destek",
+      ageQuestion: "Kaç yaşındasın?",
+      fullName: "Ad soyad",
+      specialty: "Uzmanlık",
+      specialtyPlaceholder: "ör. fitness, beslenme, rehabilitasyon",
+      languages: "Konuştuğun diller",
+      languagesPlaceholder: "ör. Türkçe, İngilizce",
+      country: "Ülke",
+      certifications: "Sertifikaların ve koçluk stilin",
+      certificationsPlaceholder: "Sertifika, deneyim, yaklaşımın…",
+      ageError: "Başvuru için 20 yaş ve üzeri olmalısın.",
+      next: "İleri",
       back: "Geri",
-      submit: "Basvuruyu gonder",
-      success: "Basvurunuz alindi. Sizinle iletisime gecicegiz.",
-      reviewTitle: "Basvurunuzu kontrol edin"
+      submit: "Başvuruyu gönder",
+      success: "Başvurun alındı. En kısa sürede döneriz.",
+      reviewTitle: "Başvurunu kontrol et"
     },
     admin: {
-      coachApplications: "Koç Basvurulari",
-      coachApplicationsCount: "basvuru",
-      noApplications: "Henuz basvuru yok.",
-      loadingApplications: "Koç basvurulari yukleniyor...",
-      logInToViewApplications: "Basvurulari gormek icin giris yapin.",
-      platformOverview: "Platform Genel Bakis",
-      platformSubtitle: "Platform genelinde istatistikler, koç basvurulari ve islemler tek yerde.",
-      quickActions: "Hizli islemler",
-      fullAdminPanel: "Tam Yonetim Paneli",
-      approveCoaches: "Koçlari onayla",
-      managePayments: "Odemeleri yonet",
+      coachApplications: "Koç başvuruları",
+      coachApplicationsCount: "başvuru",
+      noApplications: "Henüz başvuru yok.",
+      loadingApplications: "Başvurular yükleniyor…",
+      logInToViewApplications: "Başvuruları görmek için giriş yap.",
+      platformOverview: "Platform özeti",
+      platformSubtitle: "İstatistikler, koç başvuruları ve operasyon — tek ekranda.",
+      quickActions: "Hızlı işlemler",
+      fullAdminPanel: "Tam yönetim paneli",
+      approveCoaches: "Koçları onayla",
+      managePayments: "Ödemeleri yönet",
       coachList: "Koç listesi",
-      coachListSubtitle: "Platformdaki aktif koçlar."
+      coachListSubtitle: "Aktif koçlar."
     },
     dashboard: {
       coach: {
-        badge: "Koç Paneli",
-        title: "Kocluk merkeziniz.",
-        subtitle: "Takvim, mesajlar, seanslar, programlar ve kazanclar tek yerde.",
+        badge: "Koç paneli",
+        title: "Koçluk merkezin.",
+        subtitle: "Takvim, mesajlar, seanslar, programlar ve kazanç — tek yerde.",
         calendar: "Takvim",
-        calendarSubtitle: "Yaklasan seanslar, Zoom linkleri ve musaitlik.",
-        texts: "Metinler / Mesajlar",
-        textsSubtitle: "Ozel koç-ogrenci sohbetleri. Ogrenci hesaplari eklendiginde hazir.",
-        textsEmpty: "Henuz mesaj yok. Ogrenciler atandiginda sohbet burada gorunecek.",
-        myStudents: "Ogrencilerim",
-        myStudentsSubtitle: "Musterilerle yaklasan seanslar",
+        calendarSubtitle: "Yaklaşan seanslar, Zoom ve müsaitlik.",
+        texts: "Mesajlar",
+        textsSubtitle: "Özel koç–öğrenci sohbeti. Öğrenci hesapları açıldığında burada.",
+        textsEmpty: "Henüz mesaj yok. Öğrenciler bağlanınca görünecek.",
+        myStudents: "Öğrencilerim",
+        myStudentsSubtitle: "Yaklaşan seanslar",
         chat: "Sohbet",
         reschedule: "Yeniden planla",
-        viewPlan: "Plani gor",
-        zoomLink: "Zoom linki",
-        referralTitle: "Tavsiye paneli",
-        referralSubtitle: "Kodunuzu paylasin. Musteriler rezervasyon yaptiginda kazanin.",
-        wallet: "Cuzdan",
-        walletSubtitle: "Kazanclar ve odemeler.",
-        rank: "Sıra ve gorunurluk",
-        rankSubtitle: "Puan, seans hacmi ve musteri basarisina dayanir.",
-        preparedForData: "Supabase verisi icin hazir."
+        viewPlan: "Planı gör",
+        zoomLink: "Zoom bağlantısı",
+        referralTitle: "Tavsiye özeti",
+        referralSubtitle: "Kodunu paylaş; rezervasyon gelince kazan.",
+        wallet: "Cüzdan",
+        walletSubtitle: "Kazanç ve ödemeler.",
+        rank: "Sıra ve görünürlük",
+        rankSubtitle: "Puan, seans hacmi ve üye sonuçlarına göre.",
+        preparedForData: "Veri bağlantısı için hazır."
       },
       admin: {
-        badge: "Platform Genel Bakis",
-        title: "Genel web sitesi ve koç metrikleri.",
-        subtitle: "Platform genelinde istatistikler, koç basvurulari ve islemler tek yerde."
+        badge: "Platform özeti",
+        title: "Site ve koç metrikleri.",
+        subtitle: "İstatistikler, başvurular ve operasyon — tek yerde."
       }
     },
     feedback: {
-      title: "Geri Bildirim ve Destek",
-      subtitle: "Sikayet, oneri veya yardim talebi. Hepsinizi okuyoruz.",
-      typeLabel: "Bu ne hakkinda?",
-      complaint: "Sikayet",
-      suggestion: "Oneri",
+      title: "Destek",
+      subtitle: "Şikâyet, fikir veya yardım — hepsini okuyoruz.",
+      typeLabel: "Konu nedir?",
+      complaint: "Şikâyet",
+      suggestion: "Öneri",
       feedback: "Genel geri bildirim",
-      helpRequest: "Yardim talebi",
-      refundRequest: "Iade talebi",
-      subject: "Konu (istege bagli)",
-      message: "Mesaj",
-      orderReference: "Siparis / program referansi (iadeler icin)",
-      email: "E-posta (istege bagli)",
-      submit: "Gonder",
-      success: "Tesekkurler. En kisa surede size donus yapacagiz.",
-      nav: "Geri Bildirim ve Destek"
+      helpRequest: "Yardım",
+      refundRequest: "İade",
+      subject: "Konu (isteğe bağlı)",
+      message: "Mesajın",
+      orderReference: "Sipariş / program kodu (iade için)",
+      email: "E-posta (isteğe bağlı)",
+      submit: "Gönder",
+      success: "Teşekkürler. En kısa sürede döneriz.",
+      nav: "Destek"
     }
   },
   ar: {
     nav: {
       home: "الرئيسية",
-      coaches: "ابحث عن مدرب",
+      coaches: "المدربون",
       programs: "البرامج",
+      diets: "الأنظمة الغذائية",
       store: "المتجر",
       transformations: "التحولات",
       community: "المجتمع",
       challenges: "التحديات",
       live: "مباشر",
       membership: "الاشتراك",
-      becomeCoach: "انضم كمدرب",
-      dashboard: "لوحة التحكم",
-      admin: "الادارة",
+      becomeCoach: "كن مدرباً",
+      dashboard: "لوحة",
+      admin: "الإدارة",
       feedback: "الدعم",
-      login: "تسجيل الدخول",
+      login: "دخول",
       loginAsCoach: "تسجيل الدخول كمدرب",
       progress: "التقدم",
       messages: "الرسائل",
+      profile: "الملف الشخصي",
       logout: "تسجيل الخروج"
     },
     hero: {
@@ -487,6 +512,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
       title: "قريباً",
       subtitle: "متجر المعدات قادم.",
       storeDescription: "ادوات التدريب والتعافي، اشرطة المقاومة، الدمبلز والمزيد. متصل بمتجر dropshipping المستقبلي."
+    },
+    becomeCoachPage: {
+      description:
+        "نجري حالياً ضم المدربين بشكل خاص. طلبات الانضمام العامة غير متاحة بعد. يمكنك تصفح البرامج أو اختيار مدرب في هذه الأثناء."
     },
     becomeCoach: {
       badge: "انضم كمدرب",
@@ -583,27 +612,29 @@ export const dictionaries: Record<Locale, Dictionary> = {
       home: "Inicio",
       coaches: "Buscar coach",
       programs: "Programas",
+      diets: "Dietas",
       store: "Tienda",
       transformations: "Transformaciones",
       community: "Comunidad",
       challenges: "Retos",
       live: "En vivo",
-      membership: "Suscripcion",
+      membership: "Suscripción",
       becomeCoach: "Ser coach",
       dashboard: "Panel",
       admin: "Admin",
       feedback: "Soporte",
-      login: "Iniciar sesion",
-      loginAsCoach: "Iniciar sesion como coach",
+      login: "Iniciar sesión",
+      loginAsCoach: "Iniciar sesión como coach",
       progress: "Progreso",
       messages: "Mensajes",
-      logout: "Cerrar sesion"
+      profile: "Perfil",
+      logout: "Cerrar sesión"
     },
     hero: {
       badge: "Plataforma global de coaching online",
       title: "Coaching de clase mundial. Desde casa.",
       subtitle:
-        "Encuentra coaches certificados para fitness, rendimiento, nutricion, fisioterapia y rehabilitacion en ingles, turco, arabe, espanol y frances.",
+        "Encuentra coaches certificados para fitness, rendimiento, nutrición, fisioterapia y rehabilitación en inglés, turco, árabe, español y francés.",
       primaryCta: "Buscar coach",
       secondaryCta: "Ser coach"
     },
@@ -611,8 +642,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
     cta: {
       title: "Empieza hoy.",
       subtitle:
-        "Crece mas rapido con experiencias premium, expertos confiables y reservas simples.",
-      button: "Reserva tu primera sesion"
+        "Crece más rápido con experiencias premium, expertos confiables y reservas simples.",
+      button: "Reserva tu primera sesión"
     },
     common: {
       featuredCoaches: "Coaches destacados",
@@ -622,39 +653,43 @@ export const dictionaries: Record<Locale, Dictionary> = {
       socialProof: "Actividad en vivo"
     },
     launchingSoon: {
-      badge: "Proximamente",
-      title: "Proximamente",
-      subtitle: "Coaching online premium para fitness, rendimiento, nutricion y recuperacion. Disponible en ingles, turco, arabe, espanol y frances.",
-      cta: "Iniciar sesion como coach"
+      badge: "Próximamente",
+      title: "Próximamente",
+      subtitle: "Coaching online premium para fitness, rendimiento, nutrición y recuperación. Disponible en inglés, turco, árabe, español y francés.",
+      cta: "Iniciar sesión como coach"
     },
     comingSoon: {
-      title: "Proximamente",
-      subtitle: "Nuestra tienda de equipamiento esta en camino.",
-      storeDescription: "Herramientas de entrenamiento y recuperacion, bandas de resistencia, mancuernas y mas. Conectado con nuestra futura tienda dropshipping."
+      title: "Próximamente",
+      subtitle: "Nuestra tienda de equipamiento está en camino.",
+      storeDescription: "Herramientas de entrenamiento y recuperación, bandas de resistencia, mancuernas y más. Conectado con nuestra futura tienda dropshipping."
+    },
+    becomeCoachPage: {
+      description:
+        "Estamos incorporando coaches de forma privada. Las solicitudes públicas aún no están abiertas. Mientras tanto, explora programas o elige un coach."
     },
     becomeCoach: {
       badge: "Ser coach",
-      title: "Unete a un mercado de coaching premium disenado para aumentar los ingresos de los coaches.",
-      subtitle: "TJFit atrae a coaches con perfiles de alta confianza, posicionamiento multilingue, visibilidad clasificada, referidos y una experiencia de cliente premium.",
-      magnetTitle: "Sistema iman de coaches",
-      magnetSubtitle: "Mayor rango significa mejor visibilidad, mas confianza, mas clientes y mayor impulso del mercado.",
+      title: "Únete a un mercado de coaching premium diseñado para aumentar los ingresos de los coaches.",
+      subtitle: "TJFit atrae a coaches con perfiles de alta confianza, posicionamiento multilingüe, visibilidad clasificada, referidos y una experiencia de cliente premium.",
+      magnetTitle: "Sistema imán de coaches",
+      magnetSubtitle: "Mayor rango significa mejor visibilidad, más confianza, más clientes y mayor impulso del mercado.",
       applicationTitle: "Solicitud de coach",
-      feature1: "Colocacion destacada para alto rendimiento",
-      feature2: "Codigos de referidos e ingresos recurrentes",
+      feature1: "Colocación destacada para alto rendimiento",
+      feature2: "Códigos de referidos e ingresos recurrentes",
       feature3: "Panel de coach con reservas y ganancias",
-      feature4: "Audiencia global con soporte en ingles, turco y arabe",
-      ageQuestion: "Cuantos anos tienes?",
+      feature4: "Audiencia global con soporte en inglés, turco y árabe",
+      ageQuestion: "¿Cuántos años tienes?",
       fullName: "Nombre completo",
       specialty: "Especialidad",
-      specialtyPlaceholder: "ej. fitness, nutricion, rehabilitacion",
+      specialtyPlaceholder: "ej. fitness, nutrición, rehabilitación",
       languages: "Idiomas que hablas",
-      languagesPlaceholder: "ej. Ingles, Turco",
-      country: "Pais",
-      certifications: "Cuentanos sobre tus certificaciones y estilo de coaching",
+      languagesPlaceholder: "ej. Inglés, Turco",
+      country: "País",
+      certifications: "Cuéntanos sobre tus certificaciones y estilo de coaching",
       certificationsPlaceholder: "Tus certificaciones, experiencia y enfoque...",
-      ageError: "Debes tener 20 anos o mas para aplicar.",
+      ageError: "Debes tener 20 años o más para aplicar.",
       next: "Siguiente",
-      back: "Atras",
+      back: "Atrás",
       submit: "Enviar solicitud",
       success: "Solicitud enviada. Nos pondremos en contacto.",
       reviewTitle: "Revisa tu solicitud"
@@ -662,13 +697,13 @@ export const dictionaries: Record<Locale, Dictionary> = {
     admin: {
       coachApplications: "Solicitudes de coaches",
       coachApplicationsCount: "solicitud",
-      noApplications: "Aun no hay solicitudes.",
+      noApplications: "Aún no hay solicitudes.",
       loadingApplications: "Cargando solicitudes de coaches...",
-      logInToViewApplications: "Inicia sesion para ver las solicitudes.",
+      logInToViewApplications: "Inicia sesión para ver las solicitudes.",
       platformOverview: "Resumen de plataforma",
-      platformSubtitle: "Estadisticas de la plataforma, solicitudes de coaches y operaciones en un solo lugar.",
-      quickActions: "Acciones rapidas",
-      fullAdminPanel: "Panel de administracion completo",
+      platformSubtitle: "Estadísticas de la plataforma, solicitudes de coaches y operaciones en un solo lugar.",
+      quickActions: "Acciones rápidas",
+      fullAdminPanel: "Panel de administración completo",
       approveCoaches: "Aprobar coaches",
       managePayments: "Gestionar pagos",
       coachList: "Lista de coaches",
@@ -680,34 +715,34 @@ export const dictionaries: Record<Locale, Dictionary> = {
         title: "Tu centro de coaching.",
         subtitle: "Calendario, mensajes, sesiones, programas y ganancias en un solo lugar.",
         calendar: "Calendario",
-        calendarSubtitle: "Sesiones proximas, enlaces Zoom y disponibilidad.",
+        calendarSubtitle: "Sesiones próximas, enlaces Zoom y disponibilidad.",
         texts: "Textos / Mensajes",
         textsSubtitle: "Conversaciones privadas coach-estudiante. Arquitectura lista para cuando existan cuentas de estudiantes.",
-        textsEmpty: "Aun no hay mensajes. El chat aparecera cuando se asignen estudiantes.",
+        textsEmpty: "Aún no hay mensajes. El chat aparecerá cuando se asignen estudiantes.",
         myStudents: "Mis estudiantes",
-        myStudentsSubtitle: "Sesiones proximas con clientes",
+        myStudentsSubtitle: "Sesiones próximas con clientes",
         chat: "Chat",
         reschedule: "Reprogramar",
         viewPlan: "Ver plan",
         zoomLink: "Enlace Zoom",
         referralTitle: "Panel de referidos",
-        referralSubtitle: "Comparte tu codigo. Gana cuando los clientes reserven.",
+        referralSubtitle: "Comparte tu código. Gana cuando los clientes reserven.",
         wallet: "Billetera",
         walletSubtitle: "Ganancias y pagos.",
         rank: "Rango y visibilidad",
-        rankSubtitle: "Basado en calificacion, volumen de sesiones y exito del cliente.",
+        rankSubtitle: "Basado en calificación, volumen de sesiones y éxito del cliente.",
         preparedForData: "Listo para datos de Supabase."
       },
       admin: {
         badge: "Resumen de plataforma",
-        title: "Metricas generales del sitio web y coaches.",
-        subtitle: "Estadisticas de la plataforma, solicitudes de coaches y operaciones en un solo lugar."
+        title: "Métricas generales del sitio web y coaches.",
+        subtitle: "Estadísticas de la plataforma, solicitudes de coaches y operaciones en un solo lugar."
       }
     },
     feedback: {
       title: "Comentarios y Soporte",
       subtitle: "Queja, sugiere o pide ayuda. Leemos todo.",
-      typeLabel: "De que se trata?",
+      typeLabel: "¿De qué se trata?",
       complaint: "Queja",
       suggestion: "Sugerencia",
       feedback: "Comentarios generales",
@@ -727,10 +762,11 @@ export const dictionaries: Record<Locale, Dictionary> = {
       home: "Accueil",
       coaches: "Trouver un coach",
       programs: "Programmes",
+      diets: "Régimes",
       store: "Boutique",
       transformations: "Transformations",
-      community: "Communaute",
-      challenges: "Defis",
+      community: "Communauté",
+      challenges: "Défis",
       live: "Live",
       membership: "Abonnement",
       becomeCoach: "Devenir coach",
@@ -741,13 +777,14 @@ export const dictionaries: Record<Locale, Dictionary> = {
       loginAsCoach: "Se connecter en tant que coach",
       progress: "Progression",
       messages: "Messages",
-      logout: "Se deconnecter"
+      profile: "Profil",
+      logout: "Se déconnecter"
     },
     hero: {
       badge: "Plateforme mondiale de coaching en ligne",
       title: "Coaching de niveau mondial. Depuis chez vous.",
       subtitle:
-        "Trouvez des coachs certifies en fitness, performance, nutrition, physiotherapie et rehabilitation en anglais, turc, arabe, espagnol et francais.",
+        "Trouvez des coachs certifiés en fitness, performance, nutrition, physiothérapie et réhabilitation en anglais, turc, arabe, espagnol et français.",
       primaryCta: "Trouver un coach",
       secondaryCta: "Devenir coach"
     },
@@ -755,53 +792,57 @@ export const dictionaries: Record<Locale, Dictionary> = {
     cta: {
       title: "Commencez aujourd'hui.",
       subtitle:
-        "Avancez plus vite avec une experience premium, des experts fiables et une reservation simple.",
-      button: "Reserver votre premiere session"
+        "Avancez plus vite avec une expérience premium, des experts fiables et une réservation simple.",
+      button: "Réservez votre première session"
     },
     common: {
       featuredCoaches: "Coachs en vedette",
       marketplace: "Marketplace de programmes",
-      equipment: "Boutique d'equipement",
-      testimonials: "Temoignages",
-      socialProof: "Activite en direct"
+      equipment: "Boutique d'équipement",
+      testimonials: "Témoignages",
+      socialProof: "Activité en direct"
     },
     launchingSoon: {
-      badge: "Bientot",
-      title: "Bientot disponible",
-      subtitle: "Coaching en ligne premium pour fitness, performance, nutrition et recuperation. Disponible en anglais, turc, arabe, espagnol et francais.",
+      badge: "Bientôt",
+      title: "Bientôt disponible",
+      subtitle: "Coaching en ligne premium pour fitness, performance, nutrition et récupération. Disponible en anglais, turc, arabe, espagnol et français.",
       cta: "Se connecter en tant que coach"
     },
     comingSoon: {
-      title: "Bientot",
-      subtitle: "Notre boutique d'equipement arrive.",
-      storeDescription: "Outils d'entrainement et de recuperation, bandes de resistance, haltères et plus. Connecte a notre future boutique dropshipping."
+      title: "Bientôt",
+      subtitle: "Notre boutique d'équipement arrive.",
+      storeDescription: "Outils d'entraînement et de récupération, bandes de résistance, haltères et plus. Connecté à notre future boutique dropshipping."
+    },
+    becomeCoachPage: {
+      description:
+        "Nous intégrons les coaches en privé pour l'instant. Les candidatures publiques ne sont pas encore ouvertes. En attendant, parcours les programmes ou choisis un coach."
     },
     becomeCoach: {
       badge: "Devenir coach",
-      title: "Rejoins un marche de coaching premium concu pour augmenter les revenus des coachs.",
-      subtitle: "TJFit attire les coachs avec des profils de confiance, un positionnement multilingue, une visibilite classee, des parrainages et une experience client premium.",
-      magnetTitle: "Systeme d'attraction des coachs",
-      magnetSubtitle: "Un rang plus eleve signifie plus de visibilite, de confiance, de clients et d'elan de marche.",
+      title: "Rejoins un marché de coaching premium conçu pour augmenter les revenus des coachs.",
+      subtitle: "TJFit attire les coachs avec des profils de confiance, un positionnement multilingue, une visibilité classée, des parrainages et une expérience client premium.",
+      magnetTitle: "Système d'attraction des coachs",
+      magnetSubtitle: "Un rang plus élevé signifie plus de visibilité, de confiance, de clients et d'élan de marché.",
       applicationTitle: "Candidature coach",
       feature1: "Mise en avant pour les hautes performances",
-      feature2: "Codes de parrainage et revenus recurrents",
-      feature3: "Tableau de bord coach avec reservations et gains",
+      feature2: "Codes de parrainage et revenus récurrents",
+      feature3: "Tableau de bord coach avec réservations et gains",
       feature4: "Audience mondiale avec support anglais, turc et arabe",
-      ageQuestion: "Quel age as-tu?",
+      ageQuestion: "Quel âge as-tu ?",
       fullName: "Nom complet",
-      specialty: "Specialite",
-      specialtyPlaceholder: "ex. fitness, nutrition, reeducation",
+      specialty: "Spécialité",
+      specialtyPlaceholder: "ex. fitness, nutrition, rééducation",
       languages: "Langues que tu parles",
       languagesPlaceholder: "ex. Anglais, Turc",
       country: "Pays",
       certifications: "Parle-nous de tes certifications et style de coaching",
-      certificationsPlaceholder: "Tes certifications, experience et approche...",
+      certificationsPlaceholder: "Tes certifications, expérience et approche...",
       ageError: "Tu dois avoir 20 ans ou plus pour postuler.",
       next: "Suivant",
       back: "Retour",
       submit: "Envoyer la candidature",
-      success: "Candidature envoyee. Nous te contacterons.",
-      reviewTitle: "Verifie ta candidature"
+      success: "Candidature envoyée. Nous te contacterons.",
+      reviewTitle: "Vérifie ta candidature"
     },
     admin: {
       coachApplications: "Candidatures coachs",
@@ -809,12 +850,12 @@ export const dictionaries: Record<Locale, Dictionary> = {
       noApplications: "Pas encore de candidatures.",
       loadingApplications: "Chargement des candidatures coachs...",
       logInToViewApplications: "Connectez-vous pour voir les candidatures.",
-      platformOverview: "Apercu plateforme",
-      platformSubtitle: "Statistiques, candidatures coachs et operations en un seul endroit.",
+      platformOverview: "Aperçu plateforme",
+      platformSubtitle: "Statistiques, candidatures coachs et opérations en un seul endroit.",
       quickActions: "Actions rapides",
       fullAdminPanel: "Panneau admin complet",
       approveCoaches: "Approuver les coachs",
-      managePayments: "Gerer les paiements",
+      managePayments: "Gérer les paiements",
       coachList: "Liste des coachs",
       coachListSubtitle: "Coachs actifs sur la plateforme."
     },
@@ -822,47 +863,47 @@ export const dictionaries: Record<Locale, Dictionary> = {
       coach: {
         badge: "Tableau de bord coach",
         title: "Ton centre de coaching.",
-        subtitle: "Calendrier, messages, seances, programmes et gains en un seul endroit.",
+        subtitle: "Calendrier, messages, séances, programmes et gains en un seul endroit.",
         calendar: "Calendrier",
-        calendarSubtitle: "Seances a venir, liens Zoom et disponibilite.",
+        calendarSubtitle: "Séances à venir, liens Zoom et disponibilité.",
         texts: "Textes / Messages",
-        textsSubtitle: "Conversations privees coach-eleve. Architecture prete pour les comptes etudiants.",
-        textsEmpty: "Pas encore de messages. Le chat apparaitra quand des eleves seront assignes.",
-        myStudents: "Mes eleves",
-        myStudentsSubtitle: "Seances a venir avec les clients",
+        textsSubtitle: "Conversations privées coach-élève. Architecture prête pour les comptes étudiants.",
+        textsEmpty: "Pas encore de messages. Le chat apparaîtra quand des élèves seront assignés.",
+        myStudents: "Mes élèves",
+        myStudentsSubtitle: "Séances à venir avec les clients",
         chat: "Chat",
         reschedule: "Reprogrammer",
         viewPlan: "Voir le plan",
         zoomLink: "Lien Zoom",
         referralTitle: "Tableau de bord parrainage",
-        referralSubtitle: "Partage ton code. Gagne quand les clients reservent.",
+        referralSubtitle: "Partage ton code. Gagne quand les clients réservent.",
         wallet: "Portefeuille",
         walletSubtitle: "Gains et paiements.",
-        rank: "Rang et visibilite",
-        rankSubtitle: "Base sur la note, le volume de seances et le succes client.",
-        preparedForData: "Pret pour les donnees Supabase."
+        rank: "Rang et visibilité",
+        rankSubtitle: "Basé sur la note, le volume de séances et le succès client.",
+        preparedForData: "Prêt pour les données Supabase."
       },
       admin: {
-        badge: "Apercu plateforme",
-        title: "Metriques generales du site et des coachs.",
-        subtitle: "Statistiques, candidatures coachs et operations en un seul endroit."
+        badge: "Aperçu plateforme",
+        title: "Métriques générales du site et des coachs.",
+        subtitle: "Statistiques, candidatures coachs et opérations en un seul endroit."
       }
     },
     feedback: {
       title: "Commentaires et Support",
       subtitle: "Plaintes, suggestions ou aide. Nous lisons tout.",
-      typeLabel: "De quoi s'agit-il?",
+      typeLabel: "De quoi s'agit-il ?",
       complaint: "Plainte",
       suggestion: "Suggestion",
-      feedback: "Commentaires generaux",
+      feedback: "Commentaires généraux",
       helpRequest: "Demande d'aide",
       refundRequest: "Demande de remboursement",
       subject: "Sujet (optionnel)",
       message: "Message",
-      orderReference: "Reference commande/programme (remboursements)",
+      orderReference: "Référence commande/programme (remboursements)",
       email: "Email (optionnel)",
       submit: "Envoyer",
-      success: "Merci. Nous te repondrons bientot.",
+      success: "Merci. Nous te répondrons bientôt.",
       nav: "Commentaires et Support"
     }
   }
@@ -876,6 +917,42 @@ export function getDictionary(locale: Locale) {
   return dictionaries[locale];
 }
 
-export function getDirection(locale: Locale) {
+export function getDirection(locale: Locale | SupportedLocale) {
   return locale === "ar" ? "rtl" : "ltr";
 }
+
+/**
+ * Public routing locales. Keep this list limited to languages with real UI copy.
+ */
+export const supportedLocales = locales;
+export type SupportedLocale = (typeof supportedLocales)[number];
+
+export const LOCALE_META: Record<SupportedLocale, { label: string; native: string; dir: "ltr" | "rtl" }> = {
+  en: { label: "English", native: "English", dir: "ltr" },
+  tr: { label: "Turkish", native: "Türkçe", dir: "ltr" },
+  ar: { label: "Arabic", native: "العربية", dir: "rtl" },
+  es: { label: "Spanish", native: "Español", dir: "ltr" },
+  fr: { label: "French", native: "Français", dir: "ltr" },
+};
+
+export function isSupportedLocale(value: string): value is SupportedLocale {
+  return (supportedLocales as readonly string[]).includes(value);
+}
+
+/**
+ * Map any SupportedLocale to a Locale that has copy in the existing dictionaries.
+ */
+export function resolveCopyLocale(locale: string | null | undefined): Locale {
+  if (!locale) return "en";
+  if (isLocale(locale)) return locale;
+  return "en";
+}
+
+/** Language name in English — used in TJAI prompts to force response language. */
+export const LANGUAGE_NAME_EN: Record<SupportedLocale, string> = {
+  en: "English",
+  tr: "Turkish",
+  ar: "Arabic",
+  es: "Spanish",
+  fr: "French",
+};

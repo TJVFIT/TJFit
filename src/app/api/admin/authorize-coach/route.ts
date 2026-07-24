@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
   const admin = await requireAdmin();
   if (!admin.ok) return admin.response;
 
-  const limiter = rateLimit({
+  const limiter = await rateLimit({
     key: `authorize-coach:${admin.userId}`,
     limit: 10,
     windowMs: 10 * 60_000

@@ -46,6 +46,7 @@ export default function LocaleError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  void _reset;
   const pathname = usePathname() || "/en";
   const first = pathname.split("/").filter(Boolean)[0] ?? "en";
   const locale = (isLocale(first) ? first : "en") as Locale;

@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
   const auth = await requireCoachOrAdmin();
   if (!auth.ok) return auth.response;
 
-  const limiter = rateLimit({
+  const limiter = await rateLimit({
     key: `community-publish:${auth.userId}`,
     limit: 10,
     windowMs: 60 * 60_000
@@ -192,7 +192,7 @@ export async function DELETE(request: NextRequest) {
   const auth = await requireCoachOrAdmin();
   if (!auth.ok) return auth.response;
 
-  const limiter = rateLimit({
+  const limiter = await rateLimit({
     key: `community-delete:${auth.userId}`,
     limit: 30,
     windowMs: 60_000

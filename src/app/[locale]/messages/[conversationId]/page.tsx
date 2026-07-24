@@ -2,13 +2,14 @@ import { notFound } from "next/navigation";
 import { ChatThreadView } from "@/components/chat-thread-view";
 import { requireLocaleParam } from "@/lib/require-locale";
 
-export default function ConversationPage({
+export default async function ConversationPage({
   params
 }: {
-  params: { locale: string; conversationId: string };
+  params: Promise<{ locale: string; conversationId: string }>;
 }) {
-  const locale = requireLocaleParam(params.locale);
-  const conversationId = typeof params.conversationId === "string" ? params.conversationId.trim() : "";
+  const { locale: localeParam, conversationId: conversationIdParam } = await params;
+  const locale = requireLocaleParam(localeParam);
+  const conversationId = typeof conversationIdParam === "string" ? conversationIdParam.trim() : "";
   if (!conversationId) {
     notFound();
   }

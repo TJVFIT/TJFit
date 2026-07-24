@@ -150,7 +150,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Request body is too large." }, { status: 413 });
   }
 
-  const limiter = rateLimit({
+  const limiter = await rateLimit({
     key: `community-translate:${getClientAddress(request)}`,
     limit: 30,
     windowMs: 10 * 60_000

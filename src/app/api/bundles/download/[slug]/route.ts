@@ -17,11 +17,12 @@ export const runtime = "nodejs";
  * Gating (tight): only paid orders OR admin emails. `isFree` no longer
  * bypasses the check — every download requires entitlement.
  */
-export async function GET(req: Request, { params }: { params: { slug: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const auth = await requireAuth();
   if (!auth.ok) return auth.response;
 
-  const bundle = getBundle(params.slug);
+  const { slug } = await params;
+  const bundle = getBundle(slug);
   if (!bundle) {
     return NextResponse.json({ error: "Bundle not found" }, { status: 404 });
   }

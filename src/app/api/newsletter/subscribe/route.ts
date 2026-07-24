@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Request body is too large." }, { status: 413 });
   }
 
-  const limiter = rateLimit({
+  const limiter = await rateLimit({
     key: `newsletter-ip:${getClientAddress(request)}`,
     limit: 10,
     windowMs: 10 * 60_000
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid locale or source." }, { status: 400 });
   }
 
-  const emailLimiter = rateLimit({
+  const emailLimiter = await rateLimit({
     key: `newsletter-email:${email}`,
     limit: 3,
     windowMs: 60 * 60_000

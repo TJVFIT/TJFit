@@ -7,8 +7,9 @@ import { gateDashboardForCoachTerms } from "@/lib/coach-area-server";
 import { requireLocaleParam } from "@/lib/require-locale";
 import { requireAuthenticatedUser } from "@/lib/require-authenticated-server";
 
-export default async function DashboardPage({ params }: { params: { locale: string } }) {
-  const locale = requireLocaleParam(params.locale);
+export default async function DashboardPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale: localeParam } = await params;
+  const locale = requireLocaleParam(localeParam);
   await requireAuthenticatedUser(locale, `/${locale}/dashboard`);
   await gateDashboardForCoachTerms(locale);
   return (

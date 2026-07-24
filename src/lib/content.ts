@@ -43,6 +43,8 @@ export type Program = {
   difficulty: string;
   duration: string;
   price: number;
+  /** Free catalog items are claimed after sign-in and skip checkout. */
+  is_free?: boolean;
   description: string;
   coachSlug: string;
   requiredEquipment: string[];

@@ -5,7 +5,6 @@
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 const MODEL_JSON = "gpt-4o-2024-08-06"; // structured outputs / json_object
 const MODEL_CHAT = "gpt-4o";            // chat / streaming
-const MODEL_MINI = "gpt-4o-mini";       // cheap extractions
 const MAX_RETRIES = 2;
 const OPENAI_TIMEOUT_MS = 30_000;
 

@@ -119,8 +119,9 @@ const COPY: Record<
   }
 };
 
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
-  const locale = requireLocaleParam(params.locale);
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale: localeParam } = await params;
+  const locale = requireLocaleParam(localeParam);
   const copy = COPY[locale] ?? COPY.en;
   return { title: copy.title, description: copy.metaDescription };
 }
@@ -139,8 +140,9 @@ type SyncRow = {
   gumroad_permalink: string | null;
 };
 
-export default async function TjaiCreditsPage({ params }: { params: { locale: string } }) {
-  const locale = requireLocaleParam(params.locale);
+export default async function TjaiCreditsPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale: localeParam } = await params;
+  const locale = requireLocaleParam(localeParam);
   const copy = COPY[locale] ?? COPY.en;
 
   const admin = getSupabaseServerClient();

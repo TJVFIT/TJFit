@@ -6,8 +6,9 @@ import { AmbientBackground } from "@/components/ui/AmbientBackground";
 import { requireLocaleParam } from "@/lib/require-locale";
 import { getLegalHubCopy, getLegalHubCoachSections } from "@/lib/legal-hub-copy";
 
-export default function LegalHubPage({ params }: { params: { locale: string } }) {
-  const locale = requireLocaleParam(params.locale);
+export default async function LegalHubPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale: localeParam } = await params;
+  const locale = requireLocaleParam(localeParam);
   const copy = getLegalHubCopy(locale);
   const coachSections = getLegalHubCoachSections(locale);
 

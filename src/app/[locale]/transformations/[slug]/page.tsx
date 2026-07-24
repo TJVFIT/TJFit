@@ -4,13 +4,14 @@ import { ProtectedRoute } from "@/components/protected-route";
 import { transformations, coaches } from "@/lib/content";
 import { requireLocaleParam } from "@/lib/require-locale";
 
-export default function TransformationDetailPage({
+export default async function TransformationDetailPage({
   params
 }: {
-  params: { locale: string; slug: string };
+  params: Promise<{ locale: string; slug: string }>;
 }) {
-  const locale = requireLocaleParam(params.locale);
-  const slug = params.slug ?? "";
+  const { locale: localeParam, slug: slugParam } = await params;
+  const locale = requireLocaleParam(localeParam);
+  const slug = slugParam ?? "";
 
   const transformation = transformations.find((item) => item.slug === slug);
 
