@@ -1,32 +1,44 @@
-import { createServerClient } from "@supabase/ssr";
+import "server-only";
+
 import { cookies } from "next/headers";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
+
+type CookieToSet = {
+  name: string;
+  value: string;
+  options: CookieOptions;
+};
 
 /**
- * Creates a Supabase client for Server Components, Server Actions, and Route Handlers.
- * Uses cookies for session. Call this per-request (it's lightweight).
- * @throws If NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY is missing/blank.
+ * Creates a request-scoped Supabase client using only the public browser key.
+ * The service/secret key deliberately has no fallback here because a session
+ * client must always remain subject to RLS.
  */
-export function createServerSupabaseClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim();
-  if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY");
+export async function createServerSupabaseClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const publishableKey =
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !publishableKey) {
+    throw new Error("Supabase public client is not configured.");
   }
 
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
-  return createServerClient(supabaseUrl, supabaseAnonKey, {
+  return createServerClient(supabaseUrl, publishableKey, {
     cookies: {
       getAll() {
         return cookieStore.getAll();
       },
-      setAll(cookiesToSet) {
+      setAll(cookiesToSet: CookieToSet[]) {
         try {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options)
-          );
+          cookiesToSet.forEach(({ name, value, options }) => {
+            cookieStore.set(name, value, options);
+          });
         } catch {
-          // setAll from Server Component - middleware will refresh sessions
+          // Server Components cannot write cookies. Route handlers and server
+          // actions can, while middleware/proxy is responsible for refreshes.
         }
       }
     }

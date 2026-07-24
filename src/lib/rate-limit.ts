@@ -1,98 +1,66 @@
-/**
- * Rate limiter — Upstash Redis when configured, in-memory fallback otherwise.
- *
- * The in-memory `Map` does NOT survive across Vercel Lambda instances, so it
- * is effectively a no-op in production. Set UPSTASH_REDIS_REST_URL and
- * UPSTASH_REDIS_REST_TOKEN on the Vercel project to enable Redis-backed
- * limiting that actually works under serverless.
- *
- * Algorithm: fixed-window counter via Redis INCR + PEXPIRE. Keys are
- * windowed (`rl:<key>:<window-bucket>`) so each bucket auto-expires.
- *
- * Failure mode: if Redis is configured but the request fails (network,
- * 5xx), we fail-OPEN (allow the request) so a Redis outage does not
- * take down the API. Trade-off: brief unmetered traffic during outages
- * vs. user-visible 429 storms.
- */
-
-interface RateLimitArgs {
+type RateLimitInput = {
   key: string;
   limit: number;
   windowMs: number;
-}
+};
 
-interface RateLimitResult {
+type RateLimitEntry = {
+  count: number;
+  resetAt: number;
+};
+
+type RateLimitResult = {
   success: boolean;
+  limit: number;
   remaining: number;
+  resetAt: number;
+};
+
+const MAX_BUCKETS = 10_000;
+const globalStore = globalThis as typeof globalThis & {
+  __tjfitRateLimitStore__?: Map<string, RateLimitEntry>;
+};
+const buckets = globalStore.__tjfitRateLimitStore__ ?? new Map<string, RateLimitEntry>();
+globalStore.__tjfitRateLimitStore__ = buckets;
+
+function pruneExpired(now: number) {
+  buckets.forEach((entry, key) => {
+    if (entry.resetAt <= now) buckets.delete(key);
+  });
+
+  while (buckets.size >= MAX_BUCKETS) {
+    const oldestKey = buckets.keys().next().value as string | undefined;
+    if (!oldestKey) break;
+    buckets.delete(oldestKey);
+  }
 }
 
-const inMemoryStore = new Map<string, { count: number; resetAt: number }>();
-
-function inMemoryRateLimit({ key, limit, windowMs }: RateLimitArgs): RateLimitResult {
+/**
+ * A bounded, best-effort limiter for a single application instance.
+ * Production deployments with multiple instances should replace this with a
+ * shared Redis/database limiter without changing the route-level interface.
+ */
+export function rateLimit({ key, limit, windowMs }: RateLimitInput): RateLimitResult {
   const now = Date.now();
-  const current = inMemoryStore.get(key);
+  const safeLimit = Math.max(1, Math.floor(limit));
+  const safeWindow = Math.max(1_000, Math.floor(windowMs));
+  const normalizedKey = key.trim().slice(0, 256) || "unknown";
 
-  if (!current || current.resetAt < now) {
-    inMemoryStore.set(key, { count: 1, resetAt: now + windowMs });
-    return { success: true, remaining: limit - 1 };
+  let entry = buckets.get(normalizedKey);
+  if (!entry || entry.resetAt <= now) {
+    if (buckets.size >= MAX_BUCKETS) pruneExpired(now);
+    entry = { count: 0, resetAt: now + safeWindow };
   }
 
-  if (current.count >= limit) {
-    return { success: false, remaining: 0 };
-  }
+  entry.count += 1;
+  // Refresh insertion order so pruning removes the least-recently-used key.
+  buckets.delete(normalizedKey);
+  buckets.set(normalizedKey, entry);
 
-  current.count += 1;
-  inMemoryStore.set(key, current);
-  return { success: true, remaining: limit - current.count };
-}
-
-async function redisRateLimit({ key, limit, windowMs }: RateLimitArgs): Promise<RateLimitResult> {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) {
-    // Should not reach here — caller checks env. Defensive.
-    return inMemoryRateLimit({ key, limit, windowMs });
-  }
-
-  // Window bucket: floor(now / windowMs). Each bucket lives for windowMs.
-  const bucket = Math.floor(Date.now() / windowMs);
-  const redisKey = `rl:${key}:${bucket}`;
-
-  try {
-    const res = await fetch(`${url}/pipeline`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify([
-        ["INCR", redisKey],
-        ["PEXPIRE", redisKey, String(windowMs)]
-      ]),
-      cache: "no-store"
-    });
-
-    if (!res.ok) {
-      console.warn("[rate-limit] Upstash pipeline non-2xx — failing open", res.status);
-      return { success: true, remaining: limit - 1 };
-    }
-
-    const data = (await res.json()) as Array<{ result?: number; error?: string }>;
-    const count = Number(data[0]?.result ?? 0);
-
-    if (count > limit) {
-      return { success: false, remaining: 0 };
-    }
-    return { success: true, remaining: Math.max(0, limit - count) };
-  } catch (err) {
-    console.warn("[rate-limit] Upstash fetch failed — failing open", err);
-    return { success: true, remaining: limit - 1 };
-  }
-}
-
-export async function rateLimit(args: RateLimitArgs): Promise<RateLimitResult> {
-  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
-    return redisRateLimit(args);
-  }
-  return inMemoryRateLimit(args);
+  return {
+    success: entry.count <= safeLimit,
+    limit: safeLimit,
+    remaining: Math.max(0, safeLimit - entry.count),
+    resetAt: entry.resetAt
+  };
 }

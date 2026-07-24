@@ -1,46 +1,22 @@
 import { NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isAdminEmail } from "@/lib/auth-utils";
-import { logServerError, logServerWarning } from "@/lib/server-log";
-
-export const dynamic = "force-dynamic";
 
 export type Role = "admin" | "coach" | "user" | null;
 
 export async function GET() {
-  let supabase: ReturnType<typeof createServerSupabaseClient>;
   try {
-    supabase = createServerSupabaseClient();
-  } catch {
-    return NextResponse.json(
-      { user: null, role: null, error: "Service temporarily unavailable.", code: "SUPABASE_MISCONFIGURED" },
-      { status: 503 }
-    );
-  }
-
-  try {
+    const supabase = await createServerSupabaseClient();
     const {
       data: { user },
-      error: authError
+      error
     } = await supabase.auth.getUser();
 
-    if (authError) {
-      logServerWarning("api/auth/me:getUser", authError.message, { code: authError.code });
-      return NextResponse.json({ user: null, role: null });
-    }
-
-    if (!user) {
-      return NextResponse.json({ user: null, role: null });
-    }
-
-    const { data: profileRow, error: profileErr } = await supabase
-      .from("profiles")
-      .select("role, username, display_name, avatar_url")
-      .eq("id", user.id)
-      .maybeSingle();
-
-    if (profileErr) {
-      logServerError("api/auth/me:profiles", profileErr, { userId: user.id });
+    if (error || !user) {
+      return NextResponse.json(
+        { user: null, role: null },
+        { headers: { "Cache-Control": "no-store" } }
+      );
     }
 
     let role: Role = "user";
@@ -48,24 +24,33 @@ export async function GET() {
     if (user.email && isAdminEmail(user.email)) {
       role = "admin";
     } else {
-      if (profileRow?.role === "coach") role = "coach";
-      if (profileRow?.role === "admin") role = "admin";
+      const { data, error: profileError } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (profileError) {
+        return NextResponse.json(
+          { error: "Unable to load account authorization." },
+          { status: 503, headers: { "Cache-Control": "no-store" } }
+        );
+      }
+      if (data?.role === "coach") role = "coach";
+      if (data?.role === "admin") role = "admin";
     }
 
-    const { data: activeCoachLink, error: linkErr } = await supabase
+    const { data: activeCoachLink, error: coachLinkError } = await supabase
       .from("coach_student_links")
-      .select("id,coach_id,student_id")
+      .select("coach_id,student_id")
       .or(`student_id.eq.${user.id},coach_id.eq.${user.id}`)
       .eq("status", "active")
       .limit(1)
       .maybeSingle();
 
-    if (linkErr) {
-      logServerWarning("api/auth/me:coach_student_links", linkErr.message, { userId: user.id });
-    }
-
     const hasActiveCoachChat =
-      role === "coach" || role === "admin" || Boolean(activeCoachLink && activeCoachLink.student_id === user.id);
+      role === "coach" ||
+      role === "admin" ||
+      (!coachLinkError && Boolean(activeCoachLink && activeCoachLink.student_id === user.id));
 
     return NextResponse.json({
       user: {
@@ -75,18 +60,14 @@ export async function GET() {
       role,
       hasActiveCoachChat,
       activeCoachId:
-        activeCoachLink && activeCoachLink.student_id === user.id ? activeCoachLink.coach_id : undefined,
-      profile: profileRow
-        ? {
-            username: profileRow.username ?? undefined,
-            display_name: profileRow.display_name ?? undefined,
-            avatar_url: profileRow.avatar_url ?? undefined
-          }
-        : undefined
+        activeCoachLink && activeCoachLink.student_id === user.id ? activeCoachLink.coach_id : undefined
+    }, {
+      headers: { "Cache-Control": "no-store" }
     });
-  } catch (e) {
-    logServerError("api/auth/me:unhandled", e);
-    return NextResponse.json({ user: null, role: null });
+  } catch {
+    return NextResponse.json(
+      { user: null, role: null },
+      { headers: { "Cache-Control": "no-store" } }
+    );
   }
 }
-

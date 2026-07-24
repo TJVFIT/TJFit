@@ -1,25 +1,21 @@
 import { NextResponse } from "next/server";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
-type AuthUser = {
-  id: string;
-  email?: string;
-};
-
 type RequireAuthResult =
-  | { ok: true; supabase: ReturnType<typeof createServerSupabaseClient>; user: AuthUser }
+  | { ok: true; supabase: SupabaseClient; user: User }
   | { ok: false; response: NextResponse };
 
 export async function requireAuth(): Promise<RequireAuthResult> {
-  let supabase: ReturnType<typeof createServerSupabaseClient>;
+  let supabase: SupabaseClient;
   try {
-    supabase = createServerSupabaseClient();
+    supabase = await createServerSupabaseClient();
   } catch {
     return {
       ok: false,
       response: NextResponse.json(
-        { error: "Service temporarily unavailable.", code: "SUPABASE_MISCONFIGURED" },
-        { status: 503 }
+        { error: "Authentication service is not configured." },
+        { status: 503, headers: { "Cache-Control": "no-store" } }
       )
     };
   }
@@ -32,17 +28,12 @@ export async function requireAuth(): Promise<RequireAuthResult> {
   if (error || !user) {
     return {
       ok: false,
-      response: NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      response: NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401, headers: { "Cache-Control": "no-store" } }
+      )
     };
   }
 
-  return {
-    ok: true,
-    supabase,
-    user: {
-      id: user.id,
-      email: user.email ?? undefined
-    }
-  };
+  return { ok: true, supabase, user };
 }
-

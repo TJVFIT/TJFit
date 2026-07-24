@@ -13,13 +13,16 @@ type RequireAdminResult =
  * Returns supabase client (with user context) + userId if admin, else 401/403 response.
  */
 export async function requireAdmin(): Promise<RequireAdminResult> {
-  let supabase: ReturnType<typeof createServerSupabaseClient>;
+  let supabase: SupabaseClient;
   try {
-    supabase = createServerSupabaseClient();
+    supabase = await createServerSupabaseClient();
   } catch {
     return {
       ok: false,
-      response: NextResponse.json({ error: "Service temporarily unavailable." }, { status: 503 })
+      response: NextResponse.json(
+        { error: "Authentication service is not configured." },
+        { status: 503, headers: { "Cache-Control": "no-store" } }
+      )
     };
   }
 
@@ -31,7 +34,10 @@ export async function requireAdmin(): Promise<RequireAdminResult> {
   if (error || !user) {
     return {
       ok: false,
-      response: NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      response: NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401, headers: { "Cache-Control": "no-store" } }
+      )
     };
   }
 
@@ -43,21 +49,28 @@ export async function requireAdmin(): Promise<RequireAdminResult> {
       .from("profiles")
       .select("role")
       .eq("id", user.id)
-      .single();
+      .maybeSingle();
+
     if (profileError) {
-      console.error("requireAdmin: profile fetch failed", profileError);
       return {
         ok: false,
-        response: NextResponse.json({ error: "Admin check failed. Please try again." }, { status: 500 })
+        response: NextResponse.json(
+          { error: "Authorization service is unavailable." },
+          { status: 503, headers: { "Cache-Control": "no-store" } }
+        )
       };
     }
+
     if (data?.role === "admin") isAdmin = true;
   }
 
   if (!isAdmin) {
     return {
       ok: false,
-      response: NextResponse.json({ error: "Forbidden" }, { status: 403 })
+      response: NextResponse.json(
+        { error: "Forbidden" },
+        { status: 403, headers: { "Cache-Control": "no-store" } }
+      )
     };
   }
 
@@ -65,7 +78,10 @@ export async function requireAdmin(): Promise<RequireAdminResult> {
   if (!serviceClient) {
     return {
       ok: false,
-      response: NextResponse.json({ error: "Admin backend not configured." }, { status: 503 })
+      response: NextResponse.json(
+        { error: "Admin backend not configured." },
+        { status: 503, headers: { "Cache-Control": "no-store" } }
+      )
     };
   }
 

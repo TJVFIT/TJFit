@@ -1,88 +1,116 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { fulfillProgramOrderPaid } from "@/lib/checkout-fulfill-order";
-import { allowsSimulatedPaidCompletionForStoredProvider } from "@/lib/payments";
-import { readRequestJson } from "@/lib/read-request-json";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
+import {
+  exceedsDeclaredBodySize,
+  isTrustedMutationRequest
+} from "@/lib/request-security";
 import { TJFIT_COINS_PER_PROGRAM_PURCHASE } from "@/lib/tjfit-coin";
 
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function json(body: Record<string, unknown>, status = 200) {
+  return NextResponse.json(body, {
+    status,
+    headers: { "Cache-Control": "no-store" }
+  });
+}
+
 export async function POST(request: NextRequest) {
-  if (process.env.ALLOW_TEST_CHECKOUT !== "true") {
-    return NextResponse.json(
+  if (!isTrustedMutationRequest(request)) {
+    return json({ error: "Forbidden" }, 403);
+  }
+  if (exceedsDeclaredBodySize(request, 2 * 1024)) {
+    return json({ error: "Request body is too large." }, 413);
+  }
+
+  if (
+    process.env.ALLOW_TEST_CHECKOUT !== "true" ||
+    process.env.NODE_ENV === "production"
+  ) {
+    return json(
       { error: "Test order completion is disabled in this environment." },
-      { status: 403 }
+      403
     );
   }
 
-  const supabase = createServerSupabaseClient();
+  let supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>;
+  try {
+    supabase = await createServerSupabaseClient();
+  } catch {
+    return json({ error: "Authentication service is not configured." }, 503);
+  }
   const {
     data: { user },
-    error
+    error: authError
   } = await supabase.auth.getUser();
 
-  if (error || !user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (authError || !user) {
+    return json({ error: "Unauthorized" }, 401);
   }
 
-  const parsed = await readRequestJson(request);
-  if (!parsed.ok) return parsed.response;
-  const body = parsed.value as Record<string, unknown>;
-  const orderId = String(body.orderId ?? "").trim();
-  if (!orderId) {
-    return NextResponse.json({ error: "orderId is required" }, { status: 400 });
+  const body = await request.json().catch(() => null);
+  const orderId =
+    body && typeof body === "object" && !Array.isArray(body)
+      ? String((body as Record<string, unknown>).orderId ?? "").trim()
+      : "";
+
+  if (!UUID_PATTERN.test(orderId)) {
+    return json({ error: "A valid orderId is required." }, 400);
   }
 
   const adminClient = getSupabaseServerClient();
   if (!adminClient) {
-    return NextResponse.json({ error: "Server not configured" }, { status: 500 });
+    return json({ error: "Server not configured." }, 503);
   }
 
-  const { data: existingOrder } = await adminClient
-    .from("program_orders")
-    .select("id,user_id,status,discount_code,provider")
-    .eq("id", orderId)
-    .eq("user_id", user.id)
-    .maybeSingle();
+  const { data: result, error: fulfillmentError } = await adminClient.rpc(
+    "fulfill_test_program_order",
+    {
+      p_order_id: orderId,
+      p_user_id: user.id,
+      p_coins_earned: TJFIT_COINS_PER_PROGRAM_PURCHASE
+    }
+  );
 
-  if (!existingOrder) {
-    return NextResponse.json({ error: "Order not found" }, { status: 404 });
+  if (fulfillmentError || !result) {
+    const message = fulfillmentError?.message ?? "";
+    if (message.includes("order_not_found")) {
+      return json({ error: "Order not found." }, 404);
+    }
+    if (message.includes("invalid_order_provider")) {
+      return json(
+        { error: "Only local test orders can be completed directly." },
+        403
+      );
+    }
+    if (message.includes("order_not_pending")) {
+      return json({ error: "Order cannot be completed." }, 409);
+    }
+
+    return json({ error: "Order could not be completed." }, 500);
   }
 
-  if (!allowsSimulatedPaidCompletionForStoredProvider(existingOrder.provider)) {
-    return NextResponse.json(
-      { error: "This order cannot be completed from the browser. Use the configured payment gateway." },
-      { status: 403 }
-    );
-  }
+  const value = result as {
+    result?: "paid" | "already_paid";
+    wallet?: {
+      balance: number;
+      lifetime_earned: number;
+      lifetime_spent: number;
+    } | null;
+  };
 
-  if (existingOrder.status === "paid") {
-    const { data: wallet } = await adminClient
-      .from("tjfit_coin_wallets")
-      .select("balance,lifetime_earned,lifetime_spent")
-      .eq("user_id", user.id)
-      .single();
-    return NextResponse.json({
-      success: true,
-      alreadyPaid: true,
-      wallet: wallet ?? { balance: 0, lifetime_earned: 0, lifetime_spent: 0 }
-    });
-  }
-
-  const fulfilled = await fulfillProgramOrderPaid(adminClient, existingOrder.id);
-  if (!fulfilled.ok) {
-    return NextResponse.json({ error: fulfilled.error }, { status: 409 });
-  }
-
-  const { data: walletAfter } = await adminClient
-    .from("tjfit_coin_wallets")
-    .select("balance,lifetime_earned,lifetime_spent")
-    .eq("user_id", user.id)
-    .single();
-
-  return NextResponse.json({
+  return json({
     success: true,
-    coinsEarned: fulfilled.coinsEarned ?? TJFIT_COINS_PER_PROGRAM_PURCHASE,
-    wallet: walletAfter ?? { balance: 0, lifetime_earned: 0, lifetime_spent: 0 }
+    alreadyPaid: value.result === "already_paid",
+    coinsEarned:
+      value.result === "already_paid" ? 0 : TJFIT_COINS_PER_PROGRAM_PURCHASE,
+    wallet: value.wallet ?? {
+      balance: 0,
+      lifetime_earned: 0,
+      lifetime_spent: 0
+    }
   });
 }

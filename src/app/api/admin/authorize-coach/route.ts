@@ -1,20 +1,40 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readRequestJson } from "@/lib/read-request-json";
 import { requireAdmin } from "@/lib/require-admin";
+import { rateLimit } from "@/lib/rate-limit";
+import { isTrustedMutationRequest } from "@/lib/request-security";
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(request: NextRequest) {
+  if (!isTrustedMutationRequest(request)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const admin = await requireAdmin();
   if (!admin.ok) return admin.response;
 
+  const limiter = rateLimit({
+    key: `authorize-coach:${admin.userId}`,
+    limit: 10,
+    windowMs: 10 * 60_000
+  });
+  if (!limiter.success) {
+    return NextResponse.json(
+      { error: "Too many requests." },
+      {
+        status: 429,
+        headers: { "Retry-After": String(Math.ceil((limiter.resetAt - Date.now()) / 1000)) }
+      }
+    );
+  }
+
   try {
-    const parsed = await readRequestJson(request);
-    if (!parsed.ok) return parsed.response;
-    const body = parsed.value as { email?: unknown; password?: unknown };
-    const { email, password } = body;
+    const body = await request.json().catch(() => null);
+    const { email, password } = body ?? {};
     const normalizedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
 
-    if (!normalizedEmail) {
-      return NextResponse.json({ error: "Email is required." }, { status: 400 });
+    if (!emailRegex.test(normalizedEmail) || normalizedEmail.length > 254) {
+      return NextResponse.json({ error: "A valid email is required." }, { status: 400 });
     }
 
     const supabase = admin.supabase;
@@ -26,11 +46,18 @@ export async function POST(request: NextRequest) {
     }
 
     // If the user already exists as a normal customer, promote to coach.
-    const { data: existingProfile } = await supabase
+    const { data: existingProfile, error: existingProfileError } = await supabase
       .from("profiles")
       .select("id, email, role")
       .eq("email", normalizedEmail)
       .maybeSingle();
+
+    if (existingProfileError) {
+      return NextResponse.json(
+        { error: "Unable to check the existing account." },
+        { status: 503 }
+      );
+    }
 
     if (existingProfile?.id) {
       if (existingProfile.role === "admin") {
@@ -47,16 +74,18 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      const { error: updateError } = await supabase
+      const { data: updatedProfile, error: updateError } = await supabase
         .from("profiles")
         .update({ role: "coach", email: normalizedEmail })
-        .eq("id", existingProfile.id);
+        .eq("id", existingProfile.id)
+        .neq("role", "admin")
+        .select("id")
+        .maybeSingle();
 
-      if (updateError) {
-        console.error("[admin/authorize-coach] promote failed", updateError.message, updateError.code);
+      if (updateError || !updatedProfile) {
         return NextResponse.json(
-          { error: "Failed to promote existing user to coach." },
-          { status: 500 }
+          { error: "Failed to promote the existing user to coach." },
+          { status: 409 }
         );
       }
 
@@ -66,26 +95,28 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    if (typeof password !== "string" || !password.trim() || password.length < 8) {
+    if (typeof password !== "string" || password.length < 12 || password.length > 128) {
       return NextResponse.json(
-        { error: "Password is required (min 8) when creating a new coach account." },
+        { error: "Password must be between 12 and 128 characters for a new coach account." },
         { status: 400 }
       );
     }
 
     const { data: userData, error: createError } = await supabase.auth.admin.createUser({
       email: normalizedEmail,
-      password: password.trim(),
+      password,
       email_confirm: true,
-      user_metadata: {
-        requested_role: "coach",
+      app_metadata: {
+        role: "coach",
         created_by_admin: true
       }
     });
 
     if (createError) {
-      console.error("[admin/authorize-coach] createUser failed", createError.message);
-      return NextResponse.json({ error: "Failed to create coach account." }, { status: 400 });
+      return NextResponse.json(
+        { error: "Failed to create the coach account." },
+        { status: 400 }
+      );
     }
 
     if (!userData?.user?.id) {
@@ -95,23 +126,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // The `handle_new_auth_user_profile` trigger on auth.users already
-    // inserts a profiles row with role='user' (migration 20260330000500).
-    // Previously this route did INSERT here, which hit a duplicate-key error
-    // and left the new coach stuck as a plain user. UPDATE the role instead.
     const { error: profileError } = await supabase
       .from("profiles")
-      .update({ role: "coach", email: normalizedEmail })
-      .eq("id", userData.user.id);
+      .upsert(
+        {
+          id: userData.user.id,
+          email: normalizedEmail,
+          role: "coach"
+        },
+        { onConflict: "id" }
+      );
 
     if (profileError) {
-      console.error(
-        "[admin/authorize-coach] profile role update failed",
-        profileError.message,
-        profileError.code
-      );
+      await supabase.auth.admin.deleteUser(userData.user.id);
       return NextResponse.json(
-        { error: "Coach created but profile role update failed." },
+        { error: "The coach profile could not be created." },
         { status: 500 }
       );
     }
@@ -120,8 +149,10 @@ export async function POST(request: NextRequest) {
       success: true,
       message: "Coach authorized. They can now log in with this email and password."
     });
-  } catch (e) {
-    console.error("[admin/authorize-coach] crash", e);
-    return NextResponse.json({ error: "Unable to authorize coach." }, { status: 500 });
+  } catch {
+    return NextResponse.json(
+      { error: "Unable to authorize coach." },
+      { status: 500 }
+    );
   }
 }

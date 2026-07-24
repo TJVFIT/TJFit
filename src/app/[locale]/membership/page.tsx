@@ -1,64 +1,87 @@
-import { MembershipPricing } from "@/components/membership/membership-pricing";
-import { PremiumPageShell } from "@/components/premium";
-import { TJHeroStage } from "@/components/3d/hero-stage";
-import { TJ_PALETTE } from "@/components/3d/palette";
-import { Locale } from "@/lib/i18n";
-import { requireLocaleParam } from "@/lib/require-locale";
+import Link from "next/link";
+import { ArrowRight, Check, Sparkles } from "lucide-react";
 
-const HERO_COPY: Record<Locale, { title: string; sub: string }> = {
-  en: { title: "Choose Your TJFit Plan", sub: "Unlock AI coaching, full programs, and expert support." },
-  tr: { title: "TJFit Planini Sec", sub: "Yapay zeka kocluk, tam programlar ve uzman destegiyle hedeflerine ulas." },
-  ar: { title: "اختر خطة TJFit", sub: "احصل على التدريب بالذكاء الاصطناعي والبرامج الكاملة والدعم المتخصص." },
-  es: { title: "Elige Tu Plan TJFit", sub: "Desbloquea coaching con IA, programas completos y soporte experto." },
-  fr: { title: "Choisissez Votre Plan TJFit", sub: "Debloquez le coaching IA, les programmes complets et le support expert." }
-};
+import { membershipPlans } from "@/lib/content";
+import { isLocale } from "@/lib/i18n";
 
-export default function MembershipPage({ params }: { params: { locale: string } }) {
-  const locale = requireLocaleParam(params.locale);
-  const hero = HERO_COPY[locale] ?? HERO_COPY.en;
+export default async function MembershipPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  if (!isLocale(locale)) {
+    return null;
+  }
+
+  const plan = membershipPlans[0];
 
   return (
-    <PremiumPageShell>
-      <section
-        className="relative overflow-hidden rounded-3xl border px-6 py-14 sm:px-10 sm:py-16"
-        style={{
-          borderColor: TJ_PALETTE.hairline,
-          background: `radial-gradient(ellipse 80% 70% at 50% 0%, rgba(168,85,247,0.12), transparent 62%), ${TJ_PALETTE.obsidian}`
-        }}
-      >
-        <div
-          className="pointer-events-none absolute inset-0 z-0 hidden lg:block"
-          style={{ maskImage: "radial-gradient(ellipse 70% 55% at 50% 55%, black 30%, transparent 85%)" }}
-          aria-hidden
-        >
-          <TJHeroStage variant="scarab" speed={0.75} intensity={0.85} />
-        </div>
-        <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center text-center">
-          <span
-            className="mb-5 inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.24em]"
-            style={{
-              color: TJ_PALETTE.accent,
-              borderColor: "rgba(168,85,247,0.3)",
-              background: "rgba(168,85,247,0.06)"
-            }}
-          >
-            Membership
-          </span>
-          <h1
-            className="text-balance font-display font-extrabold leading-tight tracking-[-0.03em]"
-            style={{ fontSize: "clamp(32px, 5vw, 56px)" }}
-          >
-            <span className="tj-title-shimmer">{hero.title}</span>
+    <div className="page-shell py-14 sm:py-20">
+      <section className="grid gap-10 border-b border-white/10 pb-14 lg:grid-cols-[1fr_0.72fr] lg:items-end">
+        <div>
+          <span className="badge">TJFit membership / founding access</span>
+          <h1 className="mt-7 max-w-[10ch] font-display text-5xl font-semibold leading-[0.88] tracking-[-0.06em] text-white sm:text-7xl">
+            One membership. Less friction.
           </h1>
-          <p className="mt-4 max-w-xl text-sm leading-relaxed sm:text-base" style={{ color: TJ_PALETTE.textMuted }}>
-            {hero.sub}
+        </div>
+        <p className="max-w-[58ch] text-base leading-8 text-zinc-300">
+          Put programs, priority booking, challenges and member pricing inside one calm training system. Create an account now to join the founding-access queue.
+        </p>
+      </section>
+
+      <section className="grid gap-8 py-14 lg:grid-cols-[0.72fr_1.28fr]">
+        <div className="glass-panel relative overflow-hidden rounded-[2rem] border-accent-soft/20 p-7 sm:p-9">
+          <div className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-accent/20 blur-3xl" />
+          <Sparkles className="h-6 w-6 text-accent-soft" aria-hidden />
+          <p className="mt-8 font-mono text-[10px] uppercase tracking-[0.22em] text-accent-soft">
+            {plan.name}
           </p>
+          <div className="mt-5 flex items-end gap-2">
+            <span className="font-display text-6xl font-semibold tracking-[-0.06em] text-white">
+              {plan.monthlyPrice}
+            </span>
+            <span className="pb-2 text-sm text-zinc-400">TRY / month</span>
+          </div>
+          <ul className="mt-8 space-y-4 border-t border-white/10 pt-7">
+            {plan.benefits.map((benefit) => (
+              <li key={benefit} className="flex items-center gap-3 text-sm text-zinc-300">
+                <span className="grid h-6 w-6 place-items-center rounded-lg bg-accent/15 text-accent-soft">
+                  <Check className="h-3.5 w-3.5" aria-hidden />
+                </span>
+                {benefit}
+              </li>
+            ))}
+          </ul>
+          <Link
+            href={`/${locale}/signup?intent=membership`}
+            className="gradient-button mt-9 inline-flex w-full items-center justify-center gap-2 rounded-2xl px-5 py-3.5 text-sm font-semibold"
+          >
+            Join founding access
+            <ArrowRight className="h-4 w-4" aria-hidden />
+          </Link>
+          <p className="mt-4 text-center text-xs leading-5 text-zinc-500">
+            No membership charge is taken during account creation.
+          </p>
+        </div>
+
+        <div className="grid gap-px overflow-hidden rounded-[2rem] border border-white/10 bg-white/10 sm:grid-cols-2">
+          {[
+            ["01", "Train", "Follow structured programs with clear weekly progression and practical recovery direction."],
+            ["02", "Adapt", "Use TJAI’s safety-gated matching to narrow the catalog around your real training setup."],
+            ["03", "Connect", "Get priority access as verified coaches and group training experiences enter the platform."],
+            ["04", "Save", "Use member pricing and TJFit Coins across eligible programs and challenge entries."]
+          ].map(([number, title, description]) => (
+            <article key={number} className="min-h-52 bg-background p-7 sm:p-8">
+              <p className="font-mono text-[10px] text-accent-soft">{number}</p>
+              <h2 className="mt-10 font-display text-2xl font-semibold tracking-[-0.04em] text-white">
+                {title}
+              </h2>
+              <p className="mt-3 text-sm leading-7 text-zinc-400">{description}</p>
+            </article>
+          ))}
         </div>
       </section>
 
-      <div className="reveal-section tj-whirl">
-        <MembershipPricing locale={locale} />
+      <div className="border-t border-white/10 pt-8 text-sm leading-7 text-zinc-500">
+        Membership availability, benefits and pricing can vary during the founding rollout. Final billing terms are shown before any paid activation.
       </div>
-    </PremiumPageShell>
+    </div>
   );
 }
