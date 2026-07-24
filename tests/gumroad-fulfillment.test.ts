@@ -433,4 +433,66 @@ describe("subscription lifecycle events", () => {
     expect(res.action).toContain("noop");
     expect(writes.length).toBe(0);
   });
+
+  // --- anti-forgery: lifecycle events carry no sale_id and are NOT re-verified
+  // against Gumroad, so they must only ever act on a subscription we recorded
+  // from an API-verified first charge (matched by gumroad_subscription_id).
+
+  it("does NOT elevate a core account to a paid tier from a forged updated event (no verified subscription)", async () => {
+    // Attacker knows a real account email and posts a forged subscription_updated
+    // with tjfit_tier=apex but no subscription_id we ever issued. profiles would
+    // resolve the email, but resolution must ignore it and refuse to grant.
+    const resolve = (table: string): Result => {
+      if (table === "profiles") return { data: { id: "attacker-user" } };
+      if (table === "user_subscriptions") return { data: null, error: null };
+      return { data: null };
+    };
+    const { admin, writes } = createFakeAdmin({ resolve });
+    const res = await handleSubscriptionEvent(
+      "subscription_updated",
+      { email: "attacker@known.com", url_params: { tjfit_tier: "apex", tjfit_billing_mode: "annual" } },
+      admin
+    );
+    expect(res.ok).toBe(true);
+    expect(res.action).toContain("noop");
+    // the critical assertion: no tier was written at all
+    expect(findWrite(writes, "user_subscriptions", "upsert")).toBeUndefined();
+  });
+
+  it("does NOT downgrade a victim from a forged subscription_ended matched only by email", async () => {
+    // Forged subscription_ended with a victim's email but no real subscription_id
+    // must not revoke their paid access.
+    const resolve = (table: string, ops: Op[]): Result => {
+      if (table === "profiles") return { data: { id: "victim-user" } };
+      if (table === "user_subscriptions" && ops.some((o) => o.method === "select"))
+        return { data: { user_id: "victim-user", tier: "apex", current_period_end: null } };
+      return { data: null, error: null };
+    };
+    const { admin, writes } = createFakeAdmin({ resolve });
+    const res = await handleSubscriptionEvent("subscription_ended", { email: "victim@known.com" }, admin);
+    expect(res.ok).toBe(true);
+    expect(res.action).toContain("noop");
+    // the victim's tier must be untouched — no revocation write
+    expect(findWrite(writes, "user_subscriptions", "upsert")).toBeUndefined();
+    expect(writes.length).toBe(0);
+  });
+
+  it("refreshes an existing paid subscription's period without changing its tier", async () => {
+    const resolve = (table: string, ops: Op[]): Result => {
+      if (table === "user_subscriptions" && ops.some((o) => o.method === "select"))
+        return { data: { user_id: "u1", tier: "pro", current_period_end: null } };
+      return { data: null, error: null };
+    };
+    const { admin, writes } = createFakeAdmin({ resolve });
+    const res = await handleSubscriptionEvent(
+      "subscription_updated",
+      // even if a forged event claims apex, the stored tier wins
+      { subscription_id: "gsub_1", recurrence: "monthly", url_params: { tjfit_tier: "apex" } },
+      admin
+    );
+    expect(res.ok).toBe(true);
+    const row = findWrite(writes, "user_subscriptions", "upsert")!.payload as Record<string, unknown>;
+    expect(row.tier).toBe("pro"); // NOT elevated to apex
+    expect(row.status).toBe("active");
+  });
 });

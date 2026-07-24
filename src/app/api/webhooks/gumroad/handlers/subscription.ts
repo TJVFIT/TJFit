@@ -29,8 +29,7 @@ import {
   computeSubscriptionPeriodEnd,
   resolveSubscriptionPlan,
   upsertUserSubscription,
-  type BillingMode,
-  type PaidTier
+  type BillingMode
 } from "./sale";
 
 export type SubscriptionEventPayload = {
@@ -56,43 +55,32 @@ type ExistingSub = {
 };
 
 /**
- * Resolve the user_subscriptions row this event targets. Matches on the stored
- * Gumroad subscription id first (set on the first charge), then on the buyer
- * email via profiles. Returns null when neither locates a user we know.
+ * Resolve the user_subscriptions row this event targets.
+ *
+ * SECURITY (anti-forgery): subscription lifecycle events carry NO sale_id, so —
+ * unlike the sale and refund paths — they cannot be re-verified against the
+ * Gumroad API. We therefore trust them to act ONLY on a subscription we already
+ * recorded from an API-verified first charge, matched by the
+ * `gumroad_subscription_id` we stored then. We deliberately do NOT fall back to
+ * the buyer email: on a lifecycle event the email is the raw, forgeable webhook
+ * body (contrast the refund path, where the email comes from the API-confirmed
+ * sale). Trusting it would let a forged event grant a paid tier to — or revoke
+ * one from — any account whose email an attacker knows, using only the
+ * semi-public seller_id. Unknown/unmatched subscription ids resolve to null and
+ * are treated as safe no-ops by the callers.
  */
 async function resolveExistingSubscription(
   admin: SupabaseClient,
   payload: SubscriptionEventPayload
 ): Promise<ExistingSub | null> {
   const subId = payload.subscription_id?.trim();
-  if (subId) {
-    const { data } = await admin
-      .from("user_subscriptions")
-      .select("user_id, tier, current_period_end")
-      .eq("gumroad_subscription_id", subId)
-      .maybeSingle();
-    if (data?.user_id) return data as ExistingSub;
-  }
-
-  const email = payload.email?.trim().toLowerCase();
-  if (email) {
-    const { data: profile } = await admin
-      .from("profiles")
-      .select("id")
-      .eq("email", email)
-      .maybeSingle();
-    if (profile?.id) {
-      const { data: sub } = await admin
-        .from("user_subscriptions")
-        .select("user_id, tier, current_period_end")
-        .eq("user_id", profile.id)
-        .maybeSingle();
-      if (sub?.user_id) return sub as ExistingSub;
-      // Known user, no subscription row yet — return a stub so a restart/update
-      // carrying an explicit tier can still create one.
-      return { user_id: profile.id, tier: "core", current_period_end: null };
-    }
-  }
+  if (!subId) return null;
+  const { data } = await admin
+    .from("user_subscriptions")
+    .select("user_id, tier, current_period_end")
+    .eq("gumroad_subscription_id", subId)
+    .maybeSingle();
+  if (data?.user_id) return data as ExistingSub;
   return null;
 }
 
@@ -128,23 +116,21 @@ export async function handleSubscriptionEvent(
 
   // subscription_updated / subscription_restarted (and the generic
   // "subscription" alias): the membership is (still) active. Keep the paid tier
-  // and refresh the period. If the row is a fresh stub with no paid tier, try
-  // to adopt an explicit checkout tier from the event params.
-  const plan = resolveSubscriptionPlan(payload);
-  let tier: "core" | "pro" | "apex" = existing.tier;
-  let billingMode: BillingMode | undefined;
-  if (existing.tier === "core" && plan) {
-    tier = plan.tier as PaidTier;
-    billingMode = plan.billingMode;
-  } else if (plan) {
-    billingMode = plan.billingMode;
-  }
-
+  // the verified first charge already granted and refresh the period.
+  //
+  // SECURITY: we NEVER elevate a tier here. Only the API-verified first-charge
+  // `sale` event (handlers/sale.ts) may grant a paid tier — a lifecycle event's
+  // tier params are unverified and forgeable. A known subscription that is
+  // currently 'core' (e.g. already ended) therefore stays put; a genuine
+  // restart re-charges and arrives as a fresh, verified `sale`.
+  const tier: "core" | "pro" | "apex" = existing.tier;
   if (tier === "core") {
-    // Active event but we can't tell which paid tier — leave access unchanged
-    // rather than guess. Record as a benign no-op.
-    return { ok: true, action: `${eventType}:noop_no_tier` };
+    // No paid tier on record to refresh — do not conjure one from the event.
+    return { ok: true, action: `${eventType}:noop_no_paid_tier` };
   }
+  // Period cadence only (never the tier). Prefer Gumroad's recurrence; fall back
+  // to an explicit checkout billing mode if the event echoes one.
+  const billingMode: BillingMode | undefined = resolveSubscriptionPlan(payload)?.billingMode;
 
   const periodStart = new Date().toISOString();
   const periodEnd = computeSubscriptionPeriodEnd(periodStart, {
