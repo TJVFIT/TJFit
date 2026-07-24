@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { use, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { PremiumPageShell } from "@/components/premium";
 import type { Locale } from "@/lib/i18n";
@@ -16,8 +16,8 @@ type FeedItem = {
   profile: { id: string; username: string; display_name: string; avatar_url: string | null } | null;
 };
 
-export default function FeedPage({ params }: { params: Promise<{ locale: string }> }) {
-  const locale = use(params).locale as Locale;
+export default function FeedPage({ params }: { params: { locale: string } }) {
+  const locale = params.locale as Locale;
   const [items, setItems] = useState<FeedItem[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);

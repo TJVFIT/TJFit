@@ -12,14 +12,13 @@ export const dynamic = "force-dynamic";
 export default async function ProgramPage({
   params
 }: {
-  params: Promise<{ locale: string; slug: string }>;
+  params: { locale: string; slug: string };
 }) {
-  const { locale: localeParam, slug } = await params;
-  const locale = requireLocaleParam(localeParam);
-  const path = `/${locale}/bundles/${slug}/program`;
+  const locale = requireLocaleParam(params.locale);
+  const path = `/${locale}/bundles/${params.slug}/program`;
   const { supabase, user } = await requireAuthenticatedUser(locale, path);
 
-  const bundle = getBundle(slug);
+  const bundle = getBundle(params.slug);
   if (!bundle) notFound();
   const admin = !!user.email && isAdminEmail(user.email);
   if (!admin) {

@@ -13,11 +13,7 @@ export function createServerSupabaseClient() {
     throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY");
   }
 
-  // Next 15 still supports synchronous request-cookie access for compatibility,
-  // although the public type is Promise-based ahead of Next 16.
-  const cookieStore = cookies() as unknown as Awaited<
-    ReturnType<typeof cookies>
-  >;
+  const cookieStore = cookies();
 
   return createServerClient(supabaseUrl, supabaseAnonKey, {
     cookies: {

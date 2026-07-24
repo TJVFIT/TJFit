@@ -3,9 +3,8 @@ import { ProtectedRoute } from "@/components/protected-route";
 import { gateCoachDashboardRoute } from "@/lib/coach-area-server";
 import { requireLocaleParam } from "@/lib/require-locale";
 
-export default async function CoachDashboardPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale: localeParam } = await params;
-  const locale = requireLocaleParam(localeParam);
+export default async function CoachDashboardPage({ params }: { params: { locale: string } }) {
+  const locale = requireLocaleParam(params.locale);
   await gateCoachDashboardRoute(locale);
 
   return (

@@ -24,12 +24,11 @@ export default async function CoachTermsPage({
   params,
   searchParams
 }: {
-  params: Promise<{ locale: string }>;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  params: { locale: string };
+  searchParams: Record<string, string | string[] | undefined>;
 }) {
-  const [{ locale: localeParam }, query] = await Promise.all([params, searchParams]);
-  const locale = requireLocaleParam(localeParam);
-  const redirectTo = safeRedirectPath(locale, query.next);
+  const locale = requireLocaleParam(params.locale);
+  const redirectTo = safeRedirectPath(locale, searchParams.next);
   const termsVersion = getCoachTermsVersion();
 
   let supabase: ReturnType<typeof createServerSupabaseClient>;

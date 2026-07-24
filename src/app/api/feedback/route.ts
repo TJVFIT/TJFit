@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readRequestJson } from "@/lib/read-request-json";
 import { rateLimit } from "@/lib/rate-limit";
-import { getClientAddress } from "@/lib/request-security";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 const VALID_TYPES = ["complaint", "suggestion", "feedback", "help_request", "refund_request"] as const;
@@ -9,7 +8,10 @@ const VALID_TYPES = ["complaint", "suggestion", "feedback", "help_request", "ref
 export async function POST(request: NextRequest) {
   try {
     const limiter = await rateLimit({
-      key: getClientAddress(request),
+      key:
+        request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+        request.ip ??
+        "unknown",
       limit: 10,
       windowMs: 60_000
     });

@@ -3,12 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { rateLimit } from "@/lib/rate-limit";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
-export async function POST(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
+export async function POST(request: NextRequest, { params }: { params: { slug: string } }) {
   const admin = getSupabaseServerClient();
   if (!admin) return NextResponse.json({ error: "Server not configured" }, { status: 500 });
 
-  const { slug: slugParam } = await params;
-  const slug = decodeURIComponent(slugParam ?? "").trim().toLowerCase();
+  const slug = decodeURIComponent(params.slug ?? "").trim().toLowerCase();
   if (!slug) return NextResponse.json({ error: "Invalid slug" }, { status: 400 });
 
   const ip =

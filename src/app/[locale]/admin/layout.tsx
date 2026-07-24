@@ -11,10 +11,9 @@ export default async function AdminLayout({
   params
 }: {
   children: ReactNode;
-  params: Promise<{ locale: string }>;
+  params: { locale: string };
 }) {
-  const { locale: localeParam } = await params;
-  const locale = requireLocaleParam(localeParam);
+  const locale = requireLocaleParam(params.locale);
 
   let authClient: ReturnType<typeof createServerSupabaseClient>;
   try {

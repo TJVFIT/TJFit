@@ -13,11 +13,10 @@ import { supportedLocales } from "@/lib/i18n";
 import { requireLocaleParam } from "@/lib/require-locale";
 import { getSiteUrl } from "@/lib/site-url";
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
+export function generateMetadata({ params }: { params: { locale: string } }) {
   const site = getSiteUrl();
-  const url = `${site}/${locale}/bundles`;
-  const copy = getBundlesCopy(locale);
+  const url = `${site}/${params.locale}/bundles`;
+  const copy = getBundlesCopy(params.locale);
   const languages: Record<string, string> = {};
   for (const loc of supportedLocales) languages[loc] = `${site}/${loc}/bundles`;
   languages["x-default"] = `${site}/en/bundles`;
@@ -34,9 +33,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   };
 }
 
-export default async function BundlesPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale: localeParam } = await params;
-  const locale = requireLocaleParam(localeParam);
+export default function BundlesPage({ params }: { params: { locale: string } }) {
+  const locale = requireLocaleParam(params.locale);
   const copy = getBundlesCopy(locale);
   // Serializable facts for the client-side finder quiz + comparison table —
   // real catalogue metadata only, prices straight from priceUsd.

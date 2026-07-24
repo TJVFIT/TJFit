@@ -2,31 +2,23 @@ import { NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { isAdminEmail } from "@/lib/auth-utils";
+import { getCoachTermsVersion } from "@/lib/coach-terms-version";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 type Role = "admin" | "coach";
 
 type RequireCoachOrAdminResult =
-  | {
-      ok: true;
-      supabase: SupabaseClient;
-      userId: string;
-      userEmail: string | null;
-      role: Role;
-    }
+  | { ok: true; supabase: SupabaseClient; userId: string; role: Role }
   | { ok: false; response: NextResponse };
 
 export async function requireCoachOrAdmin(): Promise<RequireCoachOrAdminResult> {
-  let supabase: SupabaseClient;
+  let supabase: ReturnType<typeof createServerSupabaseClient>;
   try {
-    supabase = await createServerSupabaseClient();
+    supabase = createServerSupabaseClient();
   } catch {
     return {
       ok: false,
-      response: NextResponse.json(
-        { error: "Authentication service is not configured." },
-        { status: 503, headers: { "Cache-Control": "no-store" } }
-      )
+      response: NextResponse.json({ error: "Service temporarily unavailable." }, { status: 503 })
     };
   }
 
@@ -38,10 +30,7 @@ export async function requireCoachOrAdmin(): Promise<RequireCoachOrAdminResult> 
   if (error || !user) {
     return {
       ok: false,
-      response: NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401, headers: { "Cache-Control": "no-store" } }
-      )
+      response: NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     };
   }
 
@@ -50,82 +39,74 @@ export async function requireCoachOrAdmin(): Promise<RequireCoachOrAdminResult> 
     if (!serviceClient) {
       return {
         ok: false,
-        response: NextResponse.json(
-          { error: "Admin backend not configured." },
-          { status: 503, headers: { "Cache-Control": "no-store" } }
-        )
+        response: NextResponse.json({ error: "Admin backend not configured." }, { status: 503 })
       };
     }
     return {
       ok: true,
       supabase: serviceClient,
       userId: user.id,
-      userEmail: user.email ?? null,
       role: "admin"
     };
   }
 
-  const { data: profile, error: profileError } = await supabase
+  const { data: profile } = await supabase
     .from("profiles")
     .select("role")
     .eq("id", user.id)
     .maybeSingle();
-
-  if (profileError) {
-    return {
-      ok: false,
-      response: NextResponse.json(
-        { error: "Authorization service is unavailable." },
-        { status: 503, headers: { "Cache-Control": "no-store" } }
-      )
-    };
-  }
 
   if (profile?.role === "admin") {
     const serviceClient = getSupabaseServerClient();
     if (!serviceClient) {
       return {
         ok: false,
-        response: NextResponse.json(
-          { error: "Admin backend not configured." },
-          { status: 503, headers: { "Cache-Control": "no-store" } }
-        )
+        response: NextResponse.json({ error: "Admin backend not configured." }, { status: 503 })
       };
     }
     return {
       ok: true,
       supabase: serviceClient,
       userId: user.id,
-      userEmail: user.email ?? null,
       role: "admin"
     };
   }
 
   if (profile?.role === "coach") {
+    const expected = getCoachTermsVersion();
+    const { data: acceptRow } = await supabase
+      .from("coach_terms_acceptance")
+      .select("terms_version")
+      .eq("coach_id", user.id)
+      .order("accepted_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (acceptRow?.terms_version !== expected) {
+      return {
+        ok: false,
+        response: NextResponse.json(
+          { error: "Accept the coach terms to use this feature.", code: "coach_terms_required" },
+          { status: 403 }
+        )
+      };
+    }
     const serviceClient = getSupabaseServerClient();
     if (!serviceClient) {
       return {
         ok: false,
-        response: NextResponse.json(
-          { error: "Coach backend not configured." },
-          { status: 503, headers: { "Cache-Control": "no-store" } }
-        )
+        response: NextResponse.json({ error: "Coach backend not configured." }, { status: 503 })
       };
     }
     return {
       ok: true,
       supabase: serviceClient,
       userId: user.id,
-      userEmail: user.email ?? null,
       role: "coach"
     };
   }
 
   return {
     ok: false,
-    response: NextResponse.json(
-      { error: "Forbidden" },
-      { status: 403, headers: { "Cache-Control": "no-store" } }
-    )
+    response: NextResponse.json({ error: "Forbidden" }, { status: 403 })
   };
 }

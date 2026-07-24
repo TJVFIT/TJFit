@@ -6,12 +6,6 @@ import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { llmCall } from "@/lib/tjai/llm";
 import { isTaskAvailable } from "@/lib/tjai/provider-policy";
 
-type PlanWithWorkoutSchedule = {
-  program?: {
-    weeks?: Array<{ days?: unknown[] } | null>;
-  };
-};
-
 function weekStartIso() {
   const now = new Date();
   const day = now.getUTCDay();
@@ -104,8 +98,7 @@ Write 1 insight. No intro phrase like "Great job" or "Here's your insight". Star
     }
   }
 
-  const workoutSchedule = planRow?.plan_json as PlanWithWorkoutSchedule | null;
-  const nextWorkouts = (workoutSchedule?.program?.weeks?.[Math.max(0, currentWeek - 1)]?.days ?? []).slice(0, 3);
+  const nextWorkouts = ((planRow?.plan_json as any)?.program?.weeks?.[Math.max(0, currentWeek - 1)]?.days ?? []).slice(0, 3);
   const latestProgress = (progressEntries ?? []).at(-1) ?? null;
   const firstProgress = (progressEntries ?? [])[0] ?? null;
   const currentWeight = latestProgress?.weight_kg ? Number(latestProgress.weight_kg) : null;

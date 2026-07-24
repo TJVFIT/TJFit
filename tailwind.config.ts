@@ -1,93 +1,122 @@
 import type { Config } from "tailwindcss";
-import tailwindcssAnimate from "tailwindcss-animate";
 
 const config: Config = {
-  darkMode: ["class"],
-  content: [
-    "./src/pages/**/*.{ts,tsx}",
-    "./src/components/**/*.{ts,tsx}",
-    "./src/app/**/*.{ts,tsx}"
-  ],
+  content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
-    container: {
-      center: true,
-      padding: "1rem",
-      screens: {
-        "2xl": "1400px"
-      }
-    },
     extend: {
-      colors: {
-        background: "rgb(var(--background) / <alpha-value>)",
-        surface: "rgb(var(--surface) / <alpha-value>)",
-        text: "rgb(var(--text) / <alpha-value>)",
-        muted: "rgb(var(--muted) / <alpha-value>)",
-        accent: "rgb(var(--accent) / <alpha-value>)",
-        "accent-soft": "rgb(var(--accent-soft) / <alpha-value>)",
-        border: "rgb(var(--border) / <alpha-value>)",
-        card: "rgb(var(--card) / <alpha-value>)",
-        "card-foreground": "rgb(var(--text) / <alpha-value>)",
-        "muted-foreground": "rgb(var(--muted) / <alpha-value>)"
+      /** Editorial motion curves — pair with duration-* utilities */
+      transitionTimingFunction: {
+        /** Primary UI easing — confident stop, minimal overshoot */
+        premium: "cubic-bezier(0.2, 0.8, 0.2, 1)",
+        /** Playful entrances — subtle overshoot */
+        spring: "cubic-bezier(0.34, 1.56, 0.64, 1)",
+        /** Soft landings — fast out, gentle settle */
+        "out-soft": "cubic-bezier(0.16, 1, 0.3, 1)"
       },
-      fontFamily: {
-        sans: ["var(--font-outfit)", "ui-sans-serif", "system-ui", "sans-serif"],
-        display: ["var(--font-space-grotesk)", "ui-sans-serif", "system-ui", "sans-serif"],
-        mono: ["var(--font-space-mono)", "ui-monospace", "monospace"]
-      },
-      backgroundImage: {
-        "hero-depth":
-          "radial-gradient(circle at 72% 35%, rgb(var(--accent) / 0.18), transparent 34%), radial-gradient(circle at 18% 80%, rgb(var(--accent-soft) / 0.10), transparent 36%)"
-      },
-      boxShadow: {
-        diffusion: "0 30px 80px -44px rgba(5, 18, 48, 0.9)",
-        inset: "inset 0 1px 0 rgba(255,255,255,0.08)"
-      },
-      animation: {
-        "marquee-slow": "marquee 28s linear infinite",
-        float: "float 6s ease-in-out infinite",
-        pulseSoft: "pulseSoft 2.8s ease-in-out infinite",
-        loaderCircle: "loaderCircle 5s linear infinite",
-        loaderLetter: "loaderLetter 3s infinite"
+      /** Canonical duration scale — use with motion-reduce-safe components */
+      transitionDuration: {
+        120: "120ms",
+        180: "180ms",
+        240: "240ms",
+        280: "280ms",
+        320: "320ms",
+        480: "480ms",
+        720: "720ms",
+        1000: "1000ms"
       },
       keyframes: {
-        marquee: {
-          from: { transform: "translate3d(0,0,0)" },
-          to: { transform: "translate3d(-50%,0,0)" }
+        /** Opacity + rise — hero lines, editorial blocks */
+        fadeUp: {
+          "0%": { opacity: "0", transform: "translateY(14px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" }
         },
-        float: {
-          "0%, 100%": { transform: "translate3d(0,0,0)" },
-          "50%": { transform: "translate3d(0,-10px,0)" }
+        /** Opacity + scale — modals, popovers */
+        scaleIn: {
+          "0%": { opacity: "0", transform: "scale(0.95)" },
+          "100%": { opacity: "1", transform: "scale(1)" }
         },
-        pulseSoft: {
-          "0%, 100%": { opacity: "0.45", transform: "scale(0.94)" },
-          "50%": { opacity: "1", transform: "scale(1)" }
+        /** Opacity + blur resolve — cinematic text reveals */
+        blurIn: {
+          "0%": { opacity: "0", filter: "blur(10px)" },
+          "100%": { opacity: "1", filter: "blur(0)" }
         },
-        loaderLetter: {
-          "0%, 100%": { opacity: "0.4", transform: "translateY(0)" },
-          "20%": { opacity: "1", transform: "scale(1.15)" },
-          "40%": { opacity: "0.7", transform: "translateY(0)" }
+        /** Edge sheen — skeletons, chrome highlights */
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" }
         },
-        loaderCircle: {
-          "0%": {
-            transform: "rotate(90deg)",
-            boxShadow:
-              "0 6px 12px 0 rgb(var(--accent-soft)) inset, 0 12px 18px 0 rgb(var(--accent)) inset, 0 36px 36px 0 #132d72 inset"
-          },
-          "50%": {
-            transform: "rotate(270deg)",
-            boxShadow:
-              "0 6px 12px 0 #86a9ff inset, 0 12px 6px 0 #386ff0 inset, 0 24px 36px 0 rgb(var(--accent)) inset"
-          },
-          "100%": {
-            transform: "rotate(450deg)",
-            boxShadow:
-              "0 6px 12px 0 rgb(var(--accent-soft)) inset, 0 12px 18px 0 rgb(var(--accent)) inset, 0 36px 36px 0 #132d72 inset"
-          }
+        /** Ambient halo — badges, orbital accents */
+        breathe: {
+          "0%,100%": { opacity: "0.6", transform: "scale(1)" },
+          "50%": { opacity: "1", transform: "scale(1.04)" }
+        },
+        /** Background parallax garnish — meshes, grids */
+        drift: {
+          "0%,100%": { transform: "translateY(0) translateX(0)" },
+          "50%": { transform: "translateY(-12px) translateX(4px)" }
         }
+      },
+      animation: {
+        "fade-up": "fadeUp 560ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards",
+        "scale-in": "scaleIn 220ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards",
+        "blur-in": "blurIn 720ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards",
+        shimmer: "shimmer 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite",
+        breathe: "breathe 3.8s cubic-bezier(0.2, 0.8, 0.2, 1) infinite",
+        drift: "drift 22s ease-in-out infinite"
+      },
+      borderRadius: {
+        /** ~28px — large shells (auth panels, modals, legacy “28px” cards) */
+        shell: "1.75rem"
+      },
+      colors: {
+        background: "#0A0A0B",
+        surface: {
+          DEFAULT: "#111215",
+          elevated: "#15171A",
+          2: "#0E0F12",
+          /** Hover / sticky-bar surface — top of the elevation stack. */
+          3: "#1E2126"
+        },
+        divider: "#1E2028",
+        muted: "#A1A1AA",
+        dim: "#6B6B76",
+        faint: "#71717A",
+        bright: "#D4D4D8",
+        /** Primary brand accent — electric violet. */
+        accent: "#A855F7",
+        /** Soft purple — muted accent / hover tints. */
+        "accent-muted": "#C4B5FD",
+        /** Violet — secondary brand accent (historical name "sky"). */
+        "accent-sky": "#7C3AED",
+        /** Soft purple — historical name "violet"; kept for back-compat. */
+        "accent-violet": "#C4B5FD",
+        /** Bright lavender-violet — premium / AI / Apex / TJAI badges. */
+        premium: "#C4B5FD",
+        success: "#22C55E",
+        /** Softer red than the legacy #EF4444 — pairs with the violet accent. */
+        danger: "#F87171",
+        warning: "#F59E0B",
+        text: "#FFFFFF"
+      },
+      fontFamily: {
+        sans: ["var(--font-sans)", "Manrope", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "Space Grotesk", "ui-sans-serif", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "JetBrains Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"]
+      },
+      boxShadow: {
+        glass: "0 20px 80px rgba(0, 0, 0, 0.45)",
+        "lux-glow": "0 0 60px -12px rgba(168, 85, 247, 0.35)",
+        "lux-violet": "0 18px 50px -24px rgba(124, 58, 237, 0.30)",
+        "premium-card": "0 12px 40px -16px rgba(0,0,0,0.5)"
+      },
+      backgroundImage: {
+        /** Premium hero wash — electric violet + violet (brand-only) */
+        "hero-gradient":
+          "radial-gradient(circle at 50% 0%, rgba(168,85,247,0.16), transparent 42%), radial-gradient(circle at 100% 40%, rgba(124,58,237,0.10), transparent 38%)"
       }
     }
   },
-  plugins: [tailwindcssAnimate]
+  plugins: []
 };
 
 export default config;

@@ -34,23 +34,16 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { hasPurchasedProgram } from "@/lib/purchases";
 import { isAdminEmail } from "@/lib/auth-utils";
 
-export const dynamic = "force-dynamic";
-
 export function generateStaticParams() {
   return listBundleSlugs().map((slug) => ({ slug }));
 }
 
-export async function generateMetadata({
-  params
-}: {
-  params: Promise<{ locale: string; slug: string }>;
-}) {
-  const { locale, slug } = await params;
-  const bundle = getBundle(slug);
-  if (!bundle) return { title: getBundlesCopy(locale).detail.metaFallbackTitle };
+export function generateMetadata({ params }: { params: { locale: string; slug: string } }) {
+  const bundle = getBundle(params.slug);
+  if (!bundle) return { title: getBundlesCopy(params.locale).detail.metaFallbackTitle };
   const site = getSiteUrl();
-  const url = `${site}/${locale}/bundles/${bundle.slug}`;
-  const card = localizeBundle(bundle, locale);
+  const url = `${site}/${params.locale}/bundles/${bundle.slug}`;
+  const card = localizeBundle(bundle, params.locale);
   const languages: Record<string, string> = {};
   for (const loc of supportedLocales) {
     languages[loc] = `${site}/${loc}/bundles/${bundle.slug}`;
@@ -73,11 +66,10 @@ export async function generateMetadata({
 export default async function BundleDetailPage({
   params
 }: {
-  params: Promise<{ locale: string; slug: string }>;
+  params: { locale: string; slug: string };
 }) {
-  const { locale: localeParam, slug } = await params;
-  const locale = requireLocaleParam(localeParam);
-  const bundle = getBundle(slug);
+  const locale = requireLocaleParam(params.locale);
+  const bundle = getBundle(params.slug);
   if (!bundle) notFound();
 
   const copy = getBundlesCopy(locale);

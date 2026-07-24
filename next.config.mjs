@@ -2,10 +2,6 @@ import { withSentryConfig } from "@sentry/nextjs";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // ESLint runs as an explicit release gate via `npm run lint`.
-  eslint: {
-    ignoreDuringBuilds: true
-  },
   transpilePackages: [
     "three",
     "@react-three/fiber",

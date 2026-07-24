@@ -3,9 +3,8 @@ import { ProtectedRoute } from "@/components/protected-route";
 import { requireLocaleParam } from "@/lib/require-locale";
 import { requireAuthenticatedUser } from "@/lib/require-authenticated-server";
 
-export default async function SettingsProfilePage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale: localeParam } = await params;
-  const locale = requireLocaleParam(localeParam);
+export default async function SettingsProfilePage({ params }: { params: { locale: string } }) {
+  const locale = requireLocaleParam(params.locale);
   await requireAuthenticatedUser(locale, `/${locale}/settings/profile`);
 
   return (

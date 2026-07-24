@@ -3,9 +3,8 @@ import { PeopleSearchErrorFallback } from "@/components/people-search-error-fall
 import { PeopleSearchView } from "@/components/people-search-view";
 import { requireLocaleParam } from "@/lib/require-locale";
 
-export default async function ProfileSearchPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale: localeParam } = await params;
-  const locale = requireLocaleParam(localeParam);
+export default function ProfileSearchPage({ params }: { params: { locale: string } }) {
+  const locale = requireLocaleParam(params.locale);
 
   return (
     <ClientErrorBoundary fallback={<PeopleSearchErrorFallback locale={locale} />} sentryScope="profile-search">

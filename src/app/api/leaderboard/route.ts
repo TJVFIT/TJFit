@@ -15,15 +15,6 @@ type SnapshotRow = {
   week_start?: string | null;
 };
 
-type LeaderboardProfile = {
-  id: string;
-  username: string | null;
-  full_name: string | null;
-  avatar_url: string | null;
-  is_verified: boolean | null;
-  current_streak: number | null;
-};
-
 function getMetricColumn(type: LeaderboardType) {
   switch (type) {
     case "blog":
@@ -87,19 +78,19 @@ export async function GET(request: NextRequest) {
   const userIds = [...new Set(rows.map((r) => r.user_id))];
   const { data: profiles } = userIds.length
     ? await adminClient.from("profiles").select("id,username,full_name,avatar_url,is_verified,current_streak").in("id", userIds)
-    : { data: [] as LeaderboardProfile[] };
-  const profileById = new Map<string, LeaderboardProfile>((profiles ?? []).map((profile) => [profile.id, profile]));
+    : { data: [] as Array<Record<string, unknown>> };
+  const profileById = new Map((profiles ?? []).map((p: any) => [p.id, p]));
 
   const items = rows.map((row, idx) => {
-    const profile = profileById.get(row.user_id);
+    const profile: any = profileById.get(row.user_id) ?? {};
     return {
       rank: idx + 1,
       userId: row.user_id,
-      username: profile?.username ?? null,
-      displayName: profile?.full_name ?? profile?.username ?? "TJFit User",
-      avatarUrl: profile?.avatar_url ?? null,
-      isVerified: Boolean(profile?.is_verified),
-      streak: profile?.current_streak ?? row.streak_days ?? 0,
+      username: profile.username ?? null,
+      displayName: profile.full_name ?? profile.username ?? "TJFit User",
+      avatarUrl: profile.avatar_url ?? null,
+      isVerified: Boolean(profile.is_verified),
+      streak: profile.current_streak ?? row.streak_days ?? 0,
       blogViews: row.blog_views ?? 0,
       postsCount: row.posts_count ?? 0,
       programsDone: row.programs_done ?? 0

@@ -2,12 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { requireAuth } from "@/lib/require-auth";
 
-export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function POST(_req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const auth = await requireAuth();
     if (!auth.ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { id } = await params;
+    const id = params.id;
     if (!id) {
       return NextResponse.json({ error: "Missing suggestion id" }, { status: 400 });
     }

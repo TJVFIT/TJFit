@@ -69,16 +69,14 @@ const PAGE_METADATA: Record<Locale, { title: string; description: string }> = {
   }
 };
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
-  const { locale: localeParam } = await params;
-  const locale = requireLocaleParam(localeParam);
+export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
+  const locale = requireLocaleParam(params.locale);
   const meta = PAGE_METADATA[locale] ?? PAGE_METADATA.en;
   return { title: meta.title, description: meta.description };
 }
 
-export default async function ProPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale: localeParam } = await params;
-  const locale = requireLocaleParam(localeParam);
+export default function ProPage({ params }: { params: { locale: string } }) {
+  const locale = requireLocaleParam(params.locale);
   const hero = HERO_COPY[locale] ?? HERO_COPY.en;
 
   return (

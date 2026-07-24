@@ -30,9 +30,8 @@ const PAGE_METADATA: Record<Locale, { title: string; description: string }> = {
   }
 };
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
-  const { locale: localeParam } = await params;
-  const locale = requireLocaleParam(localeParam);
+export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
+  const locale = requireLocaleParam(params.locale);
   const meta = PAGE_METADATA[locale] ?? PAGE_METADATA.en;
   return {
     title: meta.title,
@@ -41,15 +40,14 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   };
 }
 
-export default async function TjaiLandingPage({
+export default function TjaiLandingPage({
   params,
   searchParams
 }: {
-  params: Promise<{ locale: string }>;
-  searchParams?: Promise<{ from?: string }>;
+  params: { locale: string };
+  searchParams?: { from?: string };
 }) {
-  const [routeParams, query] = await Promise.all([params, searchParams]);
-  return <TjaiLandingPageContent params={routeParams} fromAi={query?.from === "ai"} />;
+  return <TjaiLandingPageContent params={params} fromAi={searchParams?.from === "ai"} />;
 }
 
 async function TjaiLandingPageContent({ params, fromAi }: { params: { locale: string }; fromAi: boolean }) {

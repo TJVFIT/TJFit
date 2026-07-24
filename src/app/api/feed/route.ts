@@ -12,13 +12,6 @@ type FeedItem = {
   meta?: Record<string, unknown>;
 };
 
-type FeedProfile = {
-  id: string;
-  username: string | null;
-  display_name: string | null;
-  avatar_url: string | null;
-};
-
 const PAGE_SIZE = 20;
 // Hard cap on the follow set we mix into the feed. PostgREST IN clauses are
 // bounded; users following thousands of people would generate impractical
@@ -154,7 +147,7 @@ export async function GET(request: NextRequest) {
   const profileIds = [...new Set(filtered.map((item) => item.user_id))];
   const { data: profiles } = profileIds.length
     ? await admin.from("profiles").select("id,username,display_name,avatar_url").in("id", profileIds)
-    : { data: [] as FeedProfile[] };
+    : { data: [] as any[] };
   const profileMap = new Map((profiles ?? []).map((p) => [p.id, p]));
 
   const withProfile = filtered.map((item) => ({

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { AmbientOrbs } from "@/components/effects/ambient-orbs";
 
@@ -11,8 +11,7 @@ type SearchResults = { programs: Group; diets: Group; coaches: Group; blog: Grou
 
 const EMPTY: SearchResults = { programs: [], diets: [], coaches: [], blog: [], users: [] };
 
-export default function SearchPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = use(params);
+export default function SearchPage({ params }: { params: { locale: string } }) {
   const searchParams = useSearchParams();
   const q = (searchParams.get("q") ?? "").trim();
   const [results, setResults] = useState<SearchResults>(EMPTY);
@@ -50,7 +49,7 @@ export default function SearchPage({ params }: { params: Promise<{ locale: strin
             <div className="mt-3 space-y-2">
               {items.length === 0 ? <p className="text-sm text-faint">No results</p> : null}
               {items.map((item) => (
-                <Link key={item.id} href={`/${locale}${item.href}`} className="block rounded-lg border border-divider px-3 py-2 text-sm text-bright transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.04] hover:text-purple-50 hover:shadow-[0_0_18px_rgba(168,85,247,0.14)]">
+                <Link key={item.id} href={`/${params.locale}${item.href}`} className="block rounded-lg border border-divider px-3 py-2 text-sm text-bright transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.04] hover:text-purple-50 hover:shadow-[0_0_18px_rgba(168,85,247,0.14)]">
                   {item.title}
                 </Link>
               ))}

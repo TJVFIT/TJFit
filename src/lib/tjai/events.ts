@@ -91,6 +91,7 @@ export function recordTjaiEvent(client: SupabaseClient, event: TjaiEvent): void 
     .insert(toEventRow(event))
     .then(({ error }) => {
       if (error && process.env.TJAI_DEBUG_PIPELINE) {
+        // eslint-disable-next-line no-console
         console.error("[TJAI event] insert failed", event.event, error.message);
       }
     });

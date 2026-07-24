@@ -2,46 +2,9 @@ import Link from "next/link";
 import { ArrowRight, Star } from "lucide-react";
 
 import { HoverLift } from "@/components/motion";
-import { Challenge, Coach, CommunityPost, Product, Program, Transformation } from "@/lib/content";
+import { Challenge, Coach, CommunityPost, Product, Transformation } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
-function getProgramVisual(program: Program) {
-  const category = program.category.toLowerCase();
-  if (category.includes("nutrition")) {
-    return {
-      gradient: "from-accent/20 via-[#173368]/45 to-[#0a1732]",
-      ring: "border-accent-soft/15",
-      tag: "NUTRITION"
-    };
-  }
-  if (category.includes("fat")) {
-    return {
-      gradient: "from-[#274f9e]/45 via-accent/15 to-[#09152f]",
-      ring: "border-accent-soft/15",
-      tag: "FAT LOSS"
-    };
-  }
-  if (category.includes("muscle") || category.includes("mass")) {
-    return {
-      gradient: "from-[#1a3977]/65 via-accent/15 to-[#08142d]",
-      ring: "border-accent-soft/15",
-      tag: "MUSCLE"
-    };
-  }
-  return {
-    gradient: "from-accent/25 via-[#162f63]/40 to-[#08142d]",
-    ring: "border-accent-soft/15",
-    tag: "PERFORMANCE"
-  };
-}
-
-function getProgramTier(program: Program) {
-  const slug = program.slug.toLowerCase();
-  if (slug.includes("advanced") || slug.includes("hardcore")) return "Elite";
-  if (slug.includes("pro") || slug.includes("shred")) return "Popular";
-  if (slug.includes("starter") || slug.includes("beginner")) return "New";
-  return "Signature";
-}
 
 export function SectionHeading({
   eyebrow,
@@ -56,8 +19,8 @@ export function SectionHeading({
 }) {
   return (
     <div className={cn("space-y-4", align === "center" && "mx-auto max-w-3xl text-center")}>
-      <span className="badge">{eyebrow}</span>
-      <h2 className="section-title">{title}</h2>
+      <span className="lux-badge inline-flex">{eyebrow}</span>
+      <h2 className="tj-section-title sm:text-4xl">{title}</h2>
       <p className="section-copy">{copy}</p>
     </div>
   );
@@ -69,7 +32,7 @@ export function CoachCard({ coach, href }: { coach: Coach; href: string }) {
       <Link href={href} className="glass-panel block rounded-[28px] p-6 transition">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-accent/80 to-cyan-300/80 text-lg font-semibold text-white">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-accent/80 to-purple-300/80 text-lg font-semibold text-white">
               {coach.name
                 .split(" ")
                 .map((part) => part[0])
@@ -78,18 +41,18 @@ export function CoachCard({ coach, href }: { coach: Coach; href: string }) {
             </div>
             <div>
               <p className="font-medium text-white">{coach.name}</p>
-              <p className="text-sm text-zinc-400">{coach.specialty}</p>
+              <p className="text-sm text-muted">{coach.specialty}</p>
             </div>
           </div>
-          <div className="flex items-center gap-1 rounded-full bg-white/5 px-3 py-1 text-sm text-zinc-200">
-            <Star className="h-4 w-4 fill-current text-yellow-400" />
+          <div className="flex items-center gap-1 rounded-full bg-white/5 px-3 py-1 text-sm text-bright">
+            <Star className="h-4 w-4 fill-current text-purple-300" />
             {coach.rating}
           </div>
         </div>
 
         <div className="mt-6 flex flex-wrap gap-2">
           {coach.languages.map((language) => (
-            <span key={language} className="rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-300">
+            <span key={language} className="rounded-full border border-white/10 px-3 py-1 text-xs text-bright">
               {language}
             </span>
           ))}
@@ -97,7 +60,7 @@ export function CoachCard({ coach, href }: { coach: Coach; href: string }) {
 
         <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-5">
           <div />
-          <span className="inline-flex items-center gap-2 text-sm text-zinc-200">
+          <span className="inline-flex items-center gap-2 text-sm text-bright">
             View profile <ArrowRight className="h-4 w-4" />
           </span>
         </div>
@@ -106,83 +69,19 @@ export function CoachCard({ coach, href }: { coach: Coach; href: string }) {
   );
 }
 
-export function ProgramCard({
-  program,
-  href,
-  viewLabel = "View Program",
-  priceLabel,
-  tierLabel
-}: {
-  program: Program;
-  href?: string;
-  viewLabel?: string;
-  priceLabel?: string;
-  tierLabel?: string;
-}) {
-  const visual = getProgramVisual(program);
-  const tier = tierLabel ?? getProgramTier(program);
-  return (
-    <HoverLift>
-      <div className={cn("glass-panel surface-shine rounded-[28px] border p-5 sm:p-6", visual.ring)}>
-        <div className={cn("rounded-[22px] border border-white/[0.08] bg-gradient-to-br p-5 sm:p-6", visual.gradient)}>
-          <div className="flex items-center justify-between text-xs uppercase tracking-[0.22em] text-zinc-200/90">
-            <span>{visual.tag}</span>
-            <span className="rounded-full border border-white/20 px-2.5 py-1 font-semibold text-white">{tier}</span>
-          </div>
-          <p className="mt-12 max-w-[15ch] font-display text-3xl font-semibold leading-[0.96] tracking-[-0.04em] text-white">
-            {program.title}
-          </p>
-          <p className="mt-2 text-xs uppercase tracking-[0.22em] text-zinc-200/80">{program.duration}</p>
-          <div className="mt-8 flex items-center justify-between border-t border-white/10 pt-4 text-xs text-zinc-200/90">
-            <span>TJFit Program</span>
-            <span>{priceLabel ?? program.price}</span>
-          </div>
-        </div>
-
-        <div className="mt-4 flex items-center justify-between gap-3">
-          <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-300">
-            {program.category}
-          </span>
-          <span className="text-sm text-zinc-400">{program.duration}</span>
-        </div>
-        <h3 className="sr-only">{program.title}</h3>
-        <p className="mt-3 text-sm leading-7 text-zinc-400">{program.description}</p>
-        <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-5">
-          <div>
-            <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{program.difficulty}</p>
-            <p className="mt-1 text-sm text-zinc-300">{priceLabel ?? program.price}</p>
-          </div>
-          {href ? (
-            <Link
-              href={href}
-              className="rounded-full border border-white/10 px-4 py-2 text-sm text-white transition hover:bg-white/5"
-            >
-              {viewLabel}
-            </Link>
-          ) : (
-            <button className="rounded-full border border-white/10 px-4 py-2 text-sm text-white transition hover:bg-white/5">
-              {viewLabel}
-            </button>
-          )}
-        </div>
-      </div>
-    </HoverLift>
-  );
-}
-
 export function ProductCard({ product }: { product: Product }) {
   return (
     <HoverLift>
-      <div className="glass-panel rounded-[28px] p-6">
-        <div className="rounded-[24px] border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-8">
-          <div className="aspect-[4/3] rounded-[20px] border border-dashed border-white/10 bg-black/30" />
+      <div className="glass-panel p-6">
+        <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-8">
+          <div className="aspect-[4/3] rounded-2xl border border-dashed border-white/10 bg-black/30" />
         </div>
         <div className="mt-5 flex items-start justify-between gap-4">
           <div>
             <p className="text-lg font-semibold text-white">{product.name}</p>
-            <p className="mt-2 text-sm text-zinc-400">{product.description}</p>
+            <p className="mt-2 text-sm text-muted">{product.description}</p>
           </div>
-          <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-300">
+          <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-bright">
             {product.category}
           </span>
         </div>
@@ -201,8 +100,8 @@ export function StatGrid({ stats }: { stats: { label: string; value: string }[] 
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {stats.map((stat) => (
-        <div key={stat.label} className="glass-panel rounded-[24px] p-5">
-          <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{stat.label}</p>
+        <div key={stat.label} className="glass-panel p-5">
+          <p className="text-xs uppercase tracking-[0.24em] text-faint">{stat.label}</p>
           <p className="mt-4 text-3xl font-semibold text-white">{stat.value}</p>
         </div>
       ))}
@@ -219,24 +118,27 @@ export function TransformationCard({
 }) {
   return (
     <HoverLift>
-      <Link href={href} className="glass-panel block rounded-[28px] p-6">
+      <Link href={href} className="glass-panel block p-6">
         <div className="grid gap-4 md:grid-cols-[1fr_1.3fr_1fr]">
-          <div className="rounded-[24px] border border-dashed border-white/10 bg-black/30 p-6 text-center text-xs uppercase tracking-[0.24em] text-zinc-500">
+          <div className="rounded-3xl border border-dashed border-white/10 bg-black/30 p-6 text-center text-xs uppercase tracking-[0.2em] text-faint">
             Before
           </div>
           <div>
-            <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{transformation.category}</p>
+            <p className="text-xs uppercase tracking-[0.24em] text-faint">{transformation.category}</p>
             <p className="mt-3 text-2xl font-semibold text-white">{transformation.userName}</p>
-            <p className="mt-3 text-sm leading-7 text-zinc-400">{transformation.story}</p>
+            <p className="mt-3 text-sm leading-7 text-muted">{transformation.story}</p>
             <div className="mt-4 flex flex-wrap gap-2">
               {transformation.measurements.map((item) => (
-                <span key={item} className="rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-300">
+                <span
+                  key={item}
+                  className="inline-flex rounded-full border border-white/[0.1] bg-white/[0.05] px-3 py-1 text-xs text-bright shadow-[0_0_0_1px_rgba(0,0,0,0.2)_inset]"
+                >
                   {item}
                 </span>
               ))}
             </div>
           </div>
-          <div className="rounded-[24px] border border-dashed border-white/10 bg-black/30 p-6 text-center text-xs uppercase tracking-[0.24em] text-zinc-500">
+          <div className="rounded-3xl border border-dashed border-white/10 bg-black/30 p-6 text-center text-xs uppercase tracking-[0.2em] text-faint">
             After
           </div>
         </div>
@@ -248,17 +150,17 @@ export function TransformationCard({
 export function ChallengeCard({ challenge }: { challenge: Challenge }) {
   return (
     <HoverLift>
-      <div className="glass-panel rounded-[28px] p-6">
+      <div className="glass-panel p-6">
         <div className="flex items-center justify-between gap-4">
-          <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-300">
+          <span className="inline-flex rounded-full border border-white/[0.1] bg-white/[0.05] px-3 py-1 text-[11px] font-medium text-muted">
             {challenge.category}
           </span>
-          <span className="text-sm text-zinc-400">{challenge.duration}</span>
+          <span className="text-sm text-muted">{challenge.duration}</span>
         </div>
         <p className="mt-5 text-2xl font-semibold text-white">{challenge.name}</p>
-        <p className="mt-3 text-sm leading-7 text-zinc-400">{challenge.description}</p>
+        <p className="mt-3 text-sm leading-[1.65] text-muted">{challenge.description}</p>
         <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-5 text-sm">
-          <span className="text-zinc-300">{challenge.participants} participants</span>
+          <span className="text-bright">{challenge.participants} participants</span>
           <span className="text-white">{challenge.reward}</span>
         </div>
       </div>
@@ -268,23 +170,23 @@ export function ChallengeCard({ challenge }: { challenge: Challenge }) {
 
 export function CommunityPostCard({ post }: { post: CommunityPost }) {
   return (
-    <div className="glass-panel rounded-[28px] p-6">
+    <div className="glass-panel p-6">
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="font-medium text-white">{post.author}</p>
-          <p className="text-sm text-zinc-400">{post.role}</p>
+          <p className="text-sm text-muted">{post.role}</p>
         </div>
-        <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-300">
+        <span className="inline-flex rounded-full border border-white/[0.1] bg-white/[0.05] px-3 py-1 text-[11px] font-medium text-muted">
           {post.likes} likes
         </span>
       </div>
-      <p className="mt-5 text-sm leading-7 text-zinc-200">{post.content}</p>
+      <p className="mt-5 text-sm leading-[1.65] text-bright">{post.content}</p>
       {post.coachReply ? (
-        <div className="mt-5 rounded-[20px] border border-white/10 bg-white/5 p-4 text-sm text-zinc-300">
+        <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-bright">
           Coach reply: {post.coachReply}
         </div>
       ) : null}
-      <div className="mt-5 flex items-center gap-4 text-sm text-zinc-400">
+      <div className="mt-5 flex items-center gap-4 text-sm text-muted">
         <span>{post.comments} comments</span>
         <span>Share to Instagram / TikTok / X / WhatsApp</span>
       </div>

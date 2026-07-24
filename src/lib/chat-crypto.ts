@@ -9,6 +9,7 @@ function toBase64(bytes: Uint8Array) {
   });
   return btoa(binary);
 }
+
 function fromBase64(base64: string) {
   if (typeof window === "undefined") return new Uint8Array(Buffer.from(base64, "base64"));
   const binary = atob(base64);
@@ -109,3 +110,4 @@ export async function encryptBinary(data: ArrayBuffer, conversationKey: CryptoKe
     nonce: toBase64(nonce)
   };
 }
+

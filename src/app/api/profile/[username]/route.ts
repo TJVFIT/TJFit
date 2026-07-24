@@ -16,12 +16,11 @@ const DEFAULT_PRIVACY: Required<PrivacySettings> = {
   show_posts: true
 };
 
-export async function GET(_request: NextRequest, { params }: { params: Promise<{ username: string }> }) {
+export async function GET(_request: NextRequest, { params }: { params: { username: string } }) {
   const admin = getSupabaseServerClient();
   if (!admin) return NextResponse.json({ error: "Server not configured" }, { status: 500 });
 
-  const { username } = await params;
-  const rawUsername = decodeURIComponent(username ?? "").trim();
+  const rawUsername = decodeURIComponent(params.username ?? "").trim();
   if (!rawUsername || !isValidUsername(rawUsername)) {
     return NextResponse.json({ error: "Invalid username" }, { status: 400 });
   }

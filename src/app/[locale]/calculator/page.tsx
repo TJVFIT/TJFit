@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { AmbientOrbs } from "@/components/effects/ambient-orbs";
 import { Button } from "@/components/ui/Button";
@@ -115,8 +115,8 @@ function calculateBmr(age: number, gender: Gender, height: number, weight: numbe
   return gender === "male" ? 10 * weight + 6.25 * height - 5 * age + 5 : 10 * weight + 6.25 * height - 5 * age - 161;
 }
 
-export default function CalculatorPage({ params }: { params: Promise<{ locale: string }> }) {
-  const locale = use(params).locale;
+export default function CalculatorPage({ params }: { params: { locale: string } }) {
+  const locale = params.locale;
   const copy = COPY[locale as Locale] ?? COPY.en;
   const [age, setAge] = useState(28);
   const [gender, setGender] = useState<Gender>("male");

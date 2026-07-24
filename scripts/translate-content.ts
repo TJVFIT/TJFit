@@ -34,6 +34,7 @@
  * re-translation when the hash matches a stored `last_en_hash`.
  */
 
+import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
@@ -53,6 +54,8 @@ const PROVIDER_PER_LOCALE: Record<Locale, Provider> = {
   ar: "microsoft"
 };
 
+const PLACEHOLDER = "__TRANSLATE__";
+
 type Glossary = Record<string, Record<Locale, string>>;
 // `_doc` is a comment-style key in the JSON; cast via unknown to
 // satisfy strict mode.
@@ -63,8 +66,6 @@ const glossary = glossaryJson as unknown as Glossary;
 // ============================================================
 
 async function callDeepL(text: string, _target: Locale): Promise<string> {
-  void text;
-  void _target;
   // const t = new Translator(process.env.DEEPL_API_KEY!);
   // const r = await t.translateText(text, "en", target as any, {
   //   formality: "less",
@@ -78,8 +79,6 @@ async function callDeepL(text: string, _target: Locale): Promise<string> {
 }
 
 async function callMicrosoft(text: string, _target: Locale): Promise<string> {
-  void text;
-  void _target;
   // const client = TextTranslationClient(
   //   process.env.AZURE_TRANSLATOR_ENDPOINT!,
   //   { key: process.env.AZURE_TRANSLATOR_KEY!, region: process.env.AZURE_TRANSLATOR_REGION! },
@@ -106,6 +105,10 @@ async function translate(text: string, target: Locale): Promise<string> {
 // ============================================================
 // File walk
 // ============================================================
+
+function hashEnString(s: string): string {
+  return createHash("sha256").update(s, "utf8").digest("hex").slice(0, 16);
+}
 
 type Args = {
   check: boolean;
@@ -137,6 +140,8 @@ async function processSource(filePath: string, args: Args): Promise<{ replacemen
   // Find every `xx: '__TRANSLATE__'` occurrence inside a `LocalizedString`.
   // Cheap heuristic regex — production version should use ts-morph for
   // correctness across complex template literals.
+  const regex = /(en:\s*"([^"]*?)",[\s\S]*?)(tr|ar|es|fr):\s*"__TRANSLATE__"/g;
+
   // Scan-only (--check) — count without writing.
   if (args.check) {
     const matches = original.match(/__TRANSLATE__/g);

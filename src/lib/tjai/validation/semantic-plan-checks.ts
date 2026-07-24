@@ -85,7 +85,6 @@ function hasAllowance(haystack: string, allowances: string[] | undefined): boole
 }
 
 export function buildTjaiFoodConstraints(profile: TjaiUserProfile, _answers?: QuizAnswers): TjaiFoodConstraints {
-  void _answers;
   const allergyTerms = (profile.restrictionNotes ?? "")
     .toLowerCase()
     .split(/[,;\n]/)

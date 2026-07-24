@@ -45,6 +45,9 @@ function getChatLocale(): Locale {
 const SUGGESTION_ICONS = [Sparkles, Utensils, Dumbbell, Repeat2, HeartPulse, TrendingUp] as const;
 
 export function TJAIChat({
+  plan: _plan,
+  metrics: _metrics,
+  answers: _answers,
   coreLimited = false,
   onLimitReached
 }: {

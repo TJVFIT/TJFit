@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Sparkles } from "lucide-react";
 import type { Locale } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 
 type Message = {
   role: "user" | "tjai";

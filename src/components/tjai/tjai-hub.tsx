@@ -102,6 +102,7 @@ export function TJAIHub({ locale }: { locale: Locale }) {
         <WhatIfPanel locale={locale} />
       </div>
     );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale, tab]);
 
   return (

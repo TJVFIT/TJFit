@@ -1,13 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { use, useEffect } from "react";
+import { useEffect } from "react";
 
-export default function BlogPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = use(params);
+export default function BlogPage({ params }: { params: { locale: string } }) {
   const router = useRouter();
   useEffect(() => {
-    router.replace(`/${locale}#blog`);
-  }, [router, locale]);
+    router.replace(`/${params.locale}#blog`);
+  }, [router, params.locale]);
   return null;
 }

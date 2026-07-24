@@ -103,7 +103,7 @@ function matchHtmlGuard(pathname: string): { locale: string; kind: GuardKind } |
 }
 
 export async function middleware(request: NextRequest) {
-  const response = NextResponse.next({
+  let response = NextResponse.next({
     request: { headers: request.headers }
   });
 

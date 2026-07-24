@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { AuthPageFrame } from "@/components/auth-page-frame";
 import { Logo } from "@/components/ui/Logo";
@@ -82,9 +82,8 @@ const COPY = {
   }
 } as const;
 
-export default function ResetPasswordPage({ params }: { params: Promise<{ locale: string }> }) {
-  const localeParam = use(params).locale;
-  const locale = isLocale(localeParam) ? localeParam : "en";
+export default function ResetPasswordPage({ params }: { params: { locale: string } }) {
+  const locale = isLocale(params.locale) ? params.locale : "en";
   const copy = COPY[locale] ?? COPY.en;
   const router = useRouter();
 

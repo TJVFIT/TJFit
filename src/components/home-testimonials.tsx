@@ -82,6 +82,7 @@ export function HomeTestimonials({ locale }: { locale: Locale }) {
   const [activeIdx, setActiveIdx] = useState(0);
   const [paused, setPaused] = useState(false);
   const total = TESTIMONIALS.length;
+  const active = TESTIMONIALS[activeIdx]!;
 
   const go = useCallback(
     (dir: -1 | 1) => {

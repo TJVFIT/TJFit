@@ -16,7 +16,6 @@ import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { TJAI_TRIAL_MESSAGE_LIMIT } from "@/lib/tjai/trial-config";
 
 export async function POST(_request: NextRequest) {
-  void _request;
   const authResult = await requireAuth();
   if (!authResult.ok) return authResult.response;
   const adminClient = getSupabaseServerClient();

@@ -11,15 +11,13 @@ export default async function MessagesLayout({
   params
 }: {
   children: React.ReactNode;
-  params: Promise<{ locale: string }>;
+  params: { locale: string };
 }) {
-  const { locale: localeParam } = await params;
-
-  if (!isLocale(localeParam)) {
+  if (!isLocale(params.locale)) {
     notFound();
   }
 
-  const locale = localeParam as Locale;
+  const locale = params.locale as Locale;
   await requireAuthenticatedUser(locale, `/${locale}/messages`);
 
   return (

@@ -117,6 +117,7 @@ async function main(): Promise<void> {
   const dryRun = args.includes("--dry-run") || !process.env.OPENAI_API_KEY;
 
   const file = loadCases();
+  // eslint-disable-next-line no-console
   console.log(`Loaded ${file.cases.length} cases.`);
 
   if (dryRun) {
@@ -124,12 +125,15 @@ async function main(): Promise<void> {
     for (const c of file.cases) {
       const t = estimateTokens(c.prompt);
       totalTokens += t;
+      // eslint-disable-next-line no-console
       console.log(`  [dry] ${c.id.padEnd(28)} ~${t} input tokens`);
     }
+    // eslint-disable-next-line no-console
     console.log(
       `\nDry run. Would call model ${file.cases.length}x with ~${totalTokens} input tokens total.`
     );
     if (!process.env.OPENAI_API_KEY) {
+      // eslint-disable-next-line no-console
       console.log("Set OPENAI_API_KEY and re-run without --dry-run for live scoring.");
     }
     return;
@@ -147,14 +151,17 @@ async function main(): Promise<void> {
       const score = scoreCase(c, response);
       results.push(score);
       const mark = score.passed ? "PASS" : "FAIL";
+      // eslint-disable-next-line no-console
       console.log(`  ${mark}  ${c.id.padEnd(28)} ${score.notes.join(" · ")}`);
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.log(`  ERR   ${c.id.padEnd(28)} ${(err as Error).message}`);
       results.push({ id: c.id, passed: false, checks: {}, notes: [(err as Error).message] });
     }
   }
 
   const passed = results.filter((r) => r.passed).length;
+  // eslint-disable-next-line no-console
   console.log(`\nTotals: ${passed}/${results.length} passed.`);
   process.exitCode = passed === results.length ? 0 : 1;
 }

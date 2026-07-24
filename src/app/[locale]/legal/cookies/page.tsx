@@ -150,16 +150,14 @@ const PAGE_METADATA: Record<Locale, { title: string; description: string }> = {
   fr: { title: "Politique Cookies | TJFit", description: "Ce que TJFit stocke dans ton navigateur, pourquoi et comment refuser." }
 };
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
-  const { locale: localeParam } = await params;
-  const locale = requireLocaleParam(localeParam);
+export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
+  const locale = requireLocaleParam(params.locale);
   const meta = PAGE_METADATA[locale] ?? PAGE_METADATA.en;
   return { title: meta.title, description: meta.description };
 }
 
-export default async function CookiesPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale: localeParam } = await params;
-  const locale = requireLocaleParam(localeParam);
+export default function CookiesPage({ params }: { params: { locale: string } }) {
+  const locale = requireLocaleParam(params.locale);
   const copy = COPY[locale] ?? COPY.en;
   return (
     <>

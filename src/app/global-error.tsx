@@ -9,7 +9,6 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  void _error;
   return (
     <html lang="en">
       <body className="min-h-screen bg-background font-sans antialiased text-bright">
