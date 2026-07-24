@@ -54,7 +54,7 @@ export async function runPlanGenerationPipeline(input: PlanGenerationPipelineInp
   }
 
   let learningInsight: string | null = null;
-  let memory = await withTiming(trace, "memory_snapshot", () => buildTjaiMemorySnapshot(input.adminClient, input.userId));
+  const memory = await withTiming(trace, "memory_snapshot", () => buildTjaiMemorySnapshot(input.adminClient, input.userId));
 
   try {
     learningInsight = await withTiming(trace, "similar_user_insight", () =>

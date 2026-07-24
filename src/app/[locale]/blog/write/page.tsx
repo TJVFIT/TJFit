@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { use, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { PremiumPageShell } from "@/components/premium";
 import { Button } from "@/components/ui/Button";
-import type { Locale } from "@/lib/i18n";
-
-export default function BlogWritePage({ params }: { params: { locale: string } }) {
-  const locale = params.locale as Locale;
+export default function BlogWritePage({ params }: { params: Promise<{ locale: string }> }) {
+  use(params);
   const searchParams = useSearchParams();
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("Training");

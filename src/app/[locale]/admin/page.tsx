@@ -12,8 +12,9 @@ import { AdminFeedbackList } from "@/components/admin-feedback-list";
 import { ProtectedRoute } from "@/components/protected-route";
 import { StatGrid } from "@/components/ui";
 
-export default async function AdminPage({ params }: { params: { locale: string } }) {
-  const locale = requireLocaleParam(params.locale);
+export default async function AdminPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale: localeParam } = await params;
+  const locale = requireLocaleParam(localeParam);
   const dict = getDictionary(locale);
 
   const supabase = getSupabaseServerClient();

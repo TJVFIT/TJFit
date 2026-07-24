@@ -3,8 +3,9 @@ import Link from "next/link";
 import { ProtectedRoute } from "@/components/protected-route";
 import { requireLocaleParam } from "@/lib/require-locale";
 
-export default function SettingsIndexPage({ params }: { params: { locale: string } }) {
-  const locale = requireLocaleParam(params.locale);
+export default async function SettingsIndexPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale: localeParam } = await params;
+  const locale = requireLocaleParam(localeParam);
   return (
     <ProtectedRoute locale={locale}>
       <section className="mx-auto max-w-4xl space-y-4 px-4 py-10 sm:px-6">

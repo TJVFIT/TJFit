@@ -59,6 +59,7 @@ export type CachedTranslation = {
  * Implementation deferred — Phase-2 ships with the Supabase migration.
  */
 export function sourceFingerprint(_source: string): string {
+  void _source;
   // Intentional stub. Real impl: sha256 via node:crypto on the server.
   throw new Error("translation-pipeline: sourceFingerprint not yet implemented (Phase 2).");
 }
@@ -72,5 +73,8 @@ export async function getTranslated(
   _locale: SupportedLocale,
   _englishSource: string
 ): Promise<string> {
+  void _namespace;
+  void _locale;
+  void _englishSource;
   throw new Error("translation-pipeline: getTranslated not yet implemented (Phase 2).");
 }

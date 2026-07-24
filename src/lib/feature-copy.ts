@@ -393,4 +393,3 @@ export function getProgressCopy(locale: Locale) {
 export function getMessagesCopy(locale: Locale) {
   return messagesCopy[locale];
 }
-

@@ -163,7 +163,6 @@ export async function PATCH(request: NextRequest) {
     );
   }
   try {
-    // eslint-disable-next-line no-new
     new URL(shortUrl);
   } catch {
     return NextResponse.json({ error: "Invalid URL" }, { status: 400 });

@@ -1,119 +1,74 @@
 import type { Metadata, Viewport } from "next";
-import { JetBrains_Mono, Manrope, Space_Grotesk } from "next/font/google";
+import { Outfit, Space_Grotesk, Space_Mono } from "next/font/google";
 
-import { AuthProvider } from "@/components/auth-provider";
-import { TrackingScripts } from "@/components/marketing/tracking-scripts";
-import { BrandOrganizationJsonLd } from "@/components/brand-organization-json-ld";
-import { BRAND } from "@/lib/brand-assets";
-import { getSiteUrl } from "@/lib/site-url";
-import { isTaskAvailable } from "@/lib/tjai/provider-policy";
 import "./globals.css";
 
-// Display font — Space Grotesk: futuristic geometric grotesque with a
-// technical edge; carries the premium/AI brand voice.
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-  variable: "--font-display",
-  preload: true
-});
-
-// Body font — Manrope: ultra-clean, engineered for screens
-const manrope = Manrope({
-  subsets: ["latin", "latin-ext"],
-  weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-  variable: "--font-sans",
-  preload: true
-});
-
-// Technical mono — JetBrains Mono: numerals, eyebrows, set/rep notation.
-// Used on bundle pages to give programs a lab-instrument feel.
-const jetbrains = JetBrains_Mono({
+const outfit = Outfit({
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  display: "swap",
-  variable: "--font-mono",
-  preload: true
+  variable: "--font-outfit",
+  display: "swap"
 });
 
-let siteUrl: string;
-try {
-  siteUrl = getSiteUrl();
-  new URL(siteUrl);
-} catch {
-  siteUrl = "https://tjfit.org";
-}
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
+  display: "swap"
+});
 
-if (!isTaskAvailable("plan_generate")) {
-  console.error("FATAL: no LLM backend configured (TJAI_LLM_* / OPENAI_API_KEY / ANTHROPIC_API_KEY) — TJAI plan generation will not work");
-}
-
-if (!process.env.RESEND_API_KEY) {
-  console.error("FATAL: RESEND_API_KEY is not set");
-}
-
-function googleVerificationToken(): string | undefined {
-  const raw = process.env.GOOGLE_SITE_VERIFICATION?.trim();
-  if (!raw) return undefined;
-  const prefix = "google-site-verification=";
-  return raw.startsWith(prefix) ? raw.slice(prefix.length) : raw;
-}
-
-const googleVerification = googleVerificationToken();
-
-export const viewport: Viewport = {
-  viewportFit: "cover",
-  colorScheme: "dark",
-  themeColor: "#09090B"
-};
-
-const defaultTitle = "TJFit — Premium Fitness Transformation Platform";
-const defaultDescription =
-  "Complete 12-week programs and diet systems built like a real coach plan. Home or gym. Fat loss or muscle gain.";
+const spaceMono = Space_Mono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-space-mono",
+  display: "swap"
+});
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: { default: defaultTitle, template: "%s | TJFit" },
-  description: defaultDescription,
-  applicationName: "TJFit",
-  manifest: "/manifest.json",
-  icons: {
-    icon: [{ url: BRAND.faviconIco, type: "image/x-icon" }],
-    apple: [{ url: BRAND.appleTouchIcon, type: "image/png" }],
-    other: [
-      { rel: "icon", url: BRAND.logoIcon192, type: "image/png", sizes: "192x192" },
-      { rel: "icon", url: BRAND.logoIcon512, type: "image/png", sizes: "512x512" }
-    ]
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  title: {
+    default: "TJFit — Train with intelligence",
+    template: "%s | TJFit"
   },
-  appleWebApp: { capable: true, title: "TJFit", statusBarStyle: "black-translucent" },
-  ...(googleVerification ? { verification: { google: googleVerification } } : {}),
+  description:
+    "Personalized training, nutrition systems, coaching and an AI fitness guide in one focused platform.",
+  applicationName: "TJFit",
   openGraph: {
+    title: "TJFit — Train with intelligence",
+    description: "Your training system, rebuilt around measurable progress.",
     type: "website",
-    locale: "en_US",
-    url: siteUrl,
-    siteName: "TJFit",
-    title: defaultTitle,
-    description: defaultDescription,
-    images: [{ url: BRAND.ogDefault, width: 1200, height: 630, alt: defaultTitle }]
+    siteName: "TJFit"
   },
   twitter: {
     card: "summary_large_image",
-    title: defaultTitle,
-    description: defaultDescription,
-    images: [BRAND.ogDefault]
+    title: "TJFit — Train with intelligence",
+    description: "Your training system, rebuilt around measurable progress."
   },
-  robots: { index: true, follow: true }
+  robots: {
+    index: true,
+    follow: true
+  }
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#050a16"
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${manrope.variable} ${spaceGrotesk.variable} ${jetbrains.variable}`}>
-      <body className="tj-grain font-sans antialiased">
-        <BrandOrganizationJsonLd />
-        <TrackingScripts />
-        <AuthProvider>{children}</AuthProvider>
+    <html
+      lang="en"
+      className={`${outfit.variable} ${spaceGrotesk.variable} ${spaceMono.variable}`}
+      suppressHydrationWarning
+    >
+      <body>
+        <a
+          href="#main-content"
+          className="fixed left-4 top-4 z-[100] -translate-y-24 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-slate-950 transition focus:translate-y-0"
+        >
+          Skip to content
+        </a>
+        {children}
       </body>
     </html>
   );

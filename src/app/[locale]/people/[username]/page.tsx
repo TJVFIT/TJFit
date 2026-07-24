@@ -1,12 +1,13 @@
 import { redirect } from "next/navigation";
 import { requireLocaleParam } from "@/lib/require-locale";
 
-export default function PeopleUsernameRedirect({
+export default async function PeopleUsernameRedirect({
   params
 }: {
-  params: { locale: string; username: string };
+  params: Promise<{ locale: string; username: string }>;
 }) {
-  const locale = requireLocaleParam(params.locale);
-  const username = params.username ?? "";
+  const { locale: localeParam, username: usernameParam } = await params;
+  const locale = requireLocaleParam(localeParam);
+  const username = usernameParam ?? "";
   redirect(`/${locale}/profile/${encodeURIComponent(username)}`);
 }

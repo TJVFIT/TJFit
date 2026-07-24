@@ -1,4 +1,4 @@
-import { isValidUsername, normalizeUsername } from "@/lib/username";
+import { isValidUsername } from "@/lib/username";
 
 export const MESSAGE_PRIVACY_VALUES = [
   "everyone",

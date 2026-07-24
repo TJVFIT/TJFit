@@ -2,12 +2,13 @@ import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/require-auth";
 import { isMissingSchemaMigrationError, jsonSchemaNotReady } from "@/lib/supabase-rpc-errors";
 
-export async function GET(_: Request, { params }: { params: { conversationId: string } }) {
+export async function GET(_: Request, { params }: { params: Promise<{ conversationId: string }> }) {
   const auth = await requireAuth();
   if (!auth.ok) return auth.response;
+  const { conversationId } = await params;
 
   const { data, error } = await auth.supabase.rpc("get_conversation_peer", {
-    p_conversation_id: params.conversationId
+    p_conversation_id: conversationId
   });
 
   if (error) {

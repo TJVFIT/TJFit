@@ -1,120 +1,33 @@
-import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
-import { CookieConsentBanner } from "@/components/cookie-consent";
-import { Heartbeat } from "@/components/living/heartbeat";
-import { LocaleDocument } from "@/components/locale-document";
+import { AuthProvider } from "@/components/auth-provider";
 import { SiteShell } from "@/components/site-shell";
-import { PageTransition } from "@/components/transitions/PageTransition";
-import { DeviceProvider } from "@/lib/device/DeviceContext";
-import { BRAND } from "@/lib/brand-assets";
-import {
-  LOCALE_META,
-  getDirection,
-  resolveCopyLocale,
-  supportedLocales,
-  type Locale,
-  type SupportedLocale
-} from "@/lib/i18n";
-import { requireSupportedLocaleParam } from "@/lib/require-locale";
+import { isLocale, locales, type Locale } from "@/lib/i18n";
 
 export function generateStaticParams() {
-  return supportedLocales.map((locale) => ({ locale }));
+  return locales.map((locale) => ({ locale }));
 }
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://tjfit.org";
-
-const TITLES: Record<Locale, string> = {
-  en: "TJFit — AI Fitness Programs, Coaching & Nutrition | Transform Your Body",
-  tr: "TJFit — Yapay Zeka Fitness Programları ve Koçluk | Vücudunu Dönüştür",
-  ar: "TJFit — برامج اللياقة بالذكاء الاصطناعي والتدريب | حوّل جسدك",
-  es: "TJFit — Programas de Fitness con IA y Coaching | Transforma Tu Cuerpo",
-  fr: "TJFit — Programmes Fitness IA et Coaching | Transformez Votre Corps"
-};
-
-const DESCRIPTIONS: Record<Locale, string> = {
-  en: "12-week fitness programs, certified coaches, and TJAI — quiz preview is free; pay to unlock your full AI plan. 5 languages.",
-  tr: "12 haftalık programlar, sertifikalı koçlar ve TJAI — quiz ön izlemesi ücretsiz; tam plan ücretli. 5 dil.",
-  ar: "برامج لياقة لمدة 12 أسبوعاً، ومدربون معتمدون، وـTJAI — معاينة الاختبار مجانية؛ ادفع لخطتك الكاملة. 5 لغات.",
-  es: "Programas de 12 semanas, coaches certificados y TJAI — vista previa del cuestionario gratis; paga por el plan completo. 5 idiomas.",
-  fr: "Programmes 12 semaines, coachs certifies et TJAI — aperçu gratuit ; plan complet payant. 5 langues."
-};
-
-/** BCP-47 tags for `<html lang>` and OG locale. */
-const BCP47: Record<SupportedLocale, string> = {
-  en: "en_US",
-  tr: "tr_TR",
-  ar: "ar_SA",
-  es: "es_ES",
-  fr: "fr_FR"
-};
-
-export function generateMetadata({ params }: { params: { locale?: string } }): Metadata {
-  const routing = requireSupportedLocaleParam(params?.locale);
-  const copy = resolveCopyLocale(routing);
-  const title = TITLES[copy];
-  const description = DESCRIPTIONS[copy];
-
-  const languages: Record<string, string> = {};
-  supportedLocales.forEach((loc) => {
-    languages[loc] = `${SITE_URL}/${loc}`;
-  });
-  languages["x-default"] = `${SITE_URL}/en`;
-
-  return {
-    // absolute: TITLES are already branded; stops the root "%s | TJFit"
-    // template double-branding the homepage (child pages still use it)
-    title: { absolute: title },
-    description,
-    alternates: {
-      canonical: `${SITE_URL}/${routing}`,
-      languages
-    },
-    openGraph: {
-      type: "website",
-      siteName: "TJFit",
-      title,
-      description,
-      locale: BCP47[routing],
-      url: `${SITE_URL}/${routing}`,
-      images: [
-        { url: BRAND.ogDefault, width: 1200, height: 630, alt: "TJFit — Premium Fitness Transformation Platform" }
-      ]
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [
-        { url: BRAND.ogDefault, width: 1200, height: 630, alt: "TJFit — Premium Fitness Transformation Platform" }
-      ]
-    }
-  };
-}
-
-export default function LocaleLayout({
+export default async function LocaleLayout({
   children,
   params
 }: {
   children: React.ReactNode;
-  params: { locale?: string };
+  params: Promise<{ locale: string }>;
 }) {
-  const routing = requireSupportedLocaleParam(params?.locale);
-  const copy = resolveCopyLocale(routing);
-  const direction = LOCALE_META[routing].dir;
+  const { locale: localeParam } = await params;
+
+  if (!isLocale(localeParam)) {
+    notFound();
+  }
+
+  const locale = localeParam as Locale;
 
   return (
-    <div dir={direction} lang={routing}>
-      <LocaleDocument locale={routing} direction={direction} />
-      <DeviceProvider>
-        {/* v3 living-organism: heartbeat sits above all content,
-            below the cookie banner, hidden under reduced-motion.
-            See src/components/living/heartbeat.tsx. */}
-        <Heartbeat />
-        <SiteShell locale={copy}>
-          <PageTransition>{children}</PageTransition>
-        </SiteShell>
-        <CookieConsentBanner locale={routing} />
-      </DeviceProvider>
-    </div>
+    <AuthProvider>
+      <div lang={locale} dir={locale === "ar" ? "rtl" : "ltr"}>
+        <SiteShell locale={locale}>{children}</SiteShell>
+      </div>
+    </AuthProvider>
   );
 }

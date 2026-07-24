@@ -3,9 +3,10 @@ import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/require-auth";
 import { isMissingSchemaMigrationError, jsonSchemaNotReady } from "@/lib/supabase-rpc-errors";
 
-export async function POST(_: Request, { params }: { params: { conversationId: string } }) {
+export async function POST(_: Request, { params }: { params: Promise<{ conversationId: string }> }) {
   const auth = await requireAuth();
   if (!auth.ok) return auth.response;
+  const { conversationId } = await params;
 
   // Defense-in-depth: messages RLS should already block non-participants from
   // touching rows, but a route that silently no-ops for unauthorized users is
@@ -13,7 +14,7 @@ export async function POST(_: Request, { params }: { params: { conversationId: s
   const { data: membership } = await auth.supabase
     .from("conversation_participants")
     .select("conversation_id")
-    .eq("conversation_id", params.conversationId)
+    .eq("conversation_id", conversationId)
     .eq("user_id", auth.user.id)
     .maybeSingle();
 
@@ -25,12 +26,12 @@ export async function POST(_: Request, { params }: { params: { conversationId: s
   await auth.supabase
     .from("messages")
     .update({ read_at: new Date().toISOString() })
-    .eq("conversation_id", params.conversationId)
+    .eq("conversation_id", conversationId)
     .neq("sender_id", auth.user.id)
     .is("read_at", null);
 
   const { error } = await auth.supabase.rpc("mark_conversation_read", {
-    p_conversation_id: params.conversationId
+    p_conversation_id: conversationId
   });
 
   if (error) {

@@ -3,9 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
-export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const auth = await requireAuth();
   if (!auth.ok) return auth.response;
+  const { id } = await params;
 
   const admin = getSupabaseServerClient();
   if (!admin) return NextResponse.json({ error: "Server not configured" }, { status: 500 });
@@ -16,7 +17,7 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
   const { data: draft } = await admin
     .from("community_blog_posts")
     .select("id,title,content,category,tags,status,author_type")
-    .eq("id", params.id)
+    .eq("id", id)
     .eq("status", "admin_draft")
     .maybeSingle();
 

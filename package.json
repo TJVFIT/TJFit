@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -29,9 +29,11 @@
     "canvas-confetti": "^1.9.4",
     "chart.js": "^4.5.1",
     "clsx": "^2.1.1",
+    "framer-motion": "^11.18.2",
+    "gsap": "^3.15.0",
     "jspdf": "^4.2.1",
     "lucide-react": "^0.469.0",
-    "next": "^14.2.35",
+    "next": "15.5.21",
     "pdf-parse": "^2.4.5",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.3.1",
@@ -40,6 +42,7 @@
     "resend": "^6.10.0",
     "swr": "^2.4.1",
     "tailwind-merge": "^2.5.5",
+    "tailwindcss-animate": "^1.0.7",
     "three": "^0.160.1"
   },
   "devDependencies": {
@@ -50,14 +53,30 @@
     "@types/three": "^0.160.0",
     "@vitest/ui": "^4.1.5",
     "autoprefixer": "^10.4.20",
-    "eslint": "^8.57.1",
-    "eslint-config-next": "14.2.30",
+    "eslint": "9.39.2",
+    "eslint-config-next": "15.5.21",
+    "glob": "13.0.6",
     "postcss": "^8.4.49",
     "postgres": "^3.4.9",
-    "sharp": "^0.34.5",
+    "sharp": "0.35.3",
     "tailwindcss": "^3.4.17",
     "tsx": "^4.21.0",
     "typescript": "^5.7.2",
     "vitest": "^4.1.5"
+  },
+  "overrides": {
+    "next": {
+      "postcss": "8.5.22"
+    },
+    "sharp": "0.35.3",
+    "eslint": {
+      "brace-expansion": "1.1.16"
+    },
+    "@typescript-eslint/typescript-estree": {
+      "brace-expansion": "5.0.8"
+    },
+    "fast-uri": "3.1.4",
+    "dompurify": "3.4.12",
+    "esbuild": "0.28.1"
   }
 }

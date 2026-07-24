@@ -147,7 +147,7 @@ export const TJFitReel: React.FC = () => {
                 color: CREAM,
               }}
             >
-              This isn't another
+              This isn&apos;t another
               <br />
               fitness app.
             </span>

@@ -50,7 +50,7 @@ export function TJAIMealSwapTab({ locale }: { locale: string }) {
         useMeal: "Use This Meal",
         mealWord: "Meal"
       };
-  const [tier, setTier] = useState<"core" | "pro" | "apex">("core");
+  const [, setTier] = useState<"core" | "pro" | "apex">("core");
   const [planId, setPlanId] = useState<string>("");
   const [plan, setPlan] = useState<TJAIPlan | null>(null);
   const [selected, setSelected] = useState<MealOption | null>(null);

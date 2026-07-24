@@ -32,8 +32,13 @@ type RelatedPost = {
   created_at: string;
 };
 
-export default async function BlogDetailPage({ params }: { params: { locale: string; slug: string } }) {
-  const locale = requireLocaleParam(params.locale);
+export default async function BlogDetailPage({
+  params
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}) {
+  const { locale: localeParam, slug } = await params;
+  const locale = requireLocaleParam(localeParam);
   const admin = getSupabaseServerClient();
   if (!admin) notFound();
 
@@ -44,7 +49,7 @@ export default async function BlogDetailPage({ params }: { params: { locale: str
   const { data: post } = await admin
     .from("community_blog_posts")
     .select("id,author_id,title,content,author_name,author_type,created_at,category,views,read_time_minutes")
-    .eq("id", params.slug)
+    .eq("id", slug)
     .eq("status", "published")
     .maybeSingle();
   if (!post) notFound();
@@ -53,9 +58,10 @@ export default async function BlogDetailPage({ params }: { params: { locale: str
   // View-increment side-effect — rate-limited per (IP, post) so a refresh
   // loop can't inflate counts. The RPC returns the new count synchronously
   // so the rendered page reflects this visit.
+  const requestHeaders = await headers();
   const ip =
-    headers().get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    headers().get("x-real-ip") ??
+    requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    requestHeaders.get("x-real-ip") ??
     "unknown";
   let views = Number(postRow.views ?? 0);
   const viewLimiter = await rateLimit({

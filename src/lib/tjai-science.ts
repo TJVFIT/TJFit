@@ -240,7 +240,7 @@ export function calculateTJAIMetrics(answers: QuizAnswers): TJAIMetrics {
     fatPerKg = Math.max(fatPerKg, 1.2);
   }
   fatPerKg = Math.max(0.8, fatPerKg);
-  let fat = fatPerKg * profile.weightKg;
+  const fat = fatPerKg * profile.weightKg;
 
   if (metabolicType === "fast") calorieTarget *= 1.05;
   if (metabolicType === "slow") calorieTarget *= 0.92;

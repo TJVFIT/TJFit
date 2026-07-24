@@ -3,6 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { searchNormalize } from "@/lib/turkish-chars";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
+type CoachBlogRow = { author_id: string };
+type CoachReviewRow = { user_id: string; rating: number | null };
+type CoachSaleRow = { coach_id: string; user_id: string; program_slug: string | null };
+
 export async function GET(request: NextRequest) {
   const admin = getSupabaseServerClient();
   if (!admin) return NextResponse.json({ error: "Server not configured" }, { status: 500 });
@@ -44,9 +48,15 @@ export async function GET(request: NextRequest) {
 
   const ids = filtered.map((row) => row.id);
   const [{ data: blogRows }, { data: reviewRows }, { data: salesRows }] = await Promise.all([
-    ids.length ? admin.from("community_blog_posts").select("author_id").in("author_id", ids).eq("status", "published") : { data: [] as any[] },
-    ids.length ? admin.from("program_reviews").select("user_id,rating").in("user_id", ids).eq("is_hidden", false) : { data: [] as any[] },
-    ids.length ? admin.from("program_orders").select("coach_id,user_id,program_slug").in("coach_id", ids).eq("status", "paid") : { data: [] as any[] }
+    ids.length
+      ? admin.from("community_blog_posts").select("author_id").in("author_id", ids).eq("status", "published")
+      : { data: [] as CoachBlogRow[] },
+    ids.length
+      ? admin.from("program_reviews").select("user_id,rating").in("user_id", ids).eq("is_hidden", false)
+      : { data: [] as CoachReviewRow[] },
+    ids.length
+      ? admin.from("program_orders").select("coach_id,user_id,program_slug").in("coach_id", ids).eq("status", "paid")
+      : { data: [] as CoachSaleRow[] }
   ]);
 
   const byCoach = new Map<

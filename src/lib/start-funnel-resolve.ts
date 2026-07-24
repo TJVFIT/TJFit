@@ -1,5 +1,6 @@
 /** Free catalog slugs only; fat-loss free starter is home-based. */
 export function resolveStartFunnelProgramSlug(goal: "fat" | "muscle", _location: "home" | "gym"): string {
+  void _location;
   if (goal === "fat") return "home-fat-loss-starter";
   return "gym-muscle-starter";
 }

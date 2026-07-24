@@ -55,6 +55,34 @@ type ConversationPreview = {
   created_at: string;
 };
 
+type SpeechRecognitionResultEventLike = {
+  results?: {
+    [index: number]:
+      | {
+          [index: number]: { transcript?: string } | undefined;
+        }
+      | undefined;
+  };
+};
+
+type SpeechRecognitionLike = {
+  lang: string;
+  interimResults: boolean;
+  maxAlternatives: number;
+  onresult: ((event: SpeechRecognitionResultEventLike) => void) | null;
+  onerror: (() => void) | null;
+  onend: (() => void) | null;
+  start: () => void;
+  stop: () => void;
+};
+
+type SpeechRecognitionConstructor = new () => SpeechRecognitionLike;
+
+type SpeechRecognitionWindow = Window & {
+  SpeechRecognition?: SpeechRecognitionConstructor;
+  webkitSpeechRecognition?: SpeechRecognitionConstructor;
+};
+
 type SourceChipKey = "plan" | "grocery" | "swap" | "progress" | "bundle";
 type SourceChip = { key: SourceChipKey; href: string };
 
@@ -512,7 +540,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
   const [conversationId, setConversationId] = useState<string>("");
   const [conversations, setConversations] = useState<ConversationPreview[]>([]);
   const [showConversationsSheet, setShowConversationsSheet] = useState(false);
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -561,9 +589,10 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
   }, []);
 
   useEffect(() => {
+    const speechWindow = window as SpeechRecognitionWindow;
     const hasApi =
       typeof window !== "undefined" &&
-      (Boolean((window as any).SpeechRecognition) || Boolean((window as any).webkitSpeechRecognition));
+      (Boolean(speechWindow.SpeechRecognition) || Boolean(speechWindow.webkitSpeechRecognition));
     setVoiceSupported(hasApi);
     if (!localStorage.getItem("tjai-voice-hint-seen")) {
       setShowVoiceTip(true);
@@ -720,7 +749,8 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
   };
 
   const startVoice = () => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const speechWindow = window as SpeechRecognitionWindow;
+    const SpeechRecognition = speechWindow.SpeechRecognition || speechWindow.webkitSpeechRecognition;
     if (!SpeechRecognition) {
       setVoiceSupported(false);
       island?.showNotification("signup", t.voiceUnsupported);
@@ -737,7 +767,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
     recognition.lang = voiceLang(locale);
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
-    recognition.onresult = (event: any) => {
+    recognition.onresult = (event: SpeechRecognitionResultEventLike) => {
       const transcript = String(event?.results?.[0]?.[0]?.transcript ?? "").trim();
       if (!transcript) return;
       setInput(transcript);

@@ -34,4 +34,3 @@ export async function ensureUserKeyPair(userId: string) {
 
   return { privateKey: pair.privateKey, publicKeyJwk: publicJwk };
 }
-

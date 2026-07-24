@@ -24,6 +24,7 @@ interface RateLimitArgs {
 interface RateLimitResult {
   success: boolean;
   remaining: number;
+  resetAt: number;
 }
 
 const inMemoryStore = new Map<string, { count: number; resetAt: number }>();
@@ -33,17 +34,22 @@ function inMemoryRateLimit({ key, limit, windowMs }: RateLimitArgs): RateLimitRe
   const current = inMemoryStore.get(key);
 
   if (!current || current.resetAt < now) {
-    inMemoryStore.set(key, { count: 1, resetAt: now + windowMs });
-    return { success: true, remaining: limit - 1 };
+    const resetAt = now + windowMs;
+    inMemoryStore.set(key, { count: 1, resetAt });
+    return { success: true, remaining: limit - 1, resetAt };
   }
 
   if (current.count >= limit) {
-    return { success: false, remaining: 0 };
+    return { success: false, remaining: 0, resetAt: current.resetAt };
   }
 
   current.count += 1;
   inMemoryStore.set(key, current);
-  return { success: true, remaining: limit - current.count };
+  return {
+    success: true,
+    remaining: limit - current.count,
+    resetAt: current.resetAt
+  };
 }
 
 async function redisRateLimit({ key, limit, windowMs }: RateLimitArgs): Promise<RateLimitResult> {
@@ -57,6 +63,7 @@ async function redisRateLimit({ key, limit, windowMs }: RateLimitArgs): Promise<
   // Window bucket: floor(now / windowMs). Each bucket lives for windowMs.
   const bucket = Math.floor(Date.now() / windowMs);
   const redisKey = `rl:${key}:${bucket}`;
+  const resetAt = (bucket + 1) * windowMs;
 
   try {
     const res = await fetch(`${url}/pipeline`, {
@@ -74,19 +81,23 @@ async function redisRateLimit({ key, limit, windowMs }: RateLimitArgs): Promise<
 
     if (!res.ok) {
       console.warn("[rate-limit] Upstash pipeline non-2xx — failing open", res.status);
-      return { success: true, remaining: limit - 1 };
+      return { success: true, remaining: limit - 1, resetAt };
     }
 
     const data = (await res.json()) as Array<{ result?: number; error?: string }>;
     const count = Number(data[0]?.result ?? 0);
 
     if (count > limit) {
-      return { success: false, remaining: 0 };
+      return { success: false, remaining: 0, resetAt };
     }
-    return { success: true, remaining: Math.max(0, limit - count) };
+    return {
+      success: true,
+      remaining: Math.max(0, limit - count),
+      resetAt
+    };
   } catch (err) {
     console.warn("[rate-limit] Upstash fetch failed — failing open", err);
-    return { success: true, remaining: limit - 1 };
+    return { success: true, remaining: limit - 1, resetAt };
   }
 }
 

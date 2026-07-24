@@ -34,7 +34,8 @@ type Props = {
  * Currently renders the TJHeroStage dumbbell variant in all cases
  * (Spline integration stubbed; see top-of-file comment).
  */
-export function SplineShowcase(_props: Props) {
+export function SplineShowcase({ sceneUrl }: Props) {
+  void sceneUrl;
   const sectionRef = useRef<HTMLElement>(null);
   const [inView, setInView] = useState(false);
 
