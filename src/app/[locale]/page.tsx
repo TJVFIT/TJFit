@@ -136,7 +136,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               <div className="absolute left-5 top-5 z-10 font-mono text-[10px] uppercase tracking-[0.2em] text-accent-soft">
                 {copy.robotLabel}
               </div>
-              <div className="absolute right-5 top-5 z-10 hidden items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-400 sm:flex">
+              <div className="absolute right-5 top-5 z-10 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-400">
                 <span className="h-1.5 w-1.5 animate-pulseSoft rounded-full bg-accent-soft" />
                 {copy.robotNote}
               </div>
