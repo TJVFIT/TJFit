@@ -6,6 +6,7 @@ import { getBundle } from "@/lib/bundles";
 import { isAdminEmail } from "@/lib/auth-utils";
 import { hasPurchasedProgram } from "@/lib/purchases";
 import { requireAuth } from "@/lib/require-auth";
+import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -28,7 +29,12 @@ export async function GET(req: Request, { params }: { params: { slug: string } }
 
   const admin = !!auth.user.email && isAdminEmail(auth.user.email);
   if (!admin) {
-    const paid = await hasPurchasedProgram(auth.supabase, auth.user.id, bundle.slug);
+    // Entitlement is read with the service client: program_orders is revoked
+    // from `authenticated` (migration 20260723221731). auth.user.id comes from
+    // the verified session, so the row scope is still the caller's own orders.
+    const db = getSupabaseServerClient();
+    if (!db) return NextResponse.json({ error: "Server not configured" }, { status: 500 });
+    const paid = await hasPurchasedProgram(db, auth.user.id, bundle.slug);
     if (!paid) {
       return NextResponse.json({ error: "Purchase required" }, { status: 403 });
     }
