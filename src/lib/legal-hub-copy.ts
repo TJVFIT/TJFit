@@ -140,11 +140,183 @@ const faqTr: { id: string; q: string; a: string }[] = [
   }
 ];
 
-const faqAr: { id: string; q: string; a: string }[] = faqEn.map((item) => ({ ...item }));
+// OWNER REVIEW PENDING (2026-08-09): faqAr/faqEs/faqFr were literal English
+// clones (`faqEn.map(...)`) — translated faithfully from faqEn, but they carry
+// product and pricing claims (free-tier contents, 4- vs 12-week distinction,
+// Gumroad, 30-day deletion). Owner signs off before these ship.
+const faqAr: { id: string; q: string; a: string }[] = [
+  {
+    id: "what",
+    q: "ما هو TJFit؟",
+    a: "TJFit منصة تحول لياقة مميزة تقدم برامج تدريب كاملة لمدة 12 أسبوعًا وأنظمة غذائية، مصممة كخطة مدرب حقيقي للمنزل والصالة معًا."
+  },
+  {
+    id: "free-start",
+    q: "كيف أبدأ مجانًا؟",
+    a: "أنشئ حسابًا مجانيًا واحصل فورًا على برنامجين تدريبيين كاملين وخطتين غذائيتين كاملتين — دون الحاجة إلى بطاقة ائتمان."
+  },
+  {
+    id: "free-vs-paid",
+    q: "ما الفرق بين البرامج المجانية والمدفوعة؟",
+    a: "البرامج المجانية هي برامج تأسيسية لمدة 4 أسابيع. أما المدفوعة فهي أنظمة كاملة لمدة 12 أسبوعًا مع تدرج متقدم وتمارين أكثر وتفاصيل أسبوعية كاملة."
+  },
+  {
+    id: "diets",
+    q: "كيف تعمل الخطط الغذائية؟",
+    a: "توفر كل خطة وجبات يومية مع المكونات والسعرات والماكروز وتعليمات تحضير بسيطة، مع تعديلات أسبوعية للسعرات من أجل التقدم."
+  },
+  {
+    id: "switch",
+    q: "هل يمكنني تبديل البرامج؟",
+    a: "نعم. أي برنامج اشتريته يبقى متاحًا من لوحة التحكم في أي وقت."
+  },
+  {
+    id: "messaging",
+    q: "كيف تعمل المراسلة؟",
+    a: "تعتمد مراسلة TJFit على اسم المستخدم — دون مشاركة أرقام الهواتف أو البريد الإلكتروني. راسل المدربين أو المستخدمين الآخرين مباشرة داخل المنصة."
+  },
+  {
+    id: "become-coach",
+    q: "كيف أصبح مدربًا؟",
+    a: "قدّم طلبك عبر قسم «ابحث عن مدرب». بعد موافقة TJFit، يجب قبول شروط المدرب قبل الوصول إلى ميزات المدرب."
+  },
+  {
+    id: "payments",
+    q: "ما وسائل الدفع المقبولة؟",
+    a: "جميع بطاقات الائتمان والخصم الرئيسية، عبر شريك الدفع الآمن Gumroad."
+  },
+  {
+    id: "privacy-data",
+    q: "هل بياناتي خاصة؟",
+    a: "نعم. بياناتك الشخصية لا تُباع ولا تُشارك أبدًا. راجع سياسة الخصوصية أدناه للتفاصيل الكاملة."
+  },
+  {
+    id: "delete",
+    q: "كيف أحذف حسابي؟",
+    a: "اذهب إلى الملف الشخصي ← الإعدادات ← حذف الحساب. تُحذف جميع البيانات الشخصية خلال 30 يومًا."
+  },
+  {
+    id: "support",
+    q: "كيف أتواصل مع الدعم؟",
+    a: "راسل support@tjfit.org أو استخدم النموذج أسفل هذه الصفحة."
+  }
+];
 
-const faqEs: { id: string; q: string; a: string }[] = faqEn.map((item) => ({ ...item }));
+const faqEs: { id: string; q: string; a: string }[] = [
+  {
+    id: "what",
+    q: "¿Qué es TJFit?",
+    a: "TJFit es una plataforma premium de transformación física que ofrece programas de entrenamiento completos de 12 semanas y sistemas de dieta, estructurados como el plan de un coach real, tanto para casa como para el gimnasio."
+  },
+  {
+    id: "free-start",
+    q: "¿Cómo empiezo gratis?",
+    a: "Crea una cuenta gratuita y accede al instante a dos programas de entrenamiento completos y dos planes de dieta completos — sin tarjeta de crédito."
+  },
+  {
+    id: "free-vs-paid",
+    q: "¿Cuál es la diferencia entre los programas gratuitos y los de pago?",
+    a: "Los programas gratuitos son iniciaciones de base de 4 semanas. Los de pago son sistemas completos de 12 semanas con progresión avanzada, más ejercicios y todo el detalle semanal."
+  },
+  {
+    id: "diets",
+    q: "¿Cómo funcionan los planes de dieta?",
+    a: "Cada plan incluye comidas diarias con ingredientes, calorías, macros e instrucciones de preparación sencillas. Los ajustes semanales de calorías vienen integrados para progresar."
+  },
+  {
+    id: "switch",
+    q: "¿Puedo cambiar de programa?",
+    a: "Sí. Cualquier programa que hayas comprado queda accesible desde tu panel en cualquier momento."
+  },
+  {
+    id: "messaging",
+    q: "¿Cómo funciona la mensajería?",
+    a: "La mensajería de TJFit se basa en nombres de usuario — sin compartir teléfonos ni emails. Escribe a coaches u otros usuarios directamente en la plataforma."
+  },
+  {
+    id: "become-coach",
+    q: "¿Cómo me hago coach?",
+    a: "Postúlate desde la sección Encuentra un Coach. Una vez aprobado por TJFit, debes aceptar los Términos de Coach antes de acceder a las herramientas de coach."
+  },
+  {
+    id: "payments",
+    q: "¿Qué métodos de pago se aceptan?",
+    a: "Todas las principales tarjetas de crédito y débito, a través de nuestro socio de pagos seguro Gumroad."
+  },
+  {
+    id: "privacy-data",
+    q: "¿Mis datos son privados?",
+    a: "Sí. Tus datos personales nunca se venden ni se comparten. Consulta la Política de Privacidad más abajo para el detalle completo."
+  },
+  {
+    id: "delete",
+    q: "¿Cómo elimino mi cuenta?",
+    a: "Ve a Perfil → Ajustes → Eliminar cuenta. Todos los datos personales se eliminan en un plazo de 30 días."
+  },
+  {
+    id: "support",
+    q: "¿Cómo contacto con soporte?",
+    a: "Escribe a support@tjfit.org o usa el formulario al final de esta página."
+  }
+];
 
-const faqFr: { id: string; q: string; a: string }[] = faqEn.map((item) => ({ ...item }));
+const faqFr: { id: string; q: string; a: string }[] = [
+  {
+    id: "what",
+    q: "Qu'est-ce que TJFit ?",
+    a: "TJFit est une plateforme premium de transformation physique qui propose des programmes d'entraînement complets de 12 semaines et des systèmes de nutrition, structurés comme le plan d'un vrai coach, pour la maison comme pour la salle."
+  },
+  {
+    id: "free-start",
+    q: "Comment commencer gratuitement ?",
+    a: "Créez un compte gratuit et accédez immédiatement à deux programmes d'entraînement complets et deux plans de nutrition complets — sans carte bancaire."
+  },
+  {
+    id: "free-vs-paid",
+    q: "Quelle est la différence entre les programmes gratuits et payants ?",
+    a: "Les programmes gratuits sont des bases de démarrage de 4 semaines. Les payants sont des systèmes complets de 12 semaines avec progression avancée, plus d'exercices et tout le détail semaine par semaine."
+  },
+  {
+    id: "diets",
+    q: "Comment fonctionnent les plans de nutrition ?",
+    a: "Chaque plan fournit des repas quotidiens avec ingrédients, calories, macros et des instructions de préparation simples. Les ajustements caloriques hebdomadaires sont intégrés pour progresser."
+  },
+  {
+    id: "switch",
+    q: "Puis-je changer de programme ?",
+    a: "Oui. Tout programme acheté reste accessible depuis votre tableau de bord à tout moment."
+  },
+  {
+    id: "messaging",
+    q: "Comment fonctionne la messagerie ?",
+    a: "La messagerie TJFit repose sur le nom d'utilisateur — aucun numéro de téléphone ni email partagé. Écrivez directement aux coachs ou aux autres membres sur la plateforme."
+  },
+  {
+    id: "become-coach",
+    q: "Comment devenir coach ?",
+    a: "Postulez via la section Trouver un coach. Une fois approuvé par TJFit, vous devez accepter les Conditions des coachs avant d'accéder aux outils coach."
+  },
+  {
+    id: "payments",
+    q: "Quels moyens de paiement sont acceptés ?",
+    a: "Toutes les principales cartes de crédit et de débit, via notre partenaire de paiement sécurisé Gumroad."
+  },
+  {
+    id: "privacy-data",
+    q: "Mes données sont-elles privées ?",
+    a: "Oui. Vos données personnelles ne sont jamais vendues ni partagées. Consultez la Politique de confidentialité ci-dessous pour tous les détails."
+  },
+  {
+    id: "delete",
+    q: "Comment supprimer mon compte ?",
+    a: "Allez dans Profil → Paramètres → Supprimer le compte. Toutes les données personnelles sont supprimées sous 30 jours."
+  },
+  {
+    id: "support",
+    q: "Comment contacter le support ?",
+    a: "Écrivez à support@tjfit.org ou utilisez le formulaire en bas de cette page."
+  }
+];
 
 function faqFor(locale: Locale) {
   if (locale === "tr") return faqTr;
