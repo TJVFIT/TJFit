@@ -41,26 +41,26 @@ const copy: Record<Locale, TjaiAccessCopy> = {
     chatLimitBody: "You reached your preview chat limit. Upgrade to Pro or Apex for unlimited TJAI chat."
   },
   tr: {
-    approachTitle: "Bunu nasil ilerletmek istersin?",
-    approachSub: "Temponu sec, sonra tam plani olustur.",
+    approachTitle: "Bunu nasıl ilerletmek istersin?",
+    approachSub: "Temponu seç, sonra tam planı oluştur.",
     moderateTitle: "Orta Tempo",
-    moderateBody: "Daha guvenli ve surdurulebilir ilerleme.",
+    moderateBody: "Daha güvenli ve sürdürülebilir ilerleme.",
     aggressiveTitle: "Agresif Tempo",
-    aggressiveBody: "Daha hizli sonuc, daha yuksek disiplin.",
-    moderateCta: "Orta Plani Gor",
-    aggressiveCta: "Agresif Plani Gor",
-    compareCta: "Ikisini Karsilastir",
+    aggressiveBody: "Daha hızlı sonuç, daha yüksek disiplin.",
+    moderateCta: "Orta Planı Gör",
+    aggressiveCta: "Agresif Planı Gör",
+    compareCta: "İkisini Karşılaştır",
     metricsTitle: "Hesaplanan metriklerin",
-    metrics: { bmr: "BMR", tdee: "TDEE", protein: "Protein", carbs: "Karbonhidrat", fat: "Yag" },
+    metrics: { bmr: "BMR", tdee: "TDEE", protein: "Protein", carbs: "Karbonhidrat", fat: "Yağ" },
     upgrade: {
-      title: "Uyarlanabilir planin hazir",
-      body: "Tek seferlik TJAI plan kilidini ac, sonra istersen surekli koçluk icin Pro veya Apex ekle.",
-      oneTime: `TJAI Plani Ac - $${TJAI_ONE_TIME_PRICE_USD}`,
+      title: "Uyarlanabilir planın hazır",
+      body: "Tek seferlik TJAI plan kilidini aç, sonra istersen sürekli koçluk için Pro veya Apex ekle.",
+      oneTime: `TJAI Planı Aç - $${TJAI_ONE_TIME_PRICE_USD}`,
       pro: `Pro Al - $${TJAI_SUBSCRIPTION_PRICES_USD.pro.monthly}/ay`,
       apex: `Apex Al - $${TJAI_SUBSCRIPTION_PRICES_USD.apex.monthly}/ay`,
       close: "Daha sonra"
     },
-    chatLimitBody: "On izleme sohbet limitine ulastin. Sinirsiz TJAI sohbeti icin Pro veya Apex'e gec."
+    chatLimitBody: "Ön izleme sohbet limitine ulaştın. Sınırsız TJAI sohbeti için Pro veya Apex'e geç."
   },
   ar: {
     approachTitle: "كيف تريد تنفيذ الخطة؟",

@@ -25,15 +25,15 @@ const coachReviewRequestCopy: Record<Locale, CoachReviewRequestCopy> = {
     error: "Could not submit your request right now."
   },
   tr: {
-    title: "Planinizi bir coach incelesin ister misiniz?",
-    description: "Sertifikali bir TJFit coach'u AI tarafindan olusturulan planinizi inceler, size ozel yorumlar birakir ve ayarlamalar onerir.",
-    bullets: ["48 saat icinde incelenir", "Diyetiniz ve programiniz icin size ozel yorumlar", "Bir tur ayarlama dahildir"],
+    title: "Planınızı bir coach incelesin ister misiniz?",
+    description: "Sertifikalı bir TJFit coach'u AI tarafından oluşturulan planınızı inceler, size özel yorumlar bırakır ve ayarlamalar önerir.",
+    bullets: ["48 saat içinde incelenir", "Diyetiniz ve programınız için size özel yorumlar", "Bir tur ayarlama dahildir"],
     included: "TJFit Pro ile dahildir",
-    submitting: "Gonderiliyor...",
+    submitting: "Gönderiliyor...",
     request: "Coach incelemesi iste",
-    success: "Talebiniz gonderildi. Bir coach 48 saat icinde inceleyecek.",
-    upgrade: "Coach incelemesini acmak icin TJFit Pro'ya gecin.",
-    error: "Talebiniz su anda gonderilemedi."
+    success: "Talebiniz gönderildi. Bir coach 48 saat içinde inceleyecek.",
+    upgrade: "Coach incelemesini açmak için TJFit Pro'ya geçin.",
+    error: "Talebiniz şu anda gönderilemedi."
   },
   ar: {
     title: "هل تريد أن يراجع مدرب خطتك؟",

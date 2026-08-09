@@ -29,17 +29,17 @@ const copy: Record<Locale, CoachTermsCopy> = {
     alreadyAccepted: "You are up to date. Redirecting…"
   },
   tr: {
-    badge: "Koç sozlesmesi",
-    title: "TJFit Koç Sartlari",
-    subtitle: "Lutfen dikkatle okuyun. Koç araclarina erisim icin onay gereklidir.",
-    checkboxLabel: "TJFit Koç Sartlarini okudum ve kabul ediyorum.",
+    badge: "Koç sözleşmesi",
+    title: "TJFit Koç Şartları",
+    subtitle: "Lütfen dikkatle okuyun. Koç araçlarına erişim için onay gereklidir.",
+    checkboxLabel: "TJFit Koç Şartlarını okudum ve kabul ediyorum.",
     acceptButton: "Kabul et ve devam et",
     accepting: "Kaydediliyor…",
-    mustCheck: "Devam etmek icin kutuyu isaretleyin.",
-    successRedirect: "Yonlendiriliyor…",
-    errorGeneric: "Kayit basarisiz. Tekrar deneyin.",
-    onlyCoaches: "Bu sayfa yalnizca koçlar icindir.",
-    alreadyAccepted: "Guncelsiniz. Yonlendiriliyor…"
+    mustCheck: "Devam etmek için kutuyu işaretleyin.",
+    successRedirect: "Yönlendiriliyor…",
+    errorGeneric: "Kayıt başarısız. Tekrar deneyin.",
+    onlyCoaches: "Bu sayfa yalnızca koçlar içindir.",
+    alreadyAccepted: "Güncelsiniz. Yönlendiriliyor…"
   },
   ar: {
     badge: "اتفاق المدرب",
@@ -101,12 +101,12 @@ export function getCoachTermsSections(locale: Locale): { heading: string; paragr
       "Acceptance and updates"
     ],
     tr: [
-      "Koç sorumluluklari",
-      "Icerik kalite standartlari",
-      "Danisan iletisimi",
-      "Platform kurallari ve davranis",
-      "Ihlal sonuclari",
-      "Kabul ve guncellemeler"
+      "Koç sorumlulukları",
+      "İçerik kalite standartları",
+      "Danışan iletişimi",
+      "Platform kuralları ve davranış",
+      "İhlal sonuçları",
+      "Kabul ve güncellemeler"
     ],
     ar: [
       "مسؤوليات المدرب",

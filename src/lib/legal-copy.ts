@@ -80,18 +80,18 @@ export function getTermsCopy(locale: Locale, billingProvider: string, version: s
       versionLabel: `Terms version: ${version}`
     },
     tr: {
-      badge: "Hizmet Sartlari",
-      title: "Sartlar ve Kosullar",
+      badge: "Hizmet Şartları",
+      title: "Şartlar ve Koşullar",
       sections: [
-        { title: "1. Sartlarin Kabul Edilmesi", body: ["TJFit'i kullanarak bu Sartlari, Gizlilik Politikasini ve Iade Politikasini kabul etmis olursun.", "Kabul etmiyorsan platformu kullanmamalisin."] },
-        { title: "2. Uygunluk ve Hesap Guvenligi", body: ["TJFit'i kullanmak veya hesap olusturmak icin en az 13 yasinda olmalisin. 13 yas alti kullanicilara izin verilmez; 13 yas altina ait oldugu tespit edilen hesaplar silinir. 13-17 yas arasi kullanicilarin ebeveyn onayi gerekir.", "Dogru bilgi vermeli, giris bilgilerini korumali ve hesabindaki islemlerden sorumlu olmalisin.", "Dolandiricilik, kotuye kullanim veya yasa disi faaliyetlerde kullanilan hesaplar askiya alinabilir."] },
-        { title: "3. Saglik ve Tibbi Uyari", body: ["TJFit egitim ve koçluk sunar; tibbi tani veya tedavi sunmaz.", "Herhangi bir programa baslamadan once lisansli bir saglik uzmanina danis."] },
-        { title: `4. Odeme ve Faturalama (${billingProvider})`, body: [`Ucretli urunlerin odemeleri ${billingProvider} tarafindan islenebilir. Satin alarak secilen odeme yontemi uzerinden tahsilati kabul edersin.`, "Fiyatlandirma, iptal ve iadeler odeme ekranindaki sartlara ve TJFit iade politikasina tabidir."] },
-        { title: "5. Kabul Edilebilir Kullanim", body: ["Platformu tersine muhendislik icin kullanamaz, veri kaziyamaz, taciz edemez veya guvenlige mudahale edemezsin.", "Ihlaller hesap kisitlamasi veya kapatma ile sonuclanabilir."] },
-        { title: "6. Sorumlulugun Sinirlandirilmasi", body: ["Kanunun izin verdigi en genis kapsamda TJFit dolayli veya ozel zararlardan sorumlu tutulamaz.", "Platformu kendi sorumlulugunda kullanirsin."] },
-        { title: "7. Sartlarin Guncellenmesi", body: ["Bu Sartlari zaman zaman guncelleyebiliriz.", "Guncellemeden sonra kullanmaya devam etmen yeni surumu kabul ettigin anlamina gelir."] }
+        { title: "1. Şartların Kabul Edilmesi", body: ["TJFit'i kullanarak bu Şartları, Gizlilik Politikasını ve İade Politikasını kabul etmiş olursun.", "Kabul etmiyorsan platformu kullanmamalısın."] },
+        { title: "2. Uygunluk ve Hesap Güvenliği", body: ["TJFit'i kullanmak veya hesap oluşturmak için en az 13 yaşında olmalısın. 13 yaş altı kullanıcılara izin verilmez; 13 yaş altına ait olduğu tespit edilen hesaplar silinir. 13-17 yaş arası kullanıcıların ebeveyn onayı gerekir.", "Doğru bilgi vermeli, giriş bilgilerini korumalı ve hesabındaki işlemlerden sorumlu olmalısın.", "Dolandırıcılık, kötüye kullanım veya yasa dışı faaliyetlerde kullanılan hesaplar askıya alınabilir."] },
+        { title: "3. Sağlık ve Tıbbi Uyarı", body: ["TJFit eğitim ve koçluk sunar; tıbbi tanı veya tedavi sunmaz.", "Herhangi bir programa başlamadan önce lisanslı bir sağlık uzmanına danış."] },
+        { title: `4. Ödeme ve Faturalama (${billingProvider})`, body: [`Ücretli ürünlerin ödemeleri ${billingProvider} tarafından işlenebilir. Satın alarak seçilen ödeme yöntemi üzerinden tahsilatı kabul edersin.`, "Fiyatlandırma, iptal ve iadeler ödeme ekranındaki şartlara ve TJFit iade politikasına tabidir."] },
+        { title: "5. Kabul Edilebilir Kullanım", body: ["Platformu tersine mühendislik için kullanamaz, veri kazıyamaz, taciz edemez veya güvenliğe müdahale edemezsin.", "İhlaller hesap kısıtlaması veya kapatma ile sonuçlanabilir."] },
+        { title: "6. Sorumluluğun Sınırlandırılması", body: ["Kanunun izin verdiği en geniş kapsamda TJFit dolaylı veya özel zararlardan sorumlu tutulamaz.", "Platformu kendi sorumluluğunda kullanırsın."] },
+        { title: "7. Şartların Güncellenmesi", body: ["Bu Şartları zaman zaman güncelleyebiliriz.", "Güncellemeden sonra kullanmaya devam etmen yeni sürümü kabul ettiğin anlamına gelir."] }
       ],
-      versionLabel: `Sartlar surumu: ${version}`
+      versionLabel: `Şartlar sürümü: ${version}`
     },
     ar: {
       badge: "شروط الخدمة",

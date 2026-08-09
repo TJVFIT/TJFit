@@ -35,19 +35,19 @@ const c: Record<Locale, FreeOfferCopy> = {
     trustLine3: "Free to join. No credit card."
   },
   tr: {
-    badge: "Ucretsiz baslangic",
-    title: "Ucretsiz basla. Hazir olunca yukselt.",
-    subtitle: "Iki tam program ve iki diyet plani — ucretsiz.",
-    ctaStart: "Ucretsiz basla",
+    badge: "Ücretsiz başlangıç",
+    title: "Ücretsiz başla. Hazır olunca yükselt.",
+    subtitle: "İki tam program ve iki diyet planı — ücretsiz.",
+    ctaStart: "Ücretsiz başla",
     ctaPrograms: "Programlara git",
-    getFreeAccess: "Ucretsiz erisim →",
-    signInHint: "Zaten hesabin var mi?",
-    signIn: "Giris yap →",
-    programKind: "Antrenman programi",
+    getFreeAccess: "Ücretsiz erişim →",
+    signInHint: "Zaten hesabın var mı?",
+    signIn: "Giriş yap →",
+    programKind: "Antrenman programı",
     dietKind: "Diyet sistemi",
-    trustLine1: "Yapilandirilmis 12 haftalik sistem",
-    trustLine2: "Gunluk ogunler, makrolar ve tarifler",
-    trustLine3: "Katilim ucretsiz. Kredi karti yok."
+    trustLine1: "Yapılandırılmış 12 haftalık sistem",
+    trustLine2: "Günlük öğünler, makrolar ve tarifler",
+    trustLine3: "Katılım ücretsiz. Kredi kartı yok."
   },
   ar: {
     badge: "بداية مجانية",

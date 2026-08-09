@@ -24,14 +24,14 @@ export function CoachTermsAcceptClient({
   const [error, setError] = useState<string | null>(null);
   const versionNoteByLocale: Record<Locale, string> = {
     en: "Please retain a copy for your records.",
-    tr: "Lutfen kayitlariniz icin bir kopya saklayin.",
+    tr: "Lütfen kayıtlarınız için bir kopya saklayın.",
     ar: "يرجى الاحتفاظ بنسخة لسجلاتك.",
     es: "Conserva una copia para tus registros.",
     fr: "Conservez une copie pour vos dossiers."
   };
   const bindingNoteByLocale: Record<Locale, string> = {
     en: "Binding terms are provided in English.",
-    tr: "Baglayici sartlar Ingilizce olarak saglanir.",
+    tr: "Bağlayıcı şartlar İngilizce olarak sağlanır.",
     ar: "الشروط الملزمة متاحة باللغة الإنجليزية.",
     es: "Los terminos vinculantes se proporcionan en ingles.",
     fr: "Les conditions contraignantes sont fournies en anglais."

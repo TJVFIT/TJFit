@@ -84,17 +84,17 @@ const coaches: Record<Locale, CoachesListingCopy> = {
   },
   tr: {
     badge: "Koçlar",
-    title: "Luks standartta koçlar",
-    body: "Kasitli olarak yavas dahil ediyoruz. Her koç; ustalik, netlik ve uyelere yaklasim acisindan incelenir — takipçi sayisi degil.",
-    ctaPrograms: "Programlari incele",
-    ctaSignup: "Hesap olustur",
-    ctaBecomeCoach: "Koç basvurusu",
-    comingSoonLabel: "Yakinda",
-    standardsTitle: "Dogrulanmis ne demek",
+    title: "Lüks standartta koçlar",
+    body: "Kasıtlı olarak yavaş dahil ediyoruz. Her koç; ustalık, netlik ve üyelere yaklaşım açısından incelenir — takipçi sayısı değil.",
+    ctaPrograms: "Programları incele",
+    ctaSignup: "Hesap oluştur",
+    ctaBecomeCoach: "Koç başvurusu",
+    comingSoonLabel: "Yakında",
+    standardsTitle: "Doğrulanmış ne demek",
     standards: [
-      "Herkese acik profil oncesi yetkinlik ve deneyim kontrolu",
-      "Net kapsam, mesajlasma ve hesap verebilirlik",
-      "Gercek uyelerden kalite sinyalleri — gösteris metrikleri degil"
+      "Herkese açık profil öncesi yetkinlik ve deneyim kontrolü",
+      "Net kapsam, mesajlaşma ve hesap verebilirlik",
+      "Gerçek üyelerden kalite sinyalleri — gösteriş metrikleri değil"
     ]
   },
   ar: {
@@ -164,22 +164,22 @@ const membership: Record<Locale, MembershipCopy> = {
     pricingFootnote: "Founding offers may apply to early waitlist subscribers — disclosed in writing before you pay."
   },
   tr: {
-    badge: "Uyelik",
-    title: "Tam erisim uyeligi cok yakinda",
-    body: "Premium programlar, koç temasi ve topluluk derinligi tek pakette. Bugun tekil programlarla baslayin — hesabiniz devreder.",
-    ctaExplore: "Programlari gor",
-    ctaAccount: "Giris yap",
-    pricingTitle: "Seviyeler tasarimda",
-    pricingSub: "Uc seviye netlesiyor. Acik fiyat yok — erken aboneler odeme oncesi sartlari yazili gorecek.",
-    tierStatus: "Cok yakinda",
+    badge: "Üyelik",
+    title: "Tam erişim üyeliği çok yakında",
+    body: "Premium programlar, koç teması ve topluluk derinliği tek pakette. Bugün tekil programlarla başlayın — hesabınız devreder.",
+    ctaExplore: "Programları gör",
+    ctaAccount: "Giriş yap",
+    pricingTitle: "Seviyeler tasarımda",
+    pricingSub: "Üç seviye netleşiyor. Açık fiyat yok — erken aboneler ödeme öncesi şartları yazılı görecek.",
+    tierStatus: "Çok yakında",
     tiers: [
       { name: "Train", teaser: "Programlar + topluluk temeli" },
-      { name: "Coach+", teaser: "Daha yakin koç temasi" },
-      { name: "Elite", teaser: "Oncelikli erisim" }
+      { name: "Coach+", teaser: "Daha yakın koç teması" },
+      { name: "Elite", teaser: "Öncelikli erişim" }
     ],
     waitlistTitle: "Haber ver",
-    waitlistSub: "Uyelik netlestiginde tek e-posta. Istediginiz zaman cikis.",
-    pricingFootnote: "Erken liste icin kurucu teklifler olabilir — odeme oncesi yazili aciklama."
+    waitlistSub: "Üyelik netleştiğinde tek e-posta. İstediğiniz zaman çıkış.",
+    pricingFootnote: "Erken liste için kurucu teklifler olabilir — ödeme öncesi yazılı açıklama."
   },
   ar: {
     badge: "العضوية",
@@ -254,17 +254,17 @@ const coachProfileGate: Record<Locale, CoachProfileGateCopy> = {
   },
   tr: {
     badge: "Koç profili",
-    title: "Profiller asamali aciliyor",
-    body: "Anlasmalar ve medya standartlarini tamamlıyoruz; her sayfa antrenman kadar premium hissettirsin.",
-    proofTitle: "Burada ne goreceksiniz",
+    title: "Profiller aşamalı açılıyor",
+    body: "Anlaşmalar ve medya standartlarını tamamlıyoruz; her sayfa antrenman kadar premium hissettirsin.",
+    proofTitle: "Burada ne göreceksiniz",
     proofItems: [
-      "Uzmanlik etiketleri ve odak alanlari",
-      "Kisa otorite ozeti ve deneyim kaniti",
-      "Net sonraki adim: mesaj, program veya bekleme listesi"
+      "Uzmanlık etiketleri ve odak alanları",
+      "Kısa otorite özeti ve deneyim kanıtı",
+      "Net sonraki adım: mesaj, program veya bekleme listesi"
     ],
     notifyTitle: "Haber ver",
-    notifySub: "Bu koçun profili ve rezervasyonu acildiginda e-posta gondeririz.",
-    ctaBack: "Tum koçlar"
+    notifySub: "Bu koçun profili ve rezervasyonu açıldığında e-posta göndeririz.",
+    ctaBack: "Tüm koçlar"
   },
   ar: {
     badge: "ملف المدرب",
@@ -339,31 +339,31 @@ const checkout: Record<Locale, CheckoutCopy> = {
     securePaymentTrust: "Secure payment via Gumroad. Instant access after payment."
   },
   tr: {
-    badge: "Odeme",
-    title: "Satin almayi tamamlayin",
-    lead: "Varsa promosyon kodunuzu uygulayin, sonra guvenli odemeye gecin.",
+    badge: "Ödeme",
+    title: "Satın almayı tamamlayın",
+    lead: "Varsa promosyon kodunuzu uygulayın, sonra güvenli ödemeye geçin.",
     selectProgram: "Program",
-    orderSummary: "Siparis ozeti",
+    orderSummary: "Sipariş özeti",
     price: "Fiyat",
     promoCodeLabel: "Promosyon kodu",
-    promoCodePlaceholder: "ornek: JOSEPH1407",
+    promoCodePlaceholder: "örnek: JOSEPH1407",
     promoApplyCta: "Uygula",
-    promoAppliedPrefix: "Kod uygulandi:",
-    ctaPay: "Odemeye devam",
-    ctaWorking: "Isleniyor…",
+    promoAppliedPrefix: "Kod uygulandı:",
+    ctaPay: "Ödemeye devam",
+    ctaWorking: "İşleniyor…",
     footnote:
-      "Odeme Gumroad uzerinden yapilir; Gumroad panelinde actiginiz yontemler gorunur. Test modu gelistirme icin aninda tamamlar.",
-    pendingTitle: "Siparis kaydedildi",
+      "Ödeme Gumroad üzerinden yapılır; Gumroad panelinde açtığınız yöntemler görünür. Test modu geliştirme için anında tamamlar.",
+    pendingTitle: "Sipariş kaydedildi",
     pendingBody:
-      "Siparisiniz saklandi. Asagidaki guvenli odeme adimini acin — odeme tamamlanana kadar tahsilat yapilmaz.",
-    amountDue: "Odenecek tutar",
-    gatewayPayCta: "Guvenli odemeyi ac",
-    paddleOpening: "Odeme aciliyor…",
-    paddleInitError: "GUMROAD_DEFAULT_PRODUCT_URL ortam degiskenini ekleyin (Gumroad gelistirici araclari).",
-    paddleWebhookWait: "Odeme isleniyor. Sayfayi birkac saniye sonra yenileyebilirsiniz.",
-    errorPrefix: "Bir sorun olustu.",
-    successPurchase: "Satin alma tamamlandi.",
-    securePaymentTrust: "Guvenli odeme Gumroad ile. Odeme sonrasi aninda erisim."
+      "Siparişiniz saklandı. Aşağıdaki güvenli ödeme adımını açın — ödeme tamamlanana kadar tahsilat yapılmaz.",
+    amountDue: "Ödenecek tutar",
+    gatewayPayCta: "Güvenli ödemeyi aç",
+    paddleOpening: "Ödeme açılıyor…",
+    paddleInitError: "GUMROAD_DEFAULT_PRODUCT_URL ortam değişkenini ekleyin (Gumroad geliştirici araçları).",
+    paddleWebhookWait: "Ödeme işleniyor. Sayfayı birkaç saniye sonra yenileyebilirsiniz.",
+    errorPrefix: "Bir sorun oluştu.",
+    successPurchase: "Satın alma tamamlandı.",
+    securePaymentTrust: "Güvenli ödeme Gumroad ile. Ödeme sonrası anında erişim."
   },
   ar: {
     badge: "الدفع",

@@ -86,57 +86,57 @@ const faqTr: { id: string; q: string; a: string }[] = [
   {
     id: "what",
     q: "TJFit nedir?",
-    a: "TJFit; ev ve salon icin, gercek bir antrenor plani gibi yapilandirilmis tam 12 haftalik antrenman programlari ve diyet sistemleri sunan premium bir donusum platformudur."
+    a: "TJFit; ev ve salon için, gerçek bir antrenör planı gibi yapılandırılmış tam 12 haftalık antrenman programları ve diyet sistemleri sunan premium bir dönüşüm platformudur."
   },
   {
     id: "free-start",
-    q: "Ucretsiz nasil baslarim?",
-    a: "Ucretsiz hesap olusturun; iki tam antrenman programi ve iki tam diyet planina aninda erisin — kredi karti gerekmez."
+    q: "Ücretsiz nasıl başlarım?",
+    a: "Ücretsiz hesap oluşturun; iki tam antrenman programı ve iki tam diyet planına anında erişin — kredi kartı gerekmez."
   },
   {
     id: "free-vs-paid",
-    q: "Ucretsiz ve ucretli programlar arasindaki fark nedir?",
-    a: "Ucretsiz programlar 4 haftalik temel baslangiclardir. Ucretliler; ileri ilerleme, daha fazla hareket ve tam haftalik detay iceren tam 12 haftalik sistemlerdir."
+    q: "Ücretsiz ve ücretli programlar arasındaki fark nedir?",
+    a: "Ücretsiz programlar 4 haftalık temel başlangıçlardır. Ücretliler; ileri ilerleme, daha fazla hareket ve tam haftalık detay içeren tam 12 haftalık sistemlerdir."
   },
   {
     id: "diets",
-    q: "Diyet planlari nasil calisir?",
-    a: "Her plan; gunluk ogunler, malzemeler, kalori, makrolar ve basit hazirlik notlari sunar. Haftalik kalori ayarlari ilerleme icin yerlesiktir."
+    q: "Diyet planları nasıl çalışır?",
+    a: "Her plan; günlük öğünler, malzemeler, kalori, makrolar ve basit hazırlık notları sunar. Haftalık kalori ayarları ilerleme için yerleşiktir."
   },
   {
     id: "switch",
-    q: "Program degistirebilir miyim?",
-    a: "Evet. Satin aldiginiz her program, istediginiz zaman kontrol panelinizden erisilebilir."
+    q: "Program değiştirebilir miyim?",
+    a: "Evet. Satın aldığınız her program, istediğiniz zaman kontrol panelinizden erişilebilir."
   },
   {
     id: "messaging",
-    q: "Mesajlasma nasil calisir?",
-    a: "TJFit mesajlasmasi kullanici adina dayalidir — telefon veya e-posta paylasilmaz. Koçlar veya diger uyelerle dogrudan platform uzerinden yazisin."
+    q: "Mesajlaşma nasıl çalışır?",
+    a: "TJFit mesajlaşması kullanıcı adına dayalıdır — telefon veya e-posta paylaşılmaz. Koçlar veya diğer üyelerle doğrudan platform üzerinden yazışın."
   },
   {
     id: "become-coach",
-    q: "Nasil koç olurum?",
-    a: "Koç Bul bolumunden basvurun. TJFit onayladiktan sonra koç ozelliklerine erismek icin Koç Sartlarini kabul etmeniz gerekir."
+    q: "Nasıl koç olurum?",
+    a: "Koç Bul bölümünden başvurun. TJFit onayladıktan sonra koç özelliklerine erişmek için Koç Şartlarını kabul etmeniz gerekir."
   },
   {
     id: "payments",
-    q: "Hangi odeme yontemleri kabul edilir?",
-    a: "Guvenli odeme ortagimiz Gumroad uzerinden tum major kredi ve banka kartlari."
+    q: "Hangi ödeme yöntemleri kabul edilir?",
+    a: "Güvenli ödeme ortağımız Gumroad üzerinden tüm major kredi ve banka kartları."
   },
   {
     id: "privacy-data",
     q: "Verilerim gizli mi?",
-    a: "Evet. Kisisel verileriniz satilmaz ve paylasilmaz. Ayrintilar icin asagidaki Gizlilik Politikasina bakin."
+    a: "Evet. Kişisel verileriniz satılmaz ve paylaşılmaz. Ayrıntılar için aşağıdaki Gizlilik Politikasına bakın."
   },
   {
     id: "delete",
-    q: "Hesabimi nasil silerim?",
-    a: "Profil → Ayarlar → Hesabi Sil. Tum kisisel veriler 30 gun icinde kaldirilir."
+    q: "Hesabımı nasıl silerim?",
+    a: "Profil → Ayarlar → Hesabı Sil. Tüm kişisel veriler 30 gün içinde kaldırılır."
   },
   {
     id: "support",
-    q: "Destek ile nasil iletisime gecerim?",
-    a: "support@tjfit.org adresine yazin veya bu sayfanin altindaki formu kullanin."
+    q: "Destek ile nasıl iletişime geçerim?",
+    a: "support@tjfit.org adresine yazın veya bu sayfanın altındaki formu kullanın."
   }
 ];
 
@@ -335,11 +335,11 @@ const privacyEn = [
 ];
 
 const privacyTr = [
-  "1. Toplanan veriler: ad, e-posta, fitness tercihleri ve program kullanimi. Odeme karti numaralari toplanmaz (Gumroad isler).",
-  "2. Kullanim: TJFit'i sunmak ve gelistirmek; hesap bildirimleri. Verilerinizi satmayiz.",
-  "3. Saklama: veriler Supabase uzerinde sifreli sunucularda guvenle tutulur.",
-  "4. Haklariniz: dilediginiz zaman veri aktarimi veya silme talep edebilirsiniz. Iletisim: support@tjfit.org.",
-  "5. Cerezler: yalnizca kimlik dogrulama icin cerez kullaniriz. Reklam cerezi yoktur."
+  "1. Toplanan veriler: ad, e-posta, fitness tercihleri ve program kullanımı. Ödeme kartı numaraları toplanmaz (Gumroad işler).",
+  "2. Kullanım: TJFit'i sunmak ve geliştirmek; hesap bildirimleri. Verilerinizi satmayız.",
+  "3. Saklama: veriler Supabase üzerinde şifreli sunucularda güvenle tutulur.",
+  "4. Haklarınız: dilediğiniz zaman veri aktarımı veya silme talep edebilirsiniz. İletişim: support@tjfit.org.",
+  "5. Çerezler: yalnızca kimlik doğrulama için çerez kullanırız. Reklam çerezi yoktur."
 ];
 
 const privacyAr = [
@@ -392,21 +392,21 @@ const meta: Record<Locale, LegalHubMeta> = {
   tr: {
     heroEyebrow: "DESTEK VE YASAL",
     heroHeadlineBefore: "Sorular ve ",
-    heroHeadlineGradient: "sartlar.",
-    heroSub: "TJFit hakkinda bilmeniz gereken her sey.",
+    heroHeadlineGradient: "şartlar.",
+    heroSub: "TJFit hakkında bilmeniz gereken her şey.",
     pageTitle: "Yasal ve Destek",
-    pageIntro: "SSS, uye sartlari, koç sartlari ozeti ve gizlilik.",
+    pageIntro: "SSS, üye şartları, koç şartları özeti ve gizlilik.",
     navFaq: "SSS",
-    navUserTerms: "Uye sartlari",
-    navCoachTerms: "Koç sartlari",
+    navUserTerms: "Üye şartları",
+    navCoachTerms: "Koç şartları",
     navPrivacy: "Gizlilik",
-    faqTitle: "Sik sorulan sorular",
-    userTermsTitle: "Kullanici Hizmet Sartlari",
-    coachTermsTitle: "Koç Hizmet Sartlari",
-    coachTermsReadOnly: "Koç ozelliklerine erismek icin bu sartlar uygulama icinde kabul edilmelidir.",
-    privacyTitle: "Gizlilik Politikasi",
-    linkTermsPage: "Tam sartlar",
-    linkPrivacyPage: "Gizlilik politikasi",
+    faqTitle: "Sık sorulan sorular",
+    userTermsTitle: "Kullanıcı Hizmet Şartları",
+    coachTermsTitle: "Koç Hizmet Şartları",
+    coachTermsReadOnly: "Koç özelliklerine erişmek için bu şartlar uygulama içinde kabul edilmelidir.",
+    privacyTitle: "Gizlilik Politikası",
+    linkTermsPage: "Tam şartlar",
+    linkPrivacyPage: "Gizlilik politikası",
     privacyParagraphs: privacyTr
   },
   ar: {
@@ -482,13 +482,13 @@ const userTermsBody: Record<Locale, string[]> = {
     "6. Termination — TJFit reserves the right to suspend accounts that violate these terms."
   ],
   tr: [
-    "TJFit'i kullanarak asagidakileri kabul edersiniz:",
-    "1. Uygunluk — TJFit 16 yas ve uzeri icindir.",
-    "2. Hesap — Guvenlik sizin sorumlulugunuzdur; giris bilgilerini paylasmayin.",
-    "3. Kullanim — Taciz, zararli icerik veya baskalarinin verilerine yetkisiz erisim yasaktir.",
-    "4. Satinalmalar — Odemeler, Kayitli Satici olarak Gumroad tarafindan islenir. Satin alma tarihinden itibaren 14 gun icerisinde yapilan iade talepleri Gumroad tarafindan gumroad.com/refunds uzerinden karsilanir.",
-    "5. Icerik — Programlar bilgilendiricidir; baslamadan once doktorunuza danisin.",
-    "6. Sonlandirma — Ihlalde hesap askiya alinabilir."
+    "TJFit'i kullanarak aşağıdakileri kabul edersiniz:",
+    "1. Uygunluk — TJFit 16 yaş ve üzeri içindir.",
+    "2. Hesap — Güvenlik sizin sorumluluğunuzdur; giriş bilgilerini paylaşmayın.",
+    "3. Kullanım — Taciz, zararlı içerik veya başkalarının verilerine yetkisiz erişim yasaktır.",
+    "4. Satınalmalar — Ödemeler, Kayıtlı Satıcı olarak Gumroad tarafından işlenir. Satın alma tarihinden itibaren 14 gün içerisinde yapılan iade talepleri Gumroad tarafından gumroad.com/refunds üzerinden karşılanır.",
+    "5. İçerik — Programlar bilgilendiricidir; başlamadan önce doktorunuza danışın.",
+    "6. Sonlandırma — İhlalde hesap askıya alınabilir."
   ],
   ar: [
     "باستخدام TJFit فإنك توافق على ما يلي:",

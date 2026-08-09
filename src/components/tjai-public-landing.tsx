@@ -177,16 +177,16 @@ const COPY: Record<
     finalCta: "Start TJAI"
   },
   tr: {
-    heroTitle: "TJAI ile tanis.",
-    heroSub: "Ucretsiz on izleme icin uyarlanabilir degerlendirmeyi tamamla. Bir tam TJAI planinin kilidini $10 ile ac.",
-    heroCta: "TJAI On Izlemesi",
-    noCard: "On izleme ucretsiz. Tam plan uretimi odemeli.",
+    heroTitle: "TJAI ile tanış.",
+    heroSub: "Ücretsiz ön izleme için uyarlanabilir değerlendirmeyi tamamla. Bir tam TJAI planının kilidini $10 ile aç.",
+    heroCta: "TJAI Ön İzlemesi",
+    noCard: "Ön izleme ücretsiz. Tam plan üretimi ödemeli.",
     doesTitle: "TJAI ne yapar",
-    previewTitle: "TJAI plani nasil gorunuyor",
-    pricingTitle: "Seviyeni sec",
+    previewTitle: "TJAI planı nasıl görünüyor",
+    pricingTitle: "Seviyeni seç",
     faqTitle: "SSS",
-    finalTitle: "Donusumun tek bir soruyla baslar.",
-    finalCta: "TJAI'yi Baslat"
+    finalTitle: "Dönüşümün tek bir soruyla başlar.",
+    finalCta: "TJAI'yi Başlat"
   },
   ar: {
     heroTitle: "تعرّف على TJAI.",
