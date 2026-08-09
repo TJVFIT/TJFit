@@ -28,8 +28,7 @@ import type { QuizAnswers, TJAIMetrics, TJAIPlan } from "@/lib/tjai-types";
 import {
   COACH_FOLLOW_UP_PROMPTS,
   COACH_NUTRITION_HINT_RE,
-  COACH_TRAINING_HINT_RE,
-  getCoachThinkingDelayMs
+  COACH_TRAINING_HINT_RE
 } from "@/lib/tjai/chat-client-utils";
 import { cn } from "@/lib/utils";
 
@@ -176,12 +175,9 @@ export function TJAIChat({
     setThinking(true);
     setApiError(null);
 
-    const delay = getCoachThinkingDelayMs();
-    if (delay > 0) {
-      await new Promise((r) => setTimeout(r, delay));
-    }
-    setThinking(false);
-
+    // The request starts immediately — no artificial pre-fetch delay. The
+    // thinking pulse runs from send until response headers arrive, so it
+    // reflects real wait time instead of adding 360ms of theatre per message.
     const controller = new AbortController();
     abortRef.current = controller;
     try {
@@ -192,6 +188,7 @@ export function TJAIChat({
         body: JSON.stringify({ message: text, conversationId }),
         signal: controller.signal
       });
+      setThinking(false);
 
       const contentType = res.headers.get("Content-Type") ?? "";
       if (contentType.includes("application/json")) {

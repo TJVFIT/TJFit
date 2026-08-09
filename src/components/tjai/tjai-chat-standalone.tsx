@@ -22,8 +22,7 @@ import { GrainOverlay } from "@/components/ui/grain-overlay";
 import {
   COACH_FOLLOW_UP_PROMPTS,
   COACH_NUTRITION_HINT_RE,
-  COACH_TRAINING_HINT_RE,
-  getCoachThinkingDelayMs
+  COACH_TRAINING_HINT_RE
 } from "@/lib/tjai/chat-client-utils";
 import { getTJAIAccess } from "@/lib/tjai-access";
 import { isSupportedLocale, type Locale, type SupportedLocale } from "@/lib/i18n";
@@ -625,12 +624,9 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
     setApiError(null);
     setIsStreaming(true);
     setIsThinking(true);
-    const thinkMs = getCoachThinkingDelayMs();
-    if (thinkMs > 0) {
-      await new Promise((r) => setTimeout(r, thinkMs));
-    }
-    setIsThinking(false);
 
+    // No artificial pre-fetch delay — the request starts now, and the thinking
+    // pulse reflects real wait time (send until response headers arrive).
     const controller = new AbortController();
     const timer = window.setTimeout(() => controller.abort(), 35000);
     try {
@@ -641,6 +637,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
         body: JSON.stringify({ message, conversationId, locale: routingLocale }),
         signal: controller.signal
       });
+      setIsThinking(false);
       const contentType = response.headers.get("Content-Type") ?? "";
       if (contentType.includes("application/json")) {
         const data = await response.json().catch(() => ({}));

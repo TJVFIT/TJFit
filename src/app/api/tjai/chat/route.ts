@@ -114,6 +114,56 @@ export async function POST(request: NextRequest) {
       return new Response(JSON.stringify({ error: "Invalid message" }), { status: 400 });
     }
 
+    // Context assembly fired NOW, before the access gates are awaited. It only
+    // needs auth.user.id + conversationId, and the gates only decide whether we
+    // proceed — so overlapping the two waves removes one full DB round-trip
+    // from every message (the database is currently in ap-northeast-1, so a
+    // round-trip is real money: ~250ms from Europe). On the rare denied path
+    // the reads are simply abandoned — all cheap SELECTs, nothing mutating.
+    const contextWave = Promise.all([
+      getLatestTjaiPlan(auth.supabase, auth.user.id),
+      buildTjaiMemorySnapshot(auth.supabase, auth.user.id),
+      auth.supabase
+        .from("tjai_chat_messages")
+        .select("role,content,created_at")
+        .eq("user_id", auth.user.id)
+        .eq("conversation_id", conversationId)
+        .order("created_at", { ascending: false })
+        .limit(40),
+      auth.supabase
+        .from("user_chat_preferences")
+        .select("preference_key,preference_value")
+        .eq("user_id", auth.user.id),
+      Promise.all([
+        auth.supabase
+          .from("workout_logs")
+          // Alias `exercise_name` → `exercise` so older readers (and the
+          // ChatCoachWorkoutLog type) keep working unchanged. Trigger
+          // `sync_workout_log_exercise_columns_trigger` keeps the legacy
+          // `exercise` column and the newer `exercise_name` in lockstep
+          // (migration 20260502120100), so reading either is equivalent.
+          .select("workout_date,exercise:exercise_name,sets,reps,weight_kg,duration_minutes")
+          .eq("user_id", auth.user.id)
+          .order("workout_date", { ascending: false })
+          .limit(14),
+        auth.supabase
+          .from("progress_entries")
+          .select("entry_date,weight_kg,body_fat_percent,waist_cm")
+          .eq("user_id", auth.user.id)
+          .order("entry_date", { ascending: false })
+          .limit(6)
+      ]).then(([w, p]) => ({
+        workouts: (w.data ?? []) as ChatCoachWorkoutLog[],
+        entries: (p.data ?? []) as ChatCoachProgressEntry[]
+      })),
+      loadTjaiUserSettings(auth.supabase, auth.user.id),
+      loadLongMemoryFacts(auth.supabase, auth.user.id, 30)
+    ]);
+    // If a gate early-returns below, nothing ever awaits contextWave — attach a
+    // no-op handler so a rejection can't surface as an unhandled crash. A later
+    // `await contextWave` still rejects normally for the happy path.
+    contextWave.catch(() => {});
+
     const isAdminByEmail = Boolean(auth.user.email && isAdminEmail(auth.user.email));
     const [{ data: sub }, { data: rawUsage }, { data: purchase }, { data: profile }] = await Promise.all([
       admin.from("user_subscriptions").select("tier,status").eq("user_id", auth.user.id).maybeSingle(),
@@ -228,45 +278,10 @@ export async function POST(request: NextRequest) {
     // pre-gate; the RPC is the source of truth and re-checks under a lock.
     const isCoreTrial = !isAdmin && tier === "core" && !purchase?.id;
 
-    const [planRow, memorySnapshot, { data: historyRows }, { data: prefRows }, recentData, userSettings, longMemoryFacts] = await Promise.all([
-      getLatestTjaiPlan(auth.supabase, auth.user.id),
-      buildTjaiMemorySnapshot(auth.supabase, auth.user.id),
-      auth.supabase
-        .from("tjai_chat_messages")
-        .select("role,content,created_at")
-        .eq("user_id", auth.user.id)
-        .eq("conversation_id", conversationId)
-        .order("created_at", { ascending: false })
-        .limit(40),
-      auth.supabase
-        .from("user_chat_preferences")
-        .select("preference_key,preference_value")
-        .eq("user_id", auth.user.id),
-      Promise.all([
-        auth.supabase
-          .from("workout_logs")
-          // Alias `exercise_name` → `exercise` so older readers (and the
-          // ChatCoachWorkoutLog type) keep working unchanged. Trigger
-          // `sync_workout_log_exercise_columns_trigger` keeps the legacy
-          // `exercise` column and the newer `exercise_name` in lockstep
-          // (migration 20260502120100), so reading either is equivalent.
-          .select("workout_date,exercise:exercise_name,sets,reps,weight_kg,duration_minutes")
-          .eq("user_id", auth.user.id)
-          .order("workout_date", { ascending: false })
-          .limit(14),
-        auth.supabase
-          .from("progress_entries")
-          .select("entry_date,weight_kg,body_fat_percent,waist_cm")
-          .eq("user_id", auth.user.id)
-          .order("entry_date", { ascending: false })
-          .limit(6)
-      ]).then(([w, p]) => ({
-        workouts: (w.data ?? []) as ChatCoachWorkoutLog[],
-        entries: (p.data ?? []) as ChatCoachProgressEntry[]
-      })),
-      loadTjaiUserSettings(auth.supabase, auth.user.id),
-      loadLongMemoryFacts(auth.supabase, auth.user.id, 30)
-    ]);
+    // Fired before the access gates (see above) — by the time the gates have
+    // resolved, these reads are usually already back or nearly so.
+    const [planRow, memorySnapshot, { data: historyRows }, { data: prefRows }, recentData, userSettings, longMemoryFacts] =
+      await contextWave;
 
     const history: HistoryRow[] = (historyRows ?? []).reverse().flatMap((row) => {
       if ((row.role === "user" || row.role === "assistant") && typeof row.content === "string") {
