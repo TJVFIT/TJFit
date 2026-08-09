@@ -37,14 +37,22 @@ export function ReelStage({ children, type = "proximity", className }: ReelStage
 
   useEffect(() => {
     let snap: Snap | null = null;
+    let attachedCount = 0;
 
     const attach = () => {
       const lenis = window.__lenis;
       const el = root.current;
-      if (!lenis || !el || snap) return;
+      if (!lenis || !el) return;
 
       const panels = Array.from(el.querySelectorAll<HTMLElement>("[data-reel-panel]"));
       if (panels.length < 2) return;
+      // Already attached to exactly this set — nothing to do. If the count
+      // changed (a panel streamed in late), rebuild rather than leave the new
+      // one unregistered; Snap has no incremental add-after-the-fact path that
+      // keeps its internal index consistent.
+      if (snap && panels.length === attachedCount) return;
+      if (snap) detach();
+      attachedCount = panels.length;
 
       snap = new Snap(lenis, {
         type,
@@ -65,7 +73,19 @@ export function ReelStage({ children, type = "proximity", className }: ReelStage
     window.addEventListener(LENIS_READY, attach);
     window.addEventListener(LENIS_GONE, detach);
 
+    // Panels can arrive after mount — a Suspense boundary resolving, or
+    // client-fetched content. On a client-side navigation within the same
+    // layout SmoothScroll does NOT remount, so Lenis is already running and
+    // LENIS_READY will never fire again; without this observer `attach()` would
+    // have run once against an empty subtree, bailed on panels.length < 2, and
+    // reel scrolling would be silently inert for the rest of that mount.
+    const observer = new MutationObserver(() => attach());
+    if (root.current) {
+      observer.observe(root.current, { childList: true, subtree: true });
+    }
+
     return () => {
+      observer.disconnect();
       window.removeEventListener(LENIS_READY, attach);
       window.removeEventListener(LENIS_GONE, detach);
       detach();

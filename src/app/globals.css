@@ -665,15 +665,23 @@ h1, h2, h3, h4, h5, h6,
 /* Arabic gets a real webfont instead of whatever the OS happens to ship.
    Scoped to the ar locale on purpose: IBM Plex Sans Arabic's Latin is missing
    İ, ğ, Ğ, ş and Ş, so it must never sit in the global fallback chain where a
-   Turkish page could reach it. */
-:root[lang="ar"] body,
-:root[lang="ar"] h1,
-:root[lang="ar"] h2,
-:root[lang="ar"] h3,
-:root[lang="ar"] h4,
-:root[lang="ar"] h5,
-:root[lang="ar"] h6,
-:root[lang="ar"] .font-display {
+   Turkish page could reach it.
+
+   Deliberately a plain attribute selector, NOT :root[lang="ar"]. Only the root
+   layout renders <html>, and it is static — so <html lang> is always "en" in
+   the served HTML and is corrected to the real locale by locale-document.tsx
+   after hydration. A :root-scoped rule would therefore miss first paint (FOUC)
+   and miss entirely for crawlers and no-JS clients. [locale]/layout.tsx renders
+   <div dir lang> server-side, so this matches in the SSR output, and the
+   font-family cascades to everything inside it. */
+[lang="ar"],
+[lang="ar"] h1,
+[lang="ar"] h2,
+[lang="ar"] h3,
+[lang="ar"] h4,
+[lang="ar"] h5,
+[lang="ar"] h6,
+[lang="ar"] .font-display {
   font-family: var(--font-arabic), "Segoe UI", "Noto Naskh Arabic", system-ui, sans-serif;
 }
 :root[lang="hi"] { line-height: 1.65; }
