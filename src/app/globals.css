@@ -602,21 +602,49 @@
 }
 
 html {
+  /* Kept for the cases where Lenis is deliberately off — reduced-motion and
+     below the tablet breakpoint — so in-page anchors still animate. When Lenis
+     IS running it sets .lenis-smooth on <html>, and the rule below overrides
+     this one; otherwise the two scroll engines fight for the same gesture. */
   scroll-behavior: smooth;
   max-width: 100vw;
   overflow-x: hidden;
+}
+
+/* Lenis — see src/components/smooth-scroll.tsx */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+/* Opt a scroller out of Lenis (modals, code blocks, map panes). */
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Pointer events during momentum would otherwise land inside iframes. */
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }
 
 body {
   background-color: var(--color-bg);
   background-image: var(--gradient-hero);
   color: var(--color-text-primary);
-  /* Latin: Sora/DM Sans. Cyrillic/Arabic/Devanagari: fall back to high-quality system fonts
-     available on the user's OS (Segoe UI / SF / Noto / system-ui). Browsers will pick
-     per-glyph fallback automatically. */
-  font-family: var(--font-sans, "Manrope"), "Segoe UI", "Noto Sans", "Noto Sans Arabic",
-    "Noto Sans Devanagari", "SF Pro Text", system-ui, -apple-system, sans-serif;
-  font-feature-settings: "cv11", "ss01"; /* DM Sans optical features */
+  /* Latin: Switzer (self-hosted, Turkish verified in the binary). Non-Latin
+     scripts fall through to high-quality system faces; Arabic is handled
+     explicitly below rather than by fallback, so it is deliberately absent
+     from this chain. */
+  font-family: var(--font-sans), "Segoe UI", "Noto Sans", "Noto Sans Devanagari",
+    "SF Pro Text", system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   max-width: 100vw;
@@ -626,14 +654,28 @@ body {
 /* Premium heading rendering */
 h1, h2, h3, h4, h5, h6,
 .font-display {
-  font-family: var(--font-display, "Outfit"), "Segoe UI", "Noto Sans", "Noto Sans Arabic",
-    "Noto Sans Devanagari", ui-sans-serif, sans-serif;
+  font-family: var(--font-display), "Segoe UI", "Noto Sans", "Noto Sans Devanagari",
+    ui-sans-serif, sans-serif;
   letter-spacing: -0.02em;
-  font-feature-settings: "cv01", "ss01";
 }
 
 /* Per-language tuning: Arabic prefers slightly looser tracking, Devanagari needs line-height */
 :root[lang="ar"] body { letter-spacing: 0; }
+
+/* Arabic gets a real webfont instead of whatever the OS happens to ship.
+   Scoped to the ar locale on purpose: IBM Plex Sans Arabic's Latin is missing
+   İ, ğ, Ğ, ş and Ş, so it must never sit in the global fallback chain where a
+   Turkish page could reach it. */
+:root[lang="ar"] body,
+:root[lang="ar"] h1,
+:root[lang="ar"] h2,
+:root[lang="ar"] h3,
+:root[lang="ar"] h4,
+:root[lang="ar"] h5,
+:root[lang="ar"] h6,
+:root[lang="ar"] .font-display {
+  font-family: var(--font-arabic), "Segoe UI", "Noto Naskh Arabic", system-ui, sans-serif;
+}
 :root[lang="hi"] { line-height: 1.65; }
 :root[lang="ru"] body { font-feature-settings: normal; }
 

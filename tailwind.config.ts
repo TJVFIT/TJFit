@@ -99,9 +99,12 @@ const config: Config = {
         text: "#FFFFFF"
       },
       fontFamily: {
-        sans: ["var(--font-sans)", "Manrope", "ui-sans-serif", "system-ui", "sans-serif"],
-        display: ["var(--font-display)", "Space Grotesk", "ui-sans-serif", "system-ui", "sans-serif"],
-        mono: ["var(--font-mono)", "JetBrains Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"]
+        // Self-hosted, see src/app/layout.tsx. Arabic is intentionally not a
+        // fallback here — it lacks Turkish glyphs and is scoped to :root[lang="ar"].
+        sans: ["var(--font-sans)", "Segoe UI", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "Segoe UI", "ui-sans-serif", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+        arabic: ["var(--font-arabic)", "Segoe UI", "Noto Naskh Arabic", "system-ui", "sans-serif"]
       },
       boxShadow: {
         glass: "0 20px 80px rgba(0, 0, 0, 0.45)",
