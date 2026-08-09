@@ -108,9 +108,12 @@ describe("step localization overrides", () => {
     expect(walking.label).toContain("Yürüyüş");
   });
 
-  it("falls back to English for locales without an override", () => {
-    const fr = getTjaiSteps("fr").find((s) => s.id === "s6_cardio_preference")!;
-    expect(fr.question).toBe("Which kinds of cardio would you actually do?");
+  it("English flows through the no-override fallback path unchanged", () => {
+    // en has no STEP_I18N entry, so this exercises the `overrides?.[id]`
+    // undefined branch. (All five locales now ship overrides, so English
+    // itself is the remaining fallback surface.)
+    const en = getTjaiSteps("en").find((s) => s.id === "s6_cardio_preference")!;
+    expect(en.question).toBe("Which kinds of cardio would you actually do?");
   });
 
   it("never changes option VALUES, only labels", () => {
@@ -127,55 +130,115 @@ describe("step localization overrides", () => {
   });
 });
 
-describe("Turkish quiz coverage (owner-approved full translation, 2026-08-09)", () => {
-  const en = getTjaiSteps("en");
-  const tr = getTjaiSteps("tr");
-  const trById = new Map(tr.map((s) => [s.id, s]));
+// Full quiz coverage per locale. tr was owner-approved 2026-08-09; ar/es/fr
+// were translated from the English base and independently native-reviewed
+// (all flagged issues fixed before integration, 2026-08-09).
+const QUIZ_COVERAGE: Array<
+  [
+    "tr" | "ar" | "es" | "fr",
+    {
+      // Labels allowed to be byte-identical to English: numeric ranges are
+      // exempted globally; these are brand/loanwords and country names.
+      legitimatelySame: string[];
+      // The locale's writing must actually appear (aggregate check).
+      script: RegExp;
+      // Locale-specific regression pattern (tr: ASCII-folded words).
+      forbidden?: RegExp;
+    }
+  ]
+> = [
+  [
+    "tr",
+    {
+      legitimatelySame: ["Omega-3", "Pre-workout", "Vegan", "Seitan", "Tofu / tempeh"],
+      script: /[ğşçöüİı]/,
+      forbidden:
+        /\b(icin|gercek|ucretsiz|olusturun|antrenor|calisma|gunluk|haftalik|baslangic|vucut|agirlik|guclu|dusuk|kucuk|buyuk|yuksek|olcum|secim|sadece vucut)\b/i
+    }
+  ],
+  ["ar", { legitimatelySame: [], script: /[؀-ۿ]/ }],
+  [
+    "es",
+    {
+      legitimatelySame: ["Omega-3", "Pre-workout", "Vegan", "Halal", "Seitan", "Tofu / tempeh"],
+      script: /[áéíóúñ¿]/
+    }
+  ],
+  [
+    "fr",
+    {
+      legitimatelySame: ["Pre-workout", "Vegan", "Halal", "Seitan", "Tofu / tempeh"],
+      script: /[àâçéèêô]/
+    }
+  ]
+];
 
-  it("translates every base question — a new EN step without TR must fail here", () => {
-    const untranslated = en.filter((s) => trById.get(s.id)!.question === s.question);
-    // Failure message names the offenders so the fix is obvious.
+describe.each(QUIZ_COVERAGE)("full quiz coverage: %s", (locale, cfg) => {
+  const en = getTjaiSteps("en");
+  const localized = getTjaiSteps(locale);
+  const byId = new Map(localized.map((s) => [s.id, s]));
+
+  it(`translates every base question — a new EN step without ${locale} must fail here`, () => {
+    const untranslated = en.filter((s) => byId.get(s.id)!.question === s.question);
     expect(
       untranslated.map((s) => s.id),
-      "These steps render in English for Turkish users — add STEP_I18N.tr entries"
+      `These steps render in English for ${locale} users — add STEP_I18N.${locale} entries`
     ).toEqual([]);
   });
 
   it("translates every option label on every step", () => {
+    const legitimatelySame = new Set(cfg.legitimatelySame);
     const missing: string[] = [];
     for (const enStep of en) {
       if (!enStep.options) continue;
-      const trStep = trById.get(enStep.id)!;
+      const locStep = byId.get(enStep.id)!;
+      // Country exonyms legitimately collide with English per locale (es
+      // "Chile", fr "Canada"), so s20_country is checked at list level: the
+      // list as a whole must be localized. A lazy full English fallback
+      // still fails; individual matching exonyms pass.
+      if (enStep.id === "s20_country") {
+        const translated = enStep.options.filter(
+          (o, i) => locStep.options![i]!.label !== o.label
+        ).length;
+        expect(
+          translated / enStep.options.length,
+          `${locale} country list is mostly English`
+        ).toBeGreaterThan(0.5);
+        continue;
+      }
       for (let i = 0; i < enStep.options.length; i++) {
         const enOpt = enStep.options[i]!;
-        const trOpt = trStep.options![i]!;
-        // Identical label = fell back to English — except labels that are
-        // legitimately language-neutral: pure numeric ranges with units
-        // ("50–65 kg", "165–175 cm") and brand/loanwords.
+        const locOpt = locStep.options![i]!;
         const numericLabel = /^[\d\s–—\-+.,]+(kg|cm)?$/u.test(enOpt.label);
-        const legitimatelySame = new Set([
-          "Omega-3", "Pre-workout", "Vegan", "Seitan", "Tofu / tempeh",
-          "Türkiye", "Irak", "Pakistan", "Kanada"
-        ]);
-        if (trOpt.label === enOpt.label && !numericLabel && !legitimatelySame.has(trOpt.label)) {
+        if (locOpt.label === enOpt.label && !numericLabel && !legitimatelySame.has(locOpt.label)) {
           missing.push(`${enStep.id}:${String(enOpt.value)}`);
         }
       }
     }
-    expect(missing, "Option labels still in English for tr").toEqual([]);
+    expect(missing, `Option labels still in English for ${locale}`).toEqual([]);
   });
 
-  it("keeps Turkish text properly diacriticked — no ASCII-folded words", () => {
-    // The tr-diacritics defect pattern: common words shipped stripped. If any
-    // of these stripped forms appear in TR quiz copy, the fix regressed.
-    const strippedForms = /\b(icin|gercek|ucretsiz|olusturun|antrenor|calisma|gunluk|haftalik|baslangic|vucut|agirlik|guclu|dusuk|kucuk|buyuk|yuksek|olcum|secim|sadece vucut)\b/i;
+  it("never changes option values, only labels", () => {
+    for (const enStep of en) {
+      if (!enStep.options) continue;
+      expect(
+        byId.get(enStep.id)!.options!.map((o) => o.value),
+        enStep.id
+      ).toEqual(enStep.options.map((o) => o.value));
+    }
+  });
+
+  it("is written in its own script and free of locale-specific regressions", () => {
     const offenders: string[] = [];
-    for (const step of tr) {
+    let scriptSeen = false;
+    for (const step of localized) {
       const texts = [step.question, step.sub ?? "", step.placeholder ?? "", ...(step.options ?? []).map((o) => o.label)];
       for (const t of texts) {
-        if (strippedForms.test(t)) offenders.push(`${step.id}: ${t.slice(0, 50)}`);
+        if (cfg.script.test(t)) scriptSeen = true;
+        if (cfg.forbidden?.test(t)) offenders.push(`${step.id}: ${t.slice(0, 50)}`);
       }
     }
+    expect(scriptSeen, `${locale} quiz copy never uses its own script`).toBe(true);
     expect(offenders).toEqual([]);
   });
 });
