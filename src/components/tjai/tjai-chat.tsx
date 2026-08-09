@@ -62,6 +62,8 @@ export function TJAIChat({
   const [thinking, setThinking] = useState(false);
   const [conversationId, setConversationId] = useState<string>("");
   const [apiError, setApiError] = useState<string | null>(null);
+  // Data-driven chip keys from the route's `done` event (see chat-suggestions.ts).
+  const [suggestionKeys, setSuggestionKeys] = useState<string[]>([]);
   const [ttsAutoplay, setTtsAutoplay] = useState(false);
   const [trialRemaining, setTrialRemaining] = useState<number | null>(null);
   const [trialLimit, setTrialLimit] = useState<number | null>(null);
@@ -174,6 +176,8 @@ export function TJAIChat({
     setLoading(true);
     setThinking(true);
     setApiError(null);
+    // Stale chips from the previous turn must not survive into this one.
+    setSuggestionKeys([]);
 
     // The request starts immediately — no artificial pre-fetch delay. The
     // thinking pulse runs from send until response headers arrive, so it
@@ -241,7 +245,14 @@ export function TJAIChat({
         const lines = chunk.split("\n").filter((l) => l.startsWith("data: "));
         for (const line of lines) {
           try {
-            const data = JSON.parse(line.slice(6)) as { delta?: string; conversationId?: string };
+            const data = JSON.parse(line.slice(6)) as {
+              delta?: string;
+              conversationId?: string;
+              suggestionKeys?: string[];
+            };
+            if (Array.isArray(data.suggestionKeys)) {
+              setSuggestionKeys(data.suggestionKeys);
+            }
             if (data.delta) {
               setHistory((prev) => {
                 const updated = [...prev];
@@ -291,11 +302,20 @@ export function TJAIChat({
     lastAssistantIdx !== undefined &&
     (history[lastAssistantIdx]?.content?.length ?? 0) > 12;
   const lastAssistantText = lastAssistantIdx !== undefined ? history[lastAssistantIdx]?.content ?? "" : "";
-  const contextPrompts = COACH_NUTRITION_HINT_RE.test(lastAssistantText)
-    ? copy.ongoing.nutrition
-    : COACH_TRAINING_HINT_RE.test(lastAssistantText)
-      ? copy.ongoing.training
-      : [];
+  // Data-driven chips (from the user's real plan/log state) win over the
+  // regex topic fallback; unknown keys are skipped so an older client and a
+  // newer server never break each other.
+  const contextualPrompts = suggestionKeys
+    .map((k) => copy.contextual[k as keyof typeof copy.contextual])
+    .filter((v): v is string => Boolean(v));
+  const contextPrompts =
+    contextualPrompts.length > 0
+      ? contextualPrompts
+      : COACH_NUTRITION_HINT_RE.test(lastAssistantText)
+        ? copy.ongoing.nutrition
+        : COACH_TRAINING_HINT_RE.test(lastAssistantText)
+          ? copy.ongoing.training
+          : [];
 
   return (
     <section

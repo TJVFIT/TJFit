@@ -26,6 +26,17 @@ export type TJAIChatCopy = {
     nutrition: string[];
     training: string[];
   };
+  /**
+   * Data-driven chips, keyed by CoachSuggestionKey from the chat route's
+   * `done` event. Chip text is also the prompt sent when tapped (user voice),
+   * matching how `ongoing` chips behave.
+   */
+  contextual: {
+    generate_plan: string;
+    restart_training: string;
+    diagnose_progress: string;
+    plan_checkin: string;
+  };
   composerHint: string;
   fallbackReply: string;
   connectionLost: string;
@@ -76,6 +87,12 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
     ongoing: {
       nutrition: ["Turn this into a grocery list", "Fit this to my calories"],
       training: ["Plan my next session", "Add progression for next week"]
+    },
+    contextual: {
+      generate_plan: "What plan should I start with for my goal?",
+      restart_training: "I haven't trained this week — give me a session to restart today.",
+      diagnose_progress: "My weight trend doesn't match my plan — diagnose why.",
+      plan_checkin: "Review my recent workouts and tell me what to adjust next week."
     },
     composerHint: "Enter to send · Shift + Enter for newline",
     fallbackReply: "TJAI couldn't pick that up — mind asking again?",
@@ -128,6 +145,12 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
       nutrition: ["Bunu alışveriş listesine çevir", "Bunu kalorilerime uyarla"],
       training: ["Sonraki seansımı planla", "Gelecek hafta için ilerleme ekle"]
     },
+    contextual: {
+      generate_plan: "Hedefime göre hangi planla başlamalıyım?",
+      restart_training: "Bu hafta antrenman yapmadım — bugün yeniden başlamak için bir seans ver.",
+      diagnose_progress: "Kilo eğilimim planımla uyuşmuyor — nedenini analiz et.",
+      plan_checkin: "Son antrenmanlarımı incele ve gelecek hafta neyi değiştireceğimi söyle."
+    },
     composerHint: "Göndermek için Enter · Yeni satır için Shift + Enter",
     fallbackReply: "TJAI bunu tam alamadı — tekrar sorar mısın?",
     connectionLost: "Bağlantı düşünürken koptu — tekrar dener misin?",
@@ -178,6 +201,12 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
     ongoing: {
       nutrition: ["حوّل هذا إلى قائمة تسوق", "وافق هذا مع سعراتي"],
       training: ["خطط لحصتي القادمة", "أضف تدرجاً للأسبوع القادم"]
+    },
+    contextual: {
+      generate_plan: "بأي خطة أبدأ بما يناسب هدفي؟",
+      restart_training: "لم أتدرب هذا الأسبوع — أعطني جلسة أستأنف بها اليوم.",
+      diagnose_progress: "اتجاه وزني لا يطابق خطتي — حلّل السبب.",
+      plan_checkin: "راجع تماريني الأخيرة وأخبرني بما أعدّله الأسبوع القادم."
     },
     composerHint: "Enter للإرسال · Shift + Enter لسطر جديد",
     fallbackReply: "لم يلتقط TJAI ذلك — هل تسأل مرة أخرى؟",
@@ -230,6 +259,12 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
       nutrition: ["Convierte esto en lista de la compra", "Ajusta esto a mis calorías"],
       training: ["Planifica mi próxima sesión", "Añade progresión para la próxima semana"]
     },
+    contextual: {
+      generate_plan: "¿Con qué plan debería empezar según mi objetivo?",
+      restart_training: "No he entrenado esta semana — dame una sesión para retomar hoy.",
+      diagnose_progress: "Mi tendencia de peso no coincide con mi plan — diagnostica por qué.",
+      plan_checkin: "Revisa mis últimos entrenamientos y dime qué ajustar la próxima semana."
+    },
     composerHint: "Enter para enviar · Shift + Enter para salto de línea",
     fallbackReply: "TJAI no captó eso — ¿lo preguntas de nuevo?",
     connectionLost: "Se perdió la conexión a mitad de la idea — ¿lo intentas de nuevo?",
@@ -280,6 +315,12 @@ const TJAI_CHAT_COPY: Record<Locale, TJAIChatCopy> = {
     ongoing: {
       nutrition: ["Transforme ceci en liste de courses", "Ajuste ceci à mes calories"],
       training: ["Planifie ma prochaine séance", "Ajoute une progression pour la semaine prochaine"]
+    },
+    contextual: {
+      generate_plan: "Quel plan devrais-je commencer selon mon objectif ?",
+      restart_training: "Je ne me suis pas entraîné cette semaine — donne-moi une séance pour reprendre aujourd'hui.",
+      diagnose_progress: "Ma tendance de poids ne correspond pas à mon plan — diagnostique pourquoi.",
+      plan_checkin: "Analyse mes dernières séances et dis-moi quoi ajuster la semaine prochaine."
     },
     composerHint: "Entrée pour envoyer · Maj + Entrée pour un saut de ligne",
     fallbackReply: "TJAI n'a pas bien saisi — peux-tu redemander ?",

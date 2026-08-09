@@ -22,6 +22,7 @@ import {
   type ChatCoachWorkoutLog
 } from "@/lib/tjai";
 import { buildCatalogBlock } from "@/lib/tjai/catalog-context";
+import { pickCoachSuggestionKeys } from "@/lib/tjai/chat-suggestions";
 import { coachIntentMaxTokens } from "@/lib/tjai/orchestrator/chat-intent";
 import { buildReadinessProfile } from "@/lib/tjai/readiness";
 import { buildTjaiUserProfile } from "@/lib/tjai-intake";
@@ -411,7 +412,18 @@ export async function POST(request: NextRequest) {
               }
             }
 
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true, conversationId })}\n\n`));
+            // Data-driven follow-up chips: keys only (the client owns the
+            // localized text), computed from context already loaded above —
+            // no extra queries, no extra LLM call.
+            const suggestionKeys = pickCoachSuggestionKeys({
+              hasPlan: Boolean(typedPlanRow),
+              goal: typedPlanRow?.goal ?? null,
+              workoutDates: recentData.workouts.map((w) => w.workout_date ?? null),
+              entries: recentData.entries.map((e) => ({ weight_kg: e.weight_kg ?? null }))
+            });
+            controller.enqueue(
+              encoder.encode(`data: ${JSON.stringify({ done: true, conversationId, suggestionKeys })}\n\n`)
+            );
             controller.close();
           } catch (streamError) {
             controller.error(streamError);
