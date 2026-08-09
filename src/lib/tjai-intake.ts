@@ -467,6 +467,23 @@ const DISLIKED_EXERCISE_VALUES = [
 ] as const;
 const PREFERRED_SPLIT_VALUES = ["full_body", "upper_lower", "push_pull_legs", "no_preference"] as const;
 const SESSION_LENGTH_VALUES = [30, 45, 60, 75, 90];
+const CARDIO_PREFERENCE_VALUES = [
+  "walking",
+  "running",
+  "cycling",
+  "swimming",
+  "rowing_machines",
+  "jump_rope",
+  "none"
+] as const;
+const PLANT_PROTEIN_VALUES = [
+  "tofu_tempeh",
+  "seitan",
+  "legumes",
+  "protein_powder",
+  "dairy_eggs",
+  "nuts_seeds"
+] as const;
 
 function coerceNumberAnswer(value: unknown, fallback: number): number {
   const parsed = parseMaybeNumber(value);
@@ -520,7 +537,9 @@ export function normalizeQuizAnswers(raw: Record<string, unknown>): QuizAnswers 
     s5_days: coerceNumberAnswer(raw.s5_days, 4),
     s5_duration: coerceNumberAnswer(raw.s5_duration, 45),
     s5_training_preference: normalizeTrainingPreference(raw.s5_training_preference, goal),
+    s6_cardio_preference: normalizeMulti(raw.s6_cardio_preference, CARDIO_PREFERENCE_VALUES),
     s12_diet_style: normalizeDietStyle(raw.s12_diet_style),
+    s12_plant_protein: normalizeMulti(raw.s12_plant_protein, PLANT_PROTEIN_VALUES),
     s13_allergies: normalizeMulti(
       raw.s13_allergies,
       ["none", "halal", "vegetarian", "vegan", "dairy_free", "gluten_free", "nut_free"] as const,
@@ -721,6 +740,14 @@ export function buildTjaiUserProfile(rawAnswers: Record<string, unknown>): TjaiU
   if (preferredSplit) profile.preferredSplit = oneOf(preferredSplit, PREFERRED_SPLIT_VALUES, "no_preference");
   const sessionLength = parseMaybeNumber(answers.s5_session_length) ?? profile.sessionMinutes;
   if (SESSION_LENGTH_VALUES.includes(sessionLength)) profile.sessionLengthMinutes = sessionLength;
+  const cardioPreferences = normalizeMulti(answers.s6_cardio_preference, CARDIO_PREFERENCE_VALUES);
+  if (cardioPreferences.length > 0) profile.cardioPreferences = cardioPreferences;
+  // Same stale-branch rule as injury detail: plant-protein answers only mean
+  // something while the diet style is still plant-based.
+  if (profile.dietStyle === "vegetarian" || profile.dietStyle === "vegan") {
+    const plantProteinSources = normalizeMulti(answers.s12_plant_protein, PLANT_PROTEIN_VALUES);
+    if (plantProteinSources.length > 0) profile.plantProteinSources = plantProteinSources;
+  }
 
   return profile;
 }
@@ -747,6 +774,12 @@ export function summarizeProfile(profile: TjaiUserProfile): string[] {
   }
   if (profile.preferredSplit && profile.preferredSplit !== "no_preference") {
     lines.push(`Preferred split: ${profile.preferredSplit}`);
+  }
+  if (profile.cardioPreferences && profile.cardioPreferences.length > 0) {
+    lines.push(`Cardio preferences: ${profile.cardioPreferences.join(", ")}`);
+  }
+  if (profile.plantProteinSources && profile.plantProteinSources.length > 0) {
+    lines.push(`Plant protein sources: ${profile.plantProteinSources.join(", ")}`);
   }
   return lines;
 }

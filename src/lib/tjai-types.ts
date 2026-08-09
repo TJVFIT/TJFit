@@ -119,6 +119,14 @@ export type TjaiUserProfile = {
     "burpees" | "running" | "jumping" | "overhead_press" | "deep_squats" | "deadlifts" | "pull_ups" | "planks"
   >;
   preferredSplit?: "full_body" | "upper_lower" | "push_pull_legs" | "no_preference";
+  /** Cardio modalities the user will actually do — adherence lever for fat-loss/conditioning plans. */
+  cardioPreferences?: Array<
+    "walking" | "running" | "cycling" | "swimming" | "rowing_machines" | "jump_rope" | "none"
+  >;
+  /** Accepted protein sources when dietStyle is vegetarian/vegan — without this those meal plans guess. */
+  plantProteinSources?: Array<
+    "tofu_tempeh" | "seitan" | "legumes" | "protein_powder" | "dairy_eggs" | "nuts_seeds"
+  >;
 };
 
 export type TjaiReadinessFlag = {

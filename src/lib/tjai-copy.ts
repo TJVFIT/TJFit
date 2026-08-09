@@ -4,10 +4,10 @@ import { GENERIC_MARKETS, TJAI_COUNTRY_OPTIONS } from "@/lib/tjai/market-data";
 
 const SECTION_TITLES: Record<Locale, string[]> = {
   en: ["The Basics", "Your Body", "Your Lifestyle", "Your Training", "Your Nutrition", "Finishing Up"],
-  tr: ["Temel Bilgiler", "Vucut Olculeri", "Yasam Tarzi", "Antrenman", "Beslenme", "Son Detaylar"],
+  tr: ["Temel Bilgiler", "Vücut Ölçüleri", "Yaşam Tarzı", "Antrenman", "Beslenme", "Son Detaylar"],
   ar: ["الأساسيات", "جسمك", "نمط حياتك", "تدريبك", "تغذيتك", "إنهاء"],
-  es: ["Lo Basico", "Tu Cuerpo", "Tu Estilo de Vida", "Tu Entrenamiento", "Tu Nutricion", "Finalizando"],
-  fr: ["Les Bases", "Votre Corps", "Votre Mode de Vie", "Votre Entrainement", "Votre Nutrition", "Finalisation"]
+  es: ["Lo Básico", "Tu Cuerpo", "Tu Estilo de Vida", "Tu Entrenamiento", "Tu Nutrición", "Finalizando"],
+  fr: ["Les Bases", "Votre Corps", "Votre Mode de Vie", "Votre Entraînement", "Votre Nutrition", "Finalisation"]
 };
 
 export const tjaiCopy: Record<Locale, TJAICopy> = {
@@ -747,6 +747,35 @@ const BASE_STEPS: BaseStep[] = [
     ],
     required: true
   },
+  {
+    // Adaptive: only for users whose plan will actually contain cardio. The
+    // modality matters more than the dose — prescribing running to someone who
+    // hates running is how fat-loss plans die in week 2.
+    id: "s6_cardio_preference", sectionIdx: 3,
+    question: "Which kinds of cardio would you actually do?",
+    sub: "Pick everything you don't hate. TJAI only prescribes cardio you'll realistically keep doing.",
+    type: "multi",
+    options: [
+      opt("Walking / incline walking", "walking"),
+      opt("Running / jogging", "running"),
+      opt("Cycling / spin", "cycling"),
+      opt("Swimming", "swimming"),
+      opt("Rowing or cardio machines", "rowing_machines"),
+      opt("Jump rope", "jump_rope"),
+      opt("Honestly — as little cardio as possible", "none")
+    ],
+    required: false,
+    showIf: {
+      mode: "any",
+      conditions: [
+        { stepId: "s2_goal", value: "fat_loss" },
+        { stepId: "s2_goal", value: "fitness" },
+        { stepId: "s2_goal", value: "stay_active" },
+        { stepId: "s5_training_preference", value: "conditioning" },
+        { stepId: "s5_training_preference", value: "mixed" }
+      ]
+    }
+  },
 
   {
     id: "s20_country", sectionIdx: 4,
@@ -779,6 +808,31 @@ const BASE_STEPS: BaseStep[] = [
       opt("Vegan", "vegan")
     ],
     required: true
+  },
+  {
+    // Adaptive: vegetarian/vegan only. Hitting a 150g+ protein target on
+    // plants is a sourcing problem — a plan built on tofu for someone who
+    // won't eat tofu is generic advice, not coaching.
+    id: "s12_plant_protein", sectionIdx: 4,
+    question: "Which protein sources are you happy to eat regularly?",
+    sub: "Your protein target has to come from somewhere — TJAI builds meals only from sources you accept.",
+    type: "multi",
+    options: [
+      opt("Tofu / tempeh", "tofu_tempeh"),
+      opt("Seitan", "seitan"),
+      opt("Lentils, beans and chickpeas", "legumes"),
+      opt("Plant protein powder", "protein_powder"),
+      opt("Dairy and eggs (if vegetarian)", "dairy_eggs"),
+      opt("Nuts and seeds", "nuts_seeds")
+    ],
+    required: false,
+    showIf: {
+      mode: "any",
+      conditions: [
+        { stepId: "s12_diet_style", value: "vegetarian" },
+        { stepId: "s12_diet_style", value: "vegan" }
+      ]
+    }
   },
   {
     id: "s13_allergies", sectionIdx: 4,
@@ -940,13 +994,525 @@ export function getTjaiCopy(locale: Locale): TJAICopy {
   return tjaiCopy[locale] ?? tjaiCopy.en;
 }
 
+/**
+ * Per-locale overrides for individual quiz steps.
+ *
+ * BASE_STEPS is authored in English only; until now every locale rendered the
+ * 43 questions in English with localized section titles — the biggest single
+ * localization gap in the product. This map lets locales be filled in
+ * incrementally: a missing locale, step, or field falls back to the English
+ * base, so partial coverage is a strict improvement and never a crash.
+ *
+ * `optionLabels` is keyed by the option VALUE (stringified), never by the
+ * English label — labels are display-only and free to change.
+ */
+type StepOverride = {
+  question?: string;
+  sub?: string;
+  placeholder?: string;
+  optionLabels?: Record<string, string>;
+};
+
+const STEP_I18N: Partial<Record<Locale, Record<string, StepOverride>>> = {
+  // Turkish: complete coverage of all base steps (owner-approved 2026-08-09).
+  // Register matches the product's existing TR copy: informal "sen", direct,
+  // coach-voiced, full diacritics.
+  tr: {
+    s2_goal: {
+      question: "Birincil hedefin ne?",
+      sub: "Bu, tüm TJAI planını şekillendirir.",
+      optionLabels: {
+        fat_loss: "Yağ Yak — Yağları erit, fit görün",
+        muscle_gain: "Kas Yap — Daha büyük ve güçlü ol",
+        recomposition: "Vücut Kompozisyonu — Aynı anda yağ yak VE kas kazan",
+        fitness: "Kondisyonu Geliştir — Dayanıklılık, sağlık, enerji",
+        stay_active: "Aktif Kal — Daha çok hareket et, daha iyi hisset"
+      }
+    },
+    s2_goal_detail: {
+      question: "Önce hangi sonuç senin için en önemli?",
+      sub: "TJAI planı, en çok önem verdiğin sonuca göre eğer.",
+      optionLabels: {
+        sustainable_cut: "Koruyabileceğim kalıcı yağ kaybı",
+        aggressive_cut: "Agresif ve gözle görülür bir düşüş",
+        size: "Daha fazla hacim ve dolgunluk",
+        strength: "Daha fazla güç ve atletiklik",
+        aesthetic: "Daha estetik ve dengeli bir fizik",
+        energy: "Daha fazla enerji ve daha iyi sağlık",
+        consistency: "Gerçekten sürdürebileceğim bir rutin"
+      }
+    },
+    s1_gender: {
+      question: "Biyolojik cinsiyetin nedir?",
+      sub: "Daha doğru enerji ve toparlanma hesapları için kullanılır.",
+      optionLabels: { male: "Erkek", female: "Kadın" }
+    },
+    s1_age: {
+      question: "Yaş aralığın nedir?",
+      sub: "Yaş; toparlanmayı, antrenman toleransını ve metabolizma hızını doğrudan etkiler.",
+      optionLabels: {
+        "20": "16–24 yaş",
+        "30": "25–34 yaş",
+        "40": "35–44 yaş",
+        "50": "45–54 yaş",
+        "58": "55 yaş ve üzeri"
+      }
+    },
+    s1_weight: {
+      question: "Şu anki kilon nedir?",
+      sub: "Kalori, protein hedefleri ve öngörülen ilerleme için kullanılır.",
+      optionLabels: {
+        "48": "50 kg altı",
+        "58": "50–65 kg",
+        "72": "65–80 kg",
+        "90": "80–100 kg",
+        "110": "100–120 kg",
+        "125": "120 kg üzeri"
+      }
+    },
+    s1_height: {
+      question: "Boyun kaç?",
+      sub: "Enerji ihtiyacını ve egzersiz ölçeklemesini hesaplamak için kiloyla birlikte kullanılır.",
+      optionLabels: {
+        "152": "155 cm altı",
+        "160": "155–165 cm",
+        "170": "165–175 cm",
+        "180": "175–185 cm",
+        "190": "185–195 cm",
+        "198": "195 cm üzeri"
+      }
+    },
+    s2_pace: {
+      question: "Sonuçları ne kadar hızlı istiyorsun?",
+      sub: "Dürüst ol — bu; antrenman yükünü, toparlanmayı ve kalorileri doğrudan etkiler.",
+      optionLabels: {
+        slow: "Yavaş ve Sürdürülebilir — Kalıcı sonuç istiyorum, acelem yok",
+        moderate: "Orta Tempo — İstikrarlı ilerleme, iyi denge",
+        aggressive: "Hızlı Sonuç — Sonuna kadar yüklenmeye hazırım"
+      }
+    },
+    s3_body_silhouette: {
+      question: "Hangi vücut tipi seni en iyi tanımlıyor?",
+      sub: "TJAI'nin yağ oranını tahmin etmesine ve planı ne kadar zorlayacağına yardımcı olur.",
+      optionLabels: {
+        very_lean: "Çok Zayıf",
+        lean: "Zayıf / Fit",
+        average: "Ortalama",
+        overweight: "Fazla Kilolu",
+        obese: "Obez"
+      }
+    },
+    s17_injuries: {
+      question: "Herhangi bir sakatlığın veya fiziksel kısıtlaman var mı?",
+      sub: "Uyanların hepsini seç. TJAI egzersizleri ve toparlanma kurallarını buna göre ayarlar.",
+      optionLabels: {
+        none: "Yok",
+        knee: "Diz ağrısı",
+        lower_back: "Bel ağrısı",
+        shoulder: "Omuz ağrısı",
+        hip: "Kalça ağrısı",
+        wrist_elbow: "Bilek / dirsek ağrısı",
+        recent_surgery: "Yakın zamanda ameliyat",
+        chronic_condition: "Kronik rahatsızlık"
+      }
+    },
+    s17_conditions: {
+      question: "Bu kısıtlamalarla ilgili TJAI'nin bilmesi gereken bir şey var mı?",
+      sub: "İsteğe bağlı not: hareket kısıtlamaları, doktor tavsiyesi veya kaçınman gerektiğini bildiğin egzersizler.",
+      placeholder: "Örnek: Şimdilik omuz üstü itiş yok. Yürüyüş ve alt vücut serbest."
+    },
+    s19_target_weight: {
+      question: "Biliyorsan, hedeflediğin vücut ağırlığı nedir?",
+      sub: "İsteğe bağlı — ama aklında gerçekçi bir hedef varsa işe yarar.",
+      placeholder: "örn. 78"
+    },
+    s7_diet_history: {
+      question: "Daha önce programlı bir diyet denedin mi?",
+      sub: "Diyet geçmişin, TJAI'nin kalorilerde ne kadar agresif olacağını değiştirir.",
+      optionLabels: {
+        first_plan: "Hayır — bu ilk programlı planım",
+        kept_results: "Evet — ve sonuçları büyük ölçüde korudum",
+        regained: "Evet — ama sonrasında kilo geri geldi",
+        yo_yo: "Defalarca — verip geri alıyorum"
+      }
+    },
+    s4_daily_activity: {
+      question: "Antrenman dışında ne kadar aktifsin?",
+      sub: "Bu, planlı antrenman hariç günlük hareket seviyen.",
+      optionLabels: {
+        very_low: "Çok düşük — Masa başı iş, gün boyu oturuyorum",
+        low: "Düşük — Biraz yürüyüş, çoğunlukla hareketsiz",
+        moderate: "Orta — Düzenli hareket, aktif yaşam",
+        active: "Aktif — Fiziksel iş veya çok hareketli bir gün"
+      }
+    },
+    s4_job_type: {
+      question: "Çoğu gün ne tür bir işte çalışıyorsun?",
+      sub: "İşin, antrenman dışında yakılan kalorinin en büyük belirleyicisi.",
+      optionLabels: {
+        desk: "Masa başı — günün çoğu oturarak",
+        mixed: "Karışık — günün bir kısmı ayakta",
+        physical: "Fiziksel — beden gücü veya sürekli hareket"
+      }
+    },
+    s4_daily_steps: {
+      question: "Normal bir günde yaklaşık kaç adım atıyorsun?",
+      sub: "Emin değilsen telefonuna bak — günlük adımlar kalori hesabını netleştirir.",
+      optionLabels: {
+        under_4k: "4.000 altı — çoğunlukla hareketsiz",
+        "4k_8k": "4.000–8.000 — hafif hareket",
+        "8k_12k": "8.000–12.000 — hayli aktif",
+        over_12k: "12.000 üzeri — sürekli hareket halinde"
+      }
+    },
+    s8_hours: {
+      question: "Ortalama gecelik kaç saat uyuyorsun?",
+      sub: "Uyku; kortizolü, toparlanmayı, yağ kaybını ve performansı etkiler.",
+      optionLabels: {
+        "5": "4–5 saat — Kronik uykusuz",
+        "6": "6 saat — Ortalamanın altı",
+        "7": "7 saat — Ortalama",
+        "8": "8 saat — İyi",
+        "9": "9+ saat — Çok dinlenmiş"
+      }
+    },
+    s8_sleep_quality: {
+      question: "O uykunun kalitesini nasıl tanımlarsın?",
+      sub: "Saat önemli, ama huzursuz uyku toparlanmayı en az onun kadar değiştirir.",
+      optionLabels: {
+        restorative: "Dinlendirici — kolay uyurum, dinlenmiş uyanırım",
+        restless: "Huzursuz — gece uyanıyorum veya yorgun kalkıyorum",
+        poor: "Kötü — uykuya dalmakta, sürdürmekte ya da ikisinde birden zorlanıyorum"
+      }
+    },
+    s9_stress: {
+      question: "Şu anki genel stres seviyen nedir?",
+      sub: "Yüksek stres; toparlanmayı, iştahı ve TJAI'nin ne kadar agresif olacağını değiştirir.",
+      optionLabels: {
+        very_low: "Çok Düşük — Hayat sakin ve yönetilebilir",
+        low: "Düşük — Ara sıra ufak stres",
+        moderate: "Orta — Düzenli iş veya hayat baskısı",
+        high: "Yüksek — Sık sık stresliyim",
+        very_high: "Çok Yüksek — Düzenli olarak bunalmış hissediyorum"
+      }
+    },
+    s10_drinks: {
+      question: "Tipik bir günde su dışında ne içersin?",
+      sub: "Uyanları seç — sıvı kaloriler, ilerlemeyi bitiren en yaygın gizli etken.",
+      optionLabels: {
+        mostly_water: "Çoğunlukla su, çay veya sade kahve",
+        sugary_drinks: "Şekerli içecekler — gazlı içecek, meyve suyu, şekerli kahve",
+        diet_soda: "Diyet / şekersiz içecekler",
+        alcohol: "Çoğu hafta alkol",
+        energy_drinks: "Enerji içecekleri"
+      }
+    },
+    s18_schedule_constraint: {
+      question: "İstikrarını en çok ne sınırlayabilir?",
+      sub: "TJAI yokmuş gibi davranmak yerine planı bu kısıtın etrafına kurar.",
+      optionLabels: {
+        none: "Hiçbiri — programım düzenli",
+        short_sessions: "Çoğu gün kısa antrenmanlara ihtiyacım var",
+        shift_work: "Çalışma saatlerim sık değişiyor",
+        family_load: "Aile veya bakım yükümlülükleri",
+        travel: "Seyahat veya öngörülemeyen haftalar"
+      }
+    },
+    s18_schedule_notes: {
+      question: "Bu program sorunu haftadan haftaya gerçekte neye benziyor?",
+      sub: "İsteğe bağlı detay — antrenman günlerini ve toparlanmayı daha gerçekçi yerleştirmeye yarar.",
+      placeholder: "Örnek: Haftada iki gece vardiyası. Pazar en uygun günüm. İki haftada bir cuma seyahat."
+    },
+    s14_budget: {
+      question: "Bu plan için aylık gıda bütçen nedir?",
+      sub: "TJAI bu bütçeye uygun yiyecekler ve takviye seviyeleri seçer.",
+      optionLabels: {
+        budget: "Bütçe Dostu — Öğünler ekonomik kalsın",
+        moderate: "Orta — Kalite ve maliyet dengede",
+        premium: "Esnek — Önce performans kalitesi"
+      }
+    },
+    s19_daily_routine: {
+      question: "Senin için normal bir hafta içi günü nasıl geçiyor?",
+      sub: "Uyanma saatini, iş/okulu, yolu, öğün saatlerini ve gerçekçi antrenman zamanını yaz.",
+      placeholder: "Örnek: 6:30 kalkış, 9-6 masa başı iş, 13:00 öğle yemeği, 19:00 evdeyim, antrenman için en iyi saat 19:30."
+    },
+    s5_trains: {
+      question: "Şu anki antrenman seviyen nedir?",
+      sub: "Dürüst ol — TJAI hedefinle değil, gerçek seviyenle eşleşmeli.",
+      optionLabels: {
+        beginner: "Başlangıç — 6 aydan az düzenli antrenman",
+        intermediate: "Orta — 6 ila 24 ay gerçek antrenman",
+        advanced: "İleri — 2+ yıl ciddi, programlı antrenman"
+      }
+    },
+    s5_type: {
+      question: "Çoğunlukla nerede antrenman yapacaksın?",
+      sub: "Bu; egzersiz seçimini ve plan yapısını belirler.",
+      optionLabels: {
+        home: "Ev — Çoğunlukla evde",
+        gym: "Salon — Tam donanımlı salon erişimi",
+        hybrid: "Karma — Ev ve salon karışık"
+      }
+    },
+    s5_equipment: {
+      question: "Gerçekte hangi ekipmanlara erişimin var?",
+      sub: "Yalnızca tam donanımlı salon dışında gerçekten sahip olduklarını seç.",
+      optionLabels: {
+        bodyweight: "Sadece vücut ağırlığı",
+        bands: "Direnç bandı",
+        dumbbells: "Dambıl",
+        bench: "Sehpa (bench)",
+        barbell_rack: "Halter / rack",
+        machines: "Makineler / kablolar"
+      }
+    },
+    s5_days: {
+      question: "Haftada gerçekçi olarak kaç gün antrenman yapabilirsin?",
+      sub: "Sürekli koruyabileceğin sayıyı seç.",
+      optionLabels: { "3": "3 gün", "4": "4 gün", "5": "5 gün", "6": "6 gün" }
+    },
+    s5_duration: {
+      question: "Her antrenman ne kadar sürebilir?",
+      sub: "TJAI hacmi ve egzersiz yoğunluğunu buna göre ayarlar.",
+      optionLabels: {
+        "30": "20–30 dakika — Çok verimli seanslar",
+        "45": "35–45 dakika — Standart verimli seanslar",
+        "60": "50–60 dakika — Yeterince zaman var",
+        "75": "75+ dakika — Uzun seans sorun değil"
+      }
+    },
+    s5_training_preference: {
+      question: "Hangi antrenman türü seni en çok motive ediyor?",
+      sub: "TJAI hedefine hizmet etmeye devam ederken planı seni motive edene doğru eğebilir.",
+      optionLabels: {
+        strength: "Güç odaklı kaldırışlar",
+        hypertrophy: "Kas geliştirme / pump işi",
+        conditioning: "Kondisyon / kalori yakımı",
+        mixed: "Hepsinden dengeli bir karışım"
+      }
+    },
+    s6_cardio_preference: {
+      question: "Hangi kardiyo türlerini gerçekten yaparsın?",
+      sub: "Nefret etmediğin her şeyi seç. TJAI yalnızca gerçekçi biçimde sürdüreceğin kardiyoyu programa koyar.",
+      optionLabels: {
+        walking: "Yürüyüş / eğimli yürüyüş",
+        running: "Koşu / hafif tempo koşu",
+        cycling: "Bisiklet / spin",
+        swimming: "Yüzme",
+        rowing_machines: "Kürek veya kardiyo makineleri",
+        jump_rope: "İp atlama",
+        none: "Açıkçası — mümkün olduğunca az kardiyo"
+      }
+    },
+    s20_country: {
+      question: "Hangi ülkede yaşıyorsun?",
+      sub: "TJAI öğünlerini ve alışveriş listeni çevrende gerçekten satılanlara göre yerelleştirir.",
+      optionLabels: {
+        us: "Amerika Birleşik Devletleri",
+        uk: "Birleşik Krallık",
+        canada: "Kanada",
+        australia: "Avustralya",
+        ireland: "İrlanda",
+        turkey: "Türkiye",
+        saudi_arabia: "Suudi Arabistan",
+        uae: "Birleşik Arap Emirlikleri",
+        egypt: "Mısır",
+        iraq: "Irak",
+        jordan: "Ürdün",
+        kuwait: "Kuveyt",
+        qatar: "Katar",
+        morocco: "Fas",
+        spain: "İspanya",
+        mexico: "Meksika",
+        argentina: "Arjantin",
+        colombia: "Kolombiya",
+        chile: "Şili",
+        france: "Fransa",
+        belgium: "Belçika",
+        germany: "Almanya",
+        netherlands: "Hollanda",
+        india: "Hindistan",
+        pakistan: "Pakistan",
+        nigeria: "Nijerya",
+        philippines: "Filipinler",
+        other: "Başka bir yer"
+      }
+    },
+    s20_market: {
+      question: "Market alışverişini genelde nereden yaparsın?",
+      sub: "Sana en yakın olanı seç — alışveriş listen ona göre hazırlanır.",
+      optionLabels: {
+        local_supermarket: "Büyük bir süpermarket",
+        discount_chain: "İndirim market zinciri",
+        local_market: "Semt pazarı",
+        online_groceries: "Online market",
+        other_market: "Başka bir yer / değişiyor"
+      }
+    },
+    s12_diet_style: {
+      question: "Şu an sana en uygun beslenme tarzı hangisi?",
+      sub: "TJAI bunu, gerçekten sürdürebileceğin bir yapı seçmek için kullanır.",
+      optionLabels: {
+        balanced: "Dengeli ve esnek",
+        high_protein: "Yüksek protein odaklı",
+        low_carb: "Düşük karbonhidrat tercihi",
+        halal: "Helal uyumlu yapı",
+        vegetarian: "Vejetaryen",
+        vegan: "Vegan"
+      }
+    },
+    s12_plant_protein: {
+      question: "Hangi protein kaynaklarını düzenli olarak yemekten memnun olursun?",
+      sub: "Protein hedefin bir yerden gelmek zorunda — TJAI öğünleri yalnızca kabul ettiğin kaynaklardan kurar.",
+      optionLabels: {
+        tofu_tempeh: "Tofu / tempeh",
+        seitan: "Seitan",
+        legumes: "Mercimek, fasulye ve nohut",
+        protein_powder: "Bitkisel protein tozu",
+        dairy_eggs: "Süt ürünleri ve yumurta (vejetaryen ise)",
+        nuts_seeds: "Kuruyemiş ve tohumlar"
+      }
+    },
+    s13_allergies: {
+      question: "TJAI'nin uyması gereken beslenme kısıtları var mı?",
+      sub: "Uyanların hepsini seç.",
+      optionLabels: {
+        none: "Yok",
+        halal: "Helal",
+        vegetarian: "Vejetaryen",
+        vegan: "Vegan",
+        dairy_free: "Süt ürünsüz",
+        gluten_free: "Glutensiz",
+        nut_free: "Kuruyemişsiz"
+      }
+    },
+    s13_restriction_notes: {
+      question: "Bu yiyecek kısıtlarıyla ilgili TJAI'nin bilmesi gereken özel bir şey var mı?",
+      sub: "İsteğe bağlı not — örneğin kesin hariç tutmalar, kültürel tercihler veya mutlaka kalması gereken yiyecekler.",
+      placeholder: "Örnek: Sadece helal; yumurta ve süt ürünleri uygun. Whey ve kabuklu deniz ürünlerinden tamamen kaçın."
+    },
+    s12_foods_like: {
+      question: "Hangi yiyecekleri sık sık yemekten memnun olursun?",
+      sub: "Uyanların hepsini seç.",
+      optionLabels: {
+        chicken: "Tavuk",
+        beef: "Dana eti",
+        fish: "Balık",
+        eggs: "Yumurta",
+        rice: "Pirinç",
+        oats: "Yulaf",
+        fruit: "Meyve",
+        greek_yogurt: "Süzme yoğurt",
+        potatoes: "Patates",
+        legumes: "Baklagiller"
+      }
+    },
+    s12_foods_avoid: {
+      question: "Hangi yiyeceklerden kaçınmayı tercih edersin?",
+      sub: "Uyanların hepsini seç.",
+      optionLabels: {
+        seafood: "Deniz ürünleri",
+        red_meat: "Kırmızı et",
+        dairy: "Süt ürünleri",
+        eggs: "Yumurta",
+        spicy_food: "Acılı yemek",
+        nothing_specific: "Belirli bir şey yok"
+      }
+    },
+    s14_time: {
+      question: "TJAI yemek hazırlığını nasıl ele almalı?",
+      sub: "Gerçekçi olarak uygulayabileceğin pişirme tarzını seç.",
+      optionLabels: {
+        minimal: "Minimum çaba — çok hızlı öğünler",
+        simple: "Çoğu gün basit yemekler",
+        batch: "Toplu pişirme ve meal prep"
+      }
+    },
+    s11_meals: {
+      question: "Günde kaç öğün tercih edersin?",
+      sub: "TJAI kalorini ve makrolarını buna göre yapılandırır.",
+      optionLabels: { "3": "3 öğün", "4": "4 öğün", "5": "5 öğün" }
+    },
+    s11_eating_out: {
+      question: "Ne sıklıkla dışarıda yer veya sipariş verirsin?",
+      sub: "TJAI her öğün evde pişiyormuş gibi davranmak yerine gerçek hayatına göre planlar.",
+      optionLabels: {
+        rarely: "Nadiren — neredeyse her şey ev yapımı",
+        weekly: "Haftada bir veya iki kez",
+        several_weekly: "Haftada 3–5 kez",
+        daily: "Çoğu gün"
+      }
+    },
+    s16_which_supps: {
+      question: "Halihazırda kullandığın takviyeler var mı?",
+      sub: "Uyanları seç. TJAI zaten kullandıklarını tekrarlamaz.",
+      optionLabels: {
+        none: "Yok",
+        protein: "Protein tozu",
+        creatine: "Kreatin",
+        omega3: "Omega-3",
+        vitamin_d: "D Vitamini",
+        magnesium: "Magnezyum",
+        preworkout: "Pre-workout"
+      }
+    },
+    s15_weekend_consistency: {
+      question: "Hafta sonları beslenmene ne oluyor?",
+      sub: "Diyetlerin kaderini hafta sonları belirler — iki gevşek gün, beş dikkatli günü silebilir.",
+      optionLabels: {
+        consistent: "Hafta içiyle aynı — istikrarlıyım",
+        slightly_off: "Biraz daha gevşek ama rotada",
+        derails: "Hafta sonları genelde haftamı mahvediyor"
+      }
+    },
+    s18_biggest_problem: {
+      question: "Seni genelde ne raydan çıkarır?",
+      sub: "Uyanları seç ki TJAI planı gerçek engellerinin etrafına kursun.",
+      optionLabels: {
+        motivation: "Motivasyon düşüşleri",
+        consistency: "İstikrar / disiplin",
+        time: "Zaman yetersizliği",
+        food_cravings: "Yeme isteği ve iştah",
+        training_knowledge: "Ne yapacağımı bilmemek",
+        stress: "Stres ve bunalmışlık",
+        recovery: "Kötü toparlanma"
+      }
+    },
+    s19_success_vision: {
+      question: "12 hafta sonunda başarı senin için neye benziyor?",
+      sub: "Sana en çok hitap edeni seç.",
+      optionLabels: {
+        look_different: "Aynada gözle görülür şekilde farklı görünüyorum",
+        feel_energetic: "Her gün enerjik ve güçlü hissediyorum",
+        fit_clothes_better: "Önceden giremediğim kıyafetlere sığıyorum",
+        lift_heavier: "Hiç olmadığım kadar ağır kaldırıyorum",
+        build_routine: "Sürdürülebilir, sağlıklı bir rutin kurdum"
+      }
+    }
+  }
+};
+
 export function getTjaiSteps(locale: Locale): QuizStep[] {
   const sections = SECTION_TITLES[locale] ?? SECTION_TITLES.en;
-  return BASE_STEPS.map((step) => ({
-    ...step,
-    section: sections[step.sectionIdx] ?? SECTION_TITLES.en[step.sectionIdx],
-    sectionNumber: step.sectionIdx + 1,
-    totalSections: 6
-  }));
+  const overrides = STEP_I18N[locale];
+  return BASE_STEPS.map((step) => {
+    const o = overrides?.[step.id];
+    return {
+      ...step,
+      question: o?.question ?? step.question,
+      sub: o?.sub ?? step.sub,
+      placeholder: o?.placeholder ?? step.placeholder,
+      options: o?.optionLabels
+        ? step.options?.map((option) => ({
+            ...option,
+            label: o.optionLabels?.[String(option.value)] ?? option.label
+          }))
+        : step.options,
+      section: sections[step.sectionIdx] ?? SECTION_TITLES.en[step.sectionIdx],
+      sectionNumber: step.sectionIdx + 1,
+      totalSections: 6
+    };
+  });
 }
 
