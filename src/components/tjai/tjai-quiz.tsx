@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { BodySilhouetteSelector } from "@/components/tjai/body-silhouette-selector";
 import { useMagneticButton } from "@/hooks/useMagneticButton";
@@ -13,6 +13,31 @@ import type { QuizAnswers, QuizOption, QuizStep, TJAICopy } from "@/lib/tjai-typ
 
 const QUIZ_PROGRESS_KEY = "tjai_quiz_progress";
 const QUIZ_PROGRESS_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+
+// Step-funnel beacon (fire-and-forget, drop-off analytics). One
+// quiz_step_reached per (quiz session, step id); the server derives drop-off
+// from each session's furthest step, so a lost or duplicate beacon can only
+// under-count — it can never corrupt the funnel. Analytics must never break
+// the quiz, hence the double swallow.
+function sendQuizStepBeacon(payload: {
+  stepId: string;
+  stepIndex: number;
+  totalSteps: number;
+  quizSessionId: string;
+  locale: string;
+}) {
+  try {
+    void fetch("/api/tjai/quiz-events", {
+      method: "POST",
+      keepalive: true,
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    }).catch(() => undefined);
+  } catch {
+    /* ignore */
+  }
+}
 const QUIZ_UI_COPY = {
   en: {
     categoryPersonal: "Personal Info",
@@ -507,6 +532,8 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
   const [reviewing, setReviewing] = useState(false);
   const [returnToReview, setReturnToReview] = useState(false);
   const magneticGenerateRef = useMagneticButton<HTMLButtonElement>(0.3);
+  const quizSessionIdRef = useRef<string>("");
+  const sentStepsRef = useRef<Set<string>>(new Set());
 
   const localeKey = locale as keyof typeof QUIZ_UI_COPY;
   const uiCopy = QUIZ_UI_COPY[localeKey] ?? QUIZ_UI_COPY.en;
@@ -629,6 +656,25 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
   }, [resumeHandled]);
 
   useEffect(() => {
+    if (typeof window === "undefined" || !resumeHandled) return;
+    if (quizSessionIdRef.current) return;
+    // Funnel-session id: reuse the draft's so an abandoned-then-resumed run
+    // counts as one session; a fresh start mints a new one.
+    let saved: string | undefined;
+    try {
+      const raw = window.localStorage.getItem(QUIZ_PROGRESS_KEY);
+      const parsed = raw ? (JSON.parse(raw) as { sessionId?: string }) : null;
+      saved = typeof parsed?.sessionId === "string" ? parsed.sessionId : undefined;
+    } catch {
+      saved = undefined;
+    }
+    quizSessionIdRef.current =
+      saved && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(saved)
+        ? saved
+        : crypto.randomUUID();
+  }, [resumeHandled]);
+
+  useEffect(() => {
     if (typeof window === "undefined" || !resumeHandled || resumePrompt) return;
     window.localStorage.setItem(
       QUIZ_PROGRESS_KEY,
@@ -637,11 +683,44 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
         // Step id survives step-list changes between deploys; the numeric
         // index is only a fallback for drafts saved before ids were stored.
         currentStepId: filteredSteps[safeIdx]?.id,
+        sessionId: quizSessionIdRef.current || undefined,
         answers,
         savedAt: Date.now()
       })
     );
   }, [answers, idx, safeIdx, filteredSteps, resumeHandled, resumePrompt]);
+
+  // Drop-off analytics: fire once per (session, step id) the first time a
+  // step is displayed. Deduped client-side; back-navigation never re-fires.
+  useEffect(() => {
+    const stepId = filteredSteps[safeIdx]?.id;
+    if (!stepId || !resumeHandled || resumePrompt) return;
+    const quizSessionId = quizSessionIdRef.current;
+    if (!quizSessionId || sentStepsRef.current.has(stepId)) return;
+    sentStepsRef.current.add(stepId);
+    sendQuizStepBeacon({
+      stepId,
+      stepIndex: safeIdx,
+      totalSteps: filteredSteps.length,
+      quizSessionId,
+      locale
+    });
+  }, [filteredSteps, safeIdx, resumeHandled, resumePrompt, locale]);
+
+  // The review screen is the funnel's final pre-submit step.
+  useEffect(() => {
+    if (!reviewing || !resumeHandled) return;
+    const quizSessionId = quizSessionIdRef.current;
+    if (!quizSessionId || sentStepsRef.current.has("review")) return;
+    sentStepsRef.current.add("review");
+    sendQuizStepBeacon({
+      stepId: "review",
+      stepIndex: filteredSteps.length,
+      totalSteps: filteredSteps.length,
+      quizSessionId,
+      locale
+    });
+  }, [reviewing, resumeHandled, filteredSteps, locale]);
 
   useEffect(() => {
     if (!step) return;
