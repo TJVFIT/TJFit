@@ -35,15 +35,15 @@ const RECORDS_COPY = {
   },
   tr: {
     eyebrow: "Rekorlar",
-    title: "Kisisel Rekorlar",
-    sub: "Tum zamanlarin en iyi dereceleri antrenman kayitlarindan otomatik hesaplanir.",
+    title: "Kişisel Rekorlar",
+    sub: "Tüm zamanların en iyi dereceleri antrenman kayıtlarından otomatik hesaplanır.",
     search: "Egzersiz ara...",
-    loadError: "Kisisel rekorlarin yuklenemedi.",
-    emptyTitle: "Henuz rekor yok.",
-    emptyBody: "Kisisel en iyilerini gormek icin set, tekrar ve agirlikla antrenman kaydet.",
-    progressCta: "Progress kaydina git ->",
+    loadError: "Kişisel rekorların yüklenemedi.",
+    emptyTitle: "Henüz rekor yok.",
+    emptyBody: "Kişisel en iyilerini görmek için set, tekrar ve ağırlıkla antrenman kaydet.",
+    progressCta: "Progress kaydına git ->",
     sets: "set",
-    totalSets: "Kayitli toplam set"
+    totalSets: "Kayıtlı toplam set"
   },
   ar: {
     eyebrow: "الأرقام القياسية",

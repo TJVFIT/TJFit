@@ -29,9 +29,22 @@ type Preset = {
 };
 
 const PRESETS: Record<PresetName, Preset> = {
+  // Qwen3 (Apache-2.0) rather than the previous llama3.1 default: 100+
+  // languages matters for a product that ships tr/ar/es/fr, and Ollama's
+  // `format` parameter compiles a JSON Schema straight to a llama.cpp grammar,
+  // so `json` tasks are constrained at the token level instead of being
+  // validated-then-regenerated.
+  //
+  // Two resident models, not four: 8b carries chat/json/longform, and the
+  // 1.7b handles `mini` (cheap extraction and classification) so a small
+  // utility call does not evict the main model on a single-GPU box.
+  //
+  // For the tr locale, Trendyol-LLM-8B-T1 is a Turkish fine-tune built on
+  // Qwen3-8B — same family, same serving stack — and is worth pointing
+  // TJAI_LLM_MODEL_CHAT at once it is benchmarked on tests/tjai-eval.
   ollama: {
     baseUrl: "http://127.0.0.1:11434/v1",
-    models: { chat: "llama3.1", json: "llama3.1", mini: "llama3.1", longform: "llama3.1" }
+    models: { chat: "qwen3:8b", json: "qwen3:8b", mini: "qwen3:1.7b", longform: "qwen3:8b" }
   },
   lmstudio: {
     baseUrl: "http://127.0.0.1:1234/v1",

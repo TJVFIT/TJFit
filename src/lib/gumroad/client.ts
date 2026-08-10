@@ -174,6 +174,10 @@ export type GumroadSale = {
   disputed?: boolean;
   custom_fields?: Record<string, string>;
   variants?: Record<string, string>;
+  // Query params echoed back from the checkout URL (buildGumroadTrackedUrl
+  // stamps tjfit_order_id / tjfit_program_slug / tjfit_tier / tjfit_billing_mode
+  // here). Buyer-influenced, so only used to route already-API-verified sales.
+  url_params?: Record<string, string>;
   created_at: string;
 };
 

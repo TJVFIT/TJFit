@@ -4,10 +4,10 @@ import { GENERIC_MARKETS, TJAI_COUNTRY_OPTIONS } from "@/lib/tjai/market-data";
 
 const SECTION_TITLES: Record<Locale, string[]> = {
   en: ["The Basics", "Your Body", "Your Lifestyle", "Your Training", "Your Nutrition", "Finishing Up"],
-  tr: ["Temel Bilgiler", "Vucut Olculeri", "Yasam Tarzi", "Antrenman", "Beslenme", "Son Detaylar"],
+  tr: ["Temel Bilgiler", "Vücut Ölçüleri", "Yaşam Tarzı", "Antrenman", "Beslenme", "Son Detaylar"],
   ar: ["الأساسيات", "جسمك", "نمط حياتك", "تدريبك", "تغذيتك", "إنهاء"],
-  es: ["Lo Basico", "Tu Cuerpo", "Tu Estilo de Vida", "Tu Entrenamiento", "Tu Nutricion", "Finalizando"],
-  fr: ["Les Bases", "Votre Corps", "Votre Mode de Vie", "Votre Entrainement", "Votre Nutrition", "Finalisation"]
+  es: ["Lo Básico", "Tu Cuerpo", "Tu Estilo de Vida", "Tu Entrenamiento", "Tu Nutrición", "Finalizando"],
+  fr: ["Les Bases", "Votre Corps", "Votre Mode de Vie", "Votre Entraînement", "Votre Nutrition", "Finalisation"]
 };
 
 export const tjaiCopy: Record<Locale, TJAICopy> = {
@@ -747,6 +747,35 @@ const BASE_STEPS: BaseStep[] = [
     ],
     required: true
   },
+  {
+    // Adaptive: only for users whose plan will actually contain cardio. The
+    // modality matters more than the dose — prescribing running to someone who
+    // hates running is how fat-loss plans die in week 2.
+    id: "s6_cardio_preference", sectionIdx: 3,
+    question: "Which kinds of cardio would you actually do?",
+    sub: "Pick everything you don't hate. TJAI only prescribes cardio you'll realistically keep doing.",
+    type: "multi",
+    options: [
+      opt("Walking / incline walking", "walking"),
+      opt("Running / jogging", "running"),
+      opt("Cycling / spin", "cycling"),
+      opt("Swimming", "swimming"),
+      opt("Rowing or cardio machines", "rowing_machines"),
+      opt("Jump rope", "jump_rope"),
+      opt("Honestly — as little cardio as possible", "none")
+    ],
+    required: false,
+    showIf: {
+      mode: "any",
+      conditions: [
+        { stepId: "s2_goal", value: "fat_loss" },
+        { stepId: "s2_goal", value: "fitness" },
+        { stepId: "s2_goal", value: "stay_active" },
+        { stepId: "s5_training_preference", value: "conditioning" },
+        { stepId: "s5_training_preference", value: "mixed" }
+      ]
+    }
+  },
 
   {
     id: "s20_country", sectionIdx: 4,
@@ -779,6 +808,31 @@ const BASE_STEPS: BaseStep[] = [
       opt("Vegan", "vegan")
     ],
     required: true
+  },
+  {
+    // Adaptive: vegetarian/vegan only. Hitting a 150g+ protein target on
+    // plants is a sourcing problem — a plan built on tofu for someone who
+    // won't eat tofu is generic advice, not coaching.
+    id: "s12_plant_protein", sectionIdx: 4,
+    question: "Which protein sources are you happy to eat regularly?",
+    sub: "Your protein target has to come from somewhere — TJAI builds meals only from sources you accept.",
+    type: "multi",
+    options: [
+      opt("Tofu / tempeh", "tofu_tempeh"),
+      opt("Seitan", "seitan"),
+      opt("Lentils, beans and chickpeas", "legumes"),
+      opt("Plant protein powder", "protein_powder"),
+      opt("Dairy and eggs (if vegetarian)", "dairy_eggs"),
+      opt("Nuts and seeds", "nuts_seeds")
+    ],
+    required: false,
+    showIf: {
+      mode: "any",
+      conditions: [
+        { stepId: "s12_diet_style", value: "vegetarian" },
+        { stepId: "s12_diet_style", value: "vegan" }
+      ]
+    }
   },
   {
     id: "s13_allergies", sectionIdx: 4,
@@ -940,13 +994,1954 @@ export function getTjaiCopy(locale: Locale): TJAICopy {
   return tjaiCopy[locale] ?? tjaiCopy.en;
 }
 
+/**
+ * Per-locale overrides for individual quiz steps.
+ *
+ * BASE_STEPS is authored in English only; until now every locale rendered the
+ * 43 questions in English with localized section titles — the biggest single
+ * localization gap in the product. This map lets locales be filled in
+ * incrementally: a missing locale, step, or field falls back to the English
+ * base, so partial coverage is a strict improvement and never a crash.
+ *
+ * `optionLabels` is keyed by the option VALUE (stringified), never by the
+ * English label — labels are display-only and free to change.
+ */
+type StepOverride = {
+  question?: string;
+  sub?: string;
+  placeholder?: string;
+  optionLabels?: Record<string, string>;
+};
+
+const STEP_I18N: Partial<Record<Locale, Record<string, StepOverride>>> = {
+  // Turkish: complete coverage of all base steps (owner-approved 2026-08-09).
+  // Register matches the product's existing TR copy: informal "sen", direct,
+  // coach-voiced, full diacritics.
+  tr: {
+    s2_goal: {
+      question: "Birincil hedefin ne?",
+      sub: "Bu, tüm TJAI planını şekillendirir.",
+      optionLabels: {
+        fat_loss: "Yağ Yak — Yağları erit, fit görün",
+        muscle_gain: "Kas Yap — Daha büyük ve güçlü ol",
+        recomposition: "Vücut Kompozisyonu — Aynı anda yağ yak VE kas kazan",
+        fitness: "Kondisyonu Geliştir — Dayanıklılık, sağlık, enerji",
+        stay_active: "Aktif Kal — Daha çok hareket et, daha iyi hisset"
+      }
+    },
+    s2_goal_detail: {
+      question: "Önce hangi sonuç senin için en önemli?",
+      sub: "TJAI planı, en çok önem verdiğin sonuca göre eğer.",
+      optionLabels: {
+        sustainable_cut: "Koruyabileceğim kalıcı yağ kaybı",
+        aggressive_cut: "Agresif ve gözle görülür bir düşüş",
+        size: "Daha fazla hacim ve dolgunluk",
+        strength: "Daha fazla güç ve atletiklik",
+        aesthetic: "Daha estetik ve dengeli bir fizik",
+        energy: "Daha fazla enerji ve daha iyi sağlık",
+        consistency: "Gerçekten sürdürebileceğim bir rutin"
+      }
+    },
+    s1_gender: {
+      question: "Biyolojik cinsiyetin nedir?",
+      sub: "Daha doğru enerji ve toparlanma hesapları için kullanılır.",
+      optionLabels: { male: "Erkek", female: "Kadın" }
+    },
+    s1_age: {
+      question: "Yaş aralığın nedir?",
+      sub: "Yaş; toparlanmayı, antrenman toleransını ve metabolizma hızını doğrudan etkiler.",
+      optionLabels: {
+        "20": "16–24 yaş",
+        "30": "25–34 yaş",
+        "40": "35–44 yaş",
+        "50": "45–54 yaş",
+        "58": "55 yaş ve üzeri"
+      }
+    },
+    s1_weight: {
+      question: "Şu anki kilon nedir?",
+      sub: "Kalori, protein hedefleri ve öngörülen ilerleme için kullanılır.",
+      optionLabels: {
+        "48": "50 kg altı",
+        "58": "50–65 kg",
+        "72": "65–80 kg",
+        "90": "80–100 kg",
+        "110": "100–120 kg",
+        "125": "120 kg üzeri"
+      }
+    },
+    s1_height: {
+      question: "Boyun kaç?",
+      sub: "Enerji ihtiyacını ve egzersiz ölçeklemesini hesaplamak için kiloyla birlikte kullanılır.",
+      optionLabels: {
+        "152": "155 cm altı",
+        "160": "155–165 cm",
+        "170": "165–175 cm",
+        "180": "175–185 cm",
+        "190": "185–195 cm",
+        "198": "195 cm üzeri"
+      }
+    },
+    s2_pace: {
+      question: "Sonuçları ne kadar hızlı istiyorsun?",
+      sub: "Dürüst ol — bu; antrenman yükünü, toparlanmayı ve kalorileri doğrudan etkiler.",
+      optionLabels: {
+        slow: "Yavaş ve Sürdürülebilir — Kalıcı sonuç istiyorum, acelem yok",
+        moderate: "Orta Tempo — İstikrarlı ilerleme, iyi denge",
+        aggressive: "Hızlı Sonuç — Sonuna kadar yüklenmeye hazırım"
+      }
+    },
+    s3_body_silhouette: {
+      question: "Hangi vücut tipi seni en iyi tanımlıyor?",
+      sub: "TJAI'nin yağ oranını tahmin etmesine ve planı ne kadar zorlayacağına yardımcı olur.",
+      optionLabels: {
+        very_lean: "Çok Zayıf",
+        lean: "Zayıf / Fit",
+        average: "Ortalama",
+        overweight: "Fazla Kilolu",
+        obese: "Obez"
+      }
+    },
+    s17_injuries: {
+      question: "Herhangi bir sakatlığın veya fiziksel kısıtlaman var mı?",
+      sub: "Uyanların hepsini seç. TJAI egzersizleri ve toparlanma kurallarını buna göre ayarlar.",
+      optionLabels: {
+        none: "Yok",
+        knee: "Diz ağrısı",
+        lower_back: "Bel ağrısı",
+        shoulder: "Omuz ağrısı",
+        hip: "Kalça ağrısı",
+        wrist_elbow: "Bilek / dirsek ağrısı",
+        recent_surgery: "Yakın zamanda ameliyat",
+        chronic_condition: "Kronik rahatsızlık"
+      }
+    },
+    s17_conditions: {
+      question: "Bu kısıtlamalarla ilgili TJAI'nin bilmesi gereken bir şey var mı?",
+      sub: "İsteğe bağlı not: hareket kısıtlamaları, doktor tavsiyesi veya kaçınman gerektiğini bildiğin egzersizler.",
+      placeholder: "Örnek: Şimdilik omuz üstü itiş yok. Yürüyüş ve alt vücut serbest."
+    },
+    s19_target_weight: {
+      question: "Biliyorsan, hedeflediğin vücut ağırlığı nedir?",
+      sub: "İsteğe bağlı — ama aklında gerçekçi bir hedef varsa işe yarar.",
+      placeholder: "örn. 78"
+    },
+    s7_diet_history: {
+      question: "Daha önce programlı bir diyet denedin mi?",
+      sub: "Diyet geçmişin, TJAI'nin kalorilerde ne kadar agresif olacağını değiştirir.",
+      optionLabels: {
+        first_plan: "Hayır — bu ilk programlı planım",
+        kept_results: "Evet — ve sonuçları büyük ölçüde korudum",
+        regained: "Evet — ama sonrasında kilo geri geldi",
+        yo_yo: "Defalarca — verip geri alıyorum"
+      }
+    },
+    s4_daily_activity: {
+      question: "Antrenman dışında ne kadar aktifsin?",
+      sub: "Bu, planlı antrenman hariç günlük hareket seviyen.",
+      optionLabels: {
+        very_low: "Çok düşük — Masa başı iş, gün boyu oturuyorum",
+        low: "Düşük — Biraz yürüyüş, çoğunlukla hareketsiz",
+        moderate: "Orta — Düzenli hareket, aktif yaşam",
+        active: "Aktif — Fiziksel iş veya çok hareketli bir gün"
+      }
+    },
+    s4_job_type: {
+      question: "Çoğu gün ne tür bir işte çalışıyorsun?",
+      sub: "İşin, antrenman dışında yakılan kalorinin en büyük belirleyicisi.",
+      optionLabels: {
+        desk: "Masa başı — günün çoğu oturarak",
+        mixed: "Karışık — günün bir kısmı ayakta",
+        physical: "Fiziksel — beden gücü veya sürekli hareket"
+      }
+    },
+    s4_daily_steps: {
+      question: "Normal bir günde yaklaşık kaç adım atıyorsun?",
+      sub: "Emin değilsen telefonuna bak — günlük adımlar kalori hesabını netleştirir.",
+      optionLabels: {
+        under_4k: "4.000 altı — çoğunlukla hareketsiz",
+        "4k_8k": "4.000–8.000 — hafif hareket",
+        "8k_12k": "8.000–12.000 — hayli aktif",
+        over_12k: "12.000 üzeri — sürekli hareket halinde"
+      }
+    },
+    s8_hours: {
+      question: "Ortalama gecelik kaç saat uyuyorsun?",
+      sub: "Uyku; kortizolü, toparlanmayı, yağ kaybını ve performansı etkiler.",
+      optionLabels: {
+        "5": "4–5 saat — Kronik uykusuz",
+        "6": "6 saat — Ortalamanın altı",
+        "7": "7 saat — Ortalama",
+        "8": "8 saat — İyi",
+        "9": "9+ saat — Çok dinlenmiş"
+      }
+    },
+    s8_sleep_quality: {
+      question: "O uykunun kalitesini nasıl tanımlarsın?",
+      sub: "Saat önemli, ama huzursuz uyku toparlanmayı en az onun kadar değiştirir.",
+      optionLabels: {
+        restorative: "Dinlendirici — kolay uyurum, dinlenmiş uyanırım",
+        restless: "Huzursuz — gece uyanıyorum veya yorgun kalkıyorum",
+        poor: "Kötü — uykuya dalmakta, sürdürmekte ya da ikisinde birden zorlanıyorum"
+      }
+    },
+    s9_stress: {
+      question: "Şu anki genel stres seviyen nedir?",
+      sub: "Yüksek stres; toparlanmayı, iştahı ve TJAI'nin ne kadar agresif olacağını değiştirir.",
+      optionLabels: {
+        very_low: "Çok Düşük — Hayat sakin ve yönetilebilir",
+        low: "Düşük — Ara sıra ufak stres",
+        moderate: "Orta — Düzenli iş veya hayat baskısı",
+        high: "Yüksek — Sık sık stresliyim",
+        very_high: "Çok Yüksek — Düzenli olarak bunalmış hissediyorum"
+      }
+    },
+    s10_drinks: {
+      question: "Tipik bir günde su dışında ne içersin?",
+      sub: "Uyanları seç — sıvı kaloriler, ilerlemeyi bitiren en yaygın gizli etken.",
+      optionLabels: {
+        mostly_water: "Çoğunlukla su, çay veya sade kahve",
+        sugary_drinks: "Şekerli içecekler — gazlı içecek, meyve suyu, şekerli kahve",
+        diet_soda: "Diyet / şekersiz içecekler",
+        alcohol: "Çoğu hafta alkol",
+        energy_drinks: "Enerji içecekleri"
+      }
+    },
+    s18_schedule_constraint: {
+      question: "İstikrarını en çok ne sınırlayabilir?",
+      sub: "TJAI yokmuş gibi davranmak yerine planı bu kısıtın etrafına kurar.",
+      optionLabels: {
+        none: "Hiçbiri — programım düzenli",
+        short_sessions: "Çoğu gün kısa antrenmanlara ihtiyacım var",
+        shift_work: "Çalışma saatlerim sık değişiyor",
+        family_load: "Aile veya bakım yükümlülükleri",
+        travel: "Seyahat veya öngörülemeyen haftalar"
+      }
+    },
+    s18_schedule_notes: {
+      question: "Bu program sorunu haftadan haftaya gerçekte neye benziyor?",
+      sub: "İsteğe bağlı detay — antrenman günlerini ve toparlanmayı daha gerçekçi yerleştirmeye yarar.",
+      placeholder: "Örnek: Haftada iki gece vardiyası. Pazar en uygun günüm. İki haftada bir cuma seyahat."
+    },
+    s14_budget: {
+      question: "Bu plan için aylık gıda bütçen nedir?",
+      sub: "TJAI bu bütçeye uygun yiyecekler ve takviye seviyeleri seçer.",
+      optionLabels: {
+        budget: "Bütçe Dostu — Öğünler ekonomik kalsın",
+        moderate: "Orta — Kalite ve maliyet dengede",
+        premium: "Esnek — Önce performans kalitesi"
+      }
+    },
+    s19_daily_routine: {
+      question: "Senin için normal bir hafta içi günü nasıl geçiyor?",
+      sub: "Uyanma saatini, iş/okulu, yolu, öğün saatlerini ve gerçekçi antrenman zamanını yaz.",
+      placeholder: "Örnek: 6:30 kalkış, 9-6 masa başı iş, 13:00 öğle yemeği, 19:00 evdeyim, antrenman için en iyi saat 19:30."
+    },
+    s5_trains: {
+      question: "Şu anki antrenman seviyen nedir?",
+      sub: "Dürüst ol — TJAI hedefinle değil, gerçek seviyenle eşleşmeli.",
+      optionLabels: {
+        beginner: "Başlangıç — 6 aydan az düzenli antrenman",
+        intermediate: "Orta — 6 ila 24 ay gerçek antrenman",
+        advanced: "İleri — 2+ yıl ciddi, programlı antrenman"
+      }
+    },
+    s5_type: {
+      question: "Çoğunlukla nerede antrenman yapacaksın?",
+      sub: "Bu; egzersiz seçimini ve plan yapısını belirler.",
+      optionLabels: {
+        home: "Ev — Çoğunlukla evde",
+        gym: "Salon — Tam donanımlı salon erişimi",
+        hybrid: "Karma — Ev ve salon karışık"
+      }
+    },
+    s5_equipment: {
+      question: "Gerçekte hangi ekipmanlara erişimin var?",
+      sub: "Yalnızca tam donanımlı salon dışında gerçekten sahip olduklarını seç.",
+      optionLabels: {
+        bodyweight: "Sadece vücut ağırlığı",
+        bands: "Direnç bandı",
+        dumbbells: "Dambıl",
+        bench: "Sehpa (bench)",
+        barbell_rack: "Halter / rack",
+        machines: "Makineler / kablolar"
+      }
+    },
+    s5_days: {
+      question: "Haftada gerçekçi olarak kaç gün antrenman yapabilirsin?",
+      sub: "Sürekli koruyabileceğin sayıyı seç.",
+      optionLabels: { "3": "3 gün", "4": "4 gün", "5": "5 gün", "6": "6 gün" }
+    },
+    s5_duration: {
+      question: "Her antrenman ne kadar sürebilir?",
+      sub: "TJAI hacmi ve egzersiz yoğunluğunu buna göre ayarlar.",
+      optionLabels: {
+        "30": "20–30 dakika — Çok verimli seanslar",
+        "45": "35–45 dakika — Standart verimli seanslar",
+        "60": "50–60 dakika — Yeterince zaman var",
+        "75": "75+ dakika — Uzun seans sorun değil"
+      }
+    },
+    s5_training_preference: {
+      question: "Hangi antrenman türü seni en çok motive ediyor?",
+      sub: "TJAI hedefine hizmet etmeye devam ederken planı seni motive edene doğru eğebilir.",
+      optionLabels: {
+        strength: "Güç odaklı kaldırışlar",
+        hypertrophy: "Kas geliştirme / pump işi",
+        conditioning: "Kondisyon / kalori yakımı",
+        mixed: "Hepsinden dengeli bir karışım"
+      }
+    },
+    s6_cardio_preference: {
+      question: "Hangi kardiyo türlerini gerçekten yaparsın?",
+      sub: "Nefret etmediğin her şeyi seç. TJAI yalnızca gerçekçi biçimde sürdüreceğin kardiyoyu programa koyar.",
+      optionLabels: {
+        walking: "Yürüyüş / eğimli yürüyüş",
+        running: "Koşu / hafif tempo koşu",
+        cycling: "Bisiklet / spin",
+        swimming: "Yüzme",
+        rowing_machines: "Kürek veya kardiyo makineleri",
+        jump_rope: "İp atlama",
+        none: "Açıkçası — mümkün olduğunca az kardiyo"
+      }
+    },
+    s20_country: {
+      question: "Hangi ülkede yaşıyorsun?",
+      sub: "TJAI öğünlerini ve alışveriş listeni çevrende gerçekten satılanlara göre yerelleştirir.",
+      optionLabels: {
+        us: "Amerika Birleşik Devletleri",
+        uk: "Birleşik Krallık",
+        canada: "Kanada",
+        australia: "Avustralya",
+        ireland: "İrlanda",
+        turkey: "Türkiye",
+        saudi_arabia: "Suudi Arabistan",
+        uae: "Birleşik Arap Emirlikleri",
+        egypt: "Mısır",
+        iraq: "Irak",
+        jordan: "Ürdün",
+        kuwait: "Kuveyt",
+        qatar: "Katar",
+        morocco: "Fas",
+        spain: "İspanya",
+        mexico: "Meksika",
+        argentina: "Arjantin",
+        colombia: "Kolombiya",
+        chile: "Şili",
+        france: "Fransa",
+        belgium: "Belçika",
+        germany: "Almanya",
+        netherlands: "Hollanda",
+        india: "Hindistan",
+        pakistan: "Pakistan",
+        nigeria: "Nijerya",
+        philippines: "Filipinler",
+        other: "Başka bir yer"
+      }
+    },
+    s20_market: {
+      question: "Market alışverişini genelde nereden yaparsın?",
+      sub: "Sana en yakın olanı seç — alışveriş listen ona göre hazırlanır.",
+      optionLabels: {
+        local_supermarket: "Büyük bir süpermarket",
+        discount_chain: "İndirim market zinciri",
+        local_market: "Semt pazarı",
+        online_groceries: "Online market",
+        other_market: "Başka bir yer / değişiyor"
+      }
+    },
+    s12_diet_style: {
+      question: "Şu an sana en uygun beslenme tarzı hangisi?",
+      sub: "TJAI bunu, gerçekten sürdürebileceğin bir yapı seçmek için kullanır.",
+      optionLabels: {
+        balanced: "Dengeli ve esnek",
+        high_protein: "Yüksek protein odaklı",
+        low_carb: "Düşük karbonhidrat tercihi",
+        halal: "Helal uyumlu yapı",
+        vegetarian: "Vejetaryen",
+        vegan: "Vegan"
+      }
+    },
+    s12_plant_protein: {
+      question: "Hangi protein kaynaklarını düzenli olarak yemekten memnun olursun?",
+      sub: "Protein hedefin bir yerden gelmek zorunda — TJAI öğünleri yalnızca kabul ettiğin kaynaklardan kurar.",
+      optionLabels: {
+        tofu_tempeh: "Tofu / tempeh",
+        seitan: "Seitan",
+        legumes: "Mercimek, fasulye ve nohut",
+        protein_powder: "Bitkisel protein tozu",
+        dairy_eggs: "Süt ürünleri ve yumurta (vejetaryen ise)",
+        nuts_seeds: "Kuruyemiş ve tohumlar"
+      }
+    },
+    s13_allergies: {
+      question: "TJAI'nin uyması gereken beslenme kısıtları var mı?",
+      sub: "Uyanların hepsini seç.",
+      optionLabels: {
+        none: "Yok",
+        halal: "Helal",
+        vegetarian: "Vejetaryen",
+        vegan: "Vegan",
+        dairy_free: "Süt ürünsüz",
+        gluten_free: "Glutensiz",
+        nut_free: "Kuruyemişsiz"
+      }
+    },
+    s13_restriction_notes: {
+      question: "Bu yiyecek kısıtlarıyla ilgili TJAI'nin bilmesi gereken özel bir şey var mı?",
+      sub: "İsteğe bağlı not — örneğin kesin hariç tutmalar, kültürel tercihler veya mutlaka kalması gereken yiyecekler.",
+      placeholder: "Örnek: Sadece helal; yumurta ve süt ürünleri uygun. Whey ve kabuklu deniz ürünlerinden tamamen kaçın."
+    },
+    s12_foods_like: {
+      question: "Hangi yiyecekleri sık sık yemekten memnun olursun?",
+      sub: "Uyanların hepsini seç.",
+      optionLabels: {
+        chicken: "Tavuk",
+        beef: "Dana eti",
+        fish: "Balık",
+        eggs: "Yumurta",
+        rice: "Pirinç",
+        oats: "Yulaf",
+        fruit: "Meyve",
+        greek_yogurt: "Süzme yoğurt",
+        potatoes: "Patates",
+        legumes: "Baklagiller"
+      }
+    },
+    s12_foods_avoid: {
+      question: "Hangi yiyeceklerden kaçınmayı tercih edersin?",
+      sub: "Uyanların hepsini seç.",
+      optionLabels: {
+        seafood: "Deniz ürünleri",
+        red_meat: "Kırmızı et",
+        dairy: "Süt ürünleri",
+        eggs: "Yumurta",
+        spicy_food: "Acılı yemek",
+        nothing_specific: "Belirli bir şey yok"
+      }
+    },
+    s14_time: {
+      question: "TJAI yemek hazırlığını nasıl ele almalı?",
+      sub: "Gerçekçi olarak uygulayabileceğin pişirme tarzını seç.",
+      optionLabels: {
+        minimal: "Minimum çaba — çok hızlı öğünler",
+        simple: "Çoğu gün basit yemekler",
+        batch: "Toplu pişirme ve meal prep"
+      }
+    },
+    s11_meals: {
+      question: "Günde kaç öğün tercih edersin?",
+      sub: "TJAI kalorini ve makrolarını buna göre yapılandırır.",
+      optionLabels: { "3": "3 öğün", "4": "4 öğün", "5": "5 öğün" }
+    },
+    s11_eating_out: {
+      question: "Ne sıklıkla dışarıda yer veya sipariş verirsin?",
+      sub: "TJAI her öğün evde pişiyormuş gibi davranmak yerine gerçek hayatına göre planlar.",
+      optionLabels: {
+        rarely: "Nadiren — neredeyse her şey ev yapımı",
+        weekly: "Haftada bir veya iki kez",
+        several_weekly: "Haftada 3–5 kez",
+        daily: "Çoğu gün"
+      }
+    },
+    s16_which_supps: {
+      question: "Halihazırda kullandığın takviyeler var mı?",
+      sub: "Uyanları seç. TJAI zaten kullandıklarını tekrarlamaz.",
+      optionLabels: {
+        none: "Yok",
+        protein: "Protein tozu",
+        creatine: "Kreatin",
+        omega3: "Omega-3",
+        vitamin_d: "D Vitamini",
+        magnesium: "Magnezyum",
+        preworkout: "Pre-workout"
+      }
+    },
+    s15_weekend_consistency: {
+      question: "Hafta sonları beslenmene ne oluyor?",
+      sub: "Diyetlerin kaderini hafta sonları belirler — iki gevşek gün, beş dikkatli günü silebilir.",
+      optionLabels: {
+        consistent: "Hafta içiyle aynı — istikrarlıyım",
+        slightly_off: "Biraz daha gevşek ama rotada",
+        derails: "Hafta sonları genelde haftamı mahvediyor"
+      }
+    },
+    s18_biggest_problem: {
+      question: "Seni genelde ne raydan çıkarır?",
+      sub: "Uyanları seç ki TJAI planı gerçek engellerinin etrafına kursun.",
+      optionLabels: {
+        motivation: "Motivasyon düşüşleri",
+        consistency: "İstikrar / disiplin",
+        time: "Zaman yetersizliği",
+        food_cravings: "Yeme isteği ve iştah",
+        training_knowledge: "Ne yapacağımı bilmemek",
+        stress: "Stres ve bunalmışlık",
+        recovery: "Kötü toparlanma"
+      }
+    },
+    s19_success_vision: {
+      question: "12 hafta sonunda başarı senin için neye benziyor?",
+      sub: "Sana en çok hitap edeni seç.",
+      optionLabels: {
+        look_different: "Aynada gözle görülür şekilde farklı görünüyorum",
+        feel_energetic: "Her gün enerjik ve güçlü hissediyorum",
+        fit_clothes_better: "Önceden giremediğim kıyafetlere sığıyorum",
+        lift_heavier: "Hiç olmadığım kadar ağır kaldırıyorum",
+        build_routine: "Sürdürülebilir, sağlıklı bir rutin kurdum"
+      }
+    }
+  },
+  // Arabic: complete coverage matching the Turkish reference set (2026-08-09).
+  // MSA, direct coach voice, masculine-singular default, Western numerals.
+  // Independently native-reviewed; all flagged issues fixed pre-integration.
+  ar: {
+    s2_goal: {
+      question: "ما هو هدفك الأساسي؟",
+      sub: "هذا يشكّل خطة TJAI بأكملها.",
+      optionLabels: {
+        fat_loss: "خسارة الدهون — احرق الدهون واحصل على جسم مشدود",
+        muscle_gain: "بناء العضلات — كبّر حجمك وزد قوتك",
+        recomposition: "إعادة تشكيل الجسم — اخسر الدهون واكسب العضلات في آن واحد",
+        fitness: "تحسين اللياقة — التحمّل والصحة والطاقة",
+        stay_active: "البقاء نشيطاً — تحرّك أكثر واشعر بتحسن"
+      }
+    },
+    s2_goal_detail: {
+      question: "أي نتيجة تهمك أكثر في البداية؟",
+      sub: "سيوجّه TJAI الخطة نحو النتيجة التي تهمك أكثر.",
+      optionLabels: {
+        sustainable_cut: "خسارة دهون مستدامة أستطيع الحفاظ عليها",
+        aggressive_cut: "تنشيف قوي وانخفاض واضح في الوزن",
+        size: "حجم عضلي أكبر وامتلاء أكثر",
+        strength: "قوة أكبر ولياقة رياضية أعلى",
+        aesthetic: "قوام أكثر جمالاً وتوازناً",
+        energy: "طاقة أكبر وصحة أفضل",
+        consistency: "بناء روتين أستطيع الالتزام به فعلاً"
+      }
+    },
+    s1_gender: {
+      question: "ما هو جنسك البيولوجي؟",
+      sub: "يُستخدم لحساب أدق للطاقة والتعافي.",
+      optionLabels: { male: "ذكر", female: "أنثى" }
+    },
+    s1_age: {
+      question: "ما هي فئتك العمرية؟",
+      sub: "العمر يؤثر مباشرة على التعافي وتحمّل التدريب ومعدل الأيض.",
+      optionLabels: {
+        "20": "16–24 سنة",
+        "30": "25–34 سنة",
+        "40": "35–44 سنة",
+        "50": "45–54 سنة",
+        "58": "55 سنة فما فوق"
+      }
+    },
+    s1_weight: {
+      question: "ما هو وزنك الحالي؟",
+      sub: "يُستخدم لحساب السعرات وأهداف البروتين والتقدم المتوقع.",
+      optionLabels: {
+        "48": "أقل من 50 كغ",
+        "58": "50–65 كغ",
+        "72": "65–80 كغ",
+        "90": "80–100 كغ",
+        "110": "100–120 كغ",
+        "125": "أكثر من 120 كغ"
+      }
+    },
+    s1_height: {
+      question: "ما هو طولك؟",
+      sub: "يُستخدم مع الوزن لتقدير احتياجات الطاقة وضبط شدة التمارين.",
+      optionLabels: {
+        "152": "أقل من 155 سم",
+        "160": "155–165 سم",
+        "170": "165–175 سم",
+        "180": "175–185 سم",
+        "190": "185–195 سم",
+        "198": "أكثر من 195 سم"
+      }
+    },
+    s2_pace: {
+      question: "بأي سرعة تريد أن تحصل على نتائج؟",
+      sub: "كن صادقاً — هذا يؤثر مباشرة على شدة التدريب والتعافي والسعرات.",
+      optionLabels: {
+        slow: "بطيء ومستدام — أريد نتائج دائمة، بلا استعجال",
+        moderate: "وتيرة متوسطة — تقدّم ثابت وتوازن جيد",
+        aggressive: "نتائج سريعة — ملتزم تماماً بالدفع بأقصى جهد"
+      }
+    },
+    s3_body_silhouette: {
+      question: "أي شكل جسم يصفك أكثر؟",
+      sub: "يساعد هذا TJAI على تقدير نسبة الدهون في جسمك ومدى قوة دفع الخطة.",
+      optionLabels: {
+        very_lean: "نحيف جداً",
+        lean: "رشيق",
+        average: "متوسط",
+        overweight: "وزن زائد",
+        obese: "بدين"
+      }
+    },
+    s17_injuries: {
+      question: "هل لديك أي إصابات أو قيود جسدية؟",
+      sub: "اختر كل ما ينطبق عليك. سيعدّل TJAI التمارين وقواعد التعافي بناءً على ذلك.",
+      optionLabels: {
+        none: "لا شيء",
+        knee: "ألم في الركبة",
+        lower_back: "ألم أسفل الظهر",
+        shoulder: "ألم في الكتف",
+        hip: "ألم في الورك",
+        wrist_elbow: "ألم في الرسغ / المرفق",
+        recent_surgery: "عملية جراحية حديثة",
+        chronic_condition: "حالة مزمنة"
+      }
+    },
+    s17_conditions: {
+      question: "هل هناك ما يجب أن يعرفه TJAI عن هذه القيود؟",
+      sub: "ملاحظة اختيارية: قيود الحركة أو إرشادات طبية أو تمارين تعرف أنك يجب أن تتجنبها.",
+      placeholder: "مثال: لا ضغط فوق الرأس حالياً. المشي وتمارين الجزء السفلي مسموحة."
+    },
+    s19_target_weight: {
+      question: "إن كنت تعرفه، ما هو وزن الجسم المستهدف الذي تسعى إليه؟",
+      sub: "اختياري، لكنه مفيد إن كان لديك بالفعل هدف واقعي في ذهنك.",
+      placeholder: "مثال: 78"
+    },
+    s7_diet_history: {
+      question: "هل جرّبت نظاماً غذائياً منظماً من قبل؟",
+      sub: "تاريخك مع الحميات الغذائية يغيّر مدى صرامة TJAI في تحديد السعرات.",
+      optionLabels: {
+        first_plan: "لا — هذه أول خطة منظمة لي",
+        kept_results: "نعم — وحافظت على النتائج في الغالب",
+        regained: "نعم — لكنني استعدت الوزن بعد ذلك",
+        yo_yo: "مرات عديدة — أخسر الوزن ثم أستعيده بشكل دوري"
+      }
+    },
+    s4_daily_activity: {
+      question: "ما مدى نشاطك خارج أوقات تمرينك؟",
+      sub: "هذا مستوى حركتك اليومية، دون احتساب التدريب المخطط له.",
+      optionLabels: {
+        very_low: "منخفض جداً — عمل مكتبي، جالس معظم اليوم",
+        low: "منخفض — بعض المشي، خامل في الغالب",
+        moderate: "متوسط — حركة منتظمة، نمط حياة نشط",
+        active: "نشط — عمل بدني أو روتين يومي نشط جداً"
+      }
+    },
+    s4_job_type: {
+      question: "ما نوع العمل الذي تقوم به معظم الأيام؟",
+      sub: "عملك هو أكبر عامل في حرق السعرات خارج التدريب.",
+      optionLabels: {
+        desk: "عمل مكتبي — جالس معظم اليوم",
+        mixed: "مختلط — واقف جزءاً من اليوم",
+        physical: "بدني — عمل يدوي أو حركة مستمرة"
+      }
+    },
+    s4_daily_steps: {
+      question: "كم خطوة تقريباً تمشيها في يوم عادي؟",
+      sub: "تحقق من هاتفك إن لم تكن متأكداً — عدد الخطوات اليومية يجعل حساب السعرات أدق.",
+      optionLabels: {
+        under_4k: "أقل من 4,000 — خامل في الغالب",
+        "4k_8k": "4,000–8,000 — حركة خفيفة",
+        "8k_12k": "8,000–12,000 — نشيط بوضوح",
+        over_12k: "أكثر من 12,000 — دائم الحركة"
+      }
+    },
+    s8_hours: {
+      question: "كم ساعة تنام في المتوسط كل ليلة؟",
+      sub: "النوم يؤثر على الكورتيزول والتعافي وخسارة الدهون والأداء.",
+      optionLabels: {
+        "5": "4–5 ساعات — حرمان نوم مزمن",
+        "6": "6 ساعات — أقل من المتوسط",
+        "7": "7 ساعات — متوسط",
+        "8": "8 ساعات — جيد",
+        "9": "9+ ساعات — راحة كاملة"
+      }
+    },
+    s8_sleep_quality: {
+      question: "كيف تصف جودة نومك؟",
+      sub: "عدد الساعات مهم، لكن النوم المضطرب يغيّر التعافي بالقدر نفسه.",
+      optionLabels: {
+        restorative: "مريح — أنام بسهولة وأستيقظ نشيطاً",
+        restless: "مضطرب — أستيقظ أثناء الليل أو أنهض متعباً",
+        poor: "سيئ — صعوبة في النوم أو الاستمرار فيه أو كلاهما"
+      }
+    },
+    s9_stress: {
+      question: "ما هو مستوى توترك العام حالياً؟",
+      sub: "التوتر المرتفع يغيّر التعافي والشهية ومدى صرامة TJAI.",
+      optionLabels: {
+        very_low: "منخفض جداً — الحياة هادئة ويمكن التحكم بها",
+        low: "منخفض — توتر بسيط بين الحين والآخر",
+        moderate: "متوسط — ضغط عمل أو حياة منتظم",
+        high: "مرتفع — متوتر باستمرار",
+        very_high: "مرتفع جداً — أشعر بالإرهاق النفسي بانتظام"
+      }
+    },
+    s10_drinks: {
+      question: "ماذا تشرب في يوم عادي غير الماء؟",
+      sub: "اختر كل ما ينطبق — السعرات السائلة من أكثر الأسباب الخفية شيوعاً لتوقف التقدم.",
+      optionLabels: {
+        mostly_water: "ماء أو شاي أو قهوة سادة في الغالب",
+        sugary_drinks: "مشروبات سكرية — مشروبات غازية، عصير، قهوة محلاة",
+        diet_soda: "مشروبات دايت / خالية من السكر",
+        alcohol: "كحول في معظم الأسابيع",
+        energy_drinks: "مشروبات طاقة"
+      }
+    },
+    s18_schedule_constraint: {
+      question: "ما الذي يُحتمل أن يحد من استمراريتك؟",
+      sub: "سيبني TJAI الخطة حول هذا القيد بدل تجاهله وكأنه غير موجود.",
+      optionLabels: {
+        none: "لا شيء — جدولي ثابت",
+        short_sessions: "أحتاج حصصاً قصيرة معظم الأيام",
+        shift_work: "جدول عملي يتغير كثيراً",
+        family_load: "التزامات عائلية أو رعاية",
+        travel: "سفر أو أسابيع غير متوقعة"
+      }
+    },
+    s18_schedule_notes: {
+      question: "كيف تبدو مشكلة الجدول هذه فعلياً من أسبوع لآخر؟",
+      sub: "تفصيل اختياري — يساعد هذا TJAI على توزيع أيام التدريب والتعافي بواقعية أكبر.",
+      placeholder: "مثال: نوبتان متأخرتان كل أسبوع. الأحد هو الأسهل. سفر كل جمعة ثانية."
+    },
+    s14_budget: {
+      question: "ما هي ميزانيتك الشهرية للطعام في هذه الخطة؟",
+      sub: "سيختار TJAI الأطعمة ومستويات المكملات التي تناسب هذه الميزانية.",
+      optionLabels: {
+        budget: "اقتصادي — إبقاء الوجبات في متناول اليد",
+        moderate: "متوسط — توازن بين الجودة والتكلفة",
+        premium: "مرن — جودة الأداء هي الأهم"
+      }
+    },
+    s19_daily_routine: {
+      question: "كيف يبدو يومك العادي في أيام الأسبوع؟",
+      sub: "اذكر وقت استيقاظك، عملك أو دراستك، تنقلاتك، مواعيد وجباتك، والوقت الواقعي الذي يمكنك التدرب فيه.",
+      placeholder: "مثال: أستيقظ الساعة 6:30، عمل مكتبي من 9 إلى 6، غداء الساعة 1، أعود للمنزل الساعة 7، أفضل وقت للتمرين هو 7:30 مساءً."
+    },
+    s5_trains: {
+      question: "ما هو مستواك الحالي في التدريب؟",
+      sub: "كن صادقاً — يجب أن يطابق TJAI مستواك الحقيقي، لا طموحك.",
+      optionLabels: {
+        beginner: "مبتدئ — أقل من 6 أشهر من التدريب المنتظم",
+        intermediate: "متوسط — من 6 إلى 24 شهراً من التدريب الحقيقي",
+        advanced: "متقدم — أكثر من سنتين من التدريب الجاد والمنظم"
+      }
+    },
+    s5_type: {
+      question: "أين ستتدرب في معظم الأوقات؟",
+      sub: "هذا يحدد اختيار التمارين وبنية الخطة.",
+      optionLabels: {
+        home: "المنزل — أتدرب في المنزل غالباً",
+        gym: "النادي — إمكانية وصول كاملة للنادي",
+        hybrid: "مختلط — مزيج بين المنزل والنادي"
+      }
+    },
+    s5_equipment: {
+      question: "ما هي المعدات المتوفرة لديك فعلياً؟",
+      sub: "اختر فقط ما هو متوفر لديك حقاً خارج نادٍ مجهز بالكامل.",
+      optionLabels: {
+        bodyweight: "وزن الجسم فقط",
+        bands: "أشرطة مقاومة",
+        dumbbells: "دمبل",
+        bench: "مقعد تمرين",
+        barbell_rack: "بار / رف القرفصاء",
+        machines: "أجهزة / كابلات"
+      }
+    },
+    s5_days: {
+      question: "كم يوماً في الأسبوع يمكنك التدرب فيه بشكل واقعي؟",
+      sub: "اختر ما يمكنك الاستمرار عليه بثبات.",
+      optionLabels: { "3": "3 أيام", "4": "4 أيام", "5": "5 أيام", "6": "6 أيام" }
+    },
+    s5_duration: {
+      question: "كم يمكن أن تستغرق كل حصة تدريب؟",
+      sub: "سيوائم TJAI الحجم التدريبي وكثافة التمارين مع ذلك.",
+      optionLabels: {
+        "30": "20–30 دقيقة — حصص عالية الكفاءة",
+        "45": "35–45 دقيقة — حصص قياسية وفعالة",
+        "60": "50–60 دقيقة — وقت وافر",
+        "75": "75+ دقيقة — الحصص الطويلة مناسبة"
+      }
+    },
+    s5_training_preference: {
+      question: "أي نوع تدريب يبقيك متحمساً أكثر؟",
+      sub: "يمكن لـTJAI أن يوجّه الخطة نحو ما يحفزك مع خدمة هدفك في الوقت نفسه.",
+      optionLabels: {
+        strength: "رفع يركّز على القوة",
+        hypertrophy: "بناء العضلات / تدريبات الضخ",
+        conditioning: "تدريبات لياقة / حرق سعرات",
+        mixed: "مزيج متوازن من كل شيء"
+      }
+    },
+    s6_cardio_preference: {
+      question: "ما أنواع الكارديو التي ستمارسها فعلاً؟",
+      sub: "اختر كل ما لا تكرهه. يصف TJAI فقط الكارديو الذي ستستمر عليه بشكل واقعي.",
+      optionLabels: {
+        walking: "المشي / المشي على انحدار",
+        running: "الجري / الهرولة",
+        cycling: "ركوب الدراجة / السبينينغ",
+        swimming: "السباحة",
+        rowing_machines: "التجديف أو أجهزة الكارديو",
+        jump_rope: "نط الحبل",
+        none: "بصراحة — أقل قدر ممكن من الكارديو"
+      }
+    },
+    s20_country: {
+      question: "في أي بلد تعيش؟",
+      sub: "يُخصص TJAI وجباتك وقائمة تسوقك بما هو متوفر فعلاً بالقرب منك.",
+      optionLabels: {
+        us: "الولايات المتحدة الأمريكية",
+        uk: "المملكة المتحدة",
+        canada: "كندا",
+        australia: "أستراليا",
+        ireland: "أيرلندا",
+        turkey: "تركيا",
+        saudi_arabia: "المملكة العربية السعودية",
+        uae: "الإمارات العربية المتحدة",
+        egypt: "مصر",
+        iraq: "العراق",
+        jordan: "الأردن",
+        kuwait: "الكويت",
+        qatar: "قطر",
+        morocco: "المغرب",
+        spain: "إسبانيا",
+        mexico: "المكسيك",
+        argentina: "الأرجنتين",
+        colombia: "كولومبيا",
+        chile: "تشيلي",
+        france: "فرنسا",
+        belgium: "بلجيكا",
+        germany: "ألمانيا",
+        netherlands: "هولندا",
+        india: "الهند",
+        pakistan: "باكستان",
+        nigeria: "نيجيريا",
+        philippines: "الفلبين",
+        other: "بلد آخر"
+      }
+    },
+    s20_market: {
+      question: "من أين تشتري احتياجاتك الغذائية عادةً؟",
+      sub: "اختر المتجر الأقرب إليك — ستُبنى قائمة تسوقك بناءً عليه.",
+      optionLabels: {
+        local_supermarket: "سوبر ماركت كبير",
+        discount_chain: "سلسلة متاجر مخفضة الأسعار",
+        local_market: "سوق محلي / بازار",
+        online_groceries: "تسوق بقالة عبر الإنترنت",
+        other_market: "مكان آخر / يختلف"
+      }
+    },
+    s12_diet_style: {
+      question: "أي نمط تغذية يناسبك أكثر الآن؟",
+      sub: "سيستخدم TJAI هذا لاختيار بنية يمكنك الالتزام بها فعلاً.",
+      optionLabels: {
+        balanced: "متوازن ومرن",
+        high_protein: "التركيز على البروتين المرتفع",
+        low_carb: "تفضيل الكربوهيدرات المنخفضة",
+        halal: "بنية متوافقة مع الحلال",
+        vegetarian: "نباتي",
+        vegan: "نباتي صرف"
+      }
+    },
+    s12_plant_protein: {
+      question: "ما مصادر البروتين التي ترتاح لتناولها بانتظام؟",
+      sub: "هدفك من البروتين يجب أن يأتي من مكان ما — يبني TJAI الوجبات فقط من المصادر التي تقبلها.",
+      optionLabels: {
+        tofu_tempeh: "توفو / تمبيه",
+        seitan: "سيتان",
+        legumes: "العدس والفول والحمص",
+        protein_powder: "بروتين نباتي (بودرة)",
+        dairy_eggs: "الألبان والبيض (إن كنت نباتياً)",
+        nuts_seeds: "المكسرات والبذور"
+      }
+    },
+    s13_allergies: {
+      question: "هل هناك قيود غذائية يجب أن يراعيها TJAI؟",
+      sub: "اختر كل ما ينطبق.",
+      optionLabels: {
+        none: "لا شيء",
+        halal: "حلال",
+        vegetarian: "نباتي",
+        vegan: "نباتي صرف",
+        dairy_free: "خالٍ من الألبان",
+        gluten_free: "خالٍ من الغلوتين",
+        nut_free: "خالٍ من المكسرات"
+      }
+    },
+    s13_restriction_notes: {
+      question: "هل هناك أمر محدد يجب أن يعرفه TJAI عن هذه القيود الغذائية؟",
+      sub: "ملاحظة اختيارية — مثل استثناءات صارمة أو تفضيلات ثقافية أو أطعمة يجب أن تبقى دائماً.",
+      placeholder: "مثال: حلال فقط، لكن البيض والألبان مقبولان. تجنب الواي والمحاريات والقشريات تماماً."
+    },
+    s12_foods_like: {
+      question: "ما هي الأطعمة التي تسعد بتناولها بشكل متكرر؟",
+      sub: "اختر كل ما ينطبق.",
+      optionLabels: {
+        chicken: "دجاج",
+        beef: "لحم بقري",
+        fish: "سمك",
+        eggs: "بيض",
+        rice: "أرز",
+        oats: "شوفان",
+        fruit: "فواكه",
+        greek_yogurt: "زبادي يوناني",
+        potatoes: "بطاطا",
+        legumes: "بقوليات"
+      }
+    },
+    s12_foods_avoid: {
+      question: "ما هي الأطعمة التي تفضل تجنبها؟",
+      sub: "اختر كل ما ينطبق.",
+      optionLabels: {
+        seafood: "مأكولات بحرية",
+        red_meat: "لحوم حمراء",
+        dairy: "ألبان",
+        eggs: "بيض",
+        spicy_food: "طعام حار",
+        nothing_specific: "لا شيء محدد"
+      }
+    },
+    s14_time: {
+      question: "كيف يجب أن يتعامل TJAI مع تحضير الوجبات؟",
+      sub: "اختر أسلوب الطهي الذي يمكنك اتباعه بشكل واقعي.",
+      optionLabels: {
+        minimal: "أقل جهد — وجبات سريعة جداً",
+        simple: "طهي بسيط معظم الأيام",
+        batch: "طهي بكميات كبيرة وتحضير مسبق للوجبات"
+      }
+    },
+    s11_meals: {
+      question: "كم وجبة يومياً تفضل؟",
+      sub: "سيستخدم TJAI هذا لتوزيع سعراتك وعناصرك الغذائية الكبرى.",
+      optionLabels: { "3": "3 وجبات", "4": "4 وجبات", "5": "5 وجبات" }
+    },
+    s11_eating_out: {
+      question: "كم مرة تأكل خارج المنزل أو تطلب توصيلاً؟",
+      sub: "يخطط TJAI بناءً على حياتك الواقعية بدلاً من افتراض أن كل وجبة مطبوخة في المنزل.",
+      optionLabels: {
+        rarely: "نادراً — كل شيء تقريباً منزلي الصنع",
+        weekly: "مرة أو مرتين في الأسبوع",
+        several_weekly: "3–5 مرات في الأسبوع",
+        daily: "معظم الأيام"
+      }
+    },
+    s16_which_supps: {
+      question: "ما هي المكملات التي تتناولها حالياً، إن وجدت؟",
+      sub: "اختر كل ما ينطبق. سيتجنب TJAI تكرار ما تستخدمه بالفعل.",
+      optionLabels: {
+        none: "لا شيء",
+        protein: "بروتين بودرة",
+        creatine: "كرياتين",
+        omega3: "أوميغا-3",
+        vitamin_d: "فيتامين د",
+        magnesium: "مغنيسيوم",
+        preworkout: "مكمل ما قبل التمرين"
+      }
+    },
+    s15_weekend_consistency: {
+      question: "ماذا يحدث لنظامك الغذائي في عطلة نهاية الأسبوع؟",
+      sub: "عطلة نهاية الأسبوع تحدد مصير معظم الأنظمة الغذائية — يومان متساهلان قد يمحوان خمسة أيام منضبطة.",
+      optionLabels: {
+        consistent: "مثل أيام الأسبوع — أبقى منضبطاً",
+        slightly_off: "أكثر تساهلاً قليلاً، لكن على المسار تقريباً",
+        derails: "عطلة نهاية الأسبوع عادة تفسد أسبوعي"
+      }
+    },
+    s18_biggest_problem: {
+      question: "ما الذي يخرجك عن مسارك عادةً؟",
+      sub: "اختر كل ما ينطبق حتى يبني TJAI الخطة حول عوائقك الحقيقية.",
+      optionLabels: {
+        motivation: "انخفاض الحافز",
+        consistency: "الاستمرارية / الانضباط",
+        time: "نقص الوقت",
+        food_cravings: "الرغبة الشديدة في الطعام أو الشهية",
+        training_knowledge: "عدم معرفة ما يجب فعله",
+        stress: "التوتر والإرهاق النفسي",
+        recovery: "ضعف التعافي"
+      }
+    },
+    s19_success_vision: {
+      question: "كيف يبدو النجاح بالنسبة لك بعد 12 أسبوعاً؟",
+      sub: "اختر ما يعبّر عنك أكثر.",
+      optionLabels: {
+        look_different: "أبدو مختلفاً بوضوح في المرآة",
+        feel_energetic: "أشعر بالنشاط والقوة كل يوم",
+        fit_clothes_better: "أرتدي ملابس لم أستطع ارتداءها من قبل",
+        lift_heavier: "أرفع أوزاناً أثقل من أي وقت مضى",
+        build_routine: "بنيت روتيناً صحياً مستداماً"
+      }
+    }
+  },
+  // Spanish: complete coverage (2026-08-09). Informal tú, LatAm-neutral,
+  // established loanwords (deload, pump) kept. Independently reviewed.
+  es: {
+    s2_goal: {
+      question: "¿Cuál es tu objetivo principal?",
+      sub: "Esto define todo el plan de TJAI.",
+      optionLabels: {
+        fat_loss: "Perder Grasa — Quema grasa, ponte más definido",
+        muscle_gain: "Ganar Músculo — Hazte más grande y fuerte",
+        recomposition: "Recomposición Corporal — Pierde grasa Y gana músculo",
+        fitness: "Mejorar tu Condición — Resistencia, salud, energía",
+        stay_active: "Mantenerte Activo — Muévete más, siéntete mejor"
+      }
+    },
+    s2_goal_detail: {
+      question: "¿Qué resultado te importa más al principio?",
+      sub: "TJAI orientará el plan hacia el resultado que más te importa.",
+      optionLabels: {
+        sustainable_cut: "Pérdida de grasa sostenible que pueda mantener",
+        aggressive_cut: "Corte agresivo y bajada visible",
+        size: "Más volumen y plenitud muscular",
+        strength: "Más fuerza y capacidad atlética",
+        aesthetic: "Un físico más estético y equilibrado",
+        energy: "Más energía y mejor salud",
+        consistency: "Crear una rutina que realmente pueda mantener"
+      }
+    },
+    s1_gender: {
+      question: "¿Cuál es tu sexo biológico?",
+      sub: "Se usa para calcular con más precisión tu energía y recuperación.",
+      optionLabels: { male: "Hombre", female: "Mujer" }
+    },
+    s1_age: {
+      question: "¿Cuál es tu rango de edad?",
+      sub: "La edad afecta directamente tu recuperación, tolerancia al entrenamiento y metabolismo.",
+      optionLabels: {
+        "20": "16–24 años",
+        "30": "25–34 años",
+        "40": "35–44 años",
+        "50": "45–54 años",
+        "58": "55 años o más"
+      }
+    },
+    s1_weight: {
+      question: "¿Cuál es tu peso actual?",
+      sub: "Se usa para calcular calorías, objetivos de proteína y tu progreso proyectado.",
+      optionLabels: {
+        "48": "Menos de 50 kg",
+        "58": "50–65 kg",
+        "72": "65–80 kg",
+        "90": "80–100 kg",
+        "110": "100–120 kg",
+        "125": "Más de 120 kg"
+      }
+    },
+    s1_height: {
+      question: "¿Cuál es tu estatura?",
+      sub: "Se usa junto con tu peso para calcular tus necesidades energéticas y ajustar los ejercicios.",
+      optionLabels: {
+        "152": "Menos de 155 cm",
+        "160": "155–165 cm",
+        "170": "165–175 cm",
+        "180": "175–185 cm",
+        "190": "185–195 cm",
+        "198": "Más de 195 cm"
+      }
+    },
+    s2_pace: {
+      question: "¿Con qué rapidez quieres ver resultados?",
+      sub: "Sé honesto — esto afecta directamente la exigencia del entrenamiento, la recuperación y las calorías.",
+      optionLabels: {
+        slow: "Lento y Sostenible — Quiero resultados duraderos, sin prisa",
+        moderate: "Ritmo Moderado — Progreso constante, buen equilibrio",
+        aggressive: "Resultados Rápidos — Estoy totalmente comprometido a exigirme al máximo"
+      }
+    },
+    s3_body_silhouette: {
+      question: "¿Qué tipo de cuerpo te describe mejor?",
+      sub: "Esto ayuda a TJAI a estimar tu grasa corporal y qué tan agresivo debe ser el plan.",
+      optionLabels: {
+        very_lean: "Muy Delgado",
+        lean: "Delgado",
+        average: "Promedio",
+        overweight: "Sobrepeso",
+        obese: "Obeso"
+      }
+    },
+    s17_injuries: {
+      question: "¿Tienes alguna lesión o limitación física?",
+      sub: "Selecciona todas las que apliquen. TJAI ajustará los ejercicios y las reglas de recuperación según esto.",
+      optionLabels: {
+        none: "Ninguna",
+        knee: "Dolor de rodilla",
+        lower_back: "Dolor lumbar",
+        shoulder: "Dolor de hombro",
+        hip: "Dolor de cadera",
+        wrist_elbow: "Dolor de muñeca / codo",
+        recent_surgery: "Cirugía reciente",
+        chronic_condition: "Condición crónica"
+      }
+    },
+    s17_conditions: {
+      question: "¿Algo que TJAI deba saber sobre esas limitaciones?",
+      sub: "Nota opcional: restricciones de movimiento, indicaciones médicas o ejercicios que sabes que debes evitar.",
+      placeholder: "Ejemplo: Por ahora nada de press por encima de la cabeza. Caminar y tren inferior están permitidos."
+    },
+    s19_target_weight: {
+      question: "Si lo sabes, ¿cuál es tu peso corporal objetivo?",
+      sub: "Opcional, pero útil si ya tienes una meta realista en mente.",
+      placeholder: "ej. 78"
+    },
+    s7_diet_history: {
+      question: "¿Has probado una dieta estructurada antes?",
+      sub: "Tu historial con dietas cambia qué tan agresivo debe ser TJAI con las calorías.",
+      optionLabels: {
+        first_plan: "No — este es mi primer plan estructurado",
+        kept_results: "Sí — y mantuve casi todos los resultados",
+        regained: "Sí — pero después recuperé el peso",
+        yo_yo: "Muchas veces — bajo y subo en ciclos"
+      }
+    },
+    s4_daily_activity: {
+      question: "¿Qué tan activo eres fuera de tus entrenamientos?",
+      sub: "Este es tu nivel de movimiento diario, sin contar el entrenamiento planificado.",
+      optionLabels: {
+        very_low: "Muy bajo — Trabajo de oficina, sentado casi todo el día",
+        low: "Bajo — Algo de caminata, mayormente sedentario",
+        moderate: "Moderado — Movimiento regular, estilo de vida activo",
+        active: "Activo — Trabajo físico o rutina diaria muy activa"
+      }
+    },
+    s4_job_type: {
+      question: "¿Qué tipo de trabajo haces la mayoría de los días?",
+      sub: "Tu trabajo es el mayor factor de calorías quemadas fuera del entrenamiento.",
+      optionLabels: {
+        desk: "Trabajo de oficina — sentado la mayor parte del día",
+        mixed: "Mixto — de pie parte del día",
+        physical: "Físico — trabajo manual o en movimiento constante"
+      }
+    },
+    s4_daily_steps: {
+      question: "¿Aproximadamente cuántos pasos das en un día normal?",
+      sub: "Revisa tu teléfono si no estás seguro — tus pasos diarios afinan el cálculo de calorías.",
+      optionLabels: {
+        under_4k: "Menos de 4.000 — mayormente sedentario",
+        "4k_8k": "4.000–8.000 — movimiento ligero",
+        "8k_12k": "8.000–12.000 — sólidamente activo",
+        over_12k: "Más de 12.000 — siempre en movimiento"
+      }
+    },
+    s8_hours: {
+      question: "¿Cuántas horas duermes en promedio por noche?",
+      sub: "El sueño afecta el cortisol, la recuperación, la pérdida de grasa y el rendimiento.",
+      optionLabels: {
+        "5": "4–5 horas — Con falta crónica de sueño",
+        "6": "6 horas — Por debajo del promedio",
+        "7": "7 horas — Promedio",
+        "8": "8 horas — Bueno",
+        "9": "9+ horas — Muy bien descansado"
+      }
+    },
+    s8_sleep_quality: {
+      question: "¿Cómo describirías la calidad de ese sueño?",
+      sub: "Las horas importan, pero un sueño inquieto afecta la recuperación casi igual.",
+      optionLabels: {
+        restorative: "Reparador — me duermo fácil y despierto descansado",
+        restless: "Inquieto — me despierto en la noche o amanezco cansado",
+        poor: "Malo — me cuesta conciliar el sueño, mantenerlo, o ambos"
+      }
+    },
+    s9_stress: {
+      question: "¿Cuál es tu nivel de estrés general actual?",
+      sub: "El estrés alto cambia la recuperación, el apetito y qué tan agresivo debe ser TJAI.",
+      optionLabels: {
+        very_low: "Muy Bajo — La vida está tranquila y manejable",
+        low: "Bajo — Estrés leve ocasional",
+        moderate: "Moderado — Presión regular del trabajo o la vida",
+        high: "Alto — Estresado con frecuencia",
+        very_high: "Muy Alto — Me siento abrumado regularmente"
+      }
+    },
+    s10_drinks: {
+      question: "¿Qué tomas en un día típico además de agua?",
+      sub: "Selecciona todas las que apliquen — las calorías líquidas son el asesino silencioso más común del progreso.",
+      optionLabels: {
+        mostly_water: "Mayormente agua, té o café negro",
+        sugary_drinks: "Bebidas azucaradas — refresco, jugo, café con azúcar",
+        diet_soda: "Bebidas dietéticas / sin azúcar",
+        alcohol: "Alcohol casi todas las semanas",
+        energy_drinks: "Bebidas energéticas"
+      }
+    },
+    s18_schedule_constraint: {
+      question: "¿Qué es lo más probable que limite tu constancia?",
+      sub: "TJAI construirá el plan alrededor de esa limitación en lugar de ignorarla.",
+      optionLabels: {
+        none: "Ninguna — mi horario es estable",
+        short_sessions: "Necesito sesiones cortas la mayoría de los días",
+        shift_work: "Mi horario de trabajo cambia seguido",
+        family_load: "Responsabilidades familiares o de cuidado",
+        travel: "Viajes o semanas impredecibles"
+      }
+    },
+    s18_schedule_notes: {
+      question: "¿Cómo se ve realmente ese problema de horario semana a semana?",
+      sub: "Detalle opcional — esto ayuda a TJAI a ubicar tus días de entrenamiento y recuperación de forma más realista.",
+      placeholder: "Ejemplo: Dos turnos de cierre por semana. Los domingos son los más fáciles. Viajo cada dos viernes."
+    },
+    s14_budget: {
+      question: "¿Cuál es tu presupuesto mensual de comida para este plan?",
+      sub: "TJAI elegirá alimentos y niveles de suplementos acordes a este presupuesto.",
+      optionLabels: {
+        budget: "Ajustado — Mantener las comidas económicas",
+        moderate: "Moderado — Equilibrio entre calidad y costo",
+        premium: "Flexible — La calidad de rendimiento es lo prioritario"
+      }
+    },
+    s19_daily_routine: {
+      question: "¿Cómo es un día entre semana normal para ti?",
+      sub: "Menciona a qué hora te levantas, tu trabajo/estudio, el traslado, los horarios de comida y cuándo puedes entrenar realmente.",
+      placeholder: "Ejemplo: Me levanto a las 6:30, trabajo de oficina de 9 a 6, almuerzo a la 1, llego a casa a las 7, la mejor hora para entrenar es a las 7:30 pm."
+    },
+    s5_trains: {
+      question: "¿Cuál es tu nivel de entrenamiento actual?",
+      sub: "Sé honesto — TJAI debe ajustarse a tu nivel real, no a tu ambición.",
+      optionLabels: {
+        beginner: "Principiante — Menos de 6 meses de entrenamiento constante",
+        intermediate: "Intermedio — De 6 a 24 meses de entrenamiento real",
+        advanced: "Avanzado — 2+ años de entrenamiento serio y estructurado"
+      }
+    },
+    s5_type: {
+      question: "¿Dónde entrenarás la mayor parte del tiempo?",
+      sub: "Esto determina la selección de ejercicios y la estructura del plan.",
+      optionLabels: {
+        home: "Casa — Entreno mayormente en casa",
+        gym: "Gimnasio — Acceso completo a gimnasio",
+        hybrid: "Híbrido — Combinación de casa y gimnasio"
+      }
+    },
+    s5_equipment: {
+      question: "¿A qué equipo tienes acceso realmente?",
+      sub: "Elige solo lo que realmente tienes disponible fuera de un gimnasio completo.",
+      optionLabels: {
+        bodyweight: "Solo peso corporal",
+        bands: "Bandas de resistencia",
+        dumbbells: "Mancuernas",
+        bench: "Banco",
+        barbell_rack: "Barra / rack",
+        machines: "Máquinas / poleas"
+      }
+    },
+    s5_days: {
+      question: "¿Cuántos días por semana puedes entrenar de forma realista?",
+      sub: "Elige lo que puedas mantener de forma constante.",
+      optionLabels: { "3": "3 días", "4": "4 días", "5": "5 días", "6": "6 días" }
+    },
+    s5_duration: {
+      question: "¿Cuánto puede durar cada sesión de entrenamiento?",
+      sub: "TJAI ajustará el volumen y la densidad de ejercicios a esto.",
+      optionLabels: {
+        "30": "20–30 minutos — Sesiones muy eficientes",
+        "45": "35–45 minutos — Sesiones eficientes estándar",
+        "60": "50–60 minutos — Tiempo de sobra",
+        "75": "75+ minutos — Las sesiones largas están bien"
+      }
+    },
+    s5_training_preference: {
+      question: "¿Qué tipo de entrenamiento te mantiene más motivado?",
+      sub: "TJAI puede orientar el plan hacia lo que te motiva sin dejar de servir a tu objetivo.",
+      optionLabels: {
+        strength: "Levantamiento enfocado en fuerza",
+        hypertrophy: "Trabajo de construcción muscular / pump",
+        conditioning: "Trabajo de acondicionamiento / quema de calorías",
+        mixed: "Una mezcla equilibrada de todo"
+      }
+    },
+    s6_cardio_preference: {
+      question: "¿Qué tipos de cardio harías realmente?",
+      sub: "Elige todo lo que no odies. TJAI solo prescribe el cardio que realmente vas a seguir haciendo.",
+      optionLabels: {
+        walking: "Caminar / caminata inclinada",
+        running: "Correr / trotar",
+        cycling: "Ciclismo / spinning",
+        swimming: "Natación",
+        rowing_machines: "Remo o máquinas de cardio",
+        jump_rope: "Saltar la cuerda",
+        none: "Honestamente — lo menos posible de cardio"
+      }
+    },
+    s20_country: {
+      question: "¿En qué país vives?",
+      sub: "TJAI localiza tus comidas y tu lista de compras según lo que realmente se vende cerca de ti.",
+      optionLabels: {
+        us: "Estados Unidos",
+        uk: "Reino Unido",
+        canada: "Canadá",
+        australia: "Australia",
+        ireland: "Irlanda",
+        turkey: "Turquía",
+        saudi_arabia: "Arabia Saudita",
+        uae: "Emiratos Árabes Unidos",
+        egypt: "Egipto",
+        iraq: "Irak",
+        jordan: "Jordania",
+        kuwait: "Kuwait",
+        qatar: "Catar",
+        morocco: "Marruecos",
+        spain: "España",
+        mexico: "México",
+        argentina: "Argentina",
+        colombia: "Colombia",
+        chile: "Chile",
+        france: "Francia",
+        belgium: "Bélgica",
+        germany: "Alemania",
+        netherlands: "Países Bajos",
+        india: "India",
+        pakistan: "Pakistán",
+        nigeria: "Nigeria",
+        philippines: "Filipinas",
+        other: "Otro lugar"
+      }
+    },
+    s20_market: {
+      question: "¿Dónde sueles comprar tus víveres?",
+      sub: "Elige la tienda más cercana a ti — tu lista de compras se armará según esa opción.",
+      optionLabels: {
+        local_supermarket: "Un supermercado grande",
+        discount_chain: "Una cadena de descuento",
+        local_market: "Un mercado local",
+        online_groceries: "Compra de víveres en línea",
+        other_market: "Otro lugar / varía"
+      }
+    },
+    s12_diet_style: {
+      question: "¿Qué estilo de alimentación te queda mejor ahora mismo?",
+      sub: "TJAI usará esto para elegir una estructura que realmente puedas mantener.",
+      optionLabels: {
+        balanced: "Equilibrado y flexible",
+        high_protein: "Enfoque alto en proteína",
+        low_carb: "Preferencia baja en carbohidratos",
+        halal: "Estructura apta para halal",
+        vegetarian: "Vegetariano",
+        vegan: "Vegano"
+      }
+    },
+    s12_plant_protein: {
+      question: "¿Qué fuentes de proteína comerías con gusto de forma regular?",
+      sub: "Tu objetivo de proteína tiene que venir de algún lado — TJAI arma las comidas solo con fuentes que aceptes.",
+      optionLabels: {
+        tofu_tempeh: "Tofu / tempeh",
+        seitan: "Seitán",
+        legumes: "Lentejas, frijoles y garbanzos",
+        protein_powder: "Proteína vegetal en polvo",
+        dairy_eggs: "Lácteos y huevo (si eres vegetariano)",
+        nuts_seeds: "Frutos secos y semillas"
+      }
+    },
+    s13_allergies: {
+      question: "¿Alguna restricción alimentaria que TJAI deba respetar?",
+      sub: "Selecciona todas las que apliquen.",
+      optionLabels: {
+        none: "Ninguna",
+        halal: "Halal",
+        vegetarian: "Vegetariano",
+        vegan: "Vegano",
+        dairy_free: "Sin lácteos",
+        gluten_free: "Sin gluten",
+        nut_free: "Sin frutos secos"
+      }
+    },
+    s13_restriction_notes: {
+      question: "¿Algo específico que TJAI deba saber sobre esas restricciones alimentarias?",
+      sub: "Nota opcional — por ejemplo exclusiones estrictas, preferencias culturales o alimentos que siempre deben incluirse.",
+      placeholder: "Ejemplo: Solo halal, pero el huevo y los lácteos están bien. Evita por completo el suero de leche y los mariscos."
+    },
+    s12_foods_like: {
+      question: "¿Qué alimentos comerías con gusto seguido?",
+      sub: "Selecciona todos los que apliquen.",
+      optionLabels: {
+        chicken: "Pollo",
+        beef: "Carne de res",
+        fish: "Pescado",
+        eggs: "Huevo",
+        rice: "Arroz",
+        oats: "Avena",
+        fruit: "Fruta",
+        greek_yogurt: "Yogur griego",
+        potatoes: "Papas",
+        legumes: "Legumbres"
+      }
+    },
+    s12_foods_avoid: {
+      question: "¿Qué alimentos prefieres evitar?",
+      sub: "Selecciona todos los que apliquen.",
+      optionLabels: {
+        seafood: "Pescados y mariscos",
+        red_meat: "Carne roja",
+        dairy: "Lácteos",
+        eggs: "Huevo",
+        spicy_food: "Comida picante",
+        nothing_specific: "Nada en particular"
+      }
+    },
+    s14_time: {
+      question: "¿Cómo debería manejar TJAI la preparación de comidas?",
+      sub: "Elige el estilo de cocina que realmente puedas seguir.",
+      optionLabels: {
+        minimal: "Esfuerzo mínimo — comidas muy rápidas",
+        simple: "Cocina sencilla la mayoría de los días",
+        batch: "Cocinar en lote y meal prep"
+      }
+    },
+    s11_meals: {
+      question: "¿Cuántas comidas al día prefieres?",
+      sub: "TJAI usará esto para estructurar tus calorías y macros.",
+      optionLabels: { "3": "3 comidas", "4": "4 comidas", "5": "5 comidas" }
+    },
+    s11_eating_out: {
+      question: "¿Con qué frecuencia comes fuera o pides a domicilio?",
+      sub: "TJAI planea según tu vida real, no como si cada comida fuera casera.",
+      optionLabels: {
+        rarely: "Casi nunca — casi todo es hecho en casa",
+        weekly: "Una o dos veces por semana",
+        several_weekly: "3–5 veces por semana",
+        daily: "Casi todos los días"
+      }
+    },
+    s16_which_supps: {
+      question: "¿Qué suplementos ya estás tomando, si es que tomas alguno?",
+      sub: "Selecciona todos los que apliquen. TJAI evitará duplicar lo que ya usas.",
+      optionLabels: {
+        none: "Ninguno",
+        protein: "Proteína en polvo",
+        creatine: "Creatina",
+        omega3: "Omega-3",
+        vitamin_d: "Vitamina D",
+        magnesium: "Magnesio",
+        preworkout: "Pre-workout"
+      }
+    },
+    s15_weekend_consistency: {
+      question: "¿Qué pasa con tu alimentación los fines de semana?",
+      sub: "Los fines de semana definen la mayoría de las dietas — dos días sueltos pueden borrar cinco días cuidados.",
+      optionLabels: {
+        consistent: "Igual que entre semana — me mantengo constante",
+        slightly_off: "Un poco más relajado, pero más o menos en línea",
+        derails: "Los fines de semana suelen arruinar mi semana"
+      }
+    },
+    s18_biggest_problem: {
+      question: "¿Qué es lo que normalmente te saca de rumbo?",
+      sub: "Selecciona todas las que apliquen para que TJAI construya el plan alrededor de tus obstáculos reales.",
+      optionLabels: {
+        motivation: "Bajones de motivación",
+        consistency: "Constancia / disciplina",
+        time: "Falta de tiempo",
+        food_cravings: "Antojos o apetito",
+        training_knowledge: "No saber qué hacer",
+        stress: "Estrés y sensación de agobio",
+        recovery: "Mala recuperación"
+      }
+    },
+    s19_success_vision: {
+      question: "¿Cómo se ve el éxito para ti en 12 semanas?",
+      sub: "Elige la opción que más resuene contigo.",
+      optionLabels: {
+        look_different: "Me veo notablemente diferente en el espejo",
+        feel_energetic: "Me siento con energía y fuerte todos los días",
+        fit_clothes_better: "Me queda ropa que antes no podía usar",
+        lift_heavier: "Estoy levantando más peso del que nunca he levantado",
+        build_routine: "He creado una rutina saludable y sostenible"
+      }
+    }
+  },
+  // French: complete coverage (2026-08-09). Informal tu, French spacing
+  // before ?, established loanwords kept. Independently reviewed.
+  fr: {
+    s2_goal: {
+      question: "Quel est ton objectif principal ?",
+      sub: "Cela façonne tout le plan TJAI.",
+      optionLabels: {
+        fat_loss: "Perdre du gras — Brûle les graisses, affine-toi",
+        muscle_gain: "Prendre du muscle — Deviens plus fort et plus imposant",
+        recomposition: "Recomposition corporelle — Perds du gras ET prends du muscle",
+        fitness: "Améliorer ta forme — Endurance, santé, énergie",
+        stay_active: "Rester actif — Bouge plus, sens-toi mieux"
+      }
+    },
+    s2_goal_detail: {
+      question: "Quel résultat compte le plus pour toi en premier ?",
+      sub: "TJAI orientera le plan vers ce qui compte le plus pour toi.",
+      optionLabels: {
+        sustainable_cut: "Une perte de gras durable que je peux maintenir",
+        aggressive_cut: "Une sèche intensive avec une perte visible",
+        size: "Plus de volume et de plénitude musculaire",
+        strength: "Plus de force et d'athlétisme",
+        aesthetic: "Un physique plus esthétique et équilibré",
+        energy: "Plus d'énergie et une meilleure santé",
+        consistency: "Construire une routine que je peux vraiment tenir"
+      }
+    },
+    s1_gender: {
+      question: "Quel est ton sexe biologique ?",
+      sub: "Utilisé pour des estimations d'énergie et de récupération plus précises.",
+      optionLabels: { male: "Homme", female: "Femme" }
+    },
+    s1_age: {
+      question: "Quelle est ta tranche d'âge ?",
+      sub: "L'âge influence directement la récupération, la tolérance à l'entraînement et le métabolisme.",
+      optionLabels: {
+        "20": "16–24 ans",
+        "30": "25–34 ans",
+        "40": "35–44 ans",
+        "50": "45–54 ans",
+        "58": "55 ans et plus"
+      }
+    },
+    s1_weight: {
+      question: "Quel est ton poids actuel ?",
+      sub: "Utilisé pour les calories, les objectifs de protéines et la progression prévue.",
+      optionLabels: {
+        "48": "Moins de 50 kg",
+        "58": "50–65 kg",
+        "72": "65–80 kg",
+        "90": "80–100 kg",
+        "110": "100–120 kg",
+        "125": "Plus de 120 kg"
+      }
+    },
+    s1_height: {
+      question: "Quelle est ta taille ?",
+      sub: "Utilisée avec le poids pour estimer les besoins énergétiques et adapter les exercices.",
+      optionLabels: {
+        "152": "Moins de 155 cm",
+        "160": "155–165 cm",
+        "170": "165–175 cm",
+        "180": "175–185 cm",
+        "190": "185–195 cm",
+        "198": "Plus de 195 cm"
+      }
+    },
+    s2_pace: {
+      question: "À quelle vitesse veux-tu des résultats ?",
+      sub: "Sois honnête — cela influence directement la charge d'entraînement, la récupération et les calories.",
+      optionLabels: {
+        slow: "Lent et durable — Je veux des résultats qui durent, sans précipitation",
+        moderate: "Rythme modéré — Progression régulière, bon équilibre",
+        aggressive: "Résultats rapides — Je suis prêt à tout donner"
+      }
+    },
+    s3_body_silhouette: {
+      question: "Quel type de silhouette te décrit le mieux ?",
+      sub: "Cela aide TJAI à estimer ton taux de graisse et l'intensité à donner au plan.",
+      optionLabels: {
+        very_lean: "Très mince",
+        lean: "Mince",
+        average: "Moyenne",
+        overweight: "En surpoids",
+        obese: "Obèse"
+      }
+    },
+    s17_injuries: {
+      question: "As-tu des blessures ou des limitations physiques ?",
+      sub: "Sélectionne tout ce qui s'applique. TJAI adaptera les exercices et les règles de récupération en conséquence.",
+      optionLabels: {
+        none: "Aucune",
+        knee: "Douleur au genou",
+        lower_back: "Douleur au bas du dos",
+        shoulder: "Douleur à l'épaule",
+        hip: "Douleur à la hanche",
+        wrist_elbow: "Douleur au poignet / coude",
+        recent_surgery: "Chirurgie récente",
+        chronic_condition: "Maladie chronique"
+      }
+    },
+    s17_conditions: {
+      question: "Y a-t-il autre chose que TJAI devrait savoir sur ces limitations ?",
+      sub: "Note facultative : restrictions de mouvement, avis médical, ou exercices que tu sais devoir éviter.",
+      placeholder: "Exemple : Pas de développé au-dessus de la tête pour l'instant. La marche et le bas du corps sont autorisés."
+    },
+    s19_target_weight: {
+      question: "Si tu le sais, quel poids cible vises-tu ?",
+      sub: "Facultatif, mais utile si tu as déjà un objectif réaliste en tête.",
+      placeholder: "ex. 78"
+    },
+    s7_diet_history: {
+      question: "As-tu déjà suivi un régime structuré ?",
+      sub: "Ton historique de régimes détermine à quel point TJAI doit être agressif avec les calories.",
+      optionLabels: {
+        first_plan: "Non — c'est mon premier plan structuré",
+        kept_results: "Oui — et j'ai globalement gardé les résultats",
+        regained: "Oui — mais j'ai repris le poids après",
+        yo_yo: "Plusieurs fois — je fais du yo-yo avec mon poids"
+      }
+    },
+    s4_daily_activity: {
+      question: "À quel point es-tu actif en dehors de tes séances ?",
+      sub: "C'est ton niveau de mouvement quotidien, hors entraînement planifié.",
+      optionLabels: {
+        very_low: "Très faible — Travail de bureau, assis presque toute la journée",
+        low: "Faible — Un peu de marche, plutôt sédentaire",
+        moderate: "Modéré — Mouvement régulier, mode de vie actif",
+        active: "Actif — Travail physique ou journée très active"
+      }
+    },
+    s4_job_type: {
+      question: "Quel type de travail fais-tu la plupart des jours ?",
+      sub: "Ton travail est le principal facteur de calories brûlées en dehors de l'entraînement.",
+      optionLabels: {
+        desk: "Bureau — assis la majeure partie de la journée",
+        mixed: "Mixte — debout une partie de la journée",
+        physical: "Physique — travail manuel ou en mouvement constant"
+      }
+    },
+    s4_daily_steps: {
+      question: "Environ combien de pas fais-tu par jour normalement ?",
+      sub: "Regarde ton téléphone si tu n'es pas sûr — les pas quotidiens affinent le calcul des calories.",
+      optionLabels: {
+        under_4k: "Moins de 4 000 — plutôt sédentaire",
+        "4k_8k": "4 000–8 000 — mouvement léger",
+        "8k_12k": "8 000–12 000 — bien actif",
+        over_12k: "Plus de 12 000 — toujours en mouvement"
+      }
+    },
+    s8_hours: {
+      question: "Combien d'heures dors-tu par nuit en moyenne ?",
+      sub: "Le sommeil influence le cortisol, la récupération, la perte de gras et la performance.",
+      optionLabels: {
+        "5": "4–5 heures — En manque de sommeil chronique",
+        "6": "6 heures — En dessous de la moyenne",
+        "7": "7 heures — Moyenne",
+        "8": "8 heures — Bon",
+        "9": "9 heures ou plus — Très bien reposé"
+      }
+    },
+    s8_sleep_quality: {
+      question: "Comment décrirais-tu la qualité de ce sommeil ?",
+      sub: "Les heures comptent, mais un sommeil agité change tout autant la récupération.",
+      optionLabels: {
+        restorative: "Réparateur — je m'endors facilement et me réveille reposé",
+        restless: "Agité — je me réveille pendant la nuit ou je me lève fatigué",
+        poor: "Mauvais — j'ai du mal à m'endormir, à rester endormi, ou les deux"
+      }
+    },
+    s9_stress: {
+      question: "Quel est ton niveau de stress général actuellement ?",
+      sub: "Un stress élevé change la récupération, l'appétit et l'intensité que TJAI doit adopter.",
+      optionLabels: {
+        very_low: "Très faible — La vie est calme et gérable",
+        low: "Faible — Stress mineur occasionnel",
+        moderate: "Modéré — Pression régulière au travail ou dans la vie",
+        high: "Élevé — Souvent stressé",
+        very_high: "Très élevé — Régulièrement débordé"
+      }
+    },
+    s10_drinks: {
+      question: "Que bois-tu la plupart du temps en dehors de l'eau ?",
+      sub: "Sélectionne tout ce qui s'applique — les calories liquides sont le tueur de progrès caché le plus courant.",
+      optionLabels: {
+        mostly_water: "Surtout de l'eau, du thé ou du café noir",
+        sugary_drinks: "Boissons sucrées — soda, jus, café sucré",
+        diet_soda: "Boissons light / sans sucre",
+        alcohol: "De l'alcool la plupart des semaines",
+        energy_drinks: "Boissons énergisantes"
+      }
+    },
+    s18_schedule_constraint: {
+      question: "Qu'est-ce qui risque le plus de limiter ta régularité ?",
+      sub: "TJAI construira le plan autour de cette contrainte plutôt que de faire comme si elle n'existait pas.",
+      optionLabels: {
+        none: "Aucune — mon emploi du temps est stable",
+        short_sessions: "J'ai besoin de séances courtes la plupart des jours",
+        shift_work: "Mes horaires de travail changent souvent",
+        family_load: "Obligations familiales ou de soins à un proche",
+        travel: "Déplacements ou semaines imprévisibles"
+      }
+    },
+    s18_schedule_notes: {
+      question: "À quoi ressemble concrètement ce problème d'emploi du temps, semaine après semaine ?",
+      sub: "Détail facultatif — cela aide TJAI à placer les jours d'entraînement et de récupération plus concrètement.",
+      placeholder: "Exemple : Deux services tardifs par semaine. Le dimanche est le plus simple. Déplacement un vendredi sur deux."
+    },
+    s14_budget: {
+      question: "Quel est ton budget alimentaire mensuel pour ce plan ?",
+      sub: "TJAI choisira des aliments et des niveaux de compléments adaptés à ce budget.",
+      optionLabels: {
+        budget: "Économe — Garder les repas abordables",
+        moderate: "Modéré — Équilibre entre qualité et coût",
+        premium: "Flexible — La qualité et la performance priment avant tout"
+      }
+    },
+    s19_daily_routine: {
+      question: "À quoi ressemble une journée de semaine normale pour toi ?",
+      sub: "Mentionne l'heure de réveil, le travail/les études, le trajet, les horaires de repas et le moment où tu peux réellement t'entraîner.",
+      placeholder: "Exemple : Réveil à 6h30, bureau de 9h à 18h, déjeuner à 13h, de retour à 19h, meilleur moment pour m'entraîner : 19h30."
+    },
+    s5_trains: {
+      question: "Quel est ton niveau d'entraînement actuel ?",
+      sub: "Sois honnête — TJAI doit correspondre à ton vrai niveau, pas à ton ambition.",
+      optionLabels: {
+        beginner: "Débutant — Moins de 6 mois d'entraînement régulier",
+        intermediate: "Intermédiaire — 6 à 24 mois d'entraînement régulier",
+        advanced: "Avancé — 2 ans ou plus d'entraînement structuré et sérieux"
+      }
+    },
+    s5_type: {
+      question: "Où vas-tu t'entraîner la plupart du temps ?",
+      sub: "Cela détermine le choix des exercices et la structure du plan.",
+      optionLabels: {
+        home: "Maison — Principalement à la maison",
+        gym: "Salle — Accès complet à une salle",
+        hybrid: "Hybride — Mélange de maison et de salle"
+      }
+    },
+    s5_equipment: {
+      question: "À quel équipement as-tu réellement accès ?",
+      sub: "Ne choisis que ce que tu as vraiment à disposition en dehors d'une salle complète.",
+      optionLabels: {
+        bodyweight: "Poids du corps uniquement",
+        bands: "Élastiques de résistance",
+        dumbbells: "Haltères",
+        bench: "Banc",
+        barbell_rack: "Barre / rack",
+        machines: "Machines / poulies"
+      }
+    },
+    s5_days: {
+      question: "Combien de jours par semaine peux-tu t'entraîner de façon réaliste ?",
+      sub: "Choisis ce que tu peux tenir de façon régulière.",
+      optionLabels: { "3": "3 jours", "4": "4 jours", "5": "5 jours", "6": "6 jours" }
+    },
+    s5_duration: {
+      question: "Combien de temps peut durer chaque séance ?",
+      sub: "TJAI adaptera le volume et la densité des exercices en conséquence.",
+      optionLabels: {
+        "30": "20–30 minutes — Séances très efficaces",
+        "45": "35–45 minutes — Séances efficaces standards",
+        "60": "50–60 minutes — Largement le temps qu'il faut",
+        "75": "75 minutes ou plus — Les longues séances me conviennent"
+      }
+    },
+    s5_training_preference: {
+      question: "Quel type d'entraînement te motive le plus ?",
+      sub: "TJAI peut orienter le plan vers ce qui te motive, tout en servant ton objectif.",
+      optionLabels: {
+        strength: "Musculation axée sur la force",
+        hypertrophy: "Prise de muscle / travail du pump",
+        conditioning: "Conditionnement / travail brûle-calories",
+        mixed: "Un mélange équilibré de tout"
+      }
+    },
+    s6_cardio_preference: {
+      question: "Quels types de cardio ferais-tu vraiment ?",
+      sub: "Sélectionne tout ce que tu ne détestes pas. TJAI ne prescrit que du cardio que tu vas réellement tenir.",
+      optionLabels: {
+        walking: "Marche / marche inclinée",
+        running: "Course à pied / jogging",
+        cycling: "Vélo / spinning",
+        swimming: "Natation",
+        rowing_machines: "Rameur ou machines de cardio",
+        jump_rope: "Corde à sauter",
+        none: "Honnêtement — le moins de cardio possible"
+      }
+    },
+    s20_country: {
+      question: "Dans quel pays vis-tu ?",
+      sub: "TJAI adapte tes repas et ta liste de courses à ce qui est réellement vendu près de chez toi.",
+      optionLabels: {
+        us: "États-Unis",
+        uk: "Royaume-Uni",
+        canada: "Canada",
+        australia: "Australie",
+        ireland: "Irlande",
+        turkey: "Turquie",
+        saudi_arabia: "Arabie saoudite",
+        uae: "Émirats arabes unis",
+        egypt: "Égypte",
+        iraq: "Irak",
+        jordan: "Jordanie",
+        kuwait: "Koweït",
+        qatar: "Qatar",
+        morocco: "Maroc",
+        spain: "Espagne",
+        mexico: "Mexique",
+        argentina: "Argentine",
+        colombia: "Colombie",
+        chile: "Chili",
+        france: "France",
+        belgium: "Belgique",
+        germany: "Allemagne",
+        netherlands: "Pays-Bas",
+        india: "Inde",
+        pakistan: "Pakistan",
+        nigeria: "Nigeria",
+        philippines: "Philippines",
+        other: "Ailleurs"
+      }
+    },
+    s20_market: {
+      question: "Où fais-tu habituellement tes courses ?",
+      sub: "Choisis le magasin le plus proche de chez toi — ta liste de courses sera construite en fonction.",
+      optionLabels: {
+        local_supermarket: "Un grand supermarché",
+        discount_chain: "Une chaîne de hard-discount",
+        local_market: "Un marché local / bazar",
+        online_groceries: "Courses en ligne",
+        other_market: "Ailleurs / ça varie"
+      }
+    },
+    s12_diet_style: {
+      question: "Quel style alimentaire te correspond le mieux en ce moment ?",
+      sub: "TJAI s'en sert pour choisir une structure que tu peux vraiment tenir.",
+      optionLabels: {
+        balanced: "Équilibré et flexible",
+        high_protein: "Axé sur les protéines",
+        low_carb: "Préférence pauvre en glucides",
+        halal: "Structure adaptée au halal",
+        vegetarian: "Végétarien",
+        vegan: "Vegan"
+      }
+    },
+    s12_plant_protein: {
+      question: "Quelles sources de protéines es-tu prêt à manger régulièrement ?",
+      sub: "Ton objectif de protéines doit venir de quelque part — TJAI construit tes repas uniquement à partir des sources que tu acceptes.",
+      optionLabels: {
+        tofu_tempeh: "Tofu / tempeh",
+        seitan: "Seitan",
+        legumes: "Lentilles, haricots et pois chiches",
+        protein_powder: "Protéine végétale en poudre",
+        dairy_eggs: "Produits laitiers et œufs (si végétarien)",
+        nuts_seeds: "Noix et graines"
+      }
+    },
+    s13_allergies: {
+      question: "As-tu des restrictions alimentaires que TJAI doit respecter ?",
+      sub: "Sélectionne tout ce qui s'applique.",
+      optionLabels: {
+        none: "Aucune",
+        halal: "Halal",
+        vegetarian: "Végétarien",
+        vegan: "Vegan",
+        dairy_free: "Sans produits laitiers",
+        gluten_free: "Sans gluten",
+        nut_free: "Sans fruits à coque"
+      }
+    },
+    s13_restriction_notes: {
+      question: "Y a-t-il quelque chose de spécifique que TJAI devrait savoir sur ces restrictions alimentaires ?",
+      sub: "Note facultative — par exemple des exclusions strictes, des préférences culturelles, ou des aliments à toujours garder.",
+      placeholder: "Exemple : Halal uniquement, mais les œufs et les produits laitiers passent. Éviter complètement la whey et les fruits de mer."
+    },
+    s12_foods_like: {
+      question: "Quels aliments serais-tu content de manger souvent ?",
+      sub: "Sélectionne tout ce qui s'applique.",
+      optionLabels: {
+        chicken: "Poulet",
+        beef: "Bœuf",
+        fish: "Poisson",
+        eggs: "Œufs",
+        rice: "Riz",
+        oats: "Flocons d'avoine",
+        fruit: "Fruits",
+        greek_yogurt: "Yaourt grec",
+        potatoes: "Pommes de terre",
+        legumes: "Légumineuses"
+      }
+    },
+    s12_foods_avoid: {
+      question: "Quels aliments préfères-tu éviter ?",
+      sub: "Sélectionne tout ce qui s'applique.",
+      optionLabels: {
+        seafood: "Fruits de mer",
+        red_meat: "Viande rouge",
+        dairy: "Produits laitiers",
+        eggs: "Œufs",
+        spicy_food: "Nourriture épicée",
+        nothing_specific: "Rien de particulier"
+      }
+    },
+    s14_time: {
+      question: "Comment TJAI doit-il gérer la préparation des repas ?",
+      sub: "Choisis le style de cuisine que tu peux réellement suivre.",
+      optionLabels: {
+        minimal: "Effort minimal — repas très rapides",
+        simple: "Cuisine simple la plupart des jours",
+        batch: "Cuisine en gros volumes et meal prep"
+      }
+    },
+    s11_meals: {
+      question: "Combien de repas par jour préfères-tu ?",
+      sub: "TJAI s'en sert pour structurer tes calories et tes macros.",
+      optionLabels: { "3": "3 repas", "4": "4 repas", "5": "5 repas" }
+    },
+    s11_eating_out: {
+      question: "À quelle fréquence manges-tu dehors ou te fais-tu livrer ?",
+      sub: "TJAI planifie en fonction de ta vraie vie, au lieu de faire comme si chaque repas était fait maison.",
+      optionLabels: {
+        rarely: "Rarement — presque tout est fait maison",
+        weekly: "Une ou deux fois par semaine",
+        several_weekly: "3 à 5 fois par semaine",
+        daily: "La plupart des jours"
+      }
+    },
+    s16_which_supps: {
+      question: "Quels compléments prends-tu déjà, le cas échéant ?",
+      sub: "Sélectionne tout ce qui s'applique. TJAI évitera de dupliquer ce que tu utilises déjà.",
+      optionLabels: {
+        none: "Aucun",
+        protein: "Protéine en poudre",
+        creatine: "Créatine",
+        omega3: "Oméga-3",
+        vitamin_d: "Vitamine D",
+        magnesium: "Magnésium",
+        preworkout: "Pre-workout"
+      }
+    },
+    s15_weekend_consistency: {
+      question: "Que se passe-t-il avec ton alimentation le week-end ?",
+      sub: "Les week-ends déterminent la plupart des régimes — deux jours relâchés peuvent effacer cinq jours de rigueur.",
+      optionLabels: {
+        consistent: "Pareil qu'en semaine — je reste régulier",
+        slightly_off: "Un peu plus relâché, mais globalement sur la bonne voie",
+        derails: "Le week-end anéantit généralement ma semaine"
+      }
+    },
+    s18_biggest_problem: {
+      question: "Qu'est-ce qui te fait généralement dérailler ?",
+      sub: "Sélectionne tout ce qui s'applique pour que TJAI construise le plan autour de tes vrais obstacles.",
+      optionLabels: {
+        motivation: "Baisses de motivation",
+        consistency: "Régularité / discipline",
+        time: "Manque de temps",
+        food_cravings: "Envies alimentaires ou appétit",
+        training_knowledge: "Ne pas savoir quoi faire",
+        stress: "Stress et surcharge",
+        recovery: "Mauvaise récupération"
+      }
+    },
+    s19_success_vision: {
+      question: "À quoi ressemble la réussite pour toi dans 12 semaines ?",
+      sub: "Choisis celle qui te parle le plus.",
+      optionLabels: {
+        look_different: "Je me vois nettement différent dans le miroir",
+        feel_energetic: "Je me sens énergique et fort chaque jour",
+        fit_clothes_better: "Je rentre dans des vêtements que je ne pouvais pas porter avant",
+        lift_heavier: "Je soulève plus lourd que jamais",
+        build_routine: "J'ai construit une routine saine et durable"
+      }
+    }
+  }
+};
+
 export function getTjaiSteps(locale: Locale): QuizStep[] {
   const sections = SECTION_TITLES[locale] ?? SECTION_TITLES.en;
-  return BASE_STEPS.map((step) => ({
-    ...step,
-    section: sections[step.sectionIdx] ?? SECTION_TITLES.en[step.sectionIdx],
-    sectionNumber: step.sectionIdx + 1,
-    totalSections: 6
-  }));
+  const overrides = STEP_I18N[locale];
+  return BASE_STEPS.map((step) => {
+    const o = overrides?.[step.id];
+    return {
+      ...step,
+      question: o?.question ?? step.question,
+      sub: o?.sub ?? step.sub,
+      placeholder: o?.placeholder ?? step.placeholder,
+      options: o?.optionLabels
+        ? step.options?.map((option) => ({
+            ...option,
+            label: o.optionLabels?.[String(option.value)] ?? option.label
+          }))
+        : step.options,
+      section: sections[step.sectionIdx] ?? SECTION_TITLES.en[step.sectionIdx],
+      sectionNumber: step.sectionIdx + 1,
+      totalSections: 6
+    };
+  });
 }
 

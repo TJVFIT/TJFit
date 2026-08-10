@@ -1,11 +1,5 @@
 /** Client-only helpers for TJAI chat UX (no server import). */
 
-export function getCoachThinkingDelayMs(): number {
-  if (typeof window === "undefined") return 0;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return 0;
-  return 360;
-}
-
 /** Loose multilingual topic hints used to pick context-aware suggestion chips. */
 export const COACH_NUTRITION_HINT_RE =
   /protein|prot[eé]in|prote[íi]na|meal|kcal|calorie|calor[íi]a|carb|macro|öğün|kalori|yemek|بروتين|وجبة|سعرة|repas/i;

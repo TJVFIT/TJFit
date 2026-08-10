@@ -5,6 +5,7 @@ import { getBundle } from "@/lib/bundles";
 import { hasPurchasedProgram } from "@/lib/purchases";
 import { requireAuthenticatedUser } from "@/lib/require-authenticated-server";
 import { requireLocaleParam } from "@/lib/require-locale";
+import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { ProgramApp } from "./program-app";
 
 export const dynamic = "force-dynamic";
@@ -22,7 +23,12 @@ export default async function ProgramPage({
   if (!bundle) notFound();
   const admin = !!user.email && isAdminEmail(user.email);
   if (!admin) {
-    const paid = await hasPurchasedProgram(supabase, user.id, bundle.slug);
+    // program_orders is revoked from `authenticated` (migration
+    // 20260723221731); read entitlement with the service client. user.id is
+    // session-verified, so the row scope is unchanged. Fail closed: without
+    // the service client we cannot prove entitlement, so deny access.
+    const db = getSupabaseServerClient();
+    const paid = db ? await hasPurchasedProgram(db, user.id, bundle.slug) : false;
     if (!paid) redirect(`/${locale}/bundles/${bundle.slug}`);
   }
 

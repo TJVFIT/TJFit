@@ -86,65 +86,237 @@ const faqTr: { id: string; q: string; a: string }[] = [
   {
     id: "what",
     q: "TJFit nedir?",
-    a: "TJFit; ev ve salon icin, gercek bir antrenor plani gibi yapilandirilmis tam 12 haftalik antrenman programlari ve diyet sistemleri sunan premium bir donusum platformudur."
+    a: "TJFit; ev ve salon için, gerçek bir antrenör planı gibi yapılandırılmış tam 12 haftalık antrenman programları ve diyet sistemleri sunan premium bir dönüşüm platformudur."
   },
   {
     id: "free-start",
-    q: "Ucretsiz nasil baslarim?",
-    a: "Ucretsiz hesap olusturun; iki tam antrenman programi ve iki tam diyet planina aninda erisin — kredi karti gerekmez."
+    q: "Ücretsiz nasıl başlarım?",
+    a: "Ücretsiz hesap oluşturun; iki tam antrenman programı ve iki tam diyet planına anında erişin — kredi kartı gerekmez."
   },
   {
     id: "free-vs-paid",
-    q: "Ucretsiz ve ucretli programlar arasindaki fark nedir?",
-    a: "Ucretsiz programlar 4 haftalik temel baslangiclardir. Ucretliler; ileri ilerleme, daha fazla hareket ve tam haftalik detay iceren tam 12 haftalik sistemlerdir."
+    q: "Ücretsiz ve ücretli programlar arasındaki fark nedir?",
+    a: "Ücretsiz programlar 4 haftalık temel başlangıçlardır. Ücretliler; ileri ilerleme, daha fazla hareket ve tam haftalık detay içeren tam 12 haftalık sistemlerdir."
   },
   {
     id: "diets",
-    q: "Diyet planlari nasil calisir?",
-    a: "Her plan; gunluk ogunler, malzemeler, kalori, makrolar ve basit hazirlik notlari sunar. Haftalik kalori ayarlari ilerleme icin yerlesiktir."
+    q: "Diyet planları nasıl çalışır?",
+    a: "Her plan; günlük öğünler, malzemeler, kalori, makrolar ve basit hazırlık notları sunar. Haftalık kalori ayarları ilerleme için yerleşiktir."
   },
   {
     id: "switch",
-    q: "Program degistirebilir miyim?",
-    a: "Evet. Satin aldiginiz her program, istediginiz zaman kontrol panelinizden erisilebilir."
+    q: "Program değiştirebilir miyim?",
+    a: "Evet. Satın aldığınız her program, istediğiniz zaman kontrol panelinizden erişilebilir."
   },
   {
     id: "messaging",
-    q: "Mesajlasma nasil calisir?",
-    a: "TJFit mesajlasmasi kullanici adina dayalidir — telefon veya e-posta paylasilmaz. Koçlar veya diger uyelerle dogrudan platform uzerinden yazisin."
+    q: "Mesajlaşma nasıl çalışır?",
+    a: "TJFit mesajlaşması kullanıcı adına dayalıdır — telefon veya e-posta paylaşılmaz. Koçlar veya diğer üyelerle doğrudan platform üzerinden yazışın."
   },
   {
     id: "become-coach",
-    q: "Nasil koç olurum?",
-    a: "Koç Bul bolumunden basvurun. TJFit onayladiktan sonra koç ozelliklerine erismek icin Koç Sartlarini kabul etmeniz gerekir."
+    q: "Nasıl koç olurum?",
+    a: "Koç Bul bölümünden başvurun. TJFit onayladıktan sonra koç özelliklerine erişmek için Koç Şartlarını kabul etmeniz gerekir."
   },
   {
     id: "payments",
-    q: "Hangi odeme yontemleri kabul edilir?",
-    a: "Guvenli odeme ortagimiz Gumroad uzerinden tum major kredi ve banka kartlari."
+    q: "Hangi ödeme yöntemleri kabul edilir?",
+    a: "Güvenli ödeme ortağımız Gumroad üzerinden tüm major kredi ve banka kartları."
   },
   {
     id: "privacy-data",
     q: "Verilerim gizli mi?",
-    a: "Evet. Kisisel verileriniz satilmaz ve paylasilmaz. Ayrintilar icin asagidaki Gizlilik Politikasina bakin."
+    a: "Evet. Kişisel verileriniz satılmaz ve paylaşılmaz. Ayrıntılar için aşağıdaki Gizlilik Politikasına bakın."
   },
   {
     id: "delete",
-    q: "Hesabimi nasil silerim?",
-    a: "Profil → Ayarlar → Hesabi Sil. Tum kisisel veriler 30 gun icinde kaldirilir."
+    q: "Hesabımı nasıl silerim?",
+    a: "Profil → Ayarlar → Hesabı Sil. Tüm kişisel veriler 30 gün içinde kaldırılır."
   },
   {
     id: "support",
-    q: "Destek ile nasil iletisime gecerim?",
-    a: "support@tjfit.org adresine yazin veya bu sayfanin altindaki formu kullanin."
+    q: "Destek ile nasıl iletişime geçerim?",
+    a: "support@tjfit.org adresine yazın veya bu sayfanın altındaki formu kullanın."
   }
 ];
 
-const faqAr: { id: string; q: string; a: string }[] = faqEn.map((item) => ({ ...item }));
+// OWNER REVIEW PENDING (2026-08-09): faqAr/faqEs/faqFr were literal English
+// clones (`faqEn.map(...)`) — translated faithfully from faqEn, but they carry
+// product and pricing claims (free-tier contents, 4- vs 12-week distinction,
+// Gumroad, 30-day deletion). Owner signs off before these ship.
+const faqAr: { id: string; q: string; a: string }[] = [
+  {
+    id: "what",
+    q: "ما هو TJFit؟",
+    a: "TJFit منصة تحول لياقة مميزة تقدم برامج تدريب كاملة لمدة 12 أسبوعًا وأنظمة غذائية، مصممة كخطة مدرب حقيقي للمنزل والصالة معًا."
+  },
+  {
+    id: "free-start",
+    q: "كيف أبدأ مجانًا؟",
+    a: "أنشئ حسابًا مجانيًا واحصل فورًا على برنامجين تدريبيين كاملين وخطتين غذائيتين كاملتين — دون الحاجة إلى بطاقة ائتمان."
+  },
+  {
+    id: "free-vs-paid",
+    q: "ما الفرق بين البرامج المجانية والمدفوعة؟",
+    a: "البرامج المجانية هي برامج تأسيسية لمدة 4 أسابيع. أما المدفوعة فهي أنظمة كاملة لمدة 12 أسبوعًا مع تدرج متقدم وتمارين أكثر وتفاصيل أسبوعية كاملة."
+  },
+  {
+    id: "diets",
+    q: "كيف تعمل الخطط الغذائية؟",
+    a: "توفر كل خطة وجبات يومية مع المكونات والسعرات والماكروز وتعليمات تحضير بسيطة، مع تعديلات أسبوعية للسعرات من أجل التقدم."
+  },
+  {
+    id: "switch",
+    q: "هل يمكنني تبديل البرامج؟",
+    a: "نعم. أي برنامج اشتريته يبقى متاحًا من لوحة التحكم في أي وقت."
+  },
+  {
+    id: "messaging",
+    q: "كيف تعمل المراسلة؟",
+    a: "تعتمد مراسلة TJFit على اسم المستخدم — دون مشاركة أرقام الهواتف أو البريد الإلكتروني. راسل المدربين أو المستخدمين الآخرين مباشرة داخل المنصة."
+  },
+  {
+    id: "become-coach",
+    q: "كيف أصبح مدربًا؟",
+    a: "قدّم طلبك عبر قسم «ابحث عن مدرب». بعد موافقة TJFit، يجب قبول شروط المدرب قبل الوصول إلى ميزات المدرب."
+  },
+  {
+    id: "payments",
+    q: "ما وسائل الدفع المقبولة؟",
+    a: "جميع بطاقات الائتمان والخصم الرئيسية، عبر شريك الدفع الآمن Gumroad."
+  },
+  {
+    id: "privacy-data",
+    q: "هل بياناتي خاصة؟",
+    a: "نعم. بياناتك الشخصية لا تُباع ولا تُشارك أبدًا. راجع سياسة الخصوصية أدناه للتفاصيل الكاملة."
+  },
+  {
+    id: "delete",
+    q: "كيف أحذف حسابي؟",
+    a: "اذهب إلى الملف الشخصي ← الإعدادات ← حذف الحساب. تُحذف جميع البيانات الشخصية خلال 30 يومًا."
+  },
+  {
+    id: "support",
+    q: "كيف أتواصل مع الدعم؟",
+    a: "راسل support@tjfit.org أو استخدم النموذج أسفل هذه الصفحة."
+  }
+];
 
-const faqEs: { id: string; q: string; a: string }[] = faqEn.map((item) => ({ ...item }));
+const faqEs: { id: string; q: string; a: string }[] = [
+  {
+    id: "what",
+    q: "¿Qué es TJFit?",
+    a: "TJFit es una plataforma premium de transformación física que ofrece programas de entrenamiento completos de 12 semanas y sistemas de dieta, estructurados como el plan de un coach real, tanto para casa como para el gimnasio."
+  },
+  {
+    id: "free-start",
+    q: "¿Cómo empiezo gratis?",
+    a: "Crea una cuenta gratuita y accede al instante a dos programas de entrenamiento completos y dos planes de dieta completos — sin tarjeta de crédito."
+  },
+  {
+    id: "free-vs-paid",
+    q: "¿Cuál es la diferencia entre los programas gratuitos y los de pago?",
+    a: "Los programas gratuitos son iniciaciones de base de 4 semanas. Los de pago son sistemas completos de 12 semanas con progresión avanzada, más ejercicios y todo el detalle semanal."
+  },
+  {
+    id: "diets",
+    q: "¿Cómo funcionan los planes de dieta?",
+    a: "Cada plan incluye comidas diarias con ingredientes, calorías, macros e instrucciones de preparación sencillas. Los ajustes semanales de calorías vienen integrados para progresar."
+  },
+  {
+    id: "switch",
+    q: "¿Puedo cambiar de programa?",
+    a: "Sí. Cualquier programa que hayas comprado queda accesible desde tu panel en cualquier momento."
+  },
+  {
+    id: "messaging",
+    q: "¿Cómo funciona la mensajería?",
+    a: "La mensajería de TJFit se basa en nombres de usuario — sin compartir teléfonos ni emails. Escribe a coaches u otros usuarios directamente en la plataforma."
+  },
+  {
+    id: "become-coach",
+    q: "¿Cómo me hago coach?",
+    a: "Postúlate desde la sección Encuentra un Coach. Una vez aprobado por TJFit, debes aceptar los Términos de Coach antes de acceder a las herramientas de coach."
+  },
+  {
+    id: "payments",
+    q: "¿Qué métodos de pago se aceptan?",
+    a: "Todas las principales tarjetas de crédito y débito, a través de nuestro socio de pagos seguro Gumroad."
+  },
+  {
+    id: "privacy-data",
+    q: "¿Mis datos son privados?",
+    a: "Sí. Tus datos personales nunca se venden ni se comparten. Consulta la Política de Privacidad más abajo para el detalle completo."
+  },
+  {
+    id: "delete",
+    q: "¿Cómo elimino mi cuenta?",
+    a: "Ve a Perfil → Ajustes → Eliminar cuenta. Todos los datos personales se eliminan en un plazo de 30 días."
+  },
+  {
+    id: "support",
+    q: "¿Cómo contacto con soporte?",
+    a: "Escribe a support@tjfit.org o usa el formulario al final de esta página."
+  }
+];
 
-const faqFr: { id: string; q: string; a: string }[] = faqEn.map((item) => ({ ...item }));
+const faqFr: { id: string; q: string; a: string }[] = [
+  {
+    id: "what",
+    q: "Qu'est-ce que TJFit ?",
+    a: "TJFit est une plateforme premium de transformation physique qui propose des programmes d'entraînement complets de 12 semaines et des systèmes de nutrition, structurés comme le plan d'un vrai coach, pour la maison comme pour la salle."
+  },
+  {
+    id: "free-start",
+    q: "Comment commencer gratuitement ?",
+    a: "Créez un compte gratuit et accédez immédiatement à deux programmes d'entraînement complets et deux plans de nutrition complets — sans carte bancaire."
+  },
+  {
+    id: "free-vs-paid",
+    q: "Quelle est la différence entre les programmes gratuits et payants ?",
+    a: "Les programmes gratuits sont des bases de démarrage de 4 semaines. Les payants sont des systèmes complets de 12 semaines avec progression avancée, plus d'exercices et tout le détail semaine par semaine."
+  },
+  {
+    id: "diets",
+    q: "Comment fonctionnent les plans de nutrition ?",
+    a: "Chaque plan fournit des repas quotidiens avec ingrédients, calories, macros et des instructions de préparation simples. Les ajustements caloriques hebdomadaires sont intégrés pour progresser."
+  },
+  {
+    id: "switch",
+    q: "Puis-je changer de programme ?",
+    a: "Oui. Tout programme acheté reste accessible depuis votre tableau de bord à tout moment."
+  },
+  {
+    id: "messaging",
+    q: "Comment fonctionne la messagerie ?",
+    a: "La messagerie TJFit repose sur le nom d'utilisateur — aucun numéro de téléphone ni email partagé. Écrivez directement aux coachs ou aux autres membres sur la plateforme."
+  },
+  {
+    id: "become-coach",
+    q: "Comment devenir coach ?",
+    a: "Postulez via la section Trouver un coach. Une fois approuvé par TJFit, vous devez accepter les Conditions des coachs avant d'accéder aux outils coach."
+  },
+  {
+    id: "payments",
+    q: "Quels moyens de paiement sont acceptés ?",
+    a: "Toutes les principales cartes de crédit et de débit, via notre partenaire de paiement sécurisé Gumroad."
+  },
+  {
+    id: "privacy-data",
+    q: "Mes données sont-elles privées ?",
+    a: "Oui. Vos données personnelles ne sont jamais vendues ni partagées. Consultez la Politique de confidentialité ci-dessous pour tous les détails."
+  },
+  {
+    id: "delete",
+    q: "Comment supprimer mon compte ?",
+    a: "Allez dans Profil → Paramètres → Supprimer le compte. Toutes les données personnelles sont supprimées sous 30 jours."
+  },
+  {
+    id: "support",
+    q: "Comment contacter le support ?",
+    a: "Écrivez à support@tjfit.org ou utilisez le formulaire en bas de cette page."
+  }
+];
 
 function faqFor(locale: Locale) {
   if (locale === "tr") return faqTr;
@@ -163,11 +335,11 @@ const privacyEn = [
 ];
 
 const privacyTr = [
-  "1. Toplanan veriler: ad, e-posta, fitness tercihleri ve program kullanimi. Odeme karti numaralari toplanmaz (Gumroad isler).",
-  "2. Kullanim: TJFit'i sunmak ve gelistirmek; hesap bildirimleri. Verilerinizi satmayiz.",
-  "3. Saklama: veriler Supabase uzerinde sifreli sunucularda guvenle tutulur.",
-  "4. Haklariniz: dilediginiz zaman veri aktarimi veya silme talep edebilirsiniz. Iletisim: support@tjfit.org.",
-  "5. Cerezler: yalnizca kimlik dogrulama icin cerez kullaniriz. Reklam cerezi yoktur."
+  "1. Toplanan veriler: ad, e-posta, fitness tercihleri ve program kullanımı. Ödeme kartı numaraları toplanmaz (Gumroad işler).",
+  "2. Kullanım: TJFit'i sunmak ve geliştirmek; hesap bildirimleri. Verilerinizi satmayız.",
+  "3. Saklama: veriler Supabase üzerinde şifreli sunucularda güvenle tutulur.",
+  "4. Haklarınız: dilediğiniz zaman veri aktarımı veya silme talep edebilirsiniz. İletişim: support@tjfit.org.",
+  "5. Çerezler: yalnızca kimlik doğrulama için çerez kullanırız. Reklam çerezi yoktur."
 ];
 
 const privacyAr = [
@@ -220,21 +392,21 @@ const meta: Record<Locale, LegalHubMeta> = {
   tr: {
     heroEyebrow: "DESTEK VE YASAL",
     heroHeadlineBefore: "Sorular ve ",
-    heroHeadlineGradient: "sartlar.",
-    heroSub: "TJFit hakkinda bilmeniz gereken her sey.",
+    heroHeadlineGradient: "şartlar.",
+    heroSub: "TJFit hakkında bilmeniz gereken her şey.",
     pageTitle: "Yasal ve Destek",
-    pageIntro: "SSS, uye sartlari, koç sartlari ozeti ve gizlilik.",
+    pageIntro: "SSS, üye şartları, koç şartları özeti ve gizlilik.",
     navFaq: "SSS",
-    navUserTerms: "Uye sartlari",
-    navCoachTerms: "Koç sartlari",
+    navUserTerms: "Üye şartları",
+    navCoachTerms: "Koç şartları",
     navPrivacy: "Gizlilik",
-    faqTitle: "Sik sorulan sorular",
-    userTermsTitle: "Kullanici Hizmet Sartlari",
-    coachTermsTitle: "Koç Hizmet Sartlari",
-    coachTermsReadOnly: "Koç ozelliklerine erismek icin bu sartlar uygulama icinde kabul edilmelidir.",
-    privacyTitle: "Gizlilik Politikasi",
-    linkTermsPage: "Tam sartlar",
-    linkPrivacyPage: "Gizlilik politikasi",
+    faqTitle: "Sık sorulan sorular",
+    userTermsTitle: "Kullanıcı Hizmet Şartları",
+    coachTermsTitle: "Koç Hizmet Şartları",
+    coachTermsReadOnly: "Koç özelliklerine erişmek için bu şartlar uygulama içinde kabul edilmelidir.",
+    privacyTitle: "Gizlilik Politikası",
+    linkTermsPage: "Tam şartlar",
+    linkPrivacyPage: "Gizlilik politikası",
     privacyParagraphs: privacyTr
   },
   ar: {
@@ -310,13 +482,13 @@ const userTermsBody: Record<Locale, string[]> = {
     "6. Termination — TJFit reserves the right to suspend accounts that violate these terms."
   ],
   tr: [
-    "TJFit'i kullanarak asagidakileri kabul edersiniz:",
-    "1. Uygunluk — TJFit 16 yas ve uzeri icindir.",
-    "2. Hesap — Guvenlik sizin sorumlulugunuzdur; giris bilgilerini paylasmayin.",
-    "3. Kullanim — Taciz, zararli icerik veya baskalarinin verilerine yetkisiz erisim yasaktir.",
-    "4. Satinalmalar — Odemeler, Kayitli Satici olarak Gumroad tarafindan islenir. Satin alma tarihinden itibaren 14 gun icerisinde yapilan iade talepleri Gumroad tarafindan gumroad.com/refunds uzerinden karsilanir.",
-    "5. Icerik — Programlar bilgilendiricidir; baslamadan once doktorunuza danisin.",
-    "6. Sonlandirma — Ihlalde hesap askiya alinabilir."
+    "TJFit'i kullanarak aşağıdakileri kabul edersiniz:",
+    "1. Uygunluk — TJFit 16 yaş ve üzeri içindir.",
+    "2. Hesap — Güvenlik sizin sorumluluğunuzdur; giriş bilgilerini paylaşmayın.",
+    "3. Kullanım — Taciz, zararlı içerik veya başkalarının verilerine yetkisiz erişim yasaktır.",
+    "4. Satınalmalar — Ödemeler, Kayıtlı Satıcı olarak Gumroad tarafından işlenir. Satın alma tarihinden itibaren 14 gün içerisinde yapılan iade talepleri Gumroad tarafından gumroad.com/refunds üzerinden karşılanır.",
+    "5. İçerik — Programlar bilgilendiricidir; başlamadan önce doktorunuza danışın.",
+    "6. Sonlandırma — İhlalde hesap askıya alınabilir."
   ],
   ar: [
     "باستخدام TJFit فإنك توافق على ما يلي:",

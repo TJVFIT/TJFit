@@ -31,6 +31,7 @@ import { supportedLocales } from "@/lib/i18n";
 import { requireLocaleParam } from "@/lib/require-locale";
 import { getSiteUrl } from "@/lib/site-url";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { hasPurchasedProgram } from "@/lib/purchases";
 import { isAdminEmail } from "@/lib/auth-utils";
 
@@ -101,9 +102,14 @@ export default async function BundleDetailPage({
       data: { user }
     } = await supabase.auth.getUser();
     if (user) {
+      // Session client resolves the user; the entitlement read uses the
+      // service client because program_orders is revoked from `authenticated`
+      // (migration 20260723221731). user.id is session-verified. Without the
+      // service client we cannot prove entitlement, so `owns` stays false.
+      const db = getSupabaseServerClient();
       owns =
         (!!user.email && isAdminEmail(user.email)) ||
-        (await hasPurchasedProgram(supabase, user.id, bundle.slug));
+        (!!db && (await hasPurchasedProgram(db, user.id, bundle.slug)));
     }
   }
 

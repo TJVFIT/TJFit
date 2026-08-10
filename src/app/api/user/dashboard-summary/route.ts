@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/require-auth";
+import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 export const dynamic = "force-dynamic";
 
@@ -33,8 +34,15 @@ export async function GET() {
 
   const uid = auth.user.id;
 
+  // program_orders is revoked from the `authenticated` role (security
+  // hardening migration 20260723221731) because the Data API would expose
+  // columns the scoped APIs omit. Read it with the service client and keep
+  // the user scope explicit in the query below.
+  const ordersDb = getSupabaseServerClient();
+  if (!ordersDb) return NextResponse.json({ error: "Server not configured" }, { status: 500 });
+
   const [ordersRes, entryCountRes, entryRowsRes, milestonesRes, workoutDatesRes] = await Promise.all([
-    auth.supabase
+    ordersDb
       .from("program_orders")
       .select("program_slug,status,created_at")
       .eq("user_id", uid)

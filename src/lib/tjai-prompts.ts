@@ -140,6 +140,26 @@ Never program these or close variants anywhere in the plan. Substitute equally e
 Honor it if it fits ${profile.trainingDays} training days/week and the ${profile.goal} goal. If incompatible (e.g. push/pull/legs on 2 days), use the closest effective split and explain the trade-off in one sentence inside program.philosophy.`
       : "";
 
+  const cardioBlock = (() => {
+    const prefs = profile.cardioPreferences ?? [];
+    if (prefs.length === 0) return "";
+    if (prefs.includes("none")) {
+      return `CARDIO PREFERENCE (adherence rule): User wants as little cardio as possible.
+Program the minimum effective dose only: prefer daily step targets and short post-lift finishers over dedicated cardio sessions. Never schedule a standalone cardio day. State the step target explicitly.`;
+    }
+    const accepted = prefs.map(titleCase).join(", ");
+    return `CARDIO PREFERENCE (adherence rule): User will actually do: ${accepted}.
+All prescribed cardio MUST use only these modalities. Do not program running for a non-runner or machines they did not list — adherence beats optimality.`;
+  })();
+
+  const plantProteinBlock =
+    (profile.dietStyle === "vegetarian" || profile.dietStyle === "vegan") &&
+    profile.plantProteinSources &&
+    profile.plantProteinSources.length > 0
+      ? `PLANT PROTEIN SOURCES (hard rule): User accepts: ${profile.plantProteinSources.map(titleCase).join(", ")}.
+Build every meal's protein around ONLY these sources. Do not default to tofu if it is not listed. If the daily protein target is hard to reach from the accepted sources, say so explicitly in the plan and adjust the target realistically rather than inventing meals they will not eat.`
+      : "";
+
   const budgetBlock =
     profile.monthlyFoodBudget === "budget"
       ? `BUDGET MODE ACTIVE:
@@ -347,6 +367,12 @@ ${dislikedBlock || "No banned exercises."}
 
 == TRAINING SPLIT ==
 ${splitBlock || "No split preference — choose the most effective split for their days and goal."}
+
+== CARDIO MODALITIES ==
+${cardioBlock || "No stated cardio preference — choose modalities matching their equipment and goal, and favor low-skill options (walking, cycling) for adherence."}
+
+== PLANT PROTEIN ==
+${plantProteinBlock || (profile.dietStyle === "vegetarian" || profile.dietStyle === "vegan" ? "Plant-based diet with no stated source preferences — use varied common sources (legumes, tofu, dairy/eggs if vegetarian) and keep each meal's protein source realistic." : "Not applicable — omnivorous diet style.")}
 
 == PROFESSIONAL PROGRAMMING DETAIL (required) ==
 Populate these fields on EVERY exercise (terse strings — this must not bloat the JSON):

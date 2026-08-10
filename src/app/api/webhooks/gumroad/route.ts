@@ -6,6 +6,11 @@ import { fulfillProgramOrderPaid } from "@/lib/checkout-fulfill-order";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { handleSale, findOrCreateUserByEmail, type GumroadSalePayload } from "./handlers/sale";
+import { handleRefund } from "./handlers/refund";
+import {
+  handleSubscriptionCancellation,
+  handleSubscriptionEvent
+} from "./handlers/subscription";
 
 export const dynamic = "force-dynamic";
 
@@ -331,6 +336,13 @@ export async function POST(request: NextRequest) {
           gumroad_fee: confirmed.gumroad_fee,
           currency: confirmed.currency,
           custom_fields: confirmed.custom_fields,
+          // Prefer the API record's url_params; fall back to the (already
+          // seller-verified) webhook body so the buyer's tier / program-slug /
+          // order-id selection survives even if the API omits them.
+          url_params: confirmed.url_params ?? payload.url_params,
+          subscription_id: confirmed.subscription_id ?? payload.subscription_id,
+          recurrence: confirmed.recurrence,
+          sale_timestamp: confirmed.created_at ?? payload.sale_timestamp,
           test: payload.test === true || payload.test === "true"
         };
 
@@ -343,22 +355,70 @@ export async function POST(request: NextRequest) {
         }
         break;
       }
-      case "refund": {
-        // TODO: mark order refunded, revoke access, emit audit log.
-        status = "ignored";
+      case "refund":
+      case "dispute": {
+        // Re-fetch the sale from Gumroad and confirm it is actually refunded
+        // before revoking anything — same anti-forgery property as the sale
+        // path (an attacker can't fabricate a refunded sale_id in our account).
+        const saleId = payload.sale_id?.trim();
+        if (!saleId) {
+          status = "failed";
+          handlerError = `${eventType} event without sale_id`;
+          break;
+        }
+        let confirmed;
+        try {
+          confirmed = await getSale(saleId);
+        } catch (err) {
+          status = "failed";
+          handlerError = `gumroad_api_verify: ${err instanceof Error ? err.message : String(err)}`;
+          break;
+        }
+        if (!confirmed) {
+          status = "failed";
+          handlerError = `sale ${saleId} not found in Gumroad — cannot verify refund`;
+          break;
+        }
+        if (!confirmed.refunded && !confirmed.disputed) {
+          // Gumroad's record shows neither a refund nor a dispute (race /
+          // partial) — do not revoke access on an unverifiable claim.
+          status = "ignored";
+          break;
+        }
+        const result = await handleRefund(confirmed, payload, admin);
+        if (result.ok) {
+          status = "processed";
+        } else {
+          status = "failed";
+          handlerError = `refund[${result.action}]: ${result.error}`;
+        }
         break;
       }
-      case "subscription": {
-        // Covers subscription_started, subscription_updated,
-        // subscription_restarted, subscription_ended depending on
-        // payload.subscription state. Update user_subscriptions.
-        status = "ignored";
+      case "subscription":
+      case "subscription_updated":
+      case "subscription_restarted":
+      case "subscription_ended": {
+        // Post-first-charge lifecycle. Keeps user_subscriptions in sync:
+        // renew/restart → active + extend period; ended → downgrade to core.
+        const result = await handleSubscriptionEvent(eventType, payload, admin);
+        if (result.ok) {
+          status = "processed";
+        } else {
+          status = "failed";
+          handlerError = `subscription[${result.action}]: ${result.error}`;
+        }
         break;
       }
       case "cancellation": {
-        // Set subscription_active_until to current period end; do
-        // NOT immediately revoke (let user finish their cycle).
-        status = "ignored";
+        // Buyer cancelled auto-renew — keep their tier until the paid period
+        // ends (a later subscription_ended revokes). Do NOT revoke now.
+        const result = await handleSubscriptionCancellation(payload, admin);
+        if (result.ok) {
+          status = "processed";
+        } else {
+          status = "failed";
+          handlerError = `cancellation[${result.action}]: ${result.error}`;
+        }
         break;
       }
       default: {

@@ -36,6 +36,15 @@ export type GumroadSalePayload = {
   gumroad_fee?: string | number;
   currency?: string;
   custom_fields?: Record<string, string>;
+  // Query params echoed from the tracked checkout URL — carry the buyer's
+  // chosen membership tier / billing mode / program slug.
+  url_params?: Record<string, string>;
+  // Present when the sale is the first charge of a recurring subscription.
+  subscription_id?: string;
+  // Gumroad billing cadence: "monthly" | "yearly" | "quarterly" | etc.
+  recurrence?: string;
+  // ISO timestamp of the sale (used as the subscription period start).
+  sale_timestamp?: string;
   test?: boolean;
 };
 
@@ -47,6 +56,172 @@ function asCents(value: string | number | undefined): number {
   if (value === undefined || value === null) return 0;
   const n = typeof value === "string" ? Number.parseInt(value, 10) : Math.round(value);
   return Number.isFinite(n) ? n : 0;
+}
+
+// Paid membership tiers a Gumroad subscription can grant. 'core' is the
+// free/default tier and is never granted by a purchase.
+export type PaidTier = "pro" | "apex";
+export type BillingMode = "monthly" | "annual";
+
+/**
+ * Resolve the paid membership tier + billing cadence for a subscription sale.
+ *
+ * Source of truth is the checkout URL params the membership page stamps
+ * (`tjfit_tier` / `tjfit_billing_mode` — see membership-pricing.tsx). The sale
+ * itself is already re-verified against the Gumroad API by the route, so these
+ * buyer-selected params only decide WHICH plan the (real, paid) sale unlocks.
+ *
+ * Returns null when no valid paid tier can be determined — the caller must
+ * then fail loudly rather than silently grant the wrong (or free) tier.
+ */
+export function resolveSubscriptionPlan(
+  payload: Pick<GumroadSalePayload, "url_params" | "custom_fields" | "recurrence">
+): { tier: PaidTier; billingMode: BillingMode } | null {
+  const bag = { ...(payload.custom_fields ?? {}), ...(payload.url_params ?? {}) };
+  const rawTier = String(bag.tjfit_tier ?? "").trim().toLowerCase();
+  const tier: PaidTier | null = rawTier === "pro" || rawTier === "apex" ? rawTier : null;
+  if (!tier) return null;
+
+  const rawMode = String(bag.tjfit_billing_mode ?? "").trim().toLowerCase();
+  // Prefer the explicit checkout mode; fall back to the Gumroad recurrence so a
+  // direct-storefront subscription (no url_params mode) still resolves a period.
+  const recurrence = String(payload.recurrence ?? "").trim().toLowerCase();
+  const billingMode: BillingMode =
+    rawMode === "annual" || rawMode === "yearly"
+      ? "annual"
+      : rawMode === "monthly"
+        ? "monthly"
+        : recurrence === "yearly" || recurrence === "annual"
+          ? "annual"
+          : "monthly";
+
+  return { tier, billingMode };
+}
+
+/**
+ * Compute the subscription period end from its start. Prefers the authoritative
+ * Gumroad `recurrence` (what the buyer was actually charged for) over the
+ * checkout billing mode. Yearly/annual → +1 year; everything else → +1 month.
+ */
+export function computeSubscriptionPeriodEnd(
+  startISO: string,
+  opts: { recurrence?: string; billingMode?: BillingMode }
+): string {
+  const start = new Date(startISO);
+  const base = Number.isFinite(start.getTime()) ? start : new Date();
+  const recurrence = String(opts.recurrence ?? "").trim().toLowerCase();
+  const isYearly =
+    recurrence === "yearly" ||
+    recurrence === "annual" ||
+    (!recurrence && opts.billingMode === "annual");
+  const end = new Date(base);
+  if (isYearly) {
+    end.setFullYear(end.getFullYear() + 1);
+  } else {
+    end.setMonth(end.getMonth() + 1);
+  }
+  return end.toISOString();
+}
+
+/**
+ * Upsert the entitlement row that gates the paid TJAI tiers. Keyed on the
+ * unique (user_id) index so Gumroad redelivery is idempotent. All premium
+ * endpoints read `user_subscriptions.tier` directly, so `tier` is the field
+ * that actually grants/revokes access; `status` + period are bookkeeping.
+ */
+export async function upsertUserSubscription(
+  admin: SupabaseClient,
+  input: {
+    userId: string;
+    tier: "core" | "pro" | "apex";
+    status: "active" | "cancelled" | "paused";
+    periodStart?: string | null;
+    periodEnd?: string | null;
+    gumroadSubscriptionId?: string | null;
+  }
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const row: Record<string, unknown> = {
+    user_id: input.userId,
+    tier: input.tier,
+    status: input.status,
+    updated_at: new Date().toISOString()
+  };
+  if (input.periodStart !== undefined) row.current_period_start = input.periodStart;
+  if (input.periodEnd !== undefined) row.current_period_end = input.periodEnd;
+  if (input.gumroadSubscriptionId !== undefined) {
+    row.gumroad_subscription_id = input.gumroadSubscriptionId;
+  }
+
+  const { error } = await admin
+    .from("user_subscriptions")
+    .upsert(row, { onConflict: "user_id" });
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
+/**
+ * Resolve the entitlement slug for a direct program/diet sale. Priority:
+ *   1. tjfit_program_slug from the tracked checkout URL params / custom fields
+ *      (buildGumroadTrackedUrl stamps this on every TJFit-initiated checkout).
+ *   2. programs.slug looked up by the synced product id (programs only).
+ * Returns null when neither is available (e.g. a diet bought straight from the
+ * Gumroad storefront — diets have no DB table yet).
+ */
+export async function resolveEntitlementSlug(
+  admin: SupabaseClient,
+  productType: "program" | "diet",
+  productId: string,
+  payload: Pick<GumroadSalePayload, "url_params" | "custom_fields">
+): Promise<string | null> {
+  const bag = { ...(payload.custom_fields ?? {}), ...(payload.url_params ?? {}) };
+  const stamped = String(bag.tjfit_program_slug ?? "").trim();
+  if (stamped) return stamped;
+
+  if (productType === "program") {
+    const { data } = await admin
+      .from("programs")
+      .select("slug")
+      .eq("id", productId)
+      .maybeSingle();
+    const slug = (data?.slug as string | undefined)?.trim();
+    if (slug) return slug;
+  }
+  return null;
+}
+
+/**
+ * Grant a real program/diet entitlement by writing a paid program_orders row
+ * (the same row hasPurchasedProgram gates on). Idempotent via the unique
+ * provider_order_id = Gumroad sale id, so redelivery is a no-op.
+ */
+export async function grantProgramEntitlement(
+  admin: SupabaseClient,
+  input: {
+    userId: string;
+    programSlug: string;
+    saleId: string;
+    currency?: string;
+    locale?: string;
+  }
+): Promise<{ ok: true; deduped?: boolean } | { ok: false; error: string }> {
+  const { error } = await admin.from("program_orders").insert({
+    user_id: input.userId,
+    program_slug: input.programSlug,
+    amount_try: 0,
+    final_amount_try: 0,
+    currency: input.currency ?? "USD",
+    locale: input.locale ?? "en",
+    provider: "gumroad",
+    provider_order_id: input.saleId,
+    status: "paid",
+    paid_at: new Date().toISOString()
+  });
+  if (error) {
+    // 23505 = unique violation on provider_order_id → already fulfilled.
+    if (error.code === "23505") return { ok: true, deduped: true };
+    return { ok: false, error: error.message };
+  }
+  return { ok: true };
 }
 
 export async function findOrCreateUserByEmail(
@@ -186,6 +361,40 @@ export async function handleSale(
 
     case "program":
     case "diet": {
+      // 3a. Grant the REAL entitlement first — this is what actually unlocks
+      // the product for the buyer (hasPurchasedProgram gates on a paid
+      // program_orders row). The sale_commissions row written below is only
+      // the payout audit trail, not an access grant.
+      const entitlementSlug = await resolveEntitlementSlug(
+        admin,
+        syncRow.product_type as "program" | "diet",
+        syncRow.product_id as string,
+        payload
+      );
+      let entitlementGranted = false;
+      let entitlementNote: string | null = null;
+      if (entitlementSlug) {
+        const grant = await grantProgramEntitlement(admin, {
+          userId,
+          programSlug: entitlementSlug,
+          saleId,
+          currency: payload.currency,
+          locale: payload.url_params?.tjfit_locale
+        });
+        if (!grant.ok) {
+          // A hard DB error here means the buyer paid but has no access — fail
+          // so Gumroad retries and the miss is visible in payment_webhooks.
+          return { ok: false, action: "grant_entitlement", error: grant.error };
+        }
+        entitlementGranted = true;
+      } else {
+        // No slug resolvable (e.g. a diet bought straight from the Gumroad
+        // storefront — diets have no DB table yet). Keep the commission audit
+        // and surface the gap rather than retrying a structurally-unfulfillable
+        // sale forever.
+        entitlementNote = "no_program_slug_resolved";
+      }
+
       // Look up coach (trainer_id on programs) — not all surfaces have
       // a coach attached. If no coach, log a 0/100 commission row to
       // preserve the audit trail.
@@ -251,7 +460,14 @@ export async function handleSale(
           return {
             ok: true,
             action: "log_sale_commission",
-            details: { user_id: userId, deduped: true, sale_id: saleId }
+            details: {
+              user_id: userId,
+              deduped: true,
+              sale_id: saleId,
+              entitlement_granted: entitlementGranted,
+              entitlement_slug: entitlementSlug,
+              entitlement_note: entitlementNote
+            }
           };
         }
         return { ok: false, action: "log_sale_commission", error: insErr.message };
@@ -266,17 +482,63 @@ export async function handleSale(
           coach_id: coachId,
           coach_amount_usd: coachUsd,
           tjfit_amount_usd: tjfitUsd,
-          applied_rule: appliedRule
+          applied_rule: appliedRule,
+          entitlement_granted: entitlementGranted,
+          entitlement_slug: entitlementSlug,
+          entitlement_note: entitlementNote
         }
       };
     }
 
-    case "subscription":
-      // Subscriptions are handled separately via subscription_started /
-      // _renewed / _cancelled / _failed events — not the sale event.
-      // If a subscription product fires a `sale` event (Gumroad does
-      // for the first charge), v5 round 3 will route that path.
-      return { ok: true, action: "subscription_first_charge_deferred" };
+    case "subscription": {
+      // First charge of a recurring membership. Gumroad fires a `sale` event
+      // for it (subsequent lifecycle changes arrive as subscription_* events,
+      // handled in handlers/subscription.ts). Grant the paid tier now so the
+      // 16+ premium endpoints (which read user_subscriptions.tier) unlock.
+      const plan = resolveSubscriptionPlan(payload);
+      if (!plan) {
+        // A real, paid subscription sale we can't map to pro/apex — do NOT
+        // silently grant nothing or the wrong tier. Fail so it's visible.
+        return {
+          ok: false,
+          action: "grant_subscription",
+          error: "could not resolve paid tier from tjfit_tier url_param"
+        };
+      }
+
+      const periodStart = payload.sale_timestamp
+        ? new Date(payload.sale_timestamp).toISOString()
+        : new Date().toISOString();
+      const periodEnd = computeSubscriptionPeriodEnd(periodStart, {
+        recurrence: payload.recurrence,
+        billingMode: plan.billingMode
+      });
+
+      const upsert = await upsertUserSubscription(admin, {
+        userId,
+        tier: plan.tier,
+        status: "active",
+        periodStart,
+        periodEnd,
+        gumroadSubscriptionId: payload.subscription_id ?? null
+      });
+      if (!upsert.ok) {
+        return { ok: false, action: "grant_subscription", error: upsert.error };
+      }
+
+      return {
+        ok: true,
+        action: "grant_subscription",
+        details: {
+          user_id: userId,
+          new_user: userResolution.created,
+          tier: plan.tier,
+          billing_mode: plan.billingMode,
+          current_period_end: periodEnd,
+          gumroad_subscription_id: payload.subscription_id ?? null
+        }
+      };
+    }
 
     default:
       return { ok: false, action: "lookup_sync", error: `unsupported product_type: ${syncRow.product_type}` };

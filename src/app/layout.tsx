@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import { JetBrains_Mono, Manrope, Space_Grotesk } from "next/font/google";
+import localFont from "next/font/local";
 
 import { AuthProvider } from "@/components/auth-provider";
+import { SmoothScroll } from "@/components/smooth-scroll";
 import { TrackingScripts } from "@/components/marketing/tracking-scripts";
 import { BrandOrganizationJsonLd } from "@/components/brand-organization-json-ld";
 import { BRAND } from "@/lib/brand-assets";
@@ -9,33 +10,69 @@ import { getSiteUrl } from "@/lib/site-url";
 import { isTaskAvailable } from "@/lib/tjai/provider-policy";
 import "./globals.css";
 
-// Display font — Space Grotesk: futuristic geometric grotesque with a
-// technical edge; carries the premium/AI brand voice.
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "600", "700"],
+/* ---------------------------------------------------------------------------
+ * Typography — all self-hosted from src/fonts. No Google Fonts request: no
+ * third-party round trip on first paint, and no font CDN in the critical path
+ * of a page we're trying to sell from.
+ *
+ * Every Latin face below was verified against its actual binary (fontTools
+ * cmap inspection) for Turkish — ı İ ğ Ğ ş Ş — and French/Spanish accents,
+ * rather than trusting a "Latin Extended" subset label.
+ * ------------------------------------------------------------------------- */
+
+// Display — Bricolage Grotesque. Variable on three axes (opsz 12-96,
+// wght 200-800, wdth 75-100), which is where the character lives: headlines
+// can tighten and gain weight together instead of just scaling up.
+// Subset to Latin + Latin-Ext: 399 KB TTF -> 143 KB woff2.
+const display = localFont({
+  src: "../fonts/BricolageGrotesque-Variable.woff2",
+  weight: "200 800",
   display: "swap",
   variable: "--font-display",
-  preload: true
+  preload: true,
+  fallback: ["Segoe UI", "system-ui", "sans-serif"]
 });
 
-// Body font — Manrope: ultra-clean, engineered for screens
-const manrope = Manrope({
-  subsets: ["latin", "latin-ext"],
-  weight: ["300", "400", "500", "600", "700"],
+// Body — Switzer. Restrained neo-grotesque that recedes at 14-16px so it
+// doesn't argue with the display face.
+const sans = localFont({
+  src: [
+    { path: "../fonts/Switzer-400.woff2", weight: "400", style: "normal" },
+    { path: "../fonts/Switzer-500.woff2", weight: "500", style: "normal" },
+    { path: "../fonts/Switzer-600.woff2", weight: "600", style: "normal" },
+    { path: "../fonts/Switzer-700.woff2", weight: "700", style: "normal" }
+  ],
   display: "swap",
   variable: "--font-sans",
-  preload: true
+  preload: true,
+  fallback: ["Segoe UI", "system-ui", "sans-serif"]
 });
 
-// Technical mono — JetBrains Mono: numerals, eyebrows, set/rep notation.
-// Used on bundle pages to give programs a lab-instrument feel.
-const jetbrains = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
+// Technical mono — JetBrains Mono variable. Numerals, eyebrows, set/rep
+// notation; gives programs a lab-instrument feel.
+const mono = localFont({
+  src: "../fonts/JetBrainsMono-Variable.woff2",
+  weight: "100 800",
   display: "swap",
   variable: "--font-mono",
-  preload: true
+  preload: false,
+  fallback: ["ui-monospace", "SFMono-Regular", "monospace"]
+});
+
+// Arabic — IBM Plex Sans Arabic. NOT preloaded and NOT in the global fallback
+// chain: its Latin is missing İ, ğ, Ğ, ş and Ş (verified in the binary), so a
+// Turkish page falling through to it would lose glyphs. It is applied only
+// under :root[lang="ar"] in globals.css.
+const arabic = localFont({
+  src: [
+    { path: "../fonts/IBMPlexSansArabic-Regular.woff2", weight: "400", style: "normal" },
+    { path: "../fonts/IBMPlexSansArabic-Medium.woff2", weight: "500", style: "normal" },
+    { path: "../fonts/IBMPlexSansArabic-SemiBold.woff2", weight: "600", style: "normal" },
+    { path: "../fonts/IBMPlexSansArabic-Bold.woff2", weight: "700", style: "normal" }
+  ],
+  display: "swap",
+  variable: "--font-arabic",
+  preload: false
 });
 
 let siteUrl: string;
@@ -109,10 +146,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${manrope.variable} ${spaceGrotesk.variable} ${jetbrains.variable}`}>
+    <html
+      lang="en"
+      className={`${sans.variable} ${display.variable} ${mono.variable} ${arabic.variable}`}
+    >
       <body className="tj-grain font-sans antialiased">
         <BrandOrganizationJsonLd />
         <TrackingScripts />
+        <SmoothScroll />
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

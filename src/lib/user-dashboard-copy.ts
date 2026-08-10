@@ -16,17 +16,17 @@ const copy = {
     retry: "Retry"
   },
   tr: {
-    emptyHeading: "Henuz bir programa baslamadin",
-    emptySub: "Ilk programini ucretsiz al — kredi karti gerekmez.",
-    emptyCta: "Ucretsiz programlara goz at",
-    activeProgram: "Programin",
+    emptyHeading: "Henüz bir programa başlamadın",
+    emptySub: "İlk programını ücretsiz al — kredi kartı gerekmez.",
+    emptyCta: "Ücretsiz programlara göz at",
+    activeProgram: "Programın",
     recentActivity: "Son aktivite",
-    progressLink: "Ilerleme gunlugunu ac",
-    quietComplete: "Ilerlemeni takip etmek icin ilk programini tamamla.",
+    progressLink: "İlerleme günlüğünü aç",
+    quietComplete: "İlerlemeni takip etmek için ilk programını tamamla.",
     statsPrograms: "Programlar",
-    statsEntries: "Kayitlar",
-    statsMilestones: "Kilometre taslari",
-    loadError: "Panel yuklenemedi. Tekrar dene.",
+    statsEntries: "Kayıtlar",
+    statsMilestones: "Kilometre taşları",
+    loadError: "Panel yüklenemedi. Tekrar dene.",
     retry: "Yeniden dene"
   },
   ar: {

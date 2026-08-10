@@ -26,7 +26,8 @@ export type TjaiEventName =
   | "suggestion_rejected"
   | "coach_review_requested"
   | "support_refund_routed"
-  | "locale_failure_flagged";
+  | "locale_failure_flagged"
+  | "quiz_step_reached";
 
 export type TjaiEventScalar = string | number | boolean | null;
 

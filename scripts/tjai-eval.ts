@@ -114,7 +114,19 @@ function estimateTokens(text: string): number {
 
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
-  const dryRun = args.includes("--dry-run") || !process.env.OPENAI_API_KEY;
+  // Live scoring works with EITHER a legacy OpenAI key OR the open-LLM
+  // gateway (TJAI_LLM_PRESET=ollama / groq / ... — see llm-gateway.ts).
+  // llmCall already prefers the gateway when it is configured; this gate
+  // previously demanded OPENAI_API_KEY specifically, which made the eval
+  // impossible to run on the open-source stack it is meant to validate.
+  const { resolveOpenLLMConfig } = await import("../src/lib/tjai/llm-gateway");
+  const openGateway = resolveOpenLLMConfig();
+  const hasProvider = Boolean(process.env.OPENAI_API_KEY) || openGateway !== null;
+  const dryRun = args.includes("--dry-run") || !hasProvider;
+  if (openGateway && !args.includes("--dry-run")) {
+    // eslint-disable-next-line no-console
+    console.log(`Provider: open gateway (${openGateway.presetName}) — chat model: ${openGateway.models.chat}`);
+  }
 
   const file = loadCases();
   // eslint-disable-next-line no-console
@@ -132,9 +144,11 @@ async function main(): Promise<void> {
     console.log(
       `\nDry run. Would call model ${file.cases.length}x with ~${totalTokens} input tokens total.`
     );
-    if (!process.env.OPENAI_API_KEY) {
+    if (!hasProvider) {
       // eslint-disable-next-line no-console
-      console.log("Set OPENAI_API_KEY and re-run without --dry-run for live scoring.");
+      console.log(
+        "Set OPENAI_API_KEY, or TJAI_LLM_PRESET=ollama (with Ollama running), and re-run without --dry-run for live scoring."
+      );
     }
     return;
   }

@@ -37,16 +37,16 @@ const COPY: Record<Locale, Copy> = {
     empty: "No coaches yet."
   },
   tr: {
-    title: "Koc yetkilendirme",
-    subtitle: "Koc hesabi olusturmak icin e-posta ve sifre girin. Ardindan koc paneline giris yapabilirler.",
-    emailPlaceholder: "Koc e-postasi",
-    passwordPlaceholder: "Sifre (en az 6 karakter)",
-    authorizeCta: "Koc olarak yetkilendir",
+    title: "Koç yetkilendirme",
+    subtitle: "Koç hesabı oluşturmak için e-posta ve şifre girin. Ardından koç paneline giriş yapabilirler.",
+    emailPlaceholder: "Koç e-postası",
+    passwordPlaceholder: "Şifre (en az 6 karakter)",
+    authorizeCta: "Koç olarak yetkilendir",
     authorizing: "Yetkilendiriliyor...",
-    authorizedSuccess: "Koc yetkilendirildi. Artik bu e-posta ve sifre ile giris yapabilir.",
-    genericError: "Bir seyler ters gitti",
+    authorizedSuccess: "Koç yetkilendirildi. Artık bu e-posta ve şifre ile giriş yapabilir.",
+    genericError: "Bir şeyler ters gitti",
     listTitle: "Yetkili koçlar",
-    empty: "Henuz koc yok."
+    empty: "Henüz koç yok."
   },
   ar: {
     title: "????? ??????",
