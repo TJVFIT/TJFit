@@ -23,7 +23,7 @@ import { BundleCta } from "@/components/bundles/bundle-cta";
 import { BundleFigurePair } from "@/components/bundles/bundle-figures";
 import { BUNDLES, getBundle, listBundleSlugs } from "@/lib/bundles";
 import { bundleInsideStats } from "@/lib/bundle-insights";
-import { bundleFaqJsonLd, bundleProductJsonLd } from "@/lib/bundle-jsonld";
+import { bundleBreadcrumbJsonLd, bundleFaqJsonLd, bundleProductJsonLd } from "@/lib/bundle-jsonld";
 import { getBundleExtrasCopy } from "@/lib/bundle-extras-copy";
 import { getBundlesCopy } from "@/lib/bundles-copy";
 import { localizeBundle } from "@/lib/bundle-localization";
@@ -146,6 +146,10 @@ export default async function BundleDetailPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(bundleProductJsonLd(bundle, locale)) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(bundleBreadcrumbJsonLd(bundle, locale)) }}
       />
       {faqJsonLd ? (
         <script

@@ -7,6 +7,7 @@
  */
 
 import { BUNDLES, type Bundle } from "@/lib/bundles";
+import { localizeBundle } from "@/lib/bundle-localization";
 import { getSiteUrl } from "@/lib/site-url";
 
 export type ProductJsonLd = {
@@ -34,6 +35,17 @@ export type FaqPageJsonLd = {
     "@type": "Question";
     name: string;
     acceptedAnswer: { "@type": "Answer"; text: string };
+  }>;
+};
+
+export type BreadcrumbListJsonLd = {
+  "@context": "https://schema.org";
+  "@type": "BreadcrumbList";
+  itemListElement: Array<{
+    "@type": "ListItem";
+    position: number;
+    name: string;
+    item: string;
   }>;
 };
 
@@ -68,9 +80,42 @@ export function bundleProductJsonLd(bundle: Bundle, locale: string): ProductJson
       "@type": "Offer",
       url,
       priceCurrency: "USD",
-      price: "0.00",
+      price: bundle.priceUsd.toFixed(2),
       availability: "https://schema.org/InStock"
     }
+  };
+}
+
+/**
+ * Crumb labels for the two static levels of the bundle breadcrumb trail.
+ * "home" mirrors dictionaries.nav.home; "bundles" mirrors the top bar's
+ * TRAIN_LABELS so search-result crumbs match the visible navigation.
+ */
+const BREADCRUMB_LABELS: Record<string, { home: string; bundles: string }> = {
+  en: { home: "Home", bundles: "Bundles" },
+  tr: { home: "Ana sayfa", bundles: "Paketler" },
+  ar: { home: "الرئيسية", bundles: "الحزم" },
+  es: { home: "Inicio", bundles: "Bundles" },
+  fr: { home: "Accueil", bundles: "Packs" }
+};
+
+/** Schema.org/BreadcrumbList blob: home → bundles → this bundle. */
+export function bundleBreadcrumbJsonLd(bundle: Bundle, locale: string): BreadcrumbListJsonLd {
+  const site = getSiteUrl();
+  const labels = BREADCRUMB_LABELS[locale] ?? BREADCRUMB_LABELS.en;
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: labels.home, item: `${site}/${locale}` },
+      { "@type": "ListItem", position: 2, name: labels.bundles, item: `${site}/${locale}/bundles` },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: localizeBundle(bundle, locale).name,
+        item: `${site}/${locale}/bundles/${bundle.slug}`
+      }
+    ]
   };
 }
 
