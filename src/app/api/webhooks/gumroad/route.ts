@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 
 import { checkGumroadWebhookFreshness, verifyGumroadSeller } from "@/lib/gumroad-webhook-verify";
@@ -121,6 +122,39 @@ async function resolveBundleSlug(
   return null;
 }
 
+// WP-SEC-10 / WP-INFRA-11 — Sentry observability for money-affecting webhook
+// failures. This endpoint has no HTTP-level error path Vercel would surface
+// on its own (every branch returns 200 with `{ status: "failed" }` recorded
+// only in `payment_webhooks`), so without this a fulfillment miss, a
+// forgery-rejected sale, or a failed subscription upsert is invisible until
+// someone thinks to query the table. Distinct `gumroad_action` tags per
+// branch let a dashboard alert (see docs/runbooks/sentry-alerts.md) fire on
+// `surface:gumroad-webhook` without losing which code path failed.
+function reportGumroadFailure(input: {
+  eventType: string;
+  eventId: string;
+  action: string;
+  message: string;
+  err?: unknown;
+}): void {
+  Sentry.withScope((scope) => {
+    scope.setTag("surface", "gumroad-webhook");
+    scope.setTag("event_type", input.eventType);
+    scope.setTag("gumroad_action", input.action);
+    scope.setContext("gumroad_webhook", {
+      event_id: input.eventId,
+      event_type: input.eventType,
+      action: input.action,
+      message: input.message
+    });
+    if (input.err instanceof Error) {
+      Sentry.captureException(input.err);
+    } else {
+      Sentry.captureMessage(input.message, "error");
+    }
+  });
+}
+
 function readEventId(body: GumroadEventBody, headers: Headers): string {
   // Gumroad doesn't always include a top-level event_id; build a
   // stable composite from sale_id / subscription_id + resource_name.
@@ -187,6 +221,12 @@ export async function POST(request: NextRequest) {
   const admin = getSupabaseServerClient();
   if (!admin) {
     console.error("[gumroad webhook] supabase admin client missing");
+    reportGumroadFailure({
+      eventType,
+      eventId,
+      action: "admin_client_missing",
+      message: "[gumroad webhook] supabase admin client missing"
+    });
     return NextResponse.json({ error: "Server not configured" }, { status: 500 });
   }
 
@@ -213,6 +253,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ received: true, deduped: true });
     }
     console.error("[gumroad webhook] failed to log webhook", insertError);
+    reportGumroadFailure({
+      eventType,
+      eventId,
+      action: "webhook_log_insert_failed",
+      message: `[gumroad webhook] failed to log webhook: ${insertError.message}`
+    });
     return NextResponse.json({ received: true, logError: insertError.message });
   }
 
@@ -230,6 +276,7 @@ export async function POST(request: NextRequest) {
         if (!saleId) {
           status = "failed";
           handlerError = "sale event without sale_id";
+          reportGumroadFailure({ eventType, eventId, action: "sale_missing_sale_id", message: handlerError });
           break;
         }
 
@@ -239,12 +286,20 @@ export async function POST(request: NextRequest) {
         } catch (err) {
           status = "failed";
           handlerError = `gumroad_api_verify: ${err instanceof Error ? err.message : String(err)}`;
+          reportGumroadFailure({
+            eventType,
+            eventId,
+            action: "sale_api_reverify_failed",
+            message: handlerError,
+            err
+          });
           break;
         }
 
         if (!confirmed) {
           status = "failed";
           handlerError = `sale ${saleId} not found in Gumroad — possible forgery, not fulfilled`;
+          reportGumroadFailure({ eventType, eventId, action: "sale_not_found_in_gumroad", message: handlerError });
           break;
         }
         if (confirmed.refunded) {
@@ -280,6 +335,7 @@ export async function POST(request: NextRequest) {
             if (bundleSlug && order.program_slug !== bundleSlug) {
               status = "failed";
               handlerError = `order_product_mismatch: order ${orderId} is ${order.program_slug} but sale is ${bundleSlug}`;
+              reportGumroadFailure({ eventType, eventId, action: "order_product_mismatch", message: handlerError });
               break;
             }
             const fulfilled = await fulfillProgramOrderPaid(admin, orderId, { requireLiveOrder: true });
@@ -288,6 +344,7 @@ export async function POST(request: NextRequest) {
             } else {
               status = "failed";
               handlerError = `fulfill_order[${orderId}]: ${fulfilled.error}`;
+              reportGumroadFailure({ eventType, eventId, action: "fulfill_order_failed", message: handlerError });
             }
             break;
           }
@@ -304,12 +361,14 @@ export async function POST(request: NextRequest) {
           if (!buyerEmail) {
             status = "failed";
             handlerError = "direct_purchase: confirmed sale has no email";
+            reportGumroadFailure({ eventType, eventId, action: "direct_purchase_no_email", message: handlerError });
             break;
           }
           const resolved = await findOrCreateUserByEmail(admin, buyerEmail, confirmed.full_name);
           if ("error" in resolved) {
             status = "failed";
             handlerError = `direct_purchase_user: ${resolved.error}`;
+            reportGumroadFailure({ eventType, eventId, action: "direct_purchase_user_resolve_failed", message: handlerError });
             break;
           }
           const { error: insErr } = await admin.from("program_orders").insert({
@@ -331,6 +390,7 @@ export async function POST(request: NextRequest) {
             } else {
               status = "failed";
               handlerError = `direct_purchase_insert: ${insErr.message}`;
+              reportGumroadFailure({ eventType, eventId, action: "direct_purchase_insert_failed", message: handlerError });
             }
           } else {
             status = "processed";
@@ -367,6 +427,7 @@ export async function POST(request: NextRequest) {
         } else {
           status = "failed";
           handlerError = `sale[${result.action}]: ${result.error}`;
+          reportGumroadFailure({ eventType, eventId, action: `sale_handler_${result.action}`, message: handlerError });
         }
         break;
       }
@@ -379,6 +440,7 @@ export async function POST(request: NextRequest) {
         if (!saleId) {
           status = "failed";
           handlerError = `${eventType} event without sale_id`;
+          reportGumroadFailure({ eventType, eventId, action: "refund_missing_sale_id", message: handlerError });
           break;
         }
         let confirmed;
@@ -387,11 +449,19 @@ export async function POST(request: NextRequest) {
         } catch (err) {
           status = "failed";
           handlerError = `gumroad_api_verify: ${err instanceof Error ? err.message : String(err)}`;
+          reportGumroadFailure({
+            eventType,
+            eventId,
+            action: "refund_api_reverify_failed",
+            message: handlerError,
+            err
+          });
           break;
         }
         if (!confirmed) {
           status = "failed";
           handlerError = `sale ${saleId} not found in Gumroad — cannot verify refund`;
+          reportGumroadFailure({ eventType, eventId, action: "refund_sale_not_found", message: handlerError });
           break;
         }
         if (!confirmed.refunded && !confirmed.disputed) {
@@ -406,6 +476,7 @@ export async function POST(request: NextRequest) {
         } else {
           status = "failed";
           handlerError = `refund[${result.action}]: ${result.error}`;
+          reportGumroadFailure({ eventType, eventId, action: `refund_handler_${result.action}`, message: handlerError });
         }
         break;
       }
@@ -421,6 +492,12 @@ export async function POST(request: NextRequest) {
         } else {
           status = "failed";
           handlerError = `subscription[${result.action}]: ${result.error}`;
+          reportGumroadFailure({
+            eventType,
+            eventId,
+            action: `subscription_upsert_${result.action}`,
+            message: handlerError
+          });
         }
         break;
       }
@@ -433,6 +510,12 @@ export async function POST(request: NextRequest) {
         } else {
           status = "failed";
           handlerError = `cancellation[${result.action}]: ${result.error}`;
+          reportGumroadFailure({
+            eventType,
+            eventId,
+            action: `subscription_cancellation_${result.action}`,
+            message: handlerError
+          });
         }
         break;
       }
@@ -445,6 +528,7 @@ export async function POST(request: NextRequest) {
     status = "failed";
     handlerError = err instanceof Error ? err.message : String(err);
     console.error("[gumroad webhook] handler error", { eventType, eventId, error: handlerError });
+    reportGumroadFailure({ eventType, eventId, action: "uncaught_handler_error", message: handlerError, err });
   }
 
   if (webhookRowId) {

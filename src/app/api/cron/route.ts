@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 
 import { settleEndedChallenges } from "@/lib/community-challenge-settle";
@@ -18,6 +19,15 @@ export async function GET(request: NextRequest) {
   const result = await settleEndedChallenges();
   if (!result.ok) {
     console.error("[cron] settleEndedChallenges failed", result.error);
+    // WP-SEC-10 / WP-INFRA-11 — this is a scheduled, unattended job: nobody
+    // is watching a request/response for it, so the log line above is
+    // otherwise invisible until challenge payouts are noticed missing.
+    Sentry.withScope((scope) => {
+      scope.setTag("surface", "cron");
+      scope.setTag("cron_job", "settle_ended_challenges");
+      scope.setContext("cron", { error: result.error });
+      Sentry.captureMessage(`[cron] settleEndedChallenges failed: ${result.error}`, "error");
+    });
     // Don't leak internal error text to the public endpoint even though it's
     // CRON_SECRET-gated — the log catches it for ops, the response stays opaque.
     return NextResponse.json({ error: "Cron task failed" }, { status: 500 });

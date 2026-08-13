@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 
 import { isAdminEmail } from "@/lib/auth-utils";
@@ -188,6 +189,25 @@ export async function POST(request: NextRequest) {
       });
       if (refundErr) {
         console.error("[TJAI generate] credit refund failed", refundErr);
+        // WP-SEC-10 / WP-INFRA-11 — the worst silent case on this route: the
+        // pipeline already failed to deliver a plan AND the automatic credit
+        // refund meant to make the buyer whole also failed, so they paid and
+        // got nothing with no compensating write. Capture with enough
+        // context (user + original failure reason) to hand-refund from the
+        // Sentry event alone.
+        Sentry.withScope((scope) => {
+          scope.setTag("surface", "tjai-generate");
+          scope.setTag("gumroad_action", "credit_refund_failed");
+          scope.setContext("tjai_refund", {
+            user_id: userIdForRefund,
+            failure_reason: failureReason,
+            refund_error: refundErr.message
+          });
+          Sentry.captureMessage(
+            `[TJAI generate] credit refund failed for user ${userIdForRefund}: ${refundErr.message}`,
+            "fatal"
+          );
+        });
       }
     }
   }
