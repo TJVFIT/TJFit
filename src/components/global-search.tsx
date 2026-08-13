@@ -8,14 +8,13 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { searchNormalize } from "@/lib/turkish-chars";
 
 type GroupedResults = {
-  programs: Array<{ id: string; title: string; href: string }>;
-  diets: Array<{ id: string; title: string; href: string }>;
+  bundles: Array<{ id: string; title: string; href: string }>;
   coaches: Array<{ id: string; title: string; href: string }>;
   blog: Array<{ id: string; title: string; href: string }>;
   users: Array<{ id: string; title: string; href: string }>;
 };
 
-const EMPTY: GroupedResults = { programs: [], diets: [], coaches: [], blog: [], users: [] };
+const EMPTY: GroupedResults = { bundles: [], coaches: [], blog: [], users: [] };
 
 export function GlobalSearch({ locale, collapsed, onExpand }: { locale: string; collapsed: boolean; onExpand?: () => void }) {
   const [query, setQuery] = useState("");
@@ -54,8 +53,7 @@ export function GlobalSearch({ locale, collapsed, onExpand }: { locale: string; 
   }
 
   const groups: Array<[string, Array<{ id: string; title: string; href: string }>]> = [
-    ["Programs", results.programs],
-    ["Diets", results.diets],
+    ["Bundles", results.bundles],
     ["Coaches", results.coaches],
     ["Blog", results.blog],
     ["Members", results.users]

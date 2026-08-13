@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { BUNDLES } from "@/lib/bundles";
 import { rateLimit } from "@/lib/rate-limit";
+import { searchBundles } from "@/lib/search-bundles";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { searchNormalize } from "@/lib/turkish-chars";
 
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
   const qRaw = (request.nextUrl.searchParams.get("q") ?? "").slice(0, QUERY_MAX);
   const q = searchNormalize(qRaw);
   if (q.length < 2) {
-    return NextResponse.json({ results: { programs: [], diets: [], coaches: [], blog: [], users: [] } });
+    return NextResponse.json({ results: { bundles: [], coaches: [], blog: [], users: [] } });
   }
 
   // Anonymous endpoint that hits multiple tables per call. Without a rate
@@ -37,15 +37,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Too many requests." }, { status: 429 });
   }
 
-  const bundleHits = BUNDLES.filter((b) =>
-    searchNormalize(`${b.name} ${b.hook} ${b.goalLabel} ${b.programTitle} ${b.dietTitle}`).includes(q)
-  )
-    .slice(0, 6)
-    .map((b) => ({ id: b.slug, title: b.name, href: `/bundles/${b.slug}` }));
+  const bundleHits = searchBundles(q);
 
   if (!admin) {
     return NextResponse.json({
-      results: { programs: bundleHits.slice(0, 3), diets: [], coaches: [], blog: [], users: [] }
+      results: { bundles: bundleHits.slice(0, 3), coaches: [], blog: [], users: [] }
     });
   }
 
@@ -77,8 +73,7 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.json({
     results: {
-      programs: bundleHits.slice(0, 3),
-      diets: [],
+      bundles: bundleHits.slice(0, 3),
       coaches: (coaches ?? [])
         .slice(0, 3)
         .map((row) => ({ id: row.id, title: row.display_name || `@${row.username}`, href: `/coaches/${row.username}` })),

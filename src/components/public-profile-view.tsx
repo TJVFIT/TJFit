@@ -49,6 +49,7 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
   const [loading, setLoading] = useState(true);
   const [showList, setShowList] = useState<null | "followers" | "following">(null);
   const [listItems, setListItems] = useState<Array<{ id: string; username: string; display_name: string; avatar_url: string | null }>>([]);
+  const [listLoading, setListLoading] = useState(false);
 
   useEffect(() => {
     const run = async () => {
@@ -142,11 +143,17 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
 
   const openList = async (kind: "followers" | "following") => {
     setShowList(kind);
-    const res = await fetch(`/api/follow/${kind}?user_id=${encodeURIComponent(profile.id)}&page=1`, {
-      credentials: "include"
-    });
-    const data = await res.json().catch(() => ({}));
-    setListItems((data.items ?? []) as Array<{ id: string; username: string; display_name: string; avatar_url: string | null }>);
+    setListItems([]);
+    setListLoading(true);
+    try {
+      const res = await fetch(`/api/follow/${kind}?user_id=${encodeURIComponent(profile.id)}&page=1`, {
+        credentials: "include"
+      });
+      const data = await res.json().catch(() => ({}));
+      setListItems((data.items ?? []) as Array<{ id: string; username: string; display_name: string; avatar_url: string | null }>);
+    } finally {
+      setListLoading(false);
+    }
   };
 
   return (
@@ -292,17 +299,27 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
                 </button>
               </div>
               <div className="mt-3 space-y-2">
-                {listItems.map((item) => (
-                  <Link
-                    key={item.id}
-                    href={`/${locale}/profile/${encodeURIComponent(item.username)}`}
-                    className="block rounded-lg border border-white/10 bg-surface-2 p-3 text-sm text-white"
-                  >
-                    {item.display_name || item.username}
-                    <span className="ml-1 text-faint">@{item.username}</span>
-                  </Link>
-                ))}
-                {listItems.length === 0 ? <EmptyState icon={Users} subtext="No users" /> : null}
+                {listLoading ? (
+                  <>
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="tj-skeleton tj-shimmer h-[52px] rounded-lg" />
+                    ))}
+                  </>
+                ) : (
+                  <>
+                    {listItems.map((item) => (
+                      <Link
+                        key={item.id}
+                        href={`/${locale}/profile/${encodeURIComponent(item.username)}`}
+                        className="block rounded-lg border border-white/10 bg-surface-2 p-3 text-sm text-white"
+                      >
+                        {item.display_name || item.username}
+                        <span className="ml-1 text-faint">@{item.username}</span>
+                      </Link>
+                    ))}
+                    {listItems.length === 0 ? <EmptyState icon={Users} subtext="No users" /> : null}
+                  </>
+                )}
               </div>
             </div>
           </div>

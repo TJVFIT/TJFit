@@ -7,9 +7,9 @@ import { useEffect, useState } from "react";
 import { AmbientOrbs } from "@/components/effects/ambient-orbs";
 
 type Group = Array<{ id: string; title: string; href: string }>;
-type SearchResults = { programs: Group; diets: Group; coaches: Group; blog: Group; users: Group };
+type SearchResults = { bundles: Group; coaches: Group; blog: Group; users: Group };
 
-const EMPTY: SearchResults = { programs: [], diets: [], coaches: [], blog: [], users: [] };
+const EMPTY: SearchResults = { bundles: [], coaches: [], blog: [], users: [] };
 
 export default function SearchPage({ params }: { params: { locale: string } }) {
   const searchParams = useSearchParams();
@@ -28,8 +28,7 @@ export default function SearchPage({ params }: { params: { locale: string } }) {
   }, [q]);
 
   const groups: Array<[string, Group]> = [
-    ["Programs", results.programs],
-    ["Diets", results.diets],
+    ["Bundles", results.bundles],
     ["Coaches", results.coaches],
     ["Blog", results.blog],
     ["Members", results.users]
