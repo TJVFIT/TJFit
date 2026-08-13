@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
     // Rate limit: 30 messages/min per user (auth.user.id is the natural key
     // since this route is auth-gated; fall back to IP if user id is absent).
     const limiter = await rateLimit({
-      key: `tjai-chat:${auth.user.id ?? request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? request.ip ?? "unknown"}`,
+      key: `tjai-chat:${auth.user.id ?? request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown"}`,
       limit: 30,
       windowMs: 60_000
     });

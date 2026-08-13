@@ -10,7 +10,6 @@ export async function POST(request: NextRequest) {
     const limiter = await rateLimit({
       key:
         request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-        request.ip ??
         "unknown",
       limit: 10,
       windowMs: 60_000
