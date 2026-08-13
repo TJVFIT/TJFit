@@ -16,6 +16,7 @@ export default function SettingsIndexPage({ params }: { params: { locale: string
           {[
             ["Profile Settings", `/${locale}/settings/profile`],
             ["Messaging Settings", `/${locale}/settings/messaging`],
+            ["Email Preferences", `/${locale}/settings/email`],
             ["Subscription", `/${locale}/settings/subscription`]
           ].map(([label, href]) => (
             <Link
