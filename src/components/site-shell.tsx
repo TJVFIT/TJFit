@@ -5,7 +5,6 @@ import { ReactNode, useState } from "react";
 import { GuestOnboardingPopup } from "@/components/guest-onboarding-popup";
 import { LogoIntro } from "@/components/logo-intro";
 import { MainErrorBoundary } from "@/components/main-error-boundary";
-import { PageTransition } from "@/components/page-transition";
 import { ScrollProgressBar } from "@/components/scroll-progress-bar";
 import { ScrollRevealInit } from "@/components/scroll-reveal-init";
 import { ShellFooterGate } from "@/components/shell-footer-gate";
@@ -48,7 +47,7 @@ export function SiteShell({
             <main
               className="relative z-[1] min-w-0 pt-14 sm:pt-16"
             >
-              <PageTransition>{children}</PageTransition>
+              {children}
             </main>
           </MainErrorBoundary>
 
