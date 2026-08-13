@@ -1,13 +1,22 @@
-import { headers } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { BlogViewBeacon } from "@/components/blog-view-beacon";
 import { PremiumPageShell } from "@/components/premium";
-import { rateLimit } from "@/lib/rate-limit";
 import { requireLocaleParam } from "@/lib/require-locale";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
-export const dynamic = "force-dynamic";
+// ISR (WP-INFRA-07): article content changes rarely; an hour of staleness is
+// fine for body, view count, and related posts. View counting itself moved to
+// the /api/blog/posts/[id]/view beacon so this page needs no per-request
+// headers() and can actually cache. See docs/runbooks/caching-policy.md.
+// The empty generateStaticParams is load-bearing: without it Next 14 keeps a
+// dynamic-param route in per-request SSR and never registers the ISR cache
+// (verified against .next/prerender-manifest.json).
+export const revalidate = 3600;
+export function generateStaticParams(): Array<{ slug: string }> {
+  return [];
+}
 
 type BlogPost = {
   id: string;
@@ -50,30 +59,9 @@ export default async function BlogDetailPage({ params }: { params: { locale: str
   if (!post) notFound();
   const postRow = post as BlogPost;
 
-  // View-increment side-effect — rate-limited per (IP, post) so a refresh
-  // loop can't inflate counts. The RPC returns the new count synchronously
-  // so the rendered page reflects this visit.
-  const ip =
-    headers().get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    headers().get("x-real-ip") ??
-    "unknown";
-  let views = Number(postRow.views ?? 0);
-  const viewLimiter = await rateLimit({
-    key: `blog-view:${ip}:${postRow.id}`,
-    limit: 30,
-    windowMs: 60_000
-  });
-  if (viewLimiter.success) {
-    const { data: rpcRows, error: rpcError } = await admin.rpc("increment_blog_view_count", {
-      p_id: postRow.id
-    });
-    if (rpcError) {
-      console.error("[blog/[slug]] view increment failed", rpcError.message);
-    } else {
-      const next = typeof rpcRows === "number" ? rpcRows : Number(rpcRows ?? 0);
-      if (Number.isFinite(next) && next > 0) views = next;
-    }
-  }
+  // Views render from the row (≤1h stale under ISR); the live increment
+  // happens client-side via BlogViewBeacon → /api/blog/posts/[id]/view.
+  const views = Number(postRow.views ?? 0);
 
   // Related posts — same category first, fall back to most recent.
   const { data: sameCategoryRaw } = await admin
@@ -103,6 +91,7 @@ export default async function BlogDetailPage({ params }: { params: { locale: str
 
   return (
     <PremiumPageShell>
+      <BlogViewBeacon postId={postRow.id} />
       <article className="rounded-2xl border border-divider bg-surface p-6">
         <p className="text-xs uppercase tracking-[0.14em] text-purple-300">{postRow.category ?? "General"}</p>
         <h1 className="mt-2 text-3xl font-extrabold text-white">
