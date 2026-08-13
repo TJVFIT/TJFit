@@ -17,6 +17,8 @@ type DynamicIslandContextType = {
   showNotification: (type: NotificationType, message?: string) => void;
 };
 
+import { computeIslandStack } from "@/components/ui/dynamic-island-stack";
+
 const DynamicIslandContext = createContext<DynamicIslandContextType | null>(null);
 
 // NOTE: English-only, matching existing precedent in this module — the
@@ -48,10 +50,9 @@ export function DynamicIslandProvider({ children }: { children: React.ReactNode 
   const value = useMemo(() => ({ showNotification }), [showNotification]);
 
   // Newest-first stack, capped at 3 visible bubbles; anything older collapses
-  // into the count badge instead of rendering.
-  const stack = queue.length > 3 ? queue.slice(queue.length - 3) : queue;
-  const visible = [...stack].reverse();
-  const overflow = queue.length - visible.length;
+  // into the count badge instead of rendering. Pure math lives in
+  // computeIslandStack so the queue behavior is unit-testable.
+  const { visible, overflow } = computeIslandStack(queue);
 
   return (
     <DynamicIslandContext.Provider value={value}>
