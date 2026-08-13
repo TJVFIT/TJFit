@@ -74,6 +74,8 @@ export async function GET() {
           .from("profiles")
           .select("id,username,display_name,avatar_url,current_streak,is_private")
           .neq("id", auth.user.id)
+          // Privacy: private accounts do not occupy streak-ranked slots.
+          .or("is_private.is.null,is_private.eq.false")
           .order("current_streak", { ascending: false })
           .limit(8)
       : Promise.resolve({ data: [] as ProfileLite[] })
@@ -117,10 +119,15 @@ export async function GET() {
     ...(topMap.get(row.user_id) ?? { id: row.user_id })
   }));
 
+  // Privacy mask (must-fix, second attempt — the first patch's replacement
+  // anchors silently missed and left maskPrivateStreak imported-but-unused):
+  // streaks of private accounts never leave this route, whichever query
+  // produced the row, and is_private itself is stripped from every payload.
+  type MaybePrivate = { current_streak?: number | null; is_private?: boolean | null };
   return NextResponse.json({
-    top_earners: top,
-    coaches: activeCoaches.data ?? [],
-    new_members: newMembers.data ?? [],
-    similar_goal: similarGoalUsers
+    top_earners: top.map((row) => maskPrivateStreak(row as MaybePrivate)),
+    coaches: (activeCoaches.data ?? []).map((row) => maskPrivateStreak(row as MaybePrivate)),
+    new_members: (newMembers.data ?? []).map((row) => maskPrivateStreak(row as MaybePrivate)),
+    similar_goal: similarGoalUsers.map((row) => maskPrivateStreak(row as ProfileLite & MaybePrivate))
   });
 }

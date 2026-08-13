@@ -63,6 +63,8 @@ export async function GET(request: NextRequest) {
     const { data: fallbackProfiles } = await adminClient
       .from("profiles")
       .select("id,username,full_name,avatar_url,is_verified,current_streak")
+      // Privacy: private accounts never rank on a public leaderboard.
+      .or("is_private.is.null,is_private.eq.false")
       .order("current_streak", { ascending: false })
       .limit(100);
     rows = (fallbackProfiles ?? []).map((row) => ({
@@ -77,9 +79,14 @@ export async function GET(request: NextRequest) {
   }
   const userIds = [...new Set(rows.map((r) => r.user_id))];
   const { data: profiles } = userIds.length
-    ? await adminClient.from("profiles").select("id,username,full_name,avatar_url,is_verified,current_streak").in("id", userIds)
+    ? await adminClient.from("profiles").select("id,username,full_name,avatar_url,is_verified,current_streak,is_private").in("id", userIds)
     : { data: [] as Array<Record<string, unknown>> };
   const profileById = new Map((profiles ?? []).map((p: any) => [p.id, p]));
+
+  // Privacy (2026-08-13 must-fix): this route is unauthenticated by design —
+  // private accounts are excluded from the ranking entirely BEFORE ranks are
+  // assigned (a masked-null row on a leaderboard would just be broken).
+  rows = rows.filter((row) => !(profileById.get(row.user_id) as { is_private?: boolean } | undefined)?.is_private);
 
   const items = rows.map((row, idx) => {
     const profile: any = profileById.get(row.user_id) ?? {};
