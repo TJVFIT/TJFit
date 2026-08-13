@@ -80,32 +80,32 @@ export const tjaiCopy: Record<Locale, TJAICopy> = {
     sections: SECTION_TITLES.en
   },
   tr: {
-    nav: { back: "Geri", continue: "Devam", generate: "Planimi Olustur", stepOf: "Adim", sectionOf: "Bolum" },
-    validation: { required: "Devam etmek icin bir cevap secin." },
+    nav: { back: "Geri", continue: "Devam", generate: "Planımı Oluştur", stepOf: "Adım", sectionOf: "Bölüm" },
+    validation: { required: "Devam etmek için bir cevap seçin." },
     quiz: {
-      title: "TJAI Degerlendirmesi",
-      subtitle: "Kisisel planinizi olusturmasi icin tum bolumleri yanitlayin.",
-      notAtAll: "Hic",
-      extremely: "Cok",
+      title: "TJAI Değerlendirmesi",
+      subtitle: "Kişisel planınızı oluşturması için tüm bölümleri yanıtlayın.",
+      notAtAll: "Hiç",
+      extremely: "Çok",
       chars: "karakter",
-      unitYears: "yas",
+      unitYears: "yaş",
       unitCm: "cm",
       unitKg: "kg",
       unitPct: "%",
       unitHrs: "saat"
     },
     calculating: {
-      title: "Planiniz olusturuluyor...",
+      title: "Planınız oluşturuluyor...",
       statuses: [
         "BMR ve TDEE hesaplanıyor...",
-        "Gunluk rutininiz analiz ediliyor...",
-        "12 haftalik diyet tasarlaniyor...",
-        "Antrenman programi olusturuluyor...",
-        "Ogunleriniz kisisellestiriliyor...",
-        "Makrolar hedefinize gore optimize ediliyor...",
+        "Günlük rutininiz analiz ediliyor...",
+        "12 haftalık diyet tasarlanıyor...",
+        "Antrenman programı oluşturuluyor...",
+        "Öğünleriniz kişiselleştiriliyor...",
+        "Makrolar hedefinize göre optimize ediliyor...",
         "Besin tercihleriniz ekleniyor...",
-        "Kalori periodizasyonu uygulaniyor...",
-        "Donusum plani son haline getiriliyor..."
+        "Kalori periodizasyonu uygulanıyor...",
+        "Dönüşüm planı son haline getiriliyor..."
       ],
       calorieTarget: "Kalori hedefiniz",
       proteinTarget: "Protein hedefiniz",
@@ -113,36 +113,36 @@ export const tjaiCopy: Record<Locale, TJAICopy> = {
     },
     result: {
       eyebrow: "TJAI PLANINIZ",
-      yourDiet: "12 Haftalik Diyetiniz",
-      yourProgram: "12 Haftalik Programiniz",
+      yourDiet: "12 Haftalık Diyetiniz",
+      yourProgram: "12 Haftalık Programınız",
       supplements: "Takviyeler",
       mindset: "Zihniyet",
       saveToDashboard: "Panele Kaydet",
-      startOver: "Bastan Basla",
+      startOver: "Baştan Başla",
       saving: "Kaydediliyor...",
       saved: "Plan panelinize kaydedildi.",
       saveError: "Plan kaydedilemedi.",
-      generatedAt: "Plan olusturma",
+      generatedAt: "Plan oluşturma",
       metrics: {
         calories: "Kalori",
         protein: "Protein",
-        fat: "Yag",
+        fat: "Yağ",
         carbs: "Karbonhidrat",
         water: "Su",
-        weekly: "Haftalik degisim",
-        timeToGoal: "Hedef suresi"
+        weekly: "Haftalık değişim",
+        timeToGoal: "Hedef süresi"
       },
-      labels: { warmup: "Isinma", cooldown: "Soguma", duration: "Sure" },
+      labels: { warmup: "Isınma", cooldown: "Soğuma", duration: "Süre" },
       mealPrep: {
-        title: "Pazar meal prep planiniz",
-        summaryPrefix: "Bir kez hazirlayin. Tum hafta uygulayin. Toplam sure:",
+        title: "Pazar meal prep planınız",
+        summaryPrefix: "Bir kez hazırlayın. Tüm hafta uygulayın. Toplam süre:",
         totalTimeFallback: "~120 dk",
-        equipmentPrefix: "Ihtiyaciniz olacak:"
+        equipmentPrefix: "İhtiyacınız olacak:"
       },
       alternatives: {
-        title: "Alternatif ogun secin",
-        subtitle: "Orijinal ogununuzle ayni kalori ve macros",
-        loading: "Alternatifler yukleniyor..."
+        title: "Alternatif öğün seçin",
+        subtitle: "Orijinal öğününüzle aynı kalori ve macros",
+        loading: "Alternatifler yükleniyor..."
       }
     },
     sections: SECTION_TITLES.tr
