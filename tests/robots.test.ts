@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll } from "vitest";
 
 import robots from "@/app/robots";
+import { MIDDLEWARE_GUARDS, ROBOTS_ONLY_DISALLOW } from "@/lib/route-guards";
 
 beforeAll(() => {
   process.env.NEXT_PUBLIC_SITE_URL = "https://tjfit.org";
@@ -22,30 +23,24 @@ describe("robots.txt", () => {
     expect(disallow).toContain("/api/");
   });
 
-  it("disallows every middleware-gated auth path", () => {
+  it("disallows every middleware-gated auth path (SSOT-enforced, cannot drift)", () => {
     const out = robots();
     const rule = Array.isArray(out.rules) ? out.rules[0] : out.rules!;
     const disallow = Array.isArray(rule.disallow) ? rule.disallow : [rule.disallow!];
 
-    // These match the matchHtmlGuard list in src/middleware.ts.
-    const required = [
-      "/*/admin",
-      "/*/coach-dashboard",
-      "/*/dashboard",
-      "/*/messages",
-      "/*/feed",
-      "/*/profile/edit",
-      "/*/settings",
-      "/*/checkout",
-      "/*/purchase",
-      "/*/payment",
-      "/*/progress",
-      "/*/verify-email",
-      "/*/forgot-password"
-    ];
-    for (const path of required) {
-      expect(disallow).toContain(path);
+    // Both middleware and robots consume src/lib/route-guards.ts. This test
+    // pins the guarantee: EVERY guard family the middleware protects (plus
+    // the page-level-only auth surfaces) must appear in the crawler
+    // disallow list. Adding a guard without robots coverage fails here.
+    for (const guard of MIDDLEWARE_GUARDS) {
+      expect(disallow).toContain(`/*${guard.prefix}`);
     }
+    for (const path of ROBOTS_ONLY_DISALLOW) {
+      expect(disallow).toContain(`/*${path}`);
+    }
+    // The two fixed regressions stay pinned explicitly:
+    expect(disallow).toContain("/*/blog/write");
+    expect(disallow).toContain("/*/ai");
   });
 
   it("disallows /coming-soon (launch gate landing)", () => {

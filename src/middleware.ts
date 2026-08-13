@@ -5,6 +5,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { isAdminEmail } from "@/lib/auth-utils";
 import { getCoachTermsVersion } from "@/lib/coach-terms-version";
 import { locales as ROUTING_LOCALES } from "@/lib/i18n";
+import { MIDDLEWARE_GUARDS, type GuardKind } from "@/lib/route-guards";
 import { URL_NOTICE } from "@/lib/url-notice";
 
 // Sourced from @/lib/i18n so adding a new routing locale doesn't silently
@@ -76,8 +77,6 @@ async function coachHasCurrentTerms(
   return data?.terms_version === expected;
 }
 
-type GuardKind = "admin" | "coach_area" | "auth_user" | "coach_terms";
-
 function matchHtmlGuard(pathname: string): { locale: string; kind: GuardKind } | null {
   if (pathname.startsWith("/api")) return null;
   const segments = pathname.split("/").filter(Boolean);
@@ -85,20 +84,13 @@ function matchHtmlGuard(pathname: string): { locale: string; kind: GuardKind } |
   const locale = segments[0];
   if (!LOCALES.has(locale)) return null;
   const sub = `/${segments.slice(1).join("/")}`;
-  if (sub === "/admin" || sub.startsWith("/admin/")) return { locale, kind: "admin" };
-  if (sub === "/coach/terms") return { locale, kind: "coach_terms" };
-  if (sub === "/coach-dashboard" || sub.startsWith("/coach-dashboard/")) return { locale, kind: "coach_area" };
-  if (sub === "/dashboard" || sub.startsWith("/dashboard/")) return { locale, kind: "auth_user" };
-  if (sub === "/messages" || sub.startsWith("/messages/")) return { locale, kind: "auth_user" };
-  if (sub === "/feed" || sub.startsWith("/feed/")) return { locale, kind: "auth_user" };
-  if (sub === "/blog/write" || sub.startsWith("/blog/write/")) return { locale, kind: "auth_user" };
-  if (sub === "/profile/edit" || sub.startsWith("/profile/edit/")) return { locale, kind: "auth_user" };
-  if (sub === "/settings/profile" || sub.startsWith("/settings/profile/")) return { locale, kind: "auth_user" };
-  if (sub === "/checkout" || sub.startsWith("/checkout/")) return { locale, kind: "auth_user" };
-  if (sub === "/purchase" || sub.startsWith("/purchase/")) return { locale, kind: "auth_user" };
-  if (sub === "/payment" || sub.startsWith("/payment/")) return { locale, kind: "auth_user" };
-  if (sub === "/progress" || sub.startsWith("/progress/")) return { locale, kind: "auth_user" };
-  if (sub === "/settings" || sub.startsWith("/settings/")) return { locale, kind: "auth_user" };
+  // Guard families come from the shared SSOT so robots.ts can never drift
+  // from what the middleware actually protects (WP-SEC-05).
+  for (const g of MIDDLEWARE_GUARDS) {
+    if (sub === g.prefix || (!g.exact && sub.startsWith(`${g.prefix}/`))) {
+      return { locale, kind: g.kind };
+    }
+  }
   return null;
 }
 
