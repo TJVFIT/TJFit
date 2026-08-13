@@ -11,38 +11,16 @@ type Testimonial = {
   tag: string;
 };
 
-const TESTIMONIALS: Testimonial[] = [
-  {
-    quote:
-      "I've tried dozens of fitness apps. TJAI built me a plan that actually fits my schedule and my kitchen. Lost 8kg in 12 weeks and I've kept it off.",
-    name: "Ahmed K.",
-    tag: "Lost 8kg · Fat Loss Program",
-  },
-  {
-    quote:
-      "The Turkish support is incredible. My coach responds in my language and actually understands my culture. I can train during Ramadan with a modified plan.",
-    name: "Meryem Y.",
-    tag: "Gym Muscle Builder · Istanbul",
-  },
-  {
-    quote:
-      "TJAI is the most accurate thing I've used. It calculated my macros, built my meal plan, and the results speak for themselves. Down 12kg, strongest I've ever been.",
-    name: "Omar S.",
-    tag: "Lost 12kg · Dubai",
-  },
-  {
-    quote:
-      "I'm 58 and had knee surgery. The rehab programs here are safe, progressive, and I actually look forward to training now. Something I never expected.",
-    name: "Patricia M.",
-    tag: "Rehabilitation Program · Madrid",
-  },
-  {
-    quote:
-      "I bought the home program skeptical it would work. 12 weeks later, my friends are asking me what gym I go to. I tell them I train in my living room with TJFit.",
-    name: "James L.",
-    tag: "Home Fat Burn · London",
-  },
-];
+// HONEST-EMPTY (2026-08-13, same pattern as the May content.ts honesty pass):
+// the previous five entries were fabricated — invented names, cities, and
+// specific outcome claims ("Lost 8kg") presented as real member quotes under
+// a "Real People. Real Results." heading. Fake testimonials are a legal
+// exposure (FTC and EU/TR equivalents), not just a truth problem.
+// The section renders nothing while this list is empty. Real entries come
+// from actual members (program_completions / user_transformations are the
+// intended sources — Wave 2, WP-SOCIAL-03) with written consent, and go
+// through the owner before shipping.
+const TESTIMONIALS: Testimonial[] = [];
 
 const COPY: Record<Locale, { label: string; title: string; sub: string; disclaimer: string }> = {
   en: {
@@ -82,7 +60,7 @@ export function HomeTestimonials({ locale }: { locale: Locale }) {
   const [activeIdx, setActiveIdx] = useState(0);
   const [paused, setPaused] = useState(false);
   const total = TESTIMONIALS.length;
-  const active = TESTIMONIALS[activeIdx]!;
+  const active = total > 0 ? TESTIMONIALS[activeIdx % total] : undefined;
 
   const go = useCallback(
     (dir: -1 | 1) => {
@@ -92,12 +70,15 @@ export function HomeTestimonials({ locale }: { locale: Locale }) {
   );
 
   useEffect(() => {
-    if (paused) return;
+    if (paused || total === 0) return;
     const id = window.setInterval(() => {
       setActiveIdx((i) => (i + 1) % total);
     }, 5000);
     return () => window.clearInterval(id);
   }, [paused, total]);
+
+  // No real testimonials yet — render nothing rather than fabrications.
+  if (!active) return null;
 
   return (
     <section
