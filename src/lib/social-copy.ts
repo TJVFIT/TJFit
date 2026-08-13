@@ -43,7 +43,6 @@ export type SocialCopy = {
   privacyApproved: string;
   saveProfile: string;
   saving: string;
-  saved: string;
   inboxSelectChat: string;
   newChatTitle: string;
   newChatPlaceholder: string;
@@ -119,7 +118,6 @@ const socialCopy: Record<Locale, SocialCopy> = {
     privacyApproved: "Approved people only",
     saveProfile: "Save changes",
     saving: "Saving…",
-    saved: "Saved.",
     inboxSelectChat: "Select a conversation or start a new chat.",
     newChatTitle: "New message",
     newChatPlaceholder: "Username",
@@ -195,7 +193,6 @@ const socialCopy: Record<Locale, SocialCopy> = {
     privacyApproved: "Sadece onayladıklarım",
     saveProfile: "Kaydet",
     saving: "Kaydediliyor…",
-    saved: "Kaydedildi.",
     inboxSelectChat: "Bir sohbet seçin veya yeni başlatın.",
     newChatTitle: "Yeni mesaj",
     newChatPlaceholder: "Kullanıcı adı",
@@ -271,7 +268,6 @@ const socialCopy: Record<Locale, SocialCopy> = {
     privacyApproved: "من وافقت لهم فقط",
     saveProfile: "حفظ",
     saving: "جار الحفظ…",
-    saved: "تم الحفظ.",
     inboxSelectChat: "اختر محادثة أو ابدأ محادثة جديدة.",
     newChatTitle: "رسالة جديدة",
     newChatPlaceholder: "اسم المستخدم",
@@ -345,7 +341,6 @@ const socialCopy: Record<Locale, SocialCopy> = {
     privacyApproved: "Solo personas aprobadas",
     saveProfile: "Guardar",
     saving: "Guardando…",
-    saved: "Guardado.",
     inboxSelectChat: "Elige una conversacion o inicia una nueva.",
     newChatTitle: "Nuevo mensaje",
     newChatPlaceholder: "Usuario",
@@ -419,7 +414,6 @@ const socialCopy: Record<Locale, SocialCopy> = {
     privacyApproved: "Personnes approuvees seulement",
     saveProfile: "Enregistrer",
     saving: "Enregistrement…",
-    saved: "Enregistre.",
     inboxSelectChat: "Choisissez une conversation ou demarrez-en une.",
     newChatTitle: "Nouveau message",
     newChatPlaceholder: "Pseudo",
