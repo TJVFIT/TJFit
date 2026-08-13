@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Activity, Dumbbell, Flame, Plus, CheckCircle2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/components/auth-provider";
+import { EmptyState } from "@/components/ui/empty-state";
 import { programs } from "@/lib/content";
 import type { Locale } from "@/lib/i18n";
 import { localizeProgram } from "@/lib/program-localization";
@@ -366,17 +367,21 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
       </header>
 
       {isBrandNew ? (
-        <div className="tj-empty-state flex flex-col items-center">
-          <Dumbbell className="mx-auto h-8 w-8 text-[var(--color-text-muted)]" aria-hidden strokeWidth={1.5} />
-          <h2 className="mt-4 text-lg font-semibold text-[var(--color-text-secondary)]">{t.emptyHeading}</h2>
-          <p className="tj-empty-state__text mt-2 max-w-[300px] text-sm text-[var(--color-text-muted)]">{t.emptySub}</p>
-          <Link
-            href={`/${locale}/bundles`}
-            className="lux-btn-primary mt-6 inline-flex min-h-[44px] items-center justify-center rounded-full px-8 py-2.5 text-sm font-bold text-[#09090B]"
-          >
-            {t.emptyCta}
-          </Link>
-        </div>
+        <EmptyState
+          className="flex flex-col items-center"
+          icon={Dumbbell}
+          title={t.emptyHeading}
+          subtext={t.emptySub}
+          subtextClassName="max-w-[300px]"
+          cta={
+            <Link
+              href={`/${locale}/bundles`}
+              className="lux-btn-primary mt-6 inline-flex min-h-[44px] items-center justify-center rounded-full px-8 py-2.5 text-sm font-bold text-[#09090B]"
+            >
+              {t.emptyCta}
+            </Link>
+          }
+        />
       ) : null}
 
       {!isBrandNew && hasPaidProgram ? (

@@ -7,7 +7,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { useAuth } from "@/components/auth-provider";
 import type { Locale } from "@/lib/i18n";
+import { MessageCircle } from "lucide-react";
 import { AsyncButton } from "@/components/ui/AsyncButton";
+import { EmptyState } from "@/components/ui/empty-state";
 import { getMessagesCopy } from "@/lib/feature-copy";
 import { getSocialCopy } from "@/lib/social-copy";
 import { decryptText, encryptText, unwrapConversationKeyForSelf } from "@/lib/chat-crypto";
@@ -539,8 +541,12 @@ export function ChatThreadView({ locale, conversationId }: { locale: Locale; con
           <MessageSkeleton />
         ) : sorted.length === 0 ? (
           <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
-            <p className="max-w-xs text-sm italic text-[var(--color-text-muted)]">{t.threadEmpty}</p>
-            <p className="mt-2 text-[11px] text-dim">{t.encrypted}</p>
+            <EmptyState
+              icon={MessageCircle}
+              subtext={t.threadEmpty}
+              subtextClassName="max-w-xs italic"
+              cta={<p className="mt-2 text-[11px] text-dim">{t.encrypted}</p>}
+            />
           </div>
         ) : (
           <div className="mx-auto max-w-3xl space-y-1 pb-2">

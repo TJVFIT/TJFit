@@ -1,8 +1,10 @@
 "use client";
 
+import { FileText } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { EmptyState } from "@/components/ui/empty-state";
 
 type PendingPost = {
   id: string;
@@ -67,7 +69,7 @@ export function AdminBlogPanel() {
     <section className="glass-panel rounded-[32px] p-6">
       <h3 className="text-lg font-semibold text-white">Blog Management</h3>
       <div className="mt-4 space-y-3">
-        {pending.length === 0 ? <p className="text-sm text-muted">No pending posts.</p> : null}
+        {pending.length === 0 ? <EmptyState icon={FileText} subtext="No pending posts." /> : null}
         {pending.map((post) => (
           <div key={post.id} className="rounded-xl border border-white/10 bg-white/5 p-3">
             <p className="text-sm font-medium text-white">{post.title}</p>

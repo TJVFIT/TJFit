@@ -1,6 +1,8 @@
+import { Users } from "lucide-react";
 import { adminStats, adminAdvancedStats, coaches } from "@/lib/content";
 import { Logo } from "@/components/ui/Logo";
 import { StatGrid } from "@/components/ui";
+import { EmptyState } from "@/components/ui/empty-state";
 import { AdminCoachApplications } from "@/components/admin-coach-applications";
 import Link from "next/link";
 import type { Locale } from "@/lib/i18n";
@@ -61,7 +63,7 @@ export function AdminDashboardView({ locale }: { locale: Locale }) {
         <p className="mt-2 text-sm text-muted">{dict.admin.coachListSubtitle}</p>
         <div className="mt-6 max-h-48 space-y-2 overflow-y-auto">
           {coaches.length === 0 ? (
-            <p className="text-sm text-faint">No coaches yet.</p>
+            <EmptyState icon={Users} subtext="No coaches yet." />
           ) : (
             coaches.slice(0, 8).map((c) => (
               <div

@@ -1,6 +1,8 @@
 "use client";
 
+import { Receipt } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { EmptyState } from "@/components/ui/empty-state";
 
 type Item = {
   slug: string;
@@ -117,6 +119,10 @@ export function AdminBundlePayments() {
         <p className="mt-3 text-xs text-purple-200" role="status" aria-live="polite">
           {status}
         </p>
+      ) : null}
+
+      {data.items.length === 0 ? (
+        <EmptyState className="mt-5" icon={Receipt} subtext="No bundle payments recorded yet." />
       ) : null}
 
       <div className="mt-5 space-y-3">

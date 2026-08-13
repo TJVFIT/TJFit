@@ -1,6 +1,8 @@
 "use client";
 
+import { ClipboardList } from "lucide-react";
 import { useState } from "react";
+import { EmptyState } from "@/components/ui/empty-state";
 import type { Dictionary } from "@/lib/i18n";
 
 type Application = {
@@ -32,7 +34,7 @@ export function AdminCoachApplications({
       </p>
       <div className="mt-6 max-h-96 space-y-4 overflow-y-auto">
         {applications.length === 0 ? (
-          <p className="text-sm text-faint">{dict.noApplications}</p>
+          <EmptyState icon={ClipboardList} subtext={dict.noApplications} />
         ) : (
           applications.map((app) => (
             <div

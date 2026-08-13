@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { EmptyState } from "@/components/ui/empty-state";
 import { searchNormalize } from "@/lib/turkish-chars";
 
 type GroupedResults = {
@@ -78,7 +79,9 @@ export function GlobalSearch({ locale, collapsed, onExpand }: { locale: string; 
           {loading ? <p className="text-xs text-dim">Searching...</p> : null}
           {!loading &&
           groups.every(([, items]) => items.length === 0) &&
-          searchNormalize(query).length >= 2 ? <p className="text-xs text-dim">No results for &quot;{query}&quot;</p> : null}
+          searchNormalize(query).length >= 2 ? (
+            <EmptyState className="!p-4" subtext={`No results for "${query}"`} />
+          ) : null}
           {groups.map(([label, items]) =>
             items.length ? (
               <div key={label} className="mb-3">

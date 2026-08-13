@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { AuthRequiredPanel } from "@/components/auth-required-panel";
 import { useAuth } from "@/components/auth-provider";
 import { DirectMessageLaunchButton } from "@/components/direct-message-launch-button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { getSocialCopy } from "@/lib/social-copy";
 import type { Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/i18n";
@@ -201,11 +202,14 @@ export function PeopleSearchView({ locale }: { locale: Locale }) {
       ) : null}
 
       {showEmpty ? (
-        <div className="tj-empty-state relative mt-10">
-          <Search className="mx-auto h-7 w-7 text-[var(--color-text-muted)]" strokeWidth={1.75} aria-hidden />
-          <h2 className="mt-4 text-lg font-semibold text-[var(--color-text-secondary)]">{s.noResults}</h2>
-          <p className="tj-empty-state__text mt-2 text-sm text-[var(--color-text-muted)]">{s.noResultsSub}</p>
-        </div>
+        <EmptyState
+          className="relative mt-10"
+          icon={Search}
+          iconClassName="mx-auto h-7 w-7 text-[var(--color-text-muted)]"
+          iconStrokeWidth={1.75}
+          title={s.noResults}
+          subtext={s.noResultsSub}
+        />
       ) : null}
 
       {!loading && results.length > 0 ? (

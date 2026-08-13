@@ -2,6 +2,7 @@
 
 import { Users } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { EmptyState } from "@/components/ui/empty-state";
 import { getDictionary } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 
@@ -46,11 +47,13 @@ export function CoachMyStudentsPanel({ locale }: { locale: Locale }) {
 
   if (count === 0) {
     return (
-      <div className="tj-empty-state mt-6">
-        <Users className="mx-auto h-8 w-8 text-[var(--color-text-muted)]" aria-hidden strokeWidth={1.5} />
-        <h3 className="mt-4 text-lg font-semibold text-[var(--color-text-secondary)]">No students yet</h3>
-        <p className="tj-empty-state__text mt-2 text-sm">Students will appear here once they join your program.</p>
-      </div>
+      <EmptyState
+        className="mt-6"
+        icon={Users}
+        titleAs="h3"
+        title="No students yet"
+        subtext="Students will appear here once they join your program."
+      />
     );
   }
 

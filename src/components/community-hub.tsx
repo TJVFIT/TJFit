@@ -1,10 +1,11 @@
 "use client";
 
-import { Crown, Dumbbell, Flame, Target, Zap, type LucideIcon } from "lucide-react";
+import { Crown, Dumbbell, Flame, MessageSquare, Newspaper, Target, TrendingUp, Zap, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/auth-provider";
+import { EmptyState } from "@/components/ui/empty-state";
 import { useDynamicIsland } from "@/components/ui/dynamic-island";
 import { FollowButton } from "@/components/ui/follow-button";
 import { Transformation, communityPosts, transformations } from "@/lib/content";
@@ -67,11 +68,7 @@ function ThreadsPanel({
   onReact: (postId: string, key: string) => void;
 }) {
   if (posts.length === 0) {
-    return (
-      <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-muted">
-        {emptyLabel}
-      </div>
-    );
+    return <EmptyState icon={MessageSquare} subtext={emptyLabel} />;
   }
 
   return (
@@ -157,7 +154,7 @@ function ChallengesLivePanel({
 }) {
   const [logValueById, setLogValueById] = useState<Record<string, string>>({});
   if (items.length === 0) {
-    return <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-muted">{copy.noActiveChallenges}</div>;
+    return <EmptyState icon={Target} subtext={copy.noActiveChallenges} />;
   }
   return (
     <div className="space-y-4">
@@ -347,11 +344,7 @@ function TransformationsPanel({
   unverifiedLabel: string;
 }) {
   if (items.length === 0) {
-    return (
-      <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-muted">
-        {emptyLabel}
-      </div>
-    );
+    return <EmptyState icon={TrendingUp} subtext={emptyLabel} />;
   }
 
   return (
@@ -733,9 +726,7 @@ export function CommunityHub({
                   {copy.loadingBlogs}
                 </div>
               ) : posts.length === 0 ? (
-                <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-muted">
-                  {copy.noBlogs}
-                </div>
+                <EmptyState icon={Newspaper} subtext={copy.noBlogs} />
               ) : (
                 <div className="space-y-4">
                   {posts.map((post) => (

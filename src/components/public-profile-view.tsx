@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { Award, MessageSquare, Newspaper, Users } from "lucide-react";
 import { AnimatedAvatar } from "@/components/animated-avatar";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth-provider";
 import { AmbientBackground } from "@/components/ui/AmbientBackground";
+import { EmptyState } from "@/components/ui/empty-state";
 import { FollowButton } from "@/components/ui/follow-button";
 import { getSocialCopy } from "@/lib/social-copy";
 import type { Locale } from "@/lib/i18n";
@@ -234,7 +236,7 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
                 {badge.badge_key}
               </div>
             ))}
-            {badgePreview.length === 0 ? <p className="text-sm text-faint">No badges yet</p> : null}
+            {badgePreview.length === 0 ? <EmptyState icon={Award} subtext="No badges yet" /> : null}
           </div>
         </section>
 
@@ -262,7 +264,7 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
                   </p>
                 </div>
               ))}
-              {recentBlogs.length === 0 ? <p className="text-sm text-faint">No posts</p> : null}
+              {recentBlogs.length === 0 ? <EmptyState icon={Newspaper} subtext="No posts" /> : null}
             </div>
           </div>
 
@@ -275,7 +277,7 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
                   <p className="mt-1 text-xs text-faint">{new Date(post.created_at).toLocaleDateString(locale)}</p>
                 </div>
               ))}
-              {recentPosts.length === 0 ? <p className="text-sm text-faint">No posts</p> : null}
+              {recentPosts.length === 0 ? <EmptyState icon={MessageSquare} subtext="No posts" /> : null}
             </div>
           </div>
         </section>
@@ -300,7 +302,7 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
                     <span className="ml-1 text-faint">@{item.username}</span>
                   </Link>
                 ))}
-                {listItems.length === 0 ? <p className="text-sm text-faint">No users</p> : null}
+                {listItems.length === 0 ? <EmptyState icon={Users} subtext="No users" /> : null}
               </div>
             </div>
           </div>

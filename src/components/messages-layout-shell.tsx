@@ -7,6 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { MessageCircle } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
+import { EmptyState } from "@/components/ui/empty-state";
 import { getMessagesCopy } from "@/lib/feature-copy";
 import { getSocialCopy } from "@/lib/social-copy";
 import type { Locale } from "@/lib/i18n";
@@ -203,11 +204,12 @@ export function MessagesLayoutShell({
         {listLoading ? (
           <InboxSkeleton />
         ) : conversations.length === 0 ? (
-          <div className="tj-empty-state mx-3 mt-4">
-            <MessageCircle className="mx-auto h-8 w-8 text-[var(--color-text-muted)]" strokeWidth={1.5} aria-hidden />
-            <h2 className="mt-4 text-lg font-semibold text-[var(--color-text-secondary)]">{t.noConversations}</h2>
-            <p className="tj-empty-state__text mt-2 text-sm text-[var(--color-text-muted)]">{t.noConversationsSub}</p>
-          </div>
+          <EmptyState
+            className="mx-3 mt-4"
+            icon={MessageCircle}
+            title={t.noConversations}
+            subtext={t.noConversationsSub}
+          />
         ) : (
           <ul className="pb-2 pt-1" role="list">
             {conversations.map((c) => {

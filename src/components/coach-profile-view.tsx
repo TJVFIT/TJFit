@@ -1,8 +1,9 @@
 "use client";
 
-import { Check } from "lucide-react";
+import { Award, Check } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { EmptyState } from "@/components/ui/empty-state";
 
 type CoachStats = {
   student_count: number;
@@ -241,7 +242,7 @@ export function CoachProfileView({ locale, slug }: { locale: string; slug: strin
               {cert}
             </span>
           ))}
-          {(coach.certifications ?? []).length === 0 ? <p className="text-sm text-faint">{c.noCerts}</p> : null}
+          {(coach.certifications ?? []).length === 0 ? <EmptyState icon={Award} subtext={c.noCerts} /> : null}
         </div>
       </section>
 

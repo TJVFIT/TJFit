@@ -1,6 +1,8 @@
 "use client";
 
+import { Inbox } from "lucide-react";
 import { useState } from "react";
+import { EmptyState } from "@/components/ui/empty-state";
 
 type Submission = {
   id: string;
@@ -48,7 +50,7 @@ export function AdminFeedbackList({
       </div>
       <div className="mt-6 max-h-80 space-y-4 overflow-y-auto">
         {filtered.length === 0 ? (
-          <p className="text-sm text-faint">No submissions yet.</p>
+          <EmptyState icon={Inbox} subtext="No submissions yet." />
         ) : (
           filtered.map((s) => (
             <div

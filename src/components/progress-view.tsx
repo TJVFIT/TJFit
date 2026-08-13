@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { CheckCircle2, Scale, Dumbbell, Flag } from "lucide-react";
 import { AmbientOrbs } from "@/components/effects/ambient-orbs";
+import { EmptyState } from "@/components/ui/empty-state";
 import type { Locale } from "@/lib/i18n";
 import { getProgressCopy } from "@/lib/feature-copy";
 
@@ -276,7 +277,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
           </div>
           <div className="mt-5 space-y-2">
             {entries.length === 0 ? (
-              <p className="text-sm text-faint">{t.noData}</p>
+              <EmptyState icon={Scale} subtext={t.noData} />
             ) : (
               entries.slice(0, 6).map((entry) => (
                 <div key={entry.id} className="rounded-xl border border-white/10 p-3 text-xs text-bright">
@@ -319,7 +320,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
           </div>
           <div className="mt-5 space-y-4 overflow-y-auto" style={{ maxHeight: 340 }}>
             {workouts.length === 0 ? (
-              <p className="text-sm text-faint">{t.noData}</p>
+              <EmptyState icon={Dumbbell} subtext={t.noData} />
             ) : (
               groupedWorkouts.map(([date, ws]) => (
                 <div key={date}>
@@ -362,7 +363,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
           </div>
           <div className="mt-5 space-y-2">
             {milestones.length === 0 ? (
-              <p className="text-sm text-faint">{t.noData}</p>
+              <EmptyState icon={Flag} subtext={t.noData} />
             ) : (
               milestones.map((m) => (
                 <div key={m.id} className="rounded-xl border border-white/10 p-3 text-sm text-bright">

@@ -1,6 +1,8 @@
 "use client";
 
+import { BarChart3 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export function CoachAnalyticsWidget() {
   const [loading, setLoading] = useState(true);
@@ -17,7 +19,7 @@ export function CoachAnalyticsWidget() {
   }, []);
 
   if (loading) return <div className="rounded-[24px] border border-white/10 bg-white/5 p-4 text-sm text-faint">Loading analytics...</div>;
-  if (!data) return <div className="rounded-[24px] border border-white/10 bg-white/5 p-4 text-sm text-faint">No analytics data yet.</div>;
+  if (!data) return <EmptyState icon={BarChart3} subtext="No analytics data yet." />;
 
   return (
     <section className="rounded-[24px] border border-white/10 bg-white/5 p-5">
