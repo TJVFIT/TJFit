@@ -17,13 +17,23 @@ import {
   getProduct,
   type GumroadProduct
 } from "./client";
+import { getDiet } from "@/lib/diets";
+import { getProgram } from "@/lib/programs";
 
 export type ProductType = "program" | "diet" | "tjai_credits" | "subscription";
 export type SyncDirection = "to_gumroad" | "from_gumroad" | "manual";
 
 export type SyncProductInput = {
   productType: ProductType;
-  /** Supabase UUID for the local product row. */
+  /**
+   * Local product identifier stamped into product_gumroad_sync.product_id.
+   * For `program` (and `diet`) this MUST be the STATIC REGISTRY slug
+   * (src/lib/programs — e.g. "comeback"), because webhook fulfillment
+   * resolves the entitlement slug from the registry since e68bae2; a UUID
+   * here would make every storefront purchase of that product surface
+   * no_program_slug_resolved. For tjai_credits/subscription it remains the
+   * Supabase row id. Enforced in syncProductToGumroad.
+   */
   productId: string;
   name: string;
   description: string;
@@ -81,6 +91,26 @@ export async function syncProductToGumroad(
   input: SyncProductInput,
   triggeredBy?: string
 ): Promise<SyncResult> {
+  // Enforce the registry-slug convention (e68bae2 follow-up): webhook
+  // fulfillment resolves program/diet entitlement slugs from the static
+  // registries, so a sync row created with any other id would produce a
+  // product whose every purchase fails with no_program_slug_resolved.
+  // Fail HERE, at authoring time, not at the customer's checkout.
+  if (input.productType === "program" && !getProgram(input.productId)) {
+    return {
+      ok: false,
+      action: "skip",
+      error: `productId "${input.productId}" is not a registered program slug (src/lib/programs) — fulfillment would fail for every purchase`
+    };
+  }
+  if (input.productType === "diet" && !getDiet(input.productId)) {
+    return {
+      ok: false,
+      action: "skip",
+      error: `productId "${input.productId}" is not a registered diet slug (src/lib/diets) — fulfillment would fail for every purchase`
+    };
+  }
+
   const { data: existing } = await supabase
     .from("product_gumroad_sync")
     .select("*")
