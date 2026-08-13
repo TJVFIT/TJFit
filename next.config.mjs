@@ -50,7 +50,13 @@ const nextConfig = {
       "frame-ancestors 'self'",
       "base-uri 'self'",
       "form-action 'self'",
-      "object-src 'none'"
+      "object-src 'none'",
+      // WP-SEC-03 stage 1: both reporting wires point at the same collector —
+      // report-uri for legacy engines, report-to (Reporting-Endpoints header
+      // below) for modern Chromium. Relative URLs resolve per-origin, so
+      // preview deploys report to themselves, never to prod.
+      "report-uri /api/csp-report",
+      "report-to csp"
     ].join("; ");
 
     return [
@@ -64,7 +70,10 @@ const nextConfig = {
           { key: "Permissions-Policy", value: "camera=(), microphone=(self), geolocation=(), browsing-topics=()" },
           { key: "X-DNS-Prefetch-Control", value: "on" },
           ...(process.env.NODE_ENV === "production"
-            ? [{ key: "Content-Security-Policy-Report-Only", value: cspReportOnly }]
+            ? [
+                { key: "Content-Security-Policy-Report-Only", value: cspReportOnly },
+                { key: "Reporting-Endpoints", value: 'csp="/api/csp-report"' }
+              ]
             : [])
         ]
       }
