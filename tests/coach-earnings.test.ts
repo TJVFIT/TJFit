@@ -242,3 +242,32 @@ describe("fetchProductLabels", () => {
     expect(titles.get("pid-1")).toBe("title-pid-1");
   });
 });
+
+describe("row-sum equals bucket-total (penny-consistency contract)", () => {
+  it("3 x 0.237 displays as 3 x $0.24 and the paid total is exactly $0.72", () => {
+    const rows = [0.237, 0.237, 0.237].map((amt, i) => row({ id: `r${i}`, status: "paid", coach_amount_usd: amt }));
+    const out = aggregateCoachEarnings(rows, () => "P");
+    const rowSum = out.recentCommissions.reduce((s, c) => s + Math.round(c.shareUsd * 100), 0);
+    expect(out.recentCommissions.map((c) => c.shareUsd)).toEqual([0.24, 0.24, 0.24]);
+    expect(Math.round(out.paidUsd * 100)).toBe(rowSum);
+    expect(out.paidUsd).toBe(0.72);
+  });
+
+  it("mixed buckets: each bucket total equals the sum of its rounded rows", () => {
+    const rows = [
+      row({ id: "a", status: "paid", coach_amount_usd: 1.005 }),
+      row({ id: "b", status: "paid", coach_amount_usd: 2.994 }),
+      row({ id: "c", status: "pending", coach_amount_usd: 0.555 }),
+      row({ id: "d", status: "payable", coach_amount_usd: 0.444 })
+    ];
+    const out = aggregateCoachEarnings(rows, () => "P");
+    const cents = (n: number) => Math.round(n * 100);
+    const paidRowCents = out.recentCommissions.filter((c) => c.status === "paid").reduce((s, c) => s + cents(c.shareUsd), 0);
+    const pendingRowCents = out.recentCommissions
+      .filter((c) => c.status === "pending" || c.status === "payable")
+      .reduce((s, c) => s + cents(c.shareUsd), 0);
+    expect(cents(out.paidUsd)).toBe(paidRowCents);
+    expect(cents(out.pendingUsd)).toBe(pendingRowCents);
+    expect(cents(out.totalUsd)).toBe(paidRowCents + pendingRowCents);
+  });
+});

@@ -116,6 +116,8 @@ export type Dictionary = {
       walletPendingLabel: string;
       walletPaidLabel: string;
       walletRecentTitle: string;
+      walletShowAll: string;
+      walletShowLess: string;
       walletStatusPending: string;
       walletStatusPayable: string;
       walletStatusPaid: string;
@@ -293,6 +295,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
         walletPendingLabel: "Pending",
         walletPaidLabel: "Paid out",
         walletRecentTitle: "Recent commissions",
+        walletShowAll: "Show all",
+        walletShowLess: "Show less",
         walletStatusPending: "Pending",
         walletStatusPayable: "Payable",
         walletStatusPaid: "Paid",
@@ -457,6 +461,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
         walletPendingLabel: "Bekleyen",
         walletPaidLabel: "Ödendi",
         walletRecentTitle: "Son komisyonlar",
+        walletShowAll: "Tümünü göster",
+        walletShowLess: "Daha az göster",
         walletStatusPending: "Bekliyor",
         walletStatusPayable: "Ödemeye hazır",
         walletStatusPaid: "Ödendi",
@@ -618,6 +624,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
         walletPendingLabel: "قيد الانتظار",
         walletPaidLabel: "تم الدفع",
         walletRecentTitle: "أحدث العمولات",
+        walletShowAll: "عرض الكل",
+        walletShowLess: "عرض أقل",
         walletStatusPending: "قيد الانتظار",
         walletStatusPayable: "قابل للدفع",
         walletStatusPaid: "مدفوع",
@@ -779,6 +787,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
         walletPendingLabel: "Pendiente",
         walletPaidLabel: "Pagado",
         walletRecentTitle: "Comisiones recientes",
+        walletShowAll: "Mostrar todo",
+        walletShowLess: "Mostrar menos",
         walletStatusPending: "Pendiente",
         walletStatusPayable: "Por pagar",
         walletStatusPaid: "Pagado",
@@ -940,6 +950,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
         walletPendingLabel: "En attente",
         walletPaidLabel: "Payé",
         walletRecentTitle: "Commissions récentes",
+        walletShowAll: "Tout afficher",
+        walletShowLess: "Afficher moins",
         walletStatusPending: "En attente",
         walletStatusPayable: "Payable",
         walletStatusPaid: "Payé",

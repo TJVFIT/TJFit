@@ -15,6 +15,7 @@ export function CoachEarningsWidget({ locale }: { locale: Locale }) {
   const d = getDictionary(locale).dashboard.coach;
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState<CoachEarningsSummary | null>(null);
+  const [showAll, setShowAll] = useState(false);
 
   const statusLabel = useCallback(
     (status: SaleCommissionStatus): string => {
@@ -56,8 +57,11 @@ export function CoachEarningsWidget({ locale }: { locale: Locale }) {
   if (loading) {
     return (
       <div className="mt-4 space-y-3" aria-busy="true">
+        {/* Matches the populated layout: stats row (~h-16) + capped 5-row
+            list (~h-64). The list is capped below precisely so this
+            skeleton and the real content agree — CLS review follow-up. */}
         <div className="tj-skeleton tj-shimmer h-16 w-full rounded-[20px]" />
-        <div className="tj-skeleton tj-shimmer h-24 w-full rounded-[20px]" />
+        <div className="tj-skeleton tj-shimmer h-64 w-full rounded-[20px]" />
       </div>
     );
   }
@@ -95,7 +99,7 @@ export function CoachEarningsWidget({ locale }: { locale: Locale }) {
         <div className="rounded-[20px] border border-white/10 bg-black/30 p-4">
           <p className="text-sm font-medium text-white">{d.walletRecentTitle}</p>
           <ul className="mt-3 space-y-2">
-            {summary.recentCommissions.map((c) => (
+            {(showAll ? summary.recentCommissions : summary.recentCommissions.slice(0, 5)).map((c) => (
               <li
                 key={c.id}
                 className="flex items-center justify-between gap-3 rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2 text-sm"
@@ -111,6 +115,15 @@ export function CoachEarningsWidget({ locale }: { locale: Locale }) {
               </li>
             ))}
           </ul>
+          {summary.recentCommissions.length > 5 ? (
+            <button
+              type="button"
+              onClick={() => setShowAll((v) => !v)}
+              className="mt-3 w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-xs text-muted transition hover:border-accent/40 hover:text-bright"
+            >
+              {showAll ? d.walletShowLess : `${d.walletShowAll} (${summary.recentCommissions.length})`}
+            </button>
+          ) : null}
         </div>
       ) : null}
     </div>

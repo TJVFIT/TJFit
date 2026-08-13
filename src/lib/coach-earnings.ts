@@ -62,22 +62,33 @@ function round2(value: number): number {
  * pendingUsd; `disputed`/`refunded` rows are excluded from all totals
  * entirely (they are not money the coach can expect). totalUsd is
  * pendingUsd + paidUsd.
+ *
+ * ROUNDING CONTRACT (adversarial-review must-fix): every amount is rounded
+ * to cents PER ROW first, and the bucket totals are sums of those rounded
+ * row values. This is a statement view — the rows a coach can see must add
+ * up exactly to the totals they can see (3 × $0.237 shows 3 × $0.24 and a
+ * $0.72 total, never $0.71). Rounding once at the end produced penny
+ * discrepancies between visible rows and visible totals.
  */
 export function aggregateCoachEarnings(
   rows: SaleCommissionRow[],
   labelFor: (row: SaleCommissionRow) => string,
   recentLimit: number = RECENT_COMMISSIONS_LIMIT
 ): CoachEarningsSummary {
-  let pendingUsd = 0;
-  let paidUsd = 0;
+  let pendingCents = 0;
+  let paidCents = 0;
 
   for (const row of rows) {
     const amount = Number(row.coach_amount_usd);
     if (!Number.isFinite(amount)) continue;
+    // MUST be the same rounding as the per-row display (round2) — two
+    // different rounding implementations is exactly how 1.005 becomes 101
+    // cents in a row but 100 cents in the bucket.
+    const cents = Math.round(round2(amount) * 100);
     if (row.status === "paid") {
-      paidUsd += amount;
+      paidCents += cents;
     } else if (row.status === "pending" || row.status === "payable") {
-      pendingUsd += amount;
+      pendingCents += cents;
     }
     // disputed / refunded: excluded from every total on purpose.
   }
@@ -92,9 +103,9 @@ export function aggregateCoachEarnings(
   }));
 
   return {
-    totalUsd: round2(pendingUsd + paidUsd),
-    pendingUsd: round2(pendingUsd),
-    paidUsd: round2(paidUsd),
+    totalUsd: (pendingCents + paidCents) / 100,
+    pendingUsd: pendingCents / 100,
+    paidUsd: paidCents / 100,
     recentCommissions
   };
 }
