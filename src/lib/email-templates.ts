@@ -1,3 +1,5 @@
+import { getSiteUrl } from "@/lib/site-url";
+
 type BaseTemplate = {
   title: string;
   body: string;
@@ -11,8 +13,13 @@ function renderTemplate({ title, body, ctaLabel, ctaUrl, footerUrl }: BaseTempla
     ctaLabel && ctaUrl
       ? `<a href="${ctaUrl}" style="display:inline-block;padding:12px 20px;border-radius:9999px;background:#A855F7;color:#09090B;text-decoration:none;font-weight:700">${ctaLabel}</a>`
       : "";
+  // GAP-10: every footer that offers Unsubscribe also links the granular
+  // toggles page, so "fewer emails" has an answer besides all-or-nothing.
+  // English-only like the rest of the templates until WP-EMAIL-01 localizes
+  // the whole file; /en/ is the matching locale for that copy.
+  const preferencesUrl = `${getSiteUrl()}/en/settings/email`;
   const unsubscribe = footerUrl
-    ? `<p style="margin-top:24px;font-size:12px;color:#52525B"><a href="${footerUrl}" style="color:#A1A1AA">Unsubscribe</a></p>`
+    ? `<p style="margin-top:24px;font-size:12px;color:#52525B"><a href="${footerUrl}" style="color:#A1A1AA">Unsubscribe</a> &middot; <a href="${preferencesUrl}" style="color:#A1A1AA">Manage email preferences</a></p>`
     : "";
   return `
   <div style="background:#09090B;padding:24px;font-family:Inter,Segoe UI,Arial,sans-serif;color:#fff;">

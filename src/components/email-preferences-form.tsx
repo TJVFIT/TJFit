@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { AsyncButton } from "@/components/ui/AsyncButton";
 import { useDynamicIsland } from "@/components/ui/dynamic-island";
+import { getEmailPreferencesCopy } from "@/lib/email-preferences-copy";
 
 type EmailPreferences = {
   weekly_program: boolean;
@@ -23,46 +24,20 @@ const DEFAULT_PREFERENCES: EmailPreferences = {
   platform_news: true
 };
 
-// Order + copy for every toggle the API supports (src/app/api/email/preferences/route.ts).
-// English-hardcoded to match the zero-i18n sibling settings pages (subscription, messaging)
-// exactly — the /settings tree has no dictionary section, so this follows the established
-// precedent rather than inventing a parallel one for a single page.
-const FIELDS: ReadonlyArray<{ key: keyof EmailPreferences; label: string; help: string }> = [
-  {
-    key: "weekly_program",
-    label: "Weekly program updates",
-    help: "Your upcoming week's plan and any coach notes."
-  },
-  {
-    key: "achievements",
-    label: "Achievement emails",
-    help: "Badges, milestones, and personal records you unlock."
-  },
-  {
-    key: "blog_updates",
-    label: "Blog updates",
-    help: "New articles from coaches and the TJFit team."
-  },
-  {
-    key: "streak_milestones",
-    label: "Streak milestones",
-    help: "Celebrations when you hit a training streak."
-  },
-  {
-    key: "referrals",
-    label: "Referral emails",
-    help: "Updates when someone signs up with your referral code."
-  },
-  {
-    key: "platform_news",
-    label: "Platform news",
-    help: "Product announcements and account-relevant changes."
-  }
+// Toggle order matches the API (src/app/api/email/preferences/route.ts);
+// per-toggle copy lives in src/lib/email-preferences-copy.ts ×5 locales.
+const FIELD_ORDER: ReadonlyArray<keyof EmailPreferences> = [
+  "weekly_program",
+  "achievements",
+  "blog_updates",
+  "streak_milestones",
+  "referrals",
+  "platform_news"
 ];
 
-const ERROR_GENERIC = "Something went wrong. Please try again.";
-
-export function EmailPreferencesForm() {
+export function EmailPreferencesForm({ locale }: { locale: string }) {
+  const copy = getEmailPreferencesCopy(locale);
+  const ERROR_GENERIC = copy.errorGeneric;
   const island = useDynamicIsland();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -98,7 +73,7 @@ export function EmailPreferencesForm() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [ERROR_GENERIC]);
 
   useEffect(() => {
     void load();
@@ -119,7 +94,7 @@ export function EmailPreferencesForm() {
         setError(ERROR_GENERIC);
         return;
       }
-      island?.showNotification("achievement", "Email preferences updated ✓");
+      island?.showNotification("achievement", copy.updated);
     } catch {
       setError(ERROR_GENERIC);
     } finally {
@@ -148,7 +123,7 @@ export function EmailPreferencesForm() {
           className="rounded-full border border-white/15 bg-white/[0.06] px-6 py-2.5 text-sm font-medium text-bright transition hover:border-purple-400/35"
           onClick={() => void load()}
         >
-          Try again
+          {copy.tryAgain}
         </button>
       </div>
     );
@@ -158,7 +133,7 @@ export function EmailPreferencesForm() {
     <div className="mx-auto max-w-lg space-y-5 px-4 py-10 sm:px-6">
       <div className="glass-panel space-y-4 rounded-[28px] p-6">
         <div className="space-y-2">
-          {FIELDS.map(({ key, label, help }) => (
+          {FIELD_ORDER.map((key) => (
             <label key={key} className="flex cursor-pointer items-start gap-3 text-sm text-bright">
               <input
                 type="checkbox"
@@ -167,8 +142,8 @@ export function EmailPreferencesForm() {
                 onChange={(e) => setPrefs((f) => ({ ...f, [key]: e.target.checked }))}
               />
               <span>
-                <span className="font-medium text-white">{label}</span>
-                <span className="mt-0.5 block text-xs text-faint">{help}</span>
+                <span className="font-medium text-white">{copy.fields[key].label}</span>
+                <span className="mt-0.5 block text-xs text-faint">{copy.fields[key].help}</span>
               </span>
             </label>
           ))}
@@ -180,11 +155,11 @@ export function EmailPreferencesForm() {
           type="button"
           variant="primary"
           loading={saving}
-          loadingText="Saving..."
+          loadingText={copy.saving}
           className="gradient-button w-full rounded-full py-2.5 text-sm font-medium text-white sm:w-auto sm:px-10"
           onClick={() => save()}
         >
-          Save preferences
+          {copy.save}
         </AsyncButton>
       </div>
     </div>
