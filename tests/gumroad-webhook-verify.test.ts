@@ -1,49 +1,19 @@
-import crypto from "node:crypto";
-
 import { describe, it, expect } from "vitest";
 
 import {
-  verifyGumroadWebhookSignature,
   verifyGumroadSeller,
   checkGumroadWebhookFreshness,
   MAX_AGE_SEC
 } from "@/lib/gumroad-webhook-verify";
 
 /**
- * The webhook signature check is the gate that stops forged "sale" events
- * from granting bundles/credits for free. A regression = payment fraud, so
- * the accept/reject behavior is pinned here.
+ * The seller_id gate + freshness window + (provider, event_id) idempotency
+ * are what stop forged "sale" events from granting bundles/credits for
+ * free — Gumroad does not HMAC-sign webhooks, so there is no signature to
+ * verify (the dead HMAC helper and its tests were removed 2026-08-13,
+ * WP-SEC-07). A regression here = payment fraud, so accept/reject
+ * behavior stays pinned.
  */
-const secret = "test_secret_123";
-const sign = (body: string, s = secret) => crypto.createHmac("sha256", s).update(body, "utf8").digest("hex");
-
-describe("verifyGumroadWebhookSignature", () => {
-  const body = JSON.stringify({ sale_id: "abc", product_id: "p1", price: 1000 });
-
-  it("accepts a correctly-signed body", () => {
-    expect(verifyGumroadWebhookSignature(body, sign(body), secret)).toBe(true);
-  });
-
-  it("rejects a tampered body (HMAC no longer matches)", () => {
-    const sig = sign(body); // signature for the original body
-    const tampered = body.replace("1000", "1"); // attacker lowers the price
-    expect(verifyGumroadWebhookSignature(tampered, sig, secret)).toBe(false);
-  });
-
-  it("rejects a signature forged with the wrong secret", () => {
-    expect(verifyGumroadWebhookSignature(body, sign(body, "attacker_secret"), secret)).toBe(false);
-  });
-
-  it("rejects missing signature or secret (fails closed)", () => {
-    expect(verifyGumroadWebhookSignature(body, null, secret)).toBe(false);
-    expect(verifyGumroadWebhookSignature(body, undefined, secret)).toBe(false);
-    expect(verifyGumroadWebhookSignature(body, sign(body), "")).toBe(false);
-  });
-
-  it("rejects a wrong-length signature without throwing", () => {
-    expect(verifyGumroadWebhookSignature(body, "deadbeef", secret)).toBe(false);
-  });
-});
 
 describe("verifyGumroadSeller", () => {
   const expected = "h8_Y4JLPWq9Pm3yj4QSVIA==";

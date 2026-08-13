@@ -1,17 +1,19 @@
 import crypto from "node:crypto";
 
-// Gumroad webhook signature verification.
+// Gumroad webhook verification.
 //
-// Gumroad signs webhook payloads with HMAC-SHA256 using a shared
-// secret configured in the Gumroad dashboard. The signature is
-// delivered in the `X-Gumroad-Signature` header as a hex digest.
-// Compare via `crypto.timingSafeEqual` to avoid timing attacks.
-//
-// Reference: https://gumroad.com/help/article/280-creating-a-gumroad-webhook
-//
-// `rawBody` MUST be the unparsed UTF-8 body — JSON.stringify of a
-// re-parsed object will not produce a byte-equivalent string and the
-// signature check will fail.
+// Gumroad's Ping / Resource-Subscription webhooks are NOT HMAC-signed
+// (unlike Stripe/Paddle). The gates that actually exist:
+//   1. seller_id timing-safe compare (verifyGumroadSeller, below)
+//   2. best-effort replay window (checkGumroadWebhookFreshness, below)
+//   3. idempotency on (provider, event_id) in payment_webhooks
+//   4. the route re-fetches every sale from the Gumroad API before
+//      granting anything — the POST body is never trusted for value.
+// A verifyGumroadWebhookSignature HMAC helper lived here until
+// 2026-08-13; it was dead code describing a scheme Gumroad doesn't
+// offer, and was deleted (WP-SEC-07). For future webhook SOURCES that
+// do sign (e.g. Resend), follow the Standard Webhooks construction
+// (id.timestamp.payload) instead of resurrecting it.
 
 export const MAX_AGE_SEC = 300; // 5 minutes — match Gumroad equivalent.
 
@@ -38,23 +40,6 @@ export function verifyGumroadSeller(
   if (a.length !== b.length) return false;
   try {
     return crypto.timingSafeEqual(a, b);
-  } catch {
-    return false;
-  }
-}
-
-export function verifyGumroadWebhookSignature(
-  rawBody: string,
-  signature: string | null | undefined,
-  secret: string
-): boolean {
-  if (!signature || !secret) return false;
-  const expected = crypto.createHmac("sha256", secret).update(rawBody, "utf8").digest("hex");
-  // Both must be the same length for timingSafeEqual; if not, fail
-  // immediately rather than throw.
-  if (signature.length !== expected.length) return false;
-  try {
-    return crypto.timingSafeEqual(Buffer.from(signature, "utf8"), Buffer.from(expected, "utf8"));
   } catch {
     return false;
   }

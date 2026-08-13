@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { checkGumroadWebhookFreshness, verifyGumroadSeller } from "@/lib/gumroad-webhook-verify";
+import { rateLimit } from "@/lib/rate-limit";
 import { getSale, type GumroadSale } from "@/lib/gumroad/client";
 import { fulfillProgramOrderPaid } from "@/lib/checkout-fulfill-order";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
@@ -139,6 +140,20 @@ export async function POST(request: NextRequest) {
   if (!expectedSeller) {
     console.warn("[gumroad webhook] GUMROAD_SELLER_ID not set");
     return NextResponse.json({ error: "Webhook not configured" }, { status: 503 });
+  }
+
+  // Flood guard (WP-SEC-07): the endpoint is unauthenticated by design, so a
+  // garbage flood would otherwise burn function time + Gumroad API re-verify
+  // calls. 120/min per IP is orders of magnitude above real Gumroad traffic;
+  // the helper fails OPEN on limiter errors, so a legitimate sale ping can
+  // never be dropped by infrastructure trouble.
+  const limiter = await rateLimit({
+    key: `gumroad-webhook:${request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown"}`,
+    limit: 120,
+    windowMs: 60_000
+  });
+  if (!limiter.success) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
   const rawBody = await request.text();
