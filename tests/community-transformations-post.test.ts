@@ -37,6 +37,12 @@ vi.mock("@/lib/rate-limit", () => ({
   rateLimit: vi.fn(async () => (h.state.rateLimited ? { success: false, remaining: 0 } : { success: true, remaining: 4 }))
 }));
 
+// The route enforces that photos come from the caller's OWN
+// transformation-photos folder (review-hardening follow-up), built from
+// this env var — pin it before importing the route.
+process.env.NEXT_PUBLIC_SUPABASE_URL = "https://test-project.supabase.co";
+const OWN_PREFIX = "https://test-project.supabase.co/storage/v1/object/public/transformation-photos/user-1";
+
 import { POST } from "@/app/api/community/transformations/route";
 
 function request(body: unknown) {
@@ -51,15 +57,15 @@ beforeEach(() => {
 
 describe("transformation submission validation", () => {
   it("requires both before and after image URLs", async () => {
-    const res = await POST(request({ after_image_url: "https://x/a.jpg" }) as never);
+    const res = await POST(request({ after_image_url: `${OWN_PREFIX}/a.jpg` }) as never);
     expect(res.status).toBe(400);
     expect(h.insertCalls).toHaveLength(0);
   });
 
   it("rejects an oversized image URL", async () => {
-    const huge = "https://x/" + "a".repeat(2100);
+    const huge = OWN_PREFIX + "/" + "a".repeat(2100);
     const res = await POST(
-      request({ before_image_url: huge, after_image_url: "https://x/a.jpg" }) as never
+      request({ before_image_url: huge, after_image_url: `${OWN_PREFIX}/a.jpg` }) as never
     );
     expect(res.status).toBe(400);
     expect(h.insertCalls).toHaveLength(0);
@@ -68,8 +74,8 @@ describe("transformation submission validation", () => {
   it("inserts as pending under the caller's own user_id, never a client-supplied one", async () => {
     const res = await POST(
       request({
-        before_image_url: "https://x/before.jpg",
-        after_image_url: "https://x/after.jpg",
+        before_image_url: `${OWN_PREFIX}/before.jpg`,
+        after_image_url: `${OWN_PREFIX}/after.jpg`,
         user_id: "someone-else",
         story: "12 weeks of consistency."
       }) as never
@@ -78,8 +84,8 @@ describe("transformation submission validation", () => {
     expect(h.insertCalls).toHaveLength(1);
     expect(h.insertCalls[0]).toMatchObject({
       user_id: "user-1",
-      before_image_url: "https://x/before.jpg",
-      after_image_url: "https://x/after.jpg",
+      before_image_url: `${OWN_PREFIX}/before.jpg`,
+      after_image_url: `${OWN_PREFIX}/after.jpg`,
       story: "12 weeks of consistency."
     });
   });
@@ -88,8 +94,8 @@ describe("transformation submission validation", () => {
     const longStory = "s".repeat(5000);
     const res = await POST(
       request({
-        before_image_url: "https://x/before.jpg",
-        after_image_url: "https://x/after.jpg",
+        before_image_url: `${OWN_PREFIX}/before.jpg`,
+        after_image_url: `${OWN_PREFIX}/after.jpg`,
         story: longStory
       }) as never
     );
@@ -100,7 +106,7 @@ describe("transformation submission validation", () => {
 
   it("defaults show_username to true when omitted", async () => {
     const res = await POST(
-      request({ before_image_url: "https://x/before.jpg", after_image_url: "https://x/after.jpg" }) as never
+      request({ before_image_url: `${OWN_PREFIX}/before.jpg`, after_image_url: `${OWN_PREFIX}/after.jpg` }) as never
     );
     expect(res.status).toBe(201);
     expect(h.insertCalls[0]?.show_username).toBe(true);
@@ -109,8 +115,8 @@ describe("transformation submission validation", () => {
   it("honors an explicit show_username: false", async () => {
     const res = await POST(
       request({
-        before_image_url: "https://x/before.jpg",
-        after_image_url: "https://x/after.jpg",
+        before_image_url: `${OWN_PREFIX}/before.jpg`,
+        after_image_url: `${OWN_PREFIX}/after.jpg`,
         show_username: false
       }) as never
     );
@@ -121,9 +127,28 @@ describe("transformation submission validation", () => {
   it("returns 429 once the 5/hour submission limit is hit", async () => {
     h.state.rateLimited = true;
     const res = await POST(
-      request({ before_image_url: "https://x/before.jpg", after_image_url: "https://x/after.jpg" }) as never
+      request({ before_image_url: `${OWN_PREFIX}/before.jpg`, after_image_url: `${OWN_PREFIX}/after.jpg` }) as never
     );
     expect(res.status).toBe(429);
+    expect(h.insertCalls).toHaveLength(0);
+  });
+});
+
+describe("own-folder photo enforcement (review hardening)", () => {
+  it("rejects photos hosted outside the caller's own transformation folder", async () => {
+    const foreign = "https://test-project.supabase.co/storage/v1/object/public/transformation-photos/other-user/x.jpg";
+    const res = await POST(
+      request({ before_image_url: foreign, after_image_url: `${OWN_PREFIX}/after.jpg` }) as never
+    );
+    expect(res.status).toBe(400);
+    expect(h.insertCalls).toHaveLength(0);
+  });
+
+  it("rejects arbitrary external URLs even under 2048 chars", async () => {
+    const res = await POST(
+      request({ before_image_url: "https://evil.example/x.jpg", after_image_url: "https://evil.example/y.jpg" }) as never
+    );
+    expect(res.status).toBe(400);
     expect(h.insertCalls).toHaveLength(0);
   });
 });

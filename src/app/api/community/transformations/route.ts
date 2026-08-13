@@ -118,6 +118,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Image URL too long." }, { status: 400 });
   }
 
+  // Defense-in-depth (review follow-up): only accept photos from the
+  // caller's OWN transformation-photos folder. next/image's remotePatterns
+  // already blocks foreign hosts at render time; this closes the residual
+  // gap of storing any allowlisted-host URL (someone else's object, an
+  // unrelated bucket) as one's transformation.
+  const ownFolderPrefix = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/transformation-photos/${auth.user.id}/`;
+  if (!beforeImageUrl.startsWith(ownFolderPrefix) || !afterImageUrl.startsWith(ownFolderPrefix)) {
+    return NextResponse.json(
+      { error: "Photos must be uploaded through the transformation upload flow." },
+      { status: 400 }
+    );
+  }
+
   const { data, error } = await auth.supabase
     .from("user_transformations")
     .insert({
