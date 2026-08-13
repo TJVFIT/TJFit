@@ -10,11 +10,13 @@
 // Effects (per product_type from product_gumroad_sync):
 //   tjai_credits → grant_tjai_credit RPC adds the pack's credits to
 //                   the buyer's balance + ledger row
-//   program/diet → insert sale_commissions row with the commission
-//                   split resolved from the 5-tier hierarchy. (No
-//                   program_access / diet_access tables exist yet —
-//                   sale_commissions is the audit trail until those
-//                   land in a follow-up session.)
+//   program/diet → grant the entitlement (paid program_orders row)
+//                   when a slug resolves, and insert a sale_commissions
+//                   audit row at a fixed 0/100 split — no coach attaches
+//                   to this lane (static-code catalogs, no trainer_id).
+//                   The 5-tier hierarchy lives unused in
+//                   src/lib/gumroad/commission.ts until a coach lane
+//                   reaches this handler.
 //
 // The buyer is matched / auto-created by email. New accounts go
 // through Supabase Auth admin API and get a confirmed-email row in
@@ -22,7 +24,8 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { computeShareUSD, resolveCommissionRate } from "@/lib/gumroad/commission";
+import { computeShareUSD } from "@/lib/gumroad/commission";
+import { getProgram } from "@/lib/programs";
 
 export type GumroadSalePayload = {
   resource_name?: string;
@@ -163,9 +166,14 @@ export async function upsertUserSubscription(
  * Resolve the entitlement slug for a direct program/diet sale. Priority:
  *   1. tjfit_program_slug from the tracked checkout URL params / custom fields
  *      (buildGumroadTrackedUrl stamps this on every TJFit-initiated checkout).
- *   2. programs.slug looked up by the synced product id (programs only).
- * Returns null when neither is available (e.g. a diet bought straight from the
- * Gumroad storefront — diets have no DB table yet).
+ *   2. the static program registry, keyed by the sync row's product_id
+ *      (programs only). Neither programs nor diets have a DB table — the
+ *      catalogs are static code (src/lib/programs, src/lib/diets), so a
+ *      program sync row's product_id must be the program slug for a
+ *      storefront purchase (no stamped params) to be fulfillable.
+ * Returns null when neither source resolves (e.g. a diet bought straight
+ * from the Gumroad storefront, or a program sync row keyed by something
+ * that isn't a registered slug).
  */
 export async function resolveEntitlementSlug(
   admin: SupabaseClient,
@@ -173,18 +181,14 @@ export async function resolveEntitlementSlug(
   productId: string,
   payload: Pick<GumroadSalePayload, "url_params" | "custom_fields">
 ): Promise<string | null> {
+  void admin; // catalogs are static code — kept in the signature so a future DB-backed catalog is a drop-in
   const bag = { ...(payload.custom_fields ?? {}), ...(payload.url_params ?? {}) };
   const stamped = String(bag.tjfit_program_slug ?? "").trim();
   if (stamped) return stamped;
 
   if (productType === "program") {
-    const { data } = await admin
-      .from("programs")
-      .select("slug")
-      .eq("id", productId)
-      .maybeSingle();
-    const slug = (data?.slug as string | undefined)?.trim();
-    if (slug) return slug;
+    const program = getProgram(productId.trim());
+    if (program) return program.slug;
   }
   return null;
 }
@@ -395,44 +399,20 @@ export async function handleSale(
         entitlementNote = "no_program_slug_resolved";
       }
 
-      // Look up coach (trainer_id on programs) — not all surfaces have
-      // a coach attached. If no coach, log a 0/100 commission row to
-      // preserve the audit trail.
-      let coachId: string | null = null;
-      if (syncRow.product_type === "program") {
-        const { data: program } = await admin
-          .from("programs")
-          .select("trainer_id")
-          .eq("id", syncRow.product_id)
-          .maybeSingle();
-        coachId = (program?.trainer_id as string | null) ?? null;
-      }
-
-      let coachPct = 0;
-      let tjfitPct = 100;
-      let appliedRule: "global" | "product_type" | "per_product" | "per_coach" | "override" =
-        "override";
-      let appliedRuleId: string | null = null;
-
-      if (coachId) {
-        try {
-          const resolved = await resolveCommissionRate(admin, {
-            productType: syncRow.product_type as "program" | "diet",
-            productId: syncRow.product_id as string,
-            coachId
-          });
-          coachPct = resolved.coachPct;
-          tjfitPct = resolved.tjfitPct;
-          appliedRule = resolved.ruleSource;
-          appliedRuleId = resolved.ruleId;
-        } catch {
-          // Fall back to 0/100 — TJFit-keeps-all when the resolver
-          // can't satisfy. Logged below.
-        }
-      }
+      // No coach attaches to this lane: programs/diets are static-code
+      // catalogs (no DB table, no trainer_id — see resolveEntitlementSlug),
+      // so every sale here is TJFit-keeps-all. Coach-authored programs sell
+      // through custom_programs, not Gumroad sync; when a coach lane reaches
+      // this handler, resolveCommissionRate() in src/lib/gumroad/commission.ts
+      // holds the 5-tier split hierarchy to wire in.
+      const coachId: string | null = null;
+      const coachPct = 0;
+      const tjfitPct = 100;
+      const appliedRule = "override" as const;
+      const appliedRuleId: string | null = null;
 
       const { coachUsd, tjfitUsd } = computeShareUSD(
-        { coachPct, tjfitPct, ruleSource: appliedRule, ruleId: appliedRuleId ?? "" },
+        { coachPct, tjfitPct, ruleSource: appliedRule, ruleId: "" },
         netUsd
       );
 

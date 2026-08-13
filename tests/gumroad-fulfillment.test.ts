@@ -5,6 +5,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { GumroadSale } from "@/lib/gumroad/client";
 import {
   handleSale,
+  resolveEntitlementSlug,
   resolveSubscriptionPlan,
   computeSubscriptionPeriodEnd,
   type GumroadSalePayload
@@ -163,6 +164,42 @@ describe("resolveSubscriptionPlan", () => {
   });
 });
 
+describe("resolveEntitlementSlug — static catalogs, zero DB reads", () => {
+  // Programs and diets have no DB table (static-code catalogs), so slug
+  // resolution must never touch Supabase. An admin whose .from() throws
+  // makes any regression to a table lookup fail loudly.
+  const dbFreeAdmin = {
+    from() {
+      throw new Error("resolveEntitlementSlug must not query the database");
+    }
+  } as unknown as SupabaseClient;
+
+  it("a stamped tjfit_program_slug always wins", async () => {
+    await expect(
+      resolveEntitlementSlug(dbFreeAdmin, "program", "comeback", {
+        url_params: { tjfit_program_slug: "recomp" }
+      })
+    ).resolves.toBe("recomp");
+  });
+
+  it("falls back to the static registry keyed by product_id (storefront purchase)", async () => {
+    // "comeback" is the one registered program slug (comeback-12w folder).
+    await expect(resolveEntitlementSlug(dbFreeAdmin, "program", "comeback", {})).resolves.toBe(
+      "comeback"
+    );
+  });
+
+  it("returns null for a product_id that is not a registered program slug", async () => {
+    await expect(
+      resolveEntitlementSlug(dbFreeAdmin, "program", "prog-uuid", {})
+    ).resolves.toBeNull();
+  });
+
+  it("diets have no registry fallback yet", async () => {
+    await expect(resolveEntitlementSlug(dbFreeAdmin, "diet", "any-diet", {})).resolves.toBeNull();
+  });
+});
+
 describe("computeSubscriptionPeriodEnd", () => {
   const start = "2026-01-15T00:00:00.000Z";
   it("adds a month for monthly billing", () => {
@@ -264,12 +301,16 @@ describe("handleSale — program/diet direct buy grants a real entitlement", () 
     url_params: { tjfit_program_slug: "recomp", tjfit_locale: "tr" }
   };
 
-  function resolver(programOrderInsert: Result) {
+  function resolver(programOrderInsert: Result, syncProductId = "prog-uuid") {
     return (table: string): Result => {
       if (table === "product_gumroad_sync")
-        return { data: { product_type: "program", product_id: "prog-uuid", gumroad_product_id: "gum_recomp" } };
+        return { data: { product_type: "program", product_id: syncProductId, gumroad_product_id: "gum_recomp" } };
       if (table === "profiles") return { data: { id: "user-prog-1" } };
-      if (table === "programs") return { data: null }; // no coach attached
+      if (table === "programs")
+        // Regression tripwire: public.programs has never existed in prod —
+        // the catalog is static code (src/lib/programs). Any query against
+        // it is the WP-DATABASE-01 bug resurfacing.
+        throw new Error("phantom table: nothing may query public.programs");
       if (table === "program_orders") return programOrderInsert;
       if (table === "sale_commissions") return { data: null, error: null };
       return { data: null };
@@ -302,6 +343,33 @@ describe("handleSale — program/diet direct buy grants a real entitlement", () 
     // 23505 on the unique provider_order_id → treated as already-fulfilled
     expect(res.ok).toBe(true);
     expect((res as { details: Record<string, unknown> }).details.entitlement_granted).toBe(true);
+  });
+
+  it("storefront purchase (no stamped slug): resolves the program from the static registry", async () => {
+    // A buyer straight off the Gumroad storefront carries no tjfit_* url
+    // params. The sync row's product_id is the program slug by convention;
+    // resolution must come from src/lib/programs — never a DB table.
+    const { admin, writes } = createFakeAdmin({
+      resolve: resolver({ data: null, error: null }, "comeback")
+    });
+    const res = await handleSale({ ...payload, url_params: {} }, admin);
+    expect(res.ok).toBe(true);
+    expect((res as { details: Record<string, unknown> }).details.entitlement_granted).toBe(true);
+    const row = findWrite(writes, "program_orders", "insert")!.payload as Record<string, unknown>;
+    expect(row.program_slug).toBe("comeback");
+  });
+
+  it("storefront purchase with an unregistered product_id: gap surfaced, never a blind grant", async () => {
+    const { admin, writes } = createFakeAdmin({
+      resolve: resolver({ data: null, error: null }, "prog-uuid")
+    });
+    const res = await handleSale({ ...payload, url_params: {} }, admin);
+    expect(res.ok).toBe(true);
+    expect((res as { details: Record<string, unknown> }).details.entitlement_granted).toBe(false);
+    expect((res as { details: Record<string, unknown> }).details.entitlement_note).toBe("no_program_slug_resolved");
+    expect(findWrite(writes, "program_orders", "insert")).toBeUndefined();
+    // the commission audit trail must still be preserved
+    expect(findWrite(writes, "sale_commissions", "insert")).toBeTruthy();
   });
 
   it("diet with no slug source: commission written, entitlement flagged not granted", async () => {

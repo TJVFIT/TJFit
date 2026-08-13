@@ -250,10 +250,10 @@ export async function syncProductFromGumroad(
     // table. For now we only mirror the published flag (price stays
     // authored in the local product file).
     if (syncRow.product_type === "program") {
-      await supabase
-        .from("programs")
-        .update({ is_published: product.published })
-        .eq("id", syncRow.product_id);
+      // Programs aren't in DB — the catalog is static code at
+      // src/lib/programs/index.ts. No-op the local mirror, same as diets.
+      // (The update that used to sit here targeted a `programs` table that
+      // has never existed in prod, so it was a permanent silent no-op.)
     } else if (syncRow.product_type === "diet") {
       // Diets aren't in DB yet — they live in src/lib/diets/index.ts.
       // No-op the local mirror until they migrate to a table.
