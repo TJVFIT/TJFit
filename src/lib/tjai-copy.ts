@@ -54,6 +54,7 @@ export const tjaiCopy: Record<Locale, TJAICopy> = {
       saving: "Saving...",
       saved: "Plan saved to your dashboard.",
       saveError: "Could not save plan.",
+      pdfExportError: "Could not export PDF.",
       generatedAt: "Plan generated",
       metrics: {
         calories: "Calories",
@@ -122,6 +123,7 @@ export const tjaiCopy: Record<Locale, TJAICopy> = {
       saving: "Kaydediliyor...",
       saved: "Plan panelinize kaydedildi.",
       saveError: "Plan kaydedilemedi.",
+      pdfExportError: "PDF dışa aktarılamadı.",
       generatedAt: "Plan oluşturma",
       metrics: {
         calories: "Kalori",
@@ -190,6 +192,7 @@ export const tjaiCopy: Record<Locale, TJAICopy> = {
       saving: "جار الحفظ...",
       saved: "تم حفظ الخطة في لوحتك.",
       saveError: "تعذر حفظ الخطة.",
+      pdfExportError: "تعذر تصدير ملف PDF.",
       generatedAt: "تاريخ الانشاء",
       metrics: {
         calories: "السعرات",
@@ -258,6 +261,7 @@ export const tjaiCopy: Record<Locale, TJAICopy> = {
       saving: "Guardando...",
       saved: "Plan guardado en tu dashboard.",
       saveError: "No se pudo guardar el plan.",
+      pdfExportError: "No se pudo exportar el PDF.",
       generatedAt: "Plan generado",
       metrics: {
         calories: "Calorias",
@@ -326,6 +330,7 @@ export const tjaiCopy: Record<Locale, TJAICopy> = {
       saving: "Sauvegarde...",
       saved: "Plan enregistre dans votre dashboard.",
       saveError: "Impossible d'enregistrer le plan.",
+      pdfExportError: "Impossible d'exporter le PDF.",
       generatedAt: "Plan genere le",
       metrics: {
         calories: "Calories",

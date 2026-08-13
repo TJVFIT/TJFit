@@ -45,7 +45,6 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
   const island = useDynamicIsland();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [savedFlash, setSavedFlash] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [initialLoadError, setInitialLoadError] = useState<string | null>(null);
   const [usernameTouched, setUsernameTouched] = useState(false);
@@ -133,7 +132,6 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
     }
     setSaving(true);
     setError(null);
-    setSavedFlash(false);
     try {
       const res = await fetch("/api/profiles/me", {
         method: "PATCH",
@@ -154,9 +152,7 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
         setError(typeof data.error === "string" ? data.error : s.errorGeneric);
         return;
       }
-      setSavedFlash(true);
       island?.showNotification("achievement", "Profile updated ✓");
-      window.setTimeout(() => setSavedFlash(false), 2000);
       if (data.profile) {
         const p = data.profile as ProfileRow;
         setForm((prev) => ({
@@ -197,9 +193,7 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
         setError(typeof data.error === "string" ? data.error : s.errorGeneric);
         return;
       }
-      setSavedFlash(true);
       island?.showNotification("achievement", "Profile updated ✓");
-      window.setTimeout(() => setSavedFlash(false), 2000);
     } catch {
       setError(s.errorGeneric);
     } finally {
@@ -379,7 +373,6 @@ export function ProfileEditForm({ locale }: { locale: Locale }) {
         </label>
 
         {error ? <p className="text-sm text-red-400">{error}</p> : null}
-        {savedFlash ? <p className="text-sm text-purple-300/90">{s.saved}</p> : null}
 
         <AsyncButton
           type="button"

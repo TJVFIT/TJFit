@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import { CoachReviewRequest } from "@/components/tjai/coach-review-request";
 import { ShareCardGenerator } from "@/components/tjai/share-card-generator";
 import { TJAIChat } from "@/components/tjai/tjai-chat";
+import { useDynamicIsland } from "@/components/ui/dynamic-island";
 import { useInView } from "@/hooks/useInView";
 import { buildTjaiDecisionReasons } from "@/lib/tjai-explanations";
 import type { Locale } from "@/lib/i18n";
@@ -157,6 +158,8 @@ export function TJAIResult({
   const [loadingGrocery, setLoadingGrocery] = useState(false);
   const [loadingMealPrep, setLoadingMealPrep] = useState(false);
   const [loadingPdf, setLoadingPdf] = useState(false);
+
+  const island = useDynamicIsland();
 
   const summaryRef = useRef<HTMLDivElement>(null);
   const dietRef = useRef<HTMLDivElement>(null);
@@ -347,6 +350,7 @@ export function TJAIResult({
       pdf.save(`tjai-plan-${routingLocale}.pdf`);
     } catch (err) {
       console.error("[TJAI] PDF export failed:", err);
+      island?.showNotification("error", copy.result.pdfExportError);
     } finally {
       setLoadingPdf(false);
     }

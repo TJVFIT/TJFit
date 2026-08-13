@@ -394,6 +394,7 @@ export type TJAICopy = {
     saving: string;
     saved: string;
     saveError: string;
+    pdfExportError: string;
     generatedAt: string;
     metrics: {
       calories: string;
