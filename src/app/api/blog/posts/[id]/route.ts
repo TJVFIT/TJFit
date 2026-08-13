@@ -65,7 +65,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
   const id = params.id;
   const { data: post } = await admin
     .from("community_blog_posts")
-    .select("id,author_id")
+    .select("id,author_id,cover_image_url")
     .eq("id", id)
     .maybeSingle();
   if (!post) return NextResponse.json({ error: "Post not found" }, { status: 404 });
@@ -85,6 +85,24 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
 
   const { error } = await admin.from("community_blog_posts").delete().eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // Storage cleanup ported from System B's delete (review catch: the first
+  // port dropped it, orphaning a cover image on every delete). A stores the
+  // full public URL, so derive the object path; best-effort like B — a
+  // failed removal never fails the delete.
+  if (typeof post.cover_image_url === "string" && post.cover_image_url) {
+    const marker = "/storage/v1/object/public/community-blog-images/";
+    const idx = post.cover_image_url.indexOf(marker);
+    if (idx !== -1) {
+      const objectPath = post.cover_image_url.slice(idx + marker.length);
+      if (objectPath) {
+        await admin.storage
+          .from("community-blog-images")
+          .remove([objectPath])
+          .catch(() => undefined);
+      }
+    }
+  }
 
   return NextResponse.json({ success: true });
 }
