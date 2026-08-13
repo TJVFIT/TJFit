@@ -1,6 +1,6 @@
 "use client";
 
-import { Crown, Dumbbell, Flame, MessageSquare, Newspaper, Target, TrendingUp, Zap, type LucideIcon } from "lucide-react";
+import { Newspaper, Target, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -9,20 +9,11 @@ import { AuthRequiredPanel } from "@/components/auth-required-panel";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useDynamicIsland } from "@/components/ui/dynamic-island";
 import { FollowButton } from "@/components/ui/follow-button";
-import { communityPosts } from "@/lib/content";
 import type { Locale } from "@/lib/i18n";
 import Image from "next/image";
 import { getCommunityCopy } from "@/lib/launch-copy";
 
-type TabKey = "threads" | "challenges" | "groups" | "transformations" | "blogs" | "people";
-
-const REACTIONS: Array<{ key: string; Icon: LucideIcon }> = [
-  { key: "fire", Icon: Flame },
-  { key: "muscle", Icon: Dumbbell },
-  { key: "crown", Icon: Crown },
-  { key: "lightning", Icon: Zap },
-  { key: "target", Icon: Target }
-];
+type TabKey = "challenges" | "groups" | "transformations" | "blogs" | "people";
 
 type BlogPost = {
   id: string;
@@ -38,7 +29,6 @@ type BlogPost = {
 
 function safeTab(value: string | null): TabKey {
   if (
-    value === "threads" ||
     value === "challenges" ||
     value === "groups" ||
     value === "transformations" ||
@@ -54,52 +44,6 @@ function formatDate(value: string, locale: Locale) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
   return new Intl.DateTimeFormat(locale).format(date);
-}
-
-function ThreadsPanel({
-  posts,
-  emptyLabel,
-  reactions,
-  onReact
-}: {
-  posts: typeof communityPosts;
-  emptyLabel: string;
-  reactions: Record<string, Record<string, number>>;
-  onReact: (postId: string, key: string) => void;
-}) {
-  if (posts.length === 0) {
-    return <EmptyState icon={MessageSquare} subtext={emptyLabel} />;
-  }
-
-  return (
-    <div className="space-y-4">
-      {posts.map((post) => (
-        <article key={post.id} className="rounded-[24px] border border-white/10 bg-white/5 p-5">
-          <div className="flex items-center justify-between text-xs text-muted">
-            <span>{post.author}</span>
-            <span className="uppercase tracking-[0.2em]">{post.role}</span>
-          </div>
-          <p className="mt-3 text-sm text-bright">{post.content}</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {REACTIONS.map(({ key, Icon }) => (
-              <button
-                key={key}
-                type="button"
-                onClick={() => onReact(post.id, key)}
-                className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-2.5 py-1 text-xs text-bright hover:border-purple-300/40"
-              >
-                <Icon className="h-3.5 w-3.5 text-purple-300" aria-hidden />
-                {reactions[post.id]?.[key] ?? 0}
-              </button>
-            ))}
-          </div>
-          <p className="mt-3 text-xs text-faint">
-            {post.likes} likes · {post.comments} comments
-          </p>
-        </article>
-      ))}
-    </div>
-  );
 }
 
 function ChallengesPanel({ items, emptyLabel }: { items: Array<{ slug: string; category: string; name: string; description: string; duration: string; participants: number }>; emptyLabel: string }) {
@@ -569,7 +513,6 @@ export function CommunityHub({
   const tabs: { key: TabKey; label: string }[] = [
     { key: "blogs", label: copy.tabs.blogs },
     { key: "people", label: copy.tabs.people },
-    { key: "threads", label: copy.tabs.threads },
     { key: "challenges", label: copy.tabs.challenges },
     { key: "groups", label: copy.tabs.groups },
     { key: "transformations", label: copy.tabs.transformations }
@@ -590,7 +533,6 @@ export function CommunityHub({
   const [targetLocaleByPost, setTargetLocaleByPost] = useState<Record<string, Locale>>({});
   const [challengeItems, setChallengeItems] = useState<DbChallenge[]>([]);
   const [groupItems, setGroupItems] = useState<DbGroup[]>([]);
-  const [threadReactions, setThreadReactions] = useState<Record<string, Record<string, number>>>({});
   const [transformationItems, setTransformationItems] = useState<DbTransformation[]>([]);
   const [loadingTransformations, setLoadingTransformations] = useState(true);
 
@@ -856,25 +798,6 @@ export function CommunityHub({
         </div>
 
         <div className="mt-8">
-          {activeTab === "threads" && (
-            <ThreadsPanel
-              posts={communityPosts}
-              emptyLabel={copy.threadsEmpty}
-              reactions={threadReactions}
-              onReact={(postId, key) => {
-                setThreadReactions((prev) => ({
-                  ...prev,
-                  [postId]: { ...(prev[postId] ?? {}), [key]: Number(prev[postId]?.[key] ?? 0) + 1 }
-                }));
-                void fetch("/api/community/reactions", {
-                  method: "POST",
-                  credentials: "include",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ postId })
-                });
-              }}
-            />
-          )}
           {activeTab === "challenges" && <ChallengesLivePanel items={challengeItems} onJoin={joinChallenge} onLog={logChallenge} copy={copy} />}
           {activeTab === "groups" && <GroupsPanel groups={groupItems} onToggle={toggleGroup} copy={copy} />}
           {activeTab === "transformations" && (

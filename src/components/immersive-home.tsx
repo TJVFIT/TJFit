@@ -14,7 +14,6 @@ import { HomeNewsletterBar } from "@/components/home-newsletter-bar";
 import { HomeTestimonials } from "@/components/home-testimonials";
 import { HomeCoachCta } from "@/components/home-coach-cta";
 import { useInView } from "@/hooks/useInView";
-import type { Program } from "@/lib/content";
 import type { HomeLuxuryCopy } from "@/lib/home-luxury-copy";
 import { getNavChromeCopy } from "@/lib/launch-copy";
 import { getDirection, type Locale } from "@/lib/i18n";
@@ -203,15 +202,11 @@ function PlatformFeatureCard({
   );
 }
 
-type HomeCoachPreview = { slug: string; name: string; specialty: string; rating: number };
-
 export function ImmersiveHome({
-  locale, copy, coaches: _coaches, freePrograms: _freePrograms
+  locale, copy
 }: {
   locale: Locale; copy: HomeLuxuryCopy;
-  coaches: HomeCoachPreview[]; freePrograms: Program[];
 }) {
-  void _coaches; void _freePrograms;
   const { prefersReducedMotion: reduce } = useDevice();
   const direction = getDirection(locale);
   const navChrome = getNavChromeCopy(locale);

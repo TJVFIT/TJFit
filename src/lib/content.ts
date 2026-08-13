@@ -88,16 +88,6 @@ export type Challenge = {
   description: string;
 };
 
-export type CommunityPost = {
-  id: string;
-  author: string;
-  role: "user" | "coach";
-  content: string;
-  likes: number;
-  comments: number;
-  coachReply?: string;
-};
-
 export type LiveSession = {
   id: string;
   title: string;
@@ -145,8 +135,6 @@ export const rankingTiers = [
 export const transformations: Transformation[] = [];
 
 export const transformationLeaderboards: { category: string; leader: string; score: string }[] = [];
-
-export const communityPosts: CommunityPost[] = [];
 
 export const challenges: Challenge[] = [];
 

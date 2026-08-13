@@ -98,14 +98,12 @@ type CommunityCopy = {
   title: string;
   subtitle: string;
   tabs: {
-    threads: string;
     challenges: string;
     transformations: string;
     blogs: string;
     people: string;
     groups: string;
   };
-  threadsEmpty: string;
   challengesEmpty: string;
   transformationsEmpty: string;
   verified: string;
@@ -713,8 +711,7 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     badge: "Community",
     title: "Community",
     subtitle: "Discussions, challenges, and wins — together in one calm space.",
-    tabs: { threads: "Threads", challenges: "Challenges", transformations: "Transformations", blogs: "Blogs", people: "People", groups: "Groups" },
-    threadsEmpty: "Conversations are warming up. Your feed will land here.",
+    tabs: { challenges: "Challenges", transformations: "Transformations", blogs: "Blogs", people: "People", groups: "Groups" },
     challengesEmpty: "No challenges live right now.",
     transformationsEmpty: "No public stories yet — check back soon.",
     verified: "Verified",
@@ -780,8 +777,7 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     badge: "Topluluk",
     title: "Topluluk",
     subtitle: "Sohbetler, meydan okumalar ve başarı hikâyeleri — tek sakin merkezde.",
-    tabs: { threads: "Konular", challenges: "Meydan okumalar", transformations: "Dönüşümler", blogs: "Blog", people: "Kişiler", groups: "Gruplar" },
-    threadsEmpty: "Sohbetler ısınıyor. Akışın burada görünecek.",
+    tabs: { challenges: "Meydan okumalar", transformations: "Dönüşümler", blogs: "Blog", people: "Kişiler", groups: "Gruplar" },
     challengesEmpty: "Şu an canlı meydan okuma yok.",
     transformationsEmpty: "Henüz paylaşılan hikâye yok — yakında tekrar bak.",
     verified: "Doğrulandı",
@@ -847,8 +843,7 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     badge: "مركز المجتمع",
     title: "المجتمع",
     subtitle: "المنشورات والتحديات والتحولات اصبحت منظمة في مكان واحد.",
-    tabs: { threads: "المناقشات", challenges: "التحديات", transformations: "التحولات", blogs: "المدونات", people: "الأشخاص", groups: "المجموعات" },
-    threadsEmpty: "يتم تجهيز المناقشات. سيظهر نشاط المجتمع هنا.",
+    tabs: { challenges: "التحديات", transformations: "التحولات", blogs: "المدونات", people: "الأشخاص", groups: "المجموعات" },
     challengesEmpty: "لا توجد تحديات نشطة حاليا.",
     transformationsEmpty: "لا توجد تحولات عامة حاليا.",
     verified: "موثق",
@@ -914,8 +909,7 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     badge: "Centro de Comunidad",
     title: "Comunidad",
     subtitle: "Hilos, retos y transformaciones ahora estan organizados en un solo lugar.",
-    tabs: { threads: "Hilos", challenges: "Retos", transformations: "Transformaciones", blogs: "Blogs", people: "Personas", groups: "Grupos" },
-    threadsEmpty: "Los hilos se estan preparando. Tu feed aparecera aqui.",
+    tabs: { challenges: "Retos", transformations: "Transformaciones", blogs: "Blogs", people: "Personas", groups: "Grupos" },
     challengesEmpty: "Aun no hay retos activos.",
     transformationsEmpty: "Aun no hay transformaciones publicas.",
     verified: "Verificado",
@@ -981,8 +975,7 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     badge: "Centre Communaute",
     title: "Communaute",
     subtitle: "Discussions, defis et transformations sont maintenant reunis au meme endroit.",
-    tabs: { threads: "Discussions", challenges: "Defis", transformations: "Transformations", blogs: "Blogs", people: "Personnes", groups: "Groupes" },
-    threadsEmpty: "Les discussions sont en preparation. Votre flux apparaitra ici.",
+    tabs: { challenges: "Defis", transformations: "Transformations", blogs: "Blogs", people: "Personnes", groups: "Groupes" },
     challengesEmpty: "Aucun defi actif pour le moment.",
     transformationsEmpty: "Aucune transformation publique pour le moment.",
     verified: "Verifie",

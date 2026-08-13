@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Star } from "lucide-react";
 
 import { HoverLift } from "@/components/motion";
-import { Challenge, Coach, CommunityPost, Product, Transformation } from "@/lib/content";
+import { Challenge, Coach, Product, Transformation } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
 
@@ -152,31 +152,5 @@ export function ChallengeCard({ challenge }: { challenge: Challenge }) {
         </div>
       </div>
     </HoverLift>
-  );
-}
-
-export function CommunityPostCard({ post }: { post: CommunityPost }) {
-  return (
-    <div className="glass-panel p-6">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <p className="font-medium text-white">{post.author}</p>
-          <p className="text-sm text-muted">{post.role}</p>
-        </div>
-        <span className="inline-flex rounded-full border border-white/[0.1] bg-white/[0.05] px-3 py-1 text-[11px] font-medium text-muted">
-          {post.likes} likes
-        </span>
-      </div>
-      <p className="mt-5 text-sm leading-[1.65] text-bright">{post.content}</p>
-      {post.coachReply ? (
-        <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-bright">
-          Coach reply: {post.coachReply}
-        </div>
-      ) : null}
-      <div className="mt-5 flex items-center gap-4 text-sm text-muted">
-        <span>{post.comments} comments</span>
-        <span>Share to Instagram / TikTok / X / WhatsApp</span>
-      </div>
-    </div>
   );
 }

@@ -2,7 +2,6 @@ import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 
 import { ClientErrorBoundary } from "@/components/client-error-boundary";
-import { coaches, programs } from "@/lib/content";
 import { getHomeLuxuryCopy } from "@/lib/home-luxury-copy";
 import { isLocale, type Locale } from "@/lib/i18n";
 
@@ -75,13 +74,6 @@ export default function HomePage({ params }: { params: { locale: string } }) {
 
   const locale = raw as Locale;
   const copy = getHomeLuxuryCopy(locale);
-  const freePrograms = programs.filter((p) => p.is_free);
-  const coachPreviews = coaches.slice(0, 4).map((c) => ({
-    slug: c.slug,
-    name: c.name,
-    specialty: c.specialty,
-    rating: c.rating
-  }));
 
   return (
     <ClientErrorBoundary
@@ -122,8 +114,6 @@ export default function HomePage({ params }: { params: { locale: string } }) {
       <ImmersiveHome
         locale={locale}
         copy={copy}
-        coaches={coachPreviews}
-        freePrograms={freePrograms}
       />
     </ClientErrorBoundary>
   );
