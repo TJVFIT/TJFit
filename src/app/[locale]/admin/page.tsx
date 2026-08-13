@@ -9,6 +9,7 @@ import { AdminChallengesPanel } from "@/components/admin-challenges-panel";
 import { AdminBundlePayments } from "@/components/admin-bundle-payments";
 import { AdminCreditPackPayments } from "@/components/admin-credit-pack-payments";
 import { AdminFeedbackList } from "@/components/admin-feedback-list";
+import { AdminTransformationsPanel } from "@/components/admin-transformations-panel";
 import { ProtectedRoute } from "@/components/protected-route";
 import { EmptyState } from "@/components/ui/empty-state";
 
@@ -103,6 +104,7 @@ export default async function AdminPage({ params }: { params: { locale: string }
         <AdminCreditPackPayments />
         <AdminChallengesPanel />
         <AdminBlogPanel />
+        <AdminTransformationsPanel />
         <AdminFeedbackList initialSubmissions={submissions} />
         <div className="glass-panel rounded-[32px] p-6">
           <p className="text-lg font-semibold text-white">Advanced analytics</p>

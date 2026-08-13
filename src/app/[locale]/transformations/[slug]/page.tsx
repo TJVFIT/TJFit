@@ -1,89 +1,97 @@
+import Image from "next/image";
 import { notFound } from "next/navigation";
 
-import { ProtectedRoute } from "@/components/protected-route";
-import { transformations, coaches } from "@/lib/content";
 import { requireLocaleParam } from "@/lib/require-locale";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 
-export default function TransformationDetailPage({
+type TransformationRow = {
+  id: string;
+  before_image_url: string;
+  after_image_url: string;
+  program_slug: string | null;
+  duration_label: string | null;
+  weight_change: string | null;
+  story: string | null;
+  likes_count: number;
+  status: string;
+  created_at: string;
+};
+
+async function fetchTransformation(id: string): Promise<TransformationRow | null> {
+  let supabase: ReturnType<typeof createServerSupabaseClient>;
+  try {
+    supabase = createServerSupabaseClient();
+  } catch {
+    return null;
+  }
+
+  const { data } = await supabase
+    .from("user_transformations")
+    .select(
+      "id,before_image_url,after_image_url,program_slug,duration_label,weight_change,story,likes_count,status,created_at"
+    )
+    .eq("id", id)
+    .maybeSingle();
+
+  return (data as TransformationRow | null) ?? null;
+}
+
+export default async function TransformationDetailPage({
   params
 }: {
   params: { locale: string; slug: string };
 }) {
-  const locale = requireLocaleParam(params.locale);
-  const slug = params.slug ?? "";
+  requireLocaleParam(params.locale);
+  const id = params.slug ?? "";
 
-  const transformation = transformations.find((item) => item.slug === slug);
+  const transformation = await fetchTransformation(id);
 
-  if (!transformation) {
+  // Public per RLS (transformations_read_approved: status = 'approved' or
+  // own row) — the detail page itself only ever shows approved rows, even to
+  // the owner previewing their own pending submission, so nothing not yet
+  // moderated is publicly linkable.
+  if (!transformation || transformation.status !== "approved") {
     notFound();
   }
 
-  const coach = coaches.find((entry) => entry.slug === transformation.coachSlug);
-
   return (
-    <ProtectedRoute locale={locale} requireAdmin>
-      <div className="mx-auto max-w-6xl space-y-10 px-4 py-16 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-6xl space-y-10 px-4 py-16 sm:px-6 lg:px-8">
       <div className="glass-panel rounded-[36px] p-8">
         <span className="badge">Transformation Story</span>
-        <h1 className="mt-6 text-4xl font-semibold text-white">
-          <span className="tj-title-shimmer">{transformation.userName} • {transformation.category}</span>
-        </h1>
-        <p className="mt-4 max-w-3xl text-sm leading-7 text-muted">{transformation.story}</p>
+        {transformation.duration_label || transformation.weight_change ? (
+          <h1 className="mt-6 text-4xl font-semibold text-white">
+            <span className="tj-title-shimmer">
+              {[transformation.duration_label, transformation.weight_change].filter(Boolean).join(" • ")}
+            </span>
+          </h1>
+        ) : null}
+        {transformation.story ? (
+          <p className="mt-4 max-w-3xl text-sm leading-7 text-muted">{transformation.story}</p>
+        ) : null}
 
-        <div className="mt-8 grid gap-5 md:grid-cols-3">
-          <div className="rounded-[28px] border border-dashed border-purple-300/20 bg-[linear-gradient(180deg,rgba(168,85,247,0.04),rgba(0,0,0,0.3))] p-8 text-center text-xs uppercase tracking-[0.24em] text-purple-200/70 shadow-[inset_0_0_28px_-12px_rgba(168,85,247,0.2)]">
-            Before photo
+        <div className="mt-8 grid gap-5 md:grid-cols-2">
+          <div className="relative aspect-square overflow-hidden rounded-[28px] border border-white/10 bg-black/30">
+            <Image
+              src={transformation.before_image_url}
+              alt="Before"
+              fill
+              sizes="(min-width: 768px) 480px, 100vw"
+              className="object-cover"
+            />
           </div>
-          <div className="rounded-[28px] border border-white/10 bg-white/5 p-6">
-            <p className="text-sm text-muted">Starting weight</p>
-            <p className="mt-2 text-3xl font-semibold text-white">{transformation.startingWeight} kg</p>
-            <p className="mt-4 text-sm text-muted">Current weight</p>
-            <p className="mt-2 text-3xl font-semibold text-white">{transformation.currentWeight} kg</p>
-            <p className="mt-4 text-sm text-muted">Strength stat</p>
-            <p className="mt-2 text-xl text-white">{transformation.strengthStat}</p>
-          </div>
-          <div className="rounded-[28px] border border-dashed border-purple-300/20 bg-[linear-gradient(180deg,rgba(168,85,247,0.04),rgba(0,0,0,0.3))] p-8 text-center text-xs uppercase tracking-[0.24em] text-purple-200/70 shadow-[inset_0_0_28px_-12px_rgba(168,85,247,0.2)]">
-            After photo
+          <div className="relative aspect-square overflow-hidden rounded-[28px] border border-white/10 bg-black/30">
+            <Image
+              src={transformation.after_image_url}
+              alt="After"
+              fill
+              sizes="(min-width: 768px) 480px, 100vw"
+              className="object-cover"
+            />
           </div>
         </div>
-      </div>
 
-      <div className="grid gap-6 xl:grid-cols-[1fr_0.8fr]">
-        <section className="glass-panel rounded-[32px] p-6">
-          <p className="text-lg font-semibold text-white">Progress timeline</p>
-          <div className="mt-6 space-y-4">
-            {transformation.timeline.map((item) => (
-              <div key={item.week} className="rounded-[24px] border border-white/10 bg-white/5 p-5">
-                <p className="text-sm uppercase tracking-[0.24em] text-faint">{item.week}</p>
-                <p className="mt-3 text-sm leading-7 text-bright">{item.update}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <aside className="space-y-6">
-          <div className="glass-panel rounded-[32px] p-6">
-            <p className="text-lg font-semibold text-white">Measurements</p>
-            <div className="mt-6 space-y-3">
-              {transformation.measurements.map((measurement) => (
-                <div key={measurement} className="rounded-[20px] border border-white/10 bg-white/5 px-4 py-3 text-sm text-bright">
-                  {measurement}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="glass-panel rounded-[32px] p-6">
-            <p className="text-lg font-semibold text-white">Coach responsible</p>
-            <p className="mt-4 text-xl font-semibold text-white">{coach?.name ?? "Coach"}</p>
-            <p className="mt-2 text-sm text-muted">{coach?.specialty}</p>
-            <p className="mt-4 text-sm text-bright">
-              Community votes: {transformation.votes} • Verification: {transformation.verified ? "Coach verified" : "Pending"}
-            </p>
-          </div>
-        </aside>
+        <p className="mt-8 text-sm text-bright">Community likes: {transformation.likes_count}</p>
       </div>
     </div>
-    </ProtectedRoute>
   );
 }

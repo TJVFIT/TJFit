@@ -5,10 +5,11 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/auth-provider";
+import { AuthRequiredPanel } from "@/components/auth-required-panel";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useDynamicIsland } from "@/components/ui/dynamic-island";
 import { FollowButton } from "@/components/ui/follow-button";
-import { Transformation, communityPosts, transformations } from "@/lib/content";
+import { communityPosts } from "@/lib/content";
 import type { Locale } from "@/lib/i18n";
 import Image from "next/image";
 import { getCommunityCopy } from "@/lib/launch-copy";
@@ -332,32 +333,224 @@ function PeoplePanel({ locale, copy }: { locale: Locale; copy: ReturnType<typeof
   );
 }
 
+type DbTransformation = {
+  id: string;
+  before_image_url: string;
+  after_image_url: string;
+  program_slug: string | null;
+  duration_label: string | null;
+  weight_change: string | null;
+  story: string | null;
+  likes_count: number;
+  created_at: string;
+};
+
 function TransformationsPanel({
+  locale,
   items,
+  loading,
   emptyLabel,
-  verifiedLabel,
-  unverifiedLabel
+  copy,
+  user,
+  onSubmitted
 }: {
-  items: Transformation[];
+  locale: Locale;
+  items: DbTransformation[];
+  loading: boolean;
   emptyLabel: string;
-  verifiedLabel: string;
-  unverifiedLabel: string;
+  copy: ReturnType<typeof getCommunityCopy>;
+  user: { id: string } | null;
+  onSubmitted: () => void;
 }) {
-  if (items.length === 0) {
-    return <EmptyState icon={TrendingUp} subtext={emptyLabel} />;
+  if (loading) {
+    return (
+      <div className="grid gap-4 md:grid-cols-2">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className="tj-skeleton tj-shimmer h-48 w-full rounded-[24px]" />
+        ))}
+      </div>
+    );
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
-      {items.map((item) => (
-        <article key={item.slug} className="rounded-[24px] border border-white/10 bg-white/5 p-5">
-          <p className="text-xs uppercase tracking-[0.2em] text-faint">{item.category}</p>
-          <h3 className="mt-2 text-lg font-semibold text-white">{item.userName}</h3>
-          <p className="mt-2 text-sm text-bright">{item.story}</p>
-          <p className="mt-3 text-xs text-faint">{item.verified ? verifiedLabel : unverifiedLabel}</p>
-        </article>
-      ))}
+    <div className="space-y-6">
+      <SubmitTransformationForm locale={locale} copy={copy} user={user} onSubmitted={onSubmitted} />
+      {items.length === 0 ? (
+        <EmptyState icon={TrendingUp} subtext={emptyLabel} />
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2">
+          {items.map((item) => (
+            <Link
+              key={item.id}
+              href={`/${locale}/transformations/${item.id}`}
+              className="block rounded-[24px] border border-white/10 bg-white/5 p-5 transition hover:border-purple-300/35"
+            >
+              <div className="grid grid-cols-2 gap-2 overflow-hidden rounded-[16px]">
+                <div className="relative aspect-square overflow-hidden rounded-[12px] bg-black/30">
+                  <Image src={item.before_image_url} alt="Before" fill sizes="200px" className="object-cover" />
+                </div>
+                <div className="relative aspect-square overflow-hidden rounded-[12px] bg-black/30">
+                  <Image src={item.after_image_url} alt="After" fill sizes="200px" className="object-cover" />
+                </div>
+              </div>
+              {item.duration_label ? (
+                <p className="mt-3 text-xs uppercase tracking-[0.2em] text-faint">{item.duration_label}</p>
+              ) : null}
+              {item.weight_change ? <p className="mt-1 text-sm font-semibold text-white">{item.weight_change}</p> : null}
+              {item.story ? <p className="mt-2 line-clamp-3 text-sm text-bright">{item.story}</p> : null}
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
+  );
+}
+
+function SubmitTransformationForm({
+  locale,
+  copy,
+  user,
+  onSubmitted
+}: {
+  locale: Locale;
+  copy: ReturnType<typeof getCommunityCopy>;
+  user: { id: string } | null;
+  onSubmitted: () => void;
+}) {
+  const island = useDynamicIsland();
+  const [beforeFile, setBeforeFile] = useState<File | null>(null);
+  const [afterFile, setAfterFile] = useState<File | null>(null);
+  const [duration, setDuration] = useState("");
+  const [weightChange, setWeightChange] = useState("");
+  const [story, setStory] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  if (!user) {
+    return <AuthRequiredPanel locale={locale} className="mx-0 max-w-none" />;
+  }
+
+  const uploadPhoto = async (file: File, kind: "before" | "after"): Promise<string> => {
+    const signRes = await fetch("/api/community/transformations/upload-url", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ filename: file.name, kind })
+    });
+    const signData = await signRes.json().catch(() => ({}));
+    if (!signRes.ok) {
+      throw new Error(String(signData.error ?? copy.uploadPhotoFailed));
+    }
+    const uploadRes = await fetch(signData.signedUrl, {
+      method: "PUT",
+      headers: { "Content-Type": file.type || "application/octet-stream" },
+      body: file
+    });
+    if (!uploadRes.ok) {
+      throw new Error(copy.uploadPhotoFailed);
+    }
+    return String(signData.publicUrl);
+  };
+
+  const submit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!beforeFile || !afterFile) {
+      setError(copy.uploadPhotoFailed);
+      return;
+    }
+    setSubmitting(true);
+    setError("");
+    try {
+      const [beforeUrl, afterUrl] = await Promise.all([
+        uploadPhoto(beforeFile, "before"),
+        uploadPhoto(afterFile, "after")
+      ]);
+      const res = await fetch("/api/community/transformations", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          before_image_url: beforeUrl,
+          after_image_url: afterUrl,
+          duration_label: duration || undefined,
+          weight_change: weightChange || undefined,
+          story: story || undefined
+        })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(String(data.error ?? copy.submitTransformationFailed));
+        return;
+      }
+      island?.showNotification("signup", copy.submitTransformationSuccess);
+      setBeforeFile(null);
+      setAfterFile(null);
+      setDuration("");
+      setWeightChange("");
+      setStory("");
+      onSubmitted();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : copy.submitTransformationFailed);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <form onSubmit={submit} className="rounded-[24px] border border-white/10 bg-black/30 p-5">
+      <p className="text-sm font-medium text-white">{copy.submitTransformationTitle}</p>
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <label className="block text-xs text-faint">
+          {copy.beforePhotoLabel}
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setBeforeFile(e.target.files?.[0] ?? null)}
+            className="mt-1 block w-full text-xs text-bright"
+            required
+          />
+        </label>
+        <label className="block text-xs text-faint">
+          {copy.afterPhotoLabel}
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setAfterFile(e.target.files?.[0] ?? null)}
+            className="mt-1 block w-full text-xs text-bright"
+            required
+          />
+        </label>
+      </div>
+      <div className="mt-3 space-y-3">
+        <input
+          value={duration}
+          onChange={(e) => setDuration(e.target.value)}
+          placeholder={copy.durationPlaceholder}
+          className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-accent/40"
+        />
+        <input
+          value={weightChange}
+          onChange={(e) => setWeightChange(e.target.value)}
+          placeholder={copy.weightChangePlaceholder}
+          className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-accent/40"
+        />
+        <textarea
+          value={story}
+          onChange={(e) => setStory(e.target.value)}
+          placeholder={copy.storyPlaceholder}
+          rows={4}
+          className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-accent/40"
+        />
+      </div>
+      {error ? <p className="mt-3 text-xs text-red-300">{error}</p> : null}
+      <button
+        type="submit"
+        disabled={submitting}
+        className="tj-cta-sheen mt-4 rounded-full border border-purple-400/35 bg-purple-500/10 px-5 py-2.5 text-sm font-semibold text-purple-100 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/55 hover:bg-purple-500/15 hover:text-purple-50 disabled:opacity-50"
+      >
+        {submitting ? copy.submittingTransformation : copy.submitTransformation}
+      </button>
+    </form>
   );
 }
 
@@ -399,6 +592,8 @@ export function CommunityHub({
   const [challengeItems, setChallengeItems] = useState<DbChallenge[]>([]);
   const [groupItems, setGroupItems] = useState<DbGroup[]>([]);
   const [threadReactions, setThreadReactions] = useState<Record<string, Record<string, number>>>({});
+  const [transformationItems, setTransformationItems] = useState<DbTransformation[]>([]);
+  const [loadingTransformations, setLoadingTransformations] = useState(true);
 
   useEffect(() => {
     setActiveTab(safeTab(initialTab ?? null));
@@ -447,9 +642,21 @@ export function CommunityHub({
     if (res.ok) setGroupItems(Array.isArray(data.groups) ? data.groups : []);
   };
 
+  const loadTransformations = async () => {
+    setLoadingTransformations(true);
+    try {
+      const res = await fetch("/api/community/transformations", { credentials: "include" });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) setTransformationItems(Array.isArray(data.transformations) ? data.transformations : []);
+    } finally {
+      setLoadingTransformations(false);
+    }
+  };
+
   useEffect(() => {
     if (activeTab === "challenges") void loadChallenges();
     if (activeTab === "groups") void loadGroups();
+    if (activeTab === "transformations") void loadTransformations();
   }, [activeTab]);
 
   const reloadBlogs = async () => {
@@ -675,10 +882,13 @@ export function CommunityHub({
           {activeTab === "groups" && <GroupsPanel groups={groupItems} onToggle={toggleGroup} copy={copy} />}
           {activeTab === "transformations" && (
             <TransformationsPanel
-              items={transformations}
+              locale={locale}
+              items={transformationItems}
+              loading={loadingTransformations}
               emptyLabel={copy.transformationsEmpty}
-              verifiedLabel={copy.verified}
-              unverifiedLabel={copy.unverified}
+              copy={copy}
+              user={user}
+              onSubmitted={() => void loadTransformations()}
             />
           )}
           {activeTab === "blogs" && (

@@ -154,6 +154,18 @@ type CommunityCopy = {
   newMembers: string;
   similarGoals: string;
   openFeed: string;
+  loadingTransformations: string;
+  submitTransformationTitle: string;
+  beforePhotoLabel: string;
+  afterPhotoLabel: string;
+  durationPlaceholder: string;
+  weightChangePlaceholder: string;
+  storyPlaceholder: string;
+  submitTransformation: string;
+  submittingTransformation: string;
+  submitTransformationSuccess: string;
+  submitTransformationFailed: string;
+  uploadPhotoFailed: string;
 };
 
 type FooterCopy = {
@@ -750,7 +762,19 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     activeCoaches: "Active Coaches",
     newMembers: "New Members",
     similarGoals: "Similar Goals",
-    openFeed: "Open feed"
+    openFeed: "Open feed",
+    loadingTransformations: "Loading transformations...",
+    submitTransformationTitle: "Share your transformation",
+    beforePhotoLabel: "Before photo",
+    afterPhotoLabel: "After photo",
+    durationPlaceholder: "Duration (e.g. 12 weeks)",
+    weightChangePlaceholder: "Weight change (e.g. -8 kg)",
+    storyPlaceholder: "Tell your story...",
+    submitTransformation: "Submit for review",
+    submittingTransformation: "Submitting...",
+    submitTransformationSuccess: "Submitted for review",
+    submitTransformationFailed: "Could not submit. Try again.",
+    uploadPhotoFailed: "Photo upload failed."
   },
   tr: {
     badge: "Topluluk",
@@ -805,7 +829,19 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     activeCoaches: "Aktif Koçlar",
     newMembers: "Yeni Üyeler",
     similarGoals: "Benzer Hedefler",
-    openFeed: "Akışı aç"
+    openFeed: "Akışı aç",
+    loadingTransformations: "Dönüşümler yükleniyor…",
+    submitTransformationTitle: "Dönüşümünü paylaş",
+    beforePhotoLabel: "Öncesi fotoğrafı",
+    afterPhotoLabel: "Sonrası fotoğrafı",
+    durationPlaceholder: "Süre (örn. 12 hafta)",
+    weightChangePlaceholder: "Kilo değişimi (örn. -8 kg)",
+    storyPlaceholder: "Hikâyeni anlat…",
+    submitTransformation: "İncelemeye gönder",
+    submittingTransformation: "Gönderiliyor…",
+    submitTransformationSuccess: "İncelemeye gönderildi",
+    submitTransformationFailed: "Gönderilemedi. Tekrar dene.",
+    uploadPhotoFailed: "Fotoğraf yüklenemedi."
   },
   ar: {
     badge: "مركز المجتمع",
@@ -860,7 +896,19 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     activeCoaches: "المدربون النشطون",
     newMembers: "الأعضاء الجدد",
     similarGoals: "أهداف مشابهة",
-    openFeed: "فتح الخلاصة"
+    openFeed: "فتح الخلاصة",
+    loadingTransformations: "جار تحميل التحولات...",
+    submitTransformationTitle: "شارك تحولك",
+    beforePhotoLabel: "صورة قبل",
+    afterPhotoLabel: "صورة بعد",
+    durationPlaceholder: "المدة (مثال: 12 اسبوع)",
+    weightChangePlaceholder: "تغيّر الوزن (مثال: -8 كجم)",
+    storyPlaceholder: "اروِ قصتك...",
+    submitTransformation: "ارسل للمراجعة",
+    submittingTransformation: "جار الارسال...",
+    submitTransformationSuccess: "تم الارسال للمراجعة",
+    submitTransformationFailed: "تعذر الارسال. حاول مجددا.",
+    uploadPhotoFailed: "فشل رفع الصورة."
   },
   es: {
     badge: "Centro de Comunidad",
@@ -915,7 +963,19 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     activeCoaches: "Coaches Activos",
     newMembers: "Nuevos Miembros",
     similarGoals: "Objetivos Similares",
-    openFeed: "Abrir feed"
+    openFeed: "Abrir feed",
+    loadingTransformations: "Cargando transformaciones...",
+    submitTransformationTitle: "Comparte tu transformacion",
+    beforePhotoLabel: "Foto de antes",
+    afterPhotoLabel: "Foto de despues",
+    durationPlaceholder: "Duracion (ej. 12 semanas)",
+    weightChangePlaceholder: "Cambio de peso (ej. -8 kg)",
+    storyPlaceholder: "Cuenta tu historia...",
+    submitTransformation: "Enviar para revision",
+    submittingTransformation: "Enviando...",
+    submitTransformationSuccess: "Enviado para revision",
+    submitTransformationFailed: "No se pudo enviar. Intenta de nuevo.",
+    uploadPhotoFailed: "Fallo al subir la foto."
   },
   fr: {
     badge: "Centre Communaute",
@@ -970,7 +1030,19 @@ const communityCopy: Record<Locale, CommunityCopy> = {
     activeCoaches: "Coachs Actifs",
     newMembers: "Nouveaux Membres",
     similarGoals: "Objectifs Similaires",
-    openFeed: "Ouvrir le fil"
+    openFeed: "Ouvrir le fil",
+    loadingTransformations: "Chargement des transformations...",
+    submitTransformationTitle: "Partage ta transformation",
+    beforePhotoLabel: "Photo avant",
+    afterPhotoLabel: "Photo apres",
+    durationPlaceholder: "Duree (ex. 12 semaines)",
+    weightChangePlaceholder: "Changement de poids (ex. -8 kg)",
+    storyPlaceholder: "Raconte ton histoire...",
+    submitTransformation: "Envoyer pour revision",
+    submittingTransformation: "Envoi...",
+    submitTransformationSuccess: "Envoye pour revision",
+    submitTransformationFailed: "Echec de l'envoi. Reessaie.",
+    uploadPhotoFailed: "Echec du televersement de la photo."
   }
 };
 
