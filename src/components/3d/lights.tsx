@@ -8,7 +8,7 @@ import { TJ_LIGHTS } from "./palette";
 /**
  * SCARABUSE-style three-point cinematic lighting:
  *   - warm accent key from upper-right
- *   - cool moonlight fill from lower-left
+ *   - pale lavender fill from lower-left
  *   - soft accent rim behind for silhouette edge
  * Intensity breathes subtly.
  */

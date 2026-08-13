@@ -299,7 +299,7 @@ export function CurlAthleteCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
       </mesh>
       <mesh ref={haloBRef} rotation={[Math.PI / 2.85, Math.PI / 5, 0]} position={[0, 0.36, -0.22]}>
         <torusGeometry args={[2.42, 0.006, 8, 220]} />
-        <meshStandardMaterial color={TJ_PALETTE.frostIce} emissive={TJ_PALETTE.accent} emissiveIntensity={0.34} transparent opacity={0.36} metalness={0.7} roughness={0.28} />
+        <meshStandardMaterial color={TJ_PALETTE.mutedLavender} emissive={TJ_PALETTE.accent} emissiveIntensity={0.34} transparent opacity={0.36} metalness={0.7} roughness={0.28} />
       </mesh>
 
       <mesh position={[0, 1.55, 0]}>

@@ -36,9 +36,9 @@ export const TJ_MATERIAL = {
     transparent: true,
     opacity: 0.78
   },
-  moonlightChrome: {
-    color: TJ_PALETTE.moonlight,
-    emissive: TJ_PALETTE.frostIce,
+  lavenderChrome: {
+    color: TJ_PALETTE.paleLavender,
+    emissive: TJ_PALETTE.mutedLavender,
     emissiveIntensity: 0.08,
     metalness: 1,
     roughness: 0.18

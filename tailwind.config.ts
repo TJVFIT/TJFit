@@ -86,8 +86,6 @@ const config: Config = {
         accent: "#A855F7",
         /** Soft purple — muted accent / hover tints. */
         "accent-muted": "#C4B5FD",
-        /** Violet — secondary brand accent (historical name "sky"). */
-        "accent-sky": "#7C3AED",
         /** Soft purple — historical name "violet"; kept for back-compat. */
         "accent-violet": "#C4B5FD",
         /** Bright lavender-violet — premium / AI / Apex / TJAI badges. */

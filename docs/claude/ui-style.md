@@ -21,7 +21,7 @@ but note two **token names** are historical, not violations (see naming debt).
 | `surface-3` | `#1E2126` | hover / sticky bars (top of stack) |
 | `divider` | `#1E2028` | hairlines |
 | `accent` | `#A855F7` | primary electric violet |
-| `accent-sky` | `#7C3AED` | secondary violet — **historical name, violet value** |
+| ~~`accent-sky`~~ | — | deleted 2026-08-13 (WP-DESIGN-02): zero class usages, cyan-era name; deep violet `#7C3AED` lives on in arbitrary values until something needs a named token |
 | `accent-muted` / `accent-violet` / `premium` | `#C4B5FD` | soft lavender tints; `premium` = AI/Apex/TJAI badges |
 | `muted` `#A1A1AA` · `dim` `#6B6B76` · `faint` `#71717A` · `bright` `#D4D4D8` | | text hierarchy |
 | `success` `#22C55E` · `danger` `#F87171` · `warning` `#F59E0B` | | semantic, never decorative |
@@ -30,9 +30,13 @@ Shadows: `glass`, `lux-glow` (violet 35%), `lux-violet`, `premium-card`.
 Background: `hero-gradient` (violet radial wash). Radius: `shell` = 1.75rem for
 auth panels/modals/large cards.
 
-**Naming debt (do not copy the pattern):** `accent-sky` and `3d/palette.ts`'s
-`moonlight` hold violet values under cyan-era names. WP-DESIGN-02 renames them;
-until then never add a new token with a non-violet family name.
+**Naming debt — resolved 2026-08-13 (WP-DESIGN-02):** `accent-sky` deleted
+(zero usages); `3d/palette.ts` `moonlight`/`frostIce` renamed to
+`paleLavender`/`mutedLavender`; the one genuine non-violet VALUE (a steel-blue
+rgba in `surfaces.tsx`'s glow) replaced with mutedLavender. Remaining known
+debt: `globals.css` still carries ~40 `--color-accent-cyan`-style custom-prop
+NAMES holding violet values — a deliberate deferral (high-touch rename, zero
+visual gain); never add a new non-violet-family name.
 
 ## Typography (self-hosted via `next/font/local`, zero Google Fonts)
 

@@ -16,9 +16,11 @@ export const TJ_PALETTE = {
   accentSoft: "#C4B5FD",
   accentDeep: "#4C1D95",
 
-  // Cool accents — used sparingly for depth contrast
-  moonlight: "#d6cdec",
-  frostIce: "#a99bc8",
+  // Pale lavender accents — used sparingly for depth contrast
+  // (renamed from cyan-era names moonlight/frostIce, WP-DESIGN-02; the
+  // values were always violet-family)
+  paleLavender: "#d6cdec",
+  mutedLavender: "#a99bc8",
 
   // Text
   textPrimary: "#f6f3ed",

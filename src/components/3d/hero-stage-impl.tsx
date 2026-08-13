@@ -54,7 +54,7 @@ export function HeroStageImpl({ variant, intensity, speed, pointerRef }: Props) 
     <TJScene intensity={intensity}>
       <ParallaxCamera pointerRef={pointerRef} />
       <Sparkles count={70} scale={14} size={1} speed={0.18} color={TJ_PALETTE.accentHi} opacity={0.35} />
-      <Sparkles count={30} scale={18} size={0.7} speed={0.1} color={TJ_PALETTE.moonlight} opacity={0.16} />
+      <Sparkles count={30} scale={18} size={0.7} speed={0.1} color={TJ_PALETTE.paleLavender} opacity={0.16} />
       <Centerpiece variant={variant} intensity={intensity} speed={speed} pointerRef={pointerRef} />
     </TJScene>
   );
