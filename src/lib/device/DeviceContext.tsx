@@ -45,6 +45,17 @@ function persistCache(caps: DeviceCapabilities): void {
 // Wrap the app once. Detection is sync-on-mount and the result is
 // cached in sessionStorage so subsequent navigations reuse the tier
 // without re-running matchMedia checks.
+//
+// KNOWN RACE (accepted, do not "fix" by seeding real caps in useState):
+// children see DEFAULT_CAPABILITIES for their first effect run, because
+// this provider corrects state in its own effect (child effects fire
+// first on mount). Consumers with a capability in their dependency array
+// self-correct one cycle later. Seeding the lazy initializer with
+// detectDeviceCapabilities() instead would fix the race but cause
+// server/client hydration mismatches — that trade-off was evaluated and
+// rejected (WP-DESIGN-06 review, 2026-08-13). Hooks that cannot tolerate
+// one default-valued render (first-paint flash) stay on their own sync
+// matchMedia read, e.g. use-is-touch-device.ts.
 export function DeviceProvider({ children }: { children: ReactNode }) {
   const [caps, setCaps] = useState<DeviceCapabilities>(DEFAULT_CAPABILITIES);
 

@@ -79,6 +79,10 @@ export function PageTransition({ children }: { children: ReactNode }) {
   return (
     <div
       ref={containerRef}
+      // isolate + contain:paint carried over from the deleted inner
+      // page-transition wrapper (WP-DESIGN-07) so route content keeps the
+      // same paint containment and stacking isolation it had before.
+      className="isolate [contain:paint]"
       style={{
         // Establish a 3D context so translateZ has effect on desktop.
         perspective: 1500,
