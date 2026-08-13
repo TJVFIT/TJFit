@@ -35,6 +35,7 @@ import { HeroTjaiBrainDeco } from "@/components/hero-tjai-brain-deco";
 import { CinematicHowItWorks, CinematicTransformation } from "@/components/home/cinematic-sections";
 import { Cinematic3DAct } from "@/components/home/cinematic-3d-act";
 import { TouchTheSystemSection } from "@/components/home/touch-the-system-section";
+import { TJAI_ONE_TIME_PRICE_USD, TJAI_SUBSCRIPTION_PRICES_USD } from "@/lib/tjai-pricing";
 import { GrainOverlay } from "@/components/ui/grain-overlay";
 import { WordReveal } from "@/components/ui/word-reveal";
 import { useMagneticButton } from "@/hooks/useMagneticButton";
@@ -565,7 +566,9 @@ export function ImmersiveHome({
             </div>
             <p className="mt-6 text-xs text-dim">
               <Link href={`/${locale}/membership`} className="text-muted underline-offset-4 transition-colors hover:text-accent">
-                Core (Free) · TJAI unlock $10 · Pro $6/mo · Apex $10/mo
+                Core (Free) · TJAI unlock ${TJAI_ONE_TIME_PRICE_USD} · Pro $
+                {TJAI_SUBSCRIPTION_PRICES_USD.pro.monthly}/mo · Apex $
+                {TJAI_SUBSCRIPTION_PRICES_USD.apex.monthly}/mo
               </Link>
             </p>
           </MotionReveal>
