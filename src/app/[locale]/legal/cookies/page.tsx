@@ -161,7 +161,7 @@ export default function CookiesPage({ params }: { params: { locale: string } }) 
   const copy = COPY[locale] ?? COPY.en;
   return (
     <>
-      <AmbientBackground variant="cyan" />
+      <AmbientBackground variant="violet" />
       <div className="relative z-[1] mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <h1 className="font-display text-3xl font-bold leading-tight text-white sm:text-4xl">{copy.title}</h1>
         <p className="mt-2 text-xs text-faint">{copy.updated}</p>

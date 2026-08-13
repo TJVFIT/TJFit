@@ -1,6 +1,9 @@
+import { CalendarDays, Gift, LayoutGrid, Star } from "lucide-react";
+
 import { CoachMyStudentsPanel } from "@/components/coach-my-students-panel";
 import { CoachAnalyticsWidget } from "@/components/coach-analytics-widget";
 import { CoachEarningsWidget } from "@/components/coach-earnings-widget";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Logo } from "@/components/ui/Logo";
 import { getDictionary } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
@@ -33,11 +36,8 @@ export function CoachDashboardView({ locale }: { locale: Locale }) {
               {d.calendarSubtitle}
             </p>
             <div className="mt-6">
-              <p className="text-sm text-faint">No upcoming sessions.</p>
+              <EmptyState icon={CalendarDays} subtext={d.calendarEmpty} />
             </div>
-            <p className="mt-4 text-xs text-faint">
-              {d.preparedForData}
-            </p>
           </div>
 
           <div className="glass-panel rounded-[32px] p-6">
@@ -57,14 +57,7 @@ export function CoachDashboardView({ locale }: { locale: Locale }) {
             <CoachMyStudentsPanel locale={locale} />
           </div>
 
-          <div className="grid gap-4 lg:grid-cols-2">
-            {["My Programs", "My Sessions", "Progress Tracker", "Program builder"].map((card) => (
-              <div key={card} className="rounded-[24px] border border-white/10 bg-white/5 p-5">
-                <p className="font-medium text-white">{card}</p>
-                <p className="mt-2 text-sm text-muted">{d.preparedForData}</p>
-              </div>
-            ))}
-          </div>
+          <EmptyState icon={LayoutGrid} subtext={d.coachToolsEmpty} />
         </section>
 
         <aside className="space-y-6">
@@ -73,8 +66,8 @@ export function CoachDashboardView({ locale }: { locale: Locale }) {
             <p className="mt-3 text-sm leading-7 text-muted">
               {d.referralSubtitle}
             </p>
-            <div className="mt-6 rounded-[24px] border border-white/10 bg-black/30 p-4 text-sm text-faint">
-              Your referral code will appear here.
+            <div className="mt-6">
+              <EmptyState icon={Gift} subtext={d.referralEmpty} />
             </div>
           </div>
 
@@ -88,10 +81,9 @@ export function CoachDashboardView({ locale }: { locale: Locale }) {
 
           <div className="glass-panel rounded-[32px] p-6">
             <p className="text-lg font-semibold text-white">{d.rank}</p>
-            <p className="mt-3 text-sm text-muted">—</p>
-            <p className="mt-2 text-xs text-faint">
-              {d.rankSubtitle}
-            </p>
+            <div className="mt-3">
+              <EmptyState icon={Star} subtext={d.rankSubtitle} />
+            </div>
           </div>
         </aside>
       </div>

@@ -98,6 +98,7 @@ export type Dictionary = {
       subtitle: string;
       calendar: string;
       calendarSubtitle: string;
+      calendarEmpty: string;
       texts: string;
       textsSubtitle: string;
       textsEmpty: string;
@@ -109,6 +110,7 @@ export type Dictionary = {
       zoomLink: string;
       referralTitle: string;
       referralSubtitle: string;
+      referralEmpty: string;
       wallet: string;
       walletSubtitle: string;
       walletEmpty: string;
@@ -125,7 +127,7 @@ export type Dictionary = {
       walletStatusRefunded: string;
       rank: string;
       rankSubtitle: string;
-      preparedForData: string;
+      coachToolsEmpty: string;
     };
     admin: {
       badge: string;
@@ -277,6 +279,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         subtitle: "Calendar, messages, sessions, programs, and earnings in one place.",
         calendar: "Calendar",
         calendarSubtitle: "Upcoming sessions, Zoom links, and availability.",
+        calendarEmpty: "No upcoming sessions yet. They'll appear here once scheduled.",
         texts: "Texts / Messages",
         textsSubtitle: "Private coach–student conversations. Architecture ready for when student accounts exist.",
         textsEmpty: "No messages yet. Chat will appear here when students are assigned.",
@@ -288,6 +291,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         zoomLink: "Zoom link",
         referralTitle: "Referral dashboard",
         referralSubtitle: "Share your code. Earn when clients book.",
+        referralEmpty: "Your referral code will appear here once it's ready.",
         wallet: "Wallet",
         walletSubtitle: "Earnings and payouts.",
         walletEmpty: "No earnings yet. Your commission history will appear here.",
@@ -304,7 +308,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         walletStatusRefunded: "Refunded",
         rank: "Rank & visibility",
         rankSubtitle: "Based on rating, session volume, and client success.",
-        preparedForData: "Ready for Supabase data wiring."
+        coachToolsEmpty: "Coach tools arrive as your practice grows."
       },
       admin: {
         badge: "Platform Overview",
@@ -443,6 +447,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         subtitle: "Takvim, mesajlar, seanslar, programlar ve kazanç — tek yerde.",
         calendar: "Takvim",
         calendarSubtitle: "Yaklaşan seanslar, Zoom ve müsaitlik.",
+        calendarEmpty: "Henüz yaklaşan seans yok. Planlandığında burada görünecek.",
         texts: "Mesajlar",
         textsSubtitle: "Özel koç–öğrenci sohbeti. Öğrenci hesapları açıldığında burada.",
         textsEmpty: "Henüz mesaj yok. Öğrenciler bağlanınca görünecek.",
@@ -454,6 +459,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         zoomLink: "Zoom bağlantısı",
         referralTitle: "Tavsiye özeti",
         referralSubtitle: "Kodunu paylaş; rezervasyon gelince kazan.",
+        referralEmpty: "Tavsiye kodun hazır olduğunda burada görünecek.",
         wallet: "Cüzdan",
         walletSubtitle: "Kazanç ve ödemeler.",
         walletEmpty: "Henüz kazanç yok. Komisyon geçmişin burada görünecek.",
@@ -470,7 +476,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         walletStatusRefunded: "İade edildi",
         rank: "Sıra ve görünürlük",
         rankSubtitle: "Puan, seans hacmi ve üye sonuçlarına göre.",
-        preparedForData: "Veri bağlantısı için hazır."
+        coachToolsEmpty: "Koçluk araçların pratiğin büyüdükçe burada açılacak."
       },
       admin: {
         badge: "Platform özeti",
@@ -606,6 +612,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         subtitle: "التقويم والرسائل والجلسات والبرامج والأرباح في مكان واحد.",
         calendar: "التقويم",
         calendarSubtitle: "الجلسات القادمة وروابط زووم والتوفر.",
+        calendarEmpty: "لا توجد جلسات قادمة بعد. ستظهر هنا عند جدولتها.",
         texts: "النصوص / الرسائل",
         textsSubtitle: "محادثات خاصة بين المدرب والطالب. جاهز عند إضافة حسابات الطلاب.",
         textsEmpty: "لا توجد رسائل بعد. ستظهر المحادثة عند تعيين الطلاب.",
@@ -617,6 +624,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         zoomLink: "رابط زووم",
         referralTitle: "لوحة الإحالة",
         referralSubtitle: "شارك رمزك. اربح عند حجز العملاء.",
+        referralEmpty: "سيظهر رمز الإحالة الخاص بك هنا عند جاهزيته.",
         wallet: "المحفظة",
         walletSubtitle: "الأرباح والمدفوعات.",
         walletEmpty: "لا توجد أرباح بعد. سيظهر سجل العمولات هنا.",
@@ -633,7 +641,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         walletStatusRefunded: "مسترد",
         rank: "الترتيب والرؤية",
         rankSubtitle: "بناءً على التقييم وحجم الجلسات ونجاح العملاء.",
-        preparedForData: "جاهز لبيانات Supabase."
+        coachToolsEmpty: "ستظهر أدوات المدرب هنا مع نمو ممارستك."
       },
       admin: {
         badge: "نظرة عامة على المنصة",
@@ -769,6 +777,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         subtitle: "Calendario, mensajes, sesiones, programas y ganancias en un solo lugar.",
         calendar: "Calendario",
         calendarSubtitle: "Sesiones próximas, enlaces Zoom y disponibilidad.",
+        calendarEmpty: "Aún no hay sesiones próximas. Aparecerán aquí una vez programadas.",
         texts: "Textos / Mensajes",
         textsSubtitle: "Conversaciones privadas coach-estudiante. Arquitectura lista para cuando existan cuentas de estudiantes.",
         textsEmpty: "Aún no hay mensajes. El chat aparecerá cuando se asignen estudiantes.",
@@ -780,6 +789,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         zoomLink: "Enlace Zoom",
         referralTitle: "Panel de referidos",
         referralSubtitle: "Comparte tu código. Gana cuando los clientes reserven.",
+        referralEmpty: "Tu código de referido aparecerá aquí cuando esté listo.",
         wallet: "Billetera",
         walletSubtitle: "Ganancias y pagos.",
         walletEmpty: "Aún no hay ganancias. Tu historial de comisiones aparecerá aquí.",
@@ -796,7 +806,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         walletStatusRefunded: "Reembolsado",
         rank: "Rango y visibilidad",
         rankSubtitle: "Basado en calificación, volumen de sesiones y éxito del cliente.",
-        preparedForData: "Listo para datos de Supabase."
+        coachToolsEmpty: "Las herramientas de coach llegarán a medida que crezca tu práctica."
       },
       admin: {
         badge: "Resumen de plataforma",
@@ -932,6 +942,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         subtitle: "Calendrier, messages, séances, programmes et gains en un seul endroit.",
         calendar: "Calendrier",
         calendarSubtitle: "Séances à venir, liens Zoom et disponibilité.",
+        calendarEmpty: "Aucune séance à venir pour l'instant. Elles apparaîtront ici une fois planifiées.",
         texts: "Textes / Messages",
         textsSubtitle: "Conversations privées coach-élève. Architecture prête pour les comptes étudiants.",
         textsEmpty: "Pas encore de messages. Le chat apparaîtra quand des élèves seront assignés.",
@@ -943,6 +954,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         zoomLink: "Lien Zoom",
         referralTitle: "Tableau de bord parrainage",
         referralSubtitle: "Partage ton code. Gagne quand les clients réservent.",
+        referralEmpty: "Ton code de parrainage apparaîtra ici une fois prêt.",
         wallet: "Portefeuille",
         walletSubtitle: "Gains et paiements.",
         walletEmpty: "Pas encore de gains. Ton historique de commissions apparaîtra ici.",
@@ -959,7 +971,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         walletStatusRefunded: "Remboursé",
         rank: "Rang et visibilité",
         rankSubtitle: "Basé sur la note, le volume de séances et le succès client.",
-        preparedForData: "Prêt pour les données Supabase."
+        coachToolsEmpty: "Les outils coach arrivent à mesure que ta pratique grandit."
       },
       admin: {
         badge: "Aperçu plateforme",

@@ -1,7 +1,8 @@
 import { cn } from "@/lib/utils";
 
 type AmbientBackgroundProps = {
-  variant?: "cyan" | "sky" | "both";
+  /** "violet" = lighter violet-500 orb (top-left); "violetDeep" = darker violet-600 orb (bottom-right). */
+  variant?: "violet" | "violetDeep" | "both";
   intensity?: "low" | "medium";
   className?: string;
 };
@@ -23,7 +24,7 @@ export function AmbientBackground({
       className={cn("pointer-events-none fixed inset-0 z-0 overflow-hidden", className)}
       aria-hidden
     >
-      {(variant === "cyan" || variant === "both") && (
+      {(variant === "violet" || variant === "both") && (
         <div
           className="absolute will-change-transform"
           style={{
@@ -37,7 +38,7 @@ export function AmbientBackground({
           }}
         />
       )}
-      {(variant === "sky" || variant === "both") && (
+      {(variant === "violetDeep" || variant === "both") && (
         <div
           className="absolute will-change-transform"
           style={{

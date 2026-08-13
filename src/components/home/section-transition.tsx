@@ -3,7 +3,8 @@
 import { cn } from "@/lib/utils";
 
 type SectionTransitionProps = {
-  variant?: "soft" | "glow" | "sky";
+  /** "glow" = lighter violet-500 bleed; "violetDeep" = darker violet-600 bleed. */
+  variant?: "soft" | "glow" | "violetDeep";
   className?: string;
 };
 
@@ -12,7 +13,7 @@ export function SectionTransition({ variant = "soft", className }: SectionTransi
   const bg =
     variant === "glow"
       ? "linear-gradient(180deg, transparent 0%, rgba(168,85,247,0.04) 50%, transparent 100%)"
-      : variant === "sky"
+      : variant === "violetDeep"
         ? "linear-gradient(180deg, transparent 0%, rgba(124,58,237,0.05) 45%, transparent 100%)"
         : "linear-gradient(180deg, #0A0A0B 0%, rgba(17,18,21,0.85) 50%, #0A0A0B 100%)";
 

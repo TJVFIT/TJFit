@@ -241,7 +241,7 @@ export default function HealthDisclaimerPage({ params }: { params: { locale: str
   const copy = COPY[locale] ?? COPY.en;
   return (
     <>
-      <AmbientBackground variant="sky" />
+      <AmbientBackground variant="violetDeep" />
       <div className="relative z-[1] mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-warning">{copy.title}</p>
         <h1 className="mt-3 font-display text-3xl font-bold leading-tight text-white sm:text-4xl">{copy.title}</h1>
