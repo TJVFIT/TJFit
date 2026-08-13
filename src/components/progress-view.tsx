@@ -11,8 +11,10 @@ const ProgressCharts = dynamic(() => import("@/components/progress-charts"), {
   ssr: false,
   loading: () => (
     <div className="grid gap-4 lg:grid-cols-2">
-      <div className="tj-skeleton h-[248px] rounded-[28px]" aria-hidden />
-      <div className="tj-skeleton h-[248px] rounded-[28px]" aria-hidden />
+      {/* 264px = glass-panel p-6 (48) + text-sm label (20) + mb-4 (16) + chart 180 —
+          must match the real panel exactly or the swap causes CLS. */}
+      <div className="tj-skeleton h-[264px] rounded-[28px]" aria-hidden />
+      <div className="tj-skeleton h-[264px] rounded-[28px]" aria-hidden />
     </div>
   )
 });
