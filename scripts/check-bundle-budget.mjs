@@ -25,7 +25,11 @@ if (!logPath) {
   process.exit(2);
 }
 
-const log = readFileSync(logPath, "utf8");
+// Strip ANSI first: picocolors force-enables color whenever CI=true (even
+// piped, no TTY — verified in picocolors' isColorSupported), so GitHub
+// Actions logs arrive color-wrapped and the regex would never match.
+// eslint-disable-next-line no-control-regex
+const log = readFileSync(logPath, "utf8").replace(/\x1b\[[0-9;]*m/g, "");
 const failures = [];
 const seen = new Set();
 

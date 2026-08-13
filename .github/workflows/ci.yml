@@ -53,6 +53,9 @@ jobs:
         env:
           NEXT_PUBLIC_SUPABASE_URL: https://ci-placeholder.supabase.co
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder
+          # picocolors force-colors when CI=true even without a TTY, which
+          # would ANSI-wrap the route table and blind the budget parser.
+          NO_COLOR: "1"
 
       - name: Bundle budgets
         run: node scripts/check-bundle-budget.mjs build.log
