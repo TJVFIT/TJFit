@@ -38,7 +38,20 @@ export async function GET(request: NextRequest) {
     .eq("follower_id", auth.user.id)
     .order("created_at", { ascending: false })
     .limit(MAX_FOLLOWED);
-  const followedIds = (follows ?? []).map((row) => row.following_id);
+  const rawFollowedIds = (follows ?? []).map((row) => row.following_id);
+  if (rawFollowedIds.length === 0) {
+    return NextResponse.json({ items: [], next_cursor: null });
+  }
+
+  // Privacy gate (2026-08-13 review must-fix): a private account's activity
+  // never enters anyone's feed. There is no approved-follower system yet —
+  // following a private account is allowed (counts are public) but yields no
+  // content; when a follow-request flow lands, approved followers join here.
+  const { data: followedProfiles } = await admin
+    .from("profiles")
+    .select("id,is_private")
+    .in("id", rawFollowedIds);
+  const followedIds = (followedProfiles ?? []).filter((p) => !p.is_private).map((p) => p.id);
   if (followedIds.length === 0) {
     return NextResponse.json({ items: [], next_cursor: null });
   }

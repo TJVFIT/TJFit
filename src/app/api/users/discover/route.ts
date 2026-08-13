@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { maskPrivateStreak } from "@/lib/profile-privacy";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
@@ -43,13 +44,13 @@ export async function GET() {
       .limit(5),
     admin
       .from("profiles")
-      .select("id,username,display_name,avatar_url,current_streak,role")
+      .select("id,username,display_name,avatar_url,current_streak,is_private,role")
       .eq("role", "coach")
       .order("updated_at", { ascending: false })
       .limit(6),
     admin
       .from("profiles")
-      .select("id,username,display_name,avatar_url,current_streak,created_at")
+      .select("id,username,display_name,avatar_url,current_streak,is_private,created_at")
       .neq("id", auth.user.id)
       .gte("created_at", weekAgo)
       .order("created_at", { ascending: false })
@@ -71,7 +72,7 @@ export async function GET() {
     !viewerGoal
       ? admin
           .from("profiles")
-          .select("id,username,display_name,avatar_url,current_streak")
+          .select("id,username,display_name,avatar_url,current_streak,is_private")
           .neq("id", auth.user.id)
           .order("current_streak", { ascending: false })
           .limit(8)
@@ -96,7 +97,7 @@ export async function GET() {
     if (matchedUserIds.size > 0) {
       const { data: matchedProfiles } = await admin
         .from("profiles")
-        .select("id,username,display_name,avatar_url,current_streak")
+        .select("id,username,display_name,avatar_url,current_streak,is_private")
         .in("id", [...matchedUserIds]);
       similarGoalUsers = (matchedProfiles ?? []) as ProfileLite[];
     }
@@ -108,7 +109,7 @@ export async function GET() {
   const { data: topProfiles } = topIds.length
     ? await admin
         .from("profiles")
-        .select("id,username,display_name,avatar_url,current_streak")
+        .select("id,username,display_name,avatar_url,current_streak,is_private")
         .in("id", topIds)
     : { data: [] as ProfileLite[] };
   const topMap = new Map((topProfiles ?? []).map((row) => [row.id, row]));
