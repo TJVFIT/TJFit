@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { requireAuth } from "@/lib/require-auth";
+import { requireAdmin } from "@/lib/require-admin";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 export async function GET() {
@@ -107,15 +107,11 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
-  if (!auth.ok) return auth.response;
-  const admin = getSupabaseServerClient();
-  if (!admin) return NextResponse.json({ error: "Server not configured" }, { status: 500 });
-
-  const { data: profile } = await admin.from("profiles").select("role").eq("id", auth.user.id).maybeSingle();
-  if (profile?.role !== "admin") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
+  // requireAdmin honors both profiles.role and the ADMIN_EMAILS allowlist —
+  // the inline role-only check this replaces silently rejected env-allowlisted admins.
+  const gate = await requireAdmin();
+  if (!gate.ok) return gate.response;
+  const admin = gate.supabase;
 
   const body = (await request.json().catch(() => null)) as Record<string, unknown> | null;
   if (!body) return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
@@ -129,7 +125,7 @@ export async function POST(request: NextRequest) {
     coin_prize_2nd: Number(body.coin_prize_2nd ?? 250),
     coin_prize_3rd: Number(body.coin_prize_3rd ?? 100),
     coin_completion_reward: Number(body.coin_completion_reward ?? 50),
-    created_by: auth.user.id
+    created_by: gate.userId
   };
   if (!payload.title || !payload.description || !payload.start_date || !payload.end_date) {
     return NextResponse.json({ error: "Missing fields" }, { status: 400 });

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { rateLimit } from "@/lib/rate-limit";
+import { requireAdmin } from "@/lib/require-admin";
 import { requireAuth } from "@/lib/require-auth";
 import { sendEmail } from "@/lib/email";
 import { enqueuePendingNotification } from "@/lib/pending-notifications";
@@ -34,10 +35,10 @@ export async function GET(request: NextRequest) {
     status = statusFilter;
   }
   if (status !== "published") {
-    const auth = await requireAuth();
-    if (!auth.ok) return auth.response;
-    const { data: profile } = await admin.from("profiles").select("role").eq("id", auth.user.id).maybeSingle();
-    if (profile?.role !== "admin") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    // requireAdmin honors both profiles.role and the ADMIN_EMAILS allowlist —
+    // the inline role-only check this replaces silently rejected env-allowlisted admins.
+    const gate = await requireAdmin();
+    if (!gate.ok) return gate.response;
   }
   let query = admin
     .from("community_blog_posts")
