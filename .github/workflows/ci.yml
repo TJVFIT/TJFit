@@ -40,3 +40,19 @@ jobs:
 
       - name: Unit tests
         run: npm test
+
+      # The July 2026 outage class: code that passes type/lint/tests but fails
+      # to BUILD (or ships a bundle regression). CI now builds for real.
+      # Placeholder Supabase publics keep client bootstrap happy; no page
+      # fetches from Supabase at build time (verified locally with env
+      # stripped, 2026-08-13). i18n:scan is NOT gated here yet — it carries
+      # 91 pre-existing false positives; it joins CI when WP-I18N-02 fixes
+      # the scanner.
+      - name: Production build
+        run: npm run build 2>&1 | tee build.log
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://ci-placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder
+
+      - name: Bundle budgets
+        run: node scripts/check-bundle-budget.mjs build.log
