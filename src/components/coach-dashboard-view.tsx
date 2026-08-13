@@ -1,8 +1,7 @@
-import { coachDashboardStats, walletTransactions } from "@/lib/content";
 import { CoachMyStudentsPanel } from "@/components/coach-my-students-panel";
 import { CoachAnalyticsWidget } from "@/components/coach-analytics-widget";
 import { Logo } from "@/components/ui/Logo";
-import { StatGrid } from "@/components/ui";
+import { EmptyState } from "@/components/ui/empty-state";
 import { getDictionary } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 
@@ -24,7 +23,6 @@ export function CoachDashboardView({ locale }: { locale: Locale }) {
         </p>
       </div>
 
-      <StatGrid stats={coachDashboardStats} />
       <CoachAnalyticsWidget />
 
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
@@ -85,22 +83,8 @@ export function CoachDashboardView({ locale }: { locale: Locale }) {
             <p className="mt-3 text-sm leading-7 text-muted">
               {d.walletSubtitle}
             </p>
-            <div className="mt-4 rounded-[24px] border border-white/10 bg-black/30 p-4">
-              <p className="text-sm text-muted">Available balance</p>
-              <p className="mt-2 text-3xl font-semibold text-white">0 TRY</p>
-            </div>
-            <div className="mt-5 space-y-3">
-              {walletTransactions.map((tx) => (
-                <div
-                  key={tx.id}
-                  className="flex items-center justify-between rounded-[20px] border border-white/10 bg-white/5 px-4 py-3 text-sm text-bright"
-                >
-                  <span>{tx.label}</span>
-                  <span className={tx.amount >= 0 ? "text-green-400" : "text-white"}>
-                    {tx.amount >= 0 ? "+" : ""}{tx.amount} TRY
-                  </span>
-                </div>
-              ))}
+            <div className="mt-4">
+              <EmptyState subtext={d.walletEmpty} />
             </div>
           </div>
 

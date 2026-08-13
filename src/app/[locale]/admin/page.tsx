@@ -1,4 +1,4 @@
-import { adminAdvancedStats, adminStats } from "@/lib/content";
+import { BarChart3 } from "lucide-react";
 import { getDictionary } from "@/lib/i18n";
 import { requireLocaleParam } from "@/lib/require-locale";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
@@ -10,7 +10,7 @@ import { AdminBundlePayments } from "@/components/admin-bundle-payments";
 import { AdminCreditPackPayments } from "@/components/admin-credit-pack-payments";
 import { AdminFeedbackList } from "@/components/admin-feedback-list";
 import { ProtectedRoute } from "@/components/protected-route";
-import { StatGrid } from "@/components/ui";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export default async function AdminPage({ params }: { params: { locale: string } }) {
   const locale = requireLocaleParam(params.locale);
@@ -59,16 +59,7 @@ export default async function AdminPage({ params }: { params: { locale: string }
         </p>
       </div>
 
-      <StatGrid stats={adminStats} />
-
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {adminAdvancedStats.map((stat) => (
-          <div key={stat.label} className="glass-panel rounded-[24px] p-5">
-            <p className="text-xs uppercase tracking-[0.24em] text-faint">{stat.label}</p>
-            <p className="mt-4 text-2xl font-semibold text-white">{stat.value}</p>
-          </div>
-        ))}
-      </div>
+      <EmptyState icon={BarChart3} subtext={dict.admin.statsEmpty} />
 
       <AdminCoachAuthorization locale={locale} />
 
@@ -115,19 +106,9 @@ export default async function AdminPage({ params }: { params: { locale: string }
         <AdminFeedbackList initialSubmissions={submissions} />
         <div className="glass-panel rounded-[32px] p-6">
           <p className="text-lg font-semibold text-white">Advanced analytics</p>
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
-            {[
-              ["Revenue", "0 TRY"],
-              ["Top programs", "—"],
-              ["Coach conversion", "0%"],
-              ["Membership growth", "0%"]
-            ].map(([label, value]) => (
-              <div key={label} className="rounded-[24px] border border-white/10 bg-white/5 p-5">
-                <p className="text-xs uppercase tracking-[0.24em] text-faint">{label}</p>
-                <p className="mt-3 text-sm leading-7 text-bright">{value}</p>
-              </div>
-            ))}
-          </div>
+          {/* Fake-zero tiles removed (chunk C follow-up) — real revenue/conversion
+              aggregation is Wave-2 work; until then this panel is honestly empty. */}
+          <EmptyState icon={BarChart3} subtext={dict.admin.statsEmpty} className="mt-6" />
         </div>
 
         <div className="glass-panel rounded-[32px] p-6">

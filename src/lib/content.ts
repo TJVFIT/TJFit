@@ -108,13 +108,6 @@ export type LiveSession = {
   type: "group live session";
 };
 
-export type WalletTransaction = {
-  id: string;
-  type: "reward" | "refund" | "payment";
-  label: string;
-  amount: number;
-};
-
 export type MembershipPlan = {
   name: string;
   monthlyPrice: number;
@@ -159,8 +152,6 @@ export const challenges: Challenge[] = [];
 
 export const liveSessions: LiveSession[] = [];
 
-export const walletTransactions: WalletTransaction[] = [];
-
 export const membershipPlans: MembershipPlan[] = [
   {
     name: "Premium Membership",
@@ -173,36 +164,6 @@ export const coachBoostOptions = [
   { name: "Featured coach", price: "1,500 TRY / week", benefit: "Highlighted in discovery results" },
   { name: "Top search placement", price: "2,200 TRY / week", benefit: "Pinned near the top of smart discovery" },
   { name: "Homepage spotlight", price: "3,500 TRY / week", benefit: "Premium homepage placement" }
-];
-
-export const dashboardStats = [
-  { label: "Upcoming sessions", value: "0" },
-  { label: "Active programs", value: "0" },
-  { label: "Training videos uploaded", value: "0" },
-  { label: "Referral credit", value: "0 TRY" }
-];
-
-export const coachDashboardStats = [
-  { label: "Bookings this week", value: "0" },
-  { label: "Client retention", value: "0%" },
-  { label: "Earnings this month", value: "0 TRY" },
-  { label: "Referral code uses", value: "0" }
-];
-
-export const adminStats = [
-  { label: "Pending coach approvals", value: "0" },
-  { label: "Gross volume", value: "0 TRY" },
-  { label: "Refund requests", value: "0" },
-  { label: "Conversion rate", value: "0%" }
-];
-
-export const adminAdvancedStats = [
-  { label: "Total users", value: "0" },
-  { label: "Active coaches", value: "0" },
-  { label: "Top program", value: "—" },
-  { label: "Membership MRR", value: "0 TRY" },
-  { label: "Wallet credits issued", value: "0 TRY" },
-  { label: "Challenge participation", value: "0 users" }
 ];
 
 export const liveProofNotifications: string[] = [];

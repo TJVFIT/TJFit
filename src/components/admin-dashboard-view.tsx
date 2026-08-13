@@ -1,7 +1,6 @@
-import { Users } from "lucide-react";
-import { adminStats, adminAdvancedStats, coaches } from "@/lib/content";
+import { BarChart3, Users } from "lucide-react";
+import { coaches } from "@/lib/content";
 import { Logo } from "@/components/ui/Logo";
-import { StatGrid } from "@/components/ui";
 import { EmptyState } from "@/components/ui/empty-state";
 import { AdminCoachApplications } from "@/components/admin-coach-applications";
 import Link from "next/link";
@@ -26,16 +25,7 @@ export function AdminDashboardView({ locale }: { locale: Locale }) {
         </p>
       </div>
 
-      <StatGrid stats={adminStats} />
-
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {adminAdvancedStats.map((stat) => (
-          <div key={stat.label} className="glass-panel rounded-[24px] p-5">
-            <p className="text-xs uppercase tracking-[0.24em] text-faint">{stat.label}</p>
-            <p className="mt-4 text-2xl font-semibold text-white">{stat.value}</p>
-          </div>
-        ))}
-      </div>
+      <EmptyState icon={BarChart3} subtext={dict.admin.statsEmpty} />
 
       <div className="grid gap-6 xl:grid-cols-2">
         <AdminCoachApplications dict={dict.admin} />

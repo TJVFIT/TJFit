@@ -89,6 +89,7 @@ export type Dictionary = {
     managePayments: string;
     coachList: string;
     coachListSubtitle: string;
+    statsEmpty: string;
   };
   dashboard: {
     coach: {
@@ -110,6 +111,7 @@ export type Dictionary = {
       referralSubtitle: string;
       wallet: string;
       walletSubtitle: string;
+      walletEmpty: string;
       rank: string;
       rankSubtitle: string;
       preparedForData: string;
@@ -254,7 +256,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
       approveCoaches: "Approve coaches",
       managePayments: "Manage payments",
       coachList: "Coach list",
-      coachListSubtitle: "Active coaches on the platform."
+      coachListSubtitle: "Active coaches on the platform.",
+      statsEmpty: "Platform metrics build up as coaches and users join."
     },
     dashboard: {
       coach: {
@@ -276,6 +279,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         referralSubtitle: "Share your code. Earn when clients book.",
         wallet: "Wallet",
         walletSubtitle: "Earnings and payouts.",
+        walletEmpty: "No earnings yet. Your commission history will appear here.",
         rank: "Rank & visibility",
         rankSubtitle: "Based on rating, session volume, and client success.",
         preparedForData: "Ready for Supabase data wiring."
@@ -407,7 +411,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
       approveCoaches: "Koçları onayla",
       managePayments: "Ödemeleri yönet",
       coachList: "Koç listesi",
-      coachListSubtitle: "Aktif koçlar."
+      coachListSubtitle: "Aktif koçlar.",
+      statsEmpty: "Koçlar ve kullanıcılar katıldıkça platform metrikleri birikir."
     },
     dashboard: {
       coach: {
@@ -429,6 +434,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         referralSubtitle: "Kodunu paylaş; rezervasyon gelince kazan.",
         wallet: "Cüzdan",
         walletSubtitle: "Kazanç ve ödemeler.",
+        walletEmpty: "Henüz kazanç yok. Komisyon geçmişin burada görünecek.",
         rank: "Sıra ve görünürlük",
         rankSubtitle: "Puan, seans hacmi ve üye sonuçlarına göre.",
         preparedForData: "Veri bağlantısı için hazır."
@@ -557,7 +563,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
       approveCoaches: "الموافقة على المدربين",
       managePayments: "إدارة المدفوعات",
       coachList: "قائمة المدربين",
-      coachListSubtitle: "المدربون النشطون على المنصة."
+      coachListSubtitle: "المدربون النشطون على المنصة.",
+      statsEmpty: "تتراكم مقاييس المنصة مع انضمام المدربين والمستخدمين."
     },
     dashboard: {
       coach: {
@@ -579,6 +586,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         referralSubtitle: "شارك رمزك. اربح عند حجز العملاء.",
         wallet: "المحفظة",
         walletSubtitle: "الأرباح والمدفوعات.",
+        walletEmpty: "لا توجد أرباح بعد. سيظهر سجل العمولات هنا.",
         rank: "الترتيب والرؤية",
         rankSubtitle: "بناءً على التقييم وحجم الجلسات ونجاح العملاء.",
         preparedForData: "جاهز لبيانات Supabase."
@@ -707,7 +715,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
       approveCoaches: "Aprobar coaches",
       managePayments: "Gestionar pagos",
       coachList: "Lista de coaches",
-      coachListSubtitle: "Coaches activos en la plataforma."
+      coachListSubtitle: "Coaches activos en la plataforma.",
+      statsEmpty: "Las métricas de la plataforma se acumulan a medida que se unen coaches y usuarios."
     },
     dashboard: {
       coach: {
@@ -729,6 +738,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         referralSubtitle: "Comparte tu código. Gana cuando los clientes reserven.",
         wallet: "Billetera",
         walletSubtitle: "Ganancias y pagos.",
+        walletEmpty: "Aún no hay ganancias. Tu historial de comisiones aparecerá aquí.",
         rank: "Rango y visibilidad",
         rankSubtitle: "Basado en calificación, volumen de sesiones y éxito del cliente.",
         preparedForData: "Listo para datos de Supabase."
@@ -857,7 +867,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
       approveCoaches: "Approuver les coachs",
       managePayments: "Gérer les paiements",
       coachList: "Liste des coachs",
-      coachListSubtitle: "Coachs actifs sur la plateforme."
+      coachListSubtitle: "Coachs actifs sur la plateforme.",
+      statsEmpty: "Les métriques de la plateforme s'accumulent à mesure que les coachs et utilisateurs rejoignent."
     },
     dashboard: {
       coach: {
@@ -879,6 +890,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
         referralSubtitle: "Partage ton code. Gagne quand les clients réservent.",
         wallet: "Portefeuille",
         walletSubtitle: "Gains et paiements.",
+        walletEmpty: "Pas encore de gains. Ton historique de commissions apparaîtra ici.",
         rank: "Rang et visibilité",
         rankSubtitle: "Basé sur la note, le volume de séances et le succès client.",
         preparedForData: "Prêt pour les données Supabase."
