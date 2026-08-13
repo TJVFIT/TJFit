@@ -5,9 +5,7 @@ const nextConfig = {
   transpilePackages: [
     "three",
     "@react-three/fiber",
-    "@react-three/drei",
-    "@splinetool/react-spline",
-    "@splinetool/runtime"
+    "@react-three/drei"
   ],
   images: {
     remotePatterns: [
@@ -45,7 +43,7 @@ const nextConfig = {
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https://images.unsplash.com https://kohuiyqyixvrcqeepalz.supabase.co https://www.googletagmanager.com https://*.google-analytics.com https://www.facebook.com",
       "font-src 'self' data:",
-      "connect-src 'self' https://kohuiyqyixvrcqeepalz.supabase.co wss://kohuiyqyixvrcqeepalz.supabase.co https://*.google-analytics.com https://analytics.tiktok.com https://www.facebook.com https://*.sentry.io https://prod.spline.design",
+      "connect-src 'self' https://kohuiyqyixvrcqeepalz.supabase.co wss://kohuiyqyixvrcqeepalz.supabase.co https://*.google-analytics.com https://analytics.tiktok.com https://www.facebook.com https://*.sentry.io",
       "media-src 'self' blob: data: https://kohuiyqyixvrcqeepalz.supabase.co",
       "worker-src 'self' blob:",
       "frame-src 'self'",

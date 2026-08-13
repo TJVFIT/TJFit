@@ -34,7 +34,7 @@ import { TjaiEngineChrome } from "@/components/home/tjai-engine-chrome";
 import { HeroTjaiBrainDeco } from "@/components/hero-tjai-brain-deco";
 import { CinematicHowItWorks, CinematicTransformation } from "@/components/home/cinematic-sections";
 import { Cinematic3DAct } from "@/components/home/cinematic-3d-act";
-import { SplineShowcase } from "@/components/home/spline-showcase";
+import { TouchTheSystemSection } from "@/components/home/touch-the-system-section";
 import { GrainOverlay } from "@/components/ui/grain-overlay";
 import { WordReveal } from "@/components/ui/word-reveal";
 import { useMagneticButton } from "@/hooks/useMagneticButton";
@@ -435,7 +435,7 @@ export function ImmersiveHome({
       <CinematicHowItWorks />
       <CinematicTransformation reduce={reduce} />
 
-      <SplineShowcase />
+      <TouchTheSystemSection />
 
       {/* Stats — restrained, no neon scoreboard */}
       <section className="reveal-section border-y border-divider bg-background py-16 lg:py-20">
