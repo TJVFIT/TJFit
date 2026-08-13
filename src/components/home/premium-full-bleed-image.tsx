@@ -35,7 +35,6 @@ const SURFACE_CLASS: Record<PremiumBleedPreset, string> = {
 };
 
 type PremiumFullBleedImageProps = {
-  src: string;
   preset: PremiumBleedPreset;
   active: boolean;
   reduce: boolean;
@@ -43,26 +42,24 @@ type PremiumFullBleedImageProps = {
   parallaxY?: number;
   /** Target opacity when `active` */
   peakOpacity: number;
-  priority?: boolean;
   children?: ReactNode;
 };
 
 /**
  * Full-bleed campaign imagery: staged opacity, CSS drift, optional scroll parallax,
  * preset overlays — keeps section art cohesive with the hero motion language.
+ * The look is 100% procedural CSS (see PROCEDURAL_SURFACE) — no bitmap source;
+ * the former `src`/`priority` props fed shipped-but-never-rendered PNGs and were
+ * removed with them (WP-INFRA-06).
  */
 export function PremiumFullBleedImage({
-  src,
   preset,
   active,
   reduce,
   parallaxY = 0,
   peakOpacity,
-  priority = false,
   children,
 }: PremiumFullBleedImageProps) {
-  void src;
-  void priority;
   const drift = DRIFT[preset];
   const filter = FILTER[preset];
 

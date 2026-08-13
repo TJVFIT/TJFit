@@ -449,7 +449,6 @@ export function ImmersiveHome({
         </span>
 
         <PremiumFullBleedImage
-          src="/assets/hero/hero-tjai-core.png"
           preset="tjai"
           active={tjaiInView || reduce}
           reduce={reduce}
@@ -582,7 +581,6 @@ export function ImmersiveHome({
           <ParallaxLayer reduce={reduce} strength={4} className="absolute inset-0 h-full w-full">
             <div className="absolute inset-0">
               <PremiumFullBleedImage
-                src="/assets/hero/hero-nexus.png"
                 preset="nexus"
                 active={nexusInView || reduce}
                 reduce={reduce}
