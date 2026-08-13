@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { isProfilePrivateToViewer } from "@/lib/profile-privacy";
 import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
@@ -14,6 +15,11 @@ export async function GET(request: NextRequest) {
   const userId = String(request.nextUrl.searchParams.get("user_id") ?? "").trim();
   const page = Math.max(1, Number(request.nextUrl.searchParams.get("page") ?? 1));
   if (!userId) return NextResponse.json({ error: "user_id required" }, { status: 400 });
+
+  // Privacy gate: a private account's social graph is owner-only.
+  if (await isProfilePrivateToViewer(admin, userId, auth.user.id)) {
+    return NextResponse.json({ items: [], page: 1, page_size: PAGE_SIZE, private: true });
+  }
 
   const from = (page - 1) * PAGE_SIZE;
   const to = from + PAGE_SIZE - 1;

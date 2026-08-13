@@ -15,6 +15,7 @@ import { isValidUsername } from "@/lib/username";
 type ProfileData = {
   id: string;
   self: boolean;
+  is_private?: boolean;
   username: string;
   display_name: string;
   avatar_url: string | null;
@@ -49,6 +50,7 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
   const [loading, setLoading] = useState(true);
   const [showList, setShowList] = useState<null | "followers" | "following">(null);
   const [listItems, setListItems] = useState<Array<{ id: string; username: string; display_name: string; avatar_url: string | null }>>([]);
+  const [listPrivate, setListPrivate] = useState(false);
   const [listLoading, setListLoading] = useState(false);
 
   useEffect(() => {
@@ -144,12 +146,14 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
   const openList = async (kind: "followers" | "following") => {
     setShowList(kind);
     setListItems([]);
+    setListPrivate(false);
     setListLoading(true);
     try {
       const res = await fetch(`/api/follow/${kind}?user_id=${encodeURIComponent(profile.id)}&page=1`, {
         credentials: "include"
       });
       const data = await res.json().catch(() => ({}));
+      setListPrivate(Boolean(data.private));
       setListItems((data.items ?? []) as Array<{ id: string; username: string; display_name: string; avatar_url: string | null }>);
     } finally {
       setListLoading(false);
@@ -184,6 +188,9 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
                   <p className="text-sm text-faint">@{profile.username}</p>
                   <p className="mt-1 text-xs uppercase tracking-[0.14em] text-purple-300">{roleLabel(profile.role)}</p>
                   {profile.bio ? <p className="mt-2 max-w-xl text-sm text-bright">{profile.bio}</p> : null}
+                  {profile.is_private && !profile.self ? (
+                    <p className="mt-2 text-xs text-faint">This account is private.</p>
+                  ) : null}
                 </div>
               </div>
 
@@ -317,7 +324,12 @@ export function PublicProfileView({ locale, username }: { locale: Locale; userna
                         <span className="ml-1 text-faint">@{item.username}</span>
                       </Link>
                     ))}
-                    {listItems.length === 0 ? <EmptyState icon={Users} subtext="No users" /> : null}
+                    {listItems.length === 0 ? (
+                      <EmptyState
+                        icon={Users}
+                        subtext={listPrivate ? "This account is private." : "No users"}
+                      />
+                    ) : null}
                   </>
                 )}
               </div>

@@ -36,14 +36,20 @@ export async function GET(_request: NextRequest, { params }: { params: { usernam
 
   const { data: profile } = await admin
     .from("profiles")
-    .select("id,username,display_name,avatar_url,bio,role,banner_color,current_streak,is_verified,privacy_settings,display_badge_key")
+    .select("id,username,display_name,avatar_url,bio,role,banner_color,current_streak,is_verified,privacy_settings,display_badge_key,is_private")
     .eq("username_normalized", rawUsername.toLowerCase())
     .maybeSingle();
 
   if (!profile) return NextResponse.json({ error: "Profile not found" }, { status: 404 });
 
   const isSelf = viewerId === profile.id;
-  const privacy = { ...DEFAULT_PRIVACY, ...(profile.privacy_settings as PrivacySettings | null) };
+  // Account-level privacy (2026-08-13 fix): is_private hides EVERYTHING
+  // detail-level from non-owners, regardless of the granular per-field
+  // toggles below. The route historically never read this column.
+  const hiddenByAccountPrivacy = Boolean(profile.is_private) && !isSelf;
+  const privacy = hiddenByAccountPrivacy
+    ? { show_streak: false, show_programs: false, show_posts: false }
+    : { ...DEFAULT_PRIVACY, ...(profile.privacy_settings as PrivacySettings | null) };
 
   const [programOrders, blogPosts, followers, following, badges, activeProgress, recentBlogsMerged] =
     await Promise.all([
@@ -99,7 +105,8 @@ export async function GET(_request: NextRequest, { params }: { params: { usernam
       username: profile.username,
       display_name: profile.display_name,
       avatar_url: profile.avatar_url,
-      bio: profile.bio,
+      bio: hiddenByAccountPrivacy ? null : profile.bio,
+      is_private: Boolean(profile.is_private),
       // Public surface: only "coach" is a meaningful public role.
       // Admin / staff roles are masked to "user" so the public profile
       // does not advertise privileged accounts.
@@ -112,7 +119,7 @@ export async function GET(_request: NextRequest, { params }: { params: { usernam
     },
     following: Boolean(relation),
     stats,
-    badges: badges.data ?? [],
+    badges: hiddenByAccountPrivacy ? [] : (badges.data ?? []),
     active_program:
       activeProgramSlug && (isSelf || privacy.show_programs)
         ? { program_slug: activeProgramSlug, week: maxWeek, completion_percent: completionPercent }
