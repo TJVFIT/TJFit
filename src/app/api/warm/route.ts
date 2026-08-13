@@ -9,9 +9,15 @@ export const dynamic = "force-dynamic";
  *
  * Landing and checkout are server-rendered on the Node serverless runtime; when
  * the function scales to zero, the next real visitor eats a ~22-30s cold start
- * (Next.js server boot + first-request bundle load). A Vercel cron hits this
- * route every 5 minutes (see `vercel.json`) so the runtime stays warm and those
- * pages respond fast.
+ * (Next.js server boot + first-request bundle load).
+ *
+ * The Vercel cron in `vercel.json` hits this route only once daily (03:00) —
+ * the account is on the Hobby plan, which rejects sub-daily crons (a 5-minute
+ * schedule made every deploy fail pre-build, 2026-08-13). One daily ping does
+ * NOT keep the lambda warm; real warm-keeping needs an external uptime monitor
+ * pinging this route every few minutes, or a Vercel Pro upgrade to restore the
+ * 5-minute cron. Both are owner decisions — until one lands, treat cold starts
+ * on first hits as expected.
  *
  * Deliberately does no I/O — no DB, no auth, no external calls — so it always
  * returns 200 in a couple of milliseconds and never fills the cron log with

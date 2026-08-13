@@ -81,6 +81,7 @@ Load a `docs/claude/*.md` file **only when the current task matches**:
 | Locales, dictionaries, RTL, translation gaps | [docs/claude/i18n.md](docs/claude/i18n.md) |
 | Tables, migrations, RLS, auth, RPC | [docs/claude/supabase.md](docs/claude/supabase.md) |
 | Visual design, components, animation, brand | [docs/claude/ui-style.md](docs/claude/ui-style.md) |
+| ANY change a browser renders (pre-merge gate) | [docs/claude/visual-qa-protocol.md](docs/claude/visual-qa-protocol.md) |
 | TJAI hub, plan generator, chat, prompts | [docs/claude/tjai.md](docs/claude/tjai.md) |
 | Pre-merge audit, regression checks | [docs/claude/audit-checklist.md](docs/claude/audit-checklist.md) |
 | Branching, PR flow, rollback, worktrees | [docs/claude/development-workflow.md](docs/claude/development-workflow.md) |
