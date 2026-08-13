@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { checkGumroadWebhookFreshness, verifyGumroadSeller } from "@/lib/gumroad-webhook-verify";
 import { rateLimit } from "@/lib/rate-limit";
+import { redactEmails } from "@/lib/redact-pii";
 import { getSale, type GumroadSale } from "@/lib/gumroad/client";
 import { fulfillProgramOrderPaid } from "@/lib/checkout-fulfill-order";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
@@ -137,6 +138,10 @@ function reportGumroadFailure(input: {
   message: string;
   err?: unknown;
 }): void {
+  // Handler error strings can embed buyer emails (sale.ts builds
+  // "unable to resolve user for <email>") — redact before anything
+  // leaves for Sentry; the payment_webhooks row keeps the raw string.
+  const safeMessage = redactEmails(input.message);
   Sentry.withScope((scope) => {
     scope.setTag("surface", "gumroad-webhook");
     scope.setTag("event_type", input.eventType);
@@ -145,12 +150,12 @@ function reportGumroadFailure(input: {
       event_id: input.eventId,
       event_type: input.eventType,
       action: input.action,
-      message: input.message
+      message: safeMessage
     });
     if (input.err instanceof Error) {
       Sentry.captureException(input.err);
     } else {
-      Sentry.captureMessage(input.message, "error");
+      Sentry.captureMessage(safeMessage, "error");
     }
   });
 }
