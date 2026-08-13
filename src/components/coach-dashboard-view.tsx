@@ -1,7 +1,7 @@
 import { CoachMyStudentsPanel } from "@/components/coach-my-students-panel";
 import { CoachAnalyticsWidget } from "@/components/coach-analytics-widget";
+import { CoachEarningsWidget } from "@/components/coach-earnings-widget";
 import { Logo } from "@/components/ui/Logo";
-import { EmptyState } from "@/components/ui/empty-state";
 import { getDictionary } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 
@@ -83,9 +83,7 @@ export function CoachDashboardView({ locale }: { locale: Locale }) {
             <p className="mt-3 text-sm leading-7 text-muted">
               {d.walletSubtitle}
             </p>
-            <div className="mt-4">
-              <EmptyState subtext={d.walletEmpty} />
-            </div>
+            <CoachEarningsWidget locale={locale} />
           </div>
 
           <div className="glass-panel rounded-[32px] p-6">

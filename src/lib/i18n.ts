@@ -112,6 +112,15 @@ export type Dictionary = {
       wallet: string;
       walletSubtitle: string;
       walletEmpty: string;
+      walletTotalLabel: string;
+      walletPendingLabel: string;
+      walletPaidLabel: string;
+      walletRecentTitle: string;
+      walletStatusPending: string;
+      walletStatusPayable: string;
+      walletStatusPaid: string;
+      walletStatusDisputed: string;
+      walletStatusRefunded: string;
       rank: string;
       rankSubtitle: string;
       preparedForData: string;
@@ -280,6 +289,15 @@ export const dictionaries: Record<Locale, Dictionary> = {
         wallet: "Wallet",
         walletSubtitle: "Earnings and payouts.",
         walletEmpty: "No earnings yet. Your commission history will appear here.",
+        walletTotalLabel: "Total earned",
+        walletPendingLabel: "Pending",
+        walletPaidLabel: "Paid out",
+        walletRecentTitle: "Recent commissions",
+        walletStatusPending: "Pending",
+        walletStatusPayable: "Payable",
+        walletStatusPaid: "Paid",
+        walletStatusDisputed: "Disputed",
+        walletStatusRefunded: "Refunded",
         rank: "Rank & visibility",
         rankSubtitle: "Based on rating, session volume, and client success.",
         preparedForData: "Ready for Supabase data wiring."
@@ -435,6 +453,15 @@ export const dictionaries: Record<Locale, Dictionary> = {
         wallet: "Cüzdan",
         walletSubtitle: "Kazanç ve ödemeler.",
         walletEmpty: "Henüz kazanç yok. Komisyon geçmişin burada görünecek.",
+        walletTotalLabel: "Toplam kazanç",
+        walletPendingLabel: "Bekleyen",
+        walletPaidLabel: "Ödendi",
+        walletRecentTitle: "Son komisyonlar",
+        walletStatusPending: "Bekliyor",
+        walletStatusPayable: "Ödemeye hazır",
+        walletStatusPaid: "Ödendi",
+        walletStatusDisputed: "İtirazlı",
+        walletStatusRefunded: "İade edildi",
         rank: "Sıra ve görünürlük",
         rankSubtitle: "Puan, seans hacmi ve üye sonuçlarına göre.",
         preparedForData: "Veri bağlantısı için hazır."
@@ -587,6 +614,15 @@ export const dictionaries: Record<Locale, Dictionary> = {
         wallet: "المحفظة",
         walletSubtitle: "الأرباح والمدفوعات.",
         walletEmpty: "لا توجد أرباح بعد. سيظهر سجل العمولات هنا.",
+        walletTotalLabel: "إجمالي الأرباح",
+        walletPendingLabel: "قيد الانتظار",
+        walletPaidLabel: "تم الدفع",
+        walletRecentTitle: "أحدث العمولات",
+        walletStatusPending: "قيد الانتظار",
+        walletStatusPayable: "قابل للدفع",
+        walletStatusPaid: "مدفوع",
+        walletStatusDisputed: "متنازع عليه",
+        walletStatusRefunded: "مسترد",
         rank: "الترتيب والرؤية",
         rankSubtitle: "بناءً على التقييم وحجم الجلسات ونجاح العملاء.",
         preparedForData: "جاهز لبيانات Supabase."
@@ -739,6 +775,15 @@ export const dictionaries: Record<Locale, Dictionary> = {
         wallet: "Billetera",
         walletSubtitle: "Ganancias y pagos.",
         walletEmpty: "Aún no hay ganancias. Tu historial de comisiones aparecerá aquí.",
+        walletTotalLabel: "Total ganado",
+        walletPendingLabel: "Pendiente",
+        walletPaidLabel: "Pagado",
+        walletRecentTitle: "Comisiones recientes",
+        walletStatusPending: "Pendiente",
+        walletStatusPayable: "Por pagar",
+        walletStatusPaid: "Pagado",
+        walletStatusDisputed: "En disputa",
+        walletStatusRefunded: "Reembolsado",
         rank: "Rango y visibilidad",
         rankSubtitle: "Basado en calificación, volumen de sesiones y éxito del cliente.",
         preparedForData: "Listo para datos de Supabase."
@@ -891,6 +936,15 @@ export const dictionaries: Record<Locale, Dictionary> = {
         wallet: "Portefeuille",
         walletSubtitle: "Gains et paiements.",
         walletEmpty: "Pas encore de gains. Ton historique de commissions apparaîtra ici.",
+        walletTotalLabel: "Total gagné",
+        walletPendingLabel: "En attente",
+        walletPaidLabel: "Payé",
+        walletRecentTitle: "Commissions récentes",
+        walletStatusPending: "En attente",
+        walletStatusPayable: "Payable",
+        walletStatusPaid: "Payé",
+        walletStatusDisputed: "Contesté",
+        walletStatusRefunded: "Remboursé",
         rank: "Rang et visibilité",
         rankSubtitle: "Basé sur la note, le volume de séances et le succès client.",
         preparedForData: "Prêt pour les données Supabase."
