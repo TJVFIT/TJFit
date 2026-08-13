@@ -1,5 +1,7 @@
+import * as Sentry from "@sentry/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 
+import { isAdminEmail } from "@/lib/auth-utils";
 import { fulfillProgramOrderPaid } from "@/lib/checkout-fulfill-order";
 import { allowsSimulatedPaidCompletionForStoredProvider } from "@/lib/payments";
 import { readRequestJson } from "@/lib/read-request-json";
@@ -23,6 +25,22 @@ export async function POST(request: NextRequest) {
 
   if (error || !user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Tripwire (WP-SEC-06): with ALLOW_TEST_CHECKOUT left on in production,
+  // this route would let ANY authenticated user mark their own order paid.
+  // In production the flag is tolerated only for supervised admin testing —
+  // everyone else is blocked, and the misconfiguration is alarmed loudly so
+  // it cannot linger unnoticed.
+  if (process.env.VERCEL_ENV === "production" && !isAdminEmail(user.email ?? "")) {
+    console.error(
+      "TRIPWIRE: ALLOW_TEST_CHECKOUT=true in PRODUCTION — non-admin test-completion attempt blocked. Unset the env var."
+    );
+    Sentry.captureMessage("ALLOW_TEST_CHECKOUT enabled in production", "fatal");
+    return NextResponse.json(
+      { error: "Test order completion is disabled in this environment." },
+      { status: 403 }
+    );
   }
 
   const parsed = await readRequestJson(request);
