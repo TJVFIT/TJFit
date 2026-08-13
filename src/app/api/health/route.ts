@@ -28,9 +28,14 @@ export async function GET() {
     }
   }
 
+  // Send-capability visibility (WP-INFRA-12): "unconfigured" until the owner
+  // sets RESEND_API_KEY in Vercel. Informational only — an email gap should
+  // show up in monitoring, not page the uptime monitor as a site outage.
+  const email: "ok" | "unconfigured" = process.env.RESEND_API_KEY ? "ok" : "unconfigured";
+
   const ok = db === "up";
   return NextResponse.json(
-    { ok, db, ms: Date.now() - startedAt, ts: new Date().toISOString() },
+    { ok, db, email, ms: Date.now() - startedAt, ts: new Date().toISOString() },
     { status: ok ? 200 : 503, headers: { "Cache-Control": "no-store" } }
   );
 }

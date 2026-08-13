@@ -64,6 +64,12 @@ Value (rollout phases — start at Phase 1):
 Phase 1 is monitor-only. Resend / DMARC reports land at the `rua`
 address — set up `dmarc@tjfit.org` to forward to your inbox.
 
+> **Phase-2 reminder:** the day the Phase-1 record goes live, set a calendar
+> reminder 30 days out to promote to Phase 2 (`p=quarantine`) — nothing in
+> the stack will prompt you, and `p=none` forever means spoofers ride the
+> domain unpunished. (`/api/health` reports `email: "unconfigured"` until
+> `RESEND_API_KEY` is set in Vercel, so that half is monitored.)
+
 Per Resend docs: **an email must pass either SPF or DKIM (not necessarily
 both) for DMARC compliance.** Keep both healthy in case one breaks.
 
