@@ -68,6 +68,11 @@ export default async function ProgramPage({
   return (
     <ProgramApp
       locale={locale}
+      // English bundle ONLY — the tracker persists workout logs keyed by
+      // `day`/`exercise` and grocery checks by `category|item`, so localizing
+      // these strings would strand a user's progress on locale switch and
+      // write orphaned duplicate rows (WP-CONTENT-01 slophunter must-fix).
+      // Localizing the tracker needs display/key separation — a follow-up WP.
       bundle={bundle}
       currentWeek={currentWeek}
       logs={logs ?? []}

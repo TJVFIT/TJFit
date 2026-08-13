@@ -27,6 +27,7 @@ import { bundleBreadcrumbJsonLd, bundleFaqJsonLd, bundleProductJsonLd } from "@/
 import { getBundleExtrasCopy } from "@/lib/bundle-extras-copy";
 import { getBundlesCopy } from "@/lib/bundles-copy";
 import { localizeBundle } from "@/lib/bundle-localization";
+import { localizeBundleContent } from "@/lib/bundle-content-i18n";
 import { supportedLocales } from "@/lib/i18n";
 import { requireLocaleParam } from "@/lib/require-locale";
 import { getSiteUrl } from "@/lib/site-url";
@@ -70,8 +71,11 @@ export default async function BundleDetailPage({
   params: { locale: string; slug: string };
 }) {
   const locale = requireLocaleParam(params.locale);
-  const bundle = getBundle(params.slug);
-  if (!bundle) notFound();
+  const rawBundle = getBundle(params.slug);
+  if (!rawBundle) notFound();
+  // Structured content (weekly template, recipes, grocery, FAQ, …) localized
+  // ×5 (WP-CONTENT-01); prose name/hook still come from localizeBundle below.
+  const bundle = localizeBundleContent(rawBundle, locale);
 
   const copy = getBundlesCopy(locale);
   const d = copy.detail;
