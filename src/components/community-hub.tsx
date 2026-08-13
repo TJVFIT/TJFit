@@ -32,8 +32,7 @@ type BlogPost = {
   title: string;
   content: string;
   is_pinned?: boolean;
-  image_path?: string | null;
-  image_url?: string | null;
+  cover_image_url?: string | null;
   created_at: string;
 };
 
@@ -604,7 +603,7 @@ export function CommunityHub({
     const loadBlogs = async () => {
       setLoadingBlogs(true);
       try {
-        const res = await fetch("/api/community/blogs", { credentials: "include" });
+        const res = await fetch("/api/blog/posts", { credentials: "include" });
         const data = await res.json().catch(() => ({}));
         if (!mounted) return;
         if (!res.ok) {
@@ -660,7 +659,7 @@ export function CommunityHub({
   }, [activeTab]);
 
   const reloadBlogs = async () => {
-    const reload = await fetch("/api/community/blogs", { credentials: "include" });
+    const reload = await fetch("/api/blog/posts", { credentials: "include" });
     const reloadData = await reload.json().catch(() => ({}));
     if (!reload.ok) {
       throw new Error(String(reloadData.error ?? copy.blogLoadFailed));
@@ -680,7 +679,7 @@ export function CommunityHub({
       if (image) {
         formData.set("image", image);
       }
-      const res = await fetch("/api/community/blogs", {
+      const res = await fetch("/api/blog/posts", {
         method: "POST",
         body: formData,
         credentials: "include"
@@ -708,11 +707,9 @@ export function CommunityHub({
     setBlogError("");
     setBlogSuccess("");
     try {
-      const res = await fetch("/api/community/blogs", {
+      const res = await fetch(`/api/blog/posts/${encodeURIComponent(blogId)}`, {
         method: "DELETE",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ blogId })
+        credentials: "include"
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -738,11 +735,11 @@ export function CommunityHub({
     setBlogError("");
     setBlogSuccess("");
     try {
-      const res = await fetch("/api/community/blogs", {
-        method: "PATCH",
+      const res = await fetch(`/api/blog/posts/${encodeURIComponent(blogId)}/moderate`, {
+        method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ blogId, action: shouldPin ? "pin" : "unpin" })
+        body: JSON.stringify({ action: shouldPin ? "pin" : "unpin" })
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -763,7 +760,7 @@ export function CommunityHub({
     setTranslateLoadingId(blogId);
     setBlogError("");
     try {
-      const res = await fetch("/api/community/blogs/translate", {
+      const res = await fetch("/api/blog/translate", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -1024,9 +1021,9 @@ export function CommunityHub({
                           </button>
                         )}
                       </div>
-                      {post.image_url ? (
+                      {post.cover_image_url ? (
                         <Image
-                          src={post.image_url}
+                          src={post.cover_image_url}
                           alt={post.title}
                           width={1200}
                           height={700}

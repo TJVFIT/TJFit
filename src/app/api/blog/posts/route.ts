@@ -42,8 +42,11 @@ export async function GET(request: NextRequest) {
   }
   let query = admin
     .from("community_blog_posts")
-    .select("id,title,content,author_id,author_name,author_role,created_at,cover_image_url,category,read_time_minutes,views,is_featured,status")
+    .select("id,title,content,author_id,author_name,author_role,created_at,cover_image_url,category,read_time_minutes,views,is_featured,is_pinned,status")
     .eq("status", status)
+    // Pinned posts float to the top regardless of feature/recency — this is
+    // the ported System B behavior (community_blog_pinning migration).
+    .order("is_pinned", { ascending: false })
     .order("is_featured", { ascending: false })
     .order("created_at", { ascending: false })
     .limit(50);

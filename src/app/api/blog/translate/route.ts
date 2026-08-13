@@ -4,6 +4,10 @@ import { rateLimit } from "@/lib/rate-limit";
 import { readRequestJson } from "@/lib/read-request-json";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
+// Ported from the retired System B route (community/blogs/translate). Same
+// logic, only the moderation-status column changed: System B gated on the
+// `published` boolean, System A gates on the canonical `status` text column.
+
 function chunkText(input: string, chunkSize = 2500) {
   if (input.length <= chunkSize) return [input];
   const chunks: string[] = [];
@@ -106,7 +110,7 @@ export async function POST(request: NextRequest) {
     .from("community_blog_posts")
     .select("id,title,content")
     .eq("id", blogId)
-    .eq("published", true)
+    .eq("status", "published")
     .maybeSingle();
 
   if (error) {

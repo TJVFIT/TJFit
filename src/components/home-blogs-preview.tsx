@@ -11,7 +11,7 @@ type BlogPost = {
   title: string;
   content: string;
   author_name: string;
-  image_url?: string | null;
+  cover_image_url?: string | null;
   is_pinned?: boolean;
   created_at: string;
 };
@@ -46,9 +46,9 @@ function normalizeBlogPosts(raw: unknown): BlogPost[] {
         title: String(p.title ?? ""),
         content: String(p.content ?? ""),
         author_name: String(p.author_name ?? ""),
-        image_url:
-          typeof p.image_url === "string" && p.image_url.length > 0 && isSafeImageSrc(p.image_url)
-            ? p.image_url
+        cover_image_url:
+          typeof p.cover_image_url === "string" && p.cover_image_url.length > 0 && isSafeImageSrc(p.cover_image_url)
+            ? p.cover_image_url
             : null,
         is_pinned: Boolean(p.is_pinned),
         created_at: String(p.created_at ?? "")
@@ -87,7 +87,7 @@ export function HomeBlogsPreview({
     let ok = true;
     (async () => {
       try {
-        const res = await fetch("/api/community/blogs", { credentials: "include" });
+        const res = await fetch("/api/blog/posts", { credentials: "include" });
         const data = await res.json().catch(() => ({}));
         if (!ok) return;
         setPosts(normalizeBlogPosts(data.posts).slice(0, 4));
@@ -140,10 +140,10 @@ export function HomeBlogsPreview({
               href={hrefAll}
               className="group flex h-full flex-col overflow-hidden rounded-xl border border-white/[0.07] bg-surface-elevated/40 transition-[border-color,box-shadow,transform] duration-300 hover:border-purple-300/30 hover:shadow-[0_18px_44px_rgba(0,0,0,0.4),0_0_28px_rgba(168,85,247,0.08)] motion-safe:hover:-translate-y-0.5"
             >
-              {post.image_url ? (
+              {post.cover_image_url ? (
                 <div className="relative aspect-[16/9] w-full overflow-hidden bg-black/40">
                   <Image
-                    src={post.image_url}
+                    src={post.cover_image_url}
                     alt={post.title || "Blog"}
                     fill
                     className="object-cover transition duration-500 group-hover:opacity-95"

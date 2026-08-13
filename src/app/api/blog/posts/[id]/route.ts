@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { rateLimit } from "@/lib/rate-limit";
+import { requireAuth } from "@/lib/require-auth";
+import { isAdminEmail } from "@/lib/auth-utils";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
@@ -47,4 +49,42 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 
   return NextResponse.json({ post: { ...data, views } });
+}
+
+// Ported from the retired System B route (community/blogs DELETE): admin or
+// the post's own author may delete. System A had no delete path before this;
+// without it, community-hub's existing delete button would silently break
+// once System B's route was removed.
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+  const auth = await requireAuth();
+  if (!auth.ok) return auth.response;
+
+  const admin = getSupabaseServerClient();
+  if (!admin) return NextResponse.json({ error: "Server not configured" }, { status: 500 });
+
+  const id = params.id;
+  const { data: post } = await admin
+    .from("community_blog_posts")
+    .select("id,author_id")
+    .eq("id", id)
+    .maybeSingle();
+  if (!post) return NextResponse.json({ error: "Post not found" }, { status: 404 });
+
+  let isAdmin = Boolean(auth.user.email && isAdminEmail(auth.user.email));
+  if (!isAdmin) {
+    const { data: profile } = await admin
+      .from("profiles")
+      .select("role")
+      .eq("id", auth.user.id)
+      .maybeSingle();
+    isAdmin = profile?.role === "admin";
+  }
+  if (!isAdmin && post.author_id !== auth.user.id) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const { error } = await admin.from("community_blog_posts").delete().eq("id", id);
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  return NextResponse.json({ success: true });
 }
