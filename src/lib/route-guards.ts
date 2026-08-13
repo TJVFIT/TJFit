@@ -1,3 +1,5 @@
+import { locales as ROUTING_LOCALES } from "@/lib/i18n";
+
 export type GuardKind = "admin" | "coach_area" | "auth_user" | "coach_terms";
 
 /**
@@ -53,3 +55,26 @@ export const ROBOTS_DISALLOW_FAMILIES: ReadonlyArray<string> = [
   ...MIDDLEWARE_GUARDS.map((g) => g.prefix),
   ...ROBOTS_ONLY_DISALLOW
 ];
+
+const GUARD_LOCALES = new Set<string>(ROUTING_LOCALES);
+
+/**
+ * Match a pathname against the guarded families. Pure — lives here (not in
+ * middleware.ts) so the semantics are unit-testable without the Next
+ * middleware runtime. Returns null for /api paths, non-locale paths, and
+ * anything unguarded.
+ */
+export function matchHtmlGuard(pathname: string): { locale: string; kind: GuardKind } | null {
+  if (pathname.startsWith("/api")) return null;
+  const segments = pathname.split("/").filter(Boolean);
+  if (segments.length < 2) return null;
+  const locale = segments[0];
+  if (!GUARD_LOCALES.has(locale)) return null;
+  const sub = `/${segments.slice(1).join("/")}`;
+  for (const g of MIDDLEWARE_GUARDS) {
+    if (sub === g.prefix || (!g.exact && sub.startsWith(`${g.prefix}/`))) {
+      return { locale, kind: g.kind };
+    }
+  }
+  return null;
+}

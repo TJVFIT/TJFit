@@ -5,7 +5,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { isAdminEmail } from "@/lib/auth-utils";
 import { getCoachTermsVersion } from "@/lib/coach-terms-version";
 import { locales as ROUTING_LOCALES } from "@/lib/i18n";
-import { MIDDLEWARE_GUARDS, type GuardKind } from "@/lib/route-guards";
+import { matchHtmlGuard } from "@/lib/route-guards";
 import { URL_NOTICE } from "@/lib/url-notice";
 
 // Sourced from @/lib/i18n so adding a new routing locale doesn't silently
@@ -75,23 +75,6 @@ async function coachHasCurrentTerms(
     .limit(1)
     .maybeSingle();
   return data?.terms_version === expected;
-}
-
-function matchHtmlGuard(pathname: string): { locale: string; kind: GuardKind } | null {
-  if (pathname.startsWith("/api")) return null;
-  const segments = pathname.split("/").filter(Boolean);
-  if (segments.length < 2) return null;
-  const locale = segments[0];
-  if (!LOCALES.has(locale)) return null;
-  const sub = `/${segments.slice(1).join("/")}`;
-  // Guard families come from the shared SSOT so robots.ts can never drift
-  // from what the middleware actually protects (WP-SEC-05).
-  for (const g of MIDDLEWARE_GUARDS) {
-    if (sub === g.prefix || (!g.exact && sub.startsWith(`${g.prefix}/`))) {
-      return { locale, kind: g.kind };
-    }
-  }
-  return null;
 }
 
 export async function middleware(request: NextRequest) {
