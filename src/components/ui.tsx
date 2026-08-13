@@ -96,19 +96,6 @@ export function ProductCard({ product }: { product: Product }) {
   );
 }
 
-export function StatGrid({ stats }: { stats: { label: string; value: string }[] }) {
-  return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      {stats.map((stat) => (
-        <div key={stat.label} className="glass-panel p-5">
-          <p className="text-xs uppercase tracking-[0.24em] text-faint">{stat.label}</p>
-          <p className="mt-4 text-3xl font-semibold text-white">{stat.value}</p>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 export function TransformationCard({
   transformation,
   href
