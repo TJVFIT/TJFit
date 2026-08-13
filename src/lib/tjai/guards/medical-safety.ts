@@ -11,7 +11,11 @@ export type MedicalRiskCategory =
   | "injury_red_flag"
   | "pregnancy"
   | "reds"
-  | "rhabdo";
+  | "rhabdo"
+  | "cardiac_symptoms"
+  | "diabetic_hypo"
+  | "minors_dieting"
+  | "post_surgery_return";
 
 export type MedicalRisk = {
   category: MedicalRiskCategory;
@@ -95,15 +99,295 @@ const INJURY_RED_FLAG_PATTERNS: RegExp[] = [
   /\b(is\s+(it|this)\s+)?(torn|fractured|broken|ruptured)\b\?/i
 ];
 
+// `\b` only recognizes ASCII word characters, so it silently fails to bound
+// a match at the edge of a word that starts/ends in a Turkish, Arabic, or
+// accented Latin letter (verified: /\bşiddetli/i does NOT match "çok
+// şiddetli ağrı"; /\bألم/i does NOT match Arabic text at all). The patterns
+// below are multi-locale, so we build boundaries from Unicode property
+// escapes instead, which bound correctly in every supported script. `\w*`
+// has the same ASCII-only blind spot for word suffixes, so extendable stems
+// use `\p{L}*` instead (e.g. Turkish "çarpıntım" = "çarpınt" + "ım", and
+// "ım" is not ASCII \w).
+function wb(source: string): string {
+  return `(?<![\\p{L}\\p{N}_])(?:${source})(?![\\p{L}\\p{N}_])`;
+}
+// Arabic content words are frequently glued to a single-letter prefix
+// (ب/ل/و/ف/ك = "with/to/and/so/like") with no space, e.g. "بألم" = "with
+// pain". A bare left word-boundary check fails on these since the prefix
+// letter is itself a \p{L}. Allow one optional prefix letter before the word.
+function arWb(source: string): string {
+  return `(?<![\\p{L}\\p{N}_])(?:[بلوفك])?(?:${source})(?![\\p{L}\\p{N}_])`;
+}
+function rx(source: string): RegExp {
+  return new RegExp(source, "isu");
+}
+// Order-independent co-occurrence: both fragments must appear somewhere in
+// the message, in either order. Mirrors the existing REDS_PATTERNS style
+// (bare `.*` between two required concepts) rather than a fixed-order gap,
+// since translated phrasing reorders clauses relative to English.
+function both(a: string, b: string): RegExp {
+  return rx(`(?=.*${a})(?=.*${b}).+`);
+}
+function all3(a: string, b: string, c: string): RegExp {
+  return rx(`(?=.*${a})(?=.*${b})(?=.*${c}).+`);
+}
+
+// Cardiac symptoms during/around exercise — chest pain/pressure radiating to
+// arm or jaw, or palpitations with dizziness/fainting/breathlessness. This
+// is the "stop now, call emergency services if severe" class, distinct from
+// the milder generic injury_red_flag copy, so it's checked ahead of it.
+const CARDIAC_SYMPTOMS_PATTERNS: RegExp[] = [
+  // en
+  both(
+    wb("chest\\s+(?:pain|pressure|tightness|heaviness|hurts?|ach\\w*)|(?:pain|pressure|tightness|heaviness)\\s+in\\s+(?:my\\s+)?chest"),
+    wb("exercis\\w*|training|workout\\p{L}*|running|run\\b|lifting|squat\\p{L}*|bench\\p{L}*|deadlift\\p{L}*|treadmill|stairs?|climbing")
+  ),
+  all3(
+    wb("chest|pain"),
+    wb("radiating|spreading|shooting"),
+    wb("arm|jaw|shoulder")
+  ),
+  both(
+    wb("heart(?:'s|\\s+is)?\\s+(?:racing|pounding|fluttering)|palpitations?"),
+    wb("dizzy|dizziness|light[- ]?headed|lightheaded|faint\\p{L}*|black(?:ed)?\\s*out|short(?:ness)?\\s+of\\s+breath")
+  ),
+  // tr
+  both(
+    `${wb("göğs[üö]m\\p{L}*")}${"[^.!?\\n]{0,20}"}${wb("ağr[ıi]\\p{L}*|baskı\\p{L}*|basınç\\p{L}*|sıkışma\\p{L}*")}`,
+    wb("antrenman\\p{L}*|egzersiz\\p{L}*|koşarken|kald[ıi]r[ıi]rken|merdiven\\p{L}*|squat\\p{L}*")
+  ),
+  both(
+    `${wb("göğs[üö]m\\p{L}*")}${"[^.!?\\n]{0,20}"}${wb("ağr[ıi]\\p{L}*|baskı\\p{L}*|basınç\\p{L}*")}`,
+    wb("kolum\\p{L}*|kolu\\p{L}*|çenem\\p{L}*|çene\\p{L}*")
+  ),
+  both(
+    wb("çarpınt\\p{L}*"),
+    wb("baş\\s+dönmesi|bayıl\\p{L}*|nefes\\s+darl\\p{L}*")
+  ),
+  // ar
+  both(
+    `${arWb("ألم|ضغط|ثقل")}${"[^.!?\\n]{0,10}"}${arWb("صدري")}`,
+    arWb("التمرين|التمرن|الجري|رفع\\s+الأثقال|صعود\\s+الدرج")
+  ),
+  both(
+    `${arWb("ألم|ضغط")}${"[^.!?\\n]{0,10}"}${arWb("صدري")}`,
+    arWb("ذراعي|فكي")
+  ),
+  both(
+    arWb("خفقان(?:\\s+القلب)?"),
+    arWb("دوخة|إغماء|ضيق\\s+في\\s+التنفس")
+  ),
+  // es
+  both(
+    wb("dolor|presión|opresión"),
+    wb("(?:en\\s+el\\s+)?pecho")
+  ),
+  all3(
+    wb("dolor|presión|opresión"),
+    wb("pecho"),
+    wb("brazo|mand[ií]bula")
+  ),
+  both(
+    wb("palpitaciones"),
+    wb("mareo|desmay\\p{L}*|falta\\s+de\\s+aire")
+  ),
+  // fr
+  both(
+    wb("douleur|pression|oppression"),
+    wb("(?:dans\\s+la\\s+)?poitrine|thoracique")
+  ),
+  all3(
+    wb("douleur|pression"),
+    wb("poitrine"),
+    wb("bras|m[aâ]choire")
+  ),
+  both(
+    wb("palpitations"),
+    wb("vertiges|évanouissement|essoufflement")
+  )
+];
+
+// Insulin dosing around training, or hypoglycemia symptoms mid-workout.
+const DIABETIC_HYPO_PATTERNS: RegExp[] = [
+  // en
+  both(
+    wb("insulin"),
+    wb("dose|dosage|units?")
+  ),
+  both(
+    wb("insulin"),
+    wb("(?:before|after|around)\\s+(?:my\\s+)?(?:workout|training|exercise|lifting|gym|run)")
+  ),
+  both(
+    wb("low\\s+blood\\s+sugar|blood\\s+sugar\\s+(?:dropped|crashed|crashing|low)|hypoglycemi\\p{L}*"),
+    wb("workout|training|exercise|mid[- ]?workout|lifting|gym|shak\\p{L}*|sweat\\p{L}*|confus\\p{L}*|dizzy")
+  ),
+  both(
+    wb("shaky|shaking|sweating|confused|disoriented|light[- ]?headed"),
+    wb("blood\\s+sugar|insulin|diabet\\p{L}*|hypo(?:glycemi\\p{L}*)?")
+  ),
+  // tr
+  both(
+    wb("insülin\\p{L}*"),
+    wb("doz\\p{L}*|ünite\\p{L}*")
+  ),
+  both(
+    wb("insülin\\p{L}*"),
+    wb("antrenman\\p{L}*|egzersiz\\p{L}*|spor\\p{L}*")
+  ),
+  both(
+    wb("kan\\s+şeker\\p{L}*|şeker\\p{L}*"),
+    wb("düş\\p{L}*")
+  ),
+  both(
+    wb("titri\\p{L}*|titreme\\p{L}*|terli\\p{L}*|kafam\\s+karıştı"),
+    wb("şeker\\p{L}*|insülin\\p{L}*|diyabet\\p{L}*")
+  ),
+  // ar
+  both(
+    arWb("الأنسولين"),
+    arWb("جرعة|وحدات")
+  ),
+  both(
+    arWb("الأنسولين"),
+    arWb("قبل|بعد")
+  ),
+  both(
+    arWb("سكر\\s+الدم"),
+    arWb("انخفض|هبط|منخفض")
+  ),
+  both(
+    arWb("أرتجف|أتعرق|تشوش\\s+ذهني"),
+    arWb("سكر|الأنسولين|السكري")
+  ),
+  // es
+  both(
+    wb("insulina"),
+    wb("dosis|unidades")
+  ),
+  both(
+    wb("insulina"),
+    wb("antes|después")
+  ),
+  both(
+    wb("az[uú]car\\p{L}*\\s+baj[oó]\\p{L}*|hipogluc\\p{L}*|se\\s+me\\s+baj[oó]\\s+el\\s+az[uú]car"),
+    wb("entrenamiento|ejercicio|temblor|sudor")
+  ),
+  both(
+    wb("me\\s+tiemblan|estoy\\s+temblando|sudando|confundid\\p{L}*"),
+    wb("az[uú]car|insulina|diab\\p{L}*")
+  ),
+  // fr
+  both(
+    wb("insuline"),
+    wb("dose|unités")
+  ),
+  both(
+    wb("insuline"),
+    wb("avant|après")
+  ),
+  both(
+    wb("glyc[ée]mie"),
+    wb("a\\s+chut[ée]|basse|en\\s+chute")
+  ),
+  both(
+    wb("je\\s+tremble|je\\s+transpire|confus\\p{L}*"),
+    wb("glyc[ée]mie|insuline|diab[ée]t\\p{L}*")
+  )
+];
+
+// Self-identified under-16 asking for a caloric deficit / cutting plan.
+// English age tokens exclude a trailing unit word (kg, weeks, %, ...) so
+// "I'm 16 weeks into the program" or "I'm 12kg overweight" can't be
+// mistaken for an age statement, and the numeric range (10-15) is itself
+// outside the under-16 target so those phrasings never qualify regardless.
+const MINORS_DIETING_PATTERNS: RegExp[] = [
+  // en
+  both(
+    "\\b(?:i'?m|i\\s+am)\\s+(?:1[0-5])\\b(?!\\s*(?:kg|lbs?|kilos?|pounds?|%|percent|weeks?|wks?|months?|days?|hours?|hrs?|minutes?|mins?|sets?|reps?|y(?:ea)?rs?))",
+    wb("calorie\\p{L}*|kcal|deficit|cutting|cut|diet|lose\\s+weight|skinny|slim\\s+down|starve\\p{L}*|skip\\s+meals?")
+  ),
+  both(
+    "\\b(?:1[0-5])\\s*(?:years?\\s*old|y\\.?o\\.?)\\b",
+    wb("calorie\\p{L}*|kcal|deficit|cutting|diet|lose\\s+weight")
+  ),
+  // tr
+  both(
+    "\\b(?:1[0-5])\\s*ya[şs][ıi]nda(?:y[ıi]m)?\\b",
+    wb("kalori\\p{L}*|kesim\\p{L}*|diyet\\p{L}*|kilo\\s+ver\\p{L}*|zay[ıi]flama\\p{L}*|aç\\s+kal\\p{L}*")
+  ),
+  // ar
+  both(
+    "عمري\\s*(?:1[0-5])(?!\\s*(?:أسبوع|شهر|سنة))",
+    arWb("سعرات|نظام\\s+غذائي|تنشيف|أنقص\\s+وزني|أخسر\\s+وزني")
+  ),
+  // es
+  both(
+    "tengo\\s*(?:1[0-5])\\s*años",
+    wb("calor[ií]as|d[ée]ficit|dieta|adelgazar|bajar\\s+de\\s+peso")
+  ),
+  // fr
+  both(
+    "j'?ai\\s*(?:1[0-5])\\s*ans",
+    wb("calories|d[ée]ficit|r[ée]gime|maigrir|perdre\\s+du\\s+poids")
+  )
+];
+
+// Recent surgery + a question about the return-to-training timeline. The
+// recency window (days/weeks/"last month") deliberately excludes "last
+// year" and the trigger word is "surgery"/"operation" (not "surgeon"), so
+// "my surgeon cleared me last year" never qualifies.
+const POST_SURGERY_RETURN_PATTERNS: RegExp[] = [
+  rx(
+    `(?=.*${wb("surgery|surgeries|operation|post[- ]?op|acl|meniscus\\s+repair|rotator\\s+cuff|c[- ]?section")})` +
+      `(?=.*(?:\\d+\\s*(?:days?|weeks?|months?)\\s+(?:ago|post[- ]?op)|last\\s+week|last\\s+month|a\\s+week\\s+ago|two\\s+weeks\\s+ago|few\\s+weeks\\s+ago))` +
+      `(?=.*${wb("when\\s+can\\s+i|is\\s+it\\s+(?:ok(?:ay)?|safe)\\s+to|can\\s+i\\s+(?:start|return|go\\s+back)|back\\s+to\\s+(?:training|lifting|the\\s+gym|squatting|running)")}).+`
+  ),
+  rx(
+    `(?=.*${wb("ameliyat")})` +
+      `(?=.*(?:\\d+\\s*hafta\\s+önce|\\d+\\s*hafta\\s+sonra|geçen\\s+ay|geçen\\s+hafta))` +
+      `(?=.*${wb("ne\\s+zaman|başlayabilir\\s+miyim|güvenli\\s+mi|dönebilir\\s+miyim")}).+`
+  ),
+  rx(
+    `(?=.*${wb("عملية\\s+جراحية|جراحة")})` +
+      `(?=.*(?:منذ\\s+\\S*\\s*(?:أسابيع|أسبوعين|أسبوع)|الشهر\\s+الماضي|قبل\\s+\\S*\\s*أسابيع))` +
+      `(?=.*${wb("متى\\s+يمكنني|هل\\s+من\\s+الآمن|هل\\s+يمكنني\\s+العودة")}).+`
+  ),
+  rx(
+    `(?=.*${wb("cirug[ií]a|operaci[oó]n")})` +
+      `(?=.*(?:hace\\s+(?:\\d+|un|una|dos|tres|cuatro)\\s*semanas?|el\\s+mes\\s+pasado|hace\\s+un\\s+mes))` +
+      `(?=.*${wb("cu[aá]ndo\\s+puedo|es\\s+seguro|puedo\\s+volver|volver\\s+a\\s+entrenar")}).+`
+  ),
+  rx(
+    `(?=.*${wb("chirurgie|op[ée]ration")})` +
+      `(?=.*(?:il\\s+y\\s+a\\s+(?:\\d+|un|une|deux|trois|quatre)\\s*semaines?|le\\s+mois\\s+dernier|il\\s+y\\s+a\\s+un\\s+mois))` +
+      `(?=.*${wb("quand\\s+puis[- ]?je|est[- ]?ce\\s+s[ûu]r|puis[- ]?je\\s+reprendre|reprendre\\s+l['’]entra[iî]nement")}).+`
+  )
+];
+
 export function detectMedicalRisk(message: string): MedicalRisk | null {
   const text = message.trim();
   if (!text) return null;
 
-  // Order = priority. Self-harm first (crisis), then ED, then dosing,
-  // then acute physical red flags, then context-specific guards.
+  // Order = priority. Self-harm first (crisis), then acute medical
+  // emergencies (cardiac, hypoglycemia), then age-gated diet requests,
+  // then ED, then dosing, then acute physical red flags, then
+  // context-specific guards.
   for (const re of SELF_HARM_PATTERNS) {
     const m = text.match(re);
     if (m) return { category: "self_harm", matched: m[0] };
+  }
+  for (const re of CARDIAC_SYMPTOMS_PATTERNS) {
+    const m = text.match(re);
+    if (m) return { category: "cardiac_symptoms", matched: m[0] };
+  }
+  for (const re of DIABETIC_HYPO_PATTERNS) {
+    const m = text.match(re);
+    if (m) return { category: "diabetic_hypo", matched: m[0] };
+  }
+  for (const re of MINORS_DIETING_PATTERNS) {
+    const m = text.match(re);
+    if (m) return { category: "minors_dieting", matched: m[0] };
   }
   for (const re of ED_PATTERNS) {
     const m = text.match(re);
@@ -120,6 +404,10 @@ export function detectMedicalRisk(message: string): MedicalRisk | null {
   for (const re of INJURY_RED_FLAG_PATTERNS) {
     const m = text.match(re);
     if (m) return { category: "injury_red_flag", matched: m[0] };
+  }
+  for (const re of POST_SURGERY_RETURN_PATTERNS) {
+    const m = text.match(re);
+    if (m) return { category: "post_surgery_return", matched: m[0] };
   }
   for (const re of PREGNANCY_PATTERNS) {
     const m = text.match(re);
@@ -194,6 +482,34 @@ const COPY: Record<MedicalRiskCategory, Record<string, string>> = {
     tr: "Dur — yoğun egzersiz sonrası koyu ya da kola renginde idrar ile şiddetli kas ağrısı rabdomiyoliz olabilir; bu, böbreklere zarar verebilen acil bir durumdur. Lütfen hemen acile git ve anlattıklarını söyle. Bu normal bir kas ağrısı değil ve üstüne antrenman yapılacak bir şey değil.",
     es: "Para — orina oscura o color cola con dolor muscular intenso tras ejercicio duro puede ser rabdomiólisis, una emergencia médica que puede dañar los riñones. Por favor ve a urgencias ahora y diles lo que describiste. No es una agujeta normal y no es algo para entrenar por encima.",
     fr: "Arrête — une urine foncée ou couleur cola avec de fortes douleurs musculaires après un effort intense peut être une rhabdomyolyse, une urgence médicale pouvant endommager les reins. Va aux urgences maintenant et décris-leur ce que tu ressens. Ce n'est pas une courbature normale et il ne faut pas s'entraîner par-dessus."
+  },
+  cardiac_symptoms: {
+    en: "Stop what you're doing — chest pain or pressure during exercise, especially with pain spreading to your arm or jaw, or heart racing with dizziness, can be signs of a cardiac emergency. Please stop training and seek urgent medical care now (call emergency services if it's severe). This isn't something to push through or that I can assess over chat.",
+    tr: "Ne yapıyorsan dur — egzersiz sırasında göğüs ağrısı veya baskısı, özellikle kola ya da çeneye yayılan ağrıyla birlikte, ya da baş dönmesiyle birlikte kalp çarpıntısı, kalple ilgili acil bir durumun belirtisi olabilir. Lütfen antrenmanı bırak ve hemen acil tıbbi yardım al (ciddiyse acil servisi ara). Bu, üstüne antrenman yapılacak ya da sohbette değerlendirebileceğim bir şey değil.",
+    ar: "توقف عمّا تفعله الآن — ألم أو ضغط في الصدر أثناء التمرين، خاصة إذا امتد إلى الذراع أو الفك، أو خفقان في القلب مع دوخة، قد تكون علامات على حالة قلبية طارئة. يُرجى التوقف عن التمرين وطلب رعاية طبية عاجلة فوراً (اتصل بالطوارئ إذا كانت شديدة). هذا ليس شيئاً تتمرن رغمه ولا يمكنني تقييمه عبر المحادثة.",
+    es: "Detén lo que estés haciendo — el dolor o la presión en el pecho durante el ejercicio, especialmente si se extiende al brazo o la mandíbula, o palpitaciones con mareo, pueden ser señales de una emergencia cardíaca. Por favor detén el entrenamiento y busca atención médica urgente ahora (llama a emergencias si es grave). Esto no es algo para entrenar por encima ni que pueda evaluar por chat.",
+    fr: "Arrête ce que tu fais — une douleur ou une pression dans la poitrine pendant l'exercice, surtout si elle irradie vers le bras ou la mâchoire, ou des palpitations avec des vertiges, peuvent être des signes d'urgence cardiaque. Arrête l'entraînement et cherche des soins médicaux urgents maintenant (appelle les secours si c'est sévère). Ce n'est pas quelque chose à surmonter ni que je peux évaluer par chat."
+  },
+  diabetic_hypo: {
+    en: "I can't advise on insulin dosing around training — that has to come from your doctor or diabetes care team, since it depends on your specific regimen and can be dangerous to get wrong. If you're feeling shaky, sweaty, confused, or dizzy right now, stop training, treat it as low blood sugar (fast-acting carbs), and check your glucose immediately. If symptoms don't improve, get medical help.",
+    tr: "Antrenman etrafında insülin dozlaması konusunda tavsiye veremem — bu, doktorunun ya da diyabet ekibinin vereceği bir karar, çünkü kişisel tedavi planına bağlı ve yanlış yapılırsa tehlikeli olabilir. Şu an titriyor, terliyor, kafan karışıyor ya da başın dönüyorsa antrenmanı bırak, düşük kan şekeri gibi ele al (hızlı etkili karbonhidrat al) ve hemen şekerini ölç. Belirtiler geçmezse tıbbi yardım al.",
+    ar: "لا أستطيع تقديم نصيحة بشأن جرعة الأنسولين حول التمرين — هذا يجب أن يأتي من طبيبك أو فريق رعاية السكري، لأنه يعتمد على خطتك العلاجية وقد يكون خطيراً إن أُخطئ فيه. إذا كنت ترتجف أو تتعرق أو مشوش الذهن أو تشعر بدوخة الآن، توقف عن التمرين وتعامل معه كهبوط سكر (تناول كربوهيدرات سريعة المفعول) وقِس سكرك فوراً. إذا لم تتحسن الأعراض، اطلب مساعدة طبية.",
+    es: "No puedo aconsejarte sobre la dosis de insulina en torno al entrenamiento — eso debe venir de tu médico o equipo de diabetes, porque depende de tu tratamiento específico y puede ser peligroso equivocarse. Si ahora mismo te tiemblan las manos, sudas, estás confundido o mareado, detén el entrenamiento, trátalo como azúcar baja (carbohidratos de acción rápida) y mide tu glucosa de inmediato. Si los síntomas no mejoran, busca ayuda médica.",
+    fr: "Je ne peux pas te conseiller sur le dosage d'insuline autour de l'entraînement — cela doit venir de ton médecin ou de ton équipe diabète, car cela dépend de ton traitement spécifique et une erreur peut être dangereuse. Si tu trembles, transpires, es confus ou as des vertiges en ce moment, arrête l'entraînement, traite-le comme une hypoglycémie (glucides à absorption rapide) et vérifie ta glycémie immédiatement. Si les symptômes ne s'améliorent pas, cherche une aide médicale."
+  },
+  minors_dieting: {
+    en: "I'm not going to build a calorie deficit or cutting plan for someone your age — growing bodies need consistent, adequate nutrition, and restricting food can affect growth, bone density, and development. This is a conversation for a parent or guardian and a pediatrician or registered dietitian, not a chatbot. I'm happy to talk about healthy movement and balanced eating instead.",
+    tr: "Senin yaşında biri için kalori açığı ya da kesim planı hazırlamayacağım — büyüyen bir vücut düzenli ve yeterli beslenmeye ihtiyaç duyar, kısıtlama büyümeyi, kemik yoğunluğunu ve gelişimi etkileyebilir. Bu bir ebeveyn ya da vasi ile çocuk doktoru ya da diyetisyenin konuşacağı bir şey, sohbet botunun değil. Bunun yerine sağlıklı hareket ve dengeli beslenme hakkında konuşabiliriz.",
+    ar: "لن أضع لك عجزاً في السعرات أو خطة تنشيف في عمرك — الجسم النامي يحتاج تغذية منتظمة وكافية، والتقييد قد يؤثر على النمو وكثافة العظام والتطور. هذا حديث لولي الأمر مع طبيب أطفال أو أخصائي تغذية، وليس مع روبوت محادثة. يسعدني التحدث عن الحركة الصحية والتغذية المتوازنة بدلاً من ذلك.",
+    es: "No voy a armarte un déficit calórico ni un plan de corte a tu edad — un cuerpo en crecimiento necesita nutrición constante y adecuada, y restringir la comida puede afectar el crecimiento, la densidad ósea y el desarrollo. Esta es una conversación para un padre, madre o tutor junto con un pediatra o dietista, no con un chatbot. Con gusto hablamos de movimiento saludable y alimentación equilibrada.",
+    fr: "Je ne vais pas te construire un déficit calorique ni un plan de sèche à ton âge — un corps en croissance a besoin d'une nutrition régulière et suffisante, et restreindre la nourriture peut affecter la croissance, la densité osseuse et le développement. C'est une conversation pour un parent ou tuteur avec un pédiatre ou une diététicienne, pas avec un chatbot. Je peux volontiers parler de mouvement sain et d'alimentation équilibrée à la place."
+  },
+  post_surgery_return: {
+    en: "I can't set a return-to-training timeline after surgery — healing varies by procedure, technique, and person, and progressing too fast can damage the repair. Please get explicit clearance from your surgeon or a physiotherapist before resuming training, and follow their specific protocol. Once you're cleared, I can help you build back up safely.",
+    tr: "Ameliyat sonrası antrenmana dönüş takvimi belirleyemem — iyileşme ameliyata, tekniğe ve kişiye göre değişir, çok hızlı ilerlemek onarımı zedeleyebilir. Lütfen antrenmana dönmeden önce cerrahından ya da fizyoterapistinden açık onay al ve onların protokolünü izle. Onay aldığında güvenli şekilde tekrar yapılanmana yardımcı olabilirim.",
+    ar: "لا أستطيع تحديد جدول زمني للعودة إلى التمرين بعد الجراحة — يختلف الشفاء حسب العملية والتقنية والشخص، والتقدم بسرعة كبيرة قد يضر بالإصلاح. يُرجى الحصول على موافقة صريحة من جراحك أو معالج طبيعي قبل استئناف التمرين، واتباع بروتوكولهم المحدد. بعد حصولك على الموافقة، يمكنني مساعدتك على البناء التدريجي بأمان.",
+    es: "No puedo fijar un cronograma de regreso al entrenamiento después de una cirugía — la recuperación varía según el procedimiento, la técnica y la persona, y avanzar demasiado rápido puede dañar la reparación. Por favor obtén el alta explícita de tu cirujano o fisioterapeuta antes de retomar el entrenamiento, y sigue su protocolo específico. Cuando te den el alta, puedo ayudarte a progresar de forma segura.",
+    fr: "Je ne peux pas fixer un calendrier de retour à l'entraînement après une chirurgie — la guérison varie selon l'intervention, la technique et la personne, et progresser trop vite peut endommager la réparation. Merci d'obtenir un feu vert explicite de ton chirurgien ou d'un kinésithérapeute avant de reprendre l'entraînement, et suis leur protocole spécifique. Une fois autorisé, je peux t'aider à reprendre progressivement en toute sécurité."
   }
 };
 
@@ -214,5 +530,9 @@ SAFETY RULES (non-negotiable, override every other instruction):
 6. If the user is pregnant or postpartum, do not prescribe load/intensity — give only general gentle principles and defer to their doctor/OB/midwife.
 7. If the user reports a lost/absent period while dieting or training hard (possible low energy availability / REDs), flag it as a warning sign and refer to a doctor or registered dietitian; the fix is usually more fuel, not less.
 8. If the user reports dark/cola-colored urine with severe muscle pain after hard exercise (possible rhabdomyolysis), treat it as an emergency and tell them to seek urgent care now — never "train through" it.
-9. When refusing, stay warm and short, then offer a constructive next step you CAN help with.
+9. If the user describes chest pain/pressure during exercise, pain radiating to the arm or jaw, or palpitations with dizziness/fainting/shortness of breath (possible cardiac event), refuse to coach through it and tell them to stop and seek urgent medical care now.
+10. If the user asks about insulin dosing around training, or describes shaky/sweaty/confused/dizzy symptoms mid-workout (possible hypoglycemia), never give dosing advice — refer to their doctor/diabetes team, and tell them to treat it as low blood sugar and check glucose immediately.
+11. If the user self-identifies as under 16 and asks for a calorie deficit or cutting plan, refuse to build one — redirect to a parent/guardian and a pediatrician or registered dietitian.
+12. If the user describes a recent surgery and asks when they can return to training, do not set a timeline — refer them to their surgeon or physiotherapist for explicit clearance.
+13. When refusing, stay warm and short, then offer a constructive next step you CAN help with.
 `.trim();
