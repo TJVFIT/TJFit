@@ -22,7 +22,9 @@ Premium multilingual online coaching platform built with `Next.js 14`, `Tailwind
 - Coach dashboard
 - Admin panel
 - Login and signup pages
-- Checkout API: Paddle Billing when `PAYMENT_PROVIDER=paddle` (or `live` alias), test mode when `ALLOW_TEST_CHECKOUT=true`
+- Checkout API: Gumroad, with test mode when `ALLOW_TEST_CHECKOUT=true`. Paddle was removed in
+  `44f26a7` and no Paddle pay-flow exists; `paddle`/`live` survive only as legacy
+  `program_orders.provider` values so historical receipts still load.
 - English, Turkish, Arabic, Spanish, and French route support
 
 ## Routes
@@ -119,22 +121,12 @@ npm run dev
 | ADMIN_EMAILS | Required | Comma-separated admin emails for role checks. |
 | COACH_TERMS_VERSION | Required | Current coach terms version enforced by middleware/actions. |
 | ALLOW_TEST_CHECKOUT | Optional | Enable test checkout when no live provider is used. |
-| PADDLE_API_KEY | Required for Paddle live | Paddle API key for server transaction creation. |
-| PADDLE_WEBHOOK_SECRET | Required for Paddle live | Paddle webhook signature verification secret. |
-| PADDLE_ENVIRONMENT | Required for Paddle live | `sandbox` or `production`. |
-| NEXT_PUBLIC_PADDLE_ENVIRONMENT | Required for Paddle client | Public Paddle environment value. |
-| NEXT_PUBLIC_PADDLE_ENV | Optional | Short public alias for Paddle environment. |
-| NEXT_PUBLIC_PADDLE_CLIENT_TOKEN | Required for Paddle overlay | Public Paddle checkout client token. |
-| PADDLE_PRICE_MAP | Required for multi-product Paddle | JSON map of slug to Paddle `pri_...` id. |
-| PADDLE_DEFAULT_PRICE_ID | Optional | Fallback Paddle price id when slug is missing in map. |
-| PADDLE_WALLET_DISCOUNT_ID | Optional | Paddle `dsc_...` discount id applied on discounted orders. |
 | CHECKOUT_PROMO_CODES | Optional | JSON promo-code map (code to percent). |
 | CHECKOUT_PROMO_PAIRS | Optional | Comma-separated promo pairs (`CODE:PERCENT`). |
 | CHECKOUT_PROMO_CODE | Optional | Single promo code helper env. |
 | CHECKOUT_PROMO_PERCENT | Optional | Single promo percent helper env. |
 | RESEND_API_KEY | Required for email automations | API key for transactional/system emails. |
 | EMAIL_UNSUBSCRIBE_SECRET | Recommended | HMAC secret used to sign one-click unsubscribe links. |
-| PADDLE_DEBUG_LOG | Optional | Enables debug-level Paddle logging on server routes. |
 | NEXT_PUBLIC_GA4_MEASUREMENT_ID | Optional | GA4 measurement id. |
 | NEXT_PUBLIC_META_PIXEL_ID | Optional | Meta pixel id. |
 | NEXT_PUBLIC_TIKTOK_PIXEL_ID | Optional | TikTok pixel id. |
@@ -152,7 +144,6 @@ TJCOIN is designed to work cross-platform. When the TJFit equipment store launch
 
 - Connect auth, bookings, and dashboards to Supabase
 - Replace mock data with PostgreSQL tables
-- Paddle Billing: set env vars in `.env.example`, point Paddle webhooks to `POST /api/webhooks/paddle` (`transaction.completed`), map each program slug to a `pri_…` in `PADDLE_PRICE_MAP`
 - Add daily or WebRTC session room creation
 - Add role-based route protection
 - Persist transformations, wallet, challenges, and community to PostgreSQL
