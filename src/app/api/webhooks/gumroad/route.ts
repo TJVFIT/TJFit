@@ -138,9 +138,9 @@ function reportGumroadFailure(input: {
   message: string;
   err?: unknown;
 }): void {
-  // Handler error strings can embed buyer emails (sale.ts builds
-  // "unable to resolve user for <email>") — redact before anything
-  // leaves for Sentry; the payment_webhooks row keeps the raw string.
+  // Handler error strings can embed buyer emails (sale.ts's
+  // unable-to-resolve-user message interpolates the address) — redact before
+  // anything leaves for Sentry; the payment_webhooks row keeps the raw string.
   const safeMessage = redactEmails(input.message);
   Sentry.withScope((scope) => {
     scope.setTag("surface", "gumroad-webhook");
