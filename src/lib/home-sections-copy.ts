@@ -29,7 +29,7 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", HomeSectionsCopy> = {
     editorialRail: [
       "12-week periodization",
       "Macro-aware meals",
-      "TJAI · GPT-4o",
+      "TJAI · AI Engine",
       "Coach marketplace",
       "10 languages"
     ],
@@ -76,7 +76,7 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", HomeSectionsCopy> = {
     editorialRail: [
       "12 haftalık periyotlama",
       "Makro odaklı öğünler",
-      "TJAI · GPT-4o",
+      "TJAI · AI Engine",
       "Koç pazarı",
       "10 dil"
     ],
@@ -123,7 +123,7 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", HomeSectionsCopy> = {
     editorialRail: [
       "تخطيط دوري لـ12 أسبوعاً",
       "وجبات واعية بالماكروز",
-      "TJAI · GPT-4o",
+      "TJAI · AI Engine",
       "سوق المدربين",
       "10 لغات"
     ],
@@ -170,7 +170,7 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", HomeSectionsCopy> = {
     editorialRail: [
       "Periodización de 12 semanas",
       "Comidas conscientes de macros",
-      "TJAI · GPT-4o",
+      "TJAI · AI Engine",
       "Mercado de coaches",
       "10 idiomas"
     ],
@@ -217,7 +217,7 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", HomeSectionsCopy> = {
     editorialRail: [
       "Périodisation sur 12 semaines",
       "Repas pensés macros",
-      "TJAI · GPT-4o",
+      "TJAI · AI Engine",
       "Place de marché coachs",
       "10 langues"
     ],
