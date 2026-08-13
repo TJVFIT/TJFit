@@ -1,19 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { jsPDF } from "jspdf";
-import {
-  ArcElement,
-  CategoryScale,
-  Chart as ChartJS,
-  Filler,
-  Legend,
-  LineElement,
-  LinearScale,
-  PointElement,
-  Tooltip
-} from "chart.js";
-import { Doughnut, Line } from "react-chartjs-2";
+import dynamic from "next/dynamic";
 
 import { CoachReviewRequest } from "@/components/tjai/coach-review-request";
 import { ShareCardGenerator } from "@/components/tjai/share-card-generator";
@@ -24,7 +12,15 @@ import type { Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import type { QuizAnswers, TJAICopy, TJAIGroceryList, TJAIMeal, TJAIMealPrepTask, TJAIMetrics, TJAIPlan } from "@/lib/tjai-types";
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Tooltip, Legend, Filler);
+const TransformationForecastChart = dynamic(() => import("@/components/tjai/charts/transformation-forecast-chart"), {
+  ssr: false,
+  loading: () => <div className="tj-skeleton h-full w-full rounded-lg" aria-hidden />
+});
+
+const MacroSplitChart = dynamic(() => import("@/components/tjai/charts/macro-split-chart"), {
+  ssr: false,
+  loading: () => <div className="tj-skeleton h-full w-full rounded-lg" aria-hidden />
+});
 
 type ResultExtraCopy = {
   tempo: string;
@@ -312,6 +308,7 @@ export function TJAIResult({
       }
 
       // Server said no — fall back to a client-side minimal PDF so the user still gets something.
+      const { jsPDF } = await import("jspdf");
       const pdf = new jsPDF();
       pdf.setFontSize(22);
       pdf.text("Your TJAI Transformation Plan", 14, 24);
@@ -355,17 +352,11 @@ export function TJAIResult({
     }
   };
 
-  const lineData = {
-    labels: metrics.weightCurve.map((_, i) => `W${i}`),
-    datasets: [
-      { label: "Projected", data: metrics.weightCurve, borderColor: "#A855F7", backgroundColor: "rgba(168,85,247,0.12)", tension: 0.35, fill: true },
-      { label: "No action", data: metrics.weightCurve.map(() => Number(answers.s1_weight ?? 0)), borderColor: "rgba(239,68,68,0.4)", borderDash: [6, 6], tension: 0.2 }
-    ]
-  };
-  const pieData = {
-    labels: ["Protein", "Carbs", "Fat"],
-    datasets: [{ data: [metrics.protein * 4, metrics.carbs * 4, metrics.fat * 9], backgroundColor: ["#A855F7", "#7C3AED", "rgba(255,255,255,0.35)"], borderWidth: 0 }]
-  };
+  const forecastLabels = useMemo(() => metrics.weightCurve.map((_, i) => `W${i}`), [metrics.weightCurve]);
+  const forecastNoAction = useMemo(
+    () => metrics.weightCurve.map(() => Number(answers.s1_weight ?? 0)),
+    [metrics.weightCurve, answers.s1_weight]
+  );
   const decisionReasons = useMemo(() => buildTjaiDecisionReasons(answers, metrics), [answers, metrics]);
 
   return (
@@ -436,13 +427,13 @@ export function TJAIResult({
           <article className="rounded-xl border border-divider bg-surface p-5">
             <h3 className="text-lg font-semibold text-white">Your Transformation Forecast</h3>
             <div className="mt-3 h-[260px]">
-              <Line data={lineData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: "#A1A1AA" } } }, scales: { x: { ticks: { color: "#52525B" }, grid: { color: "rgba(255,255,255,0.04)" } }, y: { ticks: { color: "#52525B" }, grid: { color: "rgba(255,255,255,0.04)" } } } }} />
+              <TransformationForecastChart labels={forecastLabels} projected={metrics.weightCurve} noAction={forecastNoAction} />
             </div>
           </article>
           <article className="rounded-xl border border-divider bg-surface p-5">
             <h3 className="text-lg font-semibold text-white">Macro Split</h3>
             <div className="mt-3 h-[240px]">
-              <Doughnut data={pieData} options={{ maintainAspectRatio: false, plugins: { legend: { labels: { color: "#A1A1AA" } } } }} />
+              <MacroSplitChart protein={metrics.protein} carbs={metrics.carbs} fat={metrics.fat} />
             </div>
             <div className="mt-2 text-sm text-muted">P: {metrics.protein}g | C: {metrics.carbs}g | F: {metrics.fat}g</div>
             <div className="mt-4 space-y-3">
