@@ -34,6 +34,14 @@ declare global {
 
 export function SmoothScroll() {
   useEffect(() => {
+    // DEVICE-CONTEXT EXCEPTION: root-level singleton (Lenis smooth-
+    // scroll engine, published on `window.__lenis`) — `belowTablet` is
+    // a viewport-width breakpoint with no DeviceCapabilities field, and
+    // `reduced` is wired into the same live-`sync()` listener pair as
+    // `belowTablet`; splitting `reduced` onto DeviceContext while
+    // `belowTablet` stays a raw matchMedia listener would change the
+    // start/stop ordering of this singleton across the DeviceContext
+    // first-render race.
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
     const belowTablet = window.matchMedia(`(max-width: ${TABLET_MIN_PX - 1}px)`);
 

@@ -23,11 +23,18 @@ import { useEffect, useRef, type ReactNode } from "react";
 const DURATION_MS = 350;
 const EASING = "cubic-bezier(0.16, 1, 0.3, 1)";
 
+// DEVICE-CONTEXT EXCEPTION: plain module-level functions, not hooks —
+// they can't call useDevice(). Called synchronously from inside the
+// route-change effect below, not from render, so there's no React
+// context to read here anyway.
 function reducedMotion(): boolean {
   if (typeof window === "undefined") return false;
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
+// DEVICE-CONTEXT EXCEPTION: viewport-width breakpoint (not the same as
+// DeviceCapabilities' touch-derived `isMobile`), and — like
+// `reducedMotion()` above — a plain module-level function, not a hook.
 function isMobile(): boolean {
   if (typeof window === "undefined") return false;
   return window.matchMedia("(max-width: 768px)").matches;

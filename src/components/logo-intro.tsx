@@ -81,6 +81,11 @@ export function LogoIntro({
       }
     } catch {}
 
+    // DEVICE-CONTEXT EXCEPTION: sync-initializer flash-avoidance — this
+    // splash intro must resolve on its very first effect tick (before
+    // DeviceContext's own effect has corrected from its default), so it
+    // reads matchMedia directly rather than risking one extra render of
+    // the full intro animation for reduced-motion users.
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) {
       const t = window.setTimeout(() => {

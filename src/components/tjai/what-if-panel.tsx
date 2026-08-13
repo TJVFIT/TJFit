@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { useDevice } from "@/lib/device/DeviceContext";
 import type { Locale } from "@/lib/i18n";
 import {
   projectWeightChange,
@@ -235,11 +236,12 @@ const COPY: Record<Locale, WhatIfCopy> = {
 function useCountUp(target: number, decimals: number) {
   const [display, setDisplay] = useState(target);
   const displayRef = useRef(target);
+  const { prefersReducedMotion } = useDevice();
 
   useEffect(() => {
     const from = displayRef.current;
     if (from === target) return;
-    if (typeof window === "undefined" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (prefersReducedMotion) {
       displayRef.current = target;
       setDisplay(target);
       return;
@@ -254,7 +256,7 @@ function useCountUp(target: number, decimals: number) {
       if (t < 1) frame = requestAnimationFrame(tick);
     });
     return () => cancelAnimationFrame(frame);
-  }, [target]);
+  }, [target, prefersReducedMotion]);
 
   return display.toFixed(decimals);
 }

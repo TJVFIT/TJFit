@@ -11,6 +11,12 @@ export function CursorTrail() {
   const lastEmitRef = useRef(0);
 
   useEffect(() => {
+    // DEVICE-CONTEXT EXCEPTION: read once, synchronously, at effect
+    // setup (deps `[]`) to gate this mount's rAF trail loop. Reading
+    // DeviceContext instead would need both values in the effect deps
+    // to stay current, which would restart the whole particle trail
+    // loop (and its animation-frame lifecycle) whenever the context
+    // corrects from its default post-mount.
     if (typeof window === "undefined" || !window.matchMedia) return;
     if (!window.matchMedia("(hover: hover)").matches) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;

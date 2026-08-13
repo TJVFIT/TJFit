@@ -1,0 +1,298 @@
+{
+  "generated": "2026-08-13",
+  "note": "Accepted pre-existing i18n-scan false positives (SVG/input attrs, unsubscribe HTML, etc — see scripts/i18n/check-hardcoded-ui.ts's regex heuristics for why these read as UI strings). New hits are not added here to silence CI — they are localized (moved into a copy object) or explicitly owner-accepted with a note.",
+  "accepted": [
+    {
+      "id": "src%2Fapp%2Fapi%2Fcommunity%2Ftransformations%2Froute.ts:id%2Cbefore_image_url%2Cafter_image_url%2Cprogram_slug%2Cduration_label%2Cweight_change%2Cstory%2Cshow_username%2Ccreated_at%2Cuser_id",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2Fapi%2Fcommunity%2Ftransformations%2Froute.ts:id%2Cbefore_image_url%2Cafter_image_url%2Cprogram_slug%2Cduration_label%2Cweight_change%2Cstory%2Cshow_username%2Clikes_count%2Ccreated_at%2Cuser_id",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2Fapi%2Fcommunity%2Ftransformations%2F%5Bid%5D%2Froute.ts:id%2Cbefore_image_url%2Cafter_image_url%2Cprogram_slug%2Cduration_label%2Cweight_change%2Cstory%2Cshow_username%2Clikes_count%2Cstatus%2Ccreated_at",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2Fapi%2Ffeed%2Froute.ts:id%2Cuser_id%2Cprogram_slug%2Cday_label%2Clogged_at",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2Fapi%2Fnewsletter%2Funsubscribe%2Froute.ts:%3F%20%60%3Cp%20style%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2Fapi%2Fnewsletter%2Funsubscribe%2Froute.ts:%3E%24%7Bc.sub%7D%3C%2Fp%3E%60%20%3A",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2Fapi%2Fnewsletter%2Funsubscribe%2Froute.ts:%24%7Blocale%7D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2Fapi%2Fnewsletter%2Funsubscribe%2Froute.ts:%24%7Bdir%7D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2Fapi%2Fnewsletter%2Funsubscribe%2Froute.ts:width%3Ddevice-width%2Cinitial-scale%3D1",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2Fapi%2Fnewsletter%2Funsubscribe%2Froute.ts:margin%3A0%3Bbackground%3A%2309090B%3Bfont-family%3AInter%2CSegoe%20UI%2CArial%2Csans-serif%3Bcolor%3A%23fff",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2Fapi%2Fnewsletter%2Funsubscribe%2Froute.ts:max-width%3A480px%3Bmargin%3A14vh%20auto%3Bpadding%3A32px%3Btext-align%3Acenter%3Bborder%3A1px%20solid%20%231E2028%3Bborder-radius%3A16px%3Bbackground%3A%23111215",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2Fapi%2Fnewsletter%2Funsubscribe%2Froute.ts:font-size%3A22px%3Bmargin%3A0%200%208px%3Bcolor%3A%23A855F7",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2Fapi%2Fnewsletter%2Funsubscribe%2Froute.ts:font-size%3A20px%3Bmargin%3A0%200%2010px",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2Fapi%2Fnewsletter%2Funsubscribe%2Froute.ts:display%3Ainline-block%3Bmargin-top%3A8px%3Bcolor%3A%23A855F7%3Btext-decoration%3Anone%3Bfont-weight%3A600",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2Fapi%2Fsupport%2Fcontact%2Froute.ts:color%3A%236b7280%3Bfont-size%3A12px",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2Fapi%2Ftjai%2Fprogress%2Froute.ts:week_number%2Cday_label%2Cis_complete%2Ccompleted_at%2Cprogram_slug",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2Fapi%2Ftjai%2Fprogress%2Froute.ts:id%2Cweek_number%2Cday_label%2Cexercise_name%2Clogged_at",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2Fapi%2Ftjai%2Fprogress%2Froute.ts:)).filter(Boolean))%5D.slice(0%2C%205).join(",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2F%5Blocale%5D%2Fblog%2Fwrite%2Fpage.tsx:Tags%2C%20comma%20separated",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2F%5Blocale%5D%2Fblog%2Fwrite%2Fpage.tsx:image%2F*",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2F%5Blocale%5D%2Ffeed%2Fpage.tsx:)%7D%60%7D%20className%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2F%5Blocale%5D%2Fleaderboard%2Fpage.tsx:style%3D%7B%7B%20color%3A",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2F%5Blocale%5D%2Fleaderboard%2Fpage.tsx:%2C%20filter%3A",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2F%5Blocale%5D%2Fleaderboard%2Fpage.tsx:drop-shadow(0%200%208px%20rgba(168%2C85%2C247%2C0.5))",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2F%5Blocale%5D%2Fleaderboard%2Fpage.tsx:rgba(168%2C85%2C247%2C0.6)",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2F%5Blocale%5D%2Fleaderboard%2Fpage.tsx:rgba(168%2C85%2C247%2C0.35)",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2F%5Blocale%5D%2Fsignup%2Fpage.tsx:TJFit'i%20kullanmak%20i%C3%A7in%20en%20az%2013%20ya%C5%9F%C4%B1nda%20olmal%C4%B1s%C4%B1n%C4%B1z.",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2F%5Blocale%5D%2Fsignup%2Fpage.tsx:%D9%8A%D8%AC%D8%A8%20%D8%A3%D9%86%20%D9%8A%D9%83%D9%88%D9%86%20%D8%B9%D9%85%D8%B1%D9%83%2013%20%D8%B9%D8%A7%D9%85%D9%8B%D8%A7%20%D8%B9%D9%84%D9%89%20%D8%A7%D9%84%D8%A3%D9%82%D9%84%20%D9%84%D8%A7%D8%B3%D8%AA%D8%AE%D8%AF%D8%A7%D9%85%20TJFit.",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2F%5Blocale%5D%2Fsignup%2Fpage.tsx:Debes%20tener%20al%20menos%2013%20a%C3%B1os%20para%20usar%20TJFit.",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2F%5Blocale%5D%2Fsignup%2Fpage.tsx:%3F%20%3Cp%20className%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2F%5Blocale%5D%2Ftransformations%2F%5Bslug%5D%2Fpage.tsx:id%2Cbefore_image_url%2Cafter_image_url%2Cprogram_slug%2Cduration_label%2Cweight_change%2Cstory%2Clikes_count%2Cstatus%2Ccreated_at",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fapp%2F%5Blocale%5D%2Fverify-email%2Fverify-email-client.tsx:you%40example.com",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fadmin-transformations-panel.tsx:%7D%20%C2%B7%20%7Bitem.weight_change%20%3F%3F",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fbundles%2Fbundle-figures.tsx:width%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fbundles%2Fbundle-figures.tsx:height%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fbundles%2Fbundle-figures.tsx:strokeOpacity%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fglobal-search.tsx:%24%7Bquery%7D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fhome%2Fhero-section.tsx:rgba(246%2C243%2C237%2C0.035)",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fhome%2Fhero-section.tsx:rgba(168%2C85%2C247%2C0.045)",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fimmersive-home.tsx:fill%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Flogo-intro.tsx:clamp(190px%2C%2032vw%2C%20340px)",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fmembership%2Fmembership-pricing.tsx:conic-gradient(from%20var(--apex-angle%2C%200deg)%2C%20%237C3AED%2C%20%23A855F7%2C%20%237C3AED)",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fmembership%2Fmembership-pricing.tsx:linear-gradient(%23fff%200%200)%20content-box%2C%20linear-gradient(%23fff%200%200)",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fmotion%2Ftext-reveal.tsx:%7D%20%24%7Bvisible%20%3F",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fprogress-charts.tsx:stopColor%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fprogress-charts.tsx:rgba(255%2C255%2C255%2C0.05)",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fprogress-view.tsx:%7D%20kg%20%C2%B7%20%7Bentry.body_fat_percent%20%3F%3F",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fsite-footer.tsx:viewBox%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fsite-footer.tsx:stroke%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fsite-footer.tsx:strokeWidth%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fsite-footer.tsx:fill%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Ftjai%2Fbody-silhouette-selector.tsx:rgba(168%2C85%2C247%2C0.06)",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Ftjai%2Fcharts%2Ftransformation-forecast-chart.tsx:rgba(168%2C85%2C247%2C0.12)",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Ftjai%2Fcharts%2Ftransformation-forecast-chart.tsx:rgba(239%2C68%2C68%2C0.4)",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Ftjai%2Fcoach-review-request.tsx:%3F%20%3Cp%20className%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Ftjai%2Fspeaker-button.tsx:width%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Ftjai%2Fspeaker-button.tsx:height%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Ftjai%2Ftjai-result.tsx:bg-%5Brgba(168%2C85%2C247%2C0.03)%5D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Ftjai%2Ftjai-result.tsx:%3F%20%3Cp%20className%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Ftjai%2Ftjai-shell.tsx:border-accent%20bg-%5Brgba(168%2C85%2C247%2C0.04)%5D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Ftjai%2Ftjai-shell.tsx:border-purple-300%2F45%20bg-%5Brgba(124%2C58%2C237%2C0.05)%5D%20shadow-%5B0_0_28px_rgba(168%2C85%2C247%2C0.12)%5D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Ftjai%2Ftjai-shell.tsx:border-purple-400%2F35%20bg-%5B%230D0A12%5D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Ftjai%2Ftjai-shell.tsx:border-red-500%2F30%20bg-%5B%230F0A0A%5D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Ftjai-public-landing.tsx:%7D%60%7D%20style%3D%7B%7B%20animationDelay%3A",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fui%2FLogo.tsx:gradientUnits%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fui%2FLogo.tsx:stopColor%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fui%2FLogo.tsx:width%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fui%2FLogo.tsx:height%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fui%2FLogo.tsx:fill%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fui%2FLogo.tsx:stroke%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fuser-dashboard-view.tsx:type%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fuser-dashboard-view.tsx:step%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    },
+    {
+      "id": "src%2Fcomponents%2Fuser-dashboard-view.tsx:min%3D",
+      "note": "accepted as pre-existing on baseline regeneration"
+    }
+  ]
+}

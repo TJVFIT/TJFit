@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { useDevice } from "@/lib/device/DeviceContext";
+
 /**
  * Pointer-tracked 3D tilt — direct-DOM CSS custom property writes inside rAF.
  * Gated by `(prefers-reduced-motion: reduce)` and `(hover: none)` so touch
@@ -19,11 +21,16 @@ export function useTilt<T extends HTMLElement = HTMLDivElement>(opts?: {
   const ref = useRef<T>(null);
   const maxX = opts?.maxX ?? 7;
   const maxY = opts?.maxY ?? 9;
+  const { prefersReducedMotion } = useDevice();
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (prefersReducedMotion) return;
+    // DEVICE-CONTEXT EXCEPTION: DeviceCapabilities has no standalone
+    // "has a hover pointer" signal — only `isMobile`, which ANDs touch
+    // with `(hover: none)` — so this stays a local, direct check (same
+    // reasoning as useMagneticButton.ts).
     if (window.matchMedia("(hover: none)").matches) return;
 
     let raf = 0;
@@ -54,7 +61,7 @@ export function useTilt<T extends HTMLElement = HTMLDivElement>(opts?: {
       el.removeEventListener("pointermove", onMove);
       el.removeEventListener("pointerleave", onLeave);
     };
-  }, [maxX, maxY]);
+  }, [maxX, maxY, prefersReducedMotion]);
 
   return ref;
 }
@@ -71,10 +78,10 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>(opts?: {
   const ref = useRef<T>(null);
   const [shown, setShown] = useState(false);
   const threshold = opts?.threshold ?? 0.18;
+  const { prefersReducedMotion } = useDevice();
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (prefersReducedMotion) {
       setShown(true);
       return;
     }
@@ -91,7 +98,7 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>(opts?: {
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [threshold]);
+  }, [threshold, prefersReducedMotion]);
 
   return { ref, shown };
 }
@@ -107,10 +114,10 @@ export function useParallax<T extends HTMLElement = HTMLDivElement>(opts?: {
 }) {
   const ref = useRef<T>(null);
   const strength = opts?.strength ?? 0.25;
+  const { prefersReducedMotion } = useDevice();
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (prefersReducedMotion) return;
     const el = ref.current;
     if (!el) return;
 
@@ -134,7 +141,7 @@ export function useParallax<T extends HTMLElement = HTMLDivElement>(opts?: {
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
     };
-  }, [strength]);
+  }, [strength, prefersReducedMotion]);
 
   return ref;
 }

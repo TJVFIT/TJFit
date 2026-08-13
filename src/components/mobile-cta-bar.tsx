@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
+import { useDevice } from "@/lib/device/DeviceContext";
 import { cn } from "@/lib/utils";
 
 type MobileCtaBarProps = {
@@ -16,10 +17,10 @@ type MobileCtaBarProps = {
 export function MobileCtaBar({ ariaLabel, eyebrow, priceCopy, href, label }: MobileCtaBarProps) {
   const [hidden, setHidden] = useState(false);
   const lastY = useRef(0);
+  const { prefersReducedMotion } = useDevice();
 
   useEffect(() => {
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduceMotion) return undefined;
+    if (prefersReducedMotion) return undefined;
 
     lastY.current = window.scrollY;
     const onScroll = () => {
@@ -33,7 +34,7 @@ export function MobileCtaBar({ ariaLabel, eyebrow, priceCopy, href, label }: Mob
 
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [prefersReducedMotion]);
 
   return (
     <div

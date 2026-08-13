@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { useDevice } from "@/lib/device/DeviceContext";
+
 type Props = {
   to: number;
   /** Duration in ms */
@@ -17,15 +19,12 @@ export function CountUp({ to, duration = 1400, decimals = 0, prefix = "", suffix
   const ref = useRef<HTMLSpanElement | null>(null);
   const [value, setValue] = useState(0);
   const started = useRef(false);
+  const { prefersReducedMotion } = useDevice();
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const reduce =
-      typeof window !== "undefined" &&
-      window.matchMedia &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) {
+    if (prefersReducedMotion) {
       setValue(to);
       return;
     }
@@ -51,7 +50,7 @@ export function CountUp({ to, duration = 1400, decimals = 0, prefix = "", suffix
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [to, duration]);
+  }, [to, duration, prefersReducedMotion]);
 
   return (
     <span ref={ref} className={className}>

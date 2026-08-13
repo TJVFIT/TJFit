@@ -2,12 +2,13 @@
 
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, Sparkles } from "@react-three/drei";
-import { Suspense, useEffect, useRef, useState, type MutableRefObject } from "react";
+import { Suspense, useEffect, useRef, type MutableRefObject } from "react";
 import * as THREE from "three";
 
 import { useIsTouchDevice } from "@/hooks/use-is-touch-device";
 import { TJ_MATERIAL } from "@/components/3d/materials";
 import { TJ_PALETTE } from "@/components/3d/palette";
+import { useDevice } from "@/lib/device/DeviceContext";
 
 type EnergyRef = MutableRefObject<number>;
 
@@ -128,15 +129,7 @@ function PointerCamera() {
 export function Cinematic3DSceneImpl() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const energyRef = useRef(0);
-  const [reduce, setReduce] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => setReduce(mq.matches);
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
+  const { prefersReducedMotion: reduce } = useDevice();
 
   // Scroll-through energy: 0 at section edges, 1 when centered in the viewport.
   useEffect(() => {

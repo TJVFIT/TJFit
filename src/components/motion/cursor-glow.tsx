@@ -2,14 +2,20 @@
 
 import { useEffect, useRef } from "react";
 
+import { useDevice } from "@/lib/device/DeviceContext";
+
 export function CursorGlow() {
   const ref = useRef<HTMLDivElement | null>(null);
+  const { prefersReducedMotion } = useDevice();
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (prefersReducedMotion) return;
+    // DEVICE-CONTEXT EXCEPTION: DeviceCapabilities has no "fine pointer"
+    // signal (only touch/no-hover), so the `(hover: hover) and
+    // (pointer: fine)` check stays local — same reasoning as
+    // useMagneticButton.ts's hover check.
     const isFine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!isFine || reduce) return;
+    if (!isFine) return;
 
     const el = ref.current;
     if (!el) return;
@@ -49,7 +55,7 @@ export function CursorGlow() {
       window.removeEventListener("pointermove", move);
       if (raf) cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [prefersReducedMotion]);
 
   return <div ref={ref} className="tj-cursor-glow" aria-hidden />;
 }

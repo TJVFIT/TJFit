@@ -38,6 +38,14 @@ jobs:
       - name: i18n locale parity
         run: npm run i18n:check
 
+      # WP-INFRA-01: the raw scan carries ~95 pre-existing false positives
+      # (SVG/input attrs, unsubscribe HTML) baselined in
+      # docs/claude/i18n-scan-baseline.json (scripts/i18n/check-hardcoded-ui.ts
+      # --baseline mode, same accepted-baseline pattern as db:drift below).
+      # Only NEW hardcoded-string findings fail this step.
+      - name: i18n hardcoded-string regressions
+        run: npm run i18n:scan:ci
+
       - name: Unit tests
         run: npm test
 
@@ -45,9 +53,7 @@ jobs:
       # to BUILD (or ships a bundle regression). CI now builds for real.
       # Placeholder Supabase publics keep client bootstrap happy; no page
       # fetches from Supabase at build time (verified locally with env
-      # stripped, 2026-08-13). i18n:scan is NOT gated here yet — it carries
-      # 91 pre-existing false positives; it joins CI when WP-I18N-02 fixes
-      # the scanner.
+      # stripped, 2026-08-13).
       - name: Production build
         run: npm run build 2>&1 | tee build.log
         env:

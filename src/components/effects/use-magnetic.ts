@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef } from "react";
 
+import { useDevice } from "@/lib/device/DeviceContext";
+
 /**
  * Merge two refs into one callback ref. Lets a component attach both
  * `useMagnetic` and `useRipple` to a single element.
@@ -34,13 +36,17 @@ export function useMagnetic<T extends HTMLElement = HTMLAnchorElement>(opts?: {
   const ref = useRef<T>(null);
   const strength = opts?.strength ?? 5;
   const max = opts?.max ?? 10;
+  const { prefersReducedMotion } = useDevice();
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (typeof window === "undefined") return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (window.matchMedia("(hover: none)").matches) return;
+    if (prefersReducedMotion) return;
+    // DEVICE-CONTEXT EXCEPTION: DeviceCapabilities has no standalone
+    // "has a hover pointer" signal — only `isMobile`, which ANDs touch
+    // with `(hover: none)` — so this stays a local, direct check (same
+    // reasoning as useMagneticButton.ts).
+    if (typeof window === "undefined" || window.matchMedia("(hover: none)").matches) return;
 
     let raf = 0;
     const onMove = (e: PointerEvent) => {
@@ -68,7 +74,7 @@ export function useMagnetic<T extends HTMLElement = HTMLAnchorElement>(opts?: {
       el.removeEventListener("pointermove", onMove);
       el.removeEventListener("pointerleave", onLeave);
     };
-  }, [strength, max]);
+  }, [strength, max, prefersReducedMotion]);
 
   return ref;
 }
@@ -83,12 +89,12 @@ export function useMagnetic<T extends HTMLElement = HTMLAnchorElement>(opts?: {
  */
 export function useRipple<T extends HTMLElement = HTMLAnchorElement>() {
   const ref = useRef<T>(null);
+  const { prefersReducedMotion } = useDevice();
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (typeof window === "undefined") return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (prefersReducedMotion) return;
 
     const onPointerDown = (e: PointerEvent) => {
       const rect = el.getBoundingClientRect();
@@ -126,7 +132,7 @@ export function useRipple<T extends HTMLElement = HTMLAnchorElement>() {
 
     el.addEventListener("pointerdown", onPointerDown);
     return () => el.removeEventListener("pointerdown", onPointerDown);
-  }, []);
+  }, [prefersReducedMotion]);
 
   return ref;
 }

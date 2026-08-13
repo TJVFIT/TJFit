@@ -21,6 +21,13 @@ export function ParticleField({ className }: { className?: string }) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    // DEVICE-CONTEXT EXCEPTION: read once, synchronously, at effect
+    // setup (deps `[]`) to seed particle count/positions for this
+    // mount's canvas loop. Reading DeviceContext instead would need it
+    // in the effect deps to stay current, which would restart the
+    // particle field (regenerated random positions) whenever the
+    // context corrects from its default post-mount — a visible reset
+    // this canvas-loop effect doesn't otherwise have.
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const mobile = window.matchMedia("(hover: none)").matches;
     const particleCount = mobile ? 20 : 80;

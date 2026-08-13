@@ -2,11 +2,18 @@
 
 import { useEffect } from "react";
 
+import { useDevice } from "@/lib/device/DeviceContext";
+
 export function SpotlightCursor() {
+  const { prefersReducedMotion } = useDevice();
+
   useEffect(() => {
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const noHover = window.matchMedia("(hover: none)").matches;
-    if (reducedMotion || noHover) return;
+    if (prefersReducedMotion) return;
+    // DEVICE-CONTEXT EXCEPTION: DeviceCapabilities has no standalone
+    // "has a hover pointer" signal — only `isMobile`, which ANDs touch
+    // with `(hover: none)` — so this stays a local, direct check (same
+    // reasoning as useMagneticButton.ts).
+    if (window.matchMedia("(hover: none)").matches) return;
 
     let raf = 0;
     let x = window.innerWidth / 2;
@@ -32,7 +39,7 @@ export function SpotlightCursor() {
       window.removeEventListener("mousemove", onMove);
       window.cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [prefersReducedMotion]);
 
   return <div className="spotlight pointer-events-none fixed inset-0 z-[1]" aria-hidden />;
 }

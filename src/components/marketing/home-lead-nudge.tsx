@@ -49,6 +49,8 @@ export function HomeLeadNudge({
   useEffect(() => {
     const onLeave = (e: MouseEvent) => {
       if (e.clientY > 24) return;
+      // DEVICE-CONTEXT EXCEPTION: viewport-width breakpoint, not a device
+      // capability — DeviceCapabilities has no viewport-width field.
       if (window.matchMedia("(max-width: 1023px)").matches) return;
       tryOpen();
     };
@@ -58,6 +60,8 @@ export function HomeLeadNudge({
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    // DEVICE-CONTEXT EXCEPTION: viewport-width breakpoint, not a device
+    // capability — DeviceCapabilities has no viewport-width field.
     const mq = window.matchMedia("(max-width: 1023px)");
     if (!mq.matches) return;
     const onScroll = () => {

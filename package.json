@@ -14,6 +14,7 @@
     "eval:tjai:dry": "tsx scripts/tjai-eval.ts --dry-run",
     "i18n:check": "tsx scripts/i18n/check-locale-parity.ts",
     "i18n:scan": "tsx scripts/i18n/check-hardcoded-ui.ts",
+    "i18n:scan:ci": "tsx scripts/i18n/check-hardcoded-ui.ts --baseline docs/claude/i18n-scan-baseline.json",
     "i18n:verify": "npm run i18n:check && npm run i18n:scan",
     "db:drift": "tsx scripts/db/check-migration-drift.ts",
     "env:audit": "tsx scripts/security/env-audit.ts",

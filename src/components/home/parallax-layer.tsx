@@ -21,6 +21,8 @@ export function ParallaxLayer({ children, reduce, strength = 10, className }: Pa
 
   useEffect(() => {
     if (reduce) return;
+    // DEVICE-CONTEXT EXCEPTION: no exact DeviceCapabilities equivalent
+    // for a bare `(hover: none)` check (`isMobile` also requires touch).
     if (typeof window === "undefined" || window.matchMedia("(hover: none)").matches) return;
     const el = ref.current;
     if (!el) return;

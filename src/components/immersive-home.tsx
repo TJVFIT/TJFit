@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 
 import { useMagnetic, useMergedRef, useRipple } from "@/components/effects/use-magnetic";
+import { useDevice } from "@/lib/device/DeviceContext";
 import { HomeNewsletterBar } from "@/components/home-newsletter-bar";
 import { HomeTestimonials } from "@/components/home-testimonials";
 import { HomeCoachCta } from "@/components/home-coach-cta";
@@ -40,18 +41,6 @@ import { GrainOverlay } from "@/components/ui/grain-overlay";
 import { WordReveal } from "@/components/ui/word-reveal";
 import { useMagneticButton } from "@/hooks/useMagneticButton";
 
-function useReducedMotion() {
-  const [r, setR] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const a = () => setR(mq.matches);
-    a();
-    mq.addEventListener("change", a);
-    return () => mq.removeEventListener("change", a);
-  }, []);
-  return r;
-}
-
 // Count-up on scroll — eases to target, glows on settle, jumps to value under reduced-motion.
 function CountUp({ target, suffix = "", label }: { target: number; suffix?: string; label: string }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -59,10 +48,11 @@ function CountUp({ target, suffix = "", label }: { target: number; suffix?: stri
   const inView = useInView(ref as React.RefObject<HTMLElement>, { threshold: 0.3, once: true });
   const [val, setVal] = useState(0);
   const [settled, setSettled] = useState(false);
+  const { prefersReducedMotion } = useDevice();
 
   useEffect(() => {
     if (!inView) return;
-    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (prefersReducedMotion) {
       setVal(target);
       setSettled(true);
       return;
@@ -85,7 +75,7 @@ function CountUp({ target, suffix = "", label }: { target: number; suffix?: stri
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [inView, target]);
+  }, [inView, target, prefersReducedMotion]);
 
   return (
     <div
@@ -222,7 +212,7 @@ export function ImmersiveHome({
   coaches: HomeCoachPreview[]; freePrograms: Program[];
 }) {
   void _coaches; void _freePrograms;
-  const reduce = useReducedMotion();
+  const { prefersReducedMotion: reduce } = useDevice();
   const direction = getDirection(locale);
   const navChrome = getNavChromeCopy(locale);
 

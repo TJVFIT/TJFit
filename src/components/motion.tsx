@@ -39,6 +39,9 @@ export function HoverLift({ children, className }: PropsWithChildren<{ className
   useEffect(() => {
     if (typeof window === "undefined" || typeof window.matchMedia !== "function") return;
     try {
+      // DEVICE-CONTEXT EXCEPTION: DeviceCapabilities has no "fine
+      // pointer" signal (only touch/no-hover), so this stays local —
+      // same reasoning as useMagneticButton.ts's hover check.
       const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
       const apply = () => setFineHover(mq.matches);
       apply();

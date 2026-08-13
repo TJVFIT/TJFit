@@ -14,6 +14,8 @@ export function ShellFooterGate({ locale }: { locale: Locale }) {
   const [hideOnMobileThread, setHideOnMobileThread] = useState(false);
 
   useEffect(() => {
+    // DEVICE-CONTEXT EXCEPTION: viewport-width breakpoint, not a device
+    // capability — DeviceCapabilities has no viewport-width field.
     const mq = window.matchMedia("(max-width: 1023px)");
     const apply = () => {
       const thread = /\/messages\/[^/]+\/?$/.test(pathname);

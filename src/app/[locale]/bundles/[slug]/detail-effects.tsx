@@ -5,6 +5,7 @@ import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 
 import { useParallax, useReveal, useTilt } from "@/components/effects/use-3d";
 import { useMagnetic, useMergedRef, useRipple } from "@/components/effects/use-magnetic";
+import { useDevice } from "@/lib/device/DeviceContext";
 import type {
   BundleGroceryCategory,
   BundleProgressionPhase,
@@ -1013,10 +1014,11 @@ function InsideStatTile({
 }) {
   const [display, setDisplay] = useState(0);
   const delay = `${index * 70}ms`;
+  const { prefersReducedMotion } = useDevice();
 
   useEffect(() => {
     if (!shown) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (prefersReducedMotion) {
       setDisplay(value);
       return;
     }
@@ -1031,7 +1033,7 @@ function InsideStatTile({
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [shown, value]);
+  }, [shown, value, prefersReducedMotion]);
 
   return (
     <div
