@@ -2,6 +2,8 @@
 
 import { useEffect } from "react";
 
+import { useDevice } from "@/lib/device/DeviceContext";
+
 function applyStaggerDelays(root: HTMLElement) {
   const stepMs = Number(root.getAttribute("data-reveal-stagger")) || 60;
   root.querySelectorAll<HTMLElement>(".reveal-section, [data-tj-reveal]").forEach((el, index) => {
@@ -15,10 +17,13 @@ function applyStaggerDelays(root: HTMLElement) {
  * - Parents with `[data-reveal-stagger="N"]` set `--tj-reveal-delay` on descendents then reveal all together.
  */
 export function useScrollReveal() {
+  // Exact match for the old direct `(prefers-reduced-motion: reduce)` check.
+  const { prefersReducedMotion } = useDevice();
+
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (prefersReducedMotion) {
       document.querySelectorAll(".reveal-section, [data-tj-reveal]").forEach((el) => {
         el.classList.add("revealed");
       });
@@ -65,5 +70,5 @@ export function useScrollReveal() {
       mo.disconnect();
       io.disconnect();
     };
-  }, []);
+  }, [prefersReducedMotion]);
 }

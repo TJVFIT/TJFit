@@ -1,7 +1,9 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { CheckCircle2, Trophy } from "lucide-react";
+
+import { useDevice } from "@/lib/device/DeviceContext";
 
 type NotificationType = "signup" | "purchase" | "achievement" | "streak";
 
@@ -26,15 +28,10 @@ const DEFAULT_MESSAGES: Record<NotificationType, string> = {
 
 export function DynamicIslandProvider({ children }: { children: React.ReactNode }) {
   const [queue, setQueue] = useState<DynamicIslandItem[]>([]);
-  const [reduceMotion, setReduceMotion] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => setReduceMotion(mq.matches);
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
+  // Exact match for the old local `(prefers-reduced-motion: reduce)`
+  // matchMedia + live "change" listener — DeviceContext already tracks
+  // this reactively.
+  const { prefersReducedMotion: reduceMotion } = useDevice();
 
   const showNotification = useCallback((type: NotificationType, message?: string) => {
     const id = Date.now() + Math.floor(Math.random() * 1000);

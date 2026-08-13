@@ -2,13 +2,18 @@
 
 import { RefObject, useEffect } from "react";
 
+import { useDevice } from "@/lib/device/DeviceContext";
+
 export function useCardInCenter(ref: RefObject<HTMLElement | null>, activeClass = "tj-card-aura-active") {
+  // `isMobile` (isTouch && hover:none) is DeviceContext's touch-primary
+  // proxy for the old direct `(hover: none)` check; `prefersReducedMotion`
+  // is an exact match for the old direct reduced-motion check.
+  const { isMobile, prefersReducedMotion } = useDevice();
+
   useEffect(() => {
     const el = ref.current;
-    if (!el || typeof window === "undefined" || !window.matchMedia) return;
-    if (!window.matchMedia("(hover: none)").matches) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) return;
+    if (!el) return;
+    if (!isMobile || prefersReducedMotion) return;
 
     let timer: number | null = null;
     const io = new IntersectionObserver(
@@ -26,6 +31,6 @@ export function useCardInCenter(ref: RefObject<HTMLElement | null>, activeClass 
       if (timer) window.clearTimeout(timer);
       el.classList.remove(activeClass);
     };
-  }, [ref, activeClass]);
+  }, [ref, activeClass, isMobile, prefersReducedMotion]);
 }
 

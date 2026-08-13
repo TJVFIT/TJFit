@@ -2,15 +2,22 @@
 
 import { useEffect, useRef } from "react";
 
+import { useDevice } from "@/lib/device/DeviceContext";
+
 export function useMagneticButton<T extends HTMLElement>(strength = 0.3) {
   const ref = useRef<T>(null);
+  const { prefersReducedMotion } = useDevice();
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    // DeviceCapabilities has no standalone "has a hover pointer" signal —
+    // only `isMobile`, which ANDs touch with `(hover: none)` — so this
+    // stays a local, direct `(hover: hover)` check; the context is not a
+    // superset here.
     if (typeof window === "undefined" || !window.matchMedia) return;
     if (!window.matchMedia("(hover: hover)").matches) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (prefersReducedMotion) return;
 
     const handleMouseMove = (e: MouseEvent) => {
       const rect = el.getBoundingClientRect();
@@ -43,7 +50,7 @@ export function useMagneticButton<T extends HTMLElement>(strength = 0.3) {
       window.removeEventListener("mousemove", handleMouseMove);
       el.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, [strength]);
+  }, [strength, prefersReducedMotion]);
 
   return ref;
 }

@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { useDevice } from "@/lib/device/DeviceContext";
+
 function toBlur(velocity: number) {
   if (velocity >= 10) return 2;
   if (velocity >= 2) return 1;
@@ -18,11 +20,13 @@ export function useScrollVelocity() {
   const [blur, setBlur] = useState(0);
   const [scale, setScale] = useState(1);
   const timeoutRef = useRef<number | null>(null);
+  // `isMobile` (isTouch && hover:none) is DeviceContext's touch-primary
+  // proxy for the old direct `(hover: none)` check; `prefersReducedMotion`
+  // is an exact match for the old direct reduced-motion check.
+  const { isMobile, prefersReducedMotion } = useDevice();
 
   useEffect(() => {
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const noHover = window.matchMedia("(hover: none)").matches;
-    if (reducedMotion || noHover) return;
+    if (prefersReducedMotion || isMobile) return;
 
     let lastY = window.scrollY;
     let lastTime = performance.now();
@@ -50,7 +54,7 @@ export function useScrollVelocity() {
       window.removeEventListener("scroll", onScroll);
       if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
     };
-  }, []);
+  }, [isMobile, prefersReducedMotion]);
 
   return { blur, scale };
 }
