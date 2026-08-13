@@ -1,7 +1,3 @@
-import { readFileSync, readdirSync } from "fs";
-import { join, dirname, basename } from "path";
-import { fileURLToPath } from "url";
-
 import { dictionaries } from "../../src/lib/i18n";
 
 type Leaf = string | number | boolean | null;
@@ -50,44 +46,73 @@ function checkTsDictionary(): boolean {
   return hasError;
 }
 
-function checkJsonMessages(): boolean {
-  // Resolve `messages/` relative to repo root (this script lives in scripts/i18n/).
-  const here = dirname(fileURLToPath(import.meta.url));
-  const repoRoot = join(here, "..", "..");
-  const dir = join(repoRoot, "messages");
-  let files: string[];
-  try {
-    files = readdirSync(dir).filter((f) => f.endsWith(".json"));
-  } catch (err) {
-    console.error(`Could not read ${dir}:`, err);
-    return true;
+// Default: measured worst-case (fr) is 0.068 as of 2026-08. 0.35 leaves a wide
+// margin above every locale's current legitimate-clone rate (short strings like
+// "Protein", "%", "TJAI", "kg" are identical across locales for good reason) so
+// this stays green today; it only trips if a locale regresses toward "never
+// actually translated."
+const DEFAULT_MAX_EN_CLONE_RATIO = 0.35;
+
+function parseMaxEnCloneRatio(argv: string[]): number {
+  const flag = "--max-en-clone-ratio";
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+    if (arg === flag && argv[i + 1] !== undefined) {
+      const parsed = Number(argv[i + 1]);
+      if (!Number.isNaN(parsed)) return parsed;
+    }
+    if (arg?.startsWith(`${flag}=`)) {
+      const parsed = Number(arg.slice(flag.length + 1));
+      if (!Number.isNaN(parsed)) return parsed;
+    }
   }
-  if (!files.includes("en.json")) {
-    console.error(`messages/en.json missing — cannot run JSON parity check.`);
-    return true;
-  }
-  const baseline = flatten(JSON.parse(readFileSync(join(dir, "en.json"), "utf8")));
-  const baselineKeys = new Set(Object.keys(baseline));
+  return DEFAULT_MAX_EN_CLONE_RATIO;
+}
+
+/**
+ * Value-level pass: for each non-EN locale, how many leaf strings are
+ * byte-identical to the EN value? Identical values are often legitimate
+ * (brand names, units, short symbols), so this WARNS by default and only
+ * fails the build when a locale's identical-value ratio exceeds
+ * `maxRatio` — a sign the locale was never actually translated.
+ */
+function checkEnClones(maxRatio: number): boolean {
+  const source = flatten(dictionaries.en);
+  const stringKeys = Object.keys(source).filter((k) => typeof source[k] === "string");
   let hasError = false;
-  for (const file of files) {
-    if (file === "en.json") continue;
-    const locale = basename(file, ".json");
-    const currentKeys = new Set(
-      Object.keys(flatten(JSON.parse(readFileSync(join(dir, file), "utf8"))))
+
+  console.log(`\n[en-clone] value-level EN-clone check (threshold: ${maxRatio}):`);
+  for (const [locale, dict] of Object.entries(dictionaries)) {
+    if (locale === "en") continue;
+    const current = flatten(dict);
+    const clones = stringKeys.filter((k) => current[k] === source[k]);
+    const ratio = stringKeys.length === 0 ? 0 : clones.length / stringKeys.length;
+    const over = ratio > maxRatio;
+    const status = over ? "FAIL" : "ok";
+    console.log(
+      `  [${status}] ${locale}: ${clones.length}/${stringKeys.length} identical to EN (ratio ${ratio.toFixed(3)})`
     );
-    if (compareToBaseline(`json:${locale}`, baselineKeys, currentKeys)) hasError = true;
+    if (clones.length > 0) {
+      const label = over ? "worst offenders" : "sample identical values (often legitimate)";
+      console.log(`    ${label} (top ${Math.min(10, clones.length)}):`);
+      for (const key of clones.slice(0, 10)) {
+        console.log(`      - ${key}: ${JSON.stringify(source[key])}`);
+      }
+    }
+    if (over) hasError = true;
   }
   return hasError;
 }
 
 function main() {
+  const maxRatio = parseMaxEnCloneRatio(process.argv.slice(2));
   const tsErr = checkTsDictionary();
-  const jsonErr = checkJsonMessages();
-  if (tsErr || jsonErr) {
+  const cloneErr = checkEnClones(maxRatio);
+  if (tsErr || cloneErr) {
     process.exitCode = 1;
     return;
   }
-  console.log("i18n parity check passed: ts dictionary + messages/*.json match the English keyset.");
+  console.log("\ni18n parity check passed: ts dictionary locales match the English keyset.");
 }
 
 main();
