@@ -1951,18 +1951,17 @@ strong, b {
 }
 
 *::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(168, 85, 247, 0.22), rgba(124, 58, 237, 0.18));
+  background: #626269;
   border-radius: 3px;
   transition: background 200ms ease;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(168, 85, 247, 0.85), rgba(124, 58, 237, 0.7));
-  box-shadow: 0 0 8px rgba(168, 85, 247, 0.4);
+  background: #8b8b93;
 }
 
 html {
-  scrollbar-color: rgba(168, 85, 247, 0.22) #09090b;
+  scrollbar-color: #626269 #09090b;
 }
 
 /* Free starters: no hover lift on touch; keep border/shadow calm */

@@ -22,14 +22,23 @@ export function GuestOnboardingPopup({ locale }: { locale: Locale }) {
     const isAuthRoute =
       pathname === `/${locale}/login` ||
       pathname === `/${locale}/signup` ||
-      pathname === `/${locale}/admin`;
+      pathname === `/${locale}/admin` ||
+      pathname === `/${locale}/store` ||
+      pathname.startsWith(`/${locale}/store/`);
 
     if (isAuthRoute || user) {
       setVisible(false);
       return;
     }
 
-    const entryDone = localStorage.getItem(ENTRY_DONE_KEY) === "1";
+    let entryDone = false;
+    try {
+      entryDone = localStorage.getItem(ENTRY_DONE_KEY) === "1";
+    } catch {
+      // Browsing remains available when the browser blocks storage.
+      setVisible(false);
+      return;
+    }
     if (entryDone) {
       setVisible(false);
       return;

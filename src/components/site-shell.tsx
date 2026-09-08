@@ -6,7 +6,6 @@ import { GuestOnboardingPopup } from "@/components/guest-onboarding-popup";
 import { LogoIntro } from "@/components/logo-intro";
 import { MainErrorBoundary } from "@/components/main-error-boundary";
 import { PageTransition } from "@/components/page-transition";
-import { ScrollProgressBar } from "@/components/scroll-progress-bar";
 import { ScrollRevealInit } from "@/components/scroll-reveal-init";
 import { ShellFooterGate } from "@/components/shell-footer-gate";
 import { ShellNoticeGate } from "@/components/shell-notice-gate";
@@ -36,7 +35,6 @@ export function SiteShell({
       <div className="min-h-screen overflow-x-hidden bg-background text-text">
         {!introDone ? <LogoIntro locale={locale} onComplete={handleIntroComplete} /> : null}
         <ScrollToTop />
-        <ScrollProgressBar />
         <ScrollRevealInit />
         <SiteTopBar locale={locale} />
         <SiteSideOverlay locale={locale} />

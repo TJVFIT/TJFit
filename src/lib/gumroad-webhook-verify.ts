@@ -1,19 +1,9 @@
 import crypto from "node:crypto";
 
-// Gumroad webhook signature verification.
-//
-// Gumroad signs webhook payloads with HMAC-SHA256 using a shared
-// secret configured in the Gumroad dashboard. The signature is
-// delivered in the `X-Gumroad-Signature` header as a hex digest.
-// Compare via `crypto.timingSafeEqual` to avoid timing attacks.
-//
-// Reference: https://gumroad.com/help/article/280-creating-a-gumroad-webhook
-//
-// `rawBody` MUST be the unparsed UTF-8 body — JSON.stringify of a
-// re-parsed object will not produce a byte-equivalent string and the
-// signature check will fail.
+// The active route checks the seller and verifies sales through Gumroad's API.
+// The legacy HMAC helper below is not used to authenticate incoming Gumroad pings.
 
-export const MAX_AGE_SEC = 300; // 5 minutes — match Gumroad equivalent.
+export const MAX_AGE_SEC = 300; // Application policy, not a provider authentication guarantee.
 
 /**
  * Verify a Gumroad webhook by its `seller_id`.
@@ -63,20 +53,15 @@ export function verifyGumroadWebhookSignature(
 /**
  * Best-effort replay-window check on Gumroad webhook payloads.
  *
- * IMPORTANT CAVEAT: Unlike Gumroad, Gumroad does NOT include a signed
- * timestamp in the signature scheme. This check uses a timestamp from
- * INSIDE the body (`sale_timestamp` for sale events, `timestamp` /
- * `created_at` for others) — these fields ARE covered by the body
- * HMAC, so an attacker cannot tamper with them, but Gumroad itself
- * controls when those fields are emitted.
+ * This checks an untrusted body timestamp, not a signed delivery timestamp.
+ * It cannot authenticate an event or stop a sender from altering the time.
+ * Delayed legitimate events may also exceed this application-defined window.
  *
  * What this check actually buys us:
- *  - Rejects "old" captured-and-replayed bodies after the window.
- *  - Defense in depth on top of event_id idempotency (which already
- *    blocks replays via the unique constraint on payment_webhooks).
+ *  - Rejects bodies whose supplied timestamp is older than the window.
  *
  * What it does NOT do:
- *  - Block in-window replays (idempotency does that).
+ *  - Authenticate the sender or prevent tampering/replays.
  *  - Block replays of events that lack a recognizable timestamp field
  *    (we fail-OPEN in that case to avoid breaking legitimate events
  *    from older Gumroad event types).

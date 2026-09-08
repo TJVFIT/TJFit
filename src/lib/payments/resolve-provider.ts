@@ -1,4 +1,5 @@
 import type { PaymentProviderId, ResolvedPaymentBackend } from "@/lib/payments/types";
+import { isTestCheckoutAllowed } from "@/lib/payments/test-checkout-policy";
 
 /**
  * Server-only: which checkout backend is active.
@@ -9,7 +10,7 @@ import type { PaymentProviderId, ResolvedPaymentBackend } from "@/lib/payments/t
  * - `none` / `off` → checkout disabled.
  */
 export function resolvePaymentBackend(): ResolvedPaymentBackend {
-  const allowTestCheckout = process.env.ALLOW_TEST_CHECKOUT === "true";
+  const allowTestCheckout = isTestCheckoutAllowed();
   const override = (process.env.PAYMENT_PROVIDER ?? "").trim().toLowerCase();
   if (override === "none" || override === "off") {
     return { providerId: null, allowTestCheckout };
@@ -19,9 +20,6 @@ export function resolvePaymentBackend(): ResolvedPaymentBackend {
   }
   if (override === "gumroad" || override === "") {
     return { providerId: "gumroad", allowTestCheckout };
-  }
-  if (allowTestCheckout) {
-    return { providerId: "test", allowTestCheckout };
   }
   return { providerId: null, allowTestCheckout };
 }
