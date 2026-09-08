@@ -3,6 +3,8 @@
 import { useRef, useState } from "react";
 
 import { EquipmentVisual } from "@/components/store/equipment-visual";
+import { AccessoryCollection } from "@/components/store/accessory-collection";
+import { ACCESSORY_COPY, SHOPIFY_STORE_URL } from "@/lib/store/accessories";
 import type { Locale } from "@/lib/i18n";
 import { buildQuoteRequest, STORE_COPY, STORE_EMAIL, type ProductId, type StoreCategory } from "@/lib/store/catalog";
 
@@ -47,6 +49,11 @@ export function EquipmentStore({ locale }: { locale: Locale }) {
 
   return (
     <div dir={locale === "ar" ? "rtl" : "ltr"} className="bg-[#0A0A0B] text-zinc-100">
+      <nav aria-label={copy.eyebrow} className="mx-auto flex max-w-[1400px] flex-wrap gap-7 px-5 pt-6 text-xs text-zinc-300 sm:px-8 lg:px-12">
+        <a href="#accessories" className="py-3 hover:text-[#C4B5FD]">{ACCESSORY_COPY[locale].gear}</a>
+        <a href="#request" className="py-3 hover:text-[#C4B5FD]">{ACCESSORY_COPY[locale].gyms}</a>
+        <a href={SHOPIFY_STORE_URL} className="py-3 hover:text-[#C4B5FD]">{ACCESSORY_COPY[locale].store} ↗</a>
+      </nav>
       <section aria-labelledby="store-title" className="mx-auto max-w-[1400px] px-5 pb-12 pt-10 sm:px-8 sm:pb-20 sm:pt-14 lg:px-12">
         <div className="mb-9 flex items-center justify-between gap-5 border-b border-white/10 pb-5 sm:mb-12">
           <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#C4B5FD]">{copy.eyebrow}</p>
@@ -75,6 +82,7 @@ export function EquipmentStore({ locale }: { locale: Locale }) {
         </div>
       </section>
 
+      <AccessoryCollection locale={locale}/>
       <section id="catalog" aria-labelledby="catalog-title" className="scroll-mt-20 border-y border-white/10 bg-[#101012]">
         <div className="mx-auto max-w-[1400px] px-5 py-12 sm:px-8 sm:py-16 lg:px-12">
           <div className="flex flex-wrap items-end justify-between gap-5">
