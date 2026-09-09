@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode, useState } from "react";
+import { usePathname } from "next/navigation";
 
 import { GuestOnboardingPopup } from "@/components/guest-onboarding-popup";
 import { LogoIntro } from "@/components/logo-intro";
@@ -14,7 +15,7 @@ import { SiteTopBar } from "@/components/shell/site-top-bar";
 import { DynamicIslandProvider } from "@/components/ui/dynamic-island";
 import { PendingNotificationPoller } from "@/components/pending-notification-poller";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
-import { Locale } from "@/lib/i18n";
+import { isSupportedLocale, type Locale } from "@/lib/i18n";
 
 export function SiteShell({
   locale,
@@ -23,7 +24,12 @@ export function SiteShell({
   locale: Locale;
   children: ReactNode;
 }) {
+  const pathname = usePathname();
+  const [, routeLocale, section] = (pathname ?? "").split("/");
+  const isEquipmentRoute = Boolean(routeLocale && isSupportedLocale(routeLocale)
+    && (section === "store" || section === "equipment"));
   const [introDone, setIntroDone] = useState(false);
+  const contentVisible = isEquipmentRoute || introDone;
 
   const handleIntroComplete = () => {
     setIntroDone(true);
@@ -33,15 +39,15 @@ export function SiteShell({
     <DynamicIslandProvider>
       <PendingNotificationPoller />
       <div className="min-h-screen overflow-x-hidden bg-background text-text">
-        {!introDone ? <LogoIntro locale={locale} onComplete={handleIntroComplete} /> : null}
+        {!contentVisible ? <LogoIntro locale={locale} onComplete={handleIntroComplete} /> : null}
         <ScrollToTop />
         <ScrollRevealInit />
         <SiteTopBar locale={locale} />
         <SiteSideOverlay locale={locale} />
         <ShellNoticeGate locale={locale} />
-        <GuestOnboardingPopup locale={locale} />
+        {!isEquipmentRoute ? <GuestOnboardingPopup locale={locale} /> : null}
 
-        <div className={`transition-opacity duration-400 ${introDone ? "opacity-100" : "opacity-0"}`}>
+        <div className={`transition-opacity duration-400 ${contentVisible ? "opacity-100" : "opacity-0"}`}>
           <MainErrorBoundary>
             <main
               className="relative z-[1] min-w-0 pt-14 sm:pt-16"
