@@ -67,7 +67,8 @@ function HomeLuxurySkeleton() {
   );
 }
 
-export default function HomePage({ params }: { params: { locale: string } }) {
+export default async function HomePage(props: { params: Promise<{ locale: string }> }) {
+  const params = await props.params;
   const raw = params?.locale;
   if (typeof raw !== "string" || !isLocale(raw)) {
     notFound();

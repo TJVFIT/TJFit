@@ -6,13 +6,18 @@ import { ProtectedRoute } from "@/components/protected-route";
 import { isLocale, type Locale } from "@/lib/i18n";
 import { requireAuthenticatedUser } from "@/lib/require-authenticated-server";
 
-export default async function MessagesLayout({
-  children,
-  params
-}: {
-  children: React.ReactNode;
-  params: { locale: string };
-}) {
+export default async function MessagesLayout(
+  props: {
+    children: React.ReactNode;
+    params: Promise<{ locale: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   if (!isLocale(params.locale)) {
     notFound();
   }

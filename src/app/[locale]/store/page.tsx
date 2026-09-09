@@ -6,7 +6,8 @@ import { requireLocaleParam } from "@/lib/require-locale";
 import { getSiteUrl } from "@/lib/site-url";
 import { STORE_COPY } from "@/lib/store/catalog";
 
-export function generateMetadata({ params }: { params: { locale: string } }): Metadata {
+export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
   const copy = STORE_COPY[locale];
   const url = `${getSiteUrl()}/${locale}/store`;
@@ -21,7 +22,8 @@ export function generateMetadata({ params }: { params: { locale: string } }): Me
   };
 }
 
-export default function StorePage({ params }: { params: { locale: string } }) {
+export default async function StorePage(props: { params: Promise<{ locale: string }> }) {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
   return <EquipmentStore locale={locale} />;
 }

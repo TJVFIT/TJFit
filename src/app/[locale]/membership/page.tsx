@@ -13,7 +13,8 @@ const HERO_COPY: Record<Locale, { title: string; sub: string }> = {
   fr: { title: "Choisissez Votre Plan TJFit", sub: "Debloquez le coaching IA, les programmes complets et le support expert." }
 };
 
-export default function MembershipPage({ params }: { params: { locale: string } }) {
+export default async function MembershipPage(props: { params: Promise<{ locale: string }> }) {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
   const hero = HERO_COPY[locale] ?? HERO_COPY.en;
 

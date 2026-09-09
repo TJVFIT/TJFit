@@ -1,7 +1,7 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, use } from "react";
 import { programs } from "@/lib/content";
 import { getCheckoutCopy } from "@/lib/premium-public-copy";
 import { Locale, isLocale } from "@/lib/i18n";
@@ -30,7 +30,8 @@ type CheckoutProgramOption = {
   baseTry: number;
 };
 
-export default function CheckoutPage({ params }: { params: { locale: string } }) {
+export default function CheckoutPage(props: { params: Promise<{ locale: string }> }) {
+  const params = use(props.params);
   const rawLocale = params?.locale ?? "";
   const localeValid = isLocale(rawLocale);
   const locale = (localeValid ? rawLocale : "en") as Locale;

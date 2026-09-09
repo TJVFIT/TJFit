@@ -7,9 +7,9 @@ import { getCoachTermsVersion } from "@/lib/coach-terms-version";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export async function acceptCoachTermsAction(): Promise<{ ok: true } | { ok: false; error: string }> {
-  let supabase: ReturnType<typeof createServerSupabaseClient>;
+  let supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>;
   try {
-    supabase = createServerSupabaseClient();
+    supabase = await createServerSupabaseClient();
   } catch {
     return { ok: false, error: "Service unavailable." };
   }
@@ -27,7 +27,7 @@ export async function acceptCoachTermsAction(): Promise<{ ok: true } | { ok: fal
     return { ok: false, error: "Only coaches can accept coach terms." };
   }
 
-  const h = headers();
+  const h = await headers();
   const forwarded = h.get("x-forwarded-for");
   const ip = forwarded?.split(",")[0]?.trim() ?? h.get("x-real-ip") ?? null;
   const termsVersion = getCoachTermsVersion();

@@ -4,6 +4,7 @@ import { checkGumroadWebhookFreshness, verifyGumroadSeller } from "@/lib/gumroad
 import { getSale, type GumroadSale } from "@/lib/gumroad/client";
 import { fulfillProgramOrderPaid } from "@/lib/checkout-fulfill-order";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { isJsonObject, readRequestText } from "@/lib/read-request-json";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { handleSale, findOrCreateUserByEmail, type GumroadSalePayload } from "./handlers/sale";
 import { handleRefund } from "./handlers/refund";
@@ -70,23 +71,44 @@ type GumroadEventBody = {
  * JSON so tests and any future Gumroad change keep working.
  */
 function parseGumroadBody(rawBody: string, contentType: string): GumroadEventBody {
+  const forbidden = new Set(["__proto__", "prototype", "constructor"]);
+  const validate = (value: unknown): GumroadEventBody => {
+    if (!isJsonObject(value)) throw new Error("Webhook must be an object");
+    for (const key of Object.keys(value)) {
+      if (forbidden.has(key)) throw new Error("Invalid field");
+    }
+    for (const key of ["resource_name", "seller_id", "sale_id", "subscription_id", "product_permalink", "permalink", "product_id", "product_name", "email", "full_name", "currency", "sale_timestamp"]) {
+      if (value[key] !== undefined && typeof value[key] !== "string") throw new Error("Invalid field type");
+    }
+    for (const key of ["url_params", "custom_fields"]) {
+      const nested = value[key];
+      if (nested === undefined) continue;
+      if (!isJsonObject(nested) || Object.entries(nested).some(([name, item]) => forbidden.has(name) || typeof item !== "string")) {
+        throw new Error("Invalid nested field");
+      }
+    }
+    return value as GumroadEventBody;
+  };
   if (contentType.includes("application/json")) {
-    return JSON.parse(rawBody) as GumroadEventBody;
+    return validate(JSON.parse(rawBody));
   }
   const params = new URLSearchParams(rawBody);
-  const obj: Record<string, unknown> = {};
+  const obj: Record<string, unknown> = Object.create(null);
   for (const [key, value] of params.entries()) {
     const nested = key.match(/^([^[]+)\[([^\]]+)\]$/);
     if (nested) {
       const [, parent, child] = nested;
-      const bucket = (obj[parent] as Record<string, string> | undefined) ?? {};
+      if (forbidden.has(parent) || forbidden.has(child)) throw new Error("Invalid field");
+      if (obj[parent] !== undefined && !isJsonObject(obj[parent])) throw new Error("Conflicting field");
+      const bucket = (obj[parent] as Record<string, string> | undefined) ?? Object.create(null);
       bucket[child] = value;
       obj[parent] = bucket;
     } else {
+      if (forbidden.has(key)) throw new Error("Invalid field");
       obj[key] = value;
     }
   }
-  return obj as GumroadEventBody;
+  return validate(obj);
 }
 
 /**
@@ -141,7 +163,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Webhook not configured" }, { status: 503 });
   }
 
-  const rawBody = await request.text();
+  const bodyRead = await readRequestText(request, 65_536);
+  if (!bodyRead.ok) return bodyRead.response;
+  const rawBody = bodyRead.value;
   const contentType = request.headers.get("content-type") ?? "";
 
   let payload: GumroadEventBody;

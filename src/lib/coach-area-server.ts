@@ -9,7 +9,7 @@ import { URL_NOTICE } from "@/lib/url-notice";
 export type EffectiveServerRole = "admin" | "coach" | "user" | null;
 
 export async function resolveEffectiveServerRole(
-  supabase: ReturnType<typeof createServerSupabaseClient>,
+  supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>,
   userId: string,
   email: string | undefined
 ): Promise<EffectiveServerRole> {
@@ -30,7 +30,7 @@ function isRedirectError(e: unknown) {
  */
 export async function redirectCoachWithoutTermsIfNeeded(locale: Locale, nextPathWithLocale: string): Promise<void> {
   try {
-    const supabase = createServerSupabaseClient();
+    const supabase = await createServerSupabaseClient();
     const {
       data: { user },
       error
@@ -61,7 +61,7 @@ export async function redirectCoachWithoutTermsIfNeeded(locale: Locale, nextPath
 /** Coach-only or admin-only routes (e.g. program upload). */
 export async function gateCoachOrAdminRoute(locale: Locale, nextPathWithLocale: string): Promise<void> {
   try {
-    const supabase = createServerSupabaseClient();
+    const supabase = await createServerSupabaseClient();
     const {
       data: { user },
       error
@@ -82,7 +82,7 @@ export async function gateCoachOrAdminRoute(locale: Locale, nextPathWithLocale: 
 export async function gateCoachDashboardRoute(locale: Locale): Promise<void> {
   const path = `/${locale}/coach-dashboard`;
   try {
-    const supabase = createServerSupabaseClient();
+    const supabase = await createServerSupabaseClient();
     const {
       data: { user },
       error
@@ -103,7 +103,7 @@ export async function gateCoachDashboardRoute(locale: Locale): Promise<void> {
 export async function gateDashboardForCoachTerms(locale: Locale): Promise<void> {
   const path = `/${locale}/dashboard`;
   try {
-    const supabase = createServerSupabaseClient();
+    const supabase = await createServerSupabaseClient();
     const {
       data: { user },
       error

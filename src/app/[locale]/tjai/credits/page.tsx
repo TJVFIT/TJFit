@@ -119,7 +119,8 @@ const COPY: Record<
   }
 };
 
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
   const copy = COPY[locale] ?? COPY.en;
   return { title: copy.title, description: copy.metaDescription };
@@ -139,7 +140,8 @@ type SyncRow = {
   gumroad_permalink: string | null;
 };
 
-export default async function TjaiCreditsPage({ params }: { params: { locale: string } }) {
+export default async function TjaiCreditsPage(props: { params: Promise<{ locale: string }> }) {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
   const copy = COPY[locale] ?? COPY.en;
 
@@ -147,7 +149,7 @@ export default async function TjaiCreditsPage({ params }: { params: { locale: st
 
   let user: { id: string; email?: string } | null = null;
   try {
-    const supabase = createServerSupabaseClient();
+    const supabase = await createServerSupabaseClient();
     const { data } = await supabase.auth.getUser();
     if (data.user?.id) user = { id: data.user.id, email: data.user.email ?? undefined };
   } catch {

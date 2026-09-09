@@ -2,7 +2,8 @@ import { ProtectedRoute } from "@/components/protected-route";
 import { ProgressView } from "@/components/progress-view";
 import { requireLocaleParam } from "@/lib/require-locale";
 
-export default function ProgressPage({ params }: { params: { locale: string } }) {
+export default async function ProgressPage(props: { params: Promise<{ locale: string }> }) {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
 
   return (

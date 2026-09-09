@@ -73,7 +73,7 @@ import { GET } from "@/app/api/bundles/download/[slug]/route";
 function request() {
   return { url: "https://tjfit.org/api/bundles/download/lean-12w?locale=en" } as Request;
 }
-const params = { params: { slug: "lean-12w" } };
+const params = { params: Promise.resolve({ slug: "lean-12w" }) };
 
 beforeEach(() => {
   h.state.serviceClientAvailable = true;
@@ -144,7 +144,7 @@ describe("bundle download entitlement gate", () => {
   });
 
   it("404s an unknown bundle before any entitlement work", async () => {
-    const res = await GET(request(), { params: { slug: "missing" } });
+    const res = await GET(request(), { params: Promise.resolve({ slug: "missing" }) });
 
     expect(res.status).toBe(404);
     expect(mockHasPurchasedProgram).not.toHaveBeenCalled();

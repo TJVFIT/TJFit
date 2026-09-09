@@ -39,7 +39,8 @@ export function generateStaticParams() {
   return listBundleSlugs().map((slug) => ({ slug }));
 }
 
-export function generateMetadata({ params }: { params: { locale: string; slug: string } }) {
+export async function generateMetadata(props: { params: Promise<{ locale: string; slug: string }> }) {
+  const params = await props.params;
   const bundle = getBundle(params.slug);
   if (!bundle) return { title: getBundlesCopy(params.locale).detail.metaFallbackTitle };
   const site = getSiteUrl();
@@ -64,11 +65,12 @@ export function generateMetadata({ params }: { params: { locale: string; slug: s
 }
 
 
-export default async function BundleDetailPage({
-  params
-}: {
-  params: { locale: string; slug: string };
-}) {
+export default async function BundleDetailPage(
+  props: {
+    params: Promise<{ locale: string; slug: string }>;
+  }
+) {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
   const bundle = getBundle(params.slug);
   if (!bundle) notFound();
@@ -97,7 +99,7 @@ export default async function BundleDetailPage({
   // program content is never reachable from the sales page without entitlement.
   let owns = false;
   {
-    const supabase = createServerSupabaseClient();
+    const supabase = await createServerSupabaseClient();
     const {
       data: { user }
     } = await supabase.auth.getUser();

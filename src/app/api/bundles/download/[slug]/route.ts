@@ -18,7 +18,8 @@ export const runtime = "nodejs";
  * Gating (tight): only paid orders OR admin emails. `isFree` no longer
  * bypasses the check — every download requires entitlement.
  */
-export async function GET(req: Request, { params }: { params: { slug: string } }) {
+export async function GET(req: Request, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const auth = await requireAuth();
   if (!auth.ok) return auth.response;
 

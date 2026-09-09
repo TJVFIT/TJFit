@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
   // Keep current user visible even if outside top 100.
   let me: Record<string, unknown> | null = null;
   try {
-    const supabase = createServerSupabaseClient();
+    const supabase = await createServerSupabaseClient();
     const {
       data: { user }
     } = await supabase.auth.getUser();

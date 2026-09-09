@@ -8,9 +8,9 @@ export const dynamic = "force-dynamic";
 export type Role = "admin" | "coach" | "user" | null;
 
 export async function GET() {
-  let supabase: ReturnType<typeof createServerSupabaseClient>;
+  let supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>;
   try {
-    supabase = createServerSupabaseClient();
+    supabase = await createServerSupabaseClient();
   } catch {
     return NextResponse.json(
       { user: null, role: null, error: "Service temporarily unavailable.", code: "SUPABASE_MISCONFIGURED" },

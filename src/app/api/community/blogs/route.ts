@@ -41,9 +41,9 @@ export async function POST(request: NextRequest) {
   const auth = await requireCoachOrAdmin();
   if (!auth.ok) return auth.response;
 
-  let clientSupabase: ReturnType<typeof createServerSupabaseClient>;
+  let clientSupabase: Awaited<ReturnType<typeof createServerSupabaseClient>>;
   try {
-    clientSupabase = createServerSupabaseClient();
+    clientSupabase = await createServerSupabaseClient();
   } catch {
     return NextResponse.json({ error: "Service temporarily unavailable." }, { status: 503 });
   }

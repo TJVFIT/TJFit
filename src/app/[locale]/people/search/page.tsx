@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { requireLocaleParam } from "@/lib/require-locale";
 
-export default function PeopleSearchRedirect({ params }: { params: { locale: string } }) {
+export default async function PeopleSearchRedirect(props: { params: Promise<{ locale: string }> }) {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
   redirect(`/${locale}/profile/search`);
 }

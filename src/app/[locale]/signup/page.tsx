@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { notFound, useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState, use } from "react";
 import { Eye, EyeOff, Upload, Camera, Dumbbell, Flame, Home, Scale, type LucideIcon } from "lucide-react";
 import { AuthPageFrame } from "@/components/auth-page-frame";
 import { AsyncButton } from "@/components/ui/AsyncButton";
@@ -539,7 +539,8 @@ function SignupFallback() {
   );
 }
 
-export default function SignupPage({ params }: { params: { locale: string } }) {
+export default function SignupPage(props: { params: Promise<{ locale: string }> }) {
+  const params = use(props.params);
   return (
     <Suspense fallback={<SignupFallback />}>
       <SignupForm params={params} />

@@ -8,11 +8,12 @@ import { requireLocaleParam } from "@/lib/require-locale";
 
 export const dynamic = "force-dynamic";
 
-export default async function AiPage({ params }: { params: { locale: string } }) {
+export default async function AiPage(props: { params: Promise<{ locale: string }> }) {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
 
   try {
-    const supabase = createServerSupabaseClient();
+    const supabase = await createServerSupabaseClient();
     const {
       data: { user },
       error

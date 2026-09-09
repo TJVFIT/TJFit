@@ -13,7 +13,8 @@ import { supportedLocales } from "@/lib/i18n";
 import { requireLocaleParam } from "@/lib/require-locale";
 import { getSiteUrl } from "@/lib/site-url";
 
-export function generateMetadata({ params }: { params: { locale: string } }) {
+export async function generateMetadata(props: { params: Promise<{ locale: string }> }) {
+  const params = await props.params;
   const site = getSiteUrl();
   const url = `${site}/${params.locale}/bundles`;
   const copy = getBundlesCopy(params.locale);
@@ -33,7 +34,8 @@ export function generateMetadata({ params }: { params: { locale: string } }) {
   };
 }
 
-export default function BundlesPage({ params }: { params: { locale: string } }) {
+export default async function BundlesPage(props: { params: Promise<{ locale: string }> }) {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
   const copy = getBundlesCopy(locale);
   // Serializable facts for the client-side finder quiz + comparison table —

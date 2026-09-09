@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, use } from "react";
 import { Trophy, Dumbbell, Timer, Repeat } from "lucide-react";
 import { AmbientOrbs } from "@/components/effects/ambient-orbs";
 import { requireLocaleParam } from "@/lib/require-locale";
@@ -109,7 +109,8 @@ function PRValue({ value, suffix, color }: { value: number; suffix: string; colo
   );
 }
 
-export default function RecordsPage({ params }: { params: { locale: string } }) {
+export default function RecordsPage(props: { params: Promise<{ locale: string }> }) {
+  const params = use(props.params);
   requireLocaleParam(params.locale);
   const locale = params.locale;
   const copy = RECORDS_COPY[locale as keyof typeof RECORDS_COPY] ?? RECORDS_COPY.en;

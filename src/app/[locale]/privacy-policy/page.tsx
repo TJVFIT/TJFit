@@ -2,7 +2,8 @@ import { AmbientOrbs } from "@/components/effects/ambient-orbs";
 import { getPrivacyCopy } from "@/lib/legal-copy";
 import { requireLocaleParam } from "@/lib/require-locale";
 
-export default function PrivacyPolicyPage({ params }: { params: { locale: string } }) {
+export default async function PrivacyPolicyPage(props: { params: Promise<{ locale: string }> }) {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
 
   const copy = getPrivacyCopy(locale);

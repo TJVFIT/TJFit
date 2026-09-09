@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, use } from "react";
 
 import { AmbientOrbs } from "@/components/effects/ambient-orbs";
 import { isLocale, type Locale } from "@/lib/i18n";
@@ -135,7 +135,8 @@ const COPY: Record<Locale, SupportCopy> = {
   }
 };
 
-export default function SupportPage({ params }: { params: { locale: string } }) {
+export default function SupportPage(props: { params: Promise<{ locale: string }> }) {
+  const params = use(props.params);
   const locale = isLocale(params.locale) ? params.locale : "en";
   const copy = COPY[locale];
   const defaultSubject = useMemo(() => copy.subjects[0]?.value ?? "Technical Issue", [copy.subjects]);

@@ -4,7 +4,8 @@ import { AmbientOrbs } from "@/components/effects/ambient-orbs";
 import { PremiumPageShell } from "@/components/premium";
 import { requireLocaleParam } from "@/lib/require-locale";
 
-export default function PressPage({ params }: { params: { locale: string } }) {
+export default async function PressPage(props: { params: Promise<{ locale: string }> }) {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
 
   return (

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { isTestCheckoutAllowed } from "@/lib/payments/test-checkout-policy";
 import { requireAdmin } from "@/lib/require-admin";
 
 // v5 round 2 Task 4 — drives the consume_tjai_credit RPC for the
@@ -11,9 +12,8 @@ import { requireAdmin } from "@/lib/require-admin";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
-  // Defense in depth: admin role alone is not enough on a production
-  // deployment. Require an explicit env opt-in to fire simulated webhooks.
-  if (process.env.NODE_ENV === "production" && process.env.ALLOW_TEST_CHECKOUT !== "true") {
+  // Synthetic purchases and balance changes are never permitted in production.
+  if (!isTestCheckoutAllowed()) {
     return NextResponse.json({ error: "Test routes disabled in production." }, { status: 403 });
   }
   const adminResult = await requireAdmin();

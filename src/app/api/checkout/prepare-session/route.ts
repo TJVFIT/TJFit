@@ -15,7 +15,7 @@ import { getSupabaseServerClient } from "@/lib/supabase-server";
  * handled by the Gumroad webhook (`src/app/api/webhooks/gumroad/route.ts`).
  */
 export async function POST(request: NextRequest) {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const {
     data: { user },
     error

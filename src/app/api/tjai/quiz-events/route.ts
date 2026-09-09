@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
   // The quiz runs pre-signup; attach the user only when a session exists.
   let userId: string | null = null;
   try {
-    const supabase = createServerSupabaseClient();
+    const supabase = await createServerSupabaseClient();
     const { data } = await supabase.auth.getUser();
     userId = data.user?.id ?? null;
   } catch {

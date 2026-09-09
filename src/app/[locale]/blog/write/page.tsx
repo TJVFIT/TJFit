@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, use } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { PremiumPageShell } from "@/components/premium";
 import { Button } from "@/components/ui/Button";
 import type { Locale } from "@/lib/i18n";
 
-export default function BlogWritePage({ params }: { params: { locale: string } }) {
+export default function BlogWritePage(props: { params: Promise<{ locale: string }> }) {
+  const params = use(props.params);
   const locale = params.locale as Locale;
   const searchParams = useSearchParams();
   const [title, setTitle] = useState("");

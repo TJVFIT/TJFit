@@ -7,13 +7,13 @@ type AuthUser = {
 };
 
 type RequireAuthResult =
-  | { ok: true; supabase: ReturnType<typeof createServerSupabaseClient>; user: AuthUser }
+  | { ok: true; supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>; user: AuthUser }
   | { ok: false; response: NextResponse };
 
 export async function requireAuth(): Promise<RequireAuthResult> {
-  let supabase: ReturnType<typeof createServerSupabaseClient>;
+  let supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>;
   try {
-    supabase = createServerSupabaseClient();
+    supabase = await createServerSupabaseClient();
   } catch {
     return {
       ok: false,

@@ -1,6 +1,6 @@
 import type { Locale } from "@/lib/i18n";
 
-export const SHOPIFY_STORE_URL = "https://b5qmx9-eu.myshopify.com";
+export const SHOPIFY_STORE_URL = "https://shop.tjfit.org";
 export const ACCESSORY_IDS = ["speed-rope", "training-gloves", "ankle-bands"] as const;
 export type AccessoryId = typeof ACCESSORY_IDS[number];
 export type AccessorySelection = Partial<Record<AccessoryId, number>>;
@@ -92,4 +92,3 @@ export function buildAccessoryRequest(locale: Locale, selection: AccessorySelect
   const encode = (text: string) => encodeURIComponent(text.replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g, "\uFFFD"));
   return { count: lines.length, body, mailto: `mailto:vexafit.co@gmail.com?subject=${encode(subject)}&body=${encode(body)}` };
 }
-

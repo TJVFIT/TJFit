@@ -16,7 +16,8 @@ const DEFAULT_PRIVACY: Required<PrivacySettings> = {
   show_posts: true
 };
 
-export async function GET(_request: NextRequest, { params }: { params: { username: string } }) {
+export async function GET(_request: NextRequest, props: { params: Promise<{ username: string }> }) {
+  const params = await props.params;
   const admin = getSupabaseServerClient();
   if (!admin) return NextResponse.json({ error: "Server not configured" }, { status: 500 });
 
@@ -27,7 +28,7 @@ export async function GET(_request: NextRequest, { params }: { params: { usernam
 
   let viewerId: string | null = null;
   try {
-    const browser = createServerSupabaseClient();
+    const browser = await createServerSupabaseClient();
     const { data: { user } } = await browser.auth.getUser();
     viewerId = user?.id ?? null;
   } catch {

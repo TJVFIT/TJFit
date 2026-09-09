@@ -48,7 +48,8 @@ const BCP47: Record<SupportedLocale, string> = {
   fr: "fr_FR"
 };
 
-export function generateMetadata({ params }: { params: { locale?: string } }): Metadata {
+export async function generateMetadata(props: { params: Promise<{ locale?: string }> }): Promise<Metadata> {
+  const params = await props.params;
   const routing = requireSupportedLocaleParam(params?.locale);
   const copy = resolveCopyLocale(routing);
   const title = TITLES[copy];
@@ -91,13 +92,18 @@ export function generateMetadata({ params }: { params: { locale?: string } }): M
   };
 }
 
-export default function LocaleLayout({
-  children,
-  params
-}: {
-  children: React.ReactNode;
-  params: { locale?: string };
-}) {
+export default async function LocaleLayout(
+  props: {
+    children: React.ReactNode;
+    params: Promise<{ locale?: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   const routing = requireSupportedLocaleParam(params?.locale);
   const copy = resolveCopyLocale(routing);
   const direction = LOCALE_META[routing].dir;

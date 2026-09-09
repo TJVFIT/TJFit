@@ -3,10 +3,11 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isValidUsername } from "@/lib/username";
 import { isMissingSchemaMigrationError, jsonSchemaNotReady } from "@/lib/supabase-rpc-errors";
 
-export async function GET(_: Request, { params }: { params: { username: string } }) {
-  let supabase: ReturnType<typeof createServerSupabaseClient>;
+export async function GET(_: Request, props: { params: Promise<{ username: string }> }) {
+  const params = await props.params;
+  let supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>;
   try {
-    supabase = createServerSupabaseClient();
+    supabase = await createServerSupabaseClient();
   } catch {
     return NextResponse.json({ error: "Service temporarily unavailable." }, { status: 503 });
   }

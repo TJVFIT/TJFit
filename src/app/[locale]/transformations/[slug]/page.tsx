@@ -4,11 +4,12 @@ import { ProtectedRoute } from "@/components/protected-route";
 import { transformations, coaches } from "@/lib/content";
 import { requireLocaleParam } from "@/lib/require-locale";
 
-export default function TransformationDetailPage({
-  params
-}: {
-  params: { locale: string; slug: string };
-}) {
+export default async function TransformationDetailPage(
+  props: {
+    params: Promise<{ locale: string; slug: string }>;
+  }
+) {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
   const slug = params.slug ?? "";
 

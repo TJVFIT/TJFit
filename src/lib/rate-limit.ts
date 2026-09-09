@@ -9,21 +9,24 @@
  * Algorithm: fixed-window counter via Redis INCR + PEXPIRE. Keys are
  * windowed (`rl:<key>:<window-bucket>`) so each bucket auto-expires.
  *
- * Failure mode: if Redis is configured but the request fails (network,
- * 5xx), we fail-OPEN (allow the request) so a Redis outage does not
- * take down the API. Trade-off: brief unmetered traffic during outages
- * vs. user-visible 429 storms.
+ * Existing callers fail open on Redis outages. Callers passing failClosed
+ * reject missing shared production configuration, backend failures and
+ * malformed Redis results. Such callers can return 503 for unavailable
+ * protection, distinct from a 429 for an exhausted quota.
  */
 
 interface RateLimitArgs {
   key: string;
   limit: number;
   windowMs: number;
+  /** Require shared persistence in production and reject backend failures. */
+  failClosed?: boolean;
 }
 
 interface RateLimitResult {
   success: boolean;
   remaining: number;
+  unavailable?: boolean;
 }
 
 const inMemoryStore = new Map<string, { count: number; resetAt: number }>();
@@ -46,7 +49,7 @@ function inMemoryRateLimit({ key, limit, windowMs }: RateLimitArgs): RateLimitRe
   return { success: true, remaining: limit - current.count };
 }
 
-async function redisRateLimit({ key, limit, windowMs }: RateLimitArgs): Promise<RateLimitResult> {
+async function redisRateLimit({ key, limit, windowMs, failClosed }: RateLimitArgs): Promise<RateLimitResult> {
   const url = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
   if (!url || !token) {
@@ -69,23 +72,31 @@ async function redisRateLimit({ key, limit, windowMs }: RateLimitArgs): Promise<
         ["INCR", redisKey],
         ["PEXPIRE", redisKey, String(windowMs)]
       ]),
-      cache: "no-store"
+      cache: "no-store",
+      signal: AbortSignal.timeout(5000)
     });
 
     if (!res.ok) {
-      console.warn("[rate-limit] Upstash pipeline non-2xx — failing open", res.status);
+      console.warn("[rate-limit] Upstash pipeline non-2xx", res.status);
+      if (failClosed) return { success: false, remaining: 0, unavailable: true };
       return { success: true, remaining: limit - 1 };
     }
 
     const data = (await res.json()) as Array<{ result?: number; error?: string }>;
-    const count = Number(data[0]?.result ?? 0);
+    if (!Array.isArray(data) || data.length !== 2 || data.some(item => item.error)
+      || !Number.isSafeInteger(data[0]?.result) || Number(data[0]?.result) < 1 || data[1]?.result !== 1) {
+      if (failClosed) return { success: false, remaining: 0, unavailable: true };
+      return { success: true, remaining: limit - 1 };
+    }
+    const count = Number(data[0].result);
 
     if (count > limit) {
       return { success: false, remaining: 0 };
     }
     return { success: true, remaining: Math.max(0, limit - count) };
-  } catch (err) {
-    console.warn("[rate-limit] Upstash fetch failed — failing open", err);
+  } catch {
+    console.warn("[rate-limit] Upstash request failed");
+    if (failClosed) return { success: false, remaining: 0, unavailable: true };
     return { success: true, remaining: limit - 1 };
   }
 }
@@ -93,6 +104,9 @@ async function redisRateLimit({ key, limit, windowMs }: RateLimitArgs): Promise<
 export async function rateLimit(args: RateLimitArgs): Promise<RateLimitResult> {
   if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
     return redisRateLimit(args);
+  }
+  if (args.failClosed && (process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production")) {
+    return { success: false, remaining: 0, unavailable: true };
   }
   return inMemoryRateLimit(args);
 }

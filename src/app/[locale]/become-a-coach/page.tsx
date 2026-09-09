@@ -190,7 +190,8 @@ const COPY: Record<Locale, {
   }
 };
 
-export default function BecomeCoachPage({ params }: { params: { locale: string } }) {
+export default async function BecomeCoachPage(props: { params: Promise<{ locale: string }> }) {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
   const c = COPY[locale] ?? COPY.en;
 

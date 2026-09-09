@@ -3,7 +3,8 @@ import { PeopleSearchErrorFallback } from "@/components/people-search-error-fall
 import { PeopleSearchView } from "@/components/people-search-view";
 import { requireLocaleParam } from "@/lib/require-locale";
 
-export default function ProfileSearchPage({ params }: { params: { locale: string } }) {
+export default async function ProfileSearchPage(props: { params: Promise<{ locale: string }> }) {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
 
   return (

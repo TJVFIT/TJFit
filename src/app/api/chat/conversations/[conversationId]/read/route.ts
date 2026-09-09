@@ -3,7 +3,8 @@ import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/require-auth";
 import { isMissingSchemaMigrationError, jsonSchemaNotReady } from "@/lib/supabase-rpc-errors";
 
-export async function POST(_: Request, { params }: { params: { conversationId: string } }) {
+export async function POST(_: Request, props: { params: Promise<{ conversationId: string }> }) {
+  const params = await props.params;
   const auth = await requireAuth();
   if (!auth.ok) return auth.response;
 
