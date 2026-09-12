@@ -3,15 +3,15 @@ import { resolvePaymentBackend } from "@/lib/payments";
 import { getDigitalProduct, getLemonCheckoutConfig, UUID_RE } from "@/lib/payments/lemon/config";
 import { createLemonCheckout, isLemonCheckoutUrl, type DigitalIntent } from "@/lib/payments/lemon/client";
 import { isJsonObject, readRequestJson } from "@/lib/read-request-json";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { isTjaiPassCheckoutReady } from "@/lib/payments/lemon/readiness";
 import { validateAdultIntake } from "@/lib/tjai/intake-validation";
 
 export async function POST(request: NextRequest) {
-  const supabase = await createServerSupabaseClient();
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
-  if (authError || !user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await requireAuth();
+  if (!auth.ok) return auth.response;
+  const { user } = auth;
   const config = getLemonCheckoutConfig();
   if (resolvePaymentBackend().providerId !== "lemonsqueezy" || !config) return NextResponse.json({ error: "Purchases are not available yet." }, { status: 503 });
   const parsed = await readRequestJson(request, 4096);

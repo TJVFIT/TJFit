@@ -5,6 +5,7 @@ import { AUTH_SERVICE_UNAVAILABLE, classifyAuthSessionFailure } from "@/lib/auth
 type AuthUser = {
   id: string;
   email?: string;
+  email_confirmed_at?: string;
 };
 
 type RequireAuthResult =
@@ -46,7 +47,8 @@ export async function requireAuth(): Promise<RequireAuthResult> {
     supabase,
     user: {
       id: user.id,
-      email: user.email ?? undefined
+      email: user.email ?? undefined,
+      email_confirmed_at: user.email_confirmed_at ?? undefined
     }
   };
 }
