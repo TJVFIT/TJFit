@@ -7,6 +7,7 @@ import {getDirection,type Locale} from '@/lib/i18n';
 import {getTjaiCopy,getTjaiSteps} from '@/lib/tjai-copy';
 import {getTjaiFlowCopy} from '@/lib/tjai/flow-copy';
 import {getAssessmentCopy} from '@/lib/tjai/assessment-copy';
+import {completedIntakePlan,createGenerationRetryController} from '@/lib/tjai/generation-retry';
 import {clearPendingAssessment,readPendingAssessment,savePendingAssessment} from '@/lib/tjai/assessment-draft';
 import type {QuizAnswers,TJAIPlan,TJAIMetrics} from '@/lib/tjai-types';
 type Phase='quiz'|'approach'|'calculating'|'compare'|'result';
@@ -20,6 +21,7 @@ export function TJAIShell({locale,initialAnswers,initialPhase='quiz',publicAsses
  const [saved,setSaved]=useState<Saved|null>(null),[job,setJob]=useState<Job|null>(null),[access,setAccess]=useState<Access|null>(null);
  const [intakeId,setIntakeId]=useState<string|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false);
  const [adult,setAdult]=useState(false),[consent,setConsent]=useState(false);
+ const [generationRequests]=useState(createGenerationRetryController);
  const copy=useMemo(()=>getTjaiCopy(locale),[locale]),steps=useMemo(()=>getTjaiSteps(locale).map(step=>step.id==='s1_age'?{...step,min:18}:step),[locale]);
  const load=useCallback(async()=>{
   setError('');
@@ -30,14 +32,18 @@ export function TJAIShell({locale,initialAnswers,initialPhase='quiz',publicAsses
     if(!publicAssessment)setError(assessment.expired);
     setPhase('intro');return;
    }
-   const [planResponse,jobResponse,accessResponse]=await Promise.all([fetch('/api/tjai/save',{cache:'no-store'}),fetch('/api/tjai/jobs',{cache:'no-store'}),fetch('/api/tjai/access',{cache:'no-store'})]);
+   const returnedIntake=query.get('intake');
+   const jobsUrl='/api/tjai/jobs'+(returnedIntake?'?intakeId='+encodeURIComponent(returnedIntake):'');
+   const [planResponse,jobResponse,accessResponse]=await Promise.all([fetch('/api/tjai/save',{cache:'no-store'}),fetch(jobsUrl,{cache:'no-store'}),fetch('/api/tjai/access',{cache:'no-store'})]);
    if(!planResponse.ok)throw new Error('load');
    const planData=await planResponse.json();setSaved(planData.plan??null);
    const accessData=await accessResponse.json();setAccess(accessResponse.ok?accessData:null);
    if(!jobResponse.ok)throw new Error('load');
    const jobData=await jobResponse.json();
-   const resumedJob=jobData?.job&&(['queued','running'].includes(jobData.job.status)||(jobData.job.status==='failed'&&query.get('start')!=='1'&&!query.get('intake')))?jobData.job:null;
-   const returnedIntake=query.get('intake');
+   if(returnedIntake&&jobData?.job&&jobData.job.intake_id!==returnedIntake)throw new Error('job_intake_mismatch');
+   const completed=completedIntakePlan<Saved>(returnedIntake,jobData?.job,jobData?.plan);
+   if(completed){setSaved(completed);setJob(jobData.job);setIntakeId(returnedIntake);setPhase('result');return;}
+   const resumedJob=jobData?.job&&(['queued','running'].includes(jobData.job.status)||(jobData.job.status==='failed'&&(returnedIntake||query.get('start')!=='1')))?jobData.job:null;
    const restoreIntake=resumedJob?.intake_id??returnedIntake;
    if(restoreIntake){
     const d=await fetch('/api/tjai/intake?id='+encodeURIComponent(restoreIntake));if(!d.ok)throw new Error('load');
@@ -77,7 +83,8 @@ export function TJAIShell({locale,initialAnswers,initialPhase='quiz',publicAsses
  const generate=async()=>{
   if(!intakeId)return;setBusy(true);setError('');
   try{
-   const response=await fetch('/api/tjai/jobs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({intakeId,requestId:job?.status==='failed'?crypto.randomUUID():intakeId})});
+   const requestId=generationRequests.requestFor(intakeId,job?.status==='failed'&&job.intake_id===intakeId?job.id:null);
+   const response=await fetch('/api/tjai/jobs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({intakeId,requestId})});
    const data=await response.json();
    if(response.status===402){window.location.href='/'+locale+'/tjai/checkout?intake='+intakeId;return;}
    if(!response.ok)throw new Error(data.error);
