@@ -21,5 +21,6 @@ describe("paid digital catalogue delivery", () => {
         expect(new TextDecoder().decode(bytes.slice(0,5))).toBe("%PDF-");
       }
     }
-  });
+  // This single integration case renders 50 complete PDFs, including Arabic.
+  }, 15000);
 });

@@ -23,6 +23,7 @@ import { POST as prepareSession } from "@/app/api/checkout/prepare-session/route
 import { POST as webhook } from "@/app/api/webhooks/lemonsqueezy/route";
 
 beforeEach(() => {
+  vi.stubEnv("ALLOW_TEST_CHECKOUT", "true");
   vi.stubEnv("NODE_ENV", "test"); vi.stubEnv("VERCEL_ENV", "preview"); vi.stubEnv("PAYMENT_PROVIDER", "lemonsqueezy");
   vi.stubEnv("LEMON_MODE", "test"); vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://tjfit.example.test");
   vi.stubEnv("LEMON_TEST_API_KEY", "fake-test-key"); vi.stubEnv("LEMON_TEST_WEBHOOK_SECRET", "fake-secret"); vi.stubEnv("LEMON_TEST_STORE_ID", "12");
@@ -36,6 +37,12 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllEnvs());
 const request = (body: unknown) => new NextRequest("https://tjfit.example.test/api/checkout/create-order", { method: "POST", body: JSON.stringify(body) });
 describe("server-owned purchase intents", () => {
+  it.each(["", "false"])("keeps configured test buying closed without explicit activation: %s", async (flag) => {
+    vi.stubEnv("ALLOW_TEST_CHECKOUT", flag);
+    expect(await (await availability()).json()).toEqual({ available: false, testMode: false, programSlugs: [] });
+    expect((await createOrder(request({ programSlug: "home-starter", locale: "en" }))).status).toBe(503);
+    expect(h.writes).toHaveLength(0);
+  });
   it("binds the authenticated account and approved USD amount, ignoring client identity/prices/mode", async () => {
     const response = await createOrder(request({ programSlug:"home-starter",locale:"en",userId:"attacker",amount_minor:1,test_mode:false }));
     expect(response.status).toBe(200);

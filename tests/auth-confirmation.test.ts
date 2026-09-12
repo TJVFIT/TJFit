@@ -8,6 +8,7 @@ vi.mock('next/headers',()=>({cookies:async()=>({getAll:()=>[{name:'pkce-verifier
 import {GET} from '@/app/[locale]/auth/callback/route';
 const locales:Locale[]=['en','tr','ar','es','fr'];
 beforeEach(()=>{
+ vi.stubEnv('NEXT_PUBLIC_SITE_URL','https://tjfit.org');
  vi.clearAllMocks();vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL','https://example.supabase.co');vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY','synthetic-anon');
  mocks.exchange.mockResolvedValue({data:{user:{id:'user-a'},session:{access_token:'synthetic-token'}},error:null});
  mocks.factory.mockImplementation((_url,_key,options)=>({auth:{exchangeCodeForSession:async(code:string)=>{
@@ -19,6 +20,16 @@ beforeEach(()=>{
 });
 afterEach(()=>vi.unstubAllEnvs());
 describe('email confirmation callback',()=>{
+ it.each(['','?code=one-time-code'])('keeps callback cookies on the configured preview alias %s',async(query)=>{
+  vi.stubEnv('NEXT_PUBLIC_SITE_URL','https://tonight--tjfit.netlify.app');
+  const response=await GET(new NextRequest('https://immutable-deploy--tjfit.netlify.app/en/auth/callback'+query,{headers:{'x-forwarded-host':'evil.example'}}),{params:Promise.resolve({locale:'en'})});
+  expect(new URL(response.headers.get('location')!).origin).toBe('https://tonight--tjfit.netlify.app');
+ });
+ it('fails closed before exchanging a code when callback origin configuration is invalid',async()=>{
+  vi.stubEnv('NEXT_PUBLIC_SITE_URL','https://user:password@wrong.example');
+  const response=await GET(new NextRequest('https://tjfit.org/en/auth/callback?code=one-time-code'),{params:Promise.resolve({locale:'en'})});
+  expect(response.status).toBe(503);expect(mocks.exchange).not.toHaveBeenCalled();
+ });
  it.each(locales)('exchanges %s PKCE code using cookie storage before resuming the full return path',async(locale)=>{
   const next=`/${locale}/ai?tab=my-plan&start=1&resume=1&intake=draft-id`;
   const response=await GET(new NextRequest(`https://tjfit.org/${locale}/auth/callback?code=one-time-code&next=${encodeURIComponent(next)}`),{params:Promise.resolve({locale})});

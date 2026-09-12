@@ -34,6 +34,7 @@ describe("Lemon payment boundaries", () => {
     ["preview", "", true], ["production", "deploy-preview", false],
     ["preview", "production", false]
   ])("limits production-built test checkouts to trusted preview context (%s / %s)", (vercel, netlify, allowed) => {
+    vi.stubEnv("ALLOW_TEST_CHECKOUT", "true");
     vi.stubEnv("NODE_ENV", "production"); vi.stubEnv("VERCEL_ENV", String(vercel)); vi.stubEnv("CONTEXT", String(netlify));
     vi.stubEnv("LEMON_MODE", "test"); vi.stubEnv("LEMON_TEST_API_KEY", "fake-test-key");
     vi.stubEnv("LEMON_TEST_WEBHOOK_SECRET", "fake-test-secret"); vi.stubEnv("LEMON_TEST_STORE_ID", "12");

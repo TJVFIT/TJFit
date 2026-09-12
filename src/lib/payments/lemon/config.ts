@@ -22,6 +22,8 @@ export function getLemonCheckoutConfig(): LemonConfig | null {
   const mode = process.env.LEMON_MODE ?? "test";
   if (mode !== "test" && mode !== "live") return null;
   const testMode = mode === "test";
+  // Adding test credentials must not silently open purchasing on a public preview.
+  if (testMode && process.env.ALLOW_TEST_CHECKOUT !== "true") return null;
   if (!testMode && process.env.LEMON_LIVE_ENABLED !== "true") return null;
   // Platform-owned server context only. Any explicit production context takes priority.
   const productionDeployment = process.env.VERCEL_ENV === "production" || process.env.CONTEXT === "production";

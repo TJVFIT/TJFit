@@ -9,6 +9,14 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
+# Retain the adapter's Image CDN route for manual --no-build deployments.
+# A 200 rewrite automatically preserves url, w, q and other query parameters.
+[[redirects]]
+  from = "/_next/image"
+  to = "/.netlify/images"
+  status = 200
+  force = false
+
 # Next.js is deployed by Netlify's automatic Next.js framework adapter.
 # Set all secrets in the host's environment UI, never in this file.
 # Keep the recovery worker disabled until SQL, ZDR and provider checks pass.

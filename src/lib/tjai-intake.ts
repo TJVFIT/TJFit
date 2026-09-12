@@ -58,6 +58,7 @@ function normalizeGoal(value: unknown): TjaiUserProfile["goal"] {
       ["recomposition", "recomposition"],
       ["improve fitness", "fitness"],
       ["fitness", "fitness"],
+      ["stay_active", "stay_active"],
       ["stay active", "stay_active"]
     ],
     "fat_loss"
