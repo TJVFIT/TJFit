@@ -21,6 +21,18 @@ beforeEach(() => {
 afterEach(() => { vi.unstubAllEnvs(); vi.clearAllMocks(); });
 
 describe("session response headers", () => {
+  it("allows the exact confirmation callback through the launch gate", async () => {
+    const response = await middleware(new NextRequest("https://tjfit.org/ar/auth/callback?code=synthetic-code", { headers: { accept: "text/html" } }));
+    expect(response.headers.get("location")).toBeNull();
+  });
+  it("preserves the full protected checkout return URL through sign-in", async () => {
+    vi.stubEnv("LAUNCH_GATE", "false");
+    const response = await middleware(new NextRequest("https://tjfit.org/en/checkout?orderId=order-a&intake=draft-a", { headers: { accept: "text/html" } }));
+    expect(response.status).toBe(307);
+    const location = new URL(response.headers.get("location")!);
+    expect(location.pathname).toBe("/en/login");
+    expect(location.searchParams.get("redirect")).toBe("/en/checkout?orderId=order-a&intake=draft-a");
+  });
   it("forwards refreshed cookies to downstream SSR in the same request", async () => {
     const request = new NextRequest("https://tjfit.org/tr/login", { headers: { accept: "text/html", cookie: "session-test=expired" } });
     const response = await middleware(request);

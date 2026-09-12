@@ -7,6 +7,11 @@ import { isSafeRedirect, sanitizeRedirectParam } from "@/lib/safe-redirect";
  * is a phishing vector, so the allow/deny behavior is pinned.
  */
 describe("isSafeRedirect", () => {
+  it("rejects routing normalization and backslash bypasses", () => {
+    for (const value of ["/en/../../api/secret", "/en/%2e%2e/api/secret", "/en/..%2fapi/secret", "/en/\\evil", "/en/ai\n", "/en/api", "/en/%61pi/private"]) {
+      expect(isSafeRedirect(value, "en"), value).toBe(false);
+    }
+  });
   it("allows same-locale internal paths", () => {
     expect(isSafeRedirect("/en", "en")).toBe(true);
     expect(isSafeRedirect("/en/ai", "en")).toBe(true);
@@ -43,6 +48,11 @@ describe("isSafeRedirect", () => {
 });
 
 describe("sanitizeRedirectParam", () => {
+  it("preserves existing query encoding after URLSearchParams has decoded the outer parameter", () => {
+    const target = "/en/ai?tab=my-plan&label=a%26b%3Dc&start=1&resume=1";
+    expect(sanitizeRedirectParam(new URLSearchParams({ redirect: target }).get("redirect"), "en")).toBe(target);
+    expect(sanitizeRedirectParam(encodeURIComponent(target), "en")).toBe(target);
+  });
   it("returns a decoded safe path", () => {
     expect(sanitizeRedirectParam("%2Fen%2Fai", "en")).toBe("/en/ai");
     expect(sanitizeRedirectParam("/en/tjai", "en")).toBe("/en/tjai");

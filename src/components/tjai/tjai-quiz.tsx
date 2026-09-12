@@ -14,6 +14,14 @@ import type { QuizAnswers, QuizOption, QuizStep, TJAICopy } from "@/lib/tjai-typ
 const QUIZ_PROGRESS_KEY = "tjai_quiz_progress";
 const QUIZ_PROGRESS_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 
+export const QUIZ_RECOVERY_COPY = {
+  en: { loading: "Loading your assessment…", options: "The answer choices could not be loaded. Reload this page to try again.", reload: "Reload assessment", of: "of" },
+  tr: { loading: "Değerlendirme yükleniyor…", options: "Yanıt seçenekleri yüklenemedi. Tekrar denemek için bu sayfayı yeniden yükle.", reload: "Değerlendirmeyi yeniden yükle", of: "/" },
+  ar: { loading: "جارٍ تحميل التقييم…", options: "تعذّر تحميل خيارات الإجابة. أعد تحميل الصفحة للمحاولة مجدداً.", reload: "أعد تحميل التقييم", of: "من" },
+  es: { loading: "Cargando tu evaluación…", options: "No se pudieron cargar las respuestas. Recarga la página para intentarlo de nuevo.", reload: "Recargar evaluación", of: "de" },
+  fr: { loading: "Chargement de votre questionnaire…", options: "Les choix de réponse n’ont pas pu être chargés. Rechargez la page pour réessayer.", reload: "Recharger le questionnaire", of: "sur" }
+} satisfies Record<Locale, Record<string, string>>;
+
 // Step-funnel beacon (fire-and-forget, drop-off analytics). One
 // quiz_step_reached per (quiz session, step id); the server derives drop-off
 // from each session's furthest step, so a lost or duplicate beacon can only
@@ -493,6 +501,7 @@ type Props = {
   direction: "ltr" | "rtl";
   onSubmit: (answers: QuizAnswers) => void;
   onAnswersChange?: (answers: QuizAnswers) => void;
+  initialAnswers?: QuizAnswers;
 };
 
 function matchesShowIf(step: QuizStep, answers: QuizAnswers): boolean {
@@ -517,13 +526,14 @@ function matchesShowIf(step: QuizStep, answers: QuizAnswers): boolean {
 function hasAnswer(step: QuizStep, answer: QuizAnswers[string] | undefined): boolean {
   if (step.type === "multi") return Array.isArray(answer) && answer.length > 0;
   if (step.type === "text") return typeof answer === "string" ? answer.trim().length > 0 : !step.required;
-  if (step.type === "number" || step.type === "slider" || step.type === "scale") return typeof answer === "number";
+  if (step.type === "number" || step.type === "slider" || step.type === "scale") return typeof answer === "number" && Number.isFinite(answer) && (step.min===undefined||answer>=step.min) && (step.max===undefined||answer<=step.max);
   if (typeof answer === "number" || typeof answer === "boolean") return true;
   return typeof answer === "string" && answer.trim().length > 0;
 }
 
-export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersChange }: Props) {
-  const [answers, setAnswers] = useState<QuizAnswers>({});
+export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersChange, initialAnswers }: Props) {
+  const recovery = QUIZ_RECOVERY_COPY[locale];
+  const [answers, setAnswers] = useState<QuizAnswers>(initialAnswers??{});
   const [idx, setIdx] = useState(0);
   const [showError, setShowError] = useState(false);
   const [shake, setShake] = useState(false);
@@ -741,7 +751,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
     return (
       <section className="relative min-h-[100svh] overflow-hidden bg-background px-4 py-6 text-white sm:py-10">
         <div className="mx-auto flex min-h-[50svh] w-full max-w-[640px] items-center justify-center">
-          <p className="text-sm text-muted">Loading quiz...</p>
+          <div className="space-y-4 text-center"><p role="status" className="text-sm text-muted">{recovery.loading}</p><button type="button" className="text-accent underline" onClick={() => window.location.reload()}>{recovery.reload}</button></div>
         </div>
       </section>
     );
@@ -899,8 +909,8 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
             : [];
       if (singleOptions.length === 0) {
         return (
-          <div className="rounded-[10px] border border-divider bg-surface p-4 text-sm text-muted">
-            This question failed to load options. Please tap Continue to move to the next question.
+          <div role="alert" className="space-y-3 rounded-[10px] border border-divider bg-surface p-4 text-sm text-muted">
+            <p>{recovery.options}</p><button type="button" className="text-accent underline" onClick={() => window.location.reload()}>{recovery.reload}</button>
           </div>
         );
       }
@@ -942,8 +952,8 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
       const multiOptions = Array.isArray(step.options) ? step.options : [];
       if (multiOptions.length === 0) {
         return (
-          <div className="rounded-[10px] border border-divider bg-surface p-4 text-sm text-muted">
-            This question failed to load options. Please tap Continue to move to the next question.
+          <div role="alert" className="space-y-3 rounded-[10px] border border-divider bg-surface p-4 text-sm text-muted">
+            <p>{recovery.options}</p><button type="button" className="text-accent underline" onClick={() => window.location.reload()}>{recovery.reload}</button>
           </div>
         );
       }
@@ -1198,7 +1208,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
       <div className="mx-auto flex min-h-[90svh] w-full max-w-[640px] flex-col">
         <div className="pt-1">
           <p className="text-[11px] uppercase tracking-[0.2em] text-accent">
-            {uiCopy.question} {questionNumber} of {total} · {categoryLabel}
+            {uiCopy.question} {questionNumber} {recovery.of} {total} · {categoryLabel}
           </p>
           <div className="h-[2px] overflow-hidden rounded-full bg-divider">
             <div

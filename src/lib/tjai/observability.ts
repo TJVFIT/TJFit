@@ -24,11 +24,11 @@ export async function withTiming<T>(trace: TjaiRunTrace, key: string, fn: () => 
 }
 
 export function logPipelineTrace(userId: string, trace: TjaiRunTrace): void {
-  if (!isTjaiDebugPipeline()) return;
-  console.log("[TJAI pipeline]", userId, JSON.stringify({ stages: trace.stages, timingsMs: trace.timingsMs, tokenUsage: trace.tokenUsage, errors: trace.errors }));
+  if (process.env.NODE_ENV === "production" || !isTjaiDebugPipeline()) return;
+  console.log("[TJAI pipeline]", {stageCount:trace.stages.length,timingsMs:trace.timingsMs});
 }
 
 export function logChatCoachContextBuilt(input: { userId: string; conversationId: string; historyTurns: number }): void {
-  if (!isTjaiDebugPipeline()) return;
-  console.log("[TJAI chat] context_built", input.userId, input.conversationId, "historyTurns=", input.historyTurns);
+  if (process.env.NODE_ENV === "production" || !isTjaiDebugPipeline()) return;
+  console.log("[TJAI chat] context_built", {historyTurns:input.historyTurns});
 }

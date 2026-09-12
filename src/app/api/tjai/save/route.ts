@@ -1,77 +1,18 @@
-import { NextResponse } from "next/server";
-
-import { normalizeQuizAnswers } from "@/lib/tjai-intake";
-import { getLatestTjaiPlan, saveTjaiStructuredMemory } from "@/lib/tjai-plan-store";
-import { requireAuth } from "@/lib/require-auth";
-
-export const dynamic = "force-dynamic";
-
-export async function POST(request: Request) {
-  try {
-    const auth = await requireAuth();
-    if (!auth.ok) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const body = await request.json().catch(() => null);
-    const { plan, answers, metrics } = body ?? {};
-    if (!plan || !answers) {
-      return NextResponse.json({ error: "Missing payload" }, { status: 400 });
-    }
-
-    const normalizedAnswers = normalizeQuizAnswers(answers as Record<string, unknown>);
-    const latest = await getLatestTjaiPlan(auth.supabase, auth.user.id);
-    const payload = {
-      user_id: auth.user.id,
-      plan_json: plan,
-      answers_json: normalizedAnswers,
-      metrics_json: metrics ?? null,
-      updated_at: new Date().toISOString()
-    };
-    const { error } = latest?.id
-      ? await auth.supabase.from("saved_tjai_plans").update(payload).eq("id", latest.id)
-      : await auth.supabase.from("saved_tjai_plans").insert(payload);
-
-    if (error) {
-      // Log the full Postgres error server-side; don't leak raw error.message
-      // (table names, columns, constraint text) to the client.
-      console.error("[TJAI Save POST] DB error:", error.message, error.code);
-      return NextResponse.json(
-        {
-          error: "Failed to save plan",
-          code: error.code ?? "db_error"
-        },
-        { status: 500 }
-      );
-    }
-    void saveTjaiStructuredMemory(auth.supabase, auth.user.id, normalizedAnswers, "save");
-    return NextResponse.json({ ok: true });
-  } catch (err) {
-    console.error("[TJAI Save POST] Crash:", err);
-    return NextResponse.json(
-      {
-        error: "Save failed",
-        code: "save_crash"
-      },
-      { status: 500 }
-    );
-  }
+import {NextResponse} from 'next/server';
+import {requireAuth} from '@/lib/require-auth';
+export const dynamic='force-dynamic';
+export async function GET(){
+ const auth=await requireAuth();if(!auth.ok)return auth.response;
+ const result=await auth.supabase.from('saved_tjai_plans').select('*').eq('user_id',auth.user.id).order('version_number',{ascending:false}).order('created_at',{ascending:false}).limit(1).maybeSingle();
+ if(result.error)return NextResponse.json({error:'plan_load_failed'},{status:503});
+ return NextResponse.json({plan:result.data,plans:result.data?[result.data]:[]},{headers:{'Cache-Control':'no-store'}});
 }
-
-export async function GET() {
-  try {
-    const auth = await requireAuth();
-    if (!auth.ok) {
-      // Not logged in — return null plan, never 500
-      return NextResponse.json({ plan: null, plans: [] });
-    }
-
-    const data = await getLatestTjaiPlan(auth.supabase, auth.user.id);
-
-    return NextResponse.json({ plan: data ?? null, plans: data ? [data] : [] });
-  } catch (err) {
-    console.error("[TJAI Save GET] Crash:", err);
-    return NextResponse.json({ plan: null, plans: [] });
-  }
+export async function POST(request:Request){
+ const auth=await requireAuth();if(!auth.ok)return auth.response;
+ const body=await request.json().catch(()=>null);
+ if(typeof body?.planId!=='string')return NextResponse.json({error:'server_generated_plans_only'},{status:400});
+ const result=await auth.supabase.from('saved_tjai_plans').select('id').eq('id',body.planId).eq('user_id',auth.user.id).single();
+ if(result.error)return NextResponse.json({error:'plan_not_found'},{status:404});
+ return NextResponse.json({ok:true,planId:result.data.id});
 }
 

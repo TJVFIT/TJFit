@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 
 import { CookieConsentBanner } from "@/components/cookie-consent";
-import { Heartbeat } from "@/components/living/heartbeat";
 import { LocaleDocument } from "@/components/locale-document";
 import { SiteShell } from "@/components/site-shell";
 import { PageTransition } from "@/components/transitions/PageTransition";
 import { DeviceProvider } from "@/lib/device/DeviceContext";
 import { BRAND } from "@/lib/brand-assets";
+import { PUBLIC_COPY } from "@/lib/public-offers-copy";
 import {
   LOCALE_META,
   getDirection,
@@ -24,19 +24,19 @@ export function generateStaticParams() {
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://tjfit.org";
 
 const TITLES: Record<Locale, string> = {
-  en: "TJFit — AI Fitness Programs, Coaching & Nutrition | Transform Your Body",
-  tr: "TJFit — Yapay Zeka Fitness Programları ve Koçluk | Vücudunu Dönüştür",
-  ar: "TJFit — برامج اللياقة بالذكاء الاصطناعي والتدريب | حوّل جسدك",
-  es: "TJFit — Programas de Fitness con IA y Coaching | Transforma Tu Cuerpo",
-  fr: "TJFit — Programmes Fitness IA et Coaching | Transformez Votre Corps"
+  en: "TJFit — Bundles, TJAI & Equipment",
+  tr: "TJFit — Paketler, TJAI ve Ekipman",
+  ar: "TJFit — الحزم وTJAI والمعدات",
+  es: "TJFit — Paquetes, TJAI y Equipo",
+  fr: "TJFit — Packs, TJAI et Équipement"
 };
 
 const DESCRIPTIONS: Record<Locale, string> = {
-  en: "12-week fitness programs, certified coaches, and TJAI — quiz preview is free; pay to unlock your full AI plan. 5 languages.",
-  tr: "12 haftalık programlar, sertifikalı koçlar ve TJAI — quiz ön izlemesi ücretsiz; tam plan ücretli. 5 dil.",
-  ar: "برامج لياقة لمدة 12 أسبوعاً، ومدربون معتمدون، وـTJAI — معاينة الاختبار مجانية؛ ادفع لخطتك الكاملة. 5 لغات.",
-  es: "Programas de 12 semanas, coaches certificados y TJAI — vista previa del cuestionario gratis; paga por el plan completo. 5 idiomas.",
-  fr: "Programmes 12 semaines, coachs certifies et TJAI — aperçu gratuit ; plan complet payant. 5 langues."
+  en: PUBLIC_COPY.en.intro,
+  tr: PUBLIC_COPY.tr.intro,
+  ar: PUBLIC_COPY.ar.intro,
+  es: PUBLIC_COPY.es.intro,
+  fr: PUBLIC_COPY.fr.intro
 };
 
 /** BCP-47 tags for `<html lang>` and OG locale. */
@@ -112,10 +112,6 @@ export default async function LocaleLayout(
     <div dir={direction} lang={routing}>
       <LocaleDocument locale={routing} direction={direction} />
       <DeviceProvider>
-        {/* v3 living-organism: heartbeat sits above all content,
-            below the cookie banner, hidden under reduced-motion.
-            See src/components/living/heartbeat.tsx. */}
-        <Heartbeat />
         <SiteShell locale={copy}>
           <PageTransition>{children}</PageTransition>
         </SiteShell>

@@ -279,8 +279,9 @@ export async function runPlanGenerationPipeline(input: PlanGenerationPipelineInp
     .select("id")
     .maybeSingle();
 
-  if (saveError) {
-    appendTraceError(trace, saveError.message);
+  if (saveError || !savedPlan?.id) {
+    appendTraceError(trace, "plan_save_failed");
+    return {ok:false,status:503,error:"Plan could not be saved. Please retry.",trace};
   }
 
   void recordPlanGeneration(

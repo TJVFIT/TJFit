@@ -1,0 +1,21 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Next.js is deployed by Netlify's automatic Next.js framework adapter.
+# Set all secrets in the host's environment UI, never in this file.
+# Keep the recovery worker disabled until SQL, ZDR and provider checks pass.
+[context.deploy-preview.environment]
+  LEMON_LIVE_ENABLED = "false"
+  TJAI_WORKER_ENABLED = "false"
+
+[context.branch-deploy.environment]
+  LEMON_LIVE_ENABLED = "false"
+  TJAI_WORKER_ENABLED = "false"

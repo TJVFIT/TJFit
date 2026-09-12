@@ -13,6 +13,10 @@ import type { BundleGoal } from "@/lib/bundles";
 type FilterKey = "all" | BundleGoal;
 
 export type BundleDetailCopy = {
+  startProgram: string;
+  startProgramAria: (name: string) => string;
+  sectionNavAria: string;
+  weekLabel: string;
   metaFallbackTitle: string;
   backToAll: string;
   askTjai: string;
@@ -34,6 +38,8 @@ export type BundleDetailCopy = {
   sampleDayNote: string;
   readyEyebrow: string;
   readyTitle: string;
+  accessEyebrow: string;
+  accessTitle: string;
   downloadDossierAria: string;
   shareIdle: string;
   shareShared: string;
@@ -85,6 +91,7 @@ export type BundlesCopy = {
   download: string;
   details: string;
   buy: string;
+  free: string;
   getFree: string;
   processing: string;
   footnoteFree: string;
@@ -110,9 +117,9 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     eyebrow: "Bundles",
     title: (count) => `${count} bundles. One way to train.`,
     lead: "Each bundle pairs a 12-week training protocol with a matching diet system, delivered as a branded PDF dossier. Pick the goal — we built the rest.",
-    coachEyebrow: "For coaches & affiliates",
+    coachEyebrow: "Using your bundle",
     coachBody:
-      "Each PDF dossier is generated from the same blueprint that powers TJAI. Print it, mail it, white-label sections in your own coaching workflow — your TJFit purchase grants you a personal-use license.",
+      "Your bundle includes training and nutrition PDFs for your personal use. You may download and print your copy. Resale, redistribution and rebranding are not included in the personal-use license.",
     filterAria: "Filter bundles by goal",
     filterLabels: {
       all: "All",
@@ -131,6 +138,7 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     download: "Download PDF",
     details: "Details",
     buy: "Buy",
+    free: "Free",
     getFree: "Get free",
     processing: "Processing…",
     footnoteFree: "Free with sign-in · branded dossier · A4 print-ready",
@@ -140,6 +148,10 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     downloadAria: (name) => `Download ${name} PDF`,
     detailsAria: (name) => `Open ${name} details`,
     detail: {
+      startProgram: "Start Program",
+      startProgramAria: (name) => `Start ${name}`,
+      sectionNavAria: "On this page",
+      weekLabel: "Week",
       metaFallbackTitle: "Bundle · TJFit",
       backToAll: "All bundles",
       askTjai: "Ask TJAI which to pick",
@@ -163,6 +175,8 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
         "Adjust portions to hit your targets. A template, not a prescription.",
       readyEyebrow: "Ready to start",
       readyTitle: "Download the dossier and run it today.",
+      accessEyebrow: "Bundle access",
+      accessTitle: "Review availability and sign-in options.",
       downloadDossierAria: "Download bundle PDF",
       shareIdle: "Share",
       shareShared: "Shared",
@@ -213,9 +227,9 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     eyebrow: "Paketler",
     title: (count) => `${count} paket. Tek bir antrenman yolu.`,
     lead: "Her paket, 12 haftalık bir antrenman protokolünü uyumlu bir diyet sistemiyle eşleştirir ve markalı bir PDF dosyası olarak sunulur. Hedefi seç — gerisini biz kurduk.",
-    coachEyebrow: "Koçlar ve ortaklar için",
+    coachEyebrow: "Paketini kullanma",
     coachBody:
-      "Her PDF dosyası, TJAI'yi çalıştıran aynı şablondan üretilir. Yazdır, gönder, kendi koçluk akışında bölümleri kendi markanla kullan — TJFit satın alımın sana kişisel kullanım lisansı verir.",
+      "Paketin, kişisel kullanımın için antrenman ve beslenme PDF’leri içerir. Kopyanı indirebilir ve yazdırabilirsin. Kişisel kullanım lisansı yeniden satış, yeniden dağıtım veya yeniden markalamayı kapsamaz.",
     filterAria: "Paketleri hedefe göre filtrele",
     filterLabels: {
       all: "Tümü",
@@ -234,6 +248,7 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     download: "PDF indir",
     details: "Detaylar",
     buy: "Satın al",
+    free: "Ücretsiz",
     getFree: "Ücretsiz al",
     processing: "İşleniyor…",
     footnoteFree: "Girişle ücretsiz · markalı dosya · A4 baskıya hazır",
@@ -243,6 +258,10 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     downloadAria: (name) => `${name} PDF dosyasını indir`,
     detailsAria: (name) => `${name} detaylarını aç`,
     detail: {
+      startProgram: "Programı başlat",
+      startProgramAria: (name) => `${name} programını başlat`,
+      sectionNavAria: "Bu sayfada",
+      weekLabel: "Hafta",
       metaFallbackTitle: "Paket · TJFit",
       backToAll: "Tüm paketler",
       askTjai: "Hangisini seçeceğini TJAI'ye sor",
@@ -266,6 +285,8 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
         "Porsiyonları hedeflerine göre ayarla. Bir reçete değil, bir şablon.",
       readyEyebrow: "Başlamaya hazır",
       readyTitle: "Dosyayı indir ve bugün uygulamaya başla.",
+      accessEyebrow: "Pakete erişim",
+      accessTitle: "Erişim durumunu ve giriş seçeneklerini incele.",
       downloadDossierAria: "Paket PDF'sini indir",
       shareIdle: "Paylaş",
       shareShared: "Paylaşıldı",
@@ -316,9 +337,9 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     eyebrow: "الحزم",
     title: (count) => `${count} حزمة. طريق واحد للتدريب.`,
     lead: "تجمع كل حزمة بروتوكول تدريب لمدة 12 أسبوعاً مع نظام غذائي متوافق، وتُسلَّم كملف PDF يحمل العلامة. اختر الهدف — وقد بنينا الباقي.",
-    coachEyebrow: "للمدربين والشركاء",
+    coachEyebrow: "استخدام باقتك",
     coachBody:
-      "يُنشأ كل ملف PDF من المخطط نفسه الذي يشغّل TJAI. اطبعه، أرسله، وأضف علامتك على الأقسام ضمن سير عملك التدريبي — يمنحك شراؤك من TJFit ترخيص استخدام شخصي.",
+      "تتضمن باقتك ملفات PDF للتدريب والتغذية لاستخدامك الشخصي. يمكنك تنزيل نسختك وطباعتها. لا يشمل ترخيص الاستخدام الشخصي إعادة البيع أو إعادة التوزيع أو تغيير العلامة التجارية.",
     filterAria: "تصفية الحزم حسب الهدف",
     filterLabels: {
       all: "الكل",
@@ -337,6 +358,7 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     download: "تنزيل PDF",
     details: "التفاصيل",
     buy: "اشترِ",
+    free: "مجاني",
     getFree: "احصل عليه مجاناً",
     processing: "جارٍ المعالجة…",
     footnoteFree: "مجاني مع تسجيل الدخول · ملف بالعلامة · جاهز للطباعة A4",
@@ -346,6 +368,10 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     downloadAria: (name) => `تنزيل ملف ${name} بصيغة PDF`,
     detailsAria: (name) => `فتح تفاصيل ${name}`,
     detail: {
+      startProgram: "ابدأ البرنامج",
+      startProgramAria: (name) => `ابدأ برنامج ${name}`,
+      sectionNavAria: "في هذه الصفحة",
+      weekLabel: "الأسبوع",
       metaFallbackTitle: "حزمة · TJFit",
       backToAll: "كل الحزم",
       askTjai: "اسأل TJAI أيها تختار",
@@ -369,6 +395,8 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
         "اضبط الحصص لتحقيق أهدافك. قالب، وليس وصفة.",
       readyEyebrow: "جاهز للبدء",
       readyTitle: "نزّل الملف وابدأ تطبيقه اليوم.",
+      accessEyebrow: "الوصول إلى الحزمة",
+      accessTitle: "راجع حالة التوفر وخيارات تسجيل الدخول.",
       downloadDossierAria: "تنزيل ملف الحزمة بصيغة PDF",
       shareIdle: "مشاركة",
       shareShared: "تمت المشاركة",
@@ -419,9 +447,9 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     eyebrow: "Paquetes",
     title: (count) => `${count} paquetes. Una sola forma de entrenar.`,
     lead: "Cada paquete combina un protocolo de entrenamiento de 12 semanas con un sistema de dieta a juego, entregado como un dossier PDF de marca. Elige el objetivo — el resto ya lo construimos.",
-    coachEyebrow: "Para coaches y afiliados",
+    coachEyebrow: "Usar tu paquete",
     coachBody:
-      "Cada dossier PDF se genera con el mismo blueprint que impulsa TJAI. Imprímelo, envíalo, etiqueta secciones con tu marca en tu propio flujo de coaching — tu compra en TJFit te otorga una licencia de uso personal.",
+      "Tu paquete incluye PDF de entrenamiento y nutrición para uso personal. Puedes descargar e imprimir tu copia. La licencia de uso personal no incluye reventa, redistribución ni cambio de marca.",
     filterAria: "Filtrar paquetes por objetivo",
     filterLabels: {
       all: "Todos",
@@ -440,6 +468,7 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     download: "Descargar PDF",
     details: "Detalles",
     buy: "Comprar",
+    free: "Gratis",
     getFree: "Obtener gratis",
     processing: "Procesando…",
     footnoteFree: "Gratis con inicio de sesión · dossier de marca · listo para imprimir A4",
@@ -449,6 +478,10 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     downloadAria: (name) => `Descargar el PDF de ${name}`,
     detailsAria: (name) => `Abrir los detalles de ${name}`,
     detail: {
+      startProgram: "Iniciar programa",
+      startProgramAria: (name) => `Iniciar ${name}`,
+      sectionNavAria: "En esta página",
+      weekLabel: "Semana",
       metaFallbackTitle: "Paquete · TJFit",
       backToAll: "Todos los paquetes",
       askTjai: "Pregunta a TJAI cuál elegir",
@@ -472,6 +505,8 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
         "Ajusta las porciones para alcanzar tus objetivos. Una plantilla, no una receta.",
       readyEyebrow: "Listo para empezar",
       readyTitle: "Descarga el dossier y empiézalo hoy.",
+      accessEyebrow: "Acceso al paquete",
+      accessTitle: "Consulta la disponibilidad y las opciones de inicio de sesión.",
       downloadDossierAria: "Descargar el PDF del paquete",
       shareIdle: "Compartir",
       shareShared: "Compartido",
@@ -522,9 +557,9 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     eyebrow: "Packs",
     title: (count) => `${count} packs. Une seule façon de s'entraîner.`,
     lead: "Chaque pack associe un protocole d'entraînement de 12 semaines à un système de diète assorti, livré en dossier PDF de marque. Choisis l'objectif — on a construit le reste.",
-    coachEyebrow: "Pour coachs et affiliés",
+    coachEyebrow: "Utiliser ton pack",
     coachBody:
-      "Chaque dossier PDF est généré à partir du même blueprint qui propulse TJAI. Imprime-le, envoie-le, appose ta marque sur des sections dans ton propre flux de coaching — ton achat TJFit t'accorde une licence d'usage personnel.",
+      "Ton pack comprend des PDF d’entraînement et de nutrition pour ton usage personnel. Tu peux télécharger et imprimer ta copie. La licence personnelle n’inclut ni revente, ni redistribution, ni changement de marque.",
     filterAria: "Filtrer les packs par objectif",
     filterLabels: {
       all: "Tous",
@@ -543,6 +578,7 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     download: "Télécharger le PDF",
     details: "Détails",
     buy: "Acheter",
+    free: "Gratuit",
     getFree: "Obtenir gratuitement",
     processing: "Traitement…",
     footnoteFree: "Gratuit avec connexion · dossier de marque · prêt à imprimer A4",
@@ -552,6 +588,10 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
     downloadAria: (name) => `Télécharger le PDF de ${name}`,
     detailsAria: (name) => `Ouvrir les détails de ${name}`,
     detail: {
+      startProgram: "Commencer le programme",
+      startProgramAria: (name) => `Commencer ${name}`,
+      sectionNavAria: "Sur cette page",
+      weekLabel: "Semaine",
       metaFallbackTitle: "Pack · TJFit",
       backToAll: "Tous les packs",
       askTjai: "Demande à TJAI lequel choisir",
@@ -575,6 +615,8 @@ const COPY: Record<"en" | "tr" | "ar" | "es" | "fr", BundlesCopy> = {
         "Ajuste les portions pour atteindre tes objectifs. Un modèle, pas une prescription.",
       readyEyebrow: "Prêt à commencer",
       readyTitle: "Télécharge le dossier et lance-le dès aujourd'hui.",
+      accessEyebrow: "Accès au pack",
+      accessTitle: "Consulte la disponibilité et les options de connexion.",
       downloadDossierAria: "Télécharger le PDF du pack",
       shareIdle: "Partager",
       shareShared: "Partagé",

@@ -41,14 +41,14 @@ const nextConfig = {
   async headers() {
     const cspReportOnly = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://www.googletagmanager.com https://connect.facebook.net https://analytics.tiktok.com",
+      "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://app.lemonsqueezy.com https://www.googletagmanager.com https://connect.facebook.net https://analytics.tiktok.com",
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https://images.unsplash.com https://kohuiyqyixvrcqeepalz.supabase.co https://www.googletagmanager.com https://*.google-analytics.com https://www.facebook.com",
       "font-src 'self' data:",
-      "connect-src 'self' https://kohuiyqyixvrcqeepalz.supabase.co wss://kohuiyqyixvrcqeepalz.supabase.co https://*.google-analytics.com https://analytics.tiktok.com https://www.facebook.com https://*.sentry.io https://prod.spline.design",
+      "connect-src 'self' https://app.lemonsqueezy.com https://tjfit.lemonsqueezy.com https://kohuiyqyixvrcqeepalz.supabase.co wss://kohuiyqyixvrcqeepalz.supabase.co https://*.google-analytics.com https://analytics.tiktok.com https://www.facebook.com https://*.sentry.io https://prod.spline.design",
       "media-src 'self' blob: data: https://kohuiyqyixvrcqeepalz.supabase.co",
       "worker-src 'self' blob:",
-      "frame-src 'self'",
+      "frame-src 'self' https://app.lemonsqueezy.com https://tjfit.lemonsqueezy.com",
       "frame-ancestors 'self'",
       "base-uri 'self'",
       "form-action 'self'",

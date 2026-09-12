@@ -27,6 +27,8 @@ const LABELS: Record<
   >
 > = {
   en: {
+    bundles: "Bundles",
+    tjai: "TJAI",
     programs: "Programs",
     diets: "Diets",
     coaches: "Coaches",
@@ -58,6 +60,8 @@ const LABELS: Record<
     ready: "Ready"
   },
   tr: {
+    bundles: "Paketler",
+    tjai: "TJAI",
     programs: "Programlar",
     diets: "Diyetler",
     coaches: "Koçlar",
@@ -89,6 +93,8 @@ const LABELS: Record<
     ready: "Hazır"
   },
   ar: {
+    bundles: "الحزم",
+    tjai: "TJAI",
     programs: "البرامج",
     diets: "الأنظمة الغذائية",
     coaches: "المدربون",
@@ -120,6 +126,8 @@ const LABELS: Record<
     ready: "جاهز"
   },
   es: {
+    bundles: "Paquetes",
+    tjai: "TJAI",
     programs: "Programas",
     diets: "Dietas",
     coaches: "Coaches",
@@ -151,6 +159,8 @@ const LABELS: Record<
     ready: "Listo"
   },
   fr: {
+    bundles: "Packs",
+    tjai: "TJAI",
     programs: "Programmes",
     diets: "Régimes",
     coaches: "Coachs",
@@ -186,11 +196,13 @@ const LABELS: Record<
 const G: ShellNavGroupDef[] = [
   {
     items: [
+      { id: "bundles", href: (b) => `${b}/bundles` },
+      { id: "tjai", href: (b) => `${b}/tjai` },
+      { id: "equipment", href: (b) => `${b}/store` },
       { id: "programs", href: (b) => `${b}/programs` },
       { id: "diets", href: (b) => `${b}/diets` },
       { id: "coaches", href: (b) => `${b}/coaches` },
       { id: "calculator", href: (b) => `${b}/calculator` },
-      { id: "equipment", href: (b) => `${b}/store` },
       { id: "uploadProgram", href: (b) => `${b}/programs/upload`, coachOnly: true }
     ]
   },

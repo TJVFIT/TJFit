@@ -1,6 +1,7 @@
 import type { CheckoutPaymentAdapter } from "@/lib/payments/adapters/types";
 import { gumroadCheckoutAdapter } from "@/lib/payments/adapters/gumroad-checkout-adapter";
 import { testCheckoutAdapter } from "@/lib/payments/adapters/test-adapter";
+import { lemonCheckoutAdapter } from "./lemon-checkout-adapter";
 import type { PaymentProviderId } from "@/lib/payments/types";
 import {
   isGumroadCheckoutStored,
@@ -9,6 +10,7 @@ import {
 
 export function getCheckoutPaymentAdapter(providerId: PaymentProviderId): CheckoutPaymentAdapter {
   if (providerId === "test") return testCheckoutAdapter;
+  if (providerId === "lemonsqueezy") return lemonCheckoutAdapter;
   return gumroadCheckoutAdapter;
 }
 
@@ -19,6 +21,7 @@ export function getCheckoutPaymentAdapter(providerId: PaymentProviderId): Checko
  */
 export function getCheckoutAdapterForStoredProvider(stored: string): CheckoutPaymentAdapter | null {
   if (stored === "test") return testCheckoutAdapter;
+  if (stored === "lemonsqueezy") return lemonCheckoutAdapter;
   if (isGumroadCheckoutStored(stored) || isLegacyCheckoutStored(stored)) {
     return gumroadCheckoutAdapter;
   }

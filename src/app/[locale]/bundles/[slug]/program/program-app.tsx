@@ -892,7 +892,7 @@ function ProgressTab({
               <div
                 key={w}
                 className="flex-1 rounded-t"
-                title={`Week ${w}: ${Math.round(v)}`}
+                title={`${t.tabs.week} ${w}: ${Math.round(v)}`}
                 style={{
                   height: `${h}%`,
                   background: isCurrent
@@ -906,8 +906,8 @@ function ProgressTab({
           })}
         </div>
         <div className="mt-2 flex justify-between font-mono text-[10px] text-faint">
-          <span>W1</span>
-          <span>W{totalWeeks}</span>
+          <span>{t.tabs.week} 1</span>
+          <span>{t.tabs.week} {totalWeeks}</span>
         </div>
       </div>
 

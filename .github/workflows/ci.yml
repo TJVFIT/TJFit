@@ -1,9 +1,7 @@
 name: CI
 
-# Vercel's `next build` already enforces TypeScript and ESLint on deploy, but it
-# does not run the unit tests or the i18n parity check. This workflow gates
-# those (plus type/lint as fast pre-deploy feedback) so regressions are caught
-# before they reach main → production.
+# Keep source checks independent of host deployment and account activation.
+# Production builds and provider acceptance are separate release gates.
 
 on:
   push:
@@ -23,7 +21,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install dependencies

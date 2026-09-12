@@ -88,7 +88,7 @@ MealObject fields: name,time,foods,calories,protein,carbs,fat,prepNote,recipe`
     return NextResponse.json({ alternatives: parsed.alternatives ?? [] });
   } catch (error) {
     // Don't leak raw provider/network error text to clients.
-    console.error("[tjai/swap-meal] generation failed", error);
+    console.error("[tjai/swap-meal] generation failed");
     return NextResponse.json({ error: "Swap generation failed" }, { status: 500 });
   }
 }

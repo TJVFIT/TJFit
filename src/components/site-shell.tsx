@@ -1,10 +1,6 @@
 "use client";
 
-import { ReactNode, useState } from "react";
-import { usePathname } from "next/navigation";
-
-import { GuestOnboardingPopup } from "@/components/guest-onboarding-popup";
-import { LogoIntro } from "@/components/logo-intro";
+import { ReactNode } from "react";
 import { MainErrorBoundary } from "@/components/main-error-boundary";
 import { PageTransition } from "@/components/page-transition";
 import { ScrollRevealInit } from "@/components/scroll-reveal-init";
@@ -15,50 +11,27 @@ import { SiteTopBar } from "@/components/shell/site-top-bar";
 import { DynamicIslandProvider } from "@/components/ui/dynamic-island";
 import { PendingNotificationPoller } from "@/components/pending-notification-poller";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
-import { isSupportedLocale, type Locale } from "@/lib/i18n";
+import type { Locale } from "@/lib/i18n";
+import { PUBLIC_COPY } from "@/lib/public-offers-copy";
 
-export function SiteShell({
-  locale,
-  children
-}: {
-  locale: Locale;
-  children: ReactNode;
-}) {
-  const pathname = usePathname();
-  const [, routeLocale, section] = (pathname ?? "").split("/");
-  const isEquipmentRoute = Boolean(routeLocale && isSupportedLocale(routeLocale)
-    && (section === "store" || section === "equipment"));
-  const [introDone, setIntroDone] = useState(false);
-  const contentVisible = isEquipmentRoute || introDone;
-
-  const handleIntroComplete = () => {
-    setIntroDone(true);
-  };
-
+export function SiteShell({ locale, children }: { locale: Locale; children: ReactNode }) {
   return (
     <DynamicIslandProvider>
       <PendingNotificationPoller />
       <div className="min-h-screen overflow-x-hidden bg-background text-text">
-        {!contentVisible ? <LogoIntro locale={locale} onComplete={handleIntroComplete} /> : null}
-        <ScrollToTop />
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:start-3 focus:top-3 focus:z-[80] focus:rounded-md focus:bg-violet-200 focus:px-5 focus:py-3 focus:text-black">{PUBLIC_COPY[locale].skip}</a>
+        <ScrollToTop locale={locale} />
         <ScrollRevealInit />
         <SiteTopBar locale={locale} />
         <SiteSideOverlay locale={locale} />
         <ShellNoticeGate locale={locale} />
-        {!isEquipmentRoute ? <GuestOnboardingPopup locale={locale} /> : null}
-
-        <div className={`transition-opacity duration-400 ${contentVisible ? "opacity-100" : "opacity-0"}`}>
+        <div className="opacity-100">
           <MainErrorBoundary>
-            <main
-              className="relative z-[1] min-w-0 pt-14 sm:pt-16"
-            >
+            <main id="main-content" tabIndex={-1} className="relative z-[1] min-w-0 pt-28 outline-none lg:pt-16">
               <PageTransition>{children}</PageTransition>
             </main>
           </MainErrorBoundary>
-
-          <div>
-            <ShellFooterGate locale={locale} />
-          </div>
+          <ShellFooterGate locale={locale} />
         </div>
       </div>
     </DynamicIslandProvider>

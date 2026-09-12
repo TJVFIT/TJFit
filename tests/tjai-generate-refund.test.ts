@@ -1,184 +1,41 @@
-/**
- * TJAI generate route — credit refund safety.
- *
- * Verifies the try/finally refund flow added in `a526f7c`:
- *   - Refund FIRES when the pipeline returns { ok: false }
- *   - Refund FIRES when an uncaught exception is thrown mid-pipeline
- *   - Refund FIRES on 4xx early-returns after credit consume (e.g. invalid payload)
- *   - Refund DOES NOT FIRE on successful delivery
- *   - Refund DOES NOT double-fire (idempotency guard)
- *
- * Note: a true Vercel-timeout is impossible to simulate in a unit test
- * because it's an external process kill. Throwing mid-await is the
- * closest behavioral proxy and exercises the same finally code path.
- */
-
-import { describe, it, expect, vi, beforeEach } from "vitest";
-
-// ---- Mock factories (declared before route import so vi.mock hoists correctly) ----
-
-const mockRpc = vi.fn();
-const mockFromBuilder = () => ({
-  select: vi.fn().mockReturnThis(),
-  eq: vi.fn().mockReturnThis(),
-  order: vi.fn().mockReturnThis(),
-  limit: vi.fn().mockReturnThis(),
-  maybeSingle: vi.fn().mockResolvedValue({ data: null }),
-  insert: vi.fn().mockResolvedValue({ data: null, error: null })
+/** Durable generation safety: validation never spends a credit; PostgreSQL owns reservation/refund. */
+import {beforeEach,describe,expect,it,vi} from 'vitest';
+import {NextRequest} from 'next/server';
+const mocks=vi.hoisted(()=>({rpc:vi.fn(),access:vi.fn(),dispatch:vi.fn(),auth:vi.fn(),provider:vi.fn(),pass:vi.fn(),legacy:vi.fn()}));
+const admin={rpc:mocks.rpc,from:vi.fn(()=>({select:vi.fn().mockReturnThis(),eq:vi.fn().mockReturnThis(),single:vi.fn().mockResolvedValue({data:{answers_json:{s1_age:29,s1_height:175,s1_weight:80}},error:null})}))};
+vi.mock('@/lib/require-auth',()=>({requireAuth:mocks.auth}));
+vi.mock('@/lib/supabase-server',()=>({getSupabaseServerClient:()=>admin}));
+vi.mock('@/lib/tjai/server-access',()=>({getTjaiServerAccess:mocks.access}));
+vi.mock('@/lib/tjai/worker-dispatch',()=>({dispatchTjaiWorker:mocks.dispatch}));
+vi.mock('@/lib/tjai-pass',()=>({getTjaiPassAccess:mocks.pass}));
+vi.mock('@/lib/tjai/legacy-access',()=>({getTjaiLegacyAccess:mocks.legacy}));
+vi.mock('@/lib/tjai/free-provider',async original=>({...await original<typeof import('@/lib/tjai/free-provider')>(),callFreeGroq:mocks.provider}));
+vi.mock('@/lib/tjai/compact-plan',()=>({compactPrompt:()=>({system:'test',user:'test'}),expandCompactPlan:()=>({plan:{summary:{}},metrics:{}})}));
+import {POST} from '@/app/api/tjai/generate/route';
+import {processNextTjaiJob} from '@/lib/tjai/jobs';
+import {TjaiProviderError} from '@/lib/tjai/free-provider';
+const user='11111111-1111-4111-8111-111111111111',intake='22222222-2222-4222-8222-222222222222',requestId='33333333-3333-4333-8333-333333333333';
+const request=(body:unknown)=>new NextRequest('https://local.invalid/api/tjai/generate',{method:'POST',body:JSON.stringify(body),headers:{'Content-Type':'application/json'}});
+const queued={id:requestId,user_id:user,intake_id:intake,kind:'credit',status:'queued'};
+const claimed={...queued,status:'running',lease_token:'44444444-4444-4444-8444-444444444444'};
+beforeEach(()=>{vi.clearAllMocks();mocks.rpc.mockReset();mocks.auth.mockResolvedValue({ok:true,user:{id:user}});mocks.access.mockResolvedValue({available:true,providerReady:true,workerReady:true,mode:'credit'});mocks.dispatch.mockResolvedValue(true);mocks.pass.mockResolvedValue({available:true,hasPass:true});mocks.legacy.mockResolvedValue({available:true,hasAccess:true});mocks.provider.mockResolvedValue('{}');});
+describe('durable generation request safety',()=>{
+ it('ignores a new-pass customer trying to choose legacy mode in the request',async()=>{mocks.access.mockResolvedValue({available:true,providerReady:true,workerReady:true,mode:'pass'});mocks.rpc.mockResolvedValue({data:queued,error:null});await POST(request({intakeId:intake,requestId,mode:'legacy'}));expect(mocks.rpc.mock.calls[0][1].p_mode).toBe('pass');});
+ it('rejects invalid input before reserving or refunding credits',async()=>{expect((await POST(request(null))).status).toBe(400);expect(mocks.rpc).not.toHaveBeenCalled();expect(mocks.dispatch).not.toHaveBeenCalled();});
+ it('rejects unavailable provider and worker before enqueue',async()=>{mocks.access.mockResolvedValueOnce({available:true,providerReady:false,workerReady:true,mode:'credit'});expect((await POST(request({intakeId:intake,requestId}))).status).toBe(503);mocks.access.mockResolvedValueOnce({available:true,providerReady:true,workerReady:false,mode:'credit'});expect((await POST(request({intakeId:intake,requestId}))).status).toBe(503);expect(mocks.rpc).not.toHaveBeenCalled();});
+ it('delegates credit reservation to the single transactional enqueue RPC',async()=>{mocks.rpc.mockResolvedValue({data:queued,error:null});const r=await POST(request({intakeId:intake,requestId}));expect(r.status).toBe(202);expect(mocks.rpc.mock.calls).toEqual([['tjai_enqueue_job',{p_user:user,p_intake:intake,p_request:requestId,p_mode:'credit'}]]);expect(mocks.provider).not.toHaveBeenCalled();expect(mocks.dispatch).toHaveBeenCalledOnce();});
+ it('leaves a durable queued job for recovery when immediate dispatch fails',async()=>{mocks.rpc.mockResolvedValue({data:queued,error:null});mocks.dispatch.mockResolvedValue(false);const r=await POST(request({intakeId:intake,requestId}));expect(r.status).toBe(202);expect((await r.json()).job.status).toBe('queued');expect(mocks.rpc).toHaveBeenCalledTimes(1);});
+ it('surfaces failed enqueue without a compensating refund that could mint credits',async()=>{mocks.rpc.mockResolvedValue({data:null,error:{message:'database unavailable'}});expect((await POST(request({intakeId:intake,requestId}))).status).toBe(503);expect(mocks.rpc.mock.calls.map(c=>c[0])).toEqual(['tjai_enqueue_job']);expect(mocks.dispatch).not.toHaveBeenCalled();});
+ it('preserves the idempotency key on repeated browser submissions',async()=>{mocks.rpc.mockResolvedValue({data:queued,error:null});await POST(request({intakeId:intake,requestId}));await POST(request({intakeId:intake,requestId}));expect(mocks.rpc.mock.calls[0]).toEqual(mocks.rpc.mock.calls[1]);});
 });
-
-const mockAdminClient = {
-  from: vi.fn(() => mockFromBuilder()),
-  rpc: mockRpc
-};
-
-vi.mock("@/lib/require-auth", () => ({
-  requireAuth: vi.fn(async () => ({
-    ok: true,
-    user: { id: "user-test-1", email: "test@example.com" }
-  }))
-}));
-
-vi.mock("@/lib/supabase-server", () => ({
-  getSupabaseServerClient: vi.fn(() => mockAdminClient)
-}));
-
-vi.mock("@/lib/auth-utils", () => ({
-  isAdminEmail: vi.fn(() => false)
-}));
-
-vi.mock("@/lib/tjai-access", () => ({
-  getTJAIAccess: vi.fn(() => ({ canGeneratePlan: false, canUseChat: true }))
-}));
-
-vi.mock("@/lib/tjai-intake", () => ({
-  buildTjaiUserProfile: vi.fn(() => ({ age: 30, weightKg: 75, heightCm: 180 })),
-  normalizeQuizAnswers: vi.fn((a: unknown) => a)
-}));
-
-vi.mock("@/lib/tjai-science", () => ({
-  calculateTJAIMetrics: vi.fn(() => ({}))
-}));
-
-const mockRunPipeline = vi.fn();
-vi.mock("@/lib/tjai", () => ({
-  runPlanGenerationPipeline: mockRunPipeline
-}));
-
-// ---- Helpers ----
-
-import type { NextRequest } from "next/server";
-
-function makeRequest(body: unknown): NextRequest {
-  return {
-    json: async () => body,
-    headers: new Headers()
-  } as unknown as NextRequest;
-}
-
-function setupCreditConsumeOk() {
-  // First rpc call: consume_tjai_credit returns { ok: true, balance_after: 4 }
-  // Second rpc call (refund, if any): grant_tjai_credit returns { error: null }
-  mockRpc.mockReset();
-  mockRpc
-    .mockResolvedValueOnce({ data: [{ ok: true, balance_after: 4 }], error: null })
-    .mockResolvedValue({ data: null, error: null });
-}
-
-function refundCalls() {
-  return mockRpc.mock.calls.filter(([name]) => name === "grant_tjai_credit");
-}
-
-const VALID_BODY = {
-  s1_age: 30,
-  s1_weight: 75,
-  s1_height: 180,
-  s2_pace: "moderate"
-};
-
-describe("TJAI generate route — refund safety", () => {
-  beforeEach(() => {
-    mockRpc.mockReset();
-    mockRunPipeline.mockReset();
-  });
-
-  it("refunds when the pipeline returns { ok: false }", async () => {
-    setupCreditConsumeOk();
-    mockRunPipeline.mockResolvedValueOnce({
-      ok: false,
-      error: "fake_pipeline_failure",
-      status: 500,
-      trace: { errors: ["mock"] }
-    });
-
-    const { POST } = await import("@/app/api/tjai/generate/route");
-    const res = await POST(makeRequest(VALID_BODY));
-
-    expect(res.status).toBe(500);
-    const refunds = refundCalls();
-    expect(refunds.length).toBe(1);
-    expect(refunds[0][1]).toMatchObject({
-      p_user_id: "user-test-1",
-      p_amount: 1,
-      p_reason: "refund"
-    });
-  });
-
-  it("refunds when the pipeline throws (proxy for Vercel timeout)", async () => {
-    setupCreditConsumeOk();
-    mockRunPipeline.mockImplementationOnce(async () => {
-      throw new Error("simulated_timeout");
-    });
-
-    const { POST } = await import("@/app/api/tjai/generate/route");
-    const res = await POST(makeRequest(VALID_BODY));
-
-    expect(res.status).toBe(500);
-    expect(refundCalls().length).toBe(1);
-  });
-
-  it("refunds on 4xx invalid-payload early return (after credit consumed)", async () => {
-    setupCreditConsumeOk();
-
-    const { POST } = await import("@/app/api/tjai/generate/route");
-    // Empty body → fails the "Invalid answers payload" 400 path AFTER consume.
-    const res = await POST(makeRequest(null));
-
-    expect(res.status).toBe(400);
-    expect(refundCalls().length).toBe(1);
-  });
-
-  it("does NOT refund on successful delivery", async () => {
-    setupCreditConsumeOk();
-    mockRunPipeline.mockResolvedValueOnce({
-      ok: true,
-      body: { plan: "ok" },
-      status: 200
-    });
-
-    const { POST } = await import("@/app/api/tjai/generate/route");
-    const res = await POST(makeRequest(VALID_BODY));
-
-    expect(res.status).toBe(200);
-    expect(refundCalls().length).toBe(0);
-  });
-
-  it("does not double-refund if finally block is somehow re-entered", async () => {
-    // The route's `refunded` flag should prevent double-fire under any
-    // single invocation. Two sequential failures → two separate refunds
-    // (independent invocations); but within ONE invocation only one.
-    setupCreditConsumeOk();
-    mockRunPipeline.mockResolvedValueOnce({
-      ok: false,
-      error: "x",
-      status: 500,
-      trace: { errors: [] }
-    });
-
-    const { POST } = await import("@/app/api/tjai/generate/route");
-    await POST(makeRequest(VALID_BODY));
-
-    // Single invocation, one refund call.
-    expect(refundCalls().length).toBe(1);
-  });
+describe('durable worker failure and refund boundary',()=>{
+ it('checks current legacy eligibility before provider work even when the user also has a new pass',async()=>{mocks.rpc.mockResolvedValueOnce({data:{...claimed,kind:'legacy'},error:null}).mockResolvedValueOnce({data:{status:'failed'},error:null});mocks.legacy.mockResolvedValue({available:true,hasAccess:false});expect(await processNextTjaiJob(admin as never,'test')).toMatchObject({status:'failed'});expect(mocks.provider).not.toHaveBeenCalled();expect(mocks.rpc.mock.calls[1][1]).toMatchObject({p_error:'access_revoked',p_retry_seconds:0});});
+ it('rejects infeasible historical intake before provider work and terminally releases its reservation',async()=>{admin.from.mockImplementationOnce(()=>({select:vi.fn().mockReturnThis(),eq:vi.fn().mockReturnThis(),single:vi.fn().mockResolvedValue({data:{answers_json:{s1_age:29,s1_height:220,s1_weight:300}},error:null})}));mocks.rpc.mockResolvedValueOnce({data:claimed,error:null}).mockResolvedValueOnce({data:{status:'failed'},error:null});expect(await processNextTjaiJob(admin as never,'test')).toMatchObject({status:'failed'});expect(mocks.provider).not.toHaveBeenCalled();expect(mocks.rpc.mock.calls[1][1]).toMatchObject({p_error:'nutrition_targets_unsupported',p_retry_seconds:0,p_plan:null});});
+ it('finalizes provider failure through the leased database operation',async()=>{mocks.rpc.mockResolvedValueOnce({data:claimed,error:null}).mockResolvedValueOnce({data:{status:'failed'},error:null});mocks.provider.mockRejectedValueOnce(new TjaiProviderError('provider_rejected'));expect(await processNextTjaiJob(admin as never,'test')).toMatchObject({status:'failed'});expect(mocks.rpc.mock.calls[1]).toEqual(['tjai_finish_job',expect.objectContaining({p_job:claimed.id,p_lease:claimed.lease_token,p_plan:null,p_error:'provider_rejected',p_retry_seconds:0})]);expect(mocks.rpc.mock.calls.some(c=>c[0]==='grant_tjai_credit')).toBe(false);});
+ it('requeues transient capacity failures without a route-level refund',async()=>{mocks.rpc.mockResolvedValueOnce({data:claimed,error:null}).mockResolvedValueOnce({data:{status:'queued'},error:null});mocks.provider.mockRejectedValueOnce(new TjaiProviderError('provider_capacity',65));expect(await processNextTjaiJob(admin as never,'test')).toMatchObject({status:'queued'});expect(mocks.rpc.mock.calls[1][1]).toMatchObject({p_retry_seconds:65});});
+ it('requires persisted plan success and does not separately refund success',async()=>{mocks.rpc.mockResolvedValueOnce({data:claimed,error:null}).mockResolvedValueOnce({data:{status:'succeeded'},error:null});expect(await processNextTjaiJob(admin as never,'test')).toMatchObject({status:'succeeded'});expect(mocks.rpc.mock.calls.map(c=>c[0])).toEqual(['tjai_claim_job','tjai_finish_job']);expect(mocks.rpc.mock.calls[1][1].p_plan).toEqual({summary:{}});});
+ it('does not call the provider for a pass revoked after enqueue',async()=>{mocks.rpc.mockResolvedValueOnce({data:{...claimed,kind:'initial'},error:null}).mockResolvedValueOnce({data:{status:'failed'},error:null});mocks.pass.mockResolvedValue({available:true,hasPass:false});expect(await processNextTjaiJob(admin as never,'test')).toMatchObject({status:'failed'});expect(mocks.provider).not.toHaveBeenCalled();expect(mocks.rpc.mock.calls[1][1]).toMatchObject({p_error:'access_revoked',p_retry_seconds:0});});
+ it('treats a lost persistence acknowledgement as recovery pending, never delivered',async()=>{mocks.rpc.mockResolvedValueOnce({data:claimed,error:null}).mockResolvedValue({data:null,error:{message:'database unavailable'}});await expect(processNextTjaiJob(admin as never,'test')).rejects.toThrow('job_recovery_pending');});
 });
+// Exact-once credit refunds after provider failure and expired leases are exercised against
+// the actual SQL migrations in tjai-database.integration.mjs, not a JavaScript counter.

@@ -100,7 +100,7 @@ ${weekJson}`
     return NextResponse.json(JSON.parse(json));
   } catch (error) {
     // Don't leak Claude/network internals to client.
-    console.error("[tjai/grocery-list] generation failed", error);
+    console.error("[tjai/grocery-list] generation failed");
     return NextResponse.json({ error: "Grocery list generation failed" }, { status: 500 });
   }
 }

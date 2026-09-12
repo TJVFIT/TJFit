@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { jsPDF } from "jspdf";
 import {
   ArcElement,
   CategoryScale,
@@ -17,9 +16,8 @@ import { Doughnut, Line } from "react-chartjs-2";
 
 import { CoachReviewRequest } from "@/components/tjai/coach-review-request";
 import { ShareCardGenerator } from "@/components/tjai/share-card-generator";
-import { TJAIChat } from "@/components/tjai/tjai-chat";
 import { useInView } from "@/hooks/useInView";
-import { buildTjaiDecisionReasons } from "@/lib/tjai-explanations";
+import { RESULT_VIEW_COPY, localizedPlanDuration } from "@/lib/tjai/result-view-copy";
 import type { Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import type { QuizAnswers, TJAICopy, TJAIGroceryList, TJAIMeal, TJAIMealPrepTask, TJAIMetrics, TJAIPlan } from "@/lib/tjai-types";
@@ -120,6 +118,8 @@ const RESULT_EXTRA_COPY: Record<"en" | "tr" | "ar" | "es" | "fr", ResultExtraCop
   }
 };
 
+import {getTjaiFlowCopy} from "@/lib/tjai/flow-copy";
+
 type Props = {
   locale: Locale;
   copy: TJAICopy;
@@ -161,6 +161,7 @@ export function TJAIResult({
   const [loadingGrocery, setLoadingGrocery] = useState(false);
   const [loadingMealPrep, setLoadingMealPrep] = useState(false);
   const [loadingPdf, setLoadingPdf] = useState(false);
+  const [pdfError,setPdfError]=useState(false);
 
   const summaryRef = useRef<HTMLDivElement>(null);
   const dietRef = useRef<HTMLDivElement>(null);
@@ -171,6 +172,7 @@ export function TJAIResult({
   const inProgram = useInView(programRef, { threshold: 0.1, once: true });
   const inExtras = useInView(extrasRef, { threshold: 0.1, once: true });
 
+  const ui = RESULT_VIEW_COPY[locale];
   const activeDietPhase = mutablePlan.diet.weeks[dietTab];
   const activeDietDay = activeDietPhase?.days?.[dietDayTab];
   const activeProgramPhase = mutablePlan.program.weeks[programTab];
@@ -276,6 +278,7 @@ export function TJAIResult({
 
   const exportPdf = async () => {
     setLoadingPdf(true);
+    setPdfError(false);
     try {
       // Detect routing locale from URL (client) so server renders the correct locale label.
       let routingLocale = "en";
@@ -311,72 +314,37 @@ export function TJAIResult({
         return;
       }
 
-      // Server said no — fall back to a client-side minimal PDF so the user still gets something.
-      const pdf = new jsPDF();
-      pdf.setFontSize(22);
-      pdf.text("Your TJAI Transformation Plan", 14, 24);
-      pdf.setFontSize(12);
-      pdf.text(`Generated: ${new Date(generatedAt).toLocaleDateString()}`, 14, 34);
-      pdf.text(`Goal: ${String(answers.s2_goal ?? "")}`, 14, 42);
-      pdf.text(`Calories: ${metrics.calorieTarget} kcal`, 14, 50);
-      pdf.text(`Protein: ${metrics.protein}g  Carbs: ${metrics.carbs}g  Fat: ${metrics.fat}g`, 14, 58);
-      pdf.addPage();
-      pdf.setFontSize(16);
-      pdf.text("Diet Plan", 14, 20);
-      let y = 30;
-      mutablePlan.diet.weeks.forEach((week) => {
-        if (y > 260) {
-          pdf.addPage();
-          y = 20;
-        }
-        pdf.setFontSize(13);
-        pdf.text(`${week.weekRange} - ${week.phase}`, 14, y);
-        y += 8;
-        week.days.forEach((day) => {
-          if (y > 260) {
-            pdf.addPage();
-            y = 20;
-          }
-          pdf.setFontSize(11);
-          pdf.text(day.label, 16, y);
-          y += 6;
-          day.meals.forEach((meal) => {
-            pdf.text(`- ${meal.name} (${meal.calories} kcal)`, 20, y);
-            y += 5;
-          });
-          y += 3;
-        });
-      });
-      pdf.save(`tjai-plan-${routingLocale}.pdf`);
-    } catch (err) {
-      console.error("[TJAI] PDF export failed:", err);
+      throw new Error("pdf_failed");
+    } catch {
+      setPdfError(true);
     } finally {
       setLoadingPdf(false);
     }
   };
 
   const lineData = {
-    labels: metrics.weightCurve.map((_, i) => `W${i}`),
+    labels: metrics.weightCurve.map((_, i) => `${ui.week} ${i}`),
     datasets: [
-      { label: "Projected", data: metrics.weightCurve, borderColor: "#A855F7", backgroundColor: "rgba(168,85,247,0.12)", tension: 0.35, fill: true },
-      { label: "No action", data: metrics.weightCurve.map(() => Number(answers.s1_weight ?? 0)), borderColor: "rgba(239,68,68,0.4)", borderDash: [6, 6], tension: 0.2 }
+      { label: ui.projected, data: metrics.weightCurve, borderColor: "#A855F7", backgroundColor: "rgba(168,85,247,0.12)", tension: 0.35, fill: true },
+      { label: ui.baseline, data: metrics.weightCurve.map(() => Number(answers.s1_weight ?? 0)), borderColor: "rgba(239,68,68,0.4)", borderDash: [6, 6], tension: 0.2 }
     ]
   };
   const pieData = {
-    labels: ["Protein", "Carbs", "Fat"],
+    labels: [copy.result.metrics.protein, copy.result.metrics.carbs, copy.result.metrics.fat],
     datasets: [{ data: [metrics.protein * 4, metrics.carbs * 4, metrics.fat * 9], backgroundColor: ["#A855F7", "#7C3AED", "rgba(255,255,255,0.35)"], borderWidth: 0 }]
   };
-  const decisionReasons = useMemo(() => buildTjaiDecisionReasons(answers, metrics), [answers, metrics]);
+  const decisionReasons = [ui.calorieNote.replace("{value}", String(mutablePlan.summary?.calorieTarget ?? metrics.calorieTarget)), ui.planNote, ui.logNote];
 
   return (
-    <section className="bg-background px-4 py-10 text-white">
+    <section dir={locale === "ar" ? "rtl" : "ltr"} className="bg-background px-4 py-10 text-white">
       <div className="mx-auto w-full max-w-5xl space-y-8">
+        {pdfError&&<p role="alert" className="text-amber-300">{getTjaiFlowCopy(locale).error}</p>}
 
         {/* Medical disclaimer */}
         <div className="flex items-start gap-3 rounded-xl border border-purple-400/20 bg-purple-400/5 px-4 py-3">
           <span className="mt-0.5 shrink-0 text-purple-300"></span>
           <p className="text-xs text-purple-200/80">
-            Consult a physician before starting any new training or nutrition program. TJAI generates personalized guidance but is not a substitute for professional medical advice.
+            {getTjaiFlowCopy(locale).adult}
           </p>
         </div>
 
@@ -412,16 +380,16 @@ export function TJAIResult({
               {copy.result.metrics.water}: {mutablePlan.summary?.water ?? metrics.water}ml
             </span>
             <span>
-              {copy.result.metrics.weekly}: {mutablePlan.summary?.weeklyChange ?? `${metrics.weeklyWeightChange}kg/week`}
+              {copy.result.metrics.weekly}: {mutablePlan.summary?.weeklyChange ?? `${metrics.weeklyWeightChange} ${ui.kgWeek}`}
             </span>
             <span>
-              {copy.result.metrics.timeToGoal}: {mutablePlan.summary?.timeToGoal ?? metrics.timeToGoal}
+              {copy.result.metrics.timeToGoal}: {localizedPlanDuration(mutablePlan.summary?.timeToGoal ?? metrics.timeToGoal, locale)}
             </span>
           </div>
         </div>
 
         <article className="rounded-xl border border-divider bg-surface p-5">
-          <h3 className="text-lg font-semibold text-white">Why TJAI chose this</h3>
+          <h3 className="text-lg font-semibold text-white">{ui.overview}</h3>
           <ul className="mt-4 space-y-2">
             {decisionReasons.map((reason) => (
               <li key={reason} className="flex gap-2 text-sm text-bright">
@@ -434,26 +402,26 @@ export function TJAIResult({
 
         <div className="grid gap-4 lg:grid-cols-2">
           <article className="rounded-xl border border-divider bg-surface p-5">
-            <h3 className="text-lg font-semibold text-white">Your Transformation Forecast</h3>
+            <h3 className="text-lg font-semibold text-white">{ui.forecast}</h3>
             <div className="mt-3 h-[260px]">
               <Line data={lineData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: "#A1A1AA" } } }, scales: { x: { ticks: { color: "#52525B" }, grid: { color: "rgba(255,255,255,0.04)" } }, y: { ticks: { color: "#52525B" }, grid: { color: "rgba(255,255,255,0.04)" } } } }} />
             </div>
           </article>
           <article className="rounded-xl border border-divider bg-surface p-5">
-            <h3 className="text-lg font-semibold text-white">Macro Split</h3>
+            <h3 className="text-lg font-semibold text-white">{ui.macroSplit}</h3>
             <div className="mt-3 h-[240px]">
               <Doughnut data={pieData} options={{ maintainAspectRatio: false, plugins: { legend: { labels: { color: "#A1A1AA" } } } }} />
             </div>
-            <div className="mt-2 text-sm text-muted">P: {metrics.protein}g | C: {metrics.carbs}g | F: {metrics.fat}g</div>
+            <div className="mt-2 text-sm text-muted">{copy.result.metrics.protein}: {metrics.protein}g | {copy.result.metrics.carbs}: {metrics.carbs}g | {copy.result.metrics.fat}: {metrics.fat}g</div>
             <div className="mt-4 space-y-3">
               <div>
-                <p className="text-xs text-muted">Current BF% {metrics.estimatedBodyFat}%</p>
+                <p className="text-xs text-muted">{ui.startingFat} {metrics.estimatedBodyFat}%</p>
                 <div className="mt-1 h-2 rounded-full bg-divider">
                   <div className="h-full rounded-full bg-[rgba(239,68,68,0.3)]" style={{ width: `${Math.min(100, Math.max(0, metrics.estimatedBodyFat * 2))}%` }} />
                 </div>
               </div>
               <div>
-                <p className="text-xs text-muted">Projected BF% {metrics.projectedFinalBF}%</p>
+                <p className="text-xs text-muted">{ui.projectedFat} {metrics.projectedFinalBF}%</p>
                 <div className="mt-1 h-2 rounded-full bg-divider">
                   <div className="h-full rounded-full bg-[rgba(168,85,247,0.3)]" style={{ width: `${Math.min(100, Math.max(0, metrics.projectedFinalBF * 2))}%` }} />
                 </div>
@@ -463,15 +431,9 @@ export function TJAIResult({
         </div>
 
         <article className="rounded-xl border border-divider bg-surface p-5">
-          <h3 className="text-lg font-semibold text-white">Key Milestones</h3>
+          <h3 className="text-lg font-semibold text-white">{ui.checkpoints}</h3>
           <div className="mt-4 space-y-3">
-            {[
-              "Week 2: First noticeable energy improvements",
-              "Week 4: Visible body composition changes begin",
-              `Week ${metrics.plateauWeek || 6}: Plateau breaker week — keep going`,
-              `Week 8: Midpoint — likely ${Math.abs(metrics.weeklyWeightChange * 8).toFixed(1)}kg progress`,
-              `Week 12: Goal window — estimated ${metrics.projectedFinalWeight}kg`
-            ].map((m) => (
+            {ui.checkins.map((m) => (
               <div key={m} className="flex items-start gap-3">
                 <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-accent" />
                 <p className="text-sm text-bright">{m}</p>
@@ -481,29 +443,23 @@ export function TJAIResult({
         </article>
 
         <div className="rounded-xl border border-[rgba(124,58,237,0.2)] bg-[rgba(124,58,237,0.06)] p-5">
-          <p className="text-sm font-semibold text-accent-violet">Plateau Alert</p>
+          <p className="text-sm font-semibold text-accent-violet">{ui.review}</p>
           <p className="mt-1 text-sm text-bright">
-            Based on your profile, most people with your metabolism plateau around Week {metrics.plateauWeek}. We already built your plateau breaker into that point.
+            {ui.reviewNote}
           </p>
         </div>
-        {metrics.reverseDietNeeded ? (
-          <div className="rounded-xl border border-[rgba(168,85,247,0.2)] bg-[rgba(168,85,247,0.06)] p-5">
-            <p className="text-sm font-semibold text-accent">Metabolic Reset Added</p>
-            <p className="mt-1 text-sm text-bright">We detected signs of adaptation. Your plan starts with a 2-week reset before the main 12-week system.</p>
-          </div>
-        ) : null}
 
         <div ref={dietRef} className={cn("reveal-up space-y-4", inDiet && "is-in")}>
           <h2 className="text-2xl font-bold">{copy.result.yourDiet}</h2>
           <div className="flex flex-wrap gap-2">
-            <button onClick={() => void generateGrocery()} className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-4 py-2 text-sm font-bold text-[#09090B] shadow-[0_0_18px_rgba(168,85,247,0.22)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] hover:shadow-[0_0_28px_rgba(168,85,247,0.35)]">
-              {loadingGrocery ? "Building your grocery list..." : "Generate Grocery List"}
+            <button hidden disabled onClick={() => void generateGrocery()} className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-4 py-2 text-sm font-bold text-[#09090B] shadow-[0_0_18px_rgba(168,85,247,0.22)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] hover:shadow-[0_0_28px_rgba(168,85,247,0.35)]">
+              {loadingGrocery ? ui.groceryLoading : ui.groceryGenerate}
             </button>
-            <button onClick={() => void generateMealPrep()} className="tj-cta-sheen rounded-full border border-divider px-4 py-2 text-sm text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_18px_rgba(168,85,247,0.14)]">
-              {loadingMealPrep ? "Generating..." : "Generate Meal Prep Guide"}
+            <button hidden disabled onClick={() => void generateMealPrep()} className="tj-cta-sheen rounded-full border border-divider px-4 py-2 text-sm text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_18px_rgba(168,85,247,0.14)]">
+              {loadingMealPrep ? ui.generating : ui.mealPrepGenerate}
             </button>
             <button onClick={() => void exportPdf()} className="tj-cta-sheen rounded-full border border-divider px-4 py-2 text-sm text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_18px_rgba(168,85,247,0.14)]">
-              {loadingPdf ? "Generating PDF..." : "Download My Plan (PDF)"}
+              {loadingPdf ? ui.pdfLoading : ui.pdfDownload}
             </button>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -522,7 +478,7 @@ export function TJAIResult({
                     : "border-divider text-muted hover:border-accent"
                 )}
               >
-                {phase.weekRange} · {phase.phase} {phase.isRefeed ? "· REFEED" : ""} {phase.isPlateauBreaker ? "· BREAKER" : ""}
+                {phase.weekRange} · {phase.phase} {phase.isRefeed ? `· ${ui.refeed}` : ""} {phase.isPlateauBreaker ? `· ${ui.breaker}` : ""}
               </button>
             ))}
           </div>
@@ -557,8 +513,8 @@ export function TJAIResult({
                     <div className="text-sm text-muted">
                       {meal.time} · {meal.calories} kcal
                     </div>
-                    <button type="button" onClick={() => void openSwap(meal, dietDayTab, i)} className="rounded-full border border-divider px-2 py-1 text-[11px] text-muted hover:border-accent hover:text-accent">
-                      ↻ Swap
+                    <button hidden disabled type="button" onClick={() => void openSwap(meal, dietDayTab, i)} className="rounded-full border border-divider px-2 py-1 text-[11px] text-muted hover:border-accent hover:text-accent">
+                      ↻ {ui.swap}
                     </button>
                   </div>
                 </header>
@@ -568,19 +524,19 @@ export function TJAIResult({
                   ))}
                 </ul>
                 <p className="mt-3 text-xs text-muted">
-                  P: {meal.protein}g · C: {meal.carbs}g · F: {meal.fat}g
+                  {copy.result.metrics.protein}: {meal.protein}g · {copy.result.metrics.carbs}: {meal.carbs}g · {copy.result.metrics.fat}: {meal.fat}g
                 </p>
                 <p className="mt-2 text-xs italic text-dim">{meal.prepNote}</p>
                 {meal.educationNote ? <p className="mt-2 rounded-lg border border-divider bg-[#0f1116] px-3 py-2 text-xs text-muted">? {meal.educationNote}</p> : null}
                 <button type="button" className="mt-3 text-sm text-muted hover:text-white" onClick={() => setRecipeOpen((prev) => ({ ...prev, [`${dietDayTab}-${i}`]: !prev[`${dietDayTab}-${i}`] }))}>
-                  {recipeOpen[`${dietDayTab}-${i}`] ? "Hide Recipe" : "View Recipe"}
+                  {recipeOpen[`${dietDayTab}-${i}`] ? ui.hideRecipe : ui.viewRecipe}
                 </button>
                 <div className={cn("overflow-hidden transition-all duration-300", recipeOpen[`${dietDayTab}-${i}`] ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0")}>
                   {meal.recipe ? (
                     <div className="mt-3 rounded-xl border border-divider bg-[#0f1116] p-4">
                       <div className="flex flex-wrap gap-2 text-xs text-muted">
-                        <span className="rounded-full border border-divider px-2 py-1">Prep {meal.recipe.prepTime}</span>
-                        <span className="rounded-full border border-divider px-2 py-1">Cook {meal.recipe.cookTime}</span>
+                        <span className="rounded-full border border-divider px-2 py-1">{ui.prep} {meal.recipe.prepTime}</span>
+                        <span className="rounded-full border border-divider px-2 py-1">{ui.cook} {meal.recipe.cookTime}</span>
                         <span className="rounded-full border border-divider px-2 py-1">{meal.recipe.difficultyLevel}</span>
                       </div>
                       <ol className="mt-3 list-decimal space-y-1 ps-5 text-sm leading-7 text-bright">
@@ -599,7 +555,7 @@ export function TJAIResult({
 
           {activeDietDay?.totals ? (
             <div className="rounded-xl border border-divider bg-surface p-4 text-sm text-bright">
-              {activeDietDay.totals.calories} kcal · P {activeDietDay.totals.protein}g · C {activeDietDay.totals.carbs}g · F{" "}
+              {activeDietDay.totals.calories} kcal · {copy.result.metrics.protein} {activeDietDay.totals.protein}g · {copy.result.metrics.carbs} {activeDietDay.totals.carbs}g · {copy.result.metrics.fat}{" "}
               {activeDietDay.totals.fat}g
               {activeDietDay.waterTarget ? <span className="ms-4 text-muted">{activeDietDay.waterTarget}</span> : null}
             </div>
@@ -610,7 +566,7 @@ export function TJAIResult({
           <h2 className="text-2xl font-bold">{copy.result.yourProgram}</h2>
           {(mutablePlan.program.beginnerFoundations ?? []).length ? (
             <details className="rounded-xl border border-divider bg-surface p-4">
-              <summary className="cursor-pointer text-sm font-semibold text-accent">Fitness Fundamentals — Read This First</summary>
+              <summary className="cursor-pointer text-sm font-semibold text-accent">{ui.fundamentals}</summary>
               <ul className="mt-3 list-disc space-y-1 ps-5 text-sm text-bright">
                 {mutablePlan.program.beginnerFoundations?.map((rule) => <li key={rule}>{rule}</li>)}
               </ul>
@@ -630,7 +586,7 @@ export function TJAIResult({
                   i === programTab ? "border-accent bg-[rgba(168,85,247,0.08)] text-white" : "border-divider text-muted"
                 )}
               >
-                {phase.weekRange} · {phase.phase} {phase.isDeload ? "· DELOAD" : ""}
+                {phase.weekRange} · {phase.phase} {phase.isDeload ? `· ${extra.deloadBadge}` : ""}
               </button>
             ))}
           </div>
@@ -690,7 +646,7 @@ export function TJAIResult({
                           ) : null}
                           {typeof ex.restSeconds === "number" ? (
                             <span className="rounded-full border border-divider px-2 py-0.5 text-[10px] uppercase tracking-[0.08em] text-muted">
-                              {extra.rest} {ex.restSeconds}s
+                              {extra.rest} {ex.restSeconds} {ui.seconds}
                             </span>
                           ) : null}
                         </div>
@@ -754,15 +710,15 @@ export function TJAIResult({
             <h3 className="text-lg font-semibold text-white">{copy.result.supplements}</h3>
             {(
               [
-                ["Tier 1 — Essential", mutablePlan.diet.supplements?.tier1 ?? [], "#A855F7", "t1"],
-                ["Tier 2 — Helpful", mutablePlan.diet.supplements?.tier2 ?? [], "#7C3AED", "t2"],
-                ["Tier 3 — Optional", mutablePlan.diet.supplements?.tier3 ?? [], "#52525B", "t3"]
+                [ui.groups[0], mutablePlan.diet.supplements?.tier1 ?? [], "#A855F7", "t1"],
+                [ui.groups[1], mutablePlan.diet.supplements?.tier2 ?? [], "#7C3AED", "t2"],
+                [ui.groups[2], mutablePlan.diet.supplements?.tier3 ?? [], "#52525B", "t3"]
               ] as const
             ).map(([title, items, border, key]) => (
               <div key={title} className="mt-3 rounded-lg border border-divider">
-                <button type="button" onClick={() => setSuppOpen((prev) => ({ ...prev, [key]: !prev[key as keyof typeof prev] }))} className="flex w-full items-center justify-between border-s-2 px-3 py-2 text-left text-sm" style={{ borderLeftColor: border }}>
+                <button type="button" onClick={() => setSuppOpen((prev) => ({ ...prev, [key]: !prev[key as keyof typeof prev] }))} className="flex w-full items-center justify-between border-s-2 px-3 py-2 text-start text-sm" style={{ borderInlineStartColor: border }}>
                   <span>{title}</span>
-                  <span className="text-xs text-muted">{suppOpen[key as keyof typeof suppOpen] ? "Hide" : "Show"}</span>
+                  <span className="text-xs text-muted">{suppOpen[key as keyof typeof suppOpen] ? ui.hide : ui.show}</span>
                 </button>
                 {suppOpen[key as keyof typeof suppOpen] ? (
                   <div className="space-y-2 p-3 text-sm text-bright">
@@ -773,7 +729,7 @@ export function TJAIResult({
                           {s.dose} · {s.timing} · {s.estimatedCost}
                         </div>
                         <div className="mt-1 text-xs text-muted">{s.why}</div>
-                        {s.alreadyUsing ? <span className="mt-1 inline-flex rounded-full bg-[rgba(34,197,94,0.15)] px-2 py-0.5 text-[11px] text-success">Already using ✓</span> : null}
+                        {s.alreadyUsing ? <span className="mt-1 inline-flex rounded-full bg-[rgba(34,197,94,0.15)] px-2 py-0.5 text-[11px] text-success">{ui.alreadyUsing}</span> : null}
                       </div>
                     ))}
                   </div>
@@ -791,12 +747,12 @@ export function TJAIResult({
 
         {mutablePlan.diet.cheatMealStrategy ? (
           <div className="rounded-xl border border-[rgba(124,58,237,0.15)] bg-[rgba(124,58,237,0.04)] p-5">
-            <button type="button" onClick={() => setCheatOpen((v) => !v)} className="text-left text-lg font-semibold text-white">
-              Cheat Meal Strategy
+            <button type="button" onClick={() => setCheatOpen((v) => !v)} className="text-start text-lg font-semibold text-white">
+              {ui.flexibleMeal}
             </button>
             {cheatOpen ? (
               <div className="mt-3 space-y-2 text-sm text-bright">
-                <p>When: {mutablePlan.diet.cheatMealStrategy.optimalDay}</p>
+                <p>{ui.when}: {mutablePlan.diet.cheatMealStrategy.optimalDay}</p>
                 {(mutablePlan.diet.cheatMealStrategy.preMeal ?? []).map((x) => <p key={x}>• {x}</p>)}
                 {(mutablePlan.diet.cheatMealStrategy.postMeal ?? []).map((x) => <p key={x}>• {x}</p>)}
               </div>
@@ -806,8 +762,8 @@ export function TJAIResult({
 
         {grocery ? (
           <div className="rounded-xl border border-divider bg-surface p-5">
-            <h3 className="text-lg font-semibold text-white">Week 1 Grocery List</h3>
-            <p className="mt-1 text-xs text-muted">Quantities are for 1 person. Multiply for more.</p>
+            <h3 className="text-lg font-semibold text-white">{ui.grocery}</h3>
+            <p className="mt-1 text-xs text-muted">{ui.quantities}</p>
             <div className="mt-3 grid gap-4 md:grid-cols-2">
               {grocery.categories.map((category) => (
                 <article key={category.name}>
@@ -843,15 +799,15 @@ export function TJAIResult({
           </div>
         ) : null}
 
-        <TJAIChat plan={mutablePlan} metrics={metrics} answers={answers} coreLimited={coreLimitedChat} onLimitReached={onChatLimitReached} />
-        <ShareCardGenerator goal={String(answers.s2_goal ?? "Goal")} calories={metrics.calorieTarget} protein={metrics.protein} duration={metrics.timeToGoal} />
+        <a className="inline-flex rounded-xl bg-accent px-5 py-3 font-semibold" href={`/${locale}/ai?tab=chat`}>{({en:"Ask TJAI",tr:"TJAI’a sor",ar:"اسأل TJAI",es:"Pregunta a TJAI",fr:"Demander à TJAI"})[locale]}</a>
+        <ShareCardGenerator locale={locale} goal={copy.result.yourProgram} calories={mutablePlan.summary?.calorieTarget ?? metrics.calorieTarget} protein={mutablePlan.summary?.protein ?? metrics.protein} duration={localizedPlanDuration(metrics.timeToGoal, locale)} />
         <CoachReviewRequest locale={locale} />
       </div>
 
       <div className="sticky bottom-0 mt-10 border-t border-divider bg-background/95 px-4 py-3 backdrop-blur">
         <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3">
           <span className="text-xs text-dim">
-            {copy.result.generatedAt} {new Date(generatedAt).toLocaleDateString()}
+            {copy.result.generatedAt} {new Date(generatedAt).toLocaleDateString(locale)}
           </span>
           <div className="flex items-center gap-2">
             <button
@@ -895,16 +851,16 @@ export function TJAIResult({
                         <li key={f}>{f}</li>
                       ))}
                     </ul>
-                    <p className="mt-2 text-xs text-muted">P {meal.protein}g · C {meal.carbs}g · F {meal.fat}g</p>
+                    <p className="mt-2 text-xs text-muted">{copy.result.metrics.protein} {meal.protein}g · {copy.result.metrics.carbs} {meal.carbs}g · {copy.result.metrics.fat} {meal.fat}g</p>
                     <button type="button" onClick={() => chooseSwap(meal)} className="mt-3 tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-3 py-1 text-xs font-semibold text-[#09090B]">
-                      Choose this meal
+                      {ui.chooseMeal}
                     </button>
                   </article>
                 ))
               )}
             </div>
             <button type="button" onClick={() => setSwapState(null)} className="mt-4 rounded-full border border-divider px-4 py-2 text-sm text-muted">
-              Keep original meal
+              {ui.keepMeal}
             </button>
           </div>
         </div>

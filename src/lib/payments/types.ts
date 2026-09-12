@@ -1,11 +1,12 @@
 /**
  * Checkout provider resolution (env) and `program_orders.provider` storage.
  *
- * - `gumroad` — Gumroad hosted checkout (Merchant of Record). Default live.
- * - `test`    — Simulated paid completion when ALLOW_TEST_CHECKOUT=true.
+ * - `lemonsqueezy` — explicitly configured test/live digital checkout.
+ * - `gumroad` — historical records only; new checkout is closed.
+ * - `test` — historical development simulation when ALLOW_TEST_CHECKOUT=true.
  */
 
-export type PaymentProviderId = "gumroad" | "test";
+export type PaymentProviderId = "gumroad" | "lemonsqueezy" | "test";
 
 export type ResolvedPaymentBackend = {
   /** Active provider for new orders, or null if checkout must be disabled. */
@@ -20,7 +21,7 @@ export type ResolvedPaymentBackend = {
 export type CheckoutClientFlow =
   | { action: "complete_simulated"; orderId: string }
   | {
-      action: "redirect_gumroad";
+      action: "redirect_gumroad" | "redirect_lemon";
       orderId: string;
       url: string;
     };

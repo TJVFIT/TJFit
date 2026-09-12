@@ -1,4 +1,5 @@
 import { jsPDF } from "jspdf";
+import {configureUnicodePdf} from '@/lib/tjai/pdf-unicode-layout';
 
 import type { BundleCopy } from "@/lib/bundle-localization";
 import type { Bundle } from "@/lib/bundles";
@@ -453,6 +454,7 @@ export function buildBundlePdf(args: BundlePdfArgs): jsPDF {
     phases: bundle.phases
   };
   const pdf = new jsPDF({ unit: "pt", format: "a4" });
+  configureUnicodePdf(pdf,locale??'en');
   const contentWidth = PAGE.width - PAGE.margin * 2;
   const issued = issuedAt ? new Date(issuedAt) : new Date();
 

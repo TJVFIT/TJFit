@@ -1,132 +1,24 @@
-import { NextResponse } from "next/server";
-
-import { requireAuth } from "@/lib/require-auth";
-import { getLatestTjaiPlan } from "@/lib/tjai-plan-store";
-import { getSupabaseServerClient } from "@/lib/supabase-server";
-import { llmCall } from "@/lib/tjai/llm";
-import { isTaskAvailable } from "@/lib/tjai/provider-policy";
-
-function weekStartIso() {
-  const now = new Date();
-  const day = now.getUTCDay();
-  const diff = (day + 6) % 7;
-  const monday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - diff));
-  return monday.toISOString().slice(0, 10);
-}
-
-export async function GET() {
-  const auth = await requireAuth();
-  if (!auth.ok) return auth.response;
-  const admin = getSupabaseServerClient();
-  if (!admin) return NextResponse.json({ error: "Server not configured" }, { status: 500 });
-
-  const [{ data: progressRows }, { data: workoutRows }, { data: progressEntries }, planRow, { data: profile }] = await Promise.all([
-    admin.from("program_progress").select("week_number,day_label,is_complete,completed_at,program_slug").eq("user_id", auth.user.id).order("week_number", { ascending: true }),
-    admin.from("workout_logs").select("id,week_number,day_label,exercise_name,logged_at").eq("user_id", auth.user.id).order("logged_at", { ascending: false }).limit(100),
-    admin.from("progress_entries").select("entry_date,weight_kg,body_fat_percent,waist_cm").eq("user_id", auth.user.id).order("entry_date", { ascending: true }).limit(24),
-    getLatestTjaiPlan(admin, auth.user.id),
-    admin.from("profiles").select("current_streak").eq("id", auth.user.id).maybeSingle()
-  ]);
-
-  const completed = (progressRows ?? []).filter((row) => row.is_complete).length;
-  const total = Math.max(1, (progressRows ?? []).length || 84);
-  const completionPercent = Math.round((completed / total) * 100);
-  const currentWeek = Math.max(1, ...((progressRows ?? []).map((row) => Number(row.week_number ?? 1))));
-
-  const weightSeries = (progressEntries ?? [])
-    .map((row) => Number(row.weight_kg ?? 0))
-    .filter((value) => Number.isFinite(value) && value > 0);
-  const nutritionHit = { proteinDaysHit: 0, calorieDaysHit: 0, totalDays: 0 };
-
-  const weekStart = weekStartIso();
-  let weeklyInsight = "";
-  const { data: cachedInsight } = await admin
-    .from("tjai_weekly_insights")
-    .select("insight_text")
-    .eq("user_id", auth.user.id)
-    .eq("week_start", weekStart)
-    .maybeSingle();
-  if (cachedInsight?.insight_text) {
-    weeklyInsight = cachedInsight.insight_text;
-  } else {
-    // Task 3 — generate a REAL AI insight using this user's actual data
-    try {
-      const workoutsThisWeek = (workoutRows ?? []).filter(
-        (r) => r.logged_at && String(r.logged_at) >= weekStart
-      );
-      const planSummaryObj = ((planRow?.plan_json as Record<string, unknown> | null)?.summary ?? {}) as Record<string, unknown>;
-
-      const insightPrompt = `You are TJAI, an elite AI fitness coach. Generate a single, highly personalized weekly insight for this user. 2-3 sentences max. Be specific to their data. Motivating but honest. No fluff.
-
-USER DATA THIS WEEK:
-- Workouts logged: ${workoutsThisWeek.length} sessions
-- Exercises: ${[...new Set(workoutsThisWeek.map((w) => String((w as Record<string, unknown>).exercise_name ?? (w as Record<string, unknown>).exercise ?? "")).filter(Boolean))].slice(0, 5).join(", ") || "none logged"}
-- Program week: ${currentWeek} of 12 (${completionPercent}% complete)
-- Streak: ${Number(profile?.current_streak ?? 0)} days
-
-PLAN TARGETS:
-- Daily calories: ${planSummaryObj.calorieTarget ?? planRow?.plan_json ? "see plan" : "not set"}
-- Protein: ${planSummaryObj.protein ?? "not set"}g/day
-- Weekly change target: ${planSummaryObj.weeklyChange ?? "not set"}
-
-Write 1 insight. No intro phrase like "Great job" or "Here's your insight". Start directly.`;
-
-      if (isTaskAvailable("progress_evaluate")) {
-        weeklyInsight = await llmCall({
-          task: "progress_evaluate",
-          system: "You are TJAI, a precision AI fitness coach. Be brief, specific, actionable.",
-          user: insightPrompt,
-          maxTokens: 150,
-          jsonMode: false,
-          route: "tjai/progress",
-          userId: auth.user.id
-        });
-      } else {
-        weeklyInsight = "Log your workouts and body weight this week to unlock your personalized AI insight.";
-      }
-    } catch (insightErr) {
-      console.error("[TJAI progress] weekly insight generation failed:", insightErr);
-      weeklyInsight = "Keep logging your sessions — your personalized weekly insight will appear here.";
-    }
-
-    const { error: insightUpsertError } = await admin.from("tjai_weekly_insights").upsert(
-      { user_id: auth.user.id, week_start: weekStart, insight_text: weeklyInsight },
-      { onConflict: "user_id,week_start" }
-    );
-    if (insightUpsertError) {
-      console.error("[TJAI progress] failed to cache weekly insight:", insightUpsertError);
-    }
-  }
-
-  const nextWorkouts = ((planRow?.plan_json as any)?.program?.weeks?.[Math.max(0, currentWeek - 1)]?.days ?? []).slice(0, 3);
-  const latestProgress = (progressEntries ?? []).at(-1) ?? null;
-  const firstProgress = (progressEntries ?? [])[0] ?? null;
-  const currentWeight = latestProgress?.weight_kg ? Number(latestProgress.weight_kg) : null;
-  const startingWeight = firstProgress?.weight_kg ? Number(firstProgress.weight_kg) : null;
-
-  return NextResponse.json({
-    completion: {
-      current_week: currentWeek,
-      total_weeks: 12,
-      percent: completionPercent,
-      logged_days_this_week: (progressRows ?? []).filter((row) => Number(row.week_number) === currentWeek && row.is_complete).length
-    },
-    body_metrics: {
-      starting_weight: startingWeight,
-      current_weight: currentWeight,
-      change_kg:
-        typeof startingWeight === "number" && typeof currentWeight === "number"
-          ? Number((currentWeight - startingWeight).toFixed(1))
-          : null,
-      sparkline: weightSeries
-    },
-    macro_adherence: {
-      protein_hit_percent: nutritionHit.totalDays ? Math.round((nutritionHit.proteinDaysHit / nutritionHit.totalDays) * 100) : 0,
-      calorie_hit_percent: nutritionHit.totalDays ? Math.round((nutritionHit.calorieDaysHit / nutritionHit.totalDays) * 100) : 0
-    },
-    weekly_insight: weeklyInsight,
-    next_workouts: nextWorkouts,
-    current_streak: Number(profile?.current_streak ?? 0),
-    recent_logs: workoutRows ?? []
-  });
+import {NextResponse} from 'next/server';
+import {requireAuth} from '@/lib/require-auth';
+import {turkeyPeriod} from '@/lib/tjai/intake-validation';
+export async function GET(){
+ const auth=await requireAuth();if(!auth.ok)return auth.response;
+ const since=new Date(Date.now()-6*86400000),start=turkeyPeriod(since),today=turkeyPeriod();
+ const [weights,workouts,nutrition,plan]=await Promise.all([
+  auth.supabase.from('progress_entries').select('entry_date,weight_kg').eq('user_id',auth.user.id).not('weight_kg','is',null).order('entry_date',{ascending:false}).order('created_at',{ascending:false}).limit(200),
+  auth.supabase.from('workout_logs').select('id,workout_date,exercise,sets,reps,weight_kg,sets_data').eq('user_id',auth.user.id).order('workout_date',{ascending:false}).limit(300),
+  auth.supabase.from('nutrition_logs').select('entry_date,calories,protein_g,source').eq('user_id',auth.user.id).gte('entry_date',start).lte('entry_date',today),
+  auth.supabase.from('saved_tjai_plans').select('created_at,plan_json,training_days_per_week').eq('user_id',auth.user.id).order('created_at',{ascending:false}).limit(1).maybeSingle()
+ ]);
+ if([weights,workouts,nutrition,plan].some(r=>r.error))return NextResponse.json({error:'progress_load_failed'},{status:503});
+ const points=Array.from(new Map((weights.data??[]).map(r=>[r.entry_date,r] as const).reverse()).values()).sort((a,b)=>a.entry_date.localeCompare(b.entry_date));
+ const first=points[0]?.weight_kg??null,last=points[points.length-1]?.weight_kg??null;
+ const uniqueDays=new Set((workouts.data??[]).filter(r=>r.workout_date>=start&&r.workout_date<=today).map(r=>r.workout_date));
+ const summary=plan.data?.plan_json?.summary;
+ const days=new Map<string,{calories:number;protein:number}>();
+ for(const m of nutrition.data??[]){const d=days.get(m.entry_date)??{calories:0,protein:0};d.calories+=Number(m.calories);d.protein+=Number(m.protein_g);days.set(m.entry_date,d);}
+ const observed=[...days.values()],proteinHit=summary?.protein?observed.filter(d=>d.protein>=summary.protein*0.9).length:null,calHit=summary?.calorieTarget?observed.filter(d=>Math.abs(d.calories-summary.calorieTarget)<=summary.calorieTarget*0.1).length:null;
+ const age=plan.data?Math.max(0,(Date.now()-Date.parse(plan.data.created_at))/86400000):0,week=Math.min(12,Math.floor(age/7)+1);
+ const targetDays=Number(plan.data?.training_days_per_week??0);
+ return NextResponse.json({completion:{current_week:week,total_weeks:12,percent:targetDays?Math.min(100,Math.round(new Set((workouts.data??[]).filter(r=>r.workout_date>=plan.data!.created_at.slice(0,10)).map(r=>r.workout_date)).size/(targetDays*12)*100)):0,logged_days_this_week:uniqueDays.size},body_metrics:{starting_weight:first,current_weight:last,change_kg:first!==null&&last!==null?Number((last-first).toFixed(2)):null,sparkline:points.map(r=>Number(r.weight_kg))},macro_adherence:{observed_days:observed.length,protein_hit_percent:observed.length&&proteinHit!==null?Math.round(proteinHit/observed.length*100):null,calorie_hit_percent:observed.length&&calHit!==null?Math.round(calHit/observed.length*100):null,estimated:true},weekly_insight:'',next_workouts:plan.data?.plan_json?.program?.weeks?.[0]?.days?.slice(0,3)??[],current_streak:0,recent_logs:workouts.data??[]},{headers:{'Cache-Control':'no-store'}});
 }

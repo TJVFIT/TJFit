@@ -25,13 +25,13 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 // state they close over has to be created with vi.hoisted().
 const h = vi.hoisted(() => ({
   serviceClient: { __role: "service_role" },
-  state: { serviceClientAvailable: true, isAdmin: false, purchased: false }
+  state: { serviceClientAvailable: true, isAdmin: false, purchased: false, authenticated: true }
 }));
 
 const mockHasPurchasedProgram = vi.hoisted(() => vi.fn(async () => false));
 
 vi.mock("@/lib/require-auth", () => ({
-  requireAuth: vi.fn(async () => ({
+  requireAuth: vi.fn(async () => h.state.authenticated ? ({
     ok: true,
     user: { id: "user-1", email: "buyer@example.com" },
     supabase: {
@@ -41,7 +41,7 @@ vi.mock("@/lib/require-auth", () => ({
         })
       })
     }
-  }))
+  }) : ({ ok: false, response: new Response("Unauthorized", { status: 401 }) }))
 }));
 
 vi.mock("@/lib/supabase-server", () => ({
@@ -79,11 +79,22 @@ beforeEach(() => {
   h.state.serviceClientAvailable = true;
   h.state.isAdmin = false;
   h.state.purchased = false;
+  h.state.authenticated = true;
   mockHasPurchasedProgram.mockClear();
   mockHasPurchasedProgram.mockImplementation(async () => h.state.purchased);
 });
 
 describe("bundle download entitlement gate", () => {
+  it("denies an anonymous request before reading any entitlement", async () => {
+    h.state.authenticated = false;
+    h.state.purchased = true;
+
+    const res = await GET(request(), params);
+
+    expect(res.status).toBe(401);
+    expect(mockHasPurchasedProgram).not.toHaveBeenCalled();
+  });
+
   it("reads entitlement with the SERVICE client, not the session client", async () => {
     h.state.purchased = true;
 

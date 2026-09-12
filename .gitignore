@@ -4,6 +4,7 @@ node_modules
 .env.local
 vercel-env-paste.txt
 .vercel
+.netlify
 .claude/
 dist
 coverage
@@ -13,3 +14,4 @@ coverage
 
 scripts/_pdfgen/
 scripts/sample-program-pdf.*
+.env*.local

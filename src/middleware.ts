@@ -27,6 +27,7 @@ function isLaunchGateBypass(pathname: string): boolean {
   if (pathname.startsWith("/api/")) return true;
   if (pathname === "/robots.txt" || pathname === "/sitemap.xml") return true;
   const segments = pathname.split("/").filter(Boolean);
+  if (segments.length === 3 && LOCALES.has(segments[0]) && segments[1] === "auth" && segments[2] === "callback") return true;
   if (
     segments.length >= 2 &&
     LOCALES.has(segments[0]) &&
@@ -152,7 +153,7 @@ export async function middleware(request: NextRequest) {
   const guard = matchHtmlGuard(request.nextUrl.pathname);
   if (guard) {
     const { locale, kind } = guard;
-    const path = request.nextUrl.pathname;
+    const path = request.nextUrl.pathname + request.nextUrl.search;
 
     if (!user) {
       const login = new URL(`/${locale}/login`, request.url);

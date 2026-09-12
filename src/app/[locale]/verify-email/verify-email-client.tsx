@@ -9,6 +9,7 @@ import { AsyncButton } from "@/components/ui/AsyncButton";
 import { Logo } from "@/components/ui/Logo";
 import type { Locale } from "@/lib/i18n";
 import { sanitizeRedirectParam } from "@/lib/safe-redirect";
+import { authConfirmationUrl, getAuthConfirmationCopy } from "@/lib/auth-confirmation";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 
 const COPY: Record<
@@ -110,6 +111,7 @@ function VerifyEmailInner({ params }: { params: { locale: string } }) {
 
   const locale = params.locale as Locale;
   const copy = COPY[locale] ?? COPY.en;
+  const confirmation = getAuthConfirmationCopy(locale);
 
   const redirectSafe = useMemo(
     () =>
@@ -147,7 +149,7 @@ function VerifyEmailInner({ params }: { params: { locale: string } }) {
         type: "signup",
         email: email.trim(),
         options: {
-          emailRedirectTo: `${window.location.origin}/${locale}`
+          emailRedirectTo: authConfirmationUrl(window.location.origin, locale, redirectSafe)
         }
       });
       if (error) {
@@ -174,6 +176,8 @@ function VerifyEmailInner({ params }: { params: { locale: string } }) {
         <h1 className="font-display text-2xl font-semibold leading-tight text-white sm:text-3xl">{copy.title}</h1>
         <p className="mt-3 max-w-[42ch] text-sm text-muted sm:text-base">{copy.sub}</p>
         <p className="mt-2 text-xs text-dim">{copy.spamHint}</p>
+        {searchParams.get("authError") === "confirmation_failed" && <p role="alert" className="mt-4 text-sm text-amber-200">{confirmation.failed}</p>}
+        {redirectSafe?.startsWith(`/${locale}/ai?`) && <p className="mt-4 text-sm text-muted">{confirmation.assessment}</p>}
 
         <div className="mt-8 w-full text-start">
           <label htmlFor="verify-email-input" className="mb-1.5 block text-xs font-medium text-[var(--color-text-secondary)]">

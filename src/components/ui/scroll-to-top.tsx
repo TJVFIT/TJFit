@@ -2,8 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { ChevronUp } from "lucide-react";
+import type { Locale } from "@/lib/i18n";
 
-export function ScrollToTop() {
+const SCROLL_LABEL: Record<Locale, string> = {
+  en: "Scroll to top",
+  tr: "Başa dön",
+  ar: "العودة إلى أعلى الصفحة",
+  es: "Volver arriba",
+  fr: "Revenir en haut"
+};
+
+export function ScrollToTop({ locale }: { locale: Locale }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -16,7 +25,7 @@ export function ScrollToTop() {
   return (
     <button
       type="button"
-      aria-label="Scroll to top"
+      aria-label={SCROLL_LABEL[locale]}
       tabIndex={visible ? 0 : -1}
       aria-hidden={!visible}
       onClick={() => {

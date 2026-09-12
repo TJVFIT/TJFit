@@ -2,10 +2,23 @@ import { NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isAdminEmail } from "@/lib/auth-utils";
 import { logServerError, logServerWarning } from "@/lib/server-log";
+import { AUTH_SERVICE_UNAVAILABLE, classifyAuthSessionFailure } from "@/lib/auth-session-failure";
 
 export const dynamic = "force-dynamic";
 
 export type Role = "admin" | "coach" | "user" | null;
+
+function unavailable(scope: string, code = AUTH_SERVICE_UNAVAILABLE) {
+  logServerError(scope, { code });
+  return NextResponse.json(
+    { user: null, role: null, error: "Service temporarily unavailable.", code },
+    { status: 503, headers: { "Cache-Control": "private, no-store" } }
+  );
+}
+
+function signedOut() {
+  return NextResponse.json({ user: null, role: null }, { headers: { "Cache-Control": "private, no-store" } });
+}
 
 export async function GET() {
   let supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>;
@@ -18,21 +31,21 @@ export async function GET() {
     );
   }
 
+  let result: Awaited<ReturnType<typeof supabase.auth.getUser>>;
   try {
-    const {
-      data: { user },
-      error: authError
-    } = await supabase.auth.getUser();
+    result = await supabase.auth.getUser();
+  } catch (error) {
+    return classifyAuthSessionFailure(error) === "signed_out" ? signedOut() : unavailable("api/auth/me:getUser");
+  }
+  const { data: { user }, error: authError } = result;
 
-    if (authError) {
-      logServerWarning("api/auth/me:getUser", authError.message, { code: authError.code });
-      return NextResponse.json({ user: null, role: null });
-    }
+  if (authError) {
+    return classifyAuthSessionFailure(authError) === "signed_out" ? signedOut() : unavailable("api/auth/me:getUser");
+  }
 
-    if (!user) {
-      return NextResponse.json({ user: null, role: null });
-    }
+  if (!user) return signedOut();
 
+  try {
     const { data: profileRow, error: profileErr } = await supabase
       .from("profiles")
       .select("role, username, display_name, avatar_url")
@@ -40,7 +53,7 @@ export async function GET() {
       .maybeSingle();
 
     if (profileErr) {
-      logServerError("api/auth/me:profiles", profileErr, { userId: user.id });
+      return unavailable("api/auth/me:profiles", "PROFILE_SERVICE_UNAVAILABLE");
     }
 
     let role: Role = "user";
@@ -61,7 +74,7 @@ export async function GET() {
       .maybeSingle();
 
     if (linkErr) {
-      logServerWarning("api/auth/me:coach_student_links", linkErr.message, { userId: user.id });
+      logServerWarning("api/auth/me:coach_student_links", "relationship_lookup_failed");
     }
 
     const hasActiveCoachChat =
@@ -84,9 +97,8 @@ export async function GET() {
           }
         : undefined
     });
-  } catch (e) {
-    logServerError("api/auth/me:unhandled", e);
-    return NextResponse.json({ user: null, role: null });
+  } catch {
+    return unavailable("api/auth/me:profile_context", "PROFILE_SERVICE_UNAVAILABLE");
   }
 }
 

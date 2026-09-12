@@ -341,9 +341,9 @@ function BundleCard({
                   ? "border border-white/20 bg-white/[0.08] text-white/85"
                   : "border border-purple-300/40 bg-purple-300/[0.12] text-purple-50"
               }`}
-              aria-label={copy.priceAria(bundle.save)}
+              aria-label={copy.priceAria(isFree ? copy.free : bundle.save)}
             >
-              {bundle.save}
+              {isFree ? copy.free : bundle.save}
             </span>
           </div>
           <div className="absolute inset-x-0 bottom-0 z-[1] h-24 bg-[linear-gradient(180deg,rgba(8,8,11,0)_0%,rgba(8,8,11,0.85)_100%)]" />

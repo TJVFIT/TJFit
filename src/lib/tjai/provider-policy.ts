@@ -1,21 +1,11 @@
 /**
- * TJAI provider strategy (TJFITV.10X PR7 / doc PR4 — Option A: explicit dual-provider).
- *
- * TJAI intentionally runs two providers: OpenAI for the safety-critical paths
- * (paid plan generation, streaming chat) where the structured-output contract and
- * consistency matter most, and Anthropic for long-form/extraction helper features.
- * This module is the single source of truth for that routing so route code stops
- * drifting on ad-hoc provider/model strings, and it defines how each task degrades
- * when its provider key is absent — a missing optional key must never break core
- * chat or plan generation.
- *
- * 2026-07-14 (owner directive): an open-source gateway (llm-gateway.ts — Ollama /
- * vLLM / Groq / OpenRouter / any OpenAI-compatible server running open-weight
- * models) now outranks BOTH legacy providers for every task when configured.
- * Legacy keys remain a fallback so production never breaks during the switch.
+ * TJAI release policy: approved free Groq inference only.
+ * Plan generation and chat require the provider and retention gates. Legacy
+ * paid-provider keys never activate a fallback; optional AI tasks remain closed.
+ * Deterministic saved-plan and progress features do not require an AI provider.
  */
 
-import { isOpenLLMConfigured } from "./llm-gateway";
+import { isFreeGroqConfigured } from "./free-provider";
 
 export type TjaiProvider = "open" | "openai" | "anthropic" | "guard" | "none";
 
@@ -63,58 +53,30 @@ export const TJAI_AI_TASKS = {
 } as const satisfies Record<string, TjaiAiTask>;
 
 export const PROVIDER_POLICY: Record<TjaiAiTask, TjaiProviderDecision> = {
-  plan_generate: { task: "plan_generate", provider: "openai", reason: "JSON-mode plan contract + consistency", fallback: "generic_503" },
-  chat_stream: { task: "chat_stream", provider: "openai", reason: "Streaming coach chat", fallback: "static_fallback" },
-  chat_preference_extract: { task: "chat_preference_extract", provider: "openai", reason: "Cheap utility extraction (mini)", fallback: "fail_closed" },
-  progress_evaluate: { task: "progress_evaluate", provider: "openai", reason: "Progress analysis", fallback: "generic_503" },
-  meal_swap: { task: "meal_swap", provider: "anthropic", reason: "Long-form meal rewrite", fallback: "generic_503" },
-  grocery_list: { task: "grocery_list", provider: "anthropic", reason: "Structured list generation", fallback: "generic_503" },
-  meal_prep: { task: "meal_prep", provider: "anthropic", reason: "Timeline generation", fallback: "generic_503" },
-  adaptive_suggestion: { task: "adaptive_suggestion", provider: "anthropic", reason: "Coaching suggestion synthesis", fallback: "fail_closed" },
-  long_memory_extract: { task: "long_memory_extract", provider: "anthropic", reason: "Fact extraction from chat", fallback: "fail_closed" },
-  blog_generate: { task: "blog_generate", provider: "anthropic", reason: "Admin-only long-form content", fallback: "generic_503" },
-  pro_renewal_email: { task: "pro_renewal_email", provider: "anthropic", reason: "Renewal email copy", fallback: "static_fallback" },
-  eval_chat: { task: "eval_chat", provider: "openai", reason: "Eval harness mirrors chat", fallback: "disabled" }
+  plan_generate: { task: "plan_generate", provider: "open", reason: "JSON-mode plan contract + consistency", fallback: "generic_503" },
+  chat_stream: { task: "chat_stream", provider: "open", reason: "Streaming coach chat", fallback: "static_fallback" },
+  chat_preference_extract: { task: "chat_preference_extract", provider: "none", reason: "Cheap utility extraction (mini)", fallback: "fail_closed" },
+  progress_evaluate: { task: "progress_evaluate", provider: "none", reason: "Progress analysis", fallback: "generic_503" },
+  meal_swap: { task: "meal_swap", provider: "none", reason: "Long-form meal rewrite", fallback: "generic_503" },
+  grocery_list: { task: "grocery_list", provider: "none", reason: "Structured list generation", fallback: "generic_503" },
+  meal_prep: { task: "meal_prep", provider: "none", reason: "Timeline generation", fallback: "generic_503" },
+  adaptive_suggestion: { task: "adaptive_suggestion", provider: "none", reason: "Coaching suggestion synthesis", fallback: "fail_closed" },
+  long_memory_extract: { task: "long_memory_extract", provider: "none", reason: "Fact extraction from chat", fallback: "fail_closed" },
+  blog_generate: { task: "blog_generate", provider: "none", reason: "Admin-only long-form content", fallback: "generic_503" },
+  pro_renewal_email: { task: "pro_renewal_email", provider: "none", reason: "Renewal email copy", fallback: "static_fallback" },
+  eval_chat: { task: "eval_chat", provider: "none", reason: "Eval harness mirrors chat", fallback: "disabled" }
 };
 
 /** Shaped error code surfaced to clients when a provider key is missing. */
 export const TJAI_PROVIDER_UNAVAILABLE = "TJAI_PROVIDER_UNAVAILABLE";
 
-export function isOpenAIConfigured(): boolean {
-  return Boolean(process.env.OPENAI_API_KEY);
-}
-
-export function isAnthropicConfigured(): boolean {
-  return Boolean(process.env.ANTHROPIC_API_KEY);
-}
-
-export function isProviderConfigured(provider: TjaiProvider): boolean {
-  if (provider === "open") return isOpenLLMConfigured();
-  if (provider === "openai") return isOpenAIConfigured();
-  if (provider === "anthropic") return isAnthropicConfigured();
-  return true;
-}
-
-/**
- * The provider that will actually serve a task right now: the open-source
- * gateway when configured, else the task's legacy policy provider, else the
- * other legacy provider as a last resort (any configured LLM beats a 503).
- */
+export function isOpenAIConfigured(): boolean { return false; }
+export function isAnthropicConfigured(): boolean { return false; }
+export function isProviderConfigured(provider: TjaiProvider): boolean { return provider === "open" && isFreeGroqConfigured(); }
 export function resolveTaskProvider(task: TjaiAiTask): TjaiProvider {
-  if (isOpenLLMConfigured()) return "open";
-  const legacy = PROVIDER_POLICY[task].provider;
-  if (isProviderConfigured(legacy)) return legacy;
-  // Streaming is only implemented for open + openai; Anthropic can't rescue chat.
-  const streamingTask = task === "chat_stream" || task === "eval_chat";
-  if (legacy === "openai" && !streamingTask && isAnthropicConfigured()) return "anthropic";
-  if (legacy === "anthropic" && isOpenAIConfigured()) return "openai";
-  return "none";
+  return (task === "plan_generate" || task === "chat_stream") && isFreeGroqConfigured() ? "open" : "none";
 }
-
-/** Whether a task can run given current env, per the routing policy. */
-export function isTaskAvailable(task: TjaiAiTask): boolean {
-  return resolveTaskProvider(task) !== "none";
-}
+export function isTaskAvailable(task: TjaiAiTask): boolean { return resolveTaskProvider(task) !== "none"; }
 
 /** Standard JSON body for a shaped 503 when a task's provider is unavailable. */
 export function providerUnavailableBody(): { error: string; code: string } {

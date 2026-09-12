@@ -24,6 +24,7 @@ import {
   COACH_NUTRITION_HINT_RE,
   COACH_TRAINING_HINT_RE
 } from "@/lib/tjai/chat-client-utils";
+import {getTjaiFlowCopy} from "@/lib/tjai/flow-copy";
 import { getTJAIAccess } from "@/lib/tjai-access";
 import { getTJAIChatCopy } from "@/lib/tjai-chat-copy";
 import { isSupportedLocale, type Locale, type SupportedLocale } from "@/lib/i18n";
@@ -127,6 +128,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
   const routingLocale = useRoutingLocale(locale);
   const copy = getTJAIChatCopy(locale);
   const t = copy.standalone;
+  const flow=getTjaiFlowCopy(locale);
   const island = useDynamicIsland();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -137,7 +139,8 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
   const [showVoiceTip, setShowVoiceTip] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [tier, setTier] = useState<"core" | "pro" | "apex">("core");
-  const [remaining, setRemaining] = useState(10);
+  const [remaining, setRemaining] = useState(0);
+  const [serverCanChat,setServerCanChat]=useState(false);
   const [showLimitOverlay, setShowLimitOverlay] = useState(false);
   const [conversationId, setConversationId] = useState<string>("");
   // Data-driven chip keys from the route's `done` event (see chat-suggestions.ts).
@@ -171,14 +174,14 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
   }, [showConversationsSheet]);
 
   useEffect(() => {
-    void fetch("/api/tjai/trial-status", { credentials: "include" })
+    void fetch("/api/tjai/access", { credentials: "include" })
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (!data) return;
         const nextTier = (data.tier ?? "core") as "core" | "pro" | "apex";
-        const used = Number(data?.trial?.messagesUsed ?? 0);
+        setServerCanChat(Boolean(data.canUseChat));
         setTier(nextTier);
-        setRemaining(Math.max(0, 10 - used));
+        setRemaining(data.dailyRepliesRemaining??999);
       })
       .catch(() => undefined);
   }, []);
@@ -208,7 +211,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
     listRef.current.scrollTop = listRef.current.scrollHeight;
   }, [messages, isStreaming, isThinking]);
 
-  const access = useMemo(() => getTJAIAccess(tier, { coreTrialMessagesRemaining: remaining }), [remaining, tier]);
+  const access = useMemo(() => ({...getTJAIAccess(tier, {coreTrialMessagesRemaining:remaining}),canUseChat:serverCanChat&&remaining>0}),[remaining,tier,serverCanChat]);
 
   const lastAssistant = [...messages].reverse().find((m) => m.role === "assistant");
   const showFollowUps =
@@ -250,15 +253,6 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
       return;
     }
 
-    // Trial enforcement is atomic on the server inside /api/tjai/chat
-    // (consume_trial_message RPC). The previous client-side fetch to
-    // /api/tjai/trial-consume-message was bypassable in DevTools.
-    // Optimistically decrement; a 402 from /chat below rolls back UI
-    // state and surfaces the limit overlay.
-    if (tier === "core") {
-      setRemaining((r) => Math.max(0, r - 1));
-    }
-
     const userMessage: ChatMessage = { id: crypto.randomUUID(), role: "user", content: message, created_at: new Date().toISOString() };
     const assistantId = crypto.randomUUID();
     setMessages((prev) => [...prev, userMessage, { id: assistantId, role: "assistant", content: "", created_at: new Date().toISOString() }]);
@@ -272,13 +266,13 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
     // No artificial pre-fetch delay — the request starts now, and the thinking
     // pulse reflects real wait time (send until response headers arrive).
     const controller = new AbortController();
-    const timer = window.setTimeout(() => controller.abort(), 35000);
+    const timer = window.setTimeout(() => controller.abort(), 55000);
     try {
       const response = await fetch("/api/tjai/chat", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, conversationId, locale: routingLocale }),
+        body: JSON.stringify({ message, conversationId, locale: routingLocale, requestId:userMessage.id }),
         signal: controller.signal
       });
       setIsThinking(false);
@@ -359,6 +353,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
       setMessages((prev) => prev.map((m) => (m.id === assistantId ? { ...m, content: t.chatFailed } : m)));
     } finally {
       window.clearTimeout(timer);
+      void fetch("/api/tjai/access",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(a=>{if(a){setRemaining(a.dailyRepliesRemaining??999);setServerCanChat(Boolean(a.canUseChat));}}).catch(()=>undefined);
       setIsStreaming(false);
       setIsThinking(false);
       void fetch("/api/tjai/chat/conversations", { credentials: "include", cache: "no-store" })
@@ -712,7 +707,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
               </button>
             </div>
           </form>
-          <p className="mt-2 px-1 text-[10px] text-faint">{tier === "core" ? `${remaining} ${t.coreRemaining}` : tier === "pro" ? t.proUnlocked : t.apexUnlimited}</p>
+          <p className="mt-2 px-1 text-[10px] text-faint">{tier === "core" ? `${remaining} ${flow.replies}` : tier === "pro" ? t.proUnlocked : t.apexUnlimited}</p>
         </div>
       </section>
 
@@ -779,11 +774,11 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
             <span className={cn(styles.avatarOrb, styles.orbBreathe, "mx-auto h-12 w-12 text-sm")} aria-hidden>
               TJ
             </span>
-            <h3 className="mt-4 text-lg font-semibold text-white">{t.trialUsed}</h3>
-            <p className="mt-2 text-sm text-muted">{t.trialSub}</p>
-            <a href={`/${locale}/membership`} className="mt-5 inline-flex tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] motion-reduce:hover:scale-100 px-5 py-2.5 text-sm font-semibold text-[#09090B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+            <h3 className="mt-4 text-lg font-semibold text-white">{flow.title}</h3>
+            <p className="mt-2 text-sm text-muted">{remaining===0?flow.replies:flow.terms}</p>
+            <a href={`/${locale}/ai?tab=my-plan&start=1`} className="mt-5 inline-flex tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] motion-reduce:hover:scale-100 px-5 py-2.5 text-sm font-semibold text-[#09090B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
             >
-              {t.upgradeCta}
+              {flow.review}
             </a>
             <button
               type="button"

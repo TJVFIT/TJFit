@@ -50,10 +50,13 @@ describe("equipment entry before hydration", () => {
   });
 
   for (const pathname of ["/tr", "/tr/bundles", "/tr/storehouse", "/tr/equipment-guide", "/zz/store", "/store"]) {
-    it(`preserves the existing intro for ${pathname}`, () => {
+    it(`also keeps ${pathname} visible without an entry overlay`, () => {
       const html = renderAt(pathname);
-      expect(html).toContain("LANGUAGE_PICKER");
-      expect(html).toContain("opacity-0");
+      expect(html).not.toContain("LANGUAGE_PICKER");
+      expect(html).not.toContain("ACCOUNT_PROMPT");
+      expect(html).not.toContain("opacity-0");
+      expect(html).toContain('id="main-content"');
+      expect(html).toContain('href="#main-content"');
     });
   }
 });

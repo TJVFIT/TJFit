@@ -29,6 +29,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Server not configured" }, { status: 500 });
   }
 
+  const { data: digital } = await admin.from("digital_checkout_intents").select("status,test_mode,program_slug")
+    .eq("id", orderId).eq("user_id", user.id).maybeSingle();
+  if (digital) return NextResponse.json({ status: digital.status, testMode: digital.test_mode, programSlug: digital.program_slug });
+
   const { data: row } = await admin
     .from("program_orders")
     .select("status")

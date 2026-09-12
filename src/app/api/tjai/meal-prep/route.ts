@@ -80,7 +80,7 @@ ${weekJson}`
     if (!json) return NextResponse.json({ error: "Invalid AI response" }, { status: 502 });
     return NextResponse.json(JSON.parse(json));
   } catch (error) {
-    console.error("[tjai/meal-prep] generation failed", error);
+    console.error("[tjai/meal-prep] generation failed");
     return NextResponse.json({ error: "Meal prep generation failed" }, { status: 500 });
   }
 }

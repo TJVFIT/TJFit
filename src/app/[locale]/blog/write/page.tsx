@@ -6,10 +6,12 @@ import { useSearchParams } from "next/navigation";
 import { PremiumPageShell } from "@/components/premium";
 import { Button } from "@/components/ui/Button";
 import type { Locale } from "@/lib/i18n";
+import { BLOG_CATEGORIES, BLOG_EDITOR_COPY } from "@/lib/blog-editor-copy";
 
 export default function BlogWritePage(props: { params: Promise<{ locale: string }> }) {
   const params = use(props.params);
   const locale = params.locale as Locale;
+  const copy = BLOG_EDITOR_COPY[locale];
   const searchParams = useSearchParams();
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("Training");
@@ -58,10 +60,10 @@ export default function BlogWritePage(props: { params: Promise<{ locale: string 
     return (
       <PremiumPageShell>
         <section className="rounded-2xl border border-divider bg-surface p-6">
-          <h1 className="text-2xl font-bold text-white">Blog posting locked</h1>
-          <p className="mt-2 text-sm text-muted">Complete a 12-week program and be active for 30+ days to unlock.</p>
+          <h1 className="text-2xl font-bold text-white">{copy.locked}</h1>
+          <p className="mt-2 text-sm text-muted">{copy.unlock}</p>
           <p className="mt-3 text-sm text-bright">
-            Program completed: {progress.paidPrograms > 0 ? "✓" : "✗"} · Days active: {progress.daysActive}/30
+            {copy.programCompleted}: {progress.paidPrograms > 0 ? "✓" : "✗"} · {copy.daysActive}: {progress.daysActive}/30
           </p>
         </section>
       </PremiumPageShell>
@@ -77,29 +79,28 @@ export default function BlogWritePage(props: { params: Promise<{ locale: string 
     formData.set("tags", tags);
     if (draftId) formData.set("draft_id", draftId);
     if (image) formData.set("image", image);
-    const res = await fetch("/api/blog/posts", { method: "POST", body: formData, credentials: "include" });
-    const data = await res.json().catch(() => ({}));
-    setStatus(res.ok ? "Post saved successfully." : String(data.error ?? "Failed to submit."));
+    try {
+      const res = await fetch("/api/blog/posts", { method: "POST", body: formData, credentials: "include" });
+      setStatus(res.ok ? copy.saved : copy.failed);
+    } catch {
+      setStatus(copy.failed);
+    }
   };
 
   return (
     <PremiumPageShell>
       <section className="rounded-2xl border border-divider bg-surface p-6">
-        <h1 className="text-3xl font-extrabold text-white">Write a Blog Post</h1>
+        <h1 className="text-3xl font-extrabold text-white">{copy.heading}</h1>
         <form className="mt-6 space-y-4" onSubmit={submit}>
-          <input aria-label="Post title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" className="w-full rounded-xl border border-divider bg-background px-3 py-2 text-white" required />
-          <select aria-label="Category" value={category} onChange={(e) => setCategory(e.target.value)} className="w-full rounded-xl border border-divider bg-background px-3 py-2 text-white">
-            <option>Training</option>
-            <option>Nutrition</option>
-            <option>Mindset</option>
-            <option>Recovery</option>
-            <option>Lifestyle</option>
+          <input aria-label={copy.title} value={title} onChange={(e) => setTitle(e.target.value)} placeholder={copy.title} className="w-full rounded-xl border border-divider bg-background px-3 py-2 text-white" required />
+          <select aria-label={copy.category} value={category} onChange={(e) => setCategory(e.target.value)} className="w-full rounded-xl border border-divider bg-background px-3 py-2 text-white">
+            {BLOG_CATEGORIES.map((value) => <option key={value} value={value}>{copy.categories[value]}</option>)}
           </select>
-          <textarea aria-label="Article content" value={content} onChange={(e) => setContent(e.target.value)} placeholder="Write your article..." className="min-h-[220px] w-full rounded-xl border border-divider bg-background px-3 py-2 text-white" required />
-          <input aria-label="Tags, comma separated" value={tags} onChange={(e) => setTags(e.target.value)} placeholder="Tags (comma separated)" className="w-full rounded-xl border border-divider bg-background px-3 py-2 text-white" />
-          <input aria-label="Cover image" type="file" accept="image/*" onChange={(e) => setImage(e.target.files?.[0] ?? null)} className="w-full text-sm text-bright" />
-          <p className="text-xs text-faint">SEO description preview: {seoDescription || "-"}</p>
-          <Button type="submit">Submit for Review</Button>
+          <textarea aria-label={copy.content} value={content} onChange={(e) => setContent(e.target.value)} placeholder={copy.write} className="min-h-[220px] w-full rounded-xl border border-divider bg-background px-3 py-2 text-white" required />
+          <input aria-label={copy.tags} value={tags} onChange={(e) => setTags(e.target.value)} placeholder={copy.tags} className="w-full rounded-xl border border-divider bg-background px-3 py-2 text-white" />
+          <input aria-label={copy.cover} type="file" accept="image/*" onChange={(e) => setImage(e.target.files?.[0] ?? null)} className="w-full text-sm text-bright" />
+          <p className="text-xs text-faint">{copy.preview}: {seoDescription || "-"}</p>
+          <Button type="submit">{copy.submit}</Button>
           {status ? <p className="text-sm text-bright">{status}</p> : null}
         </form>
       </section>

@@ -1,7 +1,8 @@
 import type { Locale } from "@/lib/i18n";
+import { EXTRA_ACCESSORY_COPY, EXTRA_ACCESSORY_IDS } from "@/lib/store/accessory-details";
 
 export const SHOPIFY_STORE_URL = "https://shop.tjfit.org";
-export const ACCESSORY_IDS = ["speed-rope", "training-gloves", "ankle-bands"] as const;
+export const ACCESSORY_IDS = ["speed-rope", "training-gloves", "ankle-bands", ...EXTRA_ACCESSORY_IDS] as const;
 export type AccessoryId = typeof ACCESSORY_IDS[number];
 export type AccessorySelection = Partial<Record<AccessoryId, number>>;
 
@@ -21,6 +22,7 @@ export const ACCESSORY_COPY: Record<Locale, AccessoryCopy> = {
     quantity: "Quantity", preview: "Illustrative artwork. Final product shown with your quote.", store: "Shopify store preview",
     gear: "Accessories", gyms: "Build your gym",
     items: {
+      ...EXTRA_ACCESSORY_COPY.en,
       "speed-rope": {name: "Adjustable speed rope", description: "A compact option for skipping sessions and warm-ups.", detail: "Sourcing brief: coated steel cable, adjustable length and metal handles."},
       "training-gloves": {name: "Training gloves", description: "Half-finger gloves with an adjustable wrist closure.", detail: "Choose a size after checking the supplier's palm measurements."},
       "ankle-bands": {name: "Ankle resistance set", description: "A portable addition to lower-body training.", detail: "Band resistance, fastening and the exact pieces in each set are confirmed before ordering."}
@@ -34,6 +36,7 @@ export const ACCESSORY_COPY: Record<Locale, AccessoryCopy> = {
     quantity: "Adet", preview: "Temsili çizim. Kesin ürün teklifinizde gösterilir.", store: "Shopify mağaza önizlemesi",
     gear: "Aksesuarlar", gyms: "Spor alanını kur",
     items: {
+      ...EXTRA_ACCESSORY_COPY.tr,
       "speed-rope": {name: "Ayarlanabilir atlama ipi", description: "İp atlama ve ısınma seansları için kompakt bir seçenek.", detail: "Tedarik kapsamı: kaplamalı çelik tel, ayarlanabilir uzunluk ve metal tutacak."},
       "training-gloves": {name: "Antrenman eldiveni", description: "Ayarlanabilir bilek kapamalı yarım parmak eldiven.", detail: "Beden seçimi, tedarikçinin avuç ölçü tablosuna göre yapılır."},
       "ankle-bands": {name: "Ayak bileği direnç seti", description: "Alt vücut antrenmanına taşınabilir bir ek.", detail: "Direnç, bağlantılar ve set içeriği siparişten önce netleştirilir."}
@@ -47,6 +50,7 @@ export const ACCESSORY_COPY: Record<Locale, AccessoryCopy> = {
     quantity: "الكمية", preview: "رسم توضيحي. يُعرض المنتج النهائي مع عرض السعر.", store: "معاينة متجر Shopify",
     gear: "الإكسسوارات", gyms: "جهّز صالتك",
     items: {
+      ...EXTRA_ACCESSORY_COPY.ar,
       "speed-rope": {name: "حبل قفز قابل للتعديل", description: "خيار صغير لجلسات القفز والإحماء.", detail: "مواصفات التوريد: سلك فولاذي مغطى وطول قابل للتعديل ومقابض معدنية."},
       "training-gloves": {name: "قفازات تدريب", description: "قفازات نصف إصبع مع إغلاق قابل للتعديل حول المعصم.", detail: "يُختار المقاس بعد مراجعة جدول قياسات الكف من المورد."},
       "ankle-bands": {name: "مجموعة مقاومة للكاحل", description: "إضافة محمولة لتدريب الجزء السفلي من الجسم.", detail: "تُؤكد المقاومة والتثبيت ومحتويات المجموعة قبل الطلب."}
@@ -60,6 +64,7 @@ export const ACCESSORY_COPY: Record<Locale, AccessoryCopy> = {
     quantity: "Quantité", preview: "Illustration indicative. Le produit final figurera sur le devis.", store: "Aperçu de la boutique Shopify",
     gear: "Accessoires", gyms: "Équipez votre salle",
     items: {
+      ...EXTRA_ACCESSORY_COPY.fr,
       "speed-rope": {name: "Corde à sauter réglable", description: "Un format compact pour vos séances et échauffements.", detail: "Recherche fournisseur : câble en acier gainé, longueur réglable et poignées métalliques."},
       "training-gloves": {name: "Gants d'entraînement", description: "Gants courts avec fermeture réglable au poignet.", detail: "Choisissez la taille selon le tableau de mesures du fournisseur."},
       "ankle-bands": {name: "Kit de résistance pour chevilles", description: "Un complément portable pour le bas du corps.", detail: "Résistance, fixations et contenu exact à confirmer avant commande."}
@@ -73,6 +78,7 @@ export const ACCESSORY_COPY: Record<Locale, AccessoryCopy> = {
     quantity: "Cantidad", preview: "Ilustración orientativa. El producto final se muestra en el presupuesto.", store: "Vista previa de Shopify",
     gear: "Accesorios", gyms: "Equipa tu gimnasio",
     items: {
+      ...EXTRA_ACCESSORY_COPY.es,
       "speed-rope": {name: "Cuerda de salto ajustable", description: "Una opción compacta para saltar y calentar.", detail: "Selección: cable de acero recubierto, longitud ajustable y mangos metálicos."},
       "training-gloves": {name: "Guantes de entrenamiento", description: "Guantes sin dedos con cierre ajustable en la muñeca.", detail: "Elige la talla según la tabla de medidas del proveedor."},
       "ankle-bands": {name: "Kit de resistencia para tobillos", description: "Un complemento portátil para entrenar el tren inferior.", detail: "Resistencia, cierres y contenido se confirman antes del pedido."}

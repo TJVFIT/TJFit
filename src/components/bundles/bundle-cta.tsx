@@ -1,13 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { FileDown, Loader2, ShoppingBag } from "lucide-react";
+import { openLemonCheckout } from "@/lib/payments/lemon/browser";
+import { getDigitalCheckoutCopy } from "@/lib/payments/checkout-copy";
+import { isLocale } from "@/lib/i18n";
+import { getBundleLanguageNotice } from "@/lib/bundle-language-copy";
 
 type Labels = { download: string; buy: string; getFree: string; processing: string };
 
 /**
  * Bundle call-to-action. Free bundles claim a $0 entitlement then download;
- * paid bundles run the create-order → prepare-session → Gumroad redirect
+ * paid bundles run the create-order → prepare-session → Lemon overlay
  * flow (mirrors the checkout page). On any failure it surfaces a short
  * inline message and never silently no-ops.
  */
@@ -28,11 +33,23 @@ export function BundleCta({
 }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [available, setAvailable] = useState(false);
+  const [testMode, setTestMode] = useState(false);
+  const [paymentOrderId, setPaymentOrderId] = useState<string | null>(null);
+  const copy = getDigitalCheckoutCopy(isLocale(locale) ? locale : "en");
+  useEffect(() => {
+    if (isFree) return;
+    let disposed = false;
+    fetch("/api/checkout/availability", { cache: "no-store" }).then(response => response.json()).then(data => {
+      if (!disposed) { setAvailable(data.available === true && Array.isArray(data.programSlugs) && data.programSlugs.includes(slug)); setTestMode(data.testMode === true); }
+    }).catch(() => {});
+    return () => { disposed = true; };
+  }, [isFree, slug]);
 
   const downloadHref = `/api/bundles/download/${slug}?locale=${locale}`;
 
   const run = async () => {
-    if (busy) return;
+    if (busy || (!isFree && !available)) return;
     setBusy(true);
     setError(null);
     try {
@@ -52,7 +69,7 @@ export function BundleCta({
         return;
       }
 
-      // Paid: create order → resolve Gumroad URL → redirect.
+      // Paid: server-owned intent → verified Lemon session → overlay or hosted fallback.
       const createRes = await fetch("/api/checkout/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -68,7 +85,7 @@ export function BundleCta({
 
       const flow = createData?.clientFlow as { action?: string; orderId?: string } | undefined;
       const orderId = flow?.orderId;
-      if (!orderId) throw new Error("no order id");
+      if (!orderId || flow?.action !== "redirect_lemon") throw new Error("Invalid checkout flow");
 
       const prepRes = await fetch("/api/checkout/prepare-session", {
         method: "POST",
@@ -77,24 +94,24 @@ export function BundleCta({
         body: JSON.stringify({ orderId })
       });
       const prep = (await prepRes.json().catch(() => ({}))) as { url?: string; error?: string; code?: string };
-      if (prep.code === "GUMROAD_NOT_CONFIGURED") {
-        throw new Error("This bundle isn't connected to checkout yet. Please try again shortly.");
-      }
       if (!prepRes.ok || !prep.url) throw new Error(prep.error ?? "Checkout is temporarily unavailable.");
-      window.location.href = prep.url;
+      await openLemonCheckout(prep.url);
+      setPaymentOrderId(orderId);
     } catch (e) {
       console.error("[bundle-cta]", e);
-      setError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
+      setError(copy.failed);
+    } finally {
       setBusy(false);
     }
   };
 
   return (
     <div className={className}>
+      <p className="mb-3 text-xs leading-relaxed text-muted">{getBundleLanguageNotice(isLocale(locale) ? locale : "en")}</p>
       <button
         type="button"
         onClick={run}
-        disabled={busy}
+        disabled={busy || (!isFree && !available)}
         aria-label={isFree ? `${labels.getFree} ${slug}` : `${labels.buy} ${slug} ${priceLabel}`}
         className="tj-cta-sheen relative inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-4 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(168,85,247,0.22)] transition-[filter,box-shadow,transform] duration-150 hover:brightness-110 hover:shadow-[0_0_32px_rgba(168,85,247,0.32)] motion-safe:active:scale-[0.97] disabled:opacity-60"
       >
@@ -105,8 +122,10 @@ export function BundleCta({
         ) : (
           <ShoppingBag className="h-4 w-4" aria-hidden />
         )}
-        <span>{busy ? labels.processing : isFree ? labels.getFree : `${labels.buy} · ${priceLabel}`}</span>
+        <span>{busy ? labels.processing : isFree ? labels.getFree : !available ? copy.closed : `${labels.buy} · ${priceLabel}`}</span>
       </button>
+      {!isFree && testMode ? <p className="mt-2 text-xs text-amber-200">{copy.testLabel}</p> : null}
+      {paymentOrderId ? <Link className="mt-3 block text-sm text-purple-200" href={`/${locale}/checkout?program=${encodeURIComponent(slug)}&orderId=${paymentOrderId}`}>{copy.check}</Link> : null}
       {error ? (
         <p className="mt-2 text-xs text-red-300" role="alert" aria-live="assertive">
           {error}
