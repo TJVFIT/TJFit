@@ -7,6 +7,7 @@ import { useMagneticButton } from "@/hooks/useMagneticButton";
 import type { Locale } from "@/lib/i18n";
 import { normalizeQuizAnswers } from "@/lib/tjai-intake";
 import { getMarketQuizOptions } from "@/lib/tjai/market-data";
+import { createQuizAutoAdvance } from "@/lib/tjai/quiz-auto-advance";
 import { calculateTJAIMetrics } from "@/lib/tjai-science";
 import { cn } from "@/lib/utils";
 import type { QuizAnswers, QuizOption, QuizStep, TJAICopy } from "@/lib/tjai-types";
@@ -541,6 +542,8 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
   const [resumeHandled, setResumeHandled] = useState(false);
   const [reviewing, setReviewing] = useState(false);
   const [returnToReview, setReturnToReview] = useState(false);
+  const [advanceController] = useState(createQuizAutoAdvance);
+  useEffect(() => () => advanceController.cancel(), [advanceController]);
   const magneticGenerateRef = useMagneticButton<HTMLButtonElement>(0.3);
   const quizSessionIdRef = useRef<string>("");
   const sentStepsRef = useRef<Set<string>>(new Set());
@@ -785,6 +788,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
     filteredSteps.findIndex((candidate) => candidate.required && !hasAnswer(candidate, answers[candidate.id]));
 
   const editStep = (stepIdx: number) => {
+    advanceController.cancel();
     setReviewing(false);
     setReturnToReview(true);
     setShowError(false);
@@ -792,6 +796,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
   };
 
   const submitAll = () => {
+    advanceController.cancel();
     const incompleteIdx = findFirstIncompleteIdx();
     if (incompleteIdx !== -1) {
       editStep(incompleteIdx);
@@ -804,6 +809,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
   };
 
   const goNext = () => {
+    advanceController.cancel();
     if (!canContinue) {
       setShowError(true);
       setShake(true);
@@ -831,6 +837,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
   };
 
   const updateAnswer = (value: QuizAnswers[string], autoAdvance = false) => {
+    advanceController.cancel();
     setAnswers((prev) => {
       const next = normalizeQuizAnswers({ ...prev, [step.id]: value });
       onAnswersChange?.(next);
@@ -838,8 +845,8 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
     });
     setShowError(false);
     if (autoAdvance) {
-      window.setTimeout(() => {
-        setIdx((v) => Math.min(total - 1, v + 1));
+      advanceController.schedule(() => {
+        setIdx((v) => v === safeIdx ? Math.min(total - 1, v + 1) : v);
       }, 400);
     }
   };
@@ -863,6 +870,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
           gender={typeof answers.s1_gender === "string" ? answers.s1_gender : undefined}
           value={currentBody as "Very Lean" | "Lean" | "Average" | "Overweight" | "Obese" | undefined}
           onSelect={(selection) => {
+            advanceController.cancel();
             setAnswers((prev) => {
               const next = {
                 ...prev,
@@ -893,7 +901,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
             });
             setShowError(false);
             if (!returnToReview) {
-              window.setTimeout(() => setIdx((v) => Math.min(total - 1, v + 1)), 500);
+              advanceController.schedule(() => setIdx((v) => v === safeIdx ? Math.min(total - 1, v + 1) : v), 500);
             }
           }}
         />
@@ -1295,7 +1303,7 @@ export function TJAIQuiz({ locale, copy, steps, direction, onSubmit, onAnswersCh
               {safeIdx > 0 ? (
                 <button
                   type="button"
-                  onClick={() => setIdx((v) => Math.max(0, v - 1))}
+                  onClick={() => { advanceController.cancel(); setIdx((v) => Math.max(0, v - 1)); }}
                   className="min-h-11 rounded-full border border-divider px-4 text-sm text-muted transition-all hover:border-[rgba(255,255,255,0.2)] hover:text-white"
                 >
                   <span className="sm:hidden">{"←"}</span>
