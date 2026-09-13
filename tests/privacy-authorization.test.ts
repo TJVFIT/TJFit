@@ -25,6 +25,9 @@ import { GET as profile } from "@/app/api/profile/[username]/route";
 import { GET as search } from "@/app/api/search/route";
 import { GET as discover } from "@/app/api/users/discover/route";
 import { GET as reviews, PATCH as review } from "@/app/api/coach/review-requests/route";
+import { GET as leaderboard } from "@/app/api/leaderboard/route";
+import { GET as followers } from "@/app/api/follow/followers/route";
+import { GET as following } from "@/app/api/follow/following/route";
 
 const owner = "20000000-0000-4000-8000-000000000002";
 const id = "30000000-0000-4000-8000-000000000003";
@@ -58,6 +61,7 @@ beforeEach(() => {
         if (op === "eq") return value(row, key) === expected;
         if (op === "neq") return value(row, key) !== expected;
         if (op === "gte") return value(row, key) >= expected;
+        if (op === "in") return expected.includes(value(row, key));
         if (op === "or" && table === "coach_review_requests") {
           const own = String(key).match(/^coach_id\.eq\.([^,]+),/);
           const unassigned = String(key).includes("and(coach_id.is.null,status.eq.pending)");
@@ -69,16 +73,68 @@ beforeEach(() => {
       if (update) rows.forEach(row => Object.assign(row, update[1]));
       const limit = ops.find(([op]) => op === "limit")?.[1];
       if (limit) rows = rows.slice(0, limit);
+      const range = ops.find(([op]) => op === "range");
+      if (range) rows = rows.slice(range[1], range[2] + 1);
       return { data: rows, error: null, count: rows.length };
     };
     const query: Record<string, any> = {};
-    for (const method of ["select", "eq", "neq", "gte", "or", "ilike", "order", "limit", "update"]) {
+    for (const method of ["select", "eq", "neq", "gte", "in", "range", "or", "ilike", "order", "limit", "update"]) {
       query[method] = (...args: any[]) => { ops.push([method, ...args]); return query; };
     }
     query.maybeSingle = async () => { const result = execute(); return { ...result, data: result.data?.[0] ?? null }; };
     query.then = (resolve: (result: unknown) => unknown) => Promise.resolve(execute()).then(resolve);
     return query;
   };
+});
+
+describe("private leaderboards and relationship lists", () => {
+  it("never shares a viewer's private leaderboard result through a public cache", async () => {
+    h.tables.profiles[0].is_private = true; h.viewer = owner;
+    h.tables.leaderboard_weekly_snapshots = [{ user_id: owner, streak_days: 13, blog_views: 4, posts_count: 1, programs_done: 2 }];
+    const ownResponse = await leaderboard(req("leaderboard?period=alltime"));
+    const own = await ownResponse.json();
+    expect(ownResponse.headers.get("Cache-Control")).toBe("private, no-store");
+    expect(own.items).toEqual([]); expect(own.me.userId).toBe(owner);
+    h.viewer = otherCoach;
+    const otherResponse = await leaderboard(req("leaderboard?period=alltime"));
+    const other = await otherResponse.json();
+    expect(other.items).toEqual([]); expect(other.me).toBeNull();
+    expect(otherResponse.headers.get("Cache-Control")).toBe("private, no-store");
+  });
+
+  it("keeps unsearchable users and hidden metric ranks out, redacts other hidden metrics, and uses public display names", async () => {
+    h.viewer = null;
+    h.tables.profiles[0].full_name = "Confidential legal name";
+    h.tables.profiles[0].privacy_settings = { show_streak: true, show_posts: false, show_programs: false };
+    h.tables.profiles.push(
+      { ...h.tables.profiles[0], id, is_searchable: false },
+      { ...h.tables.profiles[0], id: otherCoach, privacy_settings: { show_streak: false } }
+    );
+    h.tables.leaderboard_weekly_snapshots = [owner, id, otherCoach].map(user_id => ({ user_id, streak_days: 13, blog_views: 4, posts_count: 1, programs_done: 2 }));
+    const body = await (await leaderboard(req("leaderboard?period=alltime"))).json();
+    expect(body.items).toHaveLength(1);
+    expect(body.items[0]).toMatchObject({ userId: owner, rank: 1, displayName: "Member", streak: 13, blogViews: null, postsCount: null, programsDone: null });
+    expect(JSON.stringify(body)).not.toContain("Confidential legal name");
+  });
+
+  it.each([["followers", followers], ["following", following]] as const)("keeps private %s relationships owner-only", async (direction, handler) => {
+    h.tables.profiles[0].is_private = true;
+    h.tables.user_follows = [{ follower_id: owner, following_id: otherCoach, created_at: "2026-09-01" },
+      { follower_id: otherCoach, following_id: owner, created_at: "2026-09-01" }];
+    const url = req(`follow/${direction}?user_id=${owner}`);
+    expect((await handler(url)).status).toBe(404);
+    expect(h.queries.map(q => q.table)).toEqual(["profiles"]);
+    h.viewer = owner;
+    const response = await handler(url);
+    expect(response.status).toBe(200);
+    expect((await response.json()).items[0].id).toBe(otherCoach);
+    expect(response.headers.get("Cache-Control")).toBe("private, no-store");
+  });
+
+  it.each([["followers", followers], ["following", following]] as const)("preserves public %s lists and validates page bounds", async (direction, handler) => {
+    expect((await handler(req(`follow/${direction}?user_id=${owner}`))).status).toBe(200);
+    expect((await handler(req(`follow/${direction}?user_id=${owner}&page=Infinity`))).status).toBe(400);
+  });
 });
 
 describe("profile privacy through service-role APIs", () => {

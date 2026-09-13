@@ -62,7 +62,9 @@ export async function GET(request: NextRequest) {
     // Graceful fallback when snapshot table is missing/unseeded.
     const { data: fallbackProfiles } = await adminClient
       .from("profiles")
-      .select("id,username,full_name,avatar_url,is_verified,current_streak")
+      .select("id,username,display_name,avatar_url,is_verified,current_streak")
+      .eq("is_private", false)
+      .eq("is_searchable", true)
       .order("current_streak", { ascending: false })
       .limit(100);
     rows = (fallbackProfiles ?? []).map((row) => ({
@@ -77,23 +79,31 @@ export async function GET(request: NextRequest) {
   }
   const userIds = [...new Set(rows.map((r) => r.user_id))];
   const { data: profiles } = userIds.length
-    ? await adminClient.from("profiles").select("id,username,full_name,avatar_url,is_verified,current_streak").in("id", userIds)
+    ? await adminClient.from("profiles").select("id,username,display_name,avatar_url,is_verified,current_streak,privacy_settings")
+        .in("id", userIds).eq("is_private", false).eq("is_searchable", true)
     : { data: [] as Array<Record<string, unknown>> };
   const profileById = new Map((profiles ?? []).map((p: any) => [p.id, p]));
 
-  const items = rows.map((row, idx) => {
-    const profile: any = profileById.get(row.user_id) ?? {};
+  const privacyField = type === "programs" ? "show_programs" : type === "blog" || type === "coaches" ? "show_posts" : "show_streak";
+  // Never return a missing profile's id as a fallback: this lookup intentionally
+  // excludes private/non-searchable accounts. Ranking itself reveals the metric.
+  const visibleRows = rows.filter(row => {
+    const profile: any = profileById.get(row.user_id);
+    return profile && profile.privacy_settings?.[privacyField] !== false;
+  });
+  const items = visibleRows.map((row, idx) => {
+    const profile: any = profileById.get(row.user_id)!;
     return {
       rank: idx + 1,
       userId: row.user_id,
       username: profile.username ?? null,
-      displayName: profile.full_name ?? profile.username ?? "TJFit User",
+      displayName: profile.display_name ?? profile.username ?? "TJFit User",
       avatarUrl: profile.avatar_url ?? null,
       isVerified: Boolean(profile.is_verified),
-      streak: profile.current_streak ?? row.streak_days ?? 0,
-      blogViews: row.blog_views ?? 0,
-      postsCount: row.posts_count ?? 0,
-      programsDone: row.programs_done ?? 0
+      streak: profile.privacy_settings?.show_streak === false ? null : profile.current_streak ?? row.streak_days ?? 0,
+      blogViews: profile.privacy_settings?.show_posts === false ? null : row.blog_views ?? 0,
+      postsCount: profile.privacy_settings?.show_posts === false ? null : row.posts_count ?? 0,
+      programsDone: profile.privacy_settings?.show_programs === false ? null : row.programs_done ?? 0
     };
   });
 
@@ -117,14 +127,14 @@ export async function GET(request: NextRequest) {
         if (mine) {
           const { data: myProfile } = await adminClient
             .from("profiles")
-            .select("id,username,full_name,avatar_url,is_verified,current_streak")
+            .select("id,username,display_name,avatar_url,is_verified,current_streak")
             .eq("id", user.id)
             .maybeSingle();
           me = {
             rank: null,
             userId: user.id,
             username: myProfile?.username ?? null,
-            displayName: myProfile?.full_name ?? myProfile?.username ?? "You",
+            displayName: myProfile?.display_name ?? myProfile?.username ?? "You",
             avatarUrl: myProfile?.avatar_url ?? null,
             isVerified: Boolean(myProfile?.is_verified),
             streak: myProfile?.current_streak ?? mine.streak_days ?? 0,
@@ -141,7 +151,7 @@ export async function GET(request: NextRequest) {
 
   const res = NextResponse.json({ type, period, items, me })
 
-  // Leaderboard is the same for everyone — cache for 2 min, serve stale for 5 min
-  res.headers.set("Cache-Control", "public, s-maxage=120, stale-while-revalidate=300");
+  // `me` belongs to the authenticated viewer, including a private profile.
+  res.headers.set("Cache-Control", "private, no-store");
   return res;
 }
