@@ -7,7 +7,8 @@ import { PUBLIC_COPY } from '@/lib/public-offers-copy';
 import { openLemonCheckout } from '@/lib/payments/lemon/browser';
 import { getTjaiFlowCopy } from '@/lib/tjai/flow-copy';
 import { getTjaiCheckoutCopy } from '@/lib/tjai/checkout-copy';
-import { CheckoutRecoveryError, emptyTjaiCheckout, isTjaiReceiptExpired, loadTjaiCheckout, mergeTjaiCheckout, parseCreatedTjaiOrder, tjaiCheckoutActions, tjaiCheckoutPath } from '@/lib/tjai/checkout-recovery';
+import { CheckoutRecoveryError, emptyTjaiCheckout, isTjaiReceiptExpired, parseCreatedTjaiOrder, tjaiCheckoutActions, tjaiCheckoutPath, type TjaiReceipt } from '@/lib/tjai/checkout-recovery';
+import { createTjaiCheckoutMonitor, type TjaiCheckoutMonitor } from '@/lib/tjai/checkout-polling';
 
 export default function TjaiCheckout() {
   const params = useParams(), query = useSearchParams();
@@ -20,49 +21,46 @@ function TjaiCheckoutFlow({ locale, intakeId, returnedOrderId }: { locale: Local
   const t = getTjaiFlowCopy(locale), copy = getTjaiCheckoutCopy(locale);
   const [orderId, setOrderId] = useState(returnedOrderId);
   const [state, setState] = useState(() => emptyTjaiCheckout(intakeId, returnedOrderId));
-  const [busy, setBusy] = useState(false), [checking, setChecking] = useState(true), [refresh, setRefresh] = useState(0);
+  const [busy, setBusy] = useState(false), [checking, setChecking] = useState(true);
   const [actionError, setActionError] = useState(false);
-  const orderRef = useRef(returnedOrderId), stateRef = useRef(state), busyRef = useRef(false), mounted = useRef(true);
-  const epoch = useRef(0), loadSequence = useRef(0);
-  stateRef.current = state;
+  const orderRef = useRef(returnedOrderId), busyRef = useRef(false), mounted = useRef(true);
+  const epoch = useRef(0), monitorRef = useRef<TjaiCheckoutMonitor | null>(null);
 
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   useEffect(() => {
-    if (returnedOrderId === orderRef.current) return;
-    epoch.current++; loadSequence.current++; orderRef.current = returnedOrderId;
-    busyRef.current = false; setBusy(false); setActionError(false); setChecking(true);
-    setOrderId(returnedOrderId); setState(emptyTjaiCheckout(intakeId, returnedOrderId));
-  }, [returnedOrderId, intakeId]);
+    const monitor = createTjaiCheckoutMonitor({ intakeId, orderId: orderRef.current,
+      visible: document.visibilityState !== 'hidden', onState: setState, onChecking: setChecking });
+    monitorRef.current = monitor;
+    const visibilityChanged = () => monitor.setVisible(document.visibilityState !== 'hidden');
+    document.addEventListener('visibilitychange', visibilityChanged);
+    monitor.start();
+    return () => {
+      document.removeEventListener('visibilitychange', visibilityChanged);
+      monitor.stop();
+      if (monitorRef.current === monitor) monitorRef.current = null;
+    };
+  }, [intakeId]);
 
   useEffect(() => {
-    let stopped = false, running = false;
-    const check = async () => {
-      if (running || busyRef.current) return;
-      running = true; const sequence = ++loadSequence.current;
-      const result = await loadTjaiCheckout(intakeId, orderId);
-      if (!stopped && mounted.current && sequence === loadSequence.current && !busyRef.current) {
-        setState(previous => mergeTjaiCheckout(previous, result)); setChecking(false);
-      }
-      running = false;
-    };
-    void check();
-    const timer = setInterval(() => {
-      const current = stateRef.current;
-      if (orderId && (!current.receipt || current.receipt.status === 'pending' || (current.receipt.status === 'paid' && !current.hasAccess))) void check();
-    }, 5000);
-    return () => { stopped = true; clearInterval(timer); };
-  }, [intakeId, orderId, refresh]);
+    if (returnedOrderId === orderRef.current) return;
+    epoch.current++; orderRef.current = returnedOrderId;
+    busyRef.current = false; setBusy(false); setActionError(false);
+    setOrderId(returnedOrderId);
+    monitorRef.current?.setOrder(returnedOrderId);
+    monitorRef.current?.setBusy(false);
+  }, [returnedOrderId, intakeId]);
 
   const actions = tjaiCheckoutActions(state, busy || checking);
-  const retry = () => { if (busyRef.current) return; setActionError(false); setChecking(true); setRefresh(value => value + 1); };
-  const rememberOrder = (id: string | null) => {
+  const retry = () => { if (busyRef.current) return; setActionError(false); monitorRef.current?.refresh(); };
+  const rememberOrder = (id: string | null, receipt?: TjaiReceipt) => {
     orderRef.current = id; setOrderId(id);
+    monitorRef.current?.setOrder(id, receipt);
     window.history.replaceState(window.history.state, '', tjaiCheckoutPath(locale, intakeId, id));
   };
 
   const checkout = async () => {
     if (busyRef.current || (!actions.canBuy && !actions.canResume)) return;
-    busyRef.current = true; setBusy(true); setActionError(false); loadSequence.current++;
+    busyRef.current = true; setBusy(true); setActionError(false); monitorRef.current?.setBusy(true);
     const operation = ++epoch.current;
     const current = () => mounted.current && operation === epoch.current;
     try {
@@ -75,8 +73,7 @@ function TjaiCheckoutFlow({ locale, intakeId, returnedOrderId }: { locale: Local
         const receipt = parseCreatedTjaiOrder(value, intakeId, state.testMode);
         id = receipt.orderId;
         // Retain this intent before prepare/open: retry must not create another order.
-        setState(previous => ({ ...previous, orderId: receipt.orderId, receipt, issue: null }));
-        rememberOrder(id);
+        rememberOrder(id, receipt);
       }
       const response = await fetch('/api/checkout/prepare-session', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId: id }) });
       const session = await response.json();
@@ -86,14 +83,14 @@ function TjaiCheckoutFlow({ locale, intakeId, returnedOrderId }: { locale: Local
     } catch {
       if (current()) setActionError(true);
     } finally {
-      if (current()) { busyRef.current = false; setBusy(false); setChecking(true); setRefresh(value => value + 1); }
+      if (current()) { busyRef.current = false; setBusy(false); monitorRef.current?.setBusy(false); }
     }
   };
 
   const startNew = () => {
     if (!actions.canStartNew || busyRef.current) return;
-    epoch.current++; loadSequence.current++; setActionError(false);
-    rememberOrder(null); setState(previous => ({ ...previous, orderId: null, receipt: null }));
+    epoch.current++; setActionError(false);
+    rememberOrder(null);
   };
   const receipt = state.receipt;
   const receiptText = receipt?.status === 'test_paid' ? copy.testPaid : receipt?.status === 'refunded' ? copy.refunded

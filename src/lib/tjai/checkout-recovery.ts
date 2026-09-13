@@ -13,7 +13,11 @@ export function emptyTjaiCheckout(intakeId: string, orderId: string | null): Tja
 }
 
 export class CheckoutRecoveryError extends Error {
-  constructor(public issue: Exclude<CheckoutIssue, null>) { super(issue); }
+  constructor(public issue: Exclude<CheckoutIssue, null>, public status?: number) { super(issue); }
+}
+
+export function validTjaiCheckoutReferences(intakeId: string, orderId: string | null) {
+  return uuid.test(intakeId) && (orderId === null || uuid.test(orderId));
 }
 
 /** A return URL is only a reference. The authenticated server owns the receipt. */
@@ -28,33 +32,48 @@ export function parseTjaiReceipt(value: unknown, intakeId: string, orderId: stri
   return { orderId, intakeId, status: value.status as TjaiReceipt['status'], testMode: value.testMode, expiresAt: value.expiresAt };
 }
 
-async function readJson(url: string, fetcher: typeof fetch): Promise<unknown> {
-  const response = await fetcher(url, { credentials: 'include', cache: 'no-store' });
-  if (!response.ok) throw new CheckoutRecoveryError('unavailable');
+async function readJson(url: string, fetcher: typeof fetch, signal?: AbortSignal): Promise<unknown> {
+  const response = await fetcher(url, { credentials: 'include', cache: 'no-store', ...(signal ? { signal } : {}) });
+  if (!response.ok) throw new CheckoutRecoveryError('unavailable', response.status);
   return response.json();
+}
+
+export async function loadTjaiIntake(intakeId: string, fetcher: typeof fetch = fetch, signal?: AbortSignal) {
+  const value = await readJson('/api/tjai/intake?id=' + encodeURIComponent(intakeId), fetcher, signal);
+  if (!object(value) || !object(value.intake) || value.intake.id !== intakeId) throw new CheckoutRecoveryError('mismatch');
+}
+
+export async function loadTjaiCheckoutAccess(fetcher: typeof fetch = fetch, signal?: AbortSignal) {
+  const value = await readJson('/api/tjai/access', fetcher, signal);
+  if (!object(value) || value.available !== true || typeof value.hasPass !== 'boolean' || typeof value.hasLegacyAccess !== 'boolean') throw new CheckoutRecoveryError('unavailable');
+  return value.hasPass || value.hasLegacyAccess;
+}
+
+export async function loadTjaiCheckoutAvailability(fetcher: typeof fetch = fetch, signal?: AbortSignal) {
+  const value = await readJson('/api/checkout/availability', fetcher, signal);
+  if (!object(value) || typeof value.available !== 'boolean' || typeof value.testMode !== 'boolean' || !Array.isArray(value.programSlugs)) throw new CheckoutRecoveryError('unavailable');
+  return { available: value.available && value.programSlugs.includes('tjai-pass'), testMode: value.testMode };
+}
+
+export async function loadTjaiCheckoutReceipt(intakeId: string, orderId: string, fetcher: typeof fetch = fetch, signal?: AbortSignal) {
+  try {
+    return parseTjaiReceipt(await readJson('/api/checkout/order-status?orderId=' + encodeURIComponent(orderId), fetcher, signal), intakeId, orderId);
+  } catch (error) {
+    // An authenticated missing receipt cannot be repaired by repeatedly polling it.
+    if (error instanceof CheckoutRecoveryError && error.status === 404) throw new CheckoutRecoveryError('mismatch', 404);
+    throw error;
+  }
 }
 
 /** Successful receipt data can still be displayed when another dependency fails. */
 export async function loadTjaiCheckout(intakeId: string, orderId: string | null, fetcher: typeof fetch = fetch): Promise<TjaiCheckoutState> {
   const next = emptyTjaiCheckout(intakeId, orderId);
-  if (!uuid.test(intakeId) || (orderId !== null && !uuid.test(orderId))) return { ...next, issue: 'mismatch' };
+  if (!validTjaiCheckoutReferences(intakeId, orderId)) return { ...next, issue: 'mismatch' };
   const results = await Promise.allSettled([
-    readJson('/api/tjai/intake?id=' + encodeURIComponent(intakeId), fetcher).then(value => {
-      if (!object(value) || !object(value.intake) || value.intake.id !== intakeId) throw new CheckoutRecoveryError('mismatch');
-      next.ready = true;
-    }),
-    readJson('/api/tjai/access', fetcher).then(value => {
-      if (!object(value) || value.available !== true || typeof value.hasPass !== 'boolean' || typeof value.hasLegacyAccess !== 'boolean') throw new CheckoutRecoveryError('unavailable');
-      next.hasAccess = value.hasPass || value.hasLegacyAccess;
-    }),
-    readJson('/api/checkout/availability', fetcher).then(value => {
-      if (!object(value) || typeof value.available !== 'boolean' || typeof value.testMode !== 'boolean' || !Array.isArray(value.programSlugs)) throw new CheckoutRecoveryError('unavailable');
-      next.available = value.available && value.programSlugs.includes('tjai-pass');
-      next.testMode = value.testMode;
-    }),
-    orderId ? readJson('/api/checkout/order-status?orderId=' + encodeURIComponent(orderId), fetcher).then(value => {
-      next.receipt = parseTjaiReceipt(value, intakeId, orderId);
-    }) : Promise.resolve()
+    loadTjaiIntake(intakeId, fetcher).then(() => { next.ready = true; }),
+    loadTjaiCheckoutAccess(fetcher).then(value => { next.hasAccess = value; }),
+    loadTjaiCheckoutAvailability(fetcher).then(value => { Object.assign(next, value); }),
+    orderId ? loadTjaiCheckoutReceipt(intakeId, orderId, fetcher).then(value => { next.receipt = value; }) : Promise.resolve()
   ]);
   for (const result of results) if (result.status === 'rejected') {
     if (result.reason instanceof CheckoutRecoveryError && result.reason.issue === 'mismatch') next.issue = 'mismatch';
