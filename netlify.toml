@@ -1,0 +1,40 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Retain the adapter's explicit Image CDN mapping for manual --no-build deploys.
+# The generic rewrite alone lost query parameters on the deployed preview.
+[[redirects]]
+  from = "/_next/image"
+  to = "/.netlify/images?url=:url&w=:width&q=:quality"
+  status = 200
+  force = false
+  [redirects.query]
+    url = ":url"
+    w = ":width"
+    q = ":quality"
+
+# Keep the adapter fallback after the exact query mapping.
+[[redirects]]
+  from = "/_next/image"
+  to = "/.netlify/images"
+  status = 200
+  force = false
+
+# Next.js is deployed by Netlify's automatic Next.js framework adapter.
+# Set all secrets in the host's environment UI, never in this file.
+# Keep the recovery worker disabled until SQL, ZDR and provider checks pass.
+[context.deploy-preview.environment]
+  LEMON_LIVE_ENABLED = "false"
+  TJAI_WORKER_ENABLED = "false"
+
+[context.branch-deploy.environment]
+  LEMON_LIVE_ENABLED = "false"
+  TJAI_WORKER_ENABLED = "false"

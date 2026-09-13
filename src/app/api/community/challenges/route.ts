@@ -9,7 +9,7 @@ export async function GET() {
   if (!admin) return NextResponse.json({ error: "Server not configured" }, { status: 500 });
   let viewerId: string | null = null;
   try {
-    const supabase = createServerSupabaseClient();
+    const supabase = await createServerSupabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
     viewerId = user?.id ?? null;
   } catch {

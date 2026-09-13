@@ -24,6 +24,8 @@ import {
   COACH_NUTRITION_HINT_RE,
   COACH_TRAINING_HINT_RE
 } from "@/lib/tjai/chat-client-utils";
+import {getTjaiFlowCopy} from "@/lib/tjai/flow-copy";
+import {ChatDeliveryError,createChatRetryController,deliverChatAttempt,loadChatMessages,restoreUnsentChatInput,type ChatSendAttempt} from "@/lib/tjai/chat-delivery";
 import { getTJAIAccess } from "@/lib/tjai-access";
 import { getTJAIChatCopy } from "@/lib/tjai-chat-copy";
 import { isSupportedLocale, type Locale, type SupportedLocale } from "@/lib/i18n";
@@ -127,6 +129,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
   const routingLocale = useRoutingLocale(locale);
   const copy = getTJAIChatCopy(locale);
   const t = copy.standalone;
+  const flow=getTjaiFlowCopy(locale);
   const island = useDynamicIsland();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -136,11 +139,17 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
   const [voiceSupported, setVoiceSupported] = useState(true);
   const [showVoiceTip, setShowVoiceTip] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
+  const [failedAttempt, setFailedAttempt] = useState<ChatSendAttempt | null>(null);
+  const [failedConversation, setFailedConversation] = useState<string | null>(null);
+  const [isLoadingConversation, setIsLoadingConversation] = useState(false);
+  const [retryController] = useState(createChatRetryController);
+  const operationRef = useRef(false);
   const [tier, setTier] = useState<"core" | "pro" | "apex">("core");
-  const [remaining, setRemaining] = useState(10);
+  const [remaining, setRemaining] = useState(0);
+  const [serverCanChat,setServerCanChat]=useState(false);
   const [showLimitOverlay, setShowLimitOverlay] = useState(false);
   const [conversationId, setConversationId] = useState<string>("");
-  // Data-driven chip keys from the route's `done` event (see chat-suggestions.ts).
+  // Retained key slot; the current durable JSON reply uses localized topic fallbacks.
   const [suggestionKeys, setSuggestionKeys] = useState<string[]>([]);
   const [conversations, setConversations] = useState<ConversationPreview[]>([]);
   const [showConversationsSheet, setShowConversationsSheet] = useState(false);
@@ -171,14 +180,14 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
   }, [showConversationsSheet]);
 
   useEffect(() => {
-    void fetch("/api/tjai/trial-status", { credentials: "include" })
+    void fetch("/api/tjai/access", { credentials: "include" })
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (!data) return;
         const nextTier = (data.tier ?? "core") as "core" | "pro" | "apex";
-        const used = Number(data?.trial?.messagesUsed ?? 0);
+        setServerCanChat(Boolean(data.canUseChat));
         setTier(nextTier);
-        setRemaining(Math.max(0, 10 - used));
+        setRemaining(data.dailyRepliesRemaining??999);
       })
       .catch(() => undefined);
   }, []);
@@ -208,7 +217,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
     listRef.current.scrollTop = listRef.current.scrollHeight;
   }, [messages, isStreaming, isThinking]);
 
-  const access = useMemo(() => getTJAIAccess(tier, { coreTrialMessagesRemaining: remaining }), [remaining, tier]);
+  const access = useMemo(() => ({...getTJAIAccess(tier, {coreTrialMessagesRemaining:remaining}),canUseChat:serverCanChat&&remaining>0}),[remaining,tier,serverCanChat]);
 
   const lastAssistant = [...messages].reverse().find((m) => m.role === "assistant");
   const showFollowUps =
@@ -217,9 +226,8 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
     messages.length > 0 &&
     (lastAssistant?.content?.length ?? 0) > 12;
   const lastAssistantText = lastAssistant?.content ?? "";
-  // Data-driven chips (from the user's real plan/log state) win over the
-  // regex topic fallback; unknown keys are skipped so an older client and a
-  // newer server never break each other.
+  // Resolve any retained keys through localized copy; the current JSON reply
+  // has no keys, so its final text selects nutrition/training/general prompts.
   const contextualPrompts = suggestionKeys
     .map((k) => copy.contextual[k as keyof typeof copy.contextual])
     .filter((v): v is string => Boolean(v));
@@ -233,138 +241,76 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
           : t.quickPrompts;
 
   const loadConversation = async (id: string) => {
-    const res = await fetch(`/api/tjai/chat/conversations?conversationId=${encodeURIComponent(id)}`, {
-      credentials: "include",
-      cache: "no-store"
-    });
-    const data = await res.json().catch(() => ({}));
-    const rows = (data.messages ?? []) as Array<{ id: string; role: "user" | "assistant"; content: string; created_at: string }>;
-    setConversationId(id);
-    setMessages(rows.map((row) => ({ id: row.id, role: row.role, content: row.content, created_at: row.created_at })));
+    if (operationRef.current) return;
+    // Selecting the active history item is not a new message intent. Keep a
+    // lost-acknowledgement retry intact, including when today's balance is zero.
+    if (retryController.preservePendingConversation(conversationId, id)) return;
+    operationRef.current = true;
+    setIsLoadingConversation(true);
+    try {
+      const rows = await loadChatMessages(id);
+      setConversationId(id);
+      setMessages(rows);
+      retryController.newIntent();
+      setFailedAttempt(null);
+      setFailedConversation(null);
+      setApiError(null);
+    } catch {
+      setApiError(t.errorGeneric);
+      setFailedConversation(id);
+    } finally {
+      operationRef.current = false;
+      setIsLoadingConversation(false);
+    }
   };
 
   const sendMessage = async (message: string) => {
-    if (!message.trim() || isStreaming || isThinking) return;
-    if (!access.canUseChat) {
+    if (!message.trim() || operationRef.current) return;
+    const payload = {message: message.trim(), conversationId, locale: routingLocale};
+    // A persisted fifth reply may have lost its HTTP acknowledgement. The
+    // server returns the same receipt before checking today's remaining limit.
+    if (!access.canUseChat && !retryController.matches(payload)) {
+      setInput(current => restoreUnsentChatInput(current, message));
       setShowLimitOverlay(true);
       return;
     }
-
-    // Trial enforcement is atomic on the server inside /api/tjai/chat
-    // (consume_trial_message RPC). The previous client-side fetch to
-    // /api/tjai/trial-consume-message was bypassable in DevTools.
-    // Optimistically decrement; a 402 from /chat below rolls back UI
-    // state and surfaces the limit overlay.
-    if (tier === "core") {
-      setRemaining((r) => Math.max(0, r - 1));
-    }
-
-    const userMessage: ChatMessage = { id: crypto.randomUUID(), role: "user", content: message, created_at: new Date().toISOString() };
-    const assistantId = crypto.randomUUID();
-    setMessages((prev) => [...prev, userMessage, { id: assistantId, role: "assistant", content: "", created_at: new Date().toISOString() }]);
-    setInput("");
+    operationRef.current = true;
+    const attempt = retryController.begin(payload);
+    const assistantId = attempt.requestId + ':assistant';
+    const userMessage: ChatMessage = {id: attempt.requestId, role: 'user', content: attempt.message, created_at: new Date().toISOString()};
+    setMessages(prev => [...prev.filter(m => m.id !== attempt.requestId && m.id !== assistantId), userMessage, {id: assistantId, role: 'assistant', content: '', created_at: new Date().toISOString()}]);
+    // An explicit retry must not erase a newer draft typed into the composer.
+    setInput(current => current.trim() === attempt.message ? '' : current);
     setApiError(null);
+    setFailedAttempt(null);
+    setFailedConversation(null);
     setIsStreaming(true);
     setIsThinking(true);
-    // Stale chips from the previous turn must not survive into this one.
     setSuggestionKeys([]);
-
-    // No artificial pre-fetch delay — the request starts now, and the thinking
-    // pulse reflects real wait time (send until response headers arrive).
     const controller = new AbortController();
-    const timer = window.setTimeout(() => controller.abort(), 35000);
+    const timer = window.setTimeout(() => controller.abort(), 55000);
     try {
-      const response = await fetch("/api/tjai/chat", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, conversationId, locale: routingLocale }),
-        signal: controller.signal
-      });
-      setIsThinking(false);
-      const contentType = response.headers.get("Content-Type") ?? "";
-      if (contentType.includes("application/json")) {
-        const data = await response.json().catch(() => ({}));
-        if (response.status === 402) {
-          // Trial limit reached server-side. Drop the optimistic user +
-          // empty-assistant rows we just appended.
-          setMessages((prev) => prev.filter((m) => m.id !== userMessage.id && m.id !== assistantId));
-          setShowLimitOverlay(true);
-          setRemaining(0);
-          return;
-        }
-        if (!response.ok) {
-          setApiError(t.errorGeneric);
-          throw new Error(String(data?.error ?? "Chat request failed"));
-        }
-        if (typeof data?.conversationId === "string" && data.conversationId) {
-          setConversationId(data.conversationId);
-        }
-        const assistantText = String(data?.message ?? "").trim();
-        setMessages((prev) =>
-          prev.map((m) => (m.id === assistantId ? { ...m, content: assistantText || t.chatFailed } : m))
-        );
-      } else {
-        if (!response.ok || !response.body) {
-          throw new Error("Stream failed");
-        }
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = "";
-        let finalMessage = "";
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          buffer += decoder.decode(value, { stream: true });
-          const chunks = buffer.split("\n\n");
-          buffer = chunks.pop() ?? "";
-          for (const chunk of chunks) {
-            const line = chunk
-              .split("\n")
-              .map((entry) => entry.trim())
-              .find((entry) => entry.startsWith("data:"));
-            if (!line) continue;
-            try {
-              const data = JSON.parse(line.slice(5).trim()) as {
-                delta?: string;
-                conversationId?: string;
-                done?: boolean;
-                suggestionKeys?: string[];
-              };
-              if (typeof data.conversationId === "string" && data.conversationId) {
-                setConversationId(data.conversationId);
-              }
-              if (Array.isArray(data.suggestionKeys)) {
-                setSuggestionKeys(data.suggestionKeys);
-              }
-              if (data.delta) {
-                finalMessage += data.delta;
-                setMessages((prev) =>
-                  prev.map((m) => (m.id === assistantId ? { ...m, content: finalMessage } : m))
-                );
-              }
-            } catch {
-              /* ignore malformed SSE payload */
-            }
-          }
-        }
-        setMessages((prev) =>
-          prev.map((m) => (m.id === assistantId ? { ...m, content: finalMessage || t.chatFailed } : m))
-        );
-      }
+      const reply = await deliverChatAttempt(attempt, controller.signal);
+      retryController.acknowledge(attempt.requestId);
+      setMessages(prev => prev.map(m => m.id === assistantId ? {...m, content: reply} : m));
     } catch (error) {
-      if (error instanceof Error && error.name === "AbortError") {
-        setApiError(t.errorTimeout);
-      }
-      setMessages((prev) => prev.map((m) => (m.id === assistantId ? { ...m, content: t.chatFailed } : m)));
+      setInput(current => restoreUnsentChatInput(current, attempt.message));
+      setFailedAttempt(attempt);
+      setApiError(error instanceof Error && error.name === 'AbortError' ? t.errorTimeout : t.errorGeneric);
+      // These rows have no acknowledged save. Keep the real conversation and
+      // the editable pending text; never display a fake persisted assistant row.
+      setMessages(prev => prev.filter(m => m.id !== attempt.requestId && m.id !== assistantId));
+      if (error instanceof ChatDeliveryError && error.status === 402) setShowLimitOverlay(true);
     } finally {
       window.clearTimeout(timer);
+      operationRef.current = false;
       setIsStreaming(false);
       setIsThinking(false);
-      void fetch("/api/tjai/chat/conversations", { credentials: "include", cache: "no-store" })
-        .then((r) => (r.ok ? r.json() : null))
-        .then((data) => setConversations((data?.conversations ?? []) as ConversationPreview[]))
-        .catch(() => undefined);
+      void fetch('/api/tjai/access',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(a=>{if(a){setRemaining(a.dailyRepliesRemaining??999);setServerCanChat(Boolean(a.canUseChat));}}).catch(()=>undefined);
+      void fetch('/api/tjai/chat/conversations', {credentials:'include',cache:'no-store'})
+        .then(r=>r.ok?r.json():null)
+        .then(data=>{if(Array.isArray(data?.conversations))setConversations(data.conversations);})
+        .catch(()=>undefined);
     }
   };
 
@@ -403,6 +349,11 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
   };
 
   const startNewChat = () => {
+    if (operationRef.current) return;
+    retryController.newIntent();
+    setFailedAttempt(null);
+    setFailedConversation(null);
+    setApiError(null);
     setConversationId(crypto.randomUUID());
     setMessages([]);
   };
@@ -416,6 +367,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
         <button
           key={item.conversation_id}
           type="button"
+          disabled={isStreaming || isThinking || isLoadingConversation}
           onClick={() => {
             void loadConversation(item.conversation_id);
             if (fromSheet) setShowConversationsSheet(false);
@@ -619,7 +571,9 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
         <div className="relative z-[3] border-t border-white/[0.06] px-3 py-3 sm:px-4">
           {showVoiceTip ? <p className="mb-2 text-xs text-faint">{t.voiceInput}</p> : null}
           {!voiceSupported ? <p className="mb-2 text-xs text-red-300">{t.voiceUnsupportedInline}</p> : null}
-          {apiError ? <p className="mb-2 text-xs text-red-300">{apiError}</p> : null}
+          {apiError ? <p role="alert" className="mb-2 text-xs text-red-300">{apiError}</p> : null}
+          {failedAttempt && failedAttempt.conversationId === conversationId ? <button type="button" disabled={isStreaming || isThinking || isLoadingConversation} className="mb-2 text-xs text-accent underline disabled:opacity-40" onClick={() => void sendMessage(failedAttempt.message)}>{copy.retry}</button> : null}
+          {failedConversation ? <button type="button" disabled={isStreaming || isThinking || isLoadingConversation} className="mb-2 text-xs text-accent underline disabled:opacity-40" onClick={() => void loadConversation(failedConversation)}>{flow.retry}</button> : null}
           {showFollowUps ? (
             <div className="mb-3">
               <span className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-dim">{copy.refine}</span>
@@ -685,6 +639,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
               <button
                 type="button"
                 onClick={startVoice}
+                disabled={isStreaming || isThinking || isLoadingConversation}
                 aria-label={t.voiceInput}
                 className={cn(
                   "inline-flex h-9 items-center gap-2 rounded-full border px-3 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40",
@@ -699,7 +654,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
               <p className="min-w-0 flex-1 truncate text-[10px] text-faint">{t.disclaimer}</p>
               <button
                 type="submit"
-                disabled={isStreaming || isThinking}
+                disabled={isStreaming || isThinking || isLoadingConversation}
                 aria-label={copy.send}
                 className={cn(
                   "tj-cta-sheen inline-flex h-10 w-10 flex-none items-center justify-center rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] text-[#0A0A0B] transition-[transform,filter,box-shadow,opacity] duration-200 hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 active:scale-[0.95] motion-reduce:active:scale-100 disabled:opacity-45",
@@ -712,7 +667,7 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
               </button>
             </div>
           </form>
-          <p className="mt-2 px-1 text-[10px] text-faint">{tier === "core" ? `${remaining} ${t.coreRemaining}` : tier === "pro" ? t.proUnlocked : t.apexUnlimited}</p>
+          <p className="mt-2 px-1 text-[10px] text-faint">{tier === "core" ? `${remaining} ${flow.replies}` : tier === "pro" ? t.proUnlocked : t.apexUnlimited}</p>
         </div>
       </section>
 
@@ -779,11 +734,11 @@ export function TJAIChatStandalone({ locale }: { locale: Locale }) {
             <span className={cn(styles.avatarOrb, styles.orbBreathe, "mx-auto h-12 w-12 text-sm")} aria-hidden>
               TJ
             </span>
-            <h3 className="mt-4 text-lg font-semibold text-white">{t.trialUsed}</h3>
-            <p className="mt-2 text-sm text-muted">{t.trialSub}</p>
-            <a href={`/${locale}/membership`} className="mt-5 inline-flex tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] motion-reduce:hover:scale-100 px-5 py-2.5 text-sm font-semibold text-[#09090B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+            <h3 className="mt-4 text-lg font-semibold text-white">{flow.title}</h3>
+            <p className="mt-2 text-sm text-muted">{remaining===0?flow.replies:flow.terms}</p>
+            <a href={`/${locale}/ai?tab=my-plan&start=1`} className="mt-5 inline-flex tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] motion-reduce:hover:scale-100 px-5 py-2.5 text-sm font-semibold text-[#09090B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
             >
-              {t.upgradeCta}
+              {flow.review}
             </a>
             <button
               type="button"

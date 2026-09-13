@@ -15,7 +15,8 @@ function isValidMessageType(value: unknown) {
   return value === "text" || value === "image" || value === "file" || value === "link" || value === "call_event";
 }
 
-export async function GET(_: NextRequest, { params }: { params: { conversationId: string } }) {
+export async function GET(_: NextRequest, props: { params: Promise<{ conversationId: string }> }) {
+  const params = await props.params;
   const auth = await requireAuth();
   if (!auth.ok) return auth.response;
 
@@ -59,7 +60,11 @@ export async function GET(_: NextRequest, { params }: { params: { conversationId
   });
 }
 
-export async function POST(request: NextRequest, { params }: { params: { conversationId: string } }) {
+export async function POST(
+  request: NextRequest,
+  props: { params: Promise<{ conversationId: string }> }
+) {
+  const params = await props.params;
   const auth = await requireAuth();
   if (!auth.ok) return auth.response;
 

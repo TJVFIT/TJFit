@@ -1,103 +1,23 @@
-import { NextResponse } from "next/server";
-
-import { isSupportedLocale, LOCALE_META } from "@/lib/i18n";
-import { requireAuth } from "@/lib/require-auth";
-import { getSupabaseServerClient } from "@/lib/supabase-server";
-import { getTJAIAccess } from "@/lib/tjai-access";
-import { buildTjaiPdf } from "@/lib/tjai-pdf-builder";
-
-export const dynamic = "force-dynamic";
-export const maxDuration = 30;
-
-function cleanFilename(name?: string | null): string {
-  const base = (name || "tjai-plan")
-    .normalize("NFKD")
-    .replace(/[^a-zA-Z0-9-_]+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "");
-  return (base || "tjai-plan").slice(0, 60);
-}
-
-export async function POST(request: Request) {
-  const auth = await requireAuth();
-  if (!auth.ok) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  const admin = getSupabaseServerClient();
-  if (!admin) {
-    return NextResponse.json({ error: "Server not configured" }, { status: 500 });
-  }
-
-  // Mirror /api/tjai/generate-pdf paywall: require a one-time plan
-  // purchase or Pro/Apex subscription. Previously this route exported
-  // PDFs to anyone authed — bypass for the canonical PDF endpoint.
-  const [{ data: subscription }, { data: purchase }] = await Promise.all([
-    admin.from("user_subscriptions").select("tier").eq("user_id", auth.user.id).maybeSingle(),
-    admin
-      .from("tjai_plan_purchases")
-      .select("id")
-      .eq("user_id", auth.user.id)
-      .order("purchased_at", { ascending: false })
-      .limit(1)
-      .maybeSingle()
-  ]);
-  const tier = (subscription?.tier ?? "core") as "core" | "pro" | "apex";
-  const access = getTJAIAccess(tier, { hasOneTimePlanPurchase: Boolean(purchase?.id) });
-  if (!access.canDownloadPdf) {
-    return NextResponse.json(
-      { error: "Upgrade required to export PDF", code: "PRO_REQUIRED" },
-      { status: 402 }
-    );
-  }
-
-  const body = await request.json().catch(() => null);
-  if (!body?.plan || !body?.metrics || !body?.answers) {
-    return NextResponse.json(
-      { error: "Invalid payload — plan, metrics and answers are required." },
-      { status: 400 }
-    );
-  }
-
-  try {
-    const rawLocale = typeof body.locale === "string" ? body.locale : "en";
-    const locale = isSupportedLocale(rawLocale) ? rawLocale : "en";
-    const meta = LOCALE_META[locale];
-    const localeLabel = `${locale.toUpperCase()} · ${meta?.native ?? "English"}`;
-    const buyerName =
-      typeof body.buyerName === "string" && body.buyerName.trim()
-        ? body.buyerName.trim()
-        : auth.user.email ?? undefined;
-    const issuedAt =
-      typeof body.generatedAt === "string" ? body.generatedAt : new Date().toISOString();
-
-    const pdf = buildTjaiPdf({
-      plan: body.plan,
-      metrics: body.metrics,
-      answers: body.answers,
-      buyerName,
-      issuedAt,
-      localeLabel
-    });
-
-    const arrayBuffer = pdf.output("arraybuffer");
-    const bytes = new Uint8Array(arrayBuffer);
-    const filename = `${cleanFilename(buyerName ?? "tjai-plan")}-${locale}.pdf`;
-
-    return new Response(bytes, {
-      status: 200,
-      headers: {
-        "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="${filename}"`,
-        "Cache-Control": "no-store, max-age=0",
-        "Content-Length": String(bytes.byteLength)
-      }
-    });
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : "unknown error";
-    console.error("[TJAI export-pdf] PDF generation failed:", msg);
-    return NextResponse.json(
-      { error: "PDF generation failed. Please retry in a moment." },
-      { status: 500 }
-    );
-  }
+import {NextResponse} from 'next/server';
+import {requireAuth} from '@/lib/require-auth';
+import {buildUnicodeTjaiPdf} from '@/lib/tjai/unicode-pdf';
+import {rateLimit} from '@/lib/rate-limit';
+export const dynamic='force-dynamic';
+export const runtime='nodejs';
+export async function POST(request:Request){
+ const auth=await requireAuth();if(!auth.ok)return auth.response;
+ const limit=await rateLimit({key:'tjai-pdf:'+auth.user.id,limit:10,windowMs:60000});if(!limit.success)return NextResponse.json({error:'rate_limit'},{status:429});
+ const body=await request.json().catch(()=>({}));
+ let query=auth.supabase.from('saved_tjai_plans').select('plan_json,metrics_json,answers_json,created_at').eq('user_id',auth.user.id);
+ if(typeof body.planId==='string')query=query.eq('id',body.planId);
+ const saved=await query.order('created_at',{ascending:false}).limit(1).maybeSingle();
+ if(saved.error)return NextResponse.json({error:'plan_load_failed'},{status:503});
+ if(!saved.data)return NextResponse.json({error:'plan_not_found'},{status:404});
+ try{
+  const row=saved.data;
+  const locale=['en','tr','ar','es','fr'].includes(body.locale)?body.locale:'en';
+  const pdf=buildUnicodeTjaiPdf({plan:row.plan_json,metrics:row.metrics_json,createdAt:row.created_at,locale});
+  const bytes=new Uint8Array(pdf.output('arraybuffer'));
+  return new Response(bytes,{headers:{'Content-Type':'application/pdf','Content-Disposition':'attachment; filename="tjai-plan-'+locale+'.pdf"','Cache-Control':'private, no-store'}});
+ }catch{return NextResponse.json({error:'pdf_failed'},{status:503});}
 }

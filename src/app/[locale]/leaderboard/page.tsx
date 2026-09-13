@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, use } from "react";
 import { Crown, Trophy } from "lucide-react";
 import confetti from "canvas-confetti";
 
@@ -118,7 +118,8 @@ function Podium({ items, tab }: { items: LeaderboardItem[]; tab: TabKey }) {
   );
 }
 
-export default function LeaderboardPage({ params }: { params: { locale: string } }) {
+export default function LeaderboardPage(props: { params: Promise<{ locale: string }> }) {
+  const params = use(props.params);
   const locale = params?.locale ?? "en";
   const [tab, setTab] = useState<TabKey>("streaks");
   const [period, setPeriod] = useState<"week" | "alltime">("week");

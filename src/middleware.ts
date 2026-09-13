@@ -27,6 +27,7 @@ function isLaunchGateBypass(pathname: string): boolean {
   if (pathname.startsWith("/api/")) return true;
   if (pathname === "/robots.txt" || pathname === "/sitemap.xml") return true;
   const segments = pathname.split("/").filter(Boolean);
+  if (segments.length === 3 && LOCALES.has(segments[0]) && segments[1] === "auth" && segments[2] === "callback") return true;
   if (
     segments.length >= 2 &&
     LOCALES.has(segments[0]) &&
@@ -40,13 +41,15 @@ function isLaunchGateBypass(pathname: string): boolean {
 function applyHtmlCacheHeaders(request: NextRequest, response: NextResponse) {
   const accept = request.headers.get("accept") ?? "";
   if (accept.includes("text/html")) {
-    response.headers.set("Cache-Control", "public, max-age=0, must-revalidate");
+    // HTML and redirects depend on the refreshed session/role. A shared cache
+    // must never reuse a response across visitors.
+    response.headers.set("Cache-Control", "private, no-store, max-age=0");
   }
 }
 
 function copyCookies(from: NextResponse, to: NextResponse) {
   from.cookies.getAll().forEach((c) => {
-    to.cookies.set(c.name, c.value);
+    to.cookies.set(c);
   });
 }
 
@@ -121,6 +124,12 @@ export async function middleware(request: NextRequest) {
         return request.cookies.getAll();
       },
       setAll(cookiesToSet) {
+        // Forward the refreshed token to Server Components in this same
+        // request, as well as back to the browser for subsequent requests.
+        const previousCookies = response.cookies.getAll();
+        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+        response = NextResponse.next({ request: { headers: request.headers } });
+        previousCookies.forEach(cookie => response.cookies.set(cookie));
         cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
       }
     }
@@ -144,7 +153,7 @@ export async function middleware(request: NextRequest) {
   const guard = matchHtmlGuard(request.nextUrl.pathname);
   if (guard) {
     const { locale, kind } = guard;
-    const path = request.nextUrl.pathname;
+    const path = request.nextUrl.pathname + request.nextUrl.search;
 
     if (!user) {
       const login = new URL(`/${locale}/login`, request.url);

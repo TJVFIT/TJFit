@@ -32,7 +32,8 @@ type RelatedPost = {
   created_at: string;
 };
 
-export default async function BlogDetailPage({ params }: { params: { locale: string; slug: string } }) {
+export default async function BlogDetailPage(props: { params: Promise<{ locale: string; slug: string }> }) {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
   const admin = getSupabaseServerClient();
   if (!admin) notFound();
@@ -54,8 +55,8 @@ export default async function BlogDetailPage({ params }: { params: { locale: str
   // loop can't inflate counts. The RPC returns the new count synchronously
   // so the rendered page reflects this visit.
   const ip =
-    headers().get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    headers().get("x-real-ip") ??
+    (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    (await headers()).get("x-real-ip") ??
     "unknown";
   let views = Number(postRow.views ?? 0);
   const viewLimiter = await rateLimit({

@@ -20,7 +20,7 @@ export async function GET() {
     // auth.userId is a session-derived UUID — safe to interpolate into the
     // PostgREST filter string. Coaches see their own assigned requests OR
     // any pending request available to claim.
-    query.or(`coach_id.eq.${auth.userId},status.eq.pending`);
+    query.or(`coach_id.eq.${auth.userId},and(coach_id.is.null,status.eq.pending)`);
   }
   const { data, error } = await query;
   if (error) {
@@ -52,7 +52,7 @@ export async function PATCH(request: Request) {
       ? body.coachNotes.trim().slice(0, NOTES_MAX) || null
       : null;
 
-  const { error } = await auth.supabase
+  const query = auth.supabase
     .from("coach_review_requests")
     .update({
       coach_notes: coachNotes,
@@ -61,10 +61,18 @@ export async function PATCH(request: Request) {
       reviewed_at: new Date().toISOString()
     })
     .eq("id", id);
+  // requireCoachOrAdmin returns a service client, so RLS is bypassed. Keep the
+  // claim predicate on the UPDATE itself: two coaches cannot steal a claim or
+  // change a request after another coach has already taken it.
+  if (auth.role === "coach") {
+    query.or(`coach_id.eq.${auth.userId},and(coach_id.is.null,status.eq.pending)`);
+  }
+  const { data, error } = await query.select("id").maybeSingle();
 
   if (error) {
     console.error("[coach/review-requests] update failed", error.message, error.code);
     return NextResponse.json({ error: "Failed to update request" }, { status: 500 });
   }
+  if (!data) return NextResponse.json({ error: "Request not found or no longer available." }, { status: 404 });
   return NextResponse.json({ ok: true });
 }

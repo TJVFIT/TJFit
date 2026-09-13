@@ -7,8 +7,8 @@ import { useCallback, useEffect, useRef } from "react";
  * `useMagnetic` and `useRipple` to a single element.
  */
 export function useMergedRef<T extends HTMLElement>(
-  a: React.RefObject<T>,
-  b: React.RefObject<T>
+  a: React.RefObject<T | null>,
+  b: React.RefObject<T | null>
 ) {
   return useCallback(
     (node: T | null) => {

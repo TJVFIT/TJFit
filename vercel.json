@@ -1,4 +1,7 @@
 {
+  "git": {
+    "deploymentEnabled": false
+  },
   "functions": {
     "src/app/api/tjai/generate/route.ts": {
       "maxDuration": 90
@@ -8,10 +11,6 @@
     {
       "path": "/api/cron",
       "schedule": "0 0 * * *"
-    },
-    {
-      "path": "/api/warm",
-      "schedule": "*/5 * * * *"
     }
   ]
 }

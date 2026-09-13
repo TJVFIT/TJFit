@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   XAxis,
   YAxis,
@@ -15,6 +15,9 @@ import confetti from "canvas-confetti";
 import { AmbientOrbs } from "@/components/effects/ambient-orbs";
 import type { Locale } from "@/lib/i18n";
 import { getProgressCopy } from "@/lib/feature-copy";
+import { PROGRESS_VIEW_COPY, localizedLogDate } from "@/lib/tjai/result-view-copy";
+import {TjaiLoggingPanel} from "@/components/tjai/tjai-logging-panel";
+import {getTjaiFlowCopy} from "@/lib/tjai/flow-copy";
 
 type ProgressEntry = {
   id: string;
@@ -46,28 +49,10 @@ type Milestone = {
 
 type ToastMsg = { id: number; text: string };
 
-// MI4 — relative time formatter
-function relativeDate(dateStr: string): string {
-  try {
-    const date = new Date(dateStr);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    if (diffDays === 0) return "Today";
-    if (diffDays === 1) return "Yesterday";
-    if (diffDays < 7) return `${diffDays} days ago`;
-    if (diffDays < 14) return "Last week";
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-    return dateStr.slice(5);
-  } catch {
-    return dateStr;
-  }
-}
-
 function Toast({ messages }: { messages: ToastMsg[] }) {
   if (messages.length === 0) return null;
   return (
-    <div className="pointer-events-none fixed bottom-6 right-6 z-50 flex flex-col gap-2">
+    <div className="pointer-events-none fixed bottom-6 end-6 z-50 flex flex-col gap-2">
       {messages.map((m) => (
         <div
           key={m.id}
@@ -93,13 +78,14 @@ function groupByDate(workouts: Workout[]): [string, Workout[]][] {
 }
 
 // ME19 — Custom Recharts tooltip showing both metrics
-function ChartTooltip(props: Record<string, unknown>) {
+function ChartTooltip(props: Record<string, unknown> & { locale: Locale }) {
   const { active, payload, label } = props as {
     active?: boolean;
     payload?: Array<{ name: string; value: number; color: string }>;
     label?: string;
   };
   if (!active || !payload?.length) return null;
+  const ui = PROGRESS_VIEW_COPY[props.locale];
   return (
     <div
       style={{
@@ -114,7 +100,7 @@ function ChartTooltip(props: Record<string, unknown>) {
       <p style={{ color: "#52525B", marginBottom: 6, fontSize: 11 }}>{label}</p>
       {payload.map((p) => (
         <p key={p.name} style={{ color: p.color, margin: "2px 0" }}>
-          {p.name === "weight" ? "Weight" : "Body Fat"}: <strong>{p.value}{p.name === "weight" ? " kg" : "%"}</strong>
+          {p.name === "weight" ? ui.weight : ui.fat}: <strong>{p.value}{p.name === "weight" ? " kg" : "%"}</strong>
         </p>
       ))}
     </div>
@@ -123,6 +109,7 @@ function ChartTooltip(props: Record<string, unknown>) {
 
 export function ProgressView({ locale }: { locale: Locale }) {
   const t = getProgressCopy(locale);
+  const ui = PROGRESS_VIEW_COPY[locale];
   const toastId = useRef(0);
   const newEntryIds = useRef(new Set<string>());
 
@@ -149,28 +136,31 @@ export function ProgressView({ locale }: { locale: Locale }) {
   const [milestoneTitle, setMilestoneTitle] = useState("");
   const [milestoneTarget, setMilestoneTarget] = useState("");
 
-  const showToast = (text: string) => {
+  const showToast = useCallback((text: string) => {
     const id = ++toastId.current;
     setToasts((prev) => [...prev, { id, text }]);
     setTimeout(() => setToasts((prev) => prev.filter((m) => m.id !== id)), 2800);
-  };
+  }, []);
 
-  const load = async () => {
+  const load = useCallback(async () => {
+    try {
     const [entriesRes, workoutsRes, milestonesRes] = await Promise.all([
       fetch("/api/progress/entries", { credentials: "include" }),
       fetch("/api/progress/workouts", { credentials: "include" }),
       fetch("/api/progress/milestones", { credentials: "include" })
     ]);
+    if(!entriesRes.ok||!workoutsRes.ok||!milestonesRes.ok){showToast(getTjaiFlowCopy(locale).error);return;}
     const [e, w, m] = await Promise.all([entriesRes.json(), workoutsRes.json(), milestonesRes.json()]);
     setEntries(e.entries ?? []);
     setWorkouts(w.workouts ?? []);
     setMilestones(m.milestones ?? []);
-  };
+    } catch { showToast(getTjaiFlowCopy(locale).error); }
+  }, [locale, showToast]);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { void load(); }, [load]);
 
   const addMetrics = async () => {
-    await fetch("/api/progress/entries", {
+    const response=await fetch("/api/progress/entries", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -182,8 +172,9 @@ export function ProgressView({ locale }: { locale: Locale }) {
         hips_cm: hips ? Number(hips) : null
       })
     });
+    if(!response.ok){showToast(getTjaiFlowCopy(locale).error);return;}
     setWeight(""); setBodyFat(""); setWaist(""); setChest(""); setHips("");
-    showToast("Metrics saved ✓");
+    showToast(ui.metricsSaved);
     await load();
   };
 
@@ -201,6 +192,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
         duration_minutes: duration ? Number(duration) : null
       })
     });
+    if(!res.ok){showToast(getTjaiFlowCopy(locale).error);return;}
     const data = await res.json();
     if (data.workout?.id) newEntryIds.current.add(data.workout.id);
     if (Array.isArray(data.newBadges) && data.newBadges.length > 0) {
@@ -208,7 +200,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
       celebrateBadges(data.newBadges);
     }
     setExercise(""); setSets(""); setReps(""); setWorkoutWeight(""); setDuration("");
-    showToast("Workout logged ✓");
+    showToast(ui.workoutSaved);
     await load();
     // Clear new entry IDs after animation
     setTimeout(() => newEntryIds.current.clear(), 600);
@@ -216,7 +208,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
 
   const addMilestone = async () => {
     if (!milestoneTitle.trim()) return;
-    await fetch("/api/progress/milestones", {
+    const response=await fetch("/api/progress/milestones", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -225,18 +217,20 @@ export function ProgressView({ locale }: { locale: Locale }) {
         target_value: milestoneTarget.trim() || null
       })
     });
+    if(!response.ok){showToast(getTjaiFlowCopy(locale).error);return;}
     setMilestoneTitle(""); setMilestoneTarget("");
-    showToast("Milestone added ✓");
+    showToast(ui.milestoneAdded);
     await load();
   };
 
   const completeMilestone = async (id: string) => {
-    await fetch("/api/progress/milestones", {
+    const response=await fetch("/api/progress/milestones", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({ id, status: "completed" })
     });
+    if(!response.ok){showToast(getTjaiFlowCopy(locale).error);return;}
     // ME5 — confetti burst
     confetti({
       particleCount: 70,
@@ -244,7 +238,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
       origin: { y: 0.6 },
       colors: ["#A855F7", "#7C3AED", "#A855F7", "#22C55E"]
     });
-    showToast("Milestone completed");
+    showToast(ui.milestoneDone);
     await load();
   };
 
@@ -262,7 +256,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
   const showCharts = chartData.length >= 2;
 
   return (
-    <div className="relative mx-auto max-w-7xl space-y-10 px-4 py-16 sm:px-6 lg:px-8">
+    <div dir={locale === "ar" ? "rtl" : "ltr"} className="relative mx-auto max-w-7xl space-y-10 px-4 py-16 sm:px-6 lg:px-8">
       <AmbientOrbs />
       <Toast messages={toasts} />
 
@@ -274,11 +268,13 @@ export function ProgressView({ locale }: { locale: Locale }) {
         <p className="mt-3 max-w-2xl text-sm leading-7 text-muted">{t.subtitle}</p>
       </div>
 
-      {/* ME1 — Recharts gradient area charts with animated draw-on */}
+      <TjaiLoggingPanel locale={locale}/>
+      <details className="space-y-6 rounded-2xl border border-divider p-5"><summary className="cursor-pointer font-semibold">{t.metrics} · {t.milestones}</summary>
+      {/* Existing measurement charts and milestones remain available. */}
       {showCharts && (
         <div className="grid gap-4 lg:grid-cols-2">
           <div className="glass-panel rounded-[28px] p-6">
-            <p className="mb-4 text-sm font-semibold text-white">Weight trend (kg)</p>
+            <p className="mb-4 text-sm font-semibold text-white">{ui.weightTrend} (kg)</p>
             <ResponsiveContainer width="100%" height={180}>
               <AreaChart data={chartData}>
                 <defs>
@@ -290,7 +286,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
                 <CartesianGrid stroke="rgba(255,255,255,0.05)" strokeDasharray="3 3" />
                 <XAxis dataKey="date" tick={{ fill: "#52525B", fontSize: 11 }} />
                 <YAxis tick={{ fill: "#52525B", fontSize: 11 }} domain={["auto", "auto"]} tickFormatter={(v) => `${v}kg`} />
-                <Tooltip content={<ChartTooltip />} />
+                <Tooltip content={<ChartTooltip locale={locale} />} />
                 <Area
                   type="monotone"
                   dataKey="weight"
@@ -307,7 +303,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
             </ResponsiveContainer>
           </div>
           <div className="glass-panel rounded-[28px] p-6">
-            <p className="mb-4 text-sm font-semibold text-white">Body fat trend (%)</p>
+            <p className="mb-4 text-sm font-semibold text-white">{ui.fatTrend} (%)</p>
             <ResponsiveContainer width="100%" height={180}>
               <AreaChart data={chartData}>
                 <defs>
@@ -319,7 +315,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
                 <CartesianGrid stroke="rgba(255,255,255,0.05)" strokeDasharray="3 3" />
                 <XAxis dataKey="date" tick={{ fill: "#52525B", fontSize: 11 }} />
                 <YAxis tick={{ fill: "#52525B", fontSize: 11 }} domain={["auto", "auto"]} tickFormatter={(v) => `${v}%`} />
-                <Tooltip content={<ChartTooltip />} />
+                <Tooltip content={<ChartTooltip locale={locale} />} />
                 <Area
                   type="monotone"
                   dataKey="fat"
@@ -367,14 +363,14 @@ export function ProgressView({ locale }: { locale: Locale }) {
               entries.slice(0, 6).map((entry) => (
                 <div key={entry.id} className="rounded-xl border border-white/10 p-3 text-xs text-bright">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium text-muted">{relativeDate(entry.entry_date)}</span>
+                    <span className="font-medium text-muted">{localizedLogDate(entry.entry_date, locale)}</span>
                     <span className="text-accent">{entry.weight_kg ?? "–"} kg · {entry.body_fat_percent ?? "–"}%</span>
                   </div>
                   {(entry.waist_cm || entry.chest_cm || entry.hips_cm) && (
                     <div className="mt-1 flex gap-3 text-faint">
-                      {entry.waist_cm ? <span>W:{entry.waist_cm}</span> : null}
-                      {entry.chest_cm ? <span>C:{entry.chest_cm}</span> : null}
-                      {entry.hips_cm ? <span>H:{entry.hips_cm}</span> : null}
+                      {entry.waist_cm ? <span>{ui.waist}: {entry.waist_cm} cm</span> : null}
+                      {entry.chest_cm ? <span>{ui.chest}: {entry.chest_cm} cm</span> : null}
+                      {entry.hips_cm ? <span>{ui.hips}: {entry.hips_cm} cm</span> : null}
                     </div>
                   )}
                 </div>
@@ -409,7 +405,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
             ) : (
               groupedWorkouts.map(([date, ws]) => (
                 <div key={date}>
-                  <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-widest text-dim">{relativeDate(date)}</p>
+                  <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-widest text-dim">{localizedLogDate(date, locale)}</p>
                   <div className="space-y-1.5">
                     {ws.map((w) => (
                       <div
@@ -419,10 +415,10 @@ export function ProgressView({ locale }: { locale: Locale }) {
                       >
                         <span className="font-medium text-white">{w.exercise}</span>
                         <div className="mt-0.5 flex flex-wrap gap-2 text-faint">
-                          {w.sets ? <span>{w.sets} sets</span> : null}
-                          {w.reps ? <span>{w.reps} reps</span> : null}
-                          {w.weight_kg ? <span>{w.weight_kg} kg</span> : null}
-                          {w.duration_minutes ? <span>{w.duration_minutes} min</span> : null}
+                          {w.sets ? <span>{w.sets} {ui.sets}</span> : null}
+                          {w.reps ? <span>{w.reps} {ui.reps}</span> : null}
+                          {w.weight_kg !== null ? <span>{w.weight_kg} kg</span> : null}
+                          {w.duration_minutes ? <span>{w.duration_minutes} {ui.minutes}</span> : null}
                         </div>
                       </div>
                     ))}
@@ -473,6 +469,7 @@ export function ProgressView({ locale }: { locale: Locale }) {
           </div>
         </section>
       </div>
+      </details>
     </div>
   );
 }

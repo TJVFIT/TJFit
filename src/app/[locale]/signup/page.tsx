@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { notFound, useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState, use } from "react";
 import { Eye, EyeOff, Upload, Camera, Dumbbell, Flame, Home, Scale, type LucideIcon } from "lucide-react";
 import { AuthPageFrame } from "@/components/auth-page-frame";
 import { AsyncButton } from "@/components/ui/AsyncButton";
@@ -13,10 +13,11 @@ import { getSignupGoals, type SignupGoalKey } from "@/lib/auth-signup-content";
 import { getAuthCopy } from "@/lib/launch-copy";
 import { isLocale, type Locale } from "@/lib/i18n";
 import { compressImage } from "@/lib/image-compress";
-import { BILLING_PROVIDER, PRIVACY_VERSION, TERMS_VERSION } from "@/lib/legal";
+import { BILLING_PROVIDER, PRIVACY_VERSION, TERMS_VERSION, getBillingAcceptanceCopy } from "@/lib/legal";
 import { sanitizeRedirectParam } from "@/lib/safe-redirect";
+import { authConfirmationUrl } from "@/lib/auth-confirmation";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
-import { isValidUsername, normalizeUsername } from "@/lib/username";
+import { isValidUsername } from "@/lib/username";
 
 const GOAL_ICONS: Record<SignupGoalKey, LucideIcon> = {
   lose_fat: Flame,
@@ -28,6 +29,14 @@ const GOAL_ICONS: Record<SignupGoalKey, LucideIcon> = {
 // COPPA: TJFit does not knowingly collect data from children under 13.
 // A neutral date-of-birth gate on step 1 blocks under-13 accounts.
 const MIN_AGE = 13;
+
+const SIGNUP_A11Y: Record<Locale, { show: string; hide: string; avatar: string; username: string }> = {
+  en: { show: "Show password", hide: "Hide password", avatar: "Profile photo preview", username: "@username" },
+  tr: { show: "Şifreyi göster", hide: "Şifreyi gizle", avatar: "Profil fotoğrafı önizlemesi", username: "@kullaniciadi" },
+  ar: { show: "إظهار كلمة المرور", hide: "إخفاء كلمة المرور", avatar: "معاينة صورة الملف الشخصي", username: "@tjfit" },
+  es: { show: "Mostrar contraseña", hide: "Ocultar contraseña", avatar: "Vista previa de la foto de perfil", username: "@usuario" },
+  fr: { show: "Afficher le mot de passe", hide: "Masquer le mot de passe", avatar: "Aperçu de la photo de profil", username: "@pseudo" },
+};
 
 const DOB_COPY: Record<Locale, { label: string; under13: string }> = {
   en: { label: "Date of birth", under13: "You must be at least 13 years old to use TJFit." },
@@ -125,12 +134,6 @@ function SignupForm({ params }: { params: { locale: string } }) {
     return data.publicUrl ?? null;
   };
 
-  const buildReferralCode = (u: string) => {
-    const head = u.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().slice(0, 4).padEnd(4, "X");
-    const rand = Math.random().toString(16).slice(2, 6).toUpperCase().padEnd(4, "A");
-    return `TJ-${head}-${rand}`;
-  };
-
   const submitSignup = async () => {
     if (loading) return;
     setError(null);
@@ -167,17 +170,15 @@ function SignupForm({ params }: { params: { locale: string } }) {
 
       const now = new Date().toISOString();
       const cleanUsername = username.trim().replace(/^@/, "");
-      const referralCode = buildReferralCode(cleanUsername);
       const { data, error: signUpError } = await supabase.auth.signUp({
         email: email.trim(),
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/${params.locale}`,
+          emailRedirectTo: authConfirmationUrl(window.location.origin, locale, redirectTarget),
           data: {
             requested_role: "user",
             username: cleanUsername,
             goal,
-            referral_code: referralCode,
             birth_date: birthDate,
             terms_accepted: true,
             terms_version: TERMS_VERSION,
@@ -205,11 +206,8 @@ function SignupForm({ params }: { params: { locale: string } }) {
           .from("profiles")
           .update({
             username: cleanUsername,
-            username_normalized: normalizeUsername(cleanUsername),
             display_name: cleanUsername,
-            avatar_url: avatarUrl,
-            referral_code: referralCode,
-            bio: `Goal: ${goal}`
+            avatar_url: avatarUrl
           })
           .eq("id", userId);
       }
@@ -219,7 +217,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
         ? `/${locale}/verify-email?redirect=${encodeURIComponent(redirectTarget)}&email=${emailParam}`
         : `/${locale}/verify-email?email=${emailParam}`;
 
-      router.push(data.session ? `/${locale}/dashboard` : verifyRedirect);
+      router.push(data.session ? redirectTarget ?? `/${locale}/dashboard` : verifyRedirect);
       router.refresh();
     } catch (err) {
       console.error("[signup] submit failed", err);
@@ -294,7 +292,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
                     type="button"
                     onClick={() => setShowPassword((v) => !v)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                    aria-label="Toggle password visibility"
+                    aria-label={showPassword ? SIGNUP_A11Y[locale].hide : SIGNUP_A11Y[locale].show}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" aria-hidden /> : <Eye className="h-4 w-4" aria-hidden />}
                   </button>
@@ -358,7 +356,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
               >
                 {avatarPreview ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={avatarPreview} alt="Avatar preview" className="h-full w-full object-cover" />
+                  <img src={avatarPreview} alt={SIGNUP_A11Y[locale].avatar} className="h-full w-full object-cover" />
                 ) : (
                   <div className="flex flex-col items-center text-faint">
                     <Camera className="h-6 w-6" />
@@ -402,7 +400,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
                   type="text"
                   name="username"
                   autoComplete="username"
-                  placeholder="@username"
+                  placeholder={SIGNUP_A11Y[locale].username}
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                 />
@@ -459,7 +457,7 @@ function SignupForm({ params }: { params: { locale: string } }) {
               <Link href={`/${params.locale}/privacy-policy`} className="text-white underline underline-offset-4 hover:text-bright">
                 {copy.privacyLink}
               </Link>
-              , {BILLING_PROVIDER} {copy.billingSuffix}
+              , {getBillingAcceptanceCopy(locale)}
             </span>
           </label>
           {error ? (
@@ -539,7 +537,8 @@ function SignupFallback() {
   );
 }
 
-export default function SignupPage({ params }: { params: { locale: string } }) {
+export default function SignupPage(props: { params: Promise<{ locale: string }> }) {
+  const params = use(props.params);
   return (
     <Suspense fallback={<SignupFallback />}>
       <SignupForm params={params} />

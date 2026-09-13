@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { requireAuth } from "@/lib/require-auth";
 
-export async function POST(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(_req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const auth = await requireAuth();
     if (!auth.ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

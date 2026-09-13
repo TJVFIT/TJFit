@@ -170,7 +170,7 @@ function PlatformFeatureCard({
   accent = "#A855F7",
   span = 1,
 }: {
-  icon: React.ElementType;
+  icon: import("lucide-react").LucideIcon;
   title: string;
   desc: string;
   accent?: string;

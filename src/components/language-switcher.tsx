@@ -39,6 +39,7 @@ export function LanguageSwitcher({
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -51,7 +52,10 @@ export function LanguageSwitcher({
       if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
     };
     document.addEventListener("mousedown", onDoc);
     window.addEventListener("keydown", onKey);
@@ -84,10 +88,11 @@ export function LanguageSwitcher({
   return (
     <div ref={rootRef} className={cn(drawer ? "relative w-full" : "relative shrink-0", className)}>
       <button
+        ref={triggerRef}
         type="button"
         aria-expanded={open}
         aria-haspopup="listbox"
-        aria-label={`${copy.aria}: ${current.label}`}
+        aria-label={`${copy.aria}: ${current.native}`}
         onClick={() => setOpen((v) => !v)}
         className={cn(
           "inline-flex touch-manipulation items-center gap-2 rounded-lg border px-3 py-1.5 text-[13px] transition-[border-color,color,background-color] duration-150 ease-out",
@@ -106,6 +111,7 @@ export function LanguageSwitcher({
       </button>
       <div
         role="listbox"
+        hidden={!open}
         aria-label={copy.aria}
         className={cn(
           "absolute z-[120] rounded-[12px] border p-2 shadow-[0_24px_64px_rgba(0,0,0,0.75)] backdrop-blur-xl transition-[opacity,transform] duration-150 ease-out",

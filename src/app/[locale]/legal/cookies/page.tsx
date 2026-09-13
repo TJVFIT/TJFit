@@ -1,3 +1,4 @@
+import { LEGAL_SERVICES } from "@/lib/legal-service-copy";
 import type { Metadata } from "next";
 
 import { AmbientBackground } from "@/components/ui/AmbientBackground";
@@ -17,7 +18,7 @@ type SectionShape = {
 const COPY: Record<Locale, SectionShape> = {
   en: {
     title: "Cookie Policy",
-    updated: "Last updated: 2026-05-02",
+    updated: LEGAL_SERVICES.en.updated,
     intro:
       "TJFit uses cookies and similar technologies (localStorage, sessionStorage) to make the site work, understand usage, and — once we run ads — measure marketing. This page explains what's stored and how to opt out.",
     categories: [
@@ -27,22 +28,22 @@ const COPY: Record<Locale, SectionShape> = {
     ],
     thirdParties: [
       { name: "Supabase", purpose: "Authentication, database, storage. Privacy policy at supabase.com/privacy." },
-      { name: "Vercel", purpose: "Hosting, analytics (anonymous). Privacy at vercel.com/legal/privacy-policy." },
-      { name: "Gumroad", purpose: "Payments + merchant of record. Privacy at gumroad.com/privacy." },
+      { name: "Lemon Squeezy", purpose: LEGAL_SERVICES.en.checkout },
+      { name: "Gumroad", purpose: LEGAL_SERVICES.en.historical },
       { name: "Resend", purpose: "Transactional email. Privacy at resend.com/legal/privacy-policy." },
-      { name: "OpenAI", purpose: "TJAI plan generation. Privacy at openai.com/policies/privacy-policy." },
+      { name: "Groq", purpose: LEGAL_SERVICES.en.ai },
       { name: "PostHog", purpose: "Product analytics (only with consent). EU-region. Privacy at posthog.com/privacy." },
       { name: "Sentry", purpose: "Error monitoring. Privacy at sentry.io/privacy." }
     ],
     optOutHeading: "How to opt out",
     optOutBody: [
-      "Open the cookie banner anytime from the footer of any page (\"Cookie preferences\") and toggle Analytics or Marketing off.",
+      "Use Customize on the cookie banner to change analytics and marketing preferences. If you have already dismissed it, clear this site’s stored data in your browser and reload to choose again.",
       "You can also clear cookies in your browser at any time. We'll re-prompt you for consent every 12 months."
     ]
   },
   tr: {
     title: "Çerez Politikası",
-    updated: "Son güncelleme: 2026-05-02",
+    updated: LEGAL_SERVICES.tr.updated,
     intro:
       "TJFit; siteyi çalıştırmak, kullanımı anlamak ve — reklam yayınladığımızda — pazarlamayı ölçmek için çerezler ve benzer teknolojiler (localStorage, sessionStorage) kullanır. Bu sayfa neyin saklandığını ve nasıl iptal edileceğini açıklar.",
     categories: [
@@ -52,22 +53,22 @@ const COPY: Record<Locale, SectionShape> = {
     ],
     thirdParties: [
       { name: "Supabase", purpose: "Kimlik doğrulama, veritabanı, depolama. supabase.com/privacy" },
-      { name: "Vercel", purpose: "Barındırma, anonim analiz. vercel.com/legal/privacy-policy" },
-      { name: "Gumroad", purpose: "Ödeme + merchant of record. gumroad.com/privacy" },
+      { name: "Lemon Squeezy", purpose: LEGAL_SERVICES.tr.checkout },
+      { name: "Gumroad", purpose: LEGAL_SERVICES.tr.historical },
       { name: "Resend", purpose: "İşlemsel e-posta. resend.com/legal/privacy-policy" },
-      { name: "OpenAI", purpose: "TJAI plan üretimi. openai.com/policies/privacy-policy" },
+      { name: "Groq", purpose: LEGAL_SERVICES.tr.ai },
       { name: "PostHog", purpose: "Ürün analizi (yalnızca onayla). EU bölgesi. posthog.com/privacy" },
       { name: "Sentry", purpose: "Hata izleme. sentry.io/privacy" }
     ],
     optOutHeading: "Nasıl reddedilir",
     optOutBody: [
-      "Herhangi bir sayfanın altbilgisinden çerez banner'ını istediğin zaman aç (\"Çerez tercihleri\") ve Analiz veya Pazarlama'yı kapat.",
+      "Analiz ve pazarlama tercihlerini çerez bildirimindeki Özelleştir düğmesiyle değiştir. Bildirimi kapattıysan yeniden seçim yapmak için tarayıcında bu sitenin verilerini temizleyip sayfayı yenile.",
       "Tarayıcında istediğin zaman çerezleri temizleyebilirsin. 12 ayda bir tekrar onay isteyeceğiz."
     ]
   },
   ar: {
     title: "سياسة ملفات تعريف الارتباط",
-    updated: "آخر تحديث: 2026-05-02",
+    updated: LEGAL_SERVICES.ar.updated,
     intro:
       "تستخدم TJFit ملفات تعريف الارتباط وتقنيات مشابهة (localStorage، sessionStorage) لتشغيل الموقع وفهم الاستخدام — وعند تشغيل الإعلانات — قياس التسويق. تشرح هذه الصفحة ما يُحفظ وكيفية الانسحاب.",
     categories: [
@@ -77,22 +78,22 @@ const COPY: Record<Locale, SectionShape> = {
     ],
     thirdParties: [
       { name: "Supabase", purpose: "المصادقة وقاعدة البيانات والتخزين. supabase.com/privacy" },
-      { name: "Vercel", purpose: "الاستضافة والتحليلات المجهولة. vercel.com/legal/privacy-policy" },
-      { name: "Gumroad", purpose: "الدفع. gumroad.com/privacy" },
+      { name: "Lemon Squeezy", purpose: LEGAL_SERVICES.ar.checkout },
+      { name: "Gumroad", purpose: LEGAL_SERVICES.ar.historical },
       { name: "Resend", purpose: "البريد المعاملاتي. resend.com/legal/privacy-policy" },
-      { name: "OpenAI", purpose: "توليد خطط TJAI. openai.com/policies/privacy-policy" },
+      { name: "Groq", purpose: LEGAL_SERVICES.ar.ai },
       { name: "PostHog", purpose: "تحليلات المنتج (بموافقة فقط). منطقة الاتحاد الأوروبي. posthog.com/privacy" },
       { name: "Sentry", purpose: "مراقبة الأخطاء. sentry.io/privacy" }
     ],
     optOutHeading: "كيفية الانسحاب",
     optOutBody: [
-      "افتح شريط الموافقة في أي وقت من تذييل أي صفحة (\"تفضيلات ملفات تعريف الارتباط\") وأطفئ التحليلات أو التسويق.",
+      "استخدم زر التخصيص في شريط ملفات الارتباط لتغيير تفضيلات التحليلات والتسويق. إذا أغلقته، امسح بيانات هذا الموقع من المتصفح وأعد تحميل الصفحة للاختيار مجدداً.",
       "يمكنك أيضاً مسح ملفات تعريف الارتباط في متصفحك في أي وقت. سنطلب الموافقة مجدداً كل 12 شهراً."
     ]
   },
   es: {
     title: "Política de Cookies",
-    updated: "Última actualización: 2026-05-02",
+    updated: LEGAL_SERVICES.es.updated,
     intro:
       "TJFit usa cookies y tecnologías similares (localStorage, sessionStorage) para que el sitio funcione, entender el uso y — cuando lancemos anuncios — medir marketing. Esta página explica qué se guarda y cómo cancelar.",
     categories: [
@@ -102,22 +103,22 @@ const COPY: Record<Locale, SectionShape> = {
     ],
     thirdParties: [
       { name: "Supabase", purpose: "Auth, base de datos, storage. supabase.com/privacy" },
-      { name: "Vercel", purpose: "Hosting, analítica anónima. vercel.com/legal/privacy-policy" },
-      { name: "Gumroad", purpose: "Pagos + merchant of record. gumroad.com/privacy" },
+      { name: "Lemon Squeezy", purpose: LEGAL_SERVICES.es.checkout },
+      { name: "Gumroad", purpose: LEGAL_SERVICES.es.historical },
       { name: "Resend", purpose: "Email transaccional. resend.com/legal/privacy-policy" },
-      { name: "OpenAI", purpose: "Generación de planes TJAI. openai.com/policies/privacy-policy" },
+      { name: "Groq", purpose: LEGAL_SERVICES.es.ai },
       { name: "PostHog", purpose: "Analítica de producto (solo con consentimiento). Región UE. posthog.com/privacy" },
       { name: "Sentry", purpose: "Monitoreo de errores. sentry.io/privacy" }
     ],
     optOutHeading: "Cómo cancelar",
     optOutBody: [
-      "Abre el banner de cookies en cualquier momento desde el pie de página (\"Preferencias de cookies\") y desactiva Analítica o Marketing.",
+      "Usa Personalizar en el aviso de cookies para cambiar las preferencias de analítica y marketing. Si ya lo cerraste, borra los datos de este sitio en el navegador y recarga para elegir de nuevo.",
       "También puedes limpiar cookies en tu navegador. Volveremos a pedir consentimiento cada 12 meses."
     ]
   },
   fr: {
     title: "Politique Cookies",
-    updated: "Dernière mise à jour : 2026-05-02",
+    updated: LEGAL_SERVICES.fr.updated,
     intro:
       "TJFit utilise des cookies et technologies similaires (localStorage, sessionStorage) pour faire fonctionner le site, comprendre l'usage et — quand on lancera de la publicité — mesurer le marketing. Cette page explique ce qui est stocké et comment refuser.",
     categories: [
@@ -127,16 +128,16 @@ const COPY: Record<Locale, SectionShape> = {
     ],
     thirdParties: [
       { name: "Supabase", purpose: "Auth, base de données, stockage. supabase.com/privacy" },
-      { name: "Vercel", purpose: "Hébergement, analytique anonyme. vercel.com/legal/privacy-policy" },
-      { name: "Gumroad", purpose: "Paiements + merchant of record. gumroad.com/privacy" },
+      { name: "Lemon Squeezy", purpose: LEGAL_SERVICES.fr.checkout },
+      { name: "Gumroad", purpose: LEGAL_SERVICES.fr.historical },
       { name: "Resend", purpose: "Email transactionnel. resend.com/legal/privacy-policy" },
-      { name: "OpenAI", purpose: "Génération des plans TJAI. openai.com/policies/privacy-policy" },
+      { name: "Groq", purpose: LEGAL_SERVICES.fr.ai },
       { name: "PostHog", purpose: "Analytique produit (avec consentement uniquement). Région UE. posthog.com/privacy" },
       { name: "Sentry", purpose: "Suivi des erreurs. sentry.io/privacy" }
     ],
     optOutHeading: "Comment refuser",
     optOutBody: [
-      "Ouvre la bannière cookies à tout moment depuis le pied de page (\"Préférences cookies\") et désactive Analytique ou Marketing.",
+      "Utilise Personnaliser dans la bannière cookies pour changer les préférences d’analyse et de marketing. Si tu l’as déjà fermée, efface les données de ce site dans le navigateur et recharge pour choisir à nouveau.",
       "Tu peux aussi vider les cookies dans ton navigateur à tout moment. Nous redemanderons consentement tous les 12 mois."
     ]
   }
@@ -150,13 +151,15 @@ const PAGE_METADATA: Record<Locale, { title: string; description: string }> = {
   fr: { title: "Politique Cookies | TJFit", description: "Ce que TJFit stocke dans ton navigateur, pourquoi et comment refuser." }
 };
 
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
   const meta = PAGE_METADATA[locale] ?? PAGE_METADATA.en;
   return { title: meta.title, description: meta.description };
 }
 
-export default function CookiesPage({ params }: { params: { locale: string } }) {
+export default async function CookiesPage(props: { params: Promise<{ locale: string }> }) {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
   const copy = COPY[locale] ?? COPY.en;
   return (
@@ -167,7 +170,7 @@ export default function CookiesPage({ params }: { params: { locale: string } }) 
         <p className="mt-2 text-xs text-faint">{copy.updated}</p>
         <p className="mt-6 text-base leading-relaxed text-muted">{copy.intro}</p>
 
-        <h2 className="mt-10 font-display text-xl font-semibold tracking-tight text-white">Categories</h2>
+        <h2 className="mt-10 font-display text-xl font-semibold tracking-tight text-white">{LEGAL_SERVICES[locale].categoriesHeading}</h2>
         <div className="mt-4 space-y-3">
           {copy.categories.map((c) => (
             <div key={c.name} className="rounded-xl border border-divider bg-surface p-4">
@@ -178,7 +181,7 @@ export default function CookiesPage({ params }: { params: { locale: string } }) 
           ))}
         </div>
 
-        <h2 className="mt-10 font-display text-xl font-semibold tracking-tight text-white">Sub-processors</h2>
+        <h2 className="mt-10 font-display text-xl font-semibold tracking-tight text-white">{LEGAL_SERVICES[locale].servicesHeading}</h2>
         <ul className="mt-4 space-y-2 text-sm">
           {copy.thirdParties.map((p) => (
             <li key={p.name} className="rounded-xl border border-divider bg-surface px-4 py-3">

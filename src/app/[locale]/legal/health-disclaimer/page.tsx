@@ -230,13 +230,15 @@ const PAGE_METADATA: Record<Locale, { title: string; description: string }> = {
   fr: { title: "Avis de Santé | TJFit", description: "Le contenu fitness, nutrition et plans TJAI de TJFit est éducatif. Lis les limites de sécurité avant de t'entraîner." }
 };
 
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
   const meta = PAGE_METADATA[locale] ?? PAGE_METADATA.en;
   return { title: meta.title, description: meta.description };
 }
 
-export default function HealthDisclaimerPage({ params }: { params: { locale: string } }) {
+export default async function HealthDisclaimerPage(props: { params: Promise<{ locale: string }> }) {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
   const copy = COPY[locale] ?? COPY.en;
   return (

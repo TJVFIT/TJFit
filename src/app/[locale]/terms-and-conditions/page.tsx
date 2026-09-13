@@ -3,7 +3,8 @@ import { BILLING_PROVIDER, TERMS_VERSION } from "@/lib/legal";
 import { getTermsCopy } from "@/lib/legal-copy";
 import { requireLocaleParam } from "@/lib/require-locale";
 
-export default function TermsPage({ params }: { params: { locale: string } }) {
+export default async function TermsPage(props: { params: Promise<{ locale: string }> }) {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
 
   const copy = getTermsCopy(locale, BILLING_PROVIDER, TERMS_VERSION);

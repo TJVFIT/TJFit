@@ -255,8 +255,8 @@ export function CurlAthleteCenterpiece({ pointerRef, speed = 1 }: HeroProps) {
     bicepRef
   }: {
     side: 1 | -1;
-    forearmRef: React.RefObject<THREE.Group>;
-    bicepRef: React.RefObject<THREE.Mesh>;
+    forearmRef: React.RefObject<THREE.Group | null>;
+    bicepRef: React.RefObject<THREE.Mesh | null>;
   }) => (
     <group position={[SHOULDER_X * side, SHOULDER_Y, 0.05]}>
       <mesh>

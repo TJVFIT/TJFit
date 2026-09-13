@@ -46,6 +46,8 @@ export function SmoothScroll() {
         // Slightly under the default so it reads as weight, not float. A
         // fitness brand should feel like it has mass.
         lerp: 0.11,
+        anchors: true,
+        prevent: (node) => node.matches('[role="dialog"], [aria-modal="true"], textarea, select'),
         wheelMultiplier: 1,
         touchMultiplier: 1.5,
         autoRaf: false

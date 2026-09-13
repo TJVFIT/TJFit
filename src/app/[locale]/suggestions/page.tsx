@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import { Lightbulb, ChevronUp } from "lucide-react";
 
 import { useAuth } from "@/components/auth-provider";
@@ -27,7 +27,8 @@ const STATUS_COLORS: Record<string, string> = {
 
 const CATEGORY_OPTIONS = ["Feature", "Bug", "Design", "Content", "Other"] as const;
 
-export default function SuggestionsPage({ params }: { params: { locale: string } }) {
+export default function SuggestionsPage(props: { params: Promise<{ locale: string }> }) {
+  const params = use(props.params);
   const locale = isLocale(params.locale) ? params.locale : "en";
   const { user } = useAuth();
   const [items, setItems] = useState<Suggestion[]>([]);

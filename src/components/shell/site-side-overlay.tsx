@@ -2,431 +2,79 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
-import { ChevronRight, Menu, Search, X } from "lucide-react";
-
+import { useEffect, useRef, useState } from "react";
+import { Menu, X } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
 import { Logo } from "@/components/ui/Logo";
 import type { Locale } from "@/lib/i18n";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
-import { cn } from "@/lib/utils";
+import { buildShellOverlayNav } from "@/lib/shell-overlay-nav";
+import { PUBLIC_COPY } from "@/lib/public-offers-copy";
 
-type NavItem = { label: string; href: string; adminOnly?: boolean; coachOnly?: boolean; authOnly?: boolean };
-type NavGroup = { title: string; items: NavItem[] };
-
-const GROUP_TITLES: Record<Locale, string[]> = {
-  en: ["Train", "TJAI", "You", "Community", "Support"],
-  tr: ["Antrenman", "TJAI", "Sen", "Topluluk", "Destek"],
-  ar: ["تدريب", "TJAI", "أنت", "المجتمع", "الدعم"],
-  es: ["Entrenar", "TJAI", "Tú", "Comunidad", "Soporte"],
-  fr: ["Entraînement", "TJAI", "Toi", "Communauté", "Support"]
+const COPY: Record<Locale, { open: string; close: string; signOut: string; error: string }> = {
+  en: { open: "Open menu", close: "Close menu", signOut: "Sign out", error: "Could not sign out. Please try again." },
+  tr: { open: "Menüyü aç", close: "Menüyü kapat", signOut: "Çıkış yap", error: "Çıkış yapılamadı. Lütfen tekrar dene." },
+  ar: { open: "فتح القائمة", close: "إغلاق القائمة", signOut: "تسجيل الخروج", error: "تعذر تسجيل الخروج. حاول مجدداً." },
+  es: { open: "Abrir menú", close: "Cerrar menú", signOut: "Cerrar sesión", error: "No se pudo cerrar la sesión. Inténtalo de nuevo." },
+  fr: { open: "Ouvrir le menu", close: "Fermer le menu", signOut: "Se déconnecter", error: "Déconnexion impossible. Réessaie." }
 };
-
-const OPEN_LABEL: Record<Locale, string> = {
-  en: "Open menu",
-  tr: "Menüyü aç",
-  ar: "فتح القائمة",
-  es: "Abrir menú",
-  fr: "Ouvrir le menu"
-};
-
-const CLOSE_LABEL: Record<Locale, string> = {
-  en: "Close menu",
-  tr: "Menüyü kapat",
-  ar: "إغلاق القائمة",
-  es: "Cerrar menú",
-  fr: "Fermer le menu"
-};
-
-const SIGN_OUT_LABEL: Record<Locale, string> = {
-  en: "Sign out",
-  tr: "Çıkış",
-  ar: "خروج",
-  es: "Salir",
-  fr: "Déconnexion"
-};
-
-const SEARCH_LABEL: Record<Locale, string> = {
-  en: "Bundles, TJAI, messages, coaches",
-  tr: "Paketler, TJAI, mesajlar, koclar",
-  ar: "الحزم، TJAI، الرسائل، المدربون",
-  es: "Paquetes, TJAI, mensajes, coaches",
-  fr: "Packs, TJAI, messages, coachs"
-};
-
-const NAV_LABELS: Record<Locale, Record<string, string>> = {
-  en: {
-    "Generate plan": "Generate plan",
-    "TJAI Chat": "TJAI Chat",
-    "Credit packs": "Credit packs"
-  },
-  tr: {
-    Coaches: "Koclar",
-    Calculator: "Hesaplayici",
-    Equipment: "Ekipman",
-    "Upload program": "Program yukle",
-    Dashboard: "Panel",
-    Progress: "Progress",
-    Messages: "Mesajlar",
-    Profile: "Profil",
-    Settings: "Ayarlar",
-    Community: "Topluluk",
-    Challenges: "Meydan okumalar",
-    Leaderboard: "Liderlik tablosu",
-    Live: "Canli",
-    Feed: "Akis",
-    Blog: "Blog",
-    Transformations: "Donusumler",
-    Support: "Destek",
-    Feedback: "Geri bildirim",
-    Press: "Basin",
-    Legal: "Yasal",
-    Admin: "Admin",
-    "Coach dashboard": "Koc paneli",
-    "Generate plan": "Plan üret",
-    "TJAI Chat": "TJAI Sohbet",
-    "Credit packs": "Kredi paketleri"
-  },
-  ar: {
-    Coaches: "المدربون",
-    Calculator: "الحاسبة",
-    Equipment: "المعدات",
-    "Upload program": "رفع برنامج",
-    Dashboard: "لوحة التحكم",
-    Progress: "التقدم",
-    Messages: "الرسائل",
-    Profile: "الملف الشخصي",
-    Settings: "الإعدادات",
-    Community: "المجتمع",
-    Challenges: "التحديات",
-    Leaderboard: "لوحة الصدارة",
-    Live: "مباشر",
-    Feed: "الخلاصة",
-    Blog: "المدونة",
-    Transformations: "التحولات",
-    Support: "الدعم",
-    Feedback: "الملاحظات",
-    Press: "الصحافة",
-    Legal: "القانوني",
-    Admin: "المشرف",
-    "Coach dashboard": "لوحة المدرب",
-    "Generate plan": "أنشئ خطة",
-    "TJAI Chat": "محادثة TJAI",
-    "Credit packs": "حزم الرصيد"
-  },
-  es: {
-    Coaches: "Coaches",
-    Calculator: "Calculadora",
-    Equipment: "Equipo",
-    "Upload program": "Subir programa",
-    Dashboard: "Panel",
-    Progress: "Progreso",
-    Messages: "Mensajes",
-    Profile: "Perfil",
-    Settings: "Ajustes",
-    Community: "Comunidad",
-    Challenges: "Retos",
-    Leaderboard: "Clasificacion",
-    Live: "Directo",
-    Feed: "Feed",
-    Blog: "Blog",
-    Transformations: "Transformaciones",
-    Support: "Soporte",
-    Feedback: "Feedback",
-    Press: "Prensa",
-    Legal: "Legal",
-    Admin: "Admin",
-    "Coach dashboard": "Panel de coach",
-    "Generate plan": "Generar plan",
-    "TJAI Chat": "TJAI Chat",
-    "Credit packs": "Paquetes de créditos"
-  },
-  fr: {
-    Coaches: "Coachs",
-    Calculator: "Calculateur",
-    Equipment: "Equipement",
-    "Upload program": "Uploader un programme",
-    Dashboard: "Tableau de bord",
-    Progress: "Progression",
-    Messages: "Messages",
-    Profile: "Profil",
-    Settings: "Reglages",
-    Community: "Communaute",
-    Challenges: "Challenges",
-    Leaderboard: "Classement",
-    Live: "Live",
-    Feed: "Fil",
-    Blog: "Blog",
-    Transformations: "Transformations",
-    Support: "Support",
-    Feedback: "Feedback",
-    Press: "Presse",
-    Legal: "Legal",
-    Admin: "Admin",
-    "Coach dashboard": "Tableau coach",
-    "Generate plan": "Générer un plan",
-    "TJAI Chat": "TJAI Chat",
-    "Credit packs": "Packs de crédits"
-  }
-};
-
-function navLabel(locale: Locale, label: string) {
-  return NAV_LABELS[locale]?.[label] ?? label;
-}
-
-function buildGroups(locale: Locale): NavGroup[] {
-  const titles = GROUP_TITLES[locale] ?? GROUP_TITLES.en;
-  const base = `/${locale}`;
-  return [
-    {
-      title: titles[0],
-      items: [
-        { label: "Bundles", href: `${base}/bundles` },
-        { label: "Coaches", href: `${base}/coaches` },
-        { label: "Calculator", href: `${base}/calculator` },
-        { label: "Equipment", href: `${base}/store` }
-      ]
-    },
-    {
-      title: titles[1],
-      items: [
-        { label: "Generate plan", href: `${base}/tjai` },
-        { label: "TJAI Chat", href: `${base}/ai` },
-        { label: "Credit packs", href: `${base}/tjai/credits` }
-      ]
-    },
-    {
-      title: titles[2],
-      items: [
-        { label: "Dashboard", href: `${base}/dashboard`, authOnly: true },
-        { label: "Progress", href: `${base}/progress`, authOnly: true },
-        { label: "Messages", href: `${base}/messages`, authOnly: true },
-        { label: "Profile", href: `${base}/profile/edit`, authOnly: true },
-        { label: "Settings", href: `${base}/settings`, authOnly: true }
-      ]
-    },
-    {
-      title: titles[3],
-      items: [
-        { label: "Community", href: `${base}/community` },
-        { label: "Challenges", href: `${base}/challenges` },
-        { label: "Leaderboard", href: `${base}/leaderboard` },
-        { label: "Live", href: `${base}/live` },
-        { label: "Feed", href: `${base}/feed` },
-        { label: "Blog", href: `${base}/blog` },
-        { label: "Transformations", href: `${base}/transformations` }
-      ]
-    },
-    {
-      title: titles[4],
-      items: [
-        { label: "Support", href: `${base}/support` },
-        { label: "Feedback", href: `${base}/feedback` },
-        { label: "Press", href: `${base}/press` },
-        { label: "Legal", href: `${base}/legal` },
-        { label: "Admin", href: `${base}/admin`, adminOnly: true },
-        { label: "Coach dashboard", href: `${base}/coach-dashboard`, coachOnly: true }
-      ]
-    }
-  ];
-}
 
 export function SiteSideOverlay({ locale }: { locale: Locale }) {
   const [open, setOpen] = useState(false);
+  const [error, setError] = useState("");
+  const [signingOut, setSigningOut] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
   const { user, role } = useAuth();
   const pathname = usePathname() ?? "";
   const router = useRouter();
+  const c = COPY[locale];
+  const nav = buildShellOverlayNav(locale, locale);
+  const groups = nav.groups.map((group, i) => ({
+    ...group, title: i === 0 ? PUBLIC_COPY[locale].navigation : group.title,
+    items: group.items.filter((item) => (!item.adminOnly || role === "admin") && (!item.coachOnly || role === "coach" || role === "admin") && (!item.authOnly || user))
+  })).filter((group) => group.items.length);
 
-  const close = useCallback(() => setOpen(false), []);
-
+  useEffect(() => { setOpen(false); }, [pathname]);
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
-    };
-    window.addEventListener("keydown", onKey);
-    const prevOverflow = document.body.style.overflow;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prevOverflow;
+    panelRef.current?.querySelector<HTMLButtonElement>("button")?.focus();
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+      if (event.key !== "Tab") return;
+      const items = Array.from(panelRef.current?.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex="0"]') ?? []);
+      const first = items[0];
+      const last = items.at(-1);
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
     };
-  }, [open, close]);
+    document.addEventListener("keydown", onKey);
+    return () => { document.body.style.overflow = previousOverflow; document.removeEventListener("keydown", onKey); previousFocus?.focus(); };
+  }, [open]);
 
-  useEffect(() => {
-    if (!open) return;
-    setOpen(false);
-  }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+  async function signOut() {
+    setSigningOut(true); setError("");
+    try {
+      const supabase = getSupabaseBrowserClient();
+      if (!supabase) throw new Error("unavailable");
+      const result = await supabase.auth.signOut();
+      if (result.error) throw result.error;
+      setOpen(false); router.replace(`/${locale}`); router.refresh();
+    } catch { setError(c.error); }
+    finally { setSigningOut(false); }
+  }
 
-  const signOut = async () => {
-    const supabase = getSupabaseBrowserClient();
-    if (supabase) {
-      try {
-        await supabase.auth.signOut();
-      } catch {}
-    }
-    close();
-    router.replace(`/${locale}`);
-    router.refresh();
-  };
-
-  const groups = buildGroups(locale);
-  const filteredGroups = groups.map((group) => ({
-    ...group,
-    items: group.items.filter((item) => {
-      if (item.adminOnly && role !== "admin") return false;
-      if (item.coachOnly && role !== "coach" && role !== "admin") return false;
-      if (item.authOnly && !user) return false;
-      return true;
-    })
-  })).filter((group) => group.items.length > 0);
-
-  return (
-    <>
-      <button
-        type="button"
-        aria-label={OPEN_LABEL[locale] ?? OPEN_LABEL.en}
-        aria-expanded={open}
-        aria-controls="site-side-overlay"
-        onClick={() => setOpen(true)}
-        className={cn(
-          "group/burger fixed start-3 top-3 z-40 inline-flex h-10 w-10 items-center justify-center rounded-md",
-          "border border-white/[0.09] bg-[rgba(15,15,18,0.7)] text-white/85 backdrop-blur",
-          "transition-[border-color,background-color,color,box-shadow] duration-200",
-          "hover:border-purple-300/40 hover:bg-[rgba(20,24,28,0.85)] hover:text-purple-100 hover:shadow-[0_0_22px_rgba(168,85,247,0.18)]",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60",
-          "sm:start-4 sm:top-3.5",
-          open && "pointer-events-none opacity-0"
-        )}
-      >
-        <Menu
-          className="h-[18px] w-[18px] transition-transform duration-200 motion-safe:group-hover/burger:rotate-90"
-          aria-hidden
-        />
-      </button>
-
-      <div
-        id="site-side-overlay"
-        className={cn(
-          "fixed inset-0 z-[60] transition-opacity duration-300",
-          open ? "opacity-100" : "pointer-events-none opacity-0"
-        )}
-        role="dialog"
-        aria-modal="true"
-        aria-hidden={!open}
-      >
-        <button
-          type="button"
-          aria-label={CLOSE_LABEL[locale] ?? CLOSE_LABEL.en}
-          onClick={close}
-          className="absolute inset-0 cursor-default bg-[rgba(8,8,10,0.6)] backdrop-blur-md"
-          tabIndex={open ? 0 : -1}
-        />
-        <div
-          className={cn(
-            "tj-side-panel absolute inset-y-0 start-0 flex w-full max-w-[820px] flex-col overflow-hidden border-e border-white/[0.06]",
-            "bg-[#0B0B0E] shadow-[24px_0_60px_rgba(0,0,0,0.55)]",
-            "transition-transform duration-[260ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
-            open ? "translate-x-0" : "-translate-x-full"
-          )}
-        >
-          <div className="relative z-[1] flex items-center justify-between border-b border-white/[0.06] px-6 py-5 sm:px-8">
-            <Logo variant="full" size="navbar" linked={false} />
-            <button
-              type="button"
-              onClick={close}
-              aria-label={CLOSE_LABEL[locale] ?? CLOSE_LABEL.en}
-              className="group/closebtn inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/[0.08] text-white/70 transition-[border-color,background-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.04] hover:text-purple-100 hover:shadow-[0_0_18px_rgba(168,85,247,0.16)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
-            >
-              <X
-                className="h-4 w-4 transition-transform duration-200 motion-safe:group-hover/closebtn:rotate-90"
-                aria-hidden
-              />
-            </button>
-          </div>
-
-          <Link
-            href={`/${locale}/search`}
-            onClick={close}
-            className="group/sidesearch relative z-[1] mx-6 mt-6 flex items-center gap-3 rounded-md border border-white/[0.07] bg-white/[0.02] px-3.5 py-2.5 transition-[border-color,background-color,box-shadow] duration-200 hover:border-purple-300/40 hover:bg-purple-300/[0.04] hover:shadow-[0_0_22px_rgba(168,85,247,0.14)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 sm:mx-8"
-          >
-            <Search
-              className="h-4 w-4 text-white/40 transition-colors duration-200 group-hover/sidesearch:text-purple-200"
-              aria-hidden
-            />
-            <span className="text-sm text-white/55 transition-colors duration-200 group-hover/sidesearch:text-purple-50">
-              {SEARCH_LABEL[locale] ?? SEARCH_LABEL.en}
-            </span>
-          </Link>
-
-          <div
-            className={cn(
-              "relative z-[1] grid flex-1 gap-x-10 gap-y-7 overflow-y-auto px-6 py-7 sm:grid-cols-2 sm:px-8 lg:grid-cols-4",
-              open && "tj-sidebar-open"
-            )}
-          >
-            {filteredGroups.map((group, gi) => (
-              <section
-                key={group.title}
-                className="tj-sidebar-section"
-                style={{ ["--tj-section-i"]: gi } as React.CSSProperties}
-              >
-                <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-white/40">
-                  {group.title}
-                </h2>
-                <ul className="space-y-0.5">
-                  {group.items.map((item, li) => {
-                    const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
-                    return (
-                      <li
-                        key={item.href}
-                        className="tj-sidebar-link-item"
-                        style={{ ["--tj-link-i"]: li } as React.CSSProperties}
-                      >
-                        <Link
-                          href={item.href}
-                          onClick={close}
-                          aria-current={active ? "page" : undefined}
-                          className={cn(
-                            "tj-sidebar-link group/link flex min-h-[44px] items-center justify-between rounded-md px-2 py-1.5 text-[14px] transition-colors duration-150",
-                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0B0E]",
-                            active ? "text-white" : "text-white/65 hover:text-white"
-                          )}
-                        >
-                          <span className="flex items-center">
-                            <span className="tj-sidebar-link-dot" aria-hidden />
-                            {navLabel(locale, item.label)}
-                          </span>
-                          <ChevronRight
-                            className={cn(
-                              "h-3.5 w-3.5 transition-opacity duration-150",
-                              active ? "text-accent opacity-100" : "opacity-0 group-hover/link:opacity-50"
-                            )}
-                            aria-hidden
-                          />
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </section>
-            ))}
-          </div>
-
-          {user ? (
-            <div className="relative z-[1] flex items-center justify-between border-t border-white/[0.06] px-6 py-4 sm:px-8">
-              <span className="truncate text-xs text-white/45">{user.email}</span>
-              <button
-                type="button"
-                onClick={signOut}
-                className="inline-flex items-center gap-2 rounded-md border border-white/[0.09] px-3 py-1.5 text-xs text-white/70 transition-colors duration-150 hover:border-[rgba(239,68,68,0.45)] hover:text-white"
-              >
-                {SIGN_OUT_LABEL[locale] ?? SIGN_OUT_LABEL.en}
-              </button>
-            </div>
-          ) : null}
-        </div>
+  return <>
+    <button type="button" aria-label={c.open} aria-expanded={open} aria-controls="site-side-overlay" onClick={() => setOpen(true)} className="fixed start-3 top-3 z-40 inline-flex h-10 w-10 items-center justify-center rounded-md border border-white/15 bg-[#151218] text-white transition-colors hover:border-violet-300/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-300 sm:start-5"><Menu className="h-4 w-4" aria-hidden /></button>
+    {open ? <div id="site-side-overlay" role="dialog" aria-modal="true" aria-label={PUBLIC_COPY[locale].navigation} className="fixed inset-0 z-[60]">
+      <button type="button" tabIndex={-1} aria-label={c.close} onClick={() => setOpen(false)} className="absolute inset-0 bg-black/65 backdrop-blur-sm" />
+      <div ref={panelRef} className="absolute inset-y-0 start-0 flex w-full max-w-xl flex-col border-e border-white/10 bg-[#101014] shadow-2xl">
+        <div className="flex items-center justify-between border-b border-white/10 px-6 py-5"><Logo variant="full" size="navbar" linked={false} /><button type="button" aria-label={c.close} onClick={() => setOpen(false)} className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-white/15 text-white hover:border-violet-300/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-300"><X className="h-4 w-4" aria-hidden /></button></div>
+        <nav className="grid flex-1 gap-8 overflow-y-auto px-6 py-7 sm:grid-cols-2" aria-label={PUBLIC_COPY[locale].navigation}>{groups.map((group) => <section key={group.title}><h2 className="mb-3 text-xs font-medium text-violet-300">{group.title}</h2><ul>{group.items.map((item) => <li key={item.href}><Link href={item.href} onClick={() => setOpen(false)} aria-current={pathname === item.href ? "page" : undefined} className="flex min-h-11 items-center rounded-md py-2 text-sm text-[#c9c1d3] transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-300">{item.label}</Link></li>)}</ul></section>)}</nav>
+        {user ? <div className="border-t border-white/10 px-6 py-4"><div className="flex items-center justify-between gap-4"><span className="truncate text-xs text-[#b7b0c0]">{user.email}</span><button type="button" disabled={signingOut} onClick={signOut} className="min-h-11 shrink-0 rounded-md px-3 text-sm text-violet-200 hover:bg-white/5 disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-300">{c.signOut}</button></div>{error ? <p role="alert" className="mt-2 text-sm text-red-300">{error}</p> : null}</div> : null}
       </div>
-    </>
-  );
+    </div> : null}
+  </>;
 }

@@ -39,7 +39,8 @@ export function generateStaticParams() {
   return listBundleSlugs().map((slug) => ({ slug }));
 }
 
-export function generateMetadata({ params }: { params: { locale: string; slug: string } }) {
+export async function generateMetadata(props: { params: Promise<{ locale: string; slug: string }> }) {
+  const params = await props.params;
   const bundle = getBundle(params.slug);
   if (!bundle) return { title: getBundlesCopy(params.locale).detail.metaFallbackTitle };
   const site = getSiteUrl();
@@ -64,11 +65,12 @@ export function generateMetadata({ params }: { params: { locale: string; slug: s
 }
 
 
-export default async function BundleDetailPage({
-  params
-}: {
-  params: { locale: string; slug: string };
-}) {
+export default async function BundleDetailPage(
+  props: {
+    params: Promise<{ locale: string; slug: string }>;
+  }
+) {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
   const bundle = getBundle(params.slug);
   if (!bundle) notFound();
@@ -97,7 +99,7 @@ export default async function BundleDetailPage({
   // program content is never reachable from the sales page without entitlement.
   let owns = false;
   {
-    const supabase = createServerSupabaseClient();
+    const supabase = await createServerSupabaseClient();
     const {
       data: { user }
     } = await supabase.auth.getUser();
@@ -191,9 +193,9 @@ export default async function BundleDetailPage({
                   ? "border border-white/15 bg-white/[0.04] text-white/85"
                   : "border border-purple-300/30 bg-purple-300/[0.08] text-purple-50"
               }`}
-              aria-label={copy.priceAria(bundle.save)}
+              aria-label={copy.priceAria(isFree ? copy.free : bundle.save)}
             >
-              {bundle.save}
+              {isFree ? copy.free : bundle.save}
             </span>
           </div>
 
@@ -226,7 +228,7 @@ export default async function BundleDetailPage({
                 href={programHref}
                 className="tj-cta-sheen relative inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-5 py-2.5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(168,85,247,0.22)] hover:brightness-110 hover:shadow-[0_0_36px_rgba(168,85,247,0.36)] motion-safe:active:scale-[0.97] sm:flex-none"
               >
-                Start Program
+                {d.startProgram}
                 <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
               </Link>
             ) : (
@@ -386,7 +388,7 @@ export default async function BundleDetailPage({
               {d.weeklyTemplateTitle}
             </h2>
             <p className="mt-3 text-sm text-muted">{d.weeklyTemplateNote}</p>
-            <WeeklyTemplate days={bundle.weeklyTemplate} weekLabel={copy.weeksValue(1).replace(/\s.*$/, "")} />
+            <WeeklyTemplate days={bundle.weeklyTemplate} weekLabel={d.weekLabel} />
           </div>
         </RevealSection>
       ) : null}
@@ -528,17 +530,17 @@ export default async function BundleDetailPage({
         <div className="mt-14 flex flex-col items-stretch gap-4 rounded-2xl border border-purple-400/20 bg-[linear-gradient(180deg,rgba(168,85,247,0.06),rgba(168,85,247,0.01))] p-5 sm:flex-row sm:items-center sm:justify-between sm:p-7">
           <div>
             <p className="text-[11px] font-mono font-semibold uppercase tracking-[0.22em] text-purple-200/80">
-              {d.readyEyebrow}
+              {owns ? d.readyEyebrow : d.accessEyebrow}
             </p>
             <p className="mt-1 text-base font-semibold text-white sm:text-lg">
-              {d.readyTitle}
+              {owns ? d.readyTitle : d.accessTitle}
             </p>
           </div>
           <Link
-            href={programHref}
+            href={owns ? programHref : "#cta"}
             className="tj-cta-sheen inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#A855F7_0%,#7C3AED_100%)] px-5 text-sm font-bold text-[#0A0A0B] shadow-[0_0_24px_rgba(168,85,247,0.22)] hover:brightness-110 sm:w-auto"
           >
-            Start Program
+            {owns ? d.startProgram : xc.viewOptions}
             <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
           </Link>
         </div>
@@ -580,14 +582,14 @@ export default async function BundleDetailPage({
         </RevealSection>
       ) : null}
 
-      <DetailSectionNav items={navItems} />
+      <DetailSectionNav items={navItems} ariaLabel={d.sectionNavAria} />
 
       {owns ? (
         <StickyBuyBar
           name={card.name}
           href={programHref}
-          label="Start Program"
-          ariaLabel={`Start ${card.name}`}
+          label={d.startProgram}
+          ariaLabel={d.startProgramAria(card.name)}
         />
       ) : (
         <StickyOfferBar

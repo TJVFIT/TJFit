@@ -7,7 +7,6 @@ import { useEffect, useMemo, useState } from "react";
 import { TJHeroStage } from "@/components/3d/hero-stage";
 import { TJ_PALETTE } from "@/components/3d/palette";
 import { TJAIChatStandalone } from "@/components/tjai/tjai-chat-standalone";
-import { TJAIMealSwapTab } from "@/components/tjai/tjai-meal-swap-tab";
 import { TJAIMyPlanTab } from "@/components/tjai/tjai-my-plan-tab";
 import { TJAIProgressTab } from "@/components/tjai/tjai-progress-tab";
 import { WhatIfPanel } from "@/components/tjai/what-if-panel";
@@ -38,6 +37,13 @@ const HUB_SUBTITLE: Record<Locale, string> = {
   es: "Tu coach fitness adaptativo con memoria de plan",
   fr: "Votre coach fitness adaptatif avec mémoire de plan"
 };
+export const HUB_ACTION_COPY: Record<Locale, {upgrade:string;pass:string}> = {
+  en:{upgrade:"View TJAI access",pass:"TJAI Pass"},
+  tr:{upgrade:"TJAI erişimini incele",pass:"TJAI Erişimi"},
+  ar:{upgrade:"عرض خيارات الوصول إلى TJAI",pass:"وصول TJAI"},
+  es:{upgrade:"Ver acceso a TJAI",pass:"Pase TJAI"},
+  fr:{upgrade:"Voir l’accès à TJAI",pass:"Pass TJAI"}
+};
 
 function normalizeTab(raw: string | null): TabKey {
   if (raw === "chat" || raw === "meal-swap" || raw === "progress" || raw === "my-plan") return raw;
@@ -60,10 +66,11 @@ export function TJAIHub({ locale }: { locale: Locale }) {
   const searchParams = useSearchParams();
   const direction = getDirection(locale);
   const [tier, setTier] = useState<"core" | "pro" | "apex">("core");
+  const [hasPass,setHasPass]=useState(false);
   const [tab, setTab] = useState<TabKey>(normalizeTab(searchParams.get("tab")));
   const tabItems = useMemo(
     () =>
-      (Object.keys(TAB_LABELS[locale]) as TabKey[]).map((key) => ({
+      (Object.keys(TAB_LABELS[locale]) as TabKey[]).filter(key=>key!=="meal-swap").map((key) => ({
         key,
         label: TAB_LABELS[locale][key]
       })),
@@ -75,9 +82,10 @@ export function TJAIHub({ locale }: { locale: Locale }) {
   }, [searchParams]);
 
   useEffect(() => {
-    void fetch("/api/tjai/trial-status", { credentials: "include" })
+    void fetch("/api/tjai/access", { credentials: "include" })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
+        setHasPass(Boolean(data?.hasPass));
         if (data?.tier === "core" || data?.tier === "pro" || data?.tier === "apex") {
           setTier(data.tier);
         }
@@ -95,7 +103,7 @@ export function TJAIHub({ locale }: { locale: Locale }) {
   const content = useMemo(() => {
     if (tab === "my-plan") return <TJAIMyPlanTab locale={locale} />;
     if (tab === "chat") return <TJAIChatStandalone locale={locale} />;
-    if (tab === "meal-swap") return <TJAIMealSwapTab locale={locale} />;
+    if (tab === "meal-swap") return <TJAIProgressTab locale={locale} />;
     return (
       <div className="space-y-4">
         <TJAIProgressTab locale={locale} />
@@ -140,7 +148,7 @@ export function TJAIHub({ locale }: { locale: Locale }) {
                 {tier === "apex" ? (
                   <div className="apex-rotating-border">
                     <div className="apex-rotating-border-inner">
-                      [{tierLabel(locale, tier).toUpperCase()}]
+                      [{hasPass?HUB_ACTION_COPY[locale].pass:tierLabel(locale, tier).toUpperCase()}]
                     </div>
                   </div>
                 ) : (
@@ -153,9 +161,9 @@ export function TJAIHub({ locale }: { locale: Locale }) {
                     [{tierLabel(locale, tier).toUpperCase()}]
                   </span>
                 )}
-                {tier === "core" ? (
+                {tier === "core" && !hasPass ? (
                   <a href={`/${locale}/membership`} className="text-xs font-semibold text-accent hover:text-white">
-                    Upgrade →
+                    {HUB_ACTION_COPY[locale].upgrade}
                   </a>
                 ) : null}
               </div>
@@ -166,10 +174,6 @@ export function TJAIHub({ locale }: { locale: Locale }) {
                   key={item.key}
                   type="button"
                   onClick={() => {
-                    if (item.key === "meal-swap" && tier === "core") {
-                      router.push(`/${locale}/membership?tier=pro`);
-                      return;
-                    }
                     setTabInUrl(item.key);
                   }}
                   className={cn(

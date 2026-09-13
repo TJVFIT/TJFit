@@ -8,7 +8,8 @@ function getRequestedLocale(request: NextRequest): Locale {
   return locales.includes(value as Locale) ? (value as Locale) : "en";
 }
 
-export async function GET(request: NextRequest, { params }: { params: { slug: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const locale = getRequestedLocale(request);
   const supabase = getSupabaseServerClient();
   if (!supabase) {

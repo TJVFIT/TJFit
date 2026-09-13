@@ -326,7 +326,7 @@ describe("handleSale — program/diet direct buy grants a real entitlement", () 
 // (2) Refund
 // ---------------------------------------------------------------------------
 
-describe("handleRefund — revokes every entitlement a sale granted", () => {
+describe("handleRefund — revokes only durable sale bindings", () => {
   const ORDER_UUID = "11111111-2222-3333-4444-555555555555";
   const sale: GumroadSale = {
     id: "sale_ref_1",
@@ -344,7 +344,7 @@ describe("handleRefund — revokes every entitlement a sale granted", () => {
     created_at: "2026-03-01T00:00:00.000Z"
   };
 
-  it("marks the tracked order + direct order + commission refunded and downgrades the subscription", async () => {
+  it("ignores buyer order metadata and preserves newer subscription rights while revoking bound orders", async () => {
     const resolve = (table: string, ops: Op[]): Result => {
       const filters = eqMap(ops);
       if (table === "program_orders" && filters.id === ORDER_UUID) return { data: [{ id: "ord-1" }] };
@@ -361,23 +361,22 @@ describe("handleRefund — revokes every entitlement a sale granted", () => {
     expect(res.ok).toBe(true);
     if (!res.ok) throw new Error(res.error);
     const details = res.details as { revoked: Record<string, unknown> };
-    expect(details.revoked.order_ids).toEqual(["ord-1"]);
+    expect(details.revoked.order_ids).toBeUndefined();
     expect(details.revoked.direct_order_ids).toEqual(["ord-direct-1"]);
     expect(details.revoked.commission_ids).toEqual(["com-1"]);
-    expect(details.revoked.subscription_user_id).toBe("user-ref-1");
+    expect(details.revoked.subscription_user_id).toBeUndefined();
+    expect((res.details as { requires_review: boolean }).requires_review).toBe(true);
 
-    // the subscription update actually downgrades to the free tier
+    // Refunding an old charge cannot prove a newer paid subscription ended.
     const subUpdate = writes.find(
       (w) => w.table === "user_subscriptions" && w.op === "update"
     );
-    expect(subUpdate).toBeTruthy();
-    const row = subUpdate!.payload as Record<string, unknown>;
-    expect(row.tier).toBe("core");
-    expect(row.status).toBe("cancelled");
+    expect(subUpdate).toBeUndefined();
 
     // orders were flipped to 'refunded'
     const orderUpdate = writes.find((w) => w.table === "program_orders" && w.op === "update");
     expect((orderUpdate!.payload as Record<string, unknown>).status).toBe("refunded");
+    expect(eqMap(orderUpdate!.ops)).toEqual({ provider_order_id: "sale_ref_1", provider: "gumroad" });
   });
 
   it("is idempotent — only touches rows still in a live state", async () => {

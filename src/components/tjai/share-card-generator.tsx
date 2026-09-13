@@ -1,18 +1,25 @@
 "use client";
 
 import { useRef, useState } from "react";
+import type { Locale } from "@/lib/i18n";
+import { RESULT_VIEW_COPY } from "@/lib/tjai/result-view-copy";
+import { getTjaiCopy } from "@/lib/tjai-copy";
 
 export function ShareCardGenerator({
+  locale,
   goal,
   calories,
   protein,
   duration
 }: {
+  locale: Locale;
   goal: string;
   calories: number;
   protein: number;
   duration: string;
 }) {
+  const copy = RESULT_VIEW_COPY[locale];
+  const proteinLabel = getTjaiCopy(locale).result.metrics.protein;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [format, setFormat] = useState<"stories" | "square">("stories");
 
@@ -40,13 +47,14 @@ export function ShareCardGenerator({
     ctx.fillStyle = "#A855F7";
     ctx.font = `700 30px ${displayFont}`;
     ctx.textAlign = "center";
-    ctx.fillText("MY TJAI PLAN", dims.w / 2, 260);
+    ctx.direction = locale === "ar" ? "rtl" : "ltr";
+    ctx.fillText(copy.planTitle, dims.w / 2, 260, dims.w - 100);
 
     ctx.fillStyle = "#FFFFFF";
     ctx.font = `800 72px ${displayFont}`;
-    ctx.fillText(goal.toUpperCase(), dims.w / 2, 360);
+    ctx.fillText(goal, dims.w / 2, 360, dims.w - 100);
 
-    const cards = [`${calories} kcal/day`, `${protein}g protein`, duration];
+    const cards = [`${calories} ${copy.perDay}`, `${protein}g ${proteinLabel}`, duration];
     cards.forEach((text, i) => {
       const x = dims.w / 2 - 360 + i * 240;
       ctx.fillStyle = "#111215";
@@ -55,7 +63,7 @@ export function ShareCardGenerator({
       ctx.strokeRect(x, 460, 220, 120);
       ctx.fillStyle = "#FFFFFF";
       ctx.font = `600 28px ${bodyFont}`;
-      ctx.fillText(text, x + 110, 530);
+      ctx.fillText(text, x + 110, 530, 200);
     });
 
     ctx.strokeStyle = "#A855F7";
@@ -67,8 +75,8 @@ export function ShareCardGenerator({
 
     ctx.fillStyle = "#A1A1AA";
     ctx.font = `500 30px ${bodyFont}`;
-    ctx.fillText("Personalized by TJAI — TJFit AI Coach", dims.w / 2, 720);
-    ctx.fillText("Create your plan at tjfit.org/ai", dims.w / 2, dims.h - 120);
+    ctx.fillText(copy.shareTagline, dims.w / 2, 720, dims.w - 100);
+    ctx.fillText(`${copy.createAt} tjfit.org/${locale}/ai`, dims.w / 2, dims.h - 120, dims.w - 100);
   };
 
   const download = () => {
@@ -93,21 +101,21 @@ export function ShareCardGenerator({
 
   return (
     <div className="rounded-xl border border-divider bg-surface p-5">
-      <h3 className="text-lg font-semibold text-white">Share Your Plan</h3>
+      <h3 className="text-lg font-semibold text-white">{copy.shareTitle}</h3>
       <div className="mt-3 flex gap-2">
         <button type="button" onClick={() => setFormat("stories")} className={`rounded-full border px-3 py-1 text-xs ${format === "stories" ? "border-accent text-white" : "border-divider text-muted"}`}>
-          Stories
+          {copy.stories}
         </button>
         <button type="button" onClick={() => setFormat("square")} className={`rounded-full border px-3 py-1 text-xs ${format === "square" ? "border-accent text-white" : "border-divider text-muted"}`}>
-          Square
+          {copy.square}
         </button>
       </div>
       <div className="mt-4 flex gap-2">
         <button type="button" onClick={download} className="tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2 text-sm font-semibold text-[#09090B]">
-          Download Card
+          {copy.downloadCard}
         </button>
         <button type="button" onClick={() => void copyImage()} className="rounded-full border border-divider px-4 py-2 text-sm text-muted">
-          Copy Image
+          {copy.copyImage}
         </button>
       </div>
       <canvas ref={canvasRef} className="mt-4 h-0 w-0 opacity-0" />

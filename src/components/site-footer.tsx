@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Logo } from "@/components/ui/Logo";
 import { Locale, supportedLocales, LOCALE_META } from "@/lib/i18n";
 import { getFooterCopy } from "@/lib/launch-copy";
+import { PUBLIC_COPY, publicPrimaryLinks } from "@/lib/public-offers-copy";
 
 const LANG_BADGE: Record<Locale, string> = {
   en: "EN",
@@ -11,14 +12,6 @@ const LANG_BADGE: Record<Locale, string> = {
   ar: "AR",
   es: "ES",
   fr: "FR",
-};
-
-const MEMBERSHIP: Record<Locale, string> = {
-  en: "Membership",
-  tr: "Uyelik",
-  ar: "العضوية",
-  es: "Membresia",
-  fr: "Abonnement",
 };
 
 const COL_HEAD: Record<Locale, { platform: string; coaches: string }> = {
@@ -37,11 +30,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
   const linkClass =
     "group/foot-link relative inline-block pl-0 text-sm leading-relaxed text-dim transition-[color,padding-left] duration-200 hover:pl-3 hover:text-purple-100 before:absolute before:left-0 before:top-1/2 before:h-1.5 before:w-1.5 before:-translate-x-2 before:-translate-y-1/2 before:rounded-full before:bg-purple-300 before:opacity-0 before:shadow-[0_0_8px_rgba(168,85,247,0.6)] before:transition-[opacity,transform] before:duration-200 before:content-[''] hover:before:translate-x-0 hover:before:opacity-100 motion-reduce:hover:pl-0 motion-reduce:hover:before:translate-x-0";
 
-  const platformLinks = [
-    { href: `/${locale}/bundles`, label: copy.programs },
-    { href: `/${locale}/start`, label: copy.startFree },
-    { href: `/${locale}/membership`, label: MEMBERSHIP[locale] ?? MEMBERSHIP.en },
-  ];
+  const platformLinks = publicPrimaryLinks(locale);
 
   const coachLinks = [
     { href: `/${locale}/coaches`, label: copy.findCoach },
@@ -54,7 +43,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
     { href: `/${locale}/terms-and-conditions`, label: copy.terms },
     { href: `/${locale}/privacy-policy`, label: copy.privacy },
     { href: `/${locale}/refund-policy`, label: copy.refundPolicy },
-    { href: `/${locale}/press`, label: "Press & Media" },
+    { href: `/${locale}/press`, label: { en: "Press & media", tr: "Basın ve medya", ar: "الصحافة والإعلام", es: "Prensa y medios", fr: "Presse et médias" }[locale] },
   ];
 
   const supportLinks = [
@@ -78,8 +67,8 @@ export function SiteFooter({ locale }: { locale: Locale }) {
             <div className="inline-flex justify-center sm:justify-start">
               <Logo variant="full" size="footer" href={`/${locale}`} glow />
             </div>
-            <p className="mt-4 text-sm font-medium leading-relaxed text-muted">{copy.tagline}</p>
-            <p className="mt-3 max-w-xs text-xs leading-relaxed text-dim sm:max-w-none">{copy.description}</p>
+            <p className="mt-4 text-sm font-medium leading-relaxed text-muted">{PUBLIC_COPY[locale].eyebrow}</p>
+            <p className="mt-3 max-w-xs text-xs leading-relaxed text-dim sm:max-w-none">{PUBLIC_COPY[locale].intro}</p>
           </div>
 
           <div>
@@ -127,7 +116,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
 
       <div className="border-t border-[rgba(255,255,255,0.04)] px-6 py-5 lg:px-8">
         <div className="mx-auto flex max-w-[1200px] flex-col items-center justify-between gap-4 text-xs text-dim sm:flex-row">
-          <p>{new Date().getFullYear()} TJFit. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} TJFit. {{ en: "All rights reserved.", tr: "Tüm hakları saklıdır.", ar: "جميع الحقوق محفوظة.", es: "Todos los derechos reservados.", fr: "Tous droits réservés." }[locale]}</p>
           <div className="flex flex-wrap justify-center gap-2 sm:justify-end">
             {supportedLocales.map((loc) => (
               <Link

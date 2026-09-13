@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 
 import { AmbientOrbs } from "@/components/effects/ambient-orbs";
 
@@ -11,7 +11,8 @@ type SearchResults = { programs: Group; diets: Group; coaches: Group; blog: Grou
 
 const EMPTY: SearchResults = { programs: [], diets: [], coaches: [], blog: [], users: [] };
 
-export default function SearchPage({ params }: { params: { locale: string } }) {
+export default function SearchPage(props: { params: Promise<{ locale: string }> }) {
+  const params = use(props.params);
   const searchParams = useSearchParams();
   const q = (searchParams.get("q") ?? "").trim();
   const [results, setResults] = useState<SearchResults>(EMPTY);

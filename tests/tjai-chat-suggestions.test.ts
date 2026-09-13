@@ -1,10 +1,10 @@
 /**
  * Contextual quick-reply selection + chip copy coverage.
  *
- * The picker is the server half (route sends keys on the `done` SSE event);
- * the copy map is the client half (keys -> localized chip text). A key without
- * text in some locale silently renders nothing there — so coverage is pinned
- * across all five locales.
+ * The deterministic picker and localized key map are retained for compatibility.
+ * The current durable route returns an acknowledged JSON reply without chip
+ * keys; the client uses its localized nutrition/training/general fallbacks.
+ * All retained keys and active fallback text stay covered in five locales.
  */
 
 import { readFileSync } from "node:fs";
@@ -153,11 +153,25 @@ describe("standalone component uses the shared copy module", () => {
     expect(src).not.toMatch(/const STARTER_PROMPTS\s*=/);
   });
 
-  it("wires suggestionKeys from the SSE done event", () => {
-    expect(src).toMatch(/setSuggestionKeys\(data\.suggestionKeys\)/);
+  it("uses the acknowledged JSON reply with localized topic fallback and clears stale chips", () => {
+    expect(src).toContain('const reply = await deliverChatAttempt(attempt, controller.signal)');
+    expect(src).toContain('content: reply');
     // Stale-chip clearing at send time.
     expect(src).toMatch(/setSuggestionKeys\(\[\]\)/);
-    // Contextual chips resolve through the shared localized map.
+    // Retained contextual keys and current topic fallbacks share localized copy.
     expect(src).toMatch(/copy\.contextual\[/);
+    expect(src).toContain('COACH_NUTRITION_HINT_RE.test(lastAssistantText)');
+    expect(src).toContain('copy.ongoing.nutrition');
+    expect(src).toContain('COACH_TRAINING_HINT_RE.test(lastAssistantText)');
+    expect(src).toContain('copy.ongoing.training');
+    expect(src).toContain('t.quickPrompts');
+    expect(src).not.toContain('response.body.getReader()');
+    for (const locale of ['en', 'tr', 'ar', 'es', 'fr'] as const) {
+      const copy = getTJAIChatCopy(locale);
+      for (const group of [copy.ongoing.nutrition, copy.ongoing.training, copy.standalone.quickPrompts]) {
+        expect(group.length).toBeGreaterThan(0);
+        expect(group.every(text => text.trim().length > 0)).toBe(true);
+      }
+    }
   });
 });

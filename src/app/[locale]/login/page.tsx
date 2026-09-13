@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { notFound, useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useState, use } from "react";
 import { AuthPageFrame } from "@/components/auth-page-frame";
 import { AsyncButton } from "@/components/ui/AsyncButton";
 import { Logo } from "@/components/ui/Logo";
@@ -162,7 +162,8 @@ function LoginFallback() {
   );
 }
 
-export default function LoginPage({ params }: { params: { locale: string } }) {
+export default function LoginPage(props: { params: Promise<{ locale: string }> }) {
+  const params = use(props.params);
   return (
     <Suspense fallback={<LoginFallback />}>
       <LoginForm params={params} />

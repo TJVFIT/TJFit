@@ -93,9 +93,9 @@ export async function buildTjaiMemorySnapshot(
       .eq("user_id", userId),
     supabase
       .from("workout_logs")
-      .select("workout_date,logged_at,exercise,exercise_name,sets,reps,weight_kg")
+      .select("workout_date,exercise,sets,reps,weight_kg")
       .eq("user_id", userId)
-      .order("logged_at", { ascending: false })
+      .order("workout_date", { ascending: false })
       .limit(10),
     supabase
       .from("progress_entries")

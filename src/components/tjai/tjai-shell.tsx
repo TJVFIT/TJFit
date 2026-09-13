@@ -1,461 +1,108 @@
 "use client";
-
-import { useEffect, useMemo, useState } from "react";
-
-import { TJAICalculating } from "@/components/tjai/tjai-calculating";
-import { TJAIQuiz } from "@/components/tjai/tjai-quiz";
-import { TJAIResult } from "@/components/tjai/tjai-result";
-import { getTJAIAccess } from "@/lib/tjai-access";
-import { buildTjaiUserProfile, normalizeQuizAnswers } from "@/lib/tjai-intake";
-import { getDirection, type Locale } from "@/lib/i18n";
-import { TJAI_ONE_TIME_PRICE_USD } from "@/lib/tjai-pricing";
-import { getTjaiAccessCopy } from "@/lib/tjai-access-copy";
-import { getTjaiCopy, getTjaiSteps } from "@/lib/tjai-copy";
-import { calculateTJAIMetrics } from "@/lib/tjai-science";
-import type { QuizAnswers, TJAIMetrics, TJAIPlan } from "@/lib/tjai-types";
-
-type Phase = "quiz" | "approach" | "calculating" | "compare" | "result";
-
-const OUT_OF_CREDITS_COPY: Record<Locale, { title: string; body: string; cta: string }> = {
-  en: {
-    title: "Out of plan credits",
-    body: "You've used all your TJAI plan credits. Get more to generate your next personalized plan.",
-    cta: "Get plan credits"
-  },
-  tr: {
-    title: "Plan kredin bitti",
-    body: "Tüm TJAI plan kredilerini kullandın. Bir sonraki kişisel planını üretmek için kredi al.",
-    cta: "Kredi al"
-  },
-  ar: {
-    title: "نفدت أرصدة الخطط",
-    body: "استخدمت كل أرصدة خطط TJAI. احصل على المزيد لإنشاء خطتك المخصصة التالية.",
-    cta: "احصل على أرصدة"
-  },
-  es: {
-    title: "Sin créditos de plan",
-    body: "Has usado todos tus créditos de planes TJAI. Consigue más para generar tu próximo plan personalizado.",
-    cta: "Obtener créditos"
-  },
-  fr: {
-    title: "Plus de crédits de plan",
-    body: "Tu as utilisé tous tes crédits de plans TJAI. Obtiens-en d'autres pour générer ton prochain plan personnalisé.",
-    cta: "Obtenir des crédits"
-  }
-};
-
-export function TJAIShell({
-  locale,
-  initialAnswers,
-  initialPhase = "quiz"
-}: {
-  locale: Locale;
-  initialAnswers?: QuizAnswers;
-  initialPhase?: Phase;
-}) {
-  const [phase, setPhase] = useState<Phase>(initialPhase);
-  const [answers, setAnswers] = useState<QuizAnswers>(initialAnswers ?? {});
-  const [metrics, setMetrics] = useState<TJAIMetrics | null>(null);
-  const [plan, setPlan] = useState<TJAIPlan | null>(null);
-  const [generatedAt, setGeneratedAt] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [draftAnswers, setDraftAnswers] = useState<QuizAnswers>(initialAnswers ?? {});
-  const [comparePlans, setComparePlans] = useState<{ moderate: TJAIPlan; aggressive: TJAIPlan } | null>(null);
-  const [compareMetrics, setCompareMetrics] = useState<{ moderate: TJAIMetrics; aggressive: TJAIMetrics } | null>(null);
-  const [selectedPlanMode, setSelectedPlanMode] = useState<"moderate" | "aggressive">("moderate");
-  const [tier, setTier] = useState<"core" | "pro" | "apex">("core");
-  const [hasOneTimePlanPurchase, setHasOneTimePlanPurchase] = useState(false);
-  const [remainingMessages, setRemainingMessages] = useState(0);
-  const [showUpgrade, setShowUpgrade] = useState(false);
-  const [generateError, setGenerateError] = useState<string | null>(null);
-  const [outOfCredits, setOutOfCredits] = useState(false);
-  const [pendingAnswers, setPendingAnswers] = useState<QuizAnswers | null>(null);
-  const [pendingPace, setPendingPace] = useState<"moderate" | "aggressive" | undefined>(undefined);
-
-  const copy = useMemo(() => getTjaiCopy(locale), [locale]);
-  const steps = useMemo(() => getTjaiSteps(locale), [locale]);
-  const accessCopy = useMemo(() => getTjaiAccessCopy(locale), [locale]);
-  const direction = getDirection(locale);
-
-  useEffect(() => {
-    if (!initialAnswers) return;
-    setAnswers(initialAnswers);
-    setDraftAnswers(initialAnswers);
-    setPhase(initialPhase);
-  }, [initialAnswers, initialPhase]);
-
-  useEffect(() => {
-    void fetch("/api/tjai/access", { credentials: "include", cache: "no-store" })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => {
-        if (!data) return;
-        setTier((data.tier ?? "core") as "core" | "pro" | "apex");
-        setHasOneTimePlanPurchase(Boolean(data.hasOneTimePlanPurchase));
-        setRemainingMessages(Number(data.coreTrialMessagesRemaining ?? 0));
-      })
-      .catch(() => undefined);
-  }, []);
-
-  const access = useMemo(
-    () =>
-      getTJAIAccess(tier, {
-        hasOneTimePlanPurchase,
-        coreTrialMessagesRemaining: remainingMessages
-      }),
-    [hasOneTimePlanPurchase, remainingMessages, tier]
-  );
-
-  const handleGenerate = async (submittedAnswers: QuizAnswers, paceOverride?: "moderate" | "aggressive") => {
-    const normalizedAnswers = normalizeQuizAnswers(submittedAnswers);
-    if (!access.canGeneratePlan) {
-      setPendingAnswers(normalizedAnswers);
-      setPendingPace(paceOverride);
-      setShowUpgrade(true);
-      return;
-    }
-    setAnswers(normalizedAnswers);
-    setPendingAnswers(normalizedAnswers);
-    setPendingPace(paceOverride);
-    setGenerateError(null);
-    setOutOfCredits(false);
-    const effective = paceOverride ? normalizeQuizAnswers({ ...normalizedAnswers, s2_pace: paceOverride }) : normalizedAnswers;
-    const localMetrics = calculateTJAIMetrics(effective);
-    setMetrics(localMetrics);
-    setPhase("calculating");
-
-    try {
-      const controller = new AbortController();
-      const timeout = window.setTimeout(() => controller.abort(), 150000); // 2.5 min max
-      let response: Response;
-      try {
-        response = await fetch("/api/tjai/generate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ answers: normalizedAnswers, paceOverride }),
-          signal: controller.signal
-        });
-      } finally {
-        window.clearTimeout(timeout);
-      }
-      const data = await response.json();
-      if (!response.ok) {
-        if (response.status === 402) {
-          const oc = OUT_OF_CREDITS_COPY[locale] ?? OUT_OF_CREDITS_COPY.en;
-          setOutOfCredits(true);
-          setGenerateError(oc.body);
-          return;
-        }
-        const errMsg = data?.error ?? "Plan generation failed. Please try again.";
-        console.error("[TJAI] generate error:", errMsg);
-        setGenerateError(errMsg);
-        return; // Stay on calculating phase, show error overlay
-      }
-      setPlan(data.plan as TJAIPlan);
-      setMetrics((data.metrics as TJAIMetrics) ?? localMetrics);
-      setGeneratedAt(data.generatedAt ?? new Date().toISOString());
-      setGenerateError(null);
-      setPhase("result");
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Connection error. Please check your internet and try again.";
-      console.error("[TJAI] generate client error:", msg);
-      setGenerateError(msg);
-    }
-  };
-
-  const handleCompareBoth = async (submittedAnswers: QuizAnswers) => {
-    const normalizedAnswers = normalizeQuizAnswers(submittedAnswers);
-    if (!access.canGeneratePlan) {
-      setPendingAnswers(normalizedAnswers);
-      setShowUpgrade(true);
-      return;
-    }
-    setPhase("calculating");
-    try {
-      const [moderateRes, aggressiveRes] = await Promise.all([
-        fetch("/api/tjai/generate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ answers: normalizedAnswers, paceOverride: "moderate" })
-        }),
-        fetch("/api/tjai/generate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ answers: normalizedAnswers, paceOverride: "aggressive" })
-        })
-      ]);
-      const moderateData = await moderateRes.json();
-      const aggressiveData = await aggressiveRes.json();
-      if (!moderateRes.ok || !aggressiveRes.ok) throw new Error("Compare generation failed");
-      setComparePlans({ moderate: moderateData.plan as TJAIPlan, aggressive: aggressiveData.plan as TJAIPlan });
-      setCompareMetrics({ moderate: moderateData.metrics as TJAIMetrics, aggressive: aggressiveData.metrics as TJAIMetrics });
-      setAnswers(normalizedAnswers);
-      setGeneratedAt(new Date().toISOString());
-      setPhase("compare");
-    } catch {
-      setPhase("approach");
-    }
-  };
-
-  const handleSave = async (planOverride?: TJAIPlan) => {
-    if (!plan || !metrics || saving) return;
-    setSaving(true);
-    try {
-      const response = await fetch("/api/tjai/save", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan: planOverride ?? plan, answers, metrics })
-      });
-      if (!response.ok) throw new Error("Save failed");
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleStartOver = () => {
-    setPhase("quiz");
-    setPlan(null);
-    setMetrics(null);
-    setGeneratedAt("");
-    setAnswers({});
-    setDraftAnswers({});
-    setComparePlans(null);
-    setCompareMetrics(null);
-  };
-
-  if (phase === "quiz") {
-    return (
-      <TJAIQuiz
-        locale={locale}
-        copy={copy}
-        steps={steps}
-        direction={direction}
-        onAnswersChange={setDraftAnswers}
-        onSubmit={(submitted) => {
-          setDraftAnswers(normalizeQuizAnswers(submitted));
-          setPhase("approach");
-        }}
-      />
-    );
-  }
-
-  if (phase === "approach") {
-    const normalizedDraft = normalizeQuizAnswers(draftAnswers);
-    const moderate = calculateTJAIMetrics({ ...normalizedDraft, s2_pace: "moderate" });
-    const aggressive = calculateTJAIMetrics({ ...normalizedDraft, s2_pace: "aggressive" });
-    const profile = buildTjaiUserProfile(normalizedDraft);
-    const recommendAggressive = profile.pace === "aggressive" && profile.experienceLevel !== "beginner" && profile.stressLevel !== "very_high";
-    return (
-      <section className="min-h-[100svh] bg-background px-4 py-12 text-white">
-        <div className="mx-auto max-w-3xl">
-          <p className="text-xs uppercase tracking-[0.2em] text-accent">Almost there</p>
-          <h2 className="mt-2 text-3xl font-bold">{accessCopy.approachTitle}</h2>
-          <p className="mt-2 text-sm text-muted">{accessCopy.approachSub}</p>
-
-          <div className="mt-5 grid grid-cols-2 gap-3 rounded-xl border border-divider bg-surface p-4 sm:grid-cols-4">
-            {[
-              { label: "BMR", value: `${moderate.bmr} kcal` },
-              { label: "TDEE", value: `${moderate.tdee} kcal` },
-              { label: "Protein", value: `${moderate.protein}g` },
-              { label: "Goal calories", value: `${moderate.calorieTarget} kcal` }
-            ].map((s) => (
-              <div key={s.label} className="rounded-lg border border-divider p-3 text-center">
-                <p className="text-xs text-muted">{s.label}</p>
-                <p className="mt-1 font-semibold text-accent">{s.value}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
-            <article className={`rounded-xl border p-5 ${!recommendAggressive ? "border-accent bg-[rgba(168,85,247,0.04)]" : "border-divider bg-surface"}`}>
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-accent">{accessCopy.moderateTitle}</h3>
-                {!recommendAggressive && <span className="rounded-full bg-accent/20 px-2 py-0.5 text-[10px] font-bold text-accent">RECOMMENDED</span>}
-              </div>
-              <p className="mt-2 text-sm text-muted">{accessCopy.moderateBody}</p>
-              <p className="mt-2 text-xs text-faint">{moderate.weeklyWeightChange} kg/week expected</p>
-              <button type="button" className="mt-4 w-full tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-4 py-2.5 text-sm font-bold text-[#09090B]" onClick={() => void handleGenerate(normalizedDraft, "moderate")}>
-                {accessCopy.moderateCta}
-              </button>
-            </article>
-            <article className={`rounded-xl border p-5 transition-[border-color,box-shadow] duration-200 ${recommendAggressive ? "border-purple-300/45 bg-[rgba(124,58,237,0.05)] shadow-[0_0_28px_rgba(168,85,247,0.12)]" : "border-divider bg-surface"}`}>
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-purple-50">{accessCopy.aggressiveTitle}</h3>
-                {recommendAggressive && <span className="rounded-full border border-purple-300/40 bg-purple-300/[0.14] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-purple-100 shadow-[0_0_12px_rgba(168,85,247,0.22)]">RECOMMENDED</span>}
-              </div>
-              <p className="mt-2 text-sm text-muted">{accessCopy.aggressiveBody}</p>
-              <p className="mt-2 text-xs text-faint">{aggressive.weeklyWeightChange} kg/week expected</p>
-              <button type="button" className="tj-cta-sheen mt-4 w-full rounded-full border border-purple-300/45 px-4 py-2.5 text-sm font-semibold text-purple-50 transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/70 hover:text-purple-100 hover:shadow-[0_0_22px_rgba(168,85,247,0.18)]" onClick={() => void handleGenerate(normalizedDraft, "aggressive")}>
-                {accessCopy.aggressiveCta}
-              </button>
-            </article>
-          </div>
-          <div className="mt-4 flex flex-wrap gap-2">
-            <button type="button" onClick={() => void handleCompareBoth(normalizedDraft)} className="rounded-full border border-divider px-5 py-2 text-sm text-muted hover:border-accent hover:text-white">
-              {accessCopy.compareCta}
-            </button>
-            <button type="button" onClick={() => handleStartOver()} className="rounded-full border border-divider px-5 py-2 text-sm text-muted hover:text-white">
-              ← Retake Quiz
-            </button>
-          </div>
-        </div>
-        {showUpgrade ? (
-          <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/60 p-4">
-            <div className="w-full max-w-md rounded-2xl border border-divider bg-surface p-6">
-              <h3 className="text-xl font-semibold text-white">{accessCopy.upgrade.title}</h3>
-              <p className="mt-2 text-sm text-muted">{accessCopy.upgrade.body}</p>
-              <div className="mt-5 grid gap-2">
-                <a href={`/${locale}/membership?tjai_onetime=1`} className="btn-primary-shimmer inline-flex min-h-[44px] items-center justify-center rounded-full bg-gradient-to-br from-[#A855F7] to-[#7C3AED] px-4 py-2 text-sm font-bold text-[#09090B]">
-                  {accessCopy.upgrade.oneTime.replace("{price}", String(TJAI_ONE_TIME_PRICE_USD))}
-                </a>
-                <a href={`/${locale}/membership?tier=pro`} className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-accent px-4 py-2 text-sm font-semibold text-bright">
-                  {accessCopy.upgrade.pro}
-                </a>
-                <a href={`/${locale}/membership?tier=apex`} className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-accent-violet px-4 py-2 text-sm font-semibold text-bright">
-                  {accessCopy.upgrade.apex}
-                </a>
-                <button type="button" onClick={() => setShowUpgrade(false)} className="text-xs text-muted">
-                  {accessCopy.upgrade.close}
-                </button>
-              </div>
-            </div>
-          </div>
-        ) : null}
-      </section>
-    );
-  }
-
-  if (phase === "calculating") {
-    return (
-      <div className="relative">
-        <TJAICalculating copy={copy} metrics={metrics} done={Boolean(plan) && !generateError} />
-        {generateError && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-            <div className={`w-full max-w-md rounded-2xl border p-6 text-center shadow-2xl ${outOfCredits ? "border-purple-400/35 bg-[#0D0A12]" : "border-red-500/30 bg-[#0F0A0A]"}`}>
-              <div className={`mx-auto flex h-12 w-12 items-center justify-center rounded-full ${outOfCredits ? "bg-purple-400/10 text-purple-300" : "bg-red-500/10 text-red-400"}`}>
-                {outOfCredits ? (
-                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                ) : (
-                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                )}
-              </div>
-              <h3 className="mt-4 text-lg font-semibold text-white">
-                {outOfCredits ? (OUT_OF_CREDITS_COPY[locale] ?? OUT_OF_CREDITS_COPY.en).title : "Generation Failed"}
-              </h3>
-              <p className="mt-2 text-sm text-muted">{generateError}</p>
-              <div className="mt-6 flex flex-col gap-3">
-                {outOfCredits ? (
-                  <a
-                    href={`/${locale}/tjai/credits`}
-                    className="w-full tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 py-2.5 text-sm font-bold text-black"
-                  >
-                    {(OUT_OF_CREDITS_COPY[locale] ?? OUT_OF_CREDITS_COPY.en).cta}
-                  </a>
-                ) : (
-                <button
-                  type="button"
-                  className="w-full tj-cta-sheen rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] shadow-[0_0_16px_rgba(168,85,247,0.2)] hover:shadow-[0_0_24px_rgba(168,85,247,0.32)] transition-[transform,box-shadow] duration-200 hover:scale-[1.02] px-5 py-2.5 text-sm font-bold text-black"
-                  onClick={() => {
-                    if (pendingAnswers) void handleGenerate(pendingAnswers, pendingPace);
-                  }}
-                >
-                  Try Again
-                </button>
-                )}
-                <button
-                  type="button"
-                  className="text-sm text-faint hover:text-white"
-                  onClick={() => { setGenerateError(null); setOutOfCredits(false); setPhase("approach"); }}
-                >
-                  ← Go Back
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  if (phase === "compare" && comparePlans && compareMetrics) {
-    const profile = buildTjaiUserProfile(answers);
-    const recommendation =
-      profile.pace === "aggressive" && profile.experienceLevel !== "beginner" && compareMetrics.aggressive.metabolicType === "fast"
-        ? "Aggressive"
-        : "Moderate";
-    return (
-      <section className="min-h-[100svh] bg-background px-4 py-10 text-white">
-        <div className="mx-auto max-w-6xl">
-          <div className="rounded-xl border border-divider bg-surface p-5">
-            <h2 className="text-2xl font-bold">TJAI Recommendation: {recommendation}</h2>
-            <p className="mt-1 text-sm text-muted">Based on your discipline profile and metabolic type.</p>
-          </div>
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
-            <article className="rounded-xl border border-divider bg-surface p-4">
-              <h3 className="font-semibold text-accent">Moderate Plan</h3>
-              <p className="mt-2 text-sm text-muted">Calories: {compareMetrics.moderate.calorieTarget}</p>
-              <p className="text-sm text-muted">Weekly change: {compareMetrics.moderate.weeklyWeightChange}</p>
-              <button className="mt-3 rounded-full border border-accent px-3 py-1 text-xs" onClick={() => { setPlan(comparePlans.moderate); setMetrics(compareMetrics.moderate); setSelectedPlanMode("moderate"); setPhase("result"); }}>
-                Use Moderate Plan
-              </button>
-            </article>
-            <article className="rounded-xl border border-divider bg-surface p-4">
-              <h3 className="font-semibold text-accent-violet">Aggressive Plan</h3>
-              <p className="mt-2 text-sm text-muted">Calories: {compareMetrics.aggressive.calorieTarget}</p>
-              <p className="text-sm text-muted">Weekly change: {compareMetrics.aggressive.weeklyWeightChange}</p>
-              <button className="mt-3 rounded-full border border-accent-violet px-3 py-1 text-xs" onClick={() => { setPlan(comparePlans.aggressive); setMetrics(compareMetrics.aggressive); setSelectedPlanMode("aggressive"); setPhase("result"); }}>
-                Use Aggressive Plan
-              </button>
-            </article>
-          </div>
-          <div className="mt-4 flex gap-2">
-            <button
-              className={`rounded-full px-4 py-2 text-sm font-semibold transition-[background-color,border-color,color,box-shadow] duration-200 ${
-                selectedPlanMode === "moderate"
-                  ? "tj-cta-sheen bg-[linear-gradient(135deg,#A855F7,#7C3AED)] text-[#09090B] shadow-[0_0_18px_rgba(168,85,247,0.22)]"
-                  : "border border-divider text-muted hover:border-purple-300/40 hover:text-purple-100"
-              }`}
-              onClick={() => { setPlan(comparePlans.moderate); setMetrics(compareMetrics.moderate); setSelectedPlanMode("moderate"); }}
-            >
-              View Moderate Plan
-            </button>
-            <button
-              className={`rounded-full px-4 py-2 text-sm font-semibold transition-[background-color,border-color,color,box-shadow] duration-200 ${
-                selectedPlanMode === "aggressive"
-                  ? "tj-cta-sheen bg-[linear-gradient(135deg,#7C3AED,#6D28D9)] text-[#09090B] shadow-[0_0_18px_rgba(124,58,237,0.28)]"
-                  : "border border-divider text-muted hover:border-purple-300/40 hover:text-purple-100"
-              }`}
-              onClick={() => { setPlan(comparePlans.aggressive); setMetrics(compareMetrics.aggressive); setSelectedPlanMode("aggressive"); }}
-            >
-              View Aggressive Plan
-            </button>
-            <button
-              className="rounded-full border border-divider px-4 py-2 text-sm text-muted transition-[border-color,color,box-shadow] duration-200 hover:border-purple-300/40 hover:text-purple-100 hover:shadow-[0_0_14px_rgba(168,85,247,0.12)]"
-              onClick={() => setPhase("result")}
-            >
-              Continue
-            </button>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (!plan || !metrics) return null;
-
-  return (
-    <TJAIResult
-      locale={locale}
-      copy={copy}
-      plan={plan}
-      answers={answers}
-      metrics={metrics}
-      generatedAt={generatedAt}
-      onSave={handleSave}
-      onStartOver={handleStartOver}
-      isSaving={saving}
-      coreLimitedChat={tier === "core"}
-      onChatLimitReached={() => setShowUpgrade(true)}
-    />
-  );
+import {useEffect,useMemo,useState,useCallback} from 'react';
+import {useSearchParams} from 'next/navigation';
+import {TJAIQuiz} from './tjai-quiz';
+import {TJAIResult} from './tjai-result';
+import {getDirection,type Locale} from '@/lib/i18n';
+import {getTjaiCopy,getTjaiSteps} from '@/lib/tjai-copy';
+import {getTjaiFlowCopy} from '@/lib/tjai/flow-copy';
+import {getAssessmentCopy} from '@/lib/tjai/assessment-copy';
+import {completedIntakePlan,createGenerationRetryController} from '@/lib/tjai/generation-retry';
+import {clearPendingAssessment,readPendingAssessment,savePendingAssessment} from '@/lib/tjai/assessment-draft';
+import type {QuizAnswers,TJAIPlan,TJAIMetrics} from '@/lib/tjai-types';
+type Phase='quiz'|'approach'|'calculating'|'compare'|'result';
+type Saved={id:string;plan_json:TJAIPlan;answers_json:QuizAnswers;metrics_json:TJAIMetrics;created_at:string};
+type Access={available:boolean;canGeneratePlan:boolean;hasPass:boolean;hasLegacyAccess:boolean;mode:string|null;regenerationAvailable:boolean};
+type Job={id:string;intake_id:string;status:string;error_code?:string;available_at:string};
+export function TJAIShell({locale,initialAnswers,initialPhase='quiz',publicAssessment=false}:{locale:Locale;initialAnswers?:QuizAnswers;initialPhase?:Phase;publicAssessment?:boolean}){
+ const t=getTjaiFlowCopy(locale),assessment=getAssessmentCopy(locale),query=useSearchParams();
+ const [phase,setPhase]=useState<'loading'|'intro'|'quiz'|'review'|'waiting'|'result'|'signin'|'save-intake'>('loading');
+ const [answers,setAnswers]=useState<QuizAnswers>(initialAnswers??{});
+ const [saved,setSaved]=useState<Saved|null>(null),[job,setJob]=useState<Job|null>(null),[access,setAccess]=useState<Access|null>(null);
+ const [intakeId,setIntakeId]=useState<string|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false);
+ const [adult,setAdult]=useState(false),[consent,setConsent]=useState(false);
+ const [generationRequests]=useState(createGenerationRetryController);
+ const copy=useMemo(()=>getTjaiCopy(locale),[locale]),steps=useMemo(()=>getTjaiSteps(locale).map(step=>step.id==='s1_age'?{...step,min:18}:step),[locale]);
+ const load=useCallback(async()=>{
+  setError('');
+  try{
+   if(publicAssessment||query.get('resume')==='1'){
+    const pending=readPendingAssessment(window.sessionStorage,locale);
+    if(pending){setAnswers(pending.answers);setAdult(true);setConsent(true);setPhase(publicAssessment?'signin':'save-intake');return;}
+    if(!publicAssessment)setError(assessment.expired);
+    setPhase('intro');return;
+   }
+   const returnedIntake=query.get('intake');
+   const jobsUrl='/api/tjai/jobs'+(returnedIntake?'?intakeId='+encodeURIComponent(returnedIntake):'');
+   const [planResponse,jobResponse,accessResponse]=await Promise.all([fetch('/api/tjai/save',{cache:'no-store'}),fetch(jobsUrl,{cache:'no-store'}),fetch('/api/tjai/access',{cache:'no-store'})]);
+   if(!planResponse.ok)throw new Error('load');
+   const planData=await planResponse.json();setSaved(planData.plan??null);
+   const accessData=await accessResponse.json();setAccess(accessResponse.ok?accessData:null);
+   if(!jobResponse.ok)throw new Error('load');
+   const jobData=await jobResponse.json();
+   if(returnedIntake&&jobData?.job&&jobData.job.intake_id!==returnedIntake)throw new Error('job_intake_mismatch');
+   const completed=completedIntakePlan<Saved>(returnedIntake,jobData?.job,jobData?.plan);
+   if(completed){setSaved(completed);setJob(jobData.job);setIntakeId(returnedIntake);setPhase('result');return;}
+   const resumedJob=jobData?.job&&(['queued','running'].includes(jobData.job.status)||(jobData.job.status==='failed'&&(returnedIntake||query.get('start')!=='1')))?jobData.job:null;
+   const restoreIntake=resumedJob?.intake_id??returnedIntake;
+   if(restoreIntake){
+    const d=await fetch('/api/tjai/intake?id='+encodeURIComponent(restoreIntake));if(!d.ok)throw new Error('load');
+    const draft=await d.json();if(!draft.intake)throw new Error('load');
+    setAnswers(draft.intake.answers_json);setIntakeId(restoreIntake);setAdult(true);setConsent(true);
+    if(resumedJob){setJob(resumedJob);setPhase(resumedJob.status==='failed'?'review':'waiting');if(resumedJob.status==='failed')setError(resumedJob.error_code==='nutrition_targets_unsupported'?t.nutrition:t.failed);}else setPhase('review');
+    return;
+   }
+   if(query.get('start')==='1'||!planData.plan){setPhase('intro');return;}
+   setPhase('result');
+  }catch{setError(t.error);setPhase('intro');}
+ },[query,t.error,t.failed,t.nutrition,locale,publicAssessment,assessment.expired]);
+ useEffect(()=>{void load();},[load]);
+ const pollingJobId=job?.id;
+ useEffect(()=>{
+  if(phase!=='waiting'||!pollingJobId)return;
+  let stopped=false;
+  const poll=async()=>{try{
+   const response=await fetch('/api/tjai/jobs?id='+pollingJobId,{cache:'no-store'});if(!response.ok)throw new Error('load');
+   const data=await response.json();if(stopped)return;setJob(data.job);
+   if(data.job?.status==='succeeded'&&data.plan){setSaved(data.plan);setPhase('result');setError('');}
+   else if(data.job?.status==='failed'){setPhase('review');setIntakeId(data.job.intake_id);setError(data.job.error_code==='nutrition_targets_unsupported'?t.nutrition:t.failed);}
+  }catch{if(!stopped)setError(t.error);}};
+  void poll();const timer=setInterval(()=>void poll(),4000);return()=>{stopped=true;clearInterval(timer);};
+ },[phase,pollingJobId,t.error,t.failed,t.nutrition]);
+ const submit=async(value:QuizAnswers)=>{
+ setBusy(true);setError('');
+  try{
+   const pending=savePendingAssessment(window.sessionStorage,value,locale,adult,consent);setAnswers(pending.answers);
+   const response=await fetch('/api/tjai/intake',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({answers:pending.answers,locale,generalFitness:adult,aiConsent:consent})});
+   if(response.status===401){setPhase('signin');return;}
+   const data=await response.json();if(!response.ok)throw new Error(data.error);
+   clearPendingAssessment(window.sessionStorage);
+   window.location.assign('/'+locale+'/ai?tab=my-plan&intake='+encodeURIComponent(data.intakeId));
+  }catch(e){setError(e instanceof Error&&e.message==='nutrition_targets_unsupported'?t.nutrition:e instanceof Error&&e.message==='general_fitness_scope'?t.scope:e instanceof Error&&['adults_only','invalid_measurements'].includes(e.message)?t.adults:t.error);}finally{setBusy(false);}
+ };
+ const generate=async()=>{
+  if(!intakeId)return;setBusy(true);setError('');
+  try{
+   const requestId=generationRequests.requestFor(intakeId,job?.status==='failed'&&job.intake_id===intakeId?job.id:null);
+   const response=await fetch('/api/tjai/jobs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({intakeId,requestId})});
+   const data=await response.json();
+   if(response.status===402){window.location.href='/'+locale+'/tjai/checkout?intake='+intakeId;return;}
+   if(!response.ok)throw new Error(data.error);
+   setJob(data.job);setPhase('waiting');
+  }catch(e){setError(e instanceof Error&&e.message==='monthly_limit'?t.limit:t.error);}finally{setBusy(false);}
+ };
+ const button='rounded-xl bg-accent px-5 py-3 font-semibold text-white disabled:opacity-40';
+ const resumePath='/'+locale+'/ai?tab=my-plan&start=1&resume=1';
+ return <section dir={getDirection(locale)} className="mx-auto w-full max-w-6xl space-y-6 p-4 sm:p-6">
+  <div className="flex flex-wrap items-center justify-between gap-3"><h1 className="text-2xl font-bold text-white">{t.title}</h1>{saved&&phase!=='result'&&<button className="text-accent" onClick={()=>setPhase('result')}>{t.back}</button>}</div>
+  {error&&<div role="alert" className="rounded-xl border border-amber-400/40 p-4 text-amber-200">{error} <button className="underline" onClick={()=>void load()}>{t.retry}</button></div>}
+  {phase==='loading'&&<p role="status">{t.loading}</p>}
+  {phase==='intro'&&<div className="space-y-5 rounded-2xl border border-divider bg-card p-6"><p>{t.terms}</p><label className="flex gap-3"><input type="checkbox" checked={adult} onChange={e=>setAdult(e.target.checked)}/>{t.adult}</label><label className="flex gap-3"><input type="checkbox" checked={consent} onChange={e=>setConsent(e.target.checked)}/>{t.consent}</label><button className={button} disabled={!adult||!consent} onClick={()=>setPhase('quiz')}>{t.continue}</button></div>}
+  {phase==='quiz'&&<><TJAIQuiz initialAnswers={answers} locale={locale} copy={copy} steps={steps} direction={getDirection(locale)} onAnswersChange={setAnswers} onSubmit={submit}/>{busy&&<p role="status">{t.loading}</p>}</>}
+  {(phase==='signin'||phase==='save-intake')&&<div className="space-y-5 rounded-2xl border border-divider bg-card p-6"><h2 className="text-xl font-semibold">{t.review}</h2><p>{String(answers.s1_age)} · {String(answers.s1_height)} cm · {String(answers.s1_weight)} kg · {String(answers.s5_days)} / 7</p><p>{assessment.temporary}</p>{phase==='signin'?<div className="flex flex-wrap items-center gap-4"><a className={button} href={'/'+locale+'/login?redirect='+encodeURIComponent(resumePath)}>{assessment.signin}</a><a className="text-accent underline" href={'/'+locale+'/signup?redirect='+encodeURIComponent(resumePath)}>{assessment.signup}</a></div>:<button className={button} disabled={busy} onClick={()=>void submit(answers)}>{busy?t.loading:assessment.save}</button>}<button disabled={busy} className="text-accent disabled:opacity-40" onClick={()=>setPhase('quiz')}>{t.review}</button></div>}
+  {phase==='review'&&<div className="space-y-5 rounded-2xl border border-divider bg-card p-6"><h2 className="text-xl font-semibold">{t.review}</h2><p>{String(answers.s1_age)} · {String(answers.s1_height)} cm · {String(answers.s1_weight)} kg · {String(answers.s5_days??4)} / 7</p><p>{t.terms}</p>{!access&&<p role="alert">{t.error}</p>}<button className={button} disabled={busy||!access} onClick={()=>access?.mode?void generate():window.location.assign('/'+locale+'/tjai/checkout?intake='+intakeId)}>{busy?t.loading:access?.mode?t.generate:t.buy}</button><button className="ml-4 text-accent" onClick={()=>setPhase('quiz')}>{t.review}</button></div>}
+  {phase==='waiting'&&<div className="space-y-4 rounded-2xl border border-divider bg-card p-6"><p role="status">{t.queued}</p><p className="text-sm text-muted">{t.recovery}</p></div>}
+  {phase==='result'&&saved&&<><p className="text-sm text-emerald-300">{t.saved} · {new Date(saved.created_at).toLocaleDateString(locale)}</p><TJAIResult locale={locale} copy={copy} plan={saved.plan_json} answers={saved.answers_json} metrics={saved.metrics_json} generatedAt={saved.created_at} isSaving={false} onSave={async()=>{const r=await fetch('/api/tjai/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({planId:saved.id})});if(!r.ok)throw new Error(t.error);}} onStartOver={()=>{if(access&&!access.canGeneratePlan){setError(t.limit);return;}setJob(null);setPhase('intro');}}/></>}
+ </section>;
 }
 

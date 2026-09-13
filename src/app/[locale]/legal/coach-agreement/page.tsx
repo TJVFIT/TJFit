@@ -12,7 +12,8 @@ const PAGE_METADATA: Record<Locale, { title: string; description: string }> = {
   fr: { title: "Accord Coach | TJFit", description: "L'accord signé par les coachs lors de la candidature — commission, propriété du contenu, paiements, SLA." }
 };
 
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
   const meta = PAGE_METADATA[locale] ?? PAGE_METADATA.en;
   return { title: meta.title, description: meta.description };
@@ -22,7 +23,8 @@ export async function generateMetadata({ params }: { params: { locale: string } 
 // (already shipped). This route is the master-prompt-named alias —
 // redirects to the canonical location so external links + the
 // `/legal/coach-agreement` reference both resolve.
-export default function CoachAgreementAlias({ params }: { params: { locale: string } }) {
+export default async function CoachAgreementAlias(props: { params: Promise<{ locale: string }> }) {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
   redirect(`/${locale}/coach/terms`);
 }

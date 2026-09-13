@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 
 import { ProtectedRoute } from "@/components/protected-route";
 import { useDynamicIsland } from "@/components/ui/dynamic-island";
@@ -107,7 +107,8 @@ function CancellationModal({ open, onClose }: { open: boolean; onClose: () => vo
   );
 }
 
-export default function SettingsSubscriptionPage({ params }: { params: { locale: string } }) {
+export default function SettingsSubscriptionPage(props: { params: Promise<{ locale: string }> }) {
+  const params = use(props.params);
   const locale = requireLocaleParam(params.locale);
   const [open, setOpen] = useState(false);
   return (

@@ -39,16 +39,19 @@ const nextConfig = {
   // surfaces every violation so the policy can be tightened then enforced.
   // 'unsafe-inline' in script-src is required until Next.js nonces are wired.
   async headers() {
+    const isPreviewDeployment = process.env.CONTEXT === "branch-deploy"
+      || process.env.CONTEXT === "deploy-preview"
+      || process.env.VERCEL_ENV === "preview";
     const cspReportOnly = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://www.googletagmanager.com https://connect.facebook.net https://analytics.tiktok.com",
+      "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://app.lemonsqueezy.com https://www.googletagmanager.com https://connect.facebook.net https://analytics.tiktok.com",
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https://images.unsplash.com https://kohuiyqyixvrcqeepalz.supabase.co https://www.googletagmanager.com https://*.google-analytics.com https://www.facebook.com",
       "font-src 'self' data:",
-      "connect-src 'self' https://kohuiyqyixvrcqeepalz.supabase.co wss://kohuiyqyixvrcqeepalz.supabase.co https://*.google-analytics.com https://analytics.tiktok.com https://www.facebook.com https://*.sentry.io https://prod.spline.design",
+      "connect-src 'self' https://app.lemonsqueezy.com https://tjfit.lemonsqueezy.com https://kohuiyqyixvrcqeepalz.supabase.co wss://kohuiyqyixvrcqeepalz.supabase.co https://*.google-analytics.com https://analytics.tiktok.com https://www.facebook.com https://*.sentry.io https://prod.spline.design",
       "media-src 'self' blob: data: https://kohuiyqyixvrcqeepalz.supabase.co",
       "worker-src 'self' blob:",
-      "frame-src 'self'",
+      "frame-src 'self' https://app.lemonsqueezy.com https://tjfit.lemonsqueezy.com",
       "frame-ancestors 'self'",
       "base-uri 'self'",
       "form-action 'self'",
@@ -65,6 +68,9 @@ const nextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(self), geolocation=(), browsing-topics=()" },
           { key: "X-DNS-Prefetch-Control", value: "on" },
+          ...(isPreviewDeployment
+            ? [{ key: "X-Robots-Tag", value: "noindex, nofollow" }]
+            : []),
           ...(process.env.NODE_ENV === "production"
             ? [{ key: "Content-Security-Policy-Report-Only", value: cspReportOnly }]
             : [])

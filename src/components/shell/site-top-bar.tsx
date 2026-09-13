@@ -1,267 +1,38 @@
 "use client";
 
-import * as NavigationMenu from "@radix-ui/react-navigation-menu";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { ChevronDown, UserRound } from "lucide-react";
-
+import { UserRound } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { Logo } from "@/components/ui/Logo";
 import type { Locale } from "@/lib/i18n";
+import { PUBLIC_COPY, publicPrimaryLinks } from "@/lib/public-offers-copy";
 import { cn } from "@/lib/utils";
 
-// v3.9 round 2 — top-nav with Radix hover-reveal submenus.
-//
-// Two trigger labels: Train and TJAI. Each opens a 220 ms fade +
-// 8 px slide submenu (Geist Sans, surface-2 background, cyan hover
-// tint). Radix handles keyboard nav (Tab / Arrows / Escape) and
-// focus management automatically. RTL is via the parent layout
-// `dir="rtl"` so submenu sides flip naturally.
-
-type SubItem = { label: string; href: string; meta?: string };
-
-const TOP_LABELS: Record<Locale, { home: string; train: string; tjai: string }> = {
-  en: { home: "Home", train: "Train", tjai: "TJAI" },
-  tr: { home: "Ana", train: "Antrenman", tjai: "TJAI" },
-  ar: { home: "الرئيسية", train: "تدريب", tjai: "TJAI" },
-  es: { home: "Inicio", train: "Entrenar", tjai: "TJAI" },
-  fr: { home: "Accueil", train: "Entraînement", tjai: "TJAI" }
-};
-
-const TRAIN_LABELS: Record<Locale, Record<string, string>> = {
-  en: { bundles: "Bundles", coaches: "Coaches", equipment: "Equipment guide" },
-  tr: { bundles: "Paketler", coaches: "Koclar", equipment: "Ekipman" },
-  ar: { bundles: "الحزم", coaches: "المدربون", equipment: "المعدات" },
-  es: { bundles: "Bundles", coaches: "Coaches", equipment: "Equipo" },
-  fr: { bundles: "Packs", coaches: "Coachs", equipment: "Équipement" }
-};
-
-const TJAI_LABELS: Record<Locale, Record<string, string>> = {
-  en: { generate: "Generate plan", chat: "TJAI Chat", credits: "Credit packs" },
-  tr: { generate: "Plan üret", chat: "TJAI Chat", credits: "Kredi paketleri" },
-  ar: { generate: "أنشئ خطة", chat: "محادثة TJAI", credits: "حزم الرصيد" },
-  es: { generate: "Generar plan", chat: "TJAI Chat", credits: "Paquetes de créditos" },
-  fr: { generate: "Générer un plan", chat: "TJAI Chat", credits: "Packs de crédits" }
-};
-
-const TJAI_META: Record<Locale, Record<string, string>> = {
-  en: { generate: "$8 / pack", chat: "Pro / Apex" },
-  tr: { generate: "$8 / paket", chat: "Pro / Apex" },
-  ar: { generate: "$8 / حزمة", chat: "Pro / Apex" },
-  es: { generate: "$8 / pack", chat: "Pro / Apex" },
-  fr: { generate: "$8 / pack", chat: "Pro / Apex" }
-};
-
-const SIGN_IN_LABEL: Record<Locale, string> = {
-  en: "Sign in",
-  tr: "Giris",
-  ar: "Sign in",
-  es: "Entrar",
-  fr: "Connexion"
-};
-
-function trainItems(locale: Locale): SubItem[] {
-  const l = TRAIN_LABELS[locale] ?? TRAIN_LABELS.en;
-  const base = `/${locale}`;
-  return [
-    { label: l.bundles, href: `${base}/bundles` },
-    { label: l.coaches, href: `${base}/coaches` },
-    { label: l.equipment, href: `${base}/store` }
-  ];
-}
-
-function tjaiItems(locale: Locale): SubItem[] {
-  const l = TJAI_LABELS[locale] ?? TJAI_LABELS.en;
-  const m = TJAI_META[locale] ?? TJAI_META.en;
-  const base = `/${locale}`;
-  return [
-    { label: l.generate, href: `${base}/tjai`, meta: m.generate },
-    { label: l.chat, href: `${base}/ai`, meta: m.chat },
-    { label: l.credits, href: `${base}/tjai/credits` }
-  ];
-}
-
 export function SiteTopBar({ locale }: { locale: Locale }) {
-  const pathname = usePathname() ?? "";
+  const pathname = usePathname() ?? `/${locale}`;
   const { user } = useAuth();
-  const [hidden, setHidden] = useState(false);
-  const lastYRef = useRef(0);
-  const labels = TOP_LABELS[locale] ?? TOP_LABELS.en;
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    lastYRef.current = window.scrollY;
-    let ticking = false;
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      window.requestAnimationFrame(() => {
-        const y = window.scrollY;
-        const dy = y - lastYRef.current;
-        if (y <= 8) setHidden(false);
-        else if (dy > 8) setHidden(true);
-        else if (dy < -8) setHidden(false);
-        lastYRef.current = y;
-        ticking = false;
-      });
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const accountHref = user
-    ? `/${locale}/profile/edit`
-    : `/${locale}/login?redirect=${encodeURIComponent(pathname || `/${locale}`)}`;
-
-  const homeActive = pathname === `/${locale}` || pathname === `/${locale}/`;
-  const trainActive =
-    pathname.startsWith(`/${locale}/bundles`) ||
-    pathname.startsWith(`/${locale}/coaches`) ||
-    pathname.startsWith(`/${locale}/store`);
-  const tjaiActive =
-    pathname.startsWith(`/${locale}/tjai`) ||
-    pathname.startsWith(`/${locale}/ai`) ||
-    pathname.startsWith(`/${locale}/coins`);
-
+  const c = PUBLIC_COPY[locale];
+  const links = publicPrimaryLinks(locale);
+  const accountHref = user ? `/${locale}/dashboard` : `/${locale}/login?redirect=${encodeURIComponent(pathname)}`;
+  function renderLinks() {
+    return links.map((item) => {
+      const active = pathname === item.href || pathname.startsWith(`${item.href}/`) || (item.key === "tjai" && pathname.startsWith(`/${locale}/ai`));
+      return <Link key={item.key} href={item.href} aria-current={active ? "page" : undefined} className={cn("flex min-h-11 items-center justify-center border-b-2 px-3 text-center text-[13px] font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-300", active ? "border-violet-300 text-violet-100" : "border-transparent text-[#c4bccd] hover:border-white/20 hover:text-white")}>{item.label}</Link>;
+    });
+  }
   return (
-    <header
-      className={cn(
-        "tj-topbar fixed inset-x-0 top-0 z-40 transition-transform duration-300 ease-out",
-        hidden ? "-translate-y-full" : "translate-y-0"
-      )}
-      style={{
-        background: "linear-gradient(180deg, rgba(10,10,12,0.94), rgba(10,10,12,0.78))",
-        backdropFilter: "blur(20px) saturate(1.05)",
-        WebkitBackdropFilter: "blur(20px) saturate(1.05)",
-        borderBottom: "1px solid rgba(255,255,255,0.06)"
-      }}
-      aria-label="Primary"
-    >
-      <div className="relative mx-auto flex h-14 w-full max-w-7xl items-center px-4 sm:h-16 sm:px-6">
-        <Link
-          href={`/${locale}`}
-          aria-label="TJFit"
-          className="relative z-10 inline-flex shrink-0 items-center"
-        >
-          <Logo variant="full" size="navbar" linked={false} />
-        </Link>
-
-        <NavigationMenu.Root
-          className="pointer-events-none absolute inset-x-0 top-0 hidden h-full items-center justify-center md:flex"
-          aria-label="Primary sections"
-        >
-          <NavigationMenu.List className="pointer-events-auto inline-flex items-center gap-1 text-sm font-medium">
-            <NavigationMenu.Item>
-              <NavigationMenu.Link asChild active={homeActive}>
-                <Link
-                  href={`/${locale}`}
-                  className={cn(
-                    "tj-topnav-link relative inline-flex min-h-[44px] items-center px-3.5 text-[13px] tracking-tight transition-colors duration-150 sm:px-4",
-                    homeActive ? "text-white" : "text-[rgba(235,235,240,0.62)] hover:text-white"
-                  )}
-                >
-                  <span>{labels.home}</span>
-                  {homeActive ? <span aria-hidden className="tj-topnav-active-bar" /> : null}
-                </Link>
-              </NavigationMenu.Link>
-            </NavigationMenu.Item>
-
-            <NavigationMenu.Item>
-              <NavigationMenu.Trigger
-                className={cn(
-                  "tj-topnav-link group relative inline-flex min-h-[44px] items-center gap-1 px-3.5 text-[13px] tracking-tight transition-colors duration-150 outline-none sm:px-4",
-                  trainActive ? "text-white" : "text-[rgba(235,235,240,0.62)] hover:text-white"
-                )}
-              >
-                {labels.train}
-                <ChevronDown
-                  className="h-3 w-3 transition-transform duration-200 group-data-[state=open]:rotate-180"
-                  aria-hidden
-                />
-                {trainActive ? <span aria-hidden className="tj-topnav-active-bar" /> : null}
-              </NavigationMenu.Trigger>
-              <NavigationMenu.Content className="tj-topnav-content">
-                <ul className="flex w-[260px] flex-col gap-0.5 p-2">
-                  {trainItems(locale).map((item) => (
-                    <li key={item.href}>
-                      <NavigationMenu.Link asChild>
-                        <Link
-                          href={item.href}
-                          className="tj-topnav-sub flex items-center justify-between rounded-md px-3 py-2 text-[13px] text-white/80 transition-colors duration-150 hover:bg-purple-300/10 hover:text-white"
-                        >
-                          <span>{item.label}</span>
-                          {item.meta ? (
-                            <span className="text-[11px] text-faint">{item.meta}</span>
-                          ) : null}
-                        </Link>
-                      </NavigationMenu.Link>
-                    </li>
-                  ))}
-                </ul>
-              </NavigationMenu.Content>
-            </NavigationMenu.Item>
-
-            <NavigationMenu.Item>
-              <NavigationMenu.Trigger
-                className={cn(
-                  "tj-topnav-link group relative inline-flex min-h-[44px] items-center gap-1 px-3.5 text-[13px] tracking-tight transition-colors duration-150 outline-none sm:px-4",
-                  tjaiActive ? "text-white" : "text-[rgba(235,235,240,0.62)] hover:text-white"
-                )}
-              >
-                {labels.tjai}
-                <ChevronDown
-                  className="h-3 w-3 transition-transform duration-200 group-data-[state=open]:rotate-180"
-                  aria-hidden
-                />
-                {tjaiActive ? <span aria-hidden className="tj-topnav-active-bar" /> : null}
-              </NavigationMenu.Trigger>
-              <NavigationMenu.Content className="tj-topnav-content">
-                <ul className="flex w-[260px] flex-col gap-0.5 p-2">
-                  {tjaiItems(locale).map((item) => (
-                    <li key={item.href}>
-                      <NavigationMenu.Link asChild>
-                        <Link
-                          href={item.href}
-                          className="tj-topnav-sub flex items-center justify-between rounded-md px-3 py-2 text-[13px] text-white/80 transition-colors duration-150 hover:bg-purple-300/10 hover:text-white"
-                        >
-                          <span>{item.label}</span>
-                          {item.meta ? (
-                            <span className="text-[11px] text-faint">{item.meta}</span>
-                          ) : null}
-                        </Link>
-                      </NavigationMenu.Link>
-                    </li>
-                  ))}
-                </ul>
-              </NavigationMenu.Content>
-            </NavigationMenu.Item>
-          </NavigationMenu.List>
-
-          <div className="absolute left-0 right-0 top-full flex justify-center">
-            <NavigationMenu.Viewport className="tj-topnav-viewport pointer-events-auto" />
-          </div>
-        </NavigationMenu.Root>
-
-        <div className="relative z-10 ms-auto inline-flex items-center">
-          <Link
-            href={accountHref}
-            aria-label={user ? "Account" : SIGN_IN_LABEL[locale]}
-            className={cn(
-              "tj-cta-sheen group/account inline-flex min-h-[44px] items-center gap-2 rounded-md border border-white/[0.09] bg-white/[0.02] px-3.5 py-1.5 text-[13px] font-medium text-white transition-[border-color,background-color,color,box-shadow] duration-200",
-              "hover:border-purple-300/40 hover:bg-purple-300/[0.05] hover:text-purple-50 hover:shadow-[0_0_22px_rgba(168,85,247,0.16)]"
-            )}
-          >
-            <UserRound
-              className="h-4 w-4 transition-colors duration-200 group-hover/account:text-purple-200"
-              aria-hidden
-            />
-            <span className="hidden sm:inline">
-              {user ? user.email?.split("@")[0] ?? "Account" : SIGN_IN_LABEL[locale]}
-            </span>
-          </Link>
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-[#0c0b0f]/95 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 pe-4 ps-16 sm:pe-6 sm:ps-20">
+        <Link href={`/${locale}`} aria-label={`TJFit · ${c.home}`} className="shrink-0 rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-300"><Logo variant="full" size="mobile" linked={false} /></Link>
+        <nav aria-label={c.navigation} className="mx-auto hidden items-center gap-3 lg:flex">{renderLinks()}</nav>
+        <div className="ms-auto flex items-center gap-2 lg:ms-0">
+          <LanguageSwitcher locale={locale} />
+          <Link href={accountHref} aria-label={user ? c.account : c.signIn} className="inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-md border border-white/15 px-3 text-sm text-[#e8e1ee] transition-colors hover:border-violet-300/50 hover:bg-violet-300/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-300"><UserRound className="h-4 w-4" aria-hidden /><span className="hidden xl:inline">{user ? c.account : c.signIn}</span></Link>
         </div>
       </div>
+      <nav aria-label={c.navigation} className="grid h-12 grid-cols-3 border-t border-white/[0.06] px-3 lg:hidden">{renderLinks()}</nav>
     </header>
   );
 }

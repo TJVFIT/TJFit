@@ -16,7 +16,8 @@ const DEFAULT_PRIVACY: Required<PrivacySettings> = {
   show_posts: true
 };
 
-export async function GET(_request: NextRequest, { params }: { params: { username: string } }) {
+export async function GET(_request: NextRequest, props: { params: Promise<{ username: string }> }) {
+  const params = await props.params;
   const admin = getSupabaseServerClient();
   if (!admin) return NextResponse.json({ error: "Server not configured" }, { status: 500 });
 
@@ -27,7 +28,7 @@ export async function GET(_request: NextRequest, { params }: { params: { usernam
 
   let viewerId: string | null = null;
   try {
-    const browser = createServerSupabaseClient();
+    const browser = await createServerSupabaseClient();
     const { data: { user } } = await browser.auth.getUser();
     viewerId = user?.id ?? null;
   } catch {
@@ -36,7 +37,7 @@ export async function GET(_request: NextRequest, { params }: { params: { usernam
 
   const { data: profile } = await admin
     .from("profiles")
-    .select("id,username,display_name,avatar_url,bio,role,banner_color,current_streak,is_verified,privacy_settings,display_badge_key")
+    .select("id,username,display_name,avatar_url,bio,role,banner_color,current_streak,is_verified,privacy_settings,display_badge_key,is_private")
     .eq("username_normalized", rawUsername.toLowerCase())
     .maybeSingle();
 
@@ -44,6 +45,23 @@ export async function GET(_request: NextRequest, { params }: { params: { usernam
 
   const isSelf = viewerId === profile.id;
   const privacy = { ...DEFAULT_PRIVACY, ...(profile.privacy_settings as PrivacySettings | null) };
+
+  // Match get_profile_card: a private account still has an identity card, but
+  // only its owner may read the biography or activity. Stop before service-role
+  // reads of orders, progress and badges; RLS cannot protect those reads here.
+  if (!isSelf && profile.is_private !== false) {
+    return NextResponse.json({
+      profile: {
+        id: profile.id, username: profile.username, display_name: profile.display_name,
+        avatar_url: profile.avatar_url, bio: "", role: profile.role === "coach" ? "coach" : "user",
+        is_private: true, limited: true, self: false,
+        banner_color: "#111215", display_badge_key: null,
+        privacy_settings: { show_streak: false, show_programs: false, show_posts: false }
+      },
+      following: false, stats: null, badges: [], active_program: null,
+      recent_blog_posts: [], recent_community_posts: []
+    }, { headers: { "Cache-Control": "private, no-store" } });
+  }
 
   const [programOrders, blogPosts, followers, following, badges, activeProgress, recentBlogsMerged] =
     await Promise.all([
@@ -123,5 +141,5 @@ export async function GET(_request: NextRequest, { params }: { params: { usernam
     recent_community_posts: isSelf || privacy.show_posts
       ? blogRows.map((p) => ({ id: p.id, title: p.title, content: p.content, created_at: p.created_at }))
       : []
-  });
+  }, { headers: { "Cache-Control": "private, no-store" } });
 }

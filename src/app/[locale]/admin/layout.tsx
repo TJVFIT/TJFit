@@ -6,18 +6,23 @@ import { requireLocaleParam } from "@/lib/require-locale";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { URL_NOTICE } from "@/lib/url-notice";
 
-export default async function AdminLayout({
-  children,
-  params
-}: {
-  children: ReactNode;
-  params: { locale: string };
-}) {
+export default async function AdminLayout(
+  props: {
+    children: ReactNode;
+    params: Promise<{ locale: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   const locale = requireLocaleParam(params.locale);
 
-  let authClient: ReturnType<typeof createServerSupabaseClient>;
+  let authClient: Awaited<ReturnType<typeof createServerSupabaseClient>>;
   try {
-    authClient = createServerSupabaseClient();
+    authClient = await createServerSupabaseClient();
   } catch {
     redirect(`/${locale}/login?next=${encodeURIComponent(`/${locale}/admin`)}`);
   }

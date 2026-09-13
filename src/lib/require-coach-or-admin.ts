@@ -12,9 +12,9 @@ type RequireCoachOrAdminResult =
   | { ok: false; response: NextResponse };
 
 export async function requireCoachOrAdmin(): Promise<RequireCoachOrAdminResult> {
-  let supabase: ReturnType<typeof createServerSupabaseClient>;
+  let supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>;
   try {
-    supabase = createServerSupabaseClient();
+    supabase = await createServerSupabaseClient();
   } catch {
     return {
       ok: false,

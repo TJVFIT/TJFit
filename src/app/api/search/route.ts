@@ -10,7 +10,13 @@ const QUERY_MAX = 100;
 // Escape PostgREST ilike wildcards so a query string can't expand into a
 // table scan via `%`. The pattern wraps the user input with %...% itself.
 function escapeIlike(value: string): string {
-  return value.replace(/([%_])/g, "\\$1");
+  return value.replace(/([\\%_])/g, "\\$1");
+}
+
+// .or() is raw PostgREST syntax. URL encoding alone does not stop a comma or
+// parenthesis in a search term from becoming another filter expression.
+function quoteFilterValue(value: string): string {
+  return `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
 }
 
 export async function GET(request: NextRequest) {
@@ -55,17 +61,20 @@ export async function GET(request: NextRequest) {
   // or btree index can handle it. The escapeIlike() guards against query
   // strings that contain `%` or `_` (which would otherwise act as wildcards).
   const pattern = `%${escapeIlike(q)}%`;
+  const profilePattern = quoteFilterValue(pattern);
   const [{ data: coaches }, { data: users }, { data: blog }] = await Promise.all([
     admin
       .from("profiles")
       .select("id,username,display_name,specialty_tags")
       .eq("role", "coach")
-      .or(`display_name.ilike.${pattern},username.ilike.${pattern}`)
+      .eq("is_searchable", true)
+      .or(`display_name.ilike.${profilePattern},username.ilike.${profilePattern}`)
       .limit(10),
     admin
       .from("profiles")
       .select("id,username,display_name")
-      .or(`display_name.ilike.${pattern},username.ilike.${pattern}`)
+      .eq("is_searchable", true)
+      .or(`display_name.ilike.${profilePattern},username.ilike.${profilePattern}`)
       .limit(10),
     admin
       .from("community_blog_posts")

@@ -6,9 +6,9 @@ import { readRequestJson } from "@/lib/read-request-json";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
-  let supabase: ReturnType<typeof createServerSupabaseClient>;
+  let supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>;
   try {
-    supabase = createServerSupabaseClient();
+    supabase = await createServerSupabaseClient();
   } catch {
     return NextResponse.json({ error: "Service unavailable" }, { status: 503 });
   }

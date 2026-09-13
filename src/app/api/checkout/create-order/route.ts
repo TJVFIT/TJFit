@@ -1,145 +1,45 @@
 import { NextRequest, NextResponse } from "next/server";
-import { programs } from "@/lib/content";
-import { getBundle } from "@/lib/bundles";
-import { convertUsdToTry } from "@/lib/fx";
-import { getProgramBasePriceTry } from "@/lib/program-localization";
-import {
-  getCheckoutPaymentAdapter,
-  providerIdForStorage,
-  resolvePaymentBackend
-} from "@/lib/payments";
-import { readRequestJson } from "@/lib/read-request-json";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { isLocale } from "@/lib/i18n";
+import { resolvePaymentBackend } from "@/lib/payments";
+import { getDigitalProduct, getLemonCheckoutConfig, UUID_RE } from "@/lib/payments/lemon/config";
+import { isJsonObject, readRequestJson } from "@/lib/read-request-json";
+import { requireAuth } from "@/lib/require-auth";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
-import { resolvePromoDiscountPercent } from "@/lib/checkout-promo-codes";
-import { TJFIT_COINS_PER_PROGRAM_PURCHASE } from "@/lib/tjfit-coin";
+import { isTjaiPassCheckoutReady } from "@/lib/payments/lemon/readiness";
+import { validateAdultIntake } from "@/lib/tjai/intake-validation";
 
 export async function POST(request: NextRequest) {
-  const supabase = createServerSupabaseClient();
-  const {
-    data: { user },
-    error
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const parsed = await readRequestJson(request);
+  const auth = await requireAuth();
+  if (!auth.ok) return auth.response;
+  const { user } = auth;
+  const config = getLemonCheckoutConfig();
+  if (resolvePaymentBackend().providerId !== "lemonsqueezy" || !config) return NextResponse.json({ error: "Purchases are not available yet." }, { status: 503 });
+  const parsed = await readRequestJson(request, 4096);
   if (!parsed.ok) return parsed.response;
-  const body = parsed.value as Record<string, unknown>;
-  const programSlug = String(body.programSlug ?? "").trim();
-  const discountCode = String(body.discountCode ?? "").trim().toUpperCase();
-  const localeRaw = String(body.locale ?? "en").trim().toLowerCase();
-  const locale = ["en", "tr", "ar", "es", "fr"].includes(localeRaw) ? localeRaw : "en";
-  const { providerId } = resolvePaymentBackend();
-  const provider = providerIdForStorage(providerId);
-  if (!providerId) {
-    return NextResponse.json(
-      {
-        error:
-          "Checkout is not available until a payment provider is configured. Enable test mode for development or connect a provider on the server."
-      },
-      { status: 503 }
-    );
+  const body = parsed.value;
+  if (!isJsonObject(body) || typeof body.programSlug !== "string" || typeof body.locale !== "string" || !isLocale(body.locale)) return NextResponse.json({ error: "Invalid checkout request" }, { status: 400 });
+  const product = getDigitalProduct(body.programSlug);
+  const mapping = product && config.products[product.slug];
+  if (!product || !mapping || (body.discountCode !== undefined && body.discountCode !== "")) return NextResponse.json({ error: "This purchase is not available." }, { status: 400 });
+  if (!user.email || !user.email_confirmed_at) return NextResponse.json({ error: "Verify your account email before purchasing." }, { status: 403 });
+  const admin = getSupabaseServerClient();
+  if (!admin) return NextResponse.json({ error: "Purchase storage is unavailable." }, { status: 503 });
+  let intakeId: string | null = null;
+  if (product.kind === "tjai_pass") {
+    if (!isTjaiPassCheckoutReady(config.testMode)) return NextResponse.json({ error: "TJAI purchases are not available yet." }, { status: 503 });
+    if (typeof body.intakeId !== "string" || !UUID_RE.test(body.intakeId)) return NextResponse.json({ error: "Complete your adult intake before purchasing." }, { status: 400 });
+    const { data: intake, error } = await admin.from("tjai_intake_drafts").select("id,age,answers_json,locale").eq("id", body.intakeId).eq("user_id", user.id).gte("age", 18).maybeSingle();
+    if (error) return NextResponse.json({ error: "Intake verification is unavailable." }, { status: 503 });
+    if (!intake) return NextResponse.json({ error: "Complete your adult intake before purchasing." }, { status: 403 });
+    if (!validateAdultIntake(intake.answers_json, intake.locale).ok) return NextResponse.json({ error: "intake_needs_review" }, { status: 409 });
+    intakeId = intake.id;
   }
-
-  const staticProgram = programs.find((item) => item.slug === programSlug);
-  if (staticProgram?.is_free) {
-    return NextResponse.json({ error: "This program is free. Sign in and open it from the library instead." }, { status: 400 });
-  }
-  let discountPercent = 0;
-  const adminClient = getSupabaseServerClient();
-  if (!adminClient) {
-    return NextResponse.json({ error: "Server not configured" }, { status: 500 });
-  }
-
-  let baseTry = 0;
-  const bundle = getBundle(programSlug);
-  if (bundle) {
-    // Bundles are priced in USD by the owner and converted to TRY via live FX.
-    // Intentionally bypasses the global PRICES_ZEROED switch (that only governs
-    // the legacy program catalog); bundles are the live product.
-    if (bundle.priceUsd <= 0) {
-      return NextResponse.json(
-        { error: "This bundle is free. Claim it from the bundle page instead." },
-        { status: 400 }
-      );
-    }
-    baseTry = await convertUsdToTry(bundle.priceUsd);
-  } else if (staticProgram) {
-    baseTry = getProgramBasePriceTry(staticProgram);
-  } else {
-    const { data: customProgram } = await adminClient
-      .from("custom_programs")
-      .select("slug,price_try,active")
-      .eq("slug", programSlug)
-      .eq("active", true)
-      .maybeSingle();
-    if (!customProgram) {
-      return NextResponse.json({ error: "Program not found" }, { status: 404 });
-    }
-    baseTry = Number(customProgram.price_try ?? 400);
-  }
-
-  if (discountCode) {
-    const { data: code } = await adminClient
-      .from("tjfit_discount_codes")
-      .select("code,discount_percent,status,user_id")
-      .eq("code", discountCode)
-      .eq("user_id", user.id)
-      .eq("status", "available")
-      .maybeSingle();
-
-    if (code) {
-      discountPercent = code.discount_percent;
-    } else {
-      const promoPercent = resolvePromoDiscountPercent(discountCode);
-      if (promoPercent === null) {
-        return NextResponse.json({ error: "Invalid or unavailable discount code." }, { status: 400 });
-      }
-      discountPercent = promoPercent;
-    }
-  }
-
-  const finalTry = Math.max(0, Math.round(baseTry * (1 - discountPercent / 100)));
-  const providerOrderId = `TJFIT-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
-
-  const { data: order, error: orderError } = await adminClient
-    .from("program_orders")
-    .insert({
-      user_id: user.id,
-      program_slug: programSlug,
-      amount_try: baseTry,
-      final_amount_try: finalTry,
-      currency: "TRY",
-      provider,
-      provider_order_id: providerOrderId,
-      status: "pending",
-      discount_code: discountCode || null,
-      discount_percent: discountPercent,
-      tjfit_coins_earned: TJFIT_COINS_PER_PROGRAM_PURCHASE,
-      locale
-    })
-    .select(
-      "id,program_slug,amount_try,final_amount_try,currency,discount_code,discount_percent,provider,status"
-    )
-    .single();
-
-  if (orderError || !order) {
-    return NextResponse.json({ error: "Could not create order." }, { status: 500 });
-  }
-
-  const adapter = getCheckoutPaymentAdapter(providerId);
-  const clientFlow = adapter.clientFlowAfterOrderCreated({
-    id: order.id,
-    finalAmountTry: order.final_amount_try,
-    currency: order.currency ?? "TRY"
-  });
-
-  return NextResponse.json({
-    order,
-    coinsToEarn: TJFIT_COINS_PER_PROGRAM_PURCHASE,
-    clientFlow
-  });
+  // The client never supplies user, amount, provider IDs, test mode, or a redirect URL.
+  const { data: order, error } = await admin.from("digital_checkout_intents").insert({
+    user_id: user.id, email: user.email.trim().toLowerCase(), program_slug: product.slug, product_kind: product.kind,
+    amount_minor: product.amountMinor, currency: "USD", store_id: config.storeId, product_id: mapping.productId,
+    variant_id: mapping.variantId, test_mode: config.testMode, intake_id: intakeId, locale: body.locale
+  }).select("id,program_slug,currency,amount_minor,test_mode,status").single();
+  if (error || !order) return NextResponse.json({ error: "Purchase storage is unavailable." }, { status: 503 });
+  return NextResponse.json({ order, coinsToEarn: 0, clientFlow: { action: "redirect_lemon", orderId: order.id, url: "" } });
 }

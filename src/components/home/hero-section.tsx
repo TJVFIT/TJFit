@@ -66,7 +66,7 @@ function HeroSignal({
   value,
   className
 }: {
-  icon: React.ElementType;
+  icon: import("lucide-react").LucideIcon;
   label: string;
   value: string;
   className?: string;

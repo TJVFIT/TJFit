@@ -1,44 +1,11 @@
+import { createHash } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
-
-import { checkGumroadWebhookFreshness, verifyGumroadSeller } from "@/lib/gumroad-webhook-verify";
-import { getSale, type GumroadSale } from "@/lib/gumroad/client";
-import { fulfillProgramOrderPaid } from "@/lib/checkout-fulfill-order";
+import { verifyGumroadSeller } from "@/lib/gumroad-webhook-verify";
+import { getSale } from "@/lib/gumroad/client";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import { handleSale, findOrCreateUserByEmail, type GumroadSalePayload } from "./handlers/sale";
+import { isJsonObject, readRequestText } from "@/lib/read-request-json";
 import { handleRefund } from "./handlers/refund";
-import {
-  handleSubscriptionCancellation,
-  handleSubscriptionEvent
-} from "./handlers/subscription";
-
 export const dynamic = "force-dynamic";
-
-// Real program_orders ids are UUIDs. The TJAI credits storefront stamps a
-// non-UUID sentinel (e.g. "credits-plan-1") as tjfit_order_id, which must
-// NOT be treated as an order to fulfil — it routes by product instead.
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-// Gumroad webhook endpoint.
-//
-// Per founder direction: Gumroad is the primary merchant of record
-// after Gumroad/Stripe rejections. This route receives lifecycle
-// events and routes them to the right handlers.
-//
-// Verification model (IMPORTANT — Gumroad ≠ Stripe/Paddle):
-//   Gumroad Ping / Resource-Subscription webhooks are NOT HMAC-signed.
-//   They arrive as application/x-www-form-urlencoded params and carry
-//   the account `seller_id`. We verify in two layers:
-//     1. seller_id must match GUMROAD_SELLER_ID (cheap reject of spam).
-//     2. For `sale` events the sale_id is re-fetched from the Gumroad
-//        API and that authoritative record — not the POST body — drives
-//        fulfillment. This makes forged "free credit" pings impossible:
-//        an attacker can't fabricate a sale_id that exists in our
-//        Gumroad account.
-//
-// Idempotency: every event is logged to `payment_webhooks` keyed on
-// (provider, event_id). Re-deliveries are short-circuited so retries
-// from Gumroad don't double-grant access.
 
 type GumroadEventBody = {
   // Gumroad uses different field names in different event types;
@@ -70,378 +37,87 @@ type GumroadEventBody = {
  * JSON so tests and any future Gumroad change keep working.
  */
 function parseGumroadBody(rawBody: string, contentType: string): GumroadEventBody {
+  const forbidden = new Set(["__proto__", "prototype", "constructor"]);
+  const validate = (value: unknown): GumroadEventBody => {
+    if (!isJsonObject(value)) throw new Error("Webhook must be an object");
+    for (const key of Object.keys(value)) {
+      if (forbidden.has(key)) throw new Error("Invalid field");
+    }
+    for (const key of ["resource_name", "seller_id", "sale_id", "subscription_id", "product_permalink", "permalink", "product_id", "product_name", "email", "full_name", "currency", "sale_timestamp"]) {
+      if (value[key] !== undefined && typeof value[key] !== "string") throw new Error("Invalid field type");
+    }
+    for (const key of ["url_params", "custom_fields"]) {
+      const nested = value[key];
+      if (nested === undefined) continue;
+      if (!isJsonObject(nested) || Object.entries(nested).some(([name, item]) => forbidden.has(name) || typeof item !== "string")) {
+        throw new Error("Invalid nested field");
+      }
+    }
+    return value as GumroadEventBody;
+  };
   if (contentType.includes("application/json")) {
-    return JSON.parse(rawBody) as GumroadEventBody;
+    return validate(JSON.parse(rawBody));
   }
   const params = new URLSearchParams(rawBody);
-  const obj: Record<string, unknown> = {};
+  const obj: Record<string, unknown> = Object.create(null);
   for (const [key, value] of params.entries()) {
     const nested = key.match(/^([^[]+)\[([^\]]+)\]$/);
     if (nested) {
       const [, parent, child] = nested;
-      const bucket = (obj[parent] as Record<string, string> | undefined) ?? {};
+      if (forbidden.has(parent) || forbidden.has(child)) throw new Error("Invalid field");
+      if (obj[parent] !== undefined && !isJsonObject(obj[parent])) throw new Error("Conflicting field");
+      const bucket = (obj[parent] as Record<string, string> | undefined) ?? Object.create(null);
       bucket[child] = value;
       obj[parent] = bucket;
     } else {
+      if (forbidden.has(key)) throw new Error("Invalid field");
       obj[key] = value;
     }
   }
-  return obj as GumroadEventBody;
+  return validate(obj);
 }
 
-/**
- * Resolve a TJFit bundle slug from the Gumroad product on a confirmed
- * sale. Matches on the Gumroad product_id first, then falls back to the
- * permalink embedded in the mapped short_url. Returns null for products
- * that aren't bundles (e.g. credit packs / diets handled elsewhere).
- */
-async function resolveBundleSlug(
-  admin: SupabaseClient,
-  sale: GumroadSale
-): Promise<string | null> {
-  const productId = sale.product_id?.trim();
-  if (productId) {
-    const { data } = await admin
-      .from("bundle_gumroad_products")
-      .select("slug")
-      .eq("product_id", productId)
-      .maybeSingle();
-    if (data?.slug) return data.slug;
-  }
-  const permalink = sale.permalink?.trim();
-  if (permalink) {
-    const { data } = await admin
-      .from("bundle_gumroad_products")
-      .select("slug")
-      .ilike("short_url", `%/${permalink}`)
-      .maybeSingle();
-    if (data?.slug) return data.slug;
-  }
-  return null;
-}
-
-function readEventId(body: GumroadEventBody, headers: Headers): string {
-  // Gumroad doesn't always include a top-level event_id; build a
-  // stable composite from sale_id / subscription_id + resource_name.
-  const headerId = headers.get("x-gumroad-event-id");
-  if (headerId) return headerId;
-  const parts = [
-    body.resource_name ?? "sale",
-    body.sale_id ?? "",
-    body.subscription_id ?? "",
-    body.product_permalink ?? body.permalink ?? body.product_id ?? ""
-  ].filter(Boolean);
-  return parts.join(":") || `unidentified:${Date.now()}`;
-}
 
 export async function POST(request: NextRequest) {
   const expectedSeller = process.env.GUMROAD_SELLER_ID?.trim();
-  if (!expectedSeller) {
-    console.warn("[gumroad webhook] GUMROAD_SELLER_ID not set");
-    return NextResponse.json({ error: "Webhook not configured" }, { status: 503 });
-  }
-
-  const rawBody = await request.text();
-  const contentType = request.headers.get("content-type") ?? "";
-
+  if (!expectedSeller) return NextResponse.json({ error: "Webhook not configured" }, { status: 503 });
+  const raw = await readRequestText(request, 65536);
+  if (!raw.ok) return raw.response;
   let payload: GumroadEventBody;
-  try {
-    payload = parseGumroadBody(rawBody, contentType);
-  } catch {
-    return NextResponse.json({ error: "Invalid body" }, { status: 400 });
-  }
-
-  // Layer 1: seller_id gate.
-  if (!verifyGumroadSeller(payload.seller_id, expectedSeller)) {
-    console.warn("[gumroad webhook] seller_id verification failed");
-    return NextResponse.json({ error: "Invalid seller" }, { status: 401 });
-  }
-
-  // Replay-window check (best-effort — idempotency on (provider,
-  // event_id) is the primary defense; this is defense-in-depth).
-  const freshness = checkGumroadWebhookFreshness(payload);
-  if (!freshness.ok) {
-    console.warn("[gumroad webhook] freshness check failed", freshness.reason);
-    return NextResponse.json({ error: "Webhook too old", reason: freshness.reason }, { status: 400 });
-  }
-
-  // A dashboard Ping for a sale has no `resource_name`; infer it.
+  try { payload = parseGumroadBody(raw.value, request.headers.get("content-type") ?? ""); }
+  catch { return NextResponse.json({ error: "Invalid body" }, { status: 400 }); }
+  if (!verifyGumroadSeller(payload.seller_id, expectedSeller)) return NextResponse.json({ error: "Invalid seller" }, { status: 401 });
   const eventType = payload.resource_name ?? (payload.sale_id ? "sale" : "unknown");
-  const eventId = readEventId(payload, request.headers);
-
+  if (!["sale", "refund", "dispute"].includes(eventType)) {
+    // Gumroad lifecycle notifications are unsigned and no authoritative subscription
+    // snapshot is available here. Existing rights stay untouched pending reconciliation.
+    return NextResponse.json({ received: true, status: "review", reason: "legacy_lifecycle_requires_reconciliation" });
+  }
+  const saleId = payload.sale_id?.trim();
+  if (!saleId || !/^[a-zA-Z0-9_-]{1,200}$/.test(saleId)) return NextResponse.json({ error: "Invalid sale" }, { status: 400 });
+  let sale;
+  try { sale = await getSale(saleId); }
+  catch { return NextResponse.json({ error: "Verification will retry" }, { status: 503 }); }
+  if (!sale || sale.id !== saleId) return NextResponse.json({ error: "Unverified sale" }, { status: 401 });
   const admin = getSupabaseServerClient();
-  if (!admin) {
-    console.error("[gumroad webhook] supabase admin client missing");
-    return NextResponse.json({ error: "Server not configured" }, { status: 500 });
+  if (!admin) return NextResponse.json({ error: "Webhook storage unavailable" }, { status: 503 });
+  const refund = sale.refunded === true || sale.disputed === true;
+  if (eventType !== "sale" && !refund) return NextResponse.json({ error: "Refund not confirmed" }, { status: 409 });
+  let reason = "legacy_new_fulfillment_requires_reconciliation";
+  if (refund) {
+    const result = await handleRefund(sale, {}, admin);
+    if (!result.ok) return NextResponse.json({ error: "Refund processing will retry" }, { status: 503 });
+    reason = result.details.requires_review ? "legacy_refund_requires_reconciliation" : "bound_refund_applied";
   }
-
-  // Idempotency: insert (gumroad, event_id) — if it conflicts the
-  // event has been seen before, return ok without reprocessing.
-  const { data: insertResult, error: insertError } = await admin
-    .from("payment_webhooks")
-    .insert({
-      provider: "gumroad",
-      event_id: eventId,
-      event_type: eventType,
-      raw_payload: payload,
-      signature: payload.seller_id ?? null,
-      signature_valid: true,
-      status: "received"
-    })
-    .select("id")
-    .maybeSingle();
-
-  if (insertError) {
-    // Most likely a duplicate (unique violation on (provider, event_id))
-    // — treat as success but mark in logs.
-    if (insertError.code === "23505") {
-      return NextResponse.json({ received: true, deduped: true });
-    }
-    console.error("[gumroad webhook] failed to log webhook", insertError);
-    return NextResponse.json({ received: true, logError: insertError.message });
-  }
-
-  const webhookRowId = insertResult?.id ?? null;
-
-  let status: "processed" | "ignored" | "failed" = "ignored";
-  let handlerError: string | null = null;
-
-  try {
-    switch (eventType) {
-      case "sale": {
-        // Layer 2: re-fetch the sale from Gumroad's API and fulfill from
-        // that authoritative record, not the (forgeable) POST body.
-        const saleId = payload.sale_id?.trim();
-        if (!saleId) {
-          status = "failed";
-          handlerError = "sale event without sale_id";
-          break;
-        }
-
-        let confirmed;
-        try {
-          confirmed = await getSale(saleId);
-        } catch (err) {
-          status = "failed";
-          handlerError = `gumroad_api_verify: ${err instanceof Error ? err.message : String(err)}`;
-          break;
-        }
-
-        if (!confirmed) {
-          status = "failed";
-          handlerError = `sale ${saleId} not found in Gumroad — possible forgery, not fulfilled`;
-          break;
-        }
-        if (confirmed.refunded) {
-          status = "ignored";
-          break;
-        }
-
-        // Resolve which bundle (if any) this confirmed Gumroad product
-        // maps to. Used both to cross-check website orders and to fulfil
-        // direct Gumroad-storefront purchases.
-        const bundleSlug = await resolveBundleSlug(admin, confirmed);
-
-        // Path A — website checkout. Checkout stamps the program_orders
-        // id onto the Gumroad URL (buildGumroadTrackedUrl); Gumroad
-        // echoes it back in url_params. Flipping that order to paid is
-        // what unlocks the in-app bundle via hasPurchasedProgram. Only a
-        // real (UUID) order that actually exists is handled here; anything
-        // else (e.g. the "credits-*" sentinel) falls through to product
-        // routing below.
-        const rawOrderId = payload.url_params?.tjfit_order_id?.trim();
-        const orderId = rawOrderId && UUID_RE.test(rawOrderId) ? rawOrderId : null;
-        if (orderId) {
-          const { data: order } = await admin
-            .from("program_orders")
-            .select("program_slug")
-            .eq("id", orderId)
-            .maybeSingle();
-          if (order) {
-            // Integrity check: the order being fulfilled must correspond
-            // to the product actually purchased. Only enforced when we can
-            // map the Gumroad product to a bundle (legacy programs map to
-            // null and are trusted via the unguessable order id alone).
-            if (bundleSlug && order.program_slug !== bundleSlug) {
-              status = "failed";
-              handlerError = `order_product_mismatch: order ${orderId} is ${order.program_slug} but sale is ${bundleSlug}`;
-              break;
-            }
-            const fulfilled = await fulfillProgramOrderPaid(admin, orderId, { requireLiveOrder: true });
-            if (fulfilled.ok) {
-              status = "processed";
-            } else {
-              status = "failed";
-              handlerError = `fulfill_order[${orderId}]: ${fulfilled.error}`;
-            }
-            break;
-          }
-          // UUID but no such order — fall through to product routing.
-        }
-
-        // Path B — direct Gumroad-storefront purchase (no website order).
-        // Grant access from the API-confirmed sale email. The buyer
-        // controls that email (they paid with it), and the sale is
-        // already verified against Gumroad, so this is safe. Idempotent
-        // via the unique provider_order_id = sale id.
-        if (bundleSlug) {
-          const buyerEmail = confirmed.email?.trim().toLowerCase();
-          if (!buyerEmail) {
-            status = "failed";
-            handlerError = "direct_purchase: confirmed sale has no email";
-            break;
-          }
-          const resolved = await findOrCreateUserByEmail(admin, buyerEmail, confirmed.full_name);
-          if ("error" in resolved) {
-            status = "failed";
-            handlerError = `direct_purchase_user: ${resolved.error}`;
-            break;
-          }
-          const { error: insErr } = await admin.from("program_orders").insert({
-            user_id: resolved.userId,
-            program_slug: bundleSlug,
-            amount_try: 0,
-            final_amount_try: 0,
-            currency: confirmed.currency ?? "USD",
-            provider: "gumroad",
-            provider_order_id: confirmed.id,
-            status: "paid",
-            paid_at: new Date().toISOString()
-          });
-          if (insErr) {
-            // 23505 = unique violation on provider_order_id: this sale was
-            // already fulfilled. Treat as success.
-            if (insErr.code === "23505") {
-              status = "processed";
-            } else {
-              status = "failed";
-              handlerError = `direct_purchase_insert: ${insErr.message}`;
-            }
-          } else {
-            status = "processed";
-          }
-          break;
-        }
-
-        // Path C — mapped product (TJAI credit packs / diets resolved via
-        // product_gumroad_sync by Gumroad product id).
-        const salePayload: GumroadSalePayload = {
-          resource_name: "sale",
-          sale_id: confirmed.id,
-          product_id: confirmed.product_id,
-          product_permalink: confirmed.permalink,
-          email: confirmed.email,
-          full_name: confirmed.full_name,
-          price: confirmed.price,
-          gumroad_fee: confirmed.gumroad_fee,
-          currency: confirmed.currency,
-          custom_fields: confirmed.custom_fields,
-          // Prefer the API record's url_params; fall back to the (already
-          // seller-verified) webhook body so the buyer's tier / program-slug /
-          // order-id selection survives even if the API omits them.
-          url_params: confirmed.url_params ?? payload.url_params,
-          subscription_id: confirmed.subscription_id ?? payload.subscription_id,
-          recurrence: confirmed.recurrence,
-          sale_timestamp: confirmed.created_at ?? payload.sale_timestamp,
-          test: payload.test === true || payload.test === "true"
-        };
-
-        const result = await handleSale(salePayload, admin);
-        if (result.ok) {
-          status = "processed";
-        } else {
-          status = "failed";
-          handlerError = `sale[${result.action}]: ${result.error}`;
-        }
-        break;
-      }
-      case "refund":
-      case "dispute": {
-        // Re-fetch the sale from Gumroad and confirm it is actually refunded
-        // before revoking anything — same anti-forgery property as the sale
-        // path (an attacker can't fabricate a refunded sale_id in our account).
-        const saleId = payload.sale_id?.trim();
-        if (!saleId) {
-          status = "failed";
-          handlerError = `${eventType} event without sale_id`;
-          break;
-        }
-        let confirmed;
-        try {
-          confirmed = await getSale(saleId);
-        } catch (err) {
-          status = "failed";
-          handlerError = `gumroad_api_verify: ${err instanceof Error ? err.message : String(err)}`;
-          break;
-        }
-        if (!confirmed) {
-          status = "failed";
-          handlerError = `sale ${saleId} not found in Gumroad — cannot verify refund`;
-          break;
-        }
-        if (!confirmed.refunded && !confirmed.disputed) {
-          // Gumroad's record shows neither a refund nor a dispute (race /
-          // partial) — do not revoke access on an unverifiable claim.
-          status = "ignored";
-          break;
-        }
-        const result = await handleRefund(confirmed, payload, admin);
-        if (result.ok) {
-          status = "processed";
-        } else {
-          status = "failed";
-          handlerError = `refund[${result.action}]: ${result.error}`;
-        }
-        break;
-      }
-      case "subscription":
-      case "subscription_updated":
-      case "subscription_restarted":
-      case "subscription_ended": {
-        // Post-first-charge lifecycle. Keeps user_subscriptions in sync:
-        // renew/restart → active + extend period; ended → downgrade to core.
-        const result = await handleSubscriptionEvent(eventType, payload, admin);
-        if (result.ok) {
-          status = "processed";
-        } else {
-          status = "failed";
-          handlerError = `subscription[${result.action}]: ${result.error}`;
-        }
-        break;
-      }
-      case "cancellation": {
-        // Buyer cancelled auto-renew — keep their tier until the paid period
-        // ends (a later subscription_ended revokes). Do NOT revoke now.
-        const result = await handleSubscriptionCancellation(payload, admin);
-        if (result.ok) {
-          status = "processed";
-        } else {
-          status = "failed";
-          handlerError = `cancellation[${result.action}]: ${result.error}`;
-        }
-        break;
-      }
-      default: {
-        status = "ignored";
-        break;
-      }
-    }
-  } catch (err) {
-    status = "failed";
-    handlerError = err instanceof Error ? err.message : String(err);
-    console.error("[gumroad webhook] handler error", { eventType, eventId, error: handlerError });
-  }
-
-  if (webhookRowId) {
-    await admin
-      .from("payment_webhooks")
-      .update({
-        status,
-        handler_error: handlerError,
-        processed_at: new Date().toISOString()
-      })
-      .eq("id", webhookRowId);
-  }
-
-  return NextResponse.json({ received: true, eventType, status });
+  // Record only API-verified facts. Retrying after a logging error is safe because
+  // refunds are idempotent status updates and this route grants no new rights.
+  const eventId = "verified-contained-v3:" + (refund ? "refund:" : "sale:") + createHash("sha256").update(sale.id).digest("hex");
+  const { error } = await admin.from("payment_webhooks").upsert({
+    provider: "gumroad", event_id: eventId, event_type: refund ? "refund" : "sale",
+    raw_payload: { sale_id: sale.id, product_id: sale.product_id, refunded: refund },
+    signature_valid: true, status: reason === "bound_refund_applied" ? "processed" : "ignored",
+    handler_error: reason, processed_at: new Date().toISOString()
+  }, { onConflict: "provider,event_id" });
+  if (error) return NextResponse.json({ error: "Webhook storage will retry" }, { status: 503 });
+  return NextResponse.json({ received: true, status: reason === "bound_refund_applied" ? "processed" : "review" });
 }

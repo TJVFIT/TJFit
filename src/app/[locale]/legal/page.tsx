@@ -6,7 +6,16 @@ import { AmbientBackground } from "@/components/ui/AmbientBackground";
 import { requireLocaleParam } from "@/lib/require-locale";
 import { getLegalHubCopy, getLegalHubCoachSections } from "@/lib/legal-hub-copy";
 
-export default function LegalHubPage({ params }: { params: { locale: string } }) {
+const fontNoticeLabels = {
+  en: { title: "Font licenses", sources: "Font sources and notices" },
+  tr: { title: "Yazı tipi lisansları", sources: "Yazı tipi kaynakları ve bildirimleri" },
+  ar: { title: "تراخيص الخطوط", sources: "مصادر الخطوط وإشعارات الترخيص" },
+  es: { title: "Licencias de fuentes", sources: "Fuentes y avisos de licencia" },
+  fr: { title: "Licences des polices", sources: "Sources des polices et mentions de licence" }
+};
+
+export default async function LegalHubPage(props: { params: Promise<{ locale: string }> }) {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
   const copy = getLegalHubCopy(locale);
   const coachSections = getLegalHubCoachSections(locale);
@@ -138,6 +147,23 @@ export default function LegalHubPage({ params }: { params: { locale: string } })
                 >
                   {copy.linkPrivacyPage} →
                 </Link>
+              </section>
+
+              <section id="font-licenses" className="scroll-mt-28 space-y-4">
+                <h2 className="font-display text-2xl font-semibold tracking-[-0.01em] text-white">{fontNoticeLabels[locale].title}</h2>
+                <ul className="space-y-2 text-sm">
+                  {[
+                    { href: "/fonts/licenses/IBM-Plex-Sans-Arabic-OFL.txt", label: "IBM Plex Sans Arabic · SIL OFL 1.1" },
+                    { href: "/fonts/licenses/JetBrains-Mono-OFL.txt", label: "JetBrains Mono · SIL OFL 1.1" },
+                    { href: "/fonts/licenses/README.md", label: fontNoticeLabels[locale].sources }
+                  ].map((notice) => (
+                    <li key={notice.href}>
+                      <a href={notice.href} className="inline-flex min-h-[44px] items-center text-accent underline underline-offset-4 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple-300">
+                        {notice.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </section>
             </div>
           </div>

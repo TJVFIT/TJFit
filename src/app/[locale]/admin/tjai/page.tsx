@@ -31,7 +31,8 @@ function fmtNum(n: number): string {
   return n.toLocaleString();
 }
 
-export default async function AdminTjaiPage({ params }: { params: { locale: string } }) {
+export default async function AdminTjaiPage(props: { params: Promise<{ locale: string }> }) {
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
   const admin = getSupabaseServerClient();
 

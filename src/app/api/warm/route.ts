@@ -7,11 +7,9 @@ export const dynamic = "force-dynamic";
 /**
  * Cold-start warmup ping.
  *
- * Landing and checkout are server-rendered on the Node serverless runtime; when
- * the function scales to zero, the next real visitor eats a ~22-30s cold start
- * (Next.js server boot + first-request bundle load). A Vercel cron hits this
- * route every 5 minutes (see `vercel.json`) so the runtime stays warm and those
- * pages respond fast.
+ * Optional manual runtime probe. It is not scheduled in vercel.json: frequent
+ * warming requires hosting-plan support and does not guarantee that a later
+ * visitor reaches the same function instance.
  *
  * Deliberately does no I/O — no DB, no auth, no external calls — so it always
  * returns 200 in a couple of milliseconds and never fills the cron log with

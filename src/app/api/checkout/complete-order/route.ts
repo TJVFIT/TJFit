@@ -2,20 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { fulfillProgramOrderPaid } from "@/lib/checkout-fulfill-order";
 import { allowsSimulatedPaidCompletionForStoredProvider } from "@/lib/payments";
+import { isTestCheckoutAllowed } from "@/lib/payments/test-checkout-policy";
 import { readRequestJson } from "@/lib/read-request-json";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { TJFIT_COINS_PER_PROGRAM_PURCHASE } from "@/lib/tjfit-coin";
 
 export async function POST(request: NextRequest) {
-  if (process.env.ALLOW_TEST_CHECKOUT !== "true") {
+  if (!isTestCheckoutAllowed()) {
     return NextResponse.json(
       { error: "Test order completion is disabled in this environment." },
       { status: 403 }
     );
   }
 
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const {
     data: { user },
     error

@@ -1,3 +1,4 @@
+import { LEGAL_SERVICES } from "@/lib/legal-service-copy";
 import type { Locale } from "@/lib/i18n";
 import { getCoachTermsSections } from "@/lib/coach-terms-copy";
 
@@ -63,12 +64,12 @@ const faqEn: { id: string; q: string; a: string }[] = [
   {
     id: "payments",
     q: "What payment methods are accepted?",
-    a: "All major credit and debit cards, via our secure payment partner Gumroad."
+    a: LEGAL_SERVICES.en.checkout + " " + LEGAL_SERVICES.en.historical
   },
   {
     id: "privacy-data",
     q: "Is my data private?",
-    a: "Yes. Your personal data is never sold or shared. See our Privacy Policy below for full details."
+    a: LEGAL_SERVICES.en.sharing
   },
   {
     id: "delete",
@@ -121,12 +122,12 @@ const faqTr: { id: string; q: string; a: string }[] = [
   {
     id: "payments",
     q: "Hangi ödeme yöntemleri kabul edilir?",
-    a: "Güvenli ödeme ortağımız Gumroad üzerinden tüm major kredi ve banka kartları."
+    a: LEGAL_SERVICES.tr.checkout + " " + LEGAL_SERVICES.tr.historical
   },
   {
     id: "privacy-data",
     q: "Verilerim gizli mi?",
-    a: "Evet. Kişisel verileriniz satılmaz ve paylaşılmaz. Ayrıntılar için aşağıdaki Gizlilik Politikasına bakın."
+    a: LEGAL_SERVICES.tr.sharing
   },
   {
     id: "delete",
@@ -143,7 +144,7 @@ const faqTr: { id: string; q: string; a: string }[] = [
 // OWNER REVIEW PENDING (2026-08-09): faqAr/faqEs/faqFr were literal English
 // clones (`faqEn.map(...)`) — translated faithfully from faqEn, but they carry
 // product and pricing claims (free-tier contents, 4- vs 12-week distinction,
-// Gumroad, 30-day deletion). Owner signs off before these ship.
+// Provider status is shared with the full legal policies below.
 const faqAr: { id: string; q: string; a: string }[] = [
   {
     id: "what",
@@ -183,12 +184,12 @@ const faqAr: { id: string; q: string; a: string }[] = [
   {
     id: "payments",
     q: "ما وسائل الدفع المقبولة؟",
-    a: "جميع بطاقات الائتمان والخصم الرئيسية، عبر شريك الدفع الآمن Gumroad."
+    a: LEGAL_SERVICES.ar.checkout + " " + LEGAL_SERVICES.ar.historical
   },
   {
     id: "privacy-data",
     q: "هل بياناتي خاصة؟",
-    a: "نعم. بياناتك الشخصية لا تُباع ولا تُشارك أبدًا. راجع سياسة الخصوصية أدناه للتفاصيل الكاملة."
+    a: LEGAL_SERVICES.ar.sharing
   },
   {
     id: "delete",
@@ -241,12 +242,12 @@ const faqEs: { id: string; q: string; a: string }[] = [
   {
     id: "payments",
     q: "¿Qué métodos de pago se aceptan?",
-    a: "Todas las principales tarjetas de crédito y débito, a través de nuestro socio de pagos seguro Gumroad."
+    a: LEGAL_SERVICES.es.checkout + " " + LEGAL_SERVICES.es.historical
   },
   {
     id: "privacy-data",
     q: "¿Mis datos son privados?",
-    a: "Sí. Tus datos personales nunca se venden ni se comparten. Consulta la Política de Privacidad más abajo para el detalle completo."
+    a: LEGAL_SERVICES.es.sharing
   },
   {
     id: "delete",
@@ -299,12 +300,12 @@ const faqFr: { id: string; q: string; a: string }[] = [
   {
     id: "payments",
     q: "Quels moyens de paiement sont acceptés ?",
-    a: "Toutes les principales cartes de crédit et de débit, via notre partenaire de paiement sécurisé Gumroad."
+    a: LEGAL_SERVICES.fr.checkout + " " + LEGAL_SERVICES.fr.historical
   },
   {
     id: "privacy-data",
     q: "Mes données sont-elles privées ?",
-    a: "Oui. Vos données personnelles ne sont jamais vendues ni partagées. Consultez la Politique de confidentialité ci-dessous pour tous les détails."
+    a: LEGAL_SERVICES.fr.sharing
   },
   {
     id: "delete",
@@ -327,43 +328,43 @@ function faqFor(locale: Locale) {
 }
 
 const privacyEn = [
-  "1. Data we collect: name, email, fitness preferences, and program usage. We do not collect payment card numbers (handled by Gumroad).",
+  LEGAL_SERVICES.en.paymentData,
   "2. How we use your data: to provide and improve the TJFit platform; to send account-related notifications. We do not sell your data.",
   "3. Data storage: data is stored securely via Supabase on encrypted servers.",
   "4. Your rights: you can request data export or deletion at any time. Contact: support@tjfit.org.",
-  "5. Cookies: we use cookies for authentication only. No advertising cookies."
+  LEGAL_SERVICES.en.cookies
 ];
 
 const privacyTr = [
-  "1. Toplanan veriler: ad, e-posta, fitness tercihleri ve program kullanımı. Ödeme kartı numaraları toplanmaz (Gumroad işler).",
+  LEGAL_SERVICES.tr.paymentData,
   "2. Kullanım: TJFit'i sunmak ve geliştirmek; hesap bildirimleri. Verilerinizi satmayız.",
   "3. Saklama: veriler Supabase üzerinde şifreli sunucularda güvenle tutulur.",
   "4. Haklarınız: dilediğiniz zaman veri aktarımı veya silme talep edebilirsiniz. İletişim: support@tjfit.org.",
-  "5. Çerezler: yalnızca kimlik doğrulama için çerez kullanırız. Reklam çerezi yoktur."
+  LEGAL_SERVICES.tr.cookies
 ];
 
 const privacyAr = [
-  "1. البيانات: الاسم والبريد وتفضيلات اللياقة واستخدام البرامج. لا نجمع أرقام البطاقات (تتولى Gumroad ذلك).",
+  LEGAL_SERVICES.ar.paymentData,
   "2. الاستخدام: لتقديم TJFit وتحسينه وإشعارات الحساب. لا نبيع بياناتك.",
   "3. التخزين: عبر Supabase على خوادم مشفرة.",
   "4. الحقوق: يمكنك طلب تصدير أو حذف البيانات. support@tjfit.org",
-  "5. ملفات تعريف الارتباط: للمصادقة فقط، دون إعلانات."
+  LEGAL_SERVICES.ar.cookies
 ];
 
 const privacyEs = [
-  "1. Datos: nombre, email, preferencias de fitness y uso de programas. No recopilamos datos de tarjeta (Gumroad).",
+  LEGAL_SERVICES.es.paymentData,
   "2. Uso: operar y mejorar TJFit; notificaciones de cuenta. No vendemos datos.",
   "3. Almacenamiento: Supabase en servidores cifrados.",
   "4. Derechos: exportacion o borrado bajo solicitud. support@tjfit.org",
-  "5. Cookies: solo autenticacion; sin cookies publicitarias."
+  LEGAL_SERVICES.es.cookies
 ];
 
 const privacyFr = [
-  "1. Donnees : nom, email, preferences fitness, usage des programmes. Pas de numeros de carte (Gumroad).",
+  LEGAL_SERVICES.fr.paymentData,
   "2. Usage : fournir et ameliorer TJFit ; notifications de compte. Pas de revente de donnees.",
   "3. Stockage : Supabase sur serveurs chiffres.",
   "4. Droits : export ou suppression sur demande. support@tjfit.org",
-  "5. Cookies : authentification uniquement ; pas de pub."
+  LEGAL_SERVICES.fr.cookies
 ];
 
 type LegalHubMeta = Omit<LegalHubCopy, "faq" | "userTermsParagraphs">;
@@ -474,46 +475,46 @@ const meta: Record<Locale, LegalHubMeta> = {
 const userTermsBody: Record<Locale, string[]> = {
   en: [
     "By using TJFit, you agree to the following:",
-    "1. Eligibility — You must be 16 years or older to use TJFit.",
+    LEGAL_SERVICES.en.adult,
     "2. Account responsibility — You are responsible for maintaining the security of your account. Do not share your login credentials.",
     "3. Acceptable use — You may not use TJFit to harass other users, distribute harmful content, or attempt to access other users' data.",
-    "4. Purchases — Payments are processed by Gumroad, our Merchant of Record. You are entitled to a full refund if requested within 14 days of purchase. Refund requests are handled directly by Gumroad in accordance with their refund policy at gumroad.com/refunds.",
+    LEGAL_SERVICES.en.checkout + " " + LEGAL_SERVICES.en.historical + " " + LEGAL_SERVICES.en.refunds,
     "5. Content — TJFit programs and diet plans are for informational purposes. Consult a medical professional before starting any fitness program.",
     "6. Termination — TJFit reserves the right to suspend accounts that violate these terms."
   ],
   tr: [
     "TJFit'i kullanarak aşağıdakileri kabul edersiniz:",
-    "1. Uygunluk — TJFit 16 yaş ve üzeri içindir.",
+    LEGAL_SERVICES.tr.adult,
     "2. Hesap — Güvenlik sizin sorumluluğunuzdur; giriş bilgilerini paylaşmayın.",
     "3. Kullanım — Taciz, zararlı içerik veya başkalarının verilerine yetkisiz erişim yasaktır.",
-    "4. Satınalmalar — Ödemeler, Kayıtlı Satıcı olarak Gumroad tarafından işlenir. Satın alma tarihinden itibaren 14 gün içerisinde yapılan iade talepleri Gumroad tarafından gumroad.com/refunds üzerinden karşılanır.",
+    LEGAL_SERVICES.tr.checkout + " " + LEGAL_SERVICES.tr.historical + " " + LEGAL_SERVICES.tr.refunds,
     "5. İçerik — Programlar bilgilendiricidir; başlamadan önce doktorunuza danışın.",
     "6. Sonlandırma — İhlalde hesap askıya alınabilir."
   ],
   ar: [
     "باستخدام TJFit فإنك توافق على ما يلي:",
-    "1. الأهلية — يجب أن يكون عمرك 16 عامًا فأكثر.",
+    LEGAL_SERVICES.ar.adult,
     "2. الحساب — أنت مسؤول عن أمان حسابك.",
     "3. الاستخدام المقبول — ممنوع المضايقة أو المحتوى الضار أو الوصول غير المصرح به لبيانات الآخرين.",
-    "4. المشتريات — تُعالَج المدفوعات عبر Gumroad بصفتها التاجر الرسمي. يحق لك استرداد كامل المبلغ إذا طلبت ذلك خلال 14 يومًا من تاريخ الشراء عبر gumroad.com/refunds.",
+    LEGAL_SERVICES.ar.checkout + " " + LEGAL_SERVICES.ar.historical + " " + LEGAL_SERVICES.ar.refunds,
     "5. المحتوى — لأغراض معلوماتية؛ استشر مختصًا صحيًا قبل البدء.",
     "6. الإيقاف — يجوز تعليق الحسابات المخالفة."
   ],
   es: [
     "Al usar TJFit aceptas lo siguiente:",
-    "1. Elegibilidad — debes tener 16 años o más.",
+    LEGAL_SERVICES.es.adult,
     "2. Cuenta — eres responsable de la seguridad de tu cuenta.",
     "3. Uso aceptable — no acosar, no contenido dañino ni acceso no autorizado a datos ajenos.",
-    "4. Compras — Los pagos son procesados por Gumroad como Merchant of Record. Tienes derecho a un reembolso completo si lo solicitas dentro de los 14 días de la compra a través de gumroad.com/refunds.",
+    LEGAL_SERVICES.es.checkout + " " + LEGAL_SERVICES.es.historical + " " + LEGAL_SERVICES.es.refunds,
     "5. Contenido — informativo; consulta a un profesional de salud antes de empezar.",
     "6. Terminacion — TJFit puede suspender cuentas que incumplan."
   ],
   fr: [
     "En utilisant TJFit vous acceptez :",
-    "1. Eligibilite — 16 ans minimum.",
+    LEGAL_SERVICES.fr.adult,
     "2. Compte — vous assurez la securite de votre compte.",
     "3. Usage — pas de harcelement, contenu nuisible ou acces non autorise aux donnees d'autrui.",
-    "4. Achats — Les paiements sont traités par Gumroad en tant que Merchant of Record. Vous avez droit à un remboursement complet si vous en faites la demande dans les 14 jours suivant l'achat via gumroad.com/refunds.",
+    LEGAL_SERVICES.fr.checkout + " " + LEGAL_SERVICES.fr.historical + " " + LEGAL_SERVICES.fr.refunds,
     "5. Contenu — a titre informatif ; consultez un professionnel de sante avant de commencer.",
     "6. Resiliation — suspension possible en cas de violation."
   ]

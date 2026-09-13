@@ -20,20 +20,21 @@ function safeRedirectPath(locale: Locale, raw: string | string[] | undefined): s
   return v;
 }
 
-export default async function CoachTermsPage({
-  params,
-  searchParams
-}: {
-  params: { locale: string };
-  searchParams: Record<string, string | string[] | undefined>;
-}) {
+export default async function CoachTermsPage(
+  props: {
+    params: Promise<{ locale: string }>;
+    searchParams: Promise<Record<string, string | string[] | undefined>>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const locale = requireLocaleParam(params.locale);
   const redirectTo = safeRedirectPath(locale, searchParams.next);
   const termsVersion = getCoachTermsVersion();
 
-  let supabase: ReturnType<typeof createServerSupabaseClient>;
+  let supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>;
   try {
-    supabase = createServerSupabaseClient();
+    supabase = await createServerSupabaseClient();
   } catch {
     redirect(`/${locale}/login?next=${encodeURIComponent(`/${locale}/coach/terms`)}`);
   }

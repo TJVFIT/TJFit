@@ -10,6 +10,22 @@ import { localizeProgram } from "@/lib/program-localization";
 import { getUserDashboardCopy } from "@/lib/user-dashboard-copy";
 import { cn } from "@/lib/utils";
 
+export const DASHBOARD_ACTION_COPY = {
+  en: { workoutTitle: "Log today's workout", logged: "Workout saved", exercise: "Exercise name", sets: "Sets", reps: "Reps", weight: "Load in kilograms", saving: "Saving workout…", save: "Save workout", fullLog: "Open full progress log", streak: "Consecutive days", continue: "Continue program", entry: "Log entry", athlete: "Athlete", saveError: "We could not save this workout. Your entries are still here. Check the values and try saving again." },
+  tr: { workoutTitle: "Bugünkü antrenmanı kaydet", logged: "Antrenman kaydedildi", exercise: "Egzersiz adı", sets: "Set", reps: "Tekrar", weight: "Kilogram cinsinden yük", saving: "Antrenman kaydediliyor…", save: "Antrenmanı kaydet", fullLog: "Tüm ilerleme günlüğünü aç", streak: "Ardışık günler", continue: "Programa devam et", entry: "Günlük kaydı", athlete: "Sporcu", saveError: "Antrenman kaydedilemedi. Girdiğin bilgiler burada duruyor. Değerleri kontrol edip yeniden kaydetmeyi dene." },
+  ar: { workoutTitle: "سجّل تمرين اليوم", logged: "تم حفظ التمرين", exercise: "اسم التمرين", sets: "المجموعات", reps: "التكرارات", weight: "الحمل بالكيلوغرام", saving: "جارٍ حفظ التمرين…", save: "احفظ التمرين", fullLog: "افتح سجل التقدم الكامل", streak: "أيام متتالية", continue: "تابع البرنامج", entry: "إدخال في السجل", athlete: "رياضي", saveError: "تعذّر حفظ التمرين. ما زالت بياناتك هنا. تحقق من القيم وحاول الحفظ مجدداً." },
+  es: { workoutTitle: "Registra el entrenamiento de hoy", logged: "Entrenamiento guardado", exercise: "Nombre del ejercicio", sets: "Series", reps: "Repeticiones", weight: "Carga en kilogramos", saving: "Guardando entrenamiento…", save: "Guardar entrenamiento", fullLog: "Abrir el registro completo", streak: "Días consecutivos", continue: "Continuar programa", entry: "Entrada del registro", athlete: "Atleta", saveError: "No pudimos guardar el entrenamiento. Tus datos siguen aquí. Revisa los valores e intenta guardarlo de nuevo." },
+  fr: { workoutTitle: "Enregistrez l’entraînement du jour", logged: "Entraînement enregistré", exercise: "Nom de l’exercice", sets: "Séries", reps: "Répétitions", weight: "Charge en kilogrammes", saving: "Enregistrement de l’entraînement…", save: "Enregistrer l’entraînement", fullLog: "Ouvrir le journal complet", streak: "Jours consécutifs", continue: "Continuer le programme", entry: "Entrée du journal", athlete: "Athlète", saveError: "L’entraînement n’a pas pu être enregistré. Vos données sont toujours ici. Vérifiez les valeurs et réessayez." }
+} satisfies Record<Locale, Record<string, string>>;
+
+export async function saveDashboardWorkout(payload: { exercise: string; sets: number | null; reps: number | null; weight_kg: number | null }, fetcher: typeof fetch = fetch) {
+  const response = await fetcher("/api/progress/workouts", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify(payload) });
+  if (!response.ok) throw new Error("workout_save_failed");
+  const data = await response.json();
+  if (typeof data?.workout?.id !== "string" || !data.workout.id) throw new Error("workout_save_unconfirmed");
+  return data.workout;
+}
+
 function greetingLead(locale: Locale, hour: number) {
   const table: Record<Locale, [string, string, string]> = {
     en: ["Good morning,", "Good afternoon,", "Good evening,"],
@@ -131,7 +147,8 @@ function StatCard({ value, label, delay, active }: { value: number; label: strin
 }
 
 // F2 — Quick log widget
-function QuickLogWidget({ locale }: { locale: Locale }) {
+export function QuickLogWidget({ locale }: { locale: Locale }) {
+  const t = DASHBOARD_ACTION_COPY[locale];
   const [open, setOpen] = useState(false);
   const [exercise, setExercise] = useState("");
   const [sets, setSets] = useState("");
@@ -139,70 +156,72 @@ function QuickLogWidget({ locale }: { locale: Locale }) {
   const [weight, setWeight] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (timeoutRef.current) clearTimeout(timeoutRef.current); }, []);
 
   const submit = async () => {
-    if (!exercise.trim()) return;
+    if (saving || !exercise.trim()) return;
     setSaving(true);
+    setSaveError(false);
     try {
-      await fetch("/api/progress/workouts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
+      await saveDashboardWorkout({
           exercise: exercise.trim(),
           sets: sets ? Number(sets) : null,
           reps: reps ? Number(reps) : null,
           weight_kg: weight ? Number(weight) : null
-        })
       });
       setExercise(""); setSets(""); setReps(""); setWeight("");
       setSaved(true);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       timeoutRef.current = setTimeout(() => { setSaved(false); setOpen(false); }, 2000);
+    } catch {
+      setSaveError(true);
     } finally {
       setSaving(false);
     }
   };
 
-  const placeholder = locale === "tr" ? "Egzersiz adı" : locale === "ar" ? "اسم التمرين" : locale === "es" ? "Ejercicio" : locale === "fr" ? "Exercice" : "Exercise name";
-
   return (
     <section className="rounded-2xl border border-divider bg-surface transition-[border-color] duration-200 hover:border-white/[0.08]">
       <button
         type="button"
+        aria-expanded={open}
+        disabled={saving}
         onClick={() => setOpen((v) => !v)}
         className="flex w-full items-center justify-between px-6 py-4 text-left"
       >
         <div className="flex items-center gap-2.5">
           <Dumbbell className="h-4 w-4 text-accent" strokeWidth={2} />
-          <span className="text-sm font-semibold text-white">Log today&apos;s workout</span>
+          <span className="text-sm font-semibold text-white">{t.workoutTitle}</span>
         </div>
         <Plus className={cn("h-4 w-4 text-faint transition-transform duration-200", open && "rotate-45")} />
       </button>
 
       <div
         className="overflow-hidden transition-all duration-300 ease-out"
-        style={{ maxHeight: open ? "300px" : "0px" }}
+        style={{ maxHeight: open ? "420px" : "0px" }}
       >
         <div className="border-t border-divider px-6 pb-5 pt-4">
           {saved ? (
-            <div className="flex items-center gap-2 rounded-xl border border-green-500/25 bg-[#0D1F17] px-4 py-3 text-sm font-medium text-green-400">
-              <CheckCircle2 className="h-4 w-4" /> Logged!
+            <div role="status" className="flex items-center gap-2 rounded-xl border border-green-500/25 bg-[#0D1F17] px-4 py-3 text-sm font-medium text-green-400">
+              <CheckCircle2 className="h-4 w-4" aria-hidden /> {t.logged}
             </div>
           ) : (
             <div className="grid gap-3">
               <input
                 className="input"
-                placeholder={placeholder}
+                placeholder={t.exercise}
+                aria-label={t.exercise}
+                disabled={saving}
                 value={exercise}
                 onChange={(e) => setExercise(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && void submit()}
               />
               <div className="grid grid-cols-3 gap-2">
-                <input className="input text-sm" placeholder="Sets" type="number" min="1" value={sets} onChange={(e) => setSets(e.target.value)} />
-                <input className="input text-sm" placeholder="Reps" type="number" min="1" value={reps} onChange={(e) => setReps(e.target.value)} />
-                <input className="input text-sm" placeholder="kg" type="number" step="0.5" min="0" value={weight} onChange={(e) => setWeight(e.target.value)} />
+                <input className="input text-sm" aria-label={t.sets} placeholder={t.sets} disabled={saving} type="number" min="1" value={sets} onChange={(e) => setSets(e.target.value)} />
+                <input className="input text-sm" aria-label={t.reps} placeholder={t.reps} disabled={saving} type="number" min="1" value={reps} onChange={(e) => setReps(e.target.value)} />
+                <input className="input text-sm" aria-label={t.weight} placeholder="kg" disabled={saving} type="number" step="0.5" min="0" value={weight} onChange={(e) => setWeight(e.target.value)} />
               </div>
               <div className="flex items-center gap-3">
                 <button
@@ -211,12 +230,13 @@ function QuickLogWidget({ locale }: { locale: Locale }) {
                   disabled={saving || !exercise.trim()}
                   className="tj-cta-sheen inline-flex min-h-[44px] items-center justify-center rounded-full bg-[linear-gradient(135deg,#A855F7,#7C3AED)] px-5 text-sm font-bold text-black shadow-[0_0_18px_rgba(168,85,247,0.22)] transition-[transform,box-shadow,opacity] duration-200 hover:scale-[1.02] hover:shadow-[0_0_28px_rgba(168,85,247,0.35)] disabled:opacity-50"
                 >
-                  {saving ? "Logging…" : "Log workout"}
+                  {saving ? t.saving : t.save}
                 </button>
                 <Link href={`/${locale}/progress`} className="text-xs text-faint hover:text-bright">
-                  Full progress log →
+                  {t.fullLog}
                 </Link>
               </div>
+              {saveError && <p role="alert" className="text-sm text-amber-200">{t.saveError}</p>}
             </div>
           )}
         </div>
@@ -227,6 +247,7 @@ function QuickLogWidget({ locale }: { locale: Locale }) {
 
 export function UserDashboardView({ locale }: { locale: Locale }) {
   const t = getUserDashboardCopy(locale);
+  const actions = DASHBOARD_ACTION_COPY[locale];
   const { user, loading: authLoading } = useAuth();
   const [summary, setSummary] = useState<Summary | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -240,7 +261,7 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
   const rawName =
     (user?.user_metadata?.full_name as string | undefined)?.trim() ||
     user?.email?.split("@")[0]?.trim() ||
-    "Athlete";
+    actions.athlete;
   const displayName = useTextScramble(rawName, headerOn);
 
   useEffect(() => {
@@ -271,7 +292,7 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
       const res = await fetch("/api/user/dashboard-summary", { credentials: "include" });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setLoadError(typeof data.error === "string" ? data.error : t.loadError);
+        setLoadError(t.loadError);
         setSummary(null);
         return;
       }
@@ -353,7 +374,7 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
             {summary.currentStreak > 0 && (
               <div className="flex items-center gap-2 rounded-full border border-purple-300/35 bg-purple-300/[0.1] px-4 py-1.5 shadow-[0_0_18px_rgba(168,85,247,0.16)]">
                 <Flame className="flame-flicker h-4 w-4 text-purple-200" />
-                <span className="text-sm font-bold text-purple-100">{summary.currentStreak} day streak</span>
+                <span className="text-sm font-bold text-purple-100">{actions.streak}: {summary.currentStreak}</span>
               </div>
             )}
             <p className="text-sm text-dim">{formatDashboardDate(locale)}</p>
@@ -397,7 +418,7 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
                 </div>
               </div>
               <span className="tj-cta-sheen inline-flex min-h-[48px] shrink-0 items-center justify-center rounded-full border border-purple-300/35 bg-purple-300/[0.1] px-6 py-2.5 text-sm font-semibold text-purple-50 transition-[transform,border-color,box-shadow,color] duration-200 group-hover/ap:scale-[1.02] group-hover/ap:border-purple-300/55 group-hover/ap:bg-purple-300/[0.14] group-hover/ap:shadow-[0_0_28px_rgba(168,85,247,0.22)]">
-                Continue →
+                {actions.continue}
               </span>
             </div>
           </Link>
@@ -422,7 +443,7 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
                 >
                   <span className="flex items-center gap-2 text-white">
                     <Activity className="h-4 w-4 shrink-0 text-accent" strokeWidth={2} aria-hidden />
-                    Log entry
+                    {actions.entry}
                   </span>
                   <time className="text-[13px] text-dim" dateTime={d}>
                     {d}
@@ -447,7 +468,7 @@ export function UserDashboardView({ locale }: { locale: Locale }) {
           <StatCard value={summary.paidOrderCount} label={t.statsPrograms} delay={0} active={statsActive} />
           <StatCard value={summary.progressEntryCount} label={t.statsEntries} delay={80} active={statsActive} />
           <StatCard value={summary.milestoneCount} label={t.statsMilestones} delay={160} active={statsActive} />
-          <StatCard value={summary.currentStreak} label="Day streak" delay={240} active={statsActive} />
+          <StatCard value={summary.currentStreak} label={actions.streak} delay={240} active={statsActive} />
         </section>
       ) : null}
     </div>

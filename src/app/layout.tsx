@@ -7,7 +7,6 @@ import { TrackingScripts } from "@/components/marketing/tracking-scripts";
 import { BrandOrganizationJsonLd } from "@/components/brand-organization-json-ld";
 import { BRAND } from "@/lib/brand-assets";
 import { getSiteUrl } from "@/lib/site-url";
-import { isTaskAvailable } from "@/lib/tjai/provider-policy";
 import "./globals.css";
 
 /* ---------------------------------------------------------------------------
@@ -81,14 +80,6 @@ try {
   new URL(siteUrl);
 } catch {
   siteUrl = "https://tjfit.org";
-}
-
-if (!isTaskAvailable("plan_generate")) {
-  console.error("FATAL: no LLM backend configured (TJAI_LLM_* / OPENAI_API_KEY / ANTHROPIC_API_KEY) — TJAI plan generation will not work");
-}
-
-if (!process.env.RESEND_API_KEY) {
-  console.error("FATAL: RESEND_API_KEY is not set");
 }
 
 function googleVerificationToken(): string | undefined {

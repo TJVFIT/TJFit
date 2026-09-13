@@ -1,8 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 /**
- * Purchase / entitlement checks backed by `program_orders` (paid status).
- * Fulfillment runs via Gumroad webhook → `fulfillProgramOrderPaid` (no separate `purchases` table).
+ * Preserve historical paid program orders and verified live Lemon bundle grants.
+ * Refunds and sandbox receipts never satisfy the new digital entitlement branch.
  */
 
 export async function hasPurchasedProgram(
@@ -21,7 +21,11 @@ export async function hasPurchasedProgram(
     .eq("program_slug", programSlug)
     .eq("status", "paid")
     .limit(1);
-  return Boolean(data && data.length > 0);
+  if (data && data.length > 0) return true;
+  const { data: digital, error } = await supabase.from("digital_bundle_purchases").select("provider_order_id")
+    .eq("user_id", userId).eq("program_slug", programSlug).eq("provider", "lemonsqueezy")
+    .eq("status", "active").eq("test_mode", false).limit(1);
+  return !error && Boolean(digital?.length);
 }
 
 export async function listPurchasedProgramSlugs(
@@ -33,8 +37,9 @@ export async function listPurchasedProgramSlugs(
     .select("program_slug")
     .eq("user_id", userId)
     .eq("status", "paid");
-  if (error || !data) return [];
+  const { data: digital } = await supabase.from("digital_bundle_purchases").select("program_slug")
+    .eq("user_id", userId).eq("provider", "lemonsqueezy").eq("status", "active").eq("test_mode", false);
   // Dedupe: duplicate paid rows (e.g. webhook retries) must not yield repeated slugs.
-  const slugs = data.map((row) => row.program_slug).filter((s): s is string => typeof s === "string");
+  const slugs = [...(!error && data ? data : []), ...(digital ?? [])].map((row) => row.program_slug).filter((s): s is string => typeof s === "string");
   return Array.from(new Set(slugs));
 }

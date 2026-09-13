@@ -7,7 +7,8 @@ import { enqueuePendingNotification } from "@/lib/pending-notifications";
 import { requireAdmin } from "@/lib/require-admin";
 import { awardTJCoin } from "@/lib/tjcoin-server";
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   // Switched from inline `profiles.role === 'admin'` check to the
   // requireAdmin helper, which also honors ADMIN_EMAILS env. Other admin
   // routes use this for defense-in-depth.

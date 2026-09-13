@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { rateLimit } from "@/lib/rate-limit";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const admin = getSupabaseServerClient();
   if (!admin) return NextResponse.json({ error: "Server not configured" }, { status: 500 });
   const id = params.id;

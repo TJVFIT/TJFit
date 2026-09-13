@@ -358,7 +358,7 @@ export function ShareButton({
     <button
       type="button"
       onClick={handleShare}
-      aria-label={ariaLabel ?? `Share ${title}`}
+      aria-label={ariaLabel ?? `${labels.idle} ${title}`}
       className={`tj-cta-sheen inline-flex min-h-[48px] items-center justify-center gap-1.5 rounded-full border px-4 py-2.5 text-sm font-semibold transition-[border-color,color,box-shadow] motion-safe:active:scale-[0.97] ${
         state === "idle"
           ? "border-white/15 text-bright hover:border-purple-300/35 hover:text-purple-100 hover:shadow-[0_0_24px_rgba(168,85,247,0.16)]"
@@ -503,9 +503,11 @@ export function StickyOfferBar({
  * right margin). Labels are passed in already-localized.
  */
 export function DetailSectionNav({
-  items
+  items,
+  ariaLabel
 }: {
   items: { id: string; label: string }[];
+  ariaLabel: string;
 }) {
   const [active, setActive] = useState(items[0]?.id ?? "");
   const visible = useRef<Set<string>>(new Set());
@@ -531,7 +533,7 @@ export function DetailSectionNav({
 
   return (
     <nav
-      aria-label="On this page"
+      aria-label={ariaLabel}
       className="pointer-events-none fixed start-5 top-1/2 z-30 hidden -translate-y-1/2 xl:block"
     >
       <ul className="pointer-events-auto flex flex-col gap-3.5">
@@ -981,8 +983,8 @@ export function GroceryList({ groups }: { groups: BundleGroceryCategory[] }) {
 
 /**
  * "What's inside" trust strip — one tile per real computed count from
- * bundleInsideStats. Numbers count up on reveal; reduced-motion users get
- * the final value immediately.
+ * bundleInsideStats. Final counts are available to assistive technology from
+ * the first render; the visual count-up is decorative.
  */
 export function InsideStatTiles({
   stats
@@ -1011,7 +1013,7 @@ function InsideStatTile({
   shown: boolean;
   index: number;
 }) {
-  const [display, setDisplay] = useState(0);
+  const [display, setDisplay] = useState(value);
   const delay = `${index * 70}ms`;
 
   useEffect(() => {
@@ -1051,7 +1053,8 @@ function InsideStatTile({
         }}
       />
       <p className="font-display text-2xl font-extrabold tabular-nums leading-none text-white sm:text-3xl">
-        {display}
+        <span className="sr-only">{value}</span>
+        <span aria-hidden="true">{display}</span>
       </p>
       <p className="mt-2 text-[10px] font-mono font-bold uppercase tracking-[0.16em] text-purple-200/80">
         {label}
